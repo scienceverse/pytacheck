@@ -974,6 +974,19 @@ def test_one_colour_coded_cell_is_singular(tmp_path: Path) -> None:
     ]
 
 
+def test_one_qualtrics_preview_row_is_singular(tmp_path: Path) -> None:
+    # metacheck: "(1 row look like previews/unfinished responses to review)"
+    d = _qualtrics_repo(tmp_path)
+    survey = d / "data" / "survey.csv"
+    lines = survey.read_text(encoding="utf-8").splitlines()
+    cells = lines[3].split(",")
+    cells[1] = '"1"'  # the first response is a survey preview (Status 1)
+    lines[3] = ",".join(cells)
+    survey.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    text = run_dir(d).summary_text
+    assert "(1 row looks like previews/unfinished responses to review)" in text
+
+
 @pytest.mark.parametrize("empty", [pc.paper, lambda: pc.PaperList([])], ids=["paper", "list"])
 def test_empty_paper_gives_the_na_result(empty: Any) -> None:
     # metacheck's repo_check stops on paper() and paperlist()

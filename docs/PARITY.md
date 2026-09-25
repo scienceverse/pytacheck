@@ -15,6 +15,7 @@ parity/
   canonical.py           Python -> canonical JSON encoder
   compare.py             structural comparator
   cases.py               case loading, argument decoding, Python runner
+  divergences/*.yaml     known_divergence marks of generated cases (one file per lane)
   __main__.py            `python -m parity generate|check|list`
 ```
 
@@ -76,6 +77,55 @@ Cases whose Python side runs R (`reproducibility_check`, `code_parse_r(engine =
 "r")`, ...) need the reference R: without `PYTACHECK_RSCRIPT` naming an R >= 4.5
 they are reported as `skip`, never as pass or fail. The harness notices any case
 whose Python side starts `Rscript`/`R`; `needs_r: true` marks one explicitly.
+
+A case must not write into the checkout: give a function that saves files
+(`paper_write()`, `grobid_to_bibr()`, `convert()`, ...) a temporary `save_path`,
+because metacheck's default `"."` is the repository root when the harness runs.
+`python -m parity check` fails when a run leaves a new file there, and so does
+`pytest` (a warning names the test). The Python side keeps its caches in a
+throwaway `PYTACHECK_CACHE_DIR`, as the R runner does with `metacheck.cache.dir`.
+
+## Cases that differ from R on purpose
+
+pytacheck fixes metacheck's bugs (see [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md)), so
+some cases differ from their golden on purpose. Such a case carries a
+`known_divergence`: `kind` (one of `DIVERGENCE_KINDS` in `parity/cases.py`,
+usually `r_bug_fixed`), `ref` (the U- or D-entry) and a one-line `reason`. A
+hand-written case file has the mark inline; a generated one is marked in
+`parity/divergences/<lane>.yaml` (`"<area>/<id>": {kind, ref, reason}`), and a case
+is marked in one place only. A marked case is an expected failure (`xfail`): it is
+reported, but not compared any further. Never mark a case that passes, and remove
+the mark when a case passes again.
+
+When the only difference is text pytacheck corrects (a typo, a plural, a full stop
+in report prose), the mark says how, with `r_text`: substitutions applied, in
+order, to every string value of R's golden (and to R's error message) before the
+comparison:
+
+```yaml
+"mod_ref_accuracy_review/ref_consistency.text_missing":
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the caveat says 'likely' (metacheck: 'likley')"
+  r_text: [["likley", "likely"]]
+"bibr12/module.stat_effect_size.full":
+  kind: r_bug_fixed
+  ref: U125
+  reason: "the missing-effect-size summary ends with a full stop (metacheck leaves it out)"
+  r_text: [["consider adding effect sizes$", "consider adding effect sizes.", regex]]
+```
+
+`[old, new]` replaces literal text; `[old, new, regex]` is Python's
+`re.sub(old, new, s)` (`\1` is a group in `new`). Such a case is not an expected
+failure: it passes when Python's result equals R's rewritten golden, and any other
+difference fails it, so the rest of its output stays compared with R. A
+substitution that changes nothing in the golden fails the case too (the mark is
+stale). A case that also differs for another reason adds `xfail: true` to its
+mark: it stays an expected failure, and `r_text` only keeps the text corrections
+out of its reported differences. The marks of generated cases whose only
+difference is prose are collected in `parity/divergences/prose.yaml` (hand-written
+case files keep theirs inline). `python -m parity check` reports how many passes
+were compared with R's text corrected.
 
 ## Deliberate pytacheck defaults
 

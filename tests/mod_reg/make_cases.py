@@ -251,7 +251,11 @@ CASES: list[tuple[str, str, dict[str, Any]]] = [
         "the same preregistration twice in the chained table: compared once",
         {**OER, **CHAIN, "double": True},
     ),
-    ("all_fail", "every comparison fails: error light", {**OER, "fake": "error"}),
+    (
+        "all_fail",
+        "every comparison fails: fail light (metacheck: error, U30)",
+        {**OER, "fake": "error"},
+    ),
     (
         "partial_fail",
         "one of two comparisons fails: the other is still reported",
@@ -260,7 +264,7 @@ CASES: list[tuple[str, str, dict[str, Any]]] = [
     # --- more branches
     (
         "empty_result",
-        "RegCheck returns no dimensions: error light without a reason",
+        "RegCheck returns no dimensions: fail light without a reason (metacheck: error, U30)",
         {**OER, "fake": "empty"},
     ),
     (
@@ -707,7 +711,7 @@ cases: list[dict[str, Any]] = [
     },
     {
         "id": "reg_check.module.empty_paperlist",
-        "note": "module_run() directly: an empty paper list (prereg_check errors)",
+        "note": "module_run() directly: an empty paper list (metacheck: prereg_check errors, U79)",
         "module": "reg_check",
         "args": {"paper": {"$expr": {"r": "paperlist()", "py": "pc.PaperList([])"}}},
     },

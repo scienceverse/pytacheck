@@ -102,24 +102,32 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
     if reason:
         return "skip", [reason], 0.0
     golden = orjson.loads(case.golden_path.read_bytes())
-    stale: list[str] = []
     subs = r_text(case.spec)
-    if subs:
-        used = [False] * len(subs)
-        key = "value" if golden["ok"] else "error"
-        golden[key] = rewrite_r_text(golden[key], subs, used)
-        stale = [
-            f"r_text {sub} changes nothing in R's golden: remove it from the mark"
-            for sub, u in zip(subs, used, strict=True)
-            if not u
-        ]
-    status, problems, elapsed = _check(case, golden)
+    if not subs:
+        return _check(case, golden)
+    used = [False] * len(subs)
+    key = "value" if golden["ok"] else "error"
+    rewritten = {**golden, key: rewrite_r_text(golden[key], subs, used)}
+    stale = [
+        f"r_text {sub} changes nothing in R's golden: remove it from the mark"
+        for sub, u in zip(subs, used, strict=True)
+        if not u
+    ]
+    status, problems, elapsed = _check(case, rewritten, raw=golden)
     if stale and status != "skip":
         return "fail", stale + problems, elapsed
     return status, problems, elapsed
 
 
-def _check(case: Case, golden: dict[str, Any]) -> tuple[str, list[str], float]:
+def _check(
+    case: Case, golden: dict[str, Any], raw: dict[str, Any] | None = None
+) -> tuple[str, list[str], float]:
+    """Run the Python side and compare it with *golden*.
+
+    *raw* is R's golden before its ``r_text`` substitutions: a case that
+    matches it too does not differ from R where it compares, so its mark is
+    stale (a mark never goes on a case that passes).
+    """
     options = Options.from_case(case.spec.get("compare"))
     start = time.perf_counter()
     try:
@@ -142,6 +150,8 @@ def _check(case: Case, golden: dict[str, Any]) -> tuple[str, list[str], float]:
             )
         message = portable(str(err))
         if error_matches(golden["error"], message, options.error):
+            if raw is not None and error_matches(raw["error"], message, options.error):
+                return "fail", [_UNNEEDED_R_TEXT], elapsed
             return "pass", [], elapsed
         return (
             failed,
@@ -152,10 +162,19 @@ def _check(case: Case, golden: dict[str, Any]) -> tuple[str, list[str], float]:
         tb = "".join(traceback.format_exception_only(type(err), err)).strip()
         status = "xfail" if expected else "error"
         return status, [f"Python raised {tb}"], elapsed
-    problems = compare(golden["value"], canonical(result), options)
+    py = canonical(result)
+    problems = compare(golden["value"], py, options)
     if problems:
         return failed, problems, elapsed
+    if raw is not None and not compare(raw["value"], py, options):
+        return "fail", [_UNNEEDED_R_TEXT], elapsed
     return "pass", [], elapsed
+
+
+_UNNEEDED_R_TEXT = (
+    "the case matches R's golden without its r_text substitutions (they change only "
+    "text the comparison skips): remove the mark"
+)
 
 
 def _root_entries() -> set[str]:
@@ -225,7 +244,8 @@ def cmd_list(ns: argparse.Namespace) -> int:
     return 0
 
 
-_DATA_DIR: Any = None  # the throwaway data and cache dirs, removed at exit
+_DATA_DIR: Any = None  # the throwaway data dir, removed at exit
+_CACHE_DIR: Any = None  # the throwaway cache dir, removed at exit
 
 
 def _hermetic_env() -> None:
@@ -236,20 +256,19 @@ def _hermetic_env() -> None:
     working directory, the checkout, as metacheck's do (the R runner points
     them at a temporary directory too).
     """
-    global _DATA_DIR
-    os.environ.setdefault("PYTACHECK_CONFIG", "none")
-    dirs = {"PYTACHECK_DATA_DIR": "data", "PYTACHECK_CACHE_DIR": "cache"}
-    missing = {var: name for var, name in dirs.items() if not os.environ.get(var)}
-    if missing:
-        import atexit
-        import tempfile
+    global _DATA_DIR, _CACHE_DIR
+    import atexit
+    import tempfile
 
-        _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-")
+    os.environ.setdefault("PYTACHECK_CONFIG", "none")
+    if not os.environ.get("PYTACHECK_DATA_DIR"):
+        _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-data-")
         atexit.register(_DATA_DIR.cleanup)
-        for var, name in missing.items():
-            path = Path(_DATA_DIR.name) / name
-            path.mkdir()
-            os.environ[var] = str(path)
+        os.environ["PYTACHECK_DATA_DIR"] = _DATA_DIR.name
+    if not os.environ.get("PYTACHECK_CACHE_DIR"):
+        _CACHE_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-cache-")
+        atexit.register(_CACHE_DIR.cleanup)
+        os.environ["PYTACHECK_CACHE_DIR"] = _CACHE_DIR.name
 
 
 def main(argv: list[str] | None = None) -> int:

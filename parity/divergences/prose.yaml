@@ -1,0 +1,118 @@
+# Cases in generated case files whose only difference from R is text that
+# pytacheck corrects in module prose: typos (U83), plurals (U82) and a missing
+# full stop (U125). Format (see parity/cases.py and docs/PARITY.md): "<area>/<id>":
+# {kind, ref, reason, r_text}. The r_text substitutions turn R's text into
+# pytacheck's before the comparison, so these cases pass when everything else
+# matches R. Cases in hand-written case files carry the same r_text inline; a
+# case that also differs for another reason stays in its lane's file.
+
+# U83: typos -------------------------------------------------------------------
+"bibr12/module.open_practices.PMC4383902": &u83_recognized
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the no-code report says 'not recognized' (metacheck: 'not reconized')"
+  r_text: [["reconized", "recognized"]]
+"grobid12/module.open_practices.0956797615569889": *u83_recognized
+"bibr12/module.ref_accuracy.preprint": &u83_such_an_incoherence
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')"
+  r_text: [["Such an incoherent", "Such an incoherence"], [" ar an AI generated", " or an AI generated"]]
+"bibr12/module.ref_accuracy.list": *u83_such_an_incoherence
+"bibr12/module.ref_accuracy.mixed": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.year.character": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.year.character_ws": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.authors.character_column": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.min_mismatches_0": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.max_authors_negative": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.max_authors_0": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional_small": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.max_authors_inf": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.title_similarity_1": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.year_tolerance_negative": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.doi.url": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.doi.record_missing": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.report.line_breaks": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.authors.metacharacters": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.journal.whitespace": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.title.empty_after_normalising": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.authors.cited_missing": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.paperlist.unsorted": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.bib_match.extra_rows": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.bib_match.double_key": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_accuracy.single_reference": *u83_such_an_incoherence
+"mod_ref_accuracy_review/ref_consistency.text_missing": &u83_likely
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the caveat says 'likely' (metacheck: 'likley')"
+  r_text: [["likley", "likely"]]
+"mod_ref_accuracy_review/ref_consistency.paperlist.unsorted": *u83_likely
+"mod_ref_accuracy_review/ref_consistency.paperlist.no_bib_match": *u83_likely
+"mod_ref_accuracy_review/ref_consistency.problems_203020": *u83_likely
+"mod_ref_accuracy_review/ref_accuracy.module_help":
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the help text says 'or mistakes in citations. You will need to check the original source.' (metacheck: 'of mistakes ... You will need check ...')"
+  r_text: [["AI generated references, of mistakes in citations. You will need check the original source.", "AI generated references, or mistakes in citations. You will need to check the original source."]]
+
+# U82: a count of one takes the singular ---------------------------------------
+"mod_code/code_check.parse_errors": &u82_in_code_file
+  kind: r_bug_fixed
+  ref: U82
+  reason: "one file with libraries at several places is \"In 1 code file\" (metacheck: \"In 1 code files\")"
+  r_text: [["In 1 code files,", "In 1 code file,"]]
+"mod_code/code_check.psychsci": *u82_in_code_file
+"mod_code/code_check.mixed": *u82_in_code_file
+"mod_code/code_check.paperlist": *u82_in_code_file
+"mod_code_review/code_check.gaps": *u82_in_code_file
+"mod_code_review/code_check.na_pid": *u82_in_code_file
+"mod_code_review/local_path.parse_errors": *u82_in_code_file
+"mod_code_review/local_path.mixed_local_only": *u82_in_code_file
+"mod_data_check/data_check.qualtrics": &u82_file_contains_survey
+  kind: r_bug_fixed
+  ref: U82
+  reason: "\"1 file contains survey data\" (metacheck: \"contain\")"
+  r_text: [["1 file contain survey data", "1 file contains survey data"]]
+"mod_data_check/data_check.careless_missing": *u82_file_contains_survey
+"mod_data_check/data_check.careless":
+  kind: r_bug_fixed
+  ref: U82
+  reason: "\"1 distinct respondent was flagged\" (metacheck: \"were\")"
+  r_text: [["1 distinct respondent were flagged", "1 distinct respondent was flagged"]]
+"mod_data_check/data_check.careless_two": &u82_of_these_was
+  kind: r_bug_fixed
+  ref: U82
+  reason: "\"Of these, **1 was flagged\" (metacheck: \"were\")"
+  r_text: [["Of these, **1 were flagged", "Of these, **1 was flagged"]]
+"mod_data_check/data_check.codebook_chain": *u82_of_these_was
+"mod_data_check/data_check.psychsci": *u82_of_these_was
+"mod_data_check/data_check_tables.spreadsheets": &u82_merged_range_breaks
+  kind: r_bug_fixed
+  ref: U82
+  reason: "a spreadsheet finding with a count of one takes a singular verb (\"1 merged range ... breaks\", \"1 column is empty or has a blank header\"; metacheck: \"break\", \"have\")"
+  r_text: [["\\b1 merged range (\\([^)]*\\)) break the", "1 merged range \\1 breaks the", "regex"], ["1 column is empty or have a blank header", "1 column is empty or has a blank header"]]
+"mod_data_check/dv_spreadsheet_findings.fixture": *u82_merged_range_breaks
+"mod_data_check_review/review.sheets": &u82_column_is_empty
+  kind: r_bug_fixed
+  ref: U82
+  reason: "\"1 column is empty or has a blank header\" (metacheck: \"have\")"
+  r_text: [["1 column is empty or have a blank header", "1 column is empty or has a blank header"]]
+"mod_data_check_review/review_tables.sheets": *u82_column_is_empty
+"mod_data_check_review/review.dv_spreadsheet_findings.handmade": *u82_column_is_empty
+"mod_ref_pubpeer_summary/ref_pubpeer.no_comments": &u82_we_checked_reference
+  kind: r_bug_fixed
+  ref: U82
+  reason: "\"We checked 1 reference with DOIs.\" (metacheck: \"1 references\")"
+  r_text: [["We checked 1 references with DOIs.", "We checked 1 reference with DOIs."]]
+"mod_ref_pubpeer_summary/ref_pubpeer.invalid_doi": *u82_we_checked_reference
+
+# U125: the missing-effect-size summary ends with a full stop ------------------
+"bibr12/module.stat_effect_size.preprint": &u125_consider_adding_effect
+  kind: r_bug_fixed
+  ref: U125
+  reason: "the missing-effect-size summary ends with a full stop (metacheck leaves it out)"
+  r_text: [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]
+"bibr12/module.stat_effect_size.full": *u125_consider_adding_effect
+"bibr12/module.stat_effect_size.mixed": *u125_consider_adding_effect
+"grobid12/module.stat_effect_size.debruine": *u125_consider_adding_effect

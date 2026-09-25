@@ -9,7 +9,7 @@
   "args":
     "paper": {"$test_paper": {"text": ["Huge, t(2147483646) = 2.0, d = 0.5."]}}
 - "id": "stat_effect_size.review.df_huge"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["Huge, t(9999999999) = 2.0, p = .04."]}}
@@ -31,7 +31,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- infinite values
 - "id": "stat_effect_size.review.inf_values"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -60,14 +60,14 @@
 # ---------------------------------------------------------------- sentences without digits
 # text_search("[0-9]") misses the sentence: text/section_id/paragraph_id are NA
 - "id": "stat_effect_size.review.no_digits"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["The effect was not significant, t = n.s.", "Other sentence without numbers.", "Bracket, t = [low, high], d = [a, b]."]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # a paper whose only test is in a digit-less sentence is not in the paper order: last
 - "id": "stat_effect_size.review.no_digits_paperlist"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -77,7 +77,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- d labels and values
 - "id": "stat_effect_size.review.d_variants"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -167,7 +167,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # mismatch in an F-test only, t-tests all missing: red with the missing-text summary
 - "id": "stat_effect_size.review.f_nomatch_t_missing"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["t(40) = 2.9, p = .006.", "F(1, 20) = 4.10, ηp² = .50."]}}
@@ -197,7 +197,7 @@
 # module's own early-return one) is then data.frame(paper_id = paper$paper_id):
 # one row per table row
 - "id": "stat_effect_size.review.text_table"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -217,7 +217,7 @@
 # |df - round(df)| <= 1e-8 counts as an integer df: as.integer() truncates df + 1 and
 # format() rounds (df + 2) / 2 to 7 significant digits
 - "id": "stat_effect_size.review.near_integer_df"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -251,7 +251,7 @@
 # order, i.e. ICU-sorted factor levels of paper_id ("_x" < "aa" < "Ab" < "b" < "B"),
 # not extract_eq()'s C-locale arrange() order
 - "id": "stat_effect_size.review.missing_paper_tie_order"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -336,7 +336,7 @@
 # a match-level text table: several rows share a text_id, so text_search("[0-9]")
 # repeats sentences and left_join() multiplies the test rows
 - "id": "stat_effect_size.review.text_table_matches"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":

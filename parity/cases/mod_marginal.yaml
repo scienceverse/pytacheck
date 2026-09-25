@@ -1,13 +1,16 @@
 "area": "mod_marginal"
 "cases":
 - "id": "marginal.demo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U3", "reason": "the guidance cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)' (metacheck: 'Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH')", "r_text": [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]}
   "module": "marginal"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "marginal.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U3", "reason": "the guidance cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)' (metacheck: 'Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH')", "r_text": [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]}
   "module": "marginal"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
 - "id": "marginal.synthetic"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U3", "reason": "the guidance cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)' (metacheck: 'Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH')", "r_text": [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]}
   "module": "marginal"
   "args":
     "paper": {"$test_paper": {"text": ["The effect was marginally significant, p = .06.", "There was a trend towards significance.", "Results approached statistical significance.", "Nothing to see here.", "It was close to being significant.", "A borderline significant result."]}}

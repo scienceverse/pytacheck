@@ -109,6 +109,26 @@ def test_empty_paperlist_has_an_empty_summary() -> None:
     assert len(mo.summary_table) == 0
 
 
+@pytest.mark.parametrize(
+    ("module", "summary_text"),
+    [
+        ("prereg_check", "No preregistration links were found."),
+        ("reg_check", "No preregistrations were found to compare with the paper."),
+    ],
+)
+def test_paper_without_info_runs(module: str, summary_text: str) -> None:
+    # U79: paper() has no info row, so paper_id() is empty and R's
+    # data.frame(paper_id = NULL, ...) stops ("arguments imply differing number
+    # of rows: 0, 1"; reg_check runs prereg_check)
+    import pytacheck as pc
+
+    paper = pc.paper()
+    mo = pc.module_run(paper, module)
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == summary_text
+    assert mo.summary_table["paper_id"].tolist() == [paper.paper_id]
+
+
 def test_deparse_str_uses_r_escapes() -> None:
     from pytacheck.modules._prereg import _deparse_str
 

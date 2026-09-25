@@ -183,11 +183,6 @@
   ref: U115
   reason: a citation (xref) without contents whose xref_id is not a bib_id is "missing" from the bibliography, not an "extra" reference
 "mod_ref_accuracy_review/ref_consistency.report_tables.contents_na": *u115_type
-"mod_ref_pubpeer_summary/ref_pubpeer.no_comments": &u82_plural
-  kind: r_bug_fixed
-  ref: U82
-  reason: '"We checked 1 reference with DOIs." (metacheck: "1 references")'
-"mod_ref_pubpeer_summary/ref_pubpeer.invalid_doi": *u82_plural
 
 # power ---------------------------------------------------------------------------
 "mod_power_review/power.review.fallback.omitted_key": &u108_complete
@@ -260,48 +255,12 @@
 # "Such an incoherent ... ar an AI"); U125: a missing full stop. Cases of the
 # io lane's generated files (bibr12, grobid12) that run these modules are listed
 # here because the module change, not the conversion, makes them differ.
-"mod_ref_accuracy_review/ref_accuracy.year.character": &u83_incoherent
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')"
-"mod_ref_accuracy_review/ref_accuracy.year.character_ws": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.authors.character_column": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.min_mismatches_0": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.max_authors_negative": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.max_authors_0": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional_small": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.max_authors_inf": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.title_similarity_1": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.year_tolerance_negative": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.doi.url": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.doi.record_missing": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.report.line_breaks": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.authors.metacharacters": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.journal.whitespace": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.title.empty_after_normalising": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.authors.cited_missing": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.paperlist.unsorted": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.bib_match.extra_rows": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.bib_match.double_key": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.single_reference": *u83_incoherent
-"bibr12/module.ref_accuracy.preprint": *u83_incoherent
-"bibr12/module.ref_accuracy.list": *u83_incoherent
-"bibr12/module.ref_accuracy.mixed": *u83_incoherent
-"mod_ref_accuracy_review/ref_accuracy.module_help":
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the help text says 'or mistakes in citations. You will need to check the original source.' (metacheck: 'of mistakes ... You will need check ...')"
 "mod_ref_accuracy_review/ref_consistency.double_key": &u83_likley
   kind: r_bug_fixed
   ref: U83
   reason: "the caveat says 'likely' (metacheck: 'likley'); summary_table always has n_missing and n_extra (U115; metacheck drops a count column when no row has it), and duplicated bib_match rows no longer repeat a reference (U114)"
 "mod_ref_accuracy_review/ref_consistency.xref_type_na": *u83_likley
-"mod_ref_accuracy_review/ref_consistency.text_missing": *u83_likley
-"mod_ref_accuracy_review/ref_consistency.paperlist.unsorted": *u83_likley
-"mod_ref_accuracy_review/ref_consistency.paperlist.no_bib_match": *u83_likley
 "mod_ref_accuracy_review/ref_consistency.duplicate_match": *u83_likley
-"mod_ref_accuracy_review/ref_consistency.problems_203020": *u83_likley
 "bibr12/module.ref_consistency.preprint": *u83_likley
 "bibr12/module.ref_consistency.PMC4383902": *u83_likley
 "bibr12/module.ref_consistency.full":
@@ -316,18 +275,6 @@
   kind: r_bug_fixed
   ref: U83
   reason: "the caveat says 'likely' (metacheck: 'likley'); the reference and citation text read from the TEI also differs (io fix U16: 'Henry, 2019', '24 July 2025')"
-"bibr12/module.open_practices.PMC4383902": &u83_reconized
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the no-code report says 'not recognized' (metacheck: 'not reconized')"
-"grobid12/module.open_practices.0956797615569889": *u83_reconized
-"bibr12/module.stat_effect_size.preprint": &u125_stop
-  kind: r_bug_fixed
-  ref: U125
-  reason: "the missing-effect-size summary ends with a full stop (metacheck leaves it out)"
-"bibr12/module.stat_effect_size.full": *u125_stop
-"bibr12/module.stat_effect_size.mixed": *u125_stop
-"grobid12/module.stat_effect_size.debruine": *u125_stop
 "bibr12/module.ref_accuracy.PMC4383902": &u30_fail_light
   kind: r_bug_fixed
   ref: U30
@@ -357,15 +304,14 @@
 # The Olsson-Collentine et al. (2019) reference in marginal's guidance is formatted
 # from person() authors ("Olsson-Collentine A, van Assen MALM, Hartgerink CHJ");
 # metacheck's author string is mangled by R's bibentry formatter. Every case that
-# shows marginal's red report differs in that one string (the report lane's
-# hand-written report cases are listed here too).
-"mod_marginal/marginal.demo": &u3_marg_ref
+# shows marginal's red report differs in that one string, which r_text corrects in
+# R's golden, so the rest stays compared with R (the report lane's hand-written
+# report cases are listed here too; mod_marginal's cases carry the mark inline).
+"bibr12/module.marginal.preprint": &u3_marg_ref
   kind: r_bug_fixed
   ref: U3
   reason: 'the guidance cites "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)" (metacheck: "Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH")'
-"mod_marginal/marginal.psychsci": *u3_marg_ref
-"mod_marginal/marginal.synthetic": *u3_marg_ref
-"bibr12/module.marginal.preprint": *u3_marg_ref
+  r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]
 "bibr12/module.marginal.mixed": *u3_marg_ref
 "grobid12/module.marginal.published": *u3_marg_ref
 "report/module_report.marginal.demo": *u3_marg_ref
@@ -404,10 +350,13 @@
 # reg_check: a light for a check that could not run (U30) --------------------------
 # When every RegCheck comparison fails, reg_check's light is "fail" (what report()
 # gives a module that fails); metacheck returns "error", which is not a traffic light.
+# r_text turns R's light into "fail" (no other value of these goldens is "error"),
+# so the rest of each result stays compared with R.
 "mod_reg/reg_check.all_fail": &u30_reg_fail
   kind: r_bug_fixed
   ref: U30
   reason: every RegCheck comparison failed, so the check could not run and the light is "fail"; metacheck's "error" is not a traffic light
+  r_text: [["^error$", "fail", regex]]
 "mod_reg/reg_check.empty_result": *u30_reg_fail
 "mod_reg/reg_check.paperlist.all_fail": *u30_reg_fail
 "mod_reg/reg_check.unknown_client": *u30_reg_fail
