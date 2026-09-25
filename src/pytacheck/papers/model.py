@@ -18,6 +18,7 @@ never mutate a paper it was given; the test suite checks this.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import itertools
 import time
@@ -185,7 +186,12 @@ class Paper:
                 tables[name] = None
             else:
                 value = self._tables[name]
-                tables[name] = value.copy(deep=deep) if isinstance(value, pd.DataFrame) else value
+                if isinstance(value, pd.DataFrame):
+                    tables[name] = value.copy(deep=deep)
+                elif deep and isinstance(value, dict | list):
+                    tables[name] = copy.deepcopy(value)  # e.g. a bibr 12.x paper's extraction
+                else:
+                    tables[name] = value
         object.__setattr__(new, "_tables", tables)
         object.__setattr__(new, "extra", dict(self.extra))
         return new

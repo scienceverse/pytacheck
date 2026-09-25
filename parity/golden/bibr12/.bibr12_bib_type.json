@@ -1,0 +1,26 @@
+{
+  "id": ".bibr12_bib_type",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "journal_article",
+      "journal_article",
+      "book",
+      "thesis",
+      "other",
+      null,
+      "thesis",
+      "preprint",
+      "other",
+      "book_chapter",
+      "conference_paper",
+      "dataset",
+      "other"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

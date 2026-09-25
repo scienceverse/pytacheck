@@ -1,0 +1,110 @@
+{
+  "id": "reg_check.tables.odd",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "dimension",
+          "judgement",
+          "explanation"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria",
+              "Other"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deviation",
+              null,
+              "Partially",
+              "unclear"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              "c [lower]",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "dimension",
+          "paper_summary",
+          "prereg_summary",
+          "paper_quotes",
+          "prereg_quotes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria",
+              "Other"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "120",
+              null,
+              "x",
+              "y<br>z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p",
+              "p",
+              "p",
+              "p"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " quote",
+              " quote",
+              " quote",
+              " quote"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

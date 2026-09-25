@@ -1,0 +1,117 @@
+{
+  "id": ".dspace7_info.review.json",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "JSON string contains (illegal) UTF8 byte-order-mark!"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dspace7_host",
+      "dspace7_uuid",
+      "title",
+      "authors",
+      "doi",
+      "license",
+      "publication_date",
+      "updated_date",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "scholarworks.umass.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "44444444-5555-6666-7777-888888888888"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "N4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "name",
+              "size",
+              "checksum",
+              "retrieve"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "café.csv"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

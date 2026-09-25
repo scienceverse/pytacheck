@@ -198,11 +198,11 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
         _dollar,
         _elements,
         _empty_or,
+        _field_cell,
         _paste,
         _query,
-        _resp_json,
     )
-    from pytacheck.archives.psycharchives import _obj_cell
+    from pytacheck.archives.psycharchives import _obj_cell, _resp_json
 
     with _spinner(pb) as bar:
         rid = _paste(reshare_id)
@@ -231,10 +231,10 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
             content = _dollar(d, "content")
             files_flat.extend(_set_content(f, content) for f in _elements(_dollar(d, "files")))
 
-        obj["title"] = _cell(_empty_or(_dollar(rec, "title"), None))
-        obj["doi"] = _cell(_empty_or(_dollar(rec, "doi"), None))
-        obj["publication_date"] = _cell(_empty_or(_dollar(rec, "datestamp"), None))
-        obj["updated_date"] = _cell(_empty_or(_dollar(rec, "lastmod"), None))
+        obj["title"] = _field_cell(_empty_or(_dollar(rec, "title"), None))
+        obj["doi"] = _field_cell(_empty_or(_dollar(rec, "doi"), None))
+        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "datestamp"), None))
+        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "lastmod"), None))
         obj["authors"] = _obj_cell(authors)
         obj["license"] = _cell(None)
         obj["files"] = _obj_cell(files_flat)

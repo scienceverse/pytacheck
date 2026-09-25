@@ -8,6 +8,7 @@ package: built-in modules resolve without it.
 * :mod:`pytacheck.packs.registry` -- the active packs and module loading;
 * :mod:`pytacheck.packs.stores` -- stores and their ``index.json``;
 * :mod:`pytacheck.packs.fetch` -- downloading and safely extracting sources;
+* :mod:`pytacheck.packs.auth` -- GitHub tokens for private stores and packs;
 * :mod:`pytacheck.packs.install` -- install, remove, update, list, show;
 * :mod:`pytacheck.packs.scan` -- static scans of pack code (never imported);
 * :mod:`pytacheck.packs.check` -- ``pack check`` (the module contract);

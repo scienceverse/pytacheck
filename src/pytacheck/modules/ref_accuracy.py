@@ -721,8 +721,7 @@ def _nodoi_report(table: pd.DataFrame, suggest_score: float, paper: Any) -> Any:
     # bibr 12.x papers score their matches 0-1
     ids12 = set(_bibr12_paper_ids(paper))
     min_scores = [
-        suggest_score / 100 if pid in ids12 else suggest_score
-        for pid in rows["paper_id"].tolist()
+        suggest_score / 100 if pid in ids12 else suggest_score for pid in rows["paper_id"].tolist()
     ]
     suggested = []
     for s, d, min_score in zip(scores, dois, min_scores, strict=True):

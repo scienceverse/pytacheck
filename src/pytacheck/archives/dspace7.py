@@ -195,10 +195,11 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
         _dollars,
         _elements,
         _empty_or,
+        _field_cell,
         _paste,
         _url_encode_reserved,
     )
-    from pytacheck.archives.psycharchives import _chr1, _obj_cell, _paste_json
+    from pytacheck.archives.psycharchives import _chr1, _obj_cell, _url_piece
 
     uuid = None if is_na(uuid) else uuid
     handle = None if is_na(handle) else handle
@@ -216,13 +217,15 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
             )
             found_uuid = _dollar(found, "uuid")
             if found is not None and found_uuid is not None:
-                item = _dspace7_rest(f"/core/items/{_paste_json(found_uuid)}", host=_paste(host))
+                piece = _url_piece(found_uuid)
+                if piece is not None:  # R: several URLs, which httr2 refuses (NULL)
+                    item = _dspace7_rest(f"/core/items/{piece}", host=_paste(host))
         item_uuid = _dollar(item, "uuid")
         if item is None or item_uuid is None:
             warnings.warn(f"{_paste(host)} ({_paste(uuid)}) could not be found", stacklevel=2)
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
-        obj["dspace7_uuid"] = _cell(item_uuid)
+        obj["dspace7_uuid"] = _field_cell(item_uuid)
 
         md = _dollar(item, "metadata")
         if md is None:
@@ -241,18 +244,23 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
             return None
 
         name = _empty_or(_dollar(item, "name"), None)
-        obj["title"] = _cell(name if name is not None else md_val(("dc.title",)))
+        obj["title"] = _field_cell(name if name is not None else md_val(("dc.title",)))
         obj["authors"] = _cell(md_val(("dc.contributor.author",)))
         obj["doi"] = _cell(md_val(("dc.identifier.doi",)))
         obj["license"] = _cell(md_val(("dc.rights", "dc.rights.uri", "dc.rights.license")))
         obj["publication_date"] = _cell(md_val(("dc.date.issued", "dc.date.available")))
-        obj["updated_date"] = _cell(_empty_or(_dollar(item, "lastModified"), None))
+        obj["updated_date"] = _field_cell(_empty_or(_dollar(item, "lastModified"), None))
 
         names: list[Any] = []
         sizes: list[float] = []
         checksums: list[Any] = []
         retrieve: list[Any] = []
-        bundles = _dspace7_rest(f"/core/items/{_paste_json(item_uuid)}/bundles", host=_paste(host))
+        piece = _url_piece(item_uuid)
+        bundles = (
+            None
+            if piece is None
+            else _dspace7_rest(f"/core/items/{piece}/bundles", host=_paste(host))
+        )
         bundle_list = _bracket(_bracket(bundles, "_embedded"), "bundles")
         original = None
         for b in _elements(bundle_list):
@@ -260,9 +268,11 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
             if isinstance(bundle_name, str) and bundle_name == "ORIGINAL":  # R: identical()
                 original = b
         if original is not None:
-            bs = _dspace7_rest(
-                f"/core/bundles/{_paste_json(_dollar(original, 'uuid'))}/bitstreams",
-                host=_paste(host),
+            piece = _url_piece(_dollar(original, "uuid"))
+            bs = (
+                None
+                if piece is None
+                else _dspace7_rest(f"/core/bundles/{piece}/bitstreams", host=_paste(host))
             )
             bitstreams = _elements(_bracket(_bracket(bs, "_embedded"), "bitstreams"))
             for b in bitstreams:

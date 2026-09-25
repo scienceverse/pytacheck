@@ -1,0 +1,220 @@
+{
+  "id": "paper_table.mixed.author",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "author_id",
+      "given",
+      "family",
+      "affiliation",
+      "email",
+      "corresponding",
+      "orcid",
+      "role",
+      "paper_id",
+      "suffix",
+      "literal",
+      "credit_roles"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          1,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Daniel",
+          "Lisa",
+          "Jakub",
+          "Jane",
+          "Jens",
+          "Agneta H.",
+          "Gerben A."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Lakens",
+          "Debruine",
+          "Werner",
+          "Smith",
+          "Lange",
+          "Fischer",
+          "van Kleef"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "jane@example.org",
+          "lange.jens@outlook.com",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "https://orcid.org/0000-0002-1825-0097",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conceptualization"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human",
+          "demo",
+          "preprint",
+          "preprint",
+          "preprint"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://credit.niso.org/contributor-roles/conceptualization/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

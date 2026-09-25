@@ -1,0 +1,190 @@
+{
+  "id": "reg_check.tables.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "judgement",
+          "explanation"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deviation",
+              "consistent",
+              "unclear"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Paper sample (120) exceeds preregistered sample (100).",
+              "Consistent.",
+              "Cannot be assessed from the paper."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "paper_summary",
+          "prereg_summary",
+          "paper_quotes",
+          "prereg_quotes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "120 participants",
+              "H1: A > B",
+              "not described"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "100 participants",
+              "H1: A > B",
+              "exclude RT < 200 ms"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " quote",
+              " quote",
+              " quote"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " quote",
+              " quote",
+              " quote"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "judgement",
+          "explanation"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deviation",
+              "consistent",
+              "unclear"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Paper sample (120) exceeds preregistered sample (100).",
+              "Consistent.",
+              "Cannot be assessed from the paper."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "paper_summary",
+          "prereg_summary",
+          "paper_quotes",
+          "prereg_quotes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "120 participants",
+              "H1: A > B",
+              "not described"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "100 participants",
+              "H1: A > B",
+              "exclude RT < 200 ms"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " quote",
+              " quote",
+              " quote"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " quote",
+              " quote",
+              " quote"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

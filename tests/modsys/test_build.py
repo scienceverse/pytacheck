@@ -1,4 +1,8 @@
-"""``store build``: index.json for a store repo, ``--check``, git revs, and the contrib seed."""
+"""``store build``: index.json for a store repo, ``--check``, git revs, and a local store folder.
+
+The real store is https://github.com/thesanogoeffect/pytacheck-modules (its CI
+runs ``store build``); these tests use the tiny store in ``fixtures/store``.
+"""
 
 from __future__ import annotations
 
@@ -20,8 +24,7 @@ from pytacheck.packs.tree import tree_sha256
 from tests.modsys.helpers import mod_src
 from tests.modsys.storekit import REV_C, codeload, dir_files, tarball
 
-ROOT = Path(__file__).resolve().parents[2]
-SEED = ROOT / "contrib" / "pytacheck-modules"
+FIXTURE_STORE = Path(__file__).resolve().parent / "fixtures" / "store"
 VALIDATION = '{"papers": 20, "instances": 30, "tp": 24, "fp": 6, "fn": 6}'
 
 
@@ -173,54 +176,34 @@ def test_reviewed_and_yanked(ms) -> None:
     assert any("changed since it was reviewed" in i.message for i in issues)
 
 
-def test_contrib_seed_index_is_current_and_its_packs_pass(ms, tmp_path) -> None:
-    if not SEED.is_dir():
-        pytest.skip("no contrib seed")
-    copy = tmp_path / "seed"
-    shutil.copytree(SEED, copy, ignore=shutil.ignore_patterns("__pycache__", ".pytest_cache"))
-    committed = json.loads((SEED / "index.json").read_text())
-    index, issues = store_build(copy, repo="thesanogoeffect/pytacheck-modules")
+def _fixture_store(tmp_path: Path) -> Path:
+    copy = tmp_path / "store"
+    shutil.copytree(
+        FIXTURE_STORE, copy, ignore=shutil.ignore_patterns("__pycache__", ".pytest_cache")
+    )
+    return copy
+
+
+def test_fixture_store_index_is_current_and_its_pack_passes(ms, tmp_path) -> None:
+    copy = _fixture_store(tmp_path)
+    committed = json.loads((FIXTURE_STORE / "index.json").read_text())
+    index, issues = store_build(copy)
     assert not [i for i in issues if i.level == "error"], issues
-    assert index["packs"] == committed["packs"], "regenerate contrib/pytacheck-modules/index.json"
-    assert {p["name"] for p in index["packs"]} == {"fields", "clinical_trials"}
-    for pack in ("fields", "clinical_trials"):
-        assert [i for i in pack_check(copy / "packs" / pack) if i.level == "error"] == []
+    assert index["packs"] == committed["packs"], "regenerate tests/modsys/fixtures/store/index.json"
+    assert [p["source"] for p in index["packs"]] == [{"path": "packs/registry"}]
+    assert [i for i in pack_check(copy / "packs" / "registry") if i.level == "error"] == []
 
 
-def test_install_from_the_contrib_seed(ms, monkeypatch, tmp_path) -> None:
-    if not SEED.is_dir():
-        pytest.skip("no contrib seed")
+def test_install_from_a_local_store_folder(ms, monkeypatch, tmp_path) -> None:
     import pytacheck as pc
-
-    copy = tmp_path / "seed"
-    shutil.copytree(SEED, copy, ignore=shutil.ignore_patterns("__pycache__", ".pytest_cache"))
-    monkeypatch.setenv("PYTACHECK_STORE_URL", str(copy))
-    pack = pack_install("clinical_trials", yes=True)
-    assert pack.trust == "store" and pack.rev is None
-    paper = pc.test_paper(["The trial was registered (NCT01234567)."])
-    out = module_run(paper, "clinical_trials::trial_registration")
-    assert out.traffic_light == "green" and out.table["trial_id"].tolist() == ["NCT01234567"]
-    pack_install("fields", yes=True)
     from pytacheck.presets import expand
 
-    psych = [m for m, _ in expand("fields::psychology")]
-    assert psych[-4:] == ["ethics_check", "open_practices", "all_p_values", "causal_claims"]
-    assert "ref_replication" not in [m for m, _ in expand("fields::medicine")]
-
-
-def test_contrib_pack_tests_pass(tmp_path) -> None:
-    if not SEED.is_dir():
-        pytest.skip("no contrib seed")
-    import sys
-
-    res = subprocess.run(
-        [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider",
-         str(SEED / "packs" / "clinical_trials" / "tests")],
-        cwd=tmp_path,
-        env={**os.environ, "PYTACHECK_CONFIG": "none", "PYTHONDONTWRITEBYTECODE": "1"},
-        capture_output=True,
-        text=True,
-        timeout=300,
-        check=False,
-    )  # fmt: skip
-    assert res.returncode == 0, res.stdout + res.stderr
+    monkeypatch.setenv("PYTACHECK_STORE_URL", str(_fixture_store(tmp_path)))
+    pack = pack_install("registry", yes=True)
+    assert pack.trust == "store" and pack.rev is None
+    paper = pc.test_paper(["The trial was registered (NCT01234567)."])
+    out = module_run(paper, "registry::nct_ids")
+    assert out.traffic_light == "green" and out.table["trial_id"].tolist() == ["NCT01234567"]
+    assert [m for m, _ in expand("registry::only")] == ["registry::nct_ids"]
+    default = [m for m, _ in expand("registry::default")]
+    assert default[-1] == "registry::nct_ids" and "marginal" in default

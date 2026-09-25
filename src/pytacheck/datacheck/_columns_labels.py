@@ -38,6 +38,11 @@ def _na(x: Any) -> bool:
     """R ``is.na()`` for one value (``None``, ``NaN``, ``pd.NA``, ``NaT``)."""
     if x is None:
         return True
+    tx = type(x)
+    if tx is str or tx is int or tx is bool:
+        return False
+    if tx is float:
+        return x != x
     try:
         return bool(is_na(x)) or (isinstance(x, float) and math.isnan(x))
     except (TypeError, ValueError):
@@ -70,7 +75,10 @@ def _vec(x: Any) -> list[Any]:
     if isinstance(x, str | bytes) or not isinstance(x, Iterable):
         return [x]
     if isinstance(x, pd.Series | pd.Index):
-        return [None if _na(v) else v for v in x.tolist()]
+        vals = x.tolist()
+        if isinstance(x.dtype, pd.StringDtype):
+            return [None if v is pd.NA or v is None else v for v in vals]
+        return [None if _na(v) else v for v in vals]
     if isinstance(x, Mapping):
         return list(x.values())
     return list(x)
@@ -431,7 +439,12 @@ def _json_loads(text: str) -> Any:
     Objects become :class:`_JsonObject` (ordered pairs, duplicates kept),
     arrays lists, ``null`` ``None``. Raises ``ValueError`` on invalid JSON.
     """
-    return json.loads(text, object_pairs_hook=_JsonObject)
+    return json.loads(text, object_pairs_hook=_JsonObject, parse_constant=_reject_constant)
+
+
+def _reject_constant(name: str) -> Any:
+    """jsonlite (yajl) rejects the non-standard ``NaN`` / ``Infinity`` literals."""
+    raise ValueError(f"invalid JSON literal {name}")
 
 
 def _json_scalar_chr(v: Any) -> str | None:
@@ -487,7 +500,10 @@ def _decode_value_labels(s: Any) -> Any:
     """Decode a value-labels JSON string (``None`` on failure / NA).
 
     Port of ``.decode_value_labels()``: a JSON object gives a ``dict`` code ->
-    label (R's named vector), an array a list; NA values are dropped.
+    label (R's named vector), an array a list; NA values are dropped. An
+    object with a repeated key (never written by :func:`_encode_value_labels`,
+    whose keys jsonlite makes unique) keeps every entry, as R's named vector
+    does: it comes back as a ``pandas.Series`` indexed by code.
     """
     if s is None or isinstance(s, list | tuple) or _na(s) or s == "":
         return None
@@ -502,7 +518,10 @@ def _decode_value_labels(s: Any) -> Any:
         if any(isinstance(v, list) for _, v in pairs):
             return None
         vals = _unlist_scalars([v for _, v in pairs])
-        return {k: v for (k, _), v in zip(pairs, vals, strict=True) if not _na(v)}
+        kept = [(k, v) for (k, _), v in zip(pairs, vals, strict=True) if not _na(v)]
+        if len({k for k, _ in kept}) < len(kept):
+            return pd.Series([v for _, v in kept], index=[k for k, _ in kept], dtype=object)
+        return dict(kept)
     if isinstance(parsed, list):
         if not parsed or any(isinstance(v, list) for v in parsed):
             return None
@@ -574,6 +593,17 @@ def _label_pairs(labs: Any) -> list[tuple[Any, Any]]:
     if isinstance(labs, pd.Series):
         return list(zip(labs.index.tolist(), labs.tolist(), strict=True))
     return [tuple(p) for p in labs]  # type: ignore[misc]
+
+
+def _is_value_labels(x: Any) -> bool:
+    """Is *x* a haven ``labels`` attribute (a mapping or ``(label, code)`` pairs)?"""
+    if isinstance(x, Mapping | pd.Series):
+        return True
+    return (
+        isinstance(x, list)
+        and bool(x)
+        and all(isinstance(p, tuple) and len(p) == 2 for p in x)
+    )
 
 
 def _column_attrs(col: Any, attrs: Mapping[str, Any] | None = None) -> Mapping[str, Any]:
@@ -728,11 +758,13 @@ def _parse_value_label_text(s: Any, observed: Any = None) -> str | None:
 def _missing_from_value_labels(vl_json: Any) -> str | None:
     """Port of ``.missing_from_value_labels()``: codes whose label reads as missing."""
     vl = _decode_value_labels(vl_json)
-    if not vl:
+    if vl is None or len(vl) == 0:
         return None
     if isinstance(vl, dict):
         names: list[Any] = list(vl.keys())
         vals = list(vl.values())
+    elif isinstance(vl, pd.Series):
+        names, vals = list(vl.index), vl.tolist()
     else:
         names, vals = [], list(vl)
     is_miss = _is_missing_label(vals)
@@ -993,7 +1025,7 @@ def _extract_haven_labels(
     for nm in names:
         a = _col_attrs(df, first_j[nm])
         lbl = _attr(a, "label")
-        lv = [p[1] for p in _label_pairs(lbl)] if isinstance(lbl, Mapping) else _vec(lbl)
+        lv = [p[1] for p in _label_pairs(lbl)] if _is_value_labels(lbl) else _vec(lbl)
         labels.append(None if lbl is None or not lv else _trim(_chr(lv[0])))
         res = _haven_value_labels(None, a)
         vls.append(res["value_labels"])

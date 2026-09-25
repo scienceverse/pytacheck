@@ -353,9 +353,7 @@ def _table_tests(paper: Any) -> list[dict[str, Any]]:
     # bibr 12.x: section_id is the section the table is printed in, and the
     # caption is the table's own
     v12 = is_bibr12(paper)
-    captions = (
-        tab["caption"].tolist() if v12 and "caption" in tab.columns else [None] * len(tab)
-    )
+    captions = tab["caption"].tolist() if v12 and "caption" in tab.columns else [None] * len(tab)
     out: list[dict[str, Any]] = []
     for i in range(len(tab)):
         content = contents[i]

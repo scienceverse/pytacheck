@@ -1,0 +1,88 @@
+{
+  "id": ".extract_haven_labels.sav",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "q1",
+          "q2",
+          "q3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Question one",
+          "Question two",
+          "5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dup_labels.sav",
+          "dup_labels.sav",
+          "dup_labels.sav"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "g1",
+          "g1",
+          "g1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Yes\",\"2\":\"No\",\"-99\":\"Missing\",\"-98\":\"Missing\"}",
+          "{\"3\":\"High\",\"1\":\"Low\",\"2\":\"Mid\",\"-9\":\"Refused\"}",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"-99\":\"Missing\",\"-98\":\"Missing\"}",
+          "{\"-9\":\"Refused\"}",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

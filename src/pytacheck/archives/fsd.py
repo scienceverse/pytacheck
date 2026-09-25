@@ -79,8 +79,14 @@ def fsd_links(paper: Any) -> pd.DataFrame:
     from pytacheck.papers.tables import paper_table
 
     urls = paper_table(paper, "url")
-    keep = [bool(v) for v in grepl(_FSD_URL_RX, urls["href"], ignore_case=True, perl=True)]
-    found_href = urls[pd.Series(keep, index=urls.index, dtype=bool)]
+    if "href" in urls.columns:
+        keep = [bool(v) for v in grepl(_FSD_URL_RX, urls["href"], ignore_case=True, perl=True)]
+        found_href = urls[pd.Series(keep, index=urls.index, dtype=bool)]
+    elif len(urls) > 0:
+        # R: `href` is then the (NULL) local variable, and grepl() a logical(0) filter
+        raise ValueError(f"`..1` must be of size {len(urls)} or 1, not size 0.")
+    else:
+        found_href = urls  # an empty paper list: a table without columns
     other = _scan_links(paper, "FSD[0-9]{3,6}", ["fsd"], anchor=None)
     return _collect_links([found_href, other])
 

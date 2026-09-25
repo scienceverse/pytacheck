@@ -1,0 +1,246 @@
+{
+  "id": "module.all_urls.PMC4383902",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "http://europepmc.org",
+              "http://www.ncbi.nlm.nih.gov/pmc/about/pmci",
+              "http://www.ntis.gov/products/agricola.aspx",
+              "http://europepmc.org/FtpSite",
+              "http://orcid.org",
+              "http://europepmc.org/orcid/import",
+              "http://europepmc.org/LabsLink",
+              "http://europepmc.org/LabsLink",
+              "http://europepmc.org/Funders",
+              "http://datadryad.org",
+              "http://www.ebi.ac.uk/Tools/biojs/registry"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              5,
+              6,
+              23,
+              40,
+              41,
+              55,
+              93,
+              105,
+              128,
+              128
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              2,
+              8,
+              15,
+              15,
+              18,
+              37,
+              44,
+              65,
+              65
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              6,
+              13,
+              13,
+              16,
+              25,
+              30,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "BACKGROUND",
+              "BACKGROUND",
+              "BACKGROUND",
+              "Open access: why licensing is important",
+              "Link publications to your ORCID",
+              "Link publications to your ORCID",
+              "Database records that cite articles",
+              "EUROPE PMC RESOURCES FOR TEXT AND DATA MINERS",
+              "FUNDING",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "intro",
+              "intro",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "funding",
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

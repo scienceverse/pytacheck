@@ -1,0 +1,14 @@
+{
+  "id": ".encode_value_labels.escapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"q\":\"say \\\"hi\\\"\\\\now\",\"b\":\"tab\\there\\u0001é\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

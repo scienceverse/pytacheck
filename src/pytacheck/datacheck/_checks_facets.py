@@ -236,8 +236,19 @@ def _numbers(x: Any) -> list[float]:
 
 
 def _lower_name(col_name: Any) -> str | None:
+    """``tolower(col_name)`` for a name used in ``if (!grepl(..., <name>))``.
+
+    ``None`` is ``NA`` (no match); a zero-length or longer vector is an error
+    in R's ``if``, as here.
+    """
+    if col_name is None:
+        return None
     names = chr(col_name)
-    return tolower(names[0]) if names else None
+    if not names:
+        raise ValueError("argument is of length zero")
+    if len(names) > 1:
+        raise ValueError("the condition has length > 1")
+    return tolower(names[0])
 
 
 def _concept_is_rt(col_name: Any, x: Any) -> bool:
@@ -275,12 +286,15 @@ def _concept_is_accuracy(col_name: Any, x: Any) -> bool:
     return is01 or is_bool
 
 
-def _concept_is_condition(col_name: Any, x: Any) -> bool:  # noqa: ARG001 - R's signature
+def _concept_is_condition(col_name: Any, x: Any) -> Any:  # noqa: ARG001 - R's signature
     """A condition/group assignment column, by name only.
 
-    Port of ``R/data_check_helpers.R::.concept_is_condition()``.
+    Port of ``R/data_check_helpers.R::.concept_is_condition()`` (a bare
+    ``grepl()``, so vectorised: a string gives a bool, a vector a list).
     """
-    return bool(grepl(_COND_NAME_RE, _lower_name(col_name), perl=True))
+    if col_name is None or isinstance(col_name, str):
+        return bool(grepl(_COND_NAME_RE, tolower(col_name), perl=True))
+    return list(grepl(_COND_NAME_RE, [tolower(s) for s in chr(col_name)], perl=True))
 
 
 def _concept_is_timestamp(col_name: Any, x: Any) -> bool:

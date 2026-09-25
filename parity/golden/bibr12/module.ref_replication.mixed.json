@@ -1,0 +1,173 @@
+{
+  "id": "module.ref_replication.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_replication"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Replication Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "replication_ref",
+          "replication_doi",
+          "replication_url",
+          "replication_outcome",
+          "replication_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1126/science.1224313",
+              "10.1037/0003-066x.54.6.408"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Aviezer, H., Trope, Y., & Todorov, A. (2012). Body cues, not facial expressions, discriminate between intense positive and negative emotions. Science, 338(6111), 1225–1229. https://doi.org/10.1126/science.1224313",
+              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at",
+              "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1038/s41562-018-0399-z",
+              "10.1177/1474704919852921"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/367yu",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "successful",
+              "failed"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 74 references with DOIs. We found 2 replications for 2 originals you cited.\n\nCheck if you are aware of the replication studies, and cite them where appropriate.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Aviezer, H., Trope, Y., & Todorov, A. (2012). Body cues, not facial expressions, discriminate between intense positive and negative emotions. Science, 338(6111), 1225–1229. https://doi.org/10.1126/science.1224313\", \n\"Eagly, Alice H., and Wendy Wood. 1999. \\\"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\\\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.\"\n), Replication = c(\"Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>\", \n\"Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2). <a href='https://doi.org/10.1177/1474704919852921' target='_blank'>doi:10.1177/1474704919852921<\/a>\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.5, 0.5), 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 2 replications for 2 originals you cited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "replications"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "demo",
+              "preprint"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,187 @@
+{
+  "id": "parse_codebook.tricky.xlsx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 13,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "c",
+          "1",
+          "2",
+          "3",
+          "10.5",
+          "age",
+          "sex",
+          "bf1",
+          "bf2",
+          "bf3",
+          "bf4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "B",
+          "C",
+          "One",
+          "Two",
+          "Three",
+          "Ten and a half",
+          "Age",
+          "Sex",
+          "I am the life of the party",
+          "I feel little concern for others",
+          "I am always prepared",
+          "I get stressed out easily"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tricky.xlsx [dups]",
+          "tricky.xlsx [dups]",
+          "tricky.xlsx [dups]",
+          "tricky.xlsx [numvars]",
+          "tricky.xlsx [numvars]",
+          "tricky.xlsx [numvars]",
+          "tricky.xlsx [numvars]",
+          "tricky.xlsx [titled]",
+          "tricky.xlsx [titled]",
+          "tricky.xlsx [positional]",
+          "tricky.xlsx [positional]",
+          "tricky.xlsx [positional]",
+          "tricky.xlsx [positional]"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "{\"1\":\"a\",\"2\":\"b\"}",
+          null,
+          "{\"1\":\"low\",\"7\":\"high\"}",
+          null,
+          null,
+          "{\"1\":\"m\",\"2\":\"f\"}",
+          "{\"1\":\"Disagree\",\"5\":\"Agree\"}",
+          "{\"1\":\"Disagree\",\"5\":\"Agree\"}",
+          "{\"1\":\"Disagree\",\"5\":\"Agree\"}",
+          "{\"5\":\"Agree\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,125 @@
+{
+  "id": "module.funding_check_oi.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "funding_check_oi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Funding Check (Overinclusive)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "As Study 1 supported these patterns at least partly based on exploratory analyses, we deemed it important to replicate them.",
+              "Even though not each conclusion found full support in each study, the pattern was robust across the studies.",
+              "Supporting this idea, in one of the few studies on the social perception of envy, people judged others to be envious based on multiple, contextual cues, namely when targets uttered rude comments about a befriended, advantaged person towards an uninvolved third party (Silver & Sabini, 1978).",
+              "Three studies support three conclusions about inferences of envy.",
+              "Despite the robust support for independent effects of nonverbal expressions on inferences of envy, our studies also have limitations that future research could address.",
+              "The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1,"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following funding statement was detected:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"As Study 1 supported these patterns at least partly based on exploratory analyses, we deemed it important to replicate them.\", \n\"Even though not each conclusion found full support in each study, the pattern was robust across the studies.\", \n\"Supporting this idea, in one of the few studies on the social perception of envy, people judged others to be envious based on multiple, contextual cues, namely when targets uttered rude comments about a befriended, advantaged person towards an uninvolved third party (Silver & Sabini, 1978).\", \n\"Three studies support three conclusions about inferences of envy.\", \n\"Despite the robust support for independent effects of nonverbal expressions on inferences of envy, our studies also have limitations that future research could address.\", \n\"The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1,\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -6L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A funding statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "funding_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "demo",
+              "preprint"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -21,9 +21,10 @@ pc.module_run(paper, "all_p_values")
 
 or on the command line: `pytacheck run paper.pdf -m marginal -m all_p_values`.
 
-bibr's result is converted straight into a `Paper` (`pc.from_bibr(result)`), with no
-JSON written to disk. Save it with `pc.paper_write(paper)` to skip extraction next
-time.
+bibr's result is read straight into a `Paper` (`pc.from_bibr(result)`), with no
+JSON written to disk: a native bibr export schema 12.x paper, the same object
+`pc.read()` returns for bibr's JSON export. Save it with `pc.paper_write(paper)` (a
+bibr 12.0 file, see below) to skip extraction next time.
 
 ## 2. From bibr JSON
 
@@ -32,8 +33,20 @@ bibr chew papers/ -o json/
 pytacheck run json/ -m marginal
 ```
 
-Any bibr version works: files in schema v11/v12 (bibr ≥ 0.4) are converted to the
-layout metacheck's checks expect (see `pytacheck.io.bibr_schema` and
+bibr export schema 12.0 is the schema pytacheck targets, and it is read natively,
+as metacheck reads it (`pytacheck.io.bibr12`, the port of metacheck's
+`R/import-bibr12.R`): the export's `metadata` and `source` make the `info` table,
+`metadata_match` is `info_match`, every other table keeps its 12.x name and meaning
+(`xref_id` is the row's own key and `target_id` the row it cites; captions and
+footnotes are text rows with no section), and the `extraction` block is kept as
+`paper["extraction"]`. Files without a root `schema_version` (bibr v10.x and older,
+metacheck's demo and fixture papers) read exactly as before; any other root
+`schema_version` (bibr 11.x, 13.x) is refused with metacheck's error.
+
+`pc.paper_write(paper)` saves a 12.x paper as a bibr 12.0 file, byte for byte as
+metacheck's `paper_write(schema_version = "12.0")` writes it, keeping bibr as the
+producer and naming pytacheck as the converter (`schema_version="auto"`, the
+default; `None` saves the paper object as metacheck's default does; see
 [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) D1).
 
 ## 3. A bibr server

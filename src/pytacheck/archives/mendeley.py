@@ -121,11 +121,11 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
         _dollars,
         _elements,
         _empty_or,
+        _field_cell,
         _paste,
         _query,
-        _resp_json,
     )
-    from pytacheck.archives.psycharchives import _obj_cell, _paste_json
+    from pytacheck.archives.psycharchives import _obj_cell, _paste_json, _resp_json
 
     with _spinner(pb) as bar:
         mid = _paste(mendeley_id)
@@ -156,14 +156,14 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
             else []
         )
 
-        obj["title"] = _cell(_empty_or(_dollar(rec, "name"), None))
-        obj["doi"] = _cell(_empty_or(_dollars(rec, "doi", "id"), None))
-        obj["description"] = _cell(_empty_or(_dollar(rec, "description"), None))
-        obj["publication_date"] = _cell(_empty_or(_dollar(rec, "publish_date"), None))
-        obj["updated_date"] = _cell(_empty_or(_dollar(rec, "modified_on"), None))
+        obj["title"] = _field_cell(_empty_or(_dollar(rec, "name"), None))
+        obj["doi"] = _field_cell(_empty_or(_dollars(rec, "doi", "id"), None))
+        obj["description"] = _field_cell(_empty_or(_dollar(rec, "description"), None))
+        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "publish_date"), None))
+        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "modified_on"), None))
         obj["authors"] = _obj_cell(authors)
         licence = _dollar(rec, "data_licence")
-        obj["license"] = _cell(
+        obj["license"] = _field_cell(
             _empty_or(
                 _empty_or(_dollar(licence, "short_name"), _dollar(licence, "full_name")), None
             )

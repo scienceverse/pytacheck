@@ -1,0 +1,152 @@
+{
+  "id": "paper_table.mixed.figure",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "figure_id",
+      "section_id",
+      "image",
+      "page_number",
+      "paper_id",
+      "label",
+      "text_id",
+      "caption"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9,
+          11,
+          2,
+          35,
+          35,
+          35,
+          35,
+          35,
+          35,
+          35,
+          35
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          2,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human",
+          "demo",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "1",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          3,
+          618,
+          619,
+          620,
+          621,
+          622,
+          623,
+          624,
+          625
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "Figure 1. Plot",
+          "Figure 1. Schematic display of the start of an exemplary trial for male participants in Study 1. The center constitutes a video in which the person turns with an angry, neutral, or sad expression towards either Marc or the object.",
+          "Figure 2. The effects of Emotion (anger vs. neutral vs. sadness) and Turning \r\n(towards person vs. towards object) on benign envy, malicious envy, and pain in Study 1.",
+          "Figure 3. The effects of Emotion (anger vs. neutral vs. sadness) and Turning (towards person vs. towards object) on the benign and malicious envy scales in Study 2.",
+          "Figure 4. The effects of Emotion (anger vs. neutral vs. sadness) and Turning",
+          "Figure 5. The effects of Emotion (anger vs. neutral vs. sadness) and Turning \r\n(towards person vs. towards object) on the benign and malicious envy selected items in Study \r\n2.",
+          "Figure 6. Exemplary stimuli from Study 3. Left picture: the female picture in which the target turns with a sad expression toward the bike. Right picture: the male picture in which the target turns with an angry expression toward the person.",
+          "Figure 7. The effects of Emotion (anger vs. sadness) and Turning (towards person vs. towards bike) on the benign and malicious envy scales in the within-subjects design in Study 3.",
+          "Figure 8. The effects of Emotion (anger vs. sadness) and Turning (towards person vs. towards bike) on the benign and malicious envy scales in the between-subjects design in Study 3."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

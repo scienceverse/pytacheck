@@ -12,6 +12,16 @@ Where the index is read from:
 * a local folder (or ``file://`` URL) -> ``<folder>/index.json``, read directly;
 * any other URL -> ``<url>/index.json``.
 
+Private stores. With a GitHub token in the environment
+(``PYTACHECK_GITHUB_TOKEN``, ``GH_TOKEN`` or ``GITHUB_TOKEN``; see
+:mod:`pytacheck.packs.auth`) a GitHub index is read through the contents API
+(``api.github.com/repos/<owner>/<repo>/contents/index.json``), since
+raw.githubusercontent.com does not serve private files to a token; the raw
+URL is then tried without the token. When both answer 401/403/404 and git is
+installed, the index is read from a shallow git fetch of the repository
+(GitHub and GitLab stores), so the user's git credentials work too. Nothing
+of this changes where the index is cached or what is recorded.
+
 Fetched indexes are cached in ``<data>/stores/<name>/index.json`` for an
 hour. When a store cannot be reached the cached copy is used with a
 warning; with no cached copy the error says so and how to add another store.
@@ -21,6 +31,8 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
+import tempfile
 import time
 import warnings
 from collections.abc import Mapping
@@ -52,8 +64,13 @@ __all__ = [
 
 INDEX_SCHEMA = 1
 INDEX_TTL = 3600.0  # seconds a fetched index stays fresh
+INDEX_LIMIT = 20 * 1024 * 1024  # bytes
 _GITHUB = re.compile(r"^https?://(?:www\.)?github\.com/([^/]+)/([^/]+?)(?:\.git)?/?$")
 _GITLAB = re.compile(r"^https?://(?:www\.)?gitlab\.com/(.+?)(?:\.git)?/?$")
+_RAW_GITHUB = re.compile(
+    r"^https://raw\.githubusercontent\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/([^/?#]+)/([^?#]+)$"
+)
+_RAW_GITLAB = re.compile(r"^(https://gitlab\.com/[^?#]+?)/-/raw/([^/?#]+)/([^?#]+)$")
 
 
 class StoreError(PackError):
@@ -69,8 +86,24 @@ def _is_url(value: str) -> bool:
     return "://" in value or value.startswith("git@")
 
 
+def _refuse_credentials(url: str) -> None:
+    """A store URL may not carry a password or token (it is shown and written to config)."""
+    try:
+        parts = urlsplit(url)
+    except ValueError:
+        return
+    if parts.scheme in ("http", "https") and "@" in parts.netloc:
+        from pytacheck.packs.auth import redact
+
+        raise StoreError(
+            f"The store URL {redact(url)} contains credentials; use the plain URL and set "
+            "PYTACHECK_GITHUB_TOKEN (or configure git credentials) instead"
+        )
+
+
 def index_location(url: str) -> tuple[str, str]:
     """Where a store's ``index.json`` is: ``("file", path)`` or ``("http", url)``."""
+    _refuse_credentials(url)
     if url.startswith("file://"):
         url = unquote(urlsplit(url).path)
     if not _is_url(url):
@@ -140,25 +173,76 @@ def validate_index(data: Any, where: str) -> dict[str, Any]:
     return out
 
 
-def _fetch(url: str) -> dict[str, Any]:
-    import httpx
-
-    from pytacheck.http import request
-
+def _parse_index(content: bytes) -> dict[str, Any]:
     try:
-        resp = request(
-            "GET", url, max_tries=2, headers={"Accept": "application/json"}, timeout=30.0
-        )
-    except httpx.HTTPError as exc:  # pragma: no cover - request() retries these
-        raise StoreError(f"cannot connect ({exc})") from exc
-    if resp is None:
-        raise StoreError("cannot connect")
-    if resp.status_code != 200:
-        raise StoreError(f"HTTP {resp.status_code}")
-    try:
-        return json.loads(resp.content)  # type: ignore[no-any-return]
+        return json.loads(content)  # type: ignore[no-any-return]
     except ValueError as exc:
         raise StoreError(f"the index is not valid JSON ({exc})") from exc
+
+
+def _index_repo(url: str) -> tuple[str | None, str, str, str] | None:
+    """``(github slug or None, clone URL, ref, path)`` of an index file in a GitHub/GitLab repo."""
+    m = _RAW_GITHUB.match(url)
+    if m:
+        owner, repo, ref, path = m.groups()
+        return f"{owner}/{repo}", f"https://github.com/{owner}/{repo}.git", ref, path
+    m = _RAW_GITLAB.match(url)
+    if m:
+        base, ref, path = m.groups()
+        return None, f"{base}.git", ref, path
+    return None
+
+
+def _git_index(clone: str, ref: str, path: str) -> bytes:
+    """The index file read from a shallow, hardened git fetch (the user's git credentials)."""
+    from pytacheck.packs import fetch
+
+    rev = fetch.git_rev(clone, None if ref == "HEAD" else ref)
+    folder, _, name = path.rpartition("/")
+    with tempfile.TemporaryDirectory(prefix="pytacheck-store-") as tmp:
+        fetch.git_fetch(clone, rev, tmp, folder)
+        try:
+            return (Path(tmp) / name).read_bytes()
+        except OSError:
+            raise StoreError(f"the repository has no {path} at {rev[:12]}") from None
+
+
+def _fetch(url: str) -> dict[str, Any]:
+    """Fetch and parse an index: GitHub's contents API with a token, the URL, then git."""
+    from pytacheck.packs.auth import AUTH_HELP, DownloadError, Fetched, get, github_token, redact
+
+    repo = _index_repo(url)
+    attempts: list[tuple[str, bool, str]] = []
+    if repo is not None and repo[0] is not None and github_token():
+        slug, _clone, ref, path = repo
+        api = f"https://api.github.com/repos/{slug}/contents/{path}?ref={ref}"
+        attempts.append((api, True, "application/vnd.github.raw"))
+    attempts.append((url, False, "application/json"))
+    answers: list[Fetched] = []
+    failures: list[str] = []
+    for where, token, accept in attempts:
+        try:
+            res = get(where, token=token, accept=accept, limit=INDEX_LIMIT, tries=2, timeout=30.0)
+        except DownloadError:
+            failures.append("cannot connect")
+            continue
+        if res.ok:
+            return _parse_index(res.content)
+        answers.append(res)
+        failures.append(res.problem())
+    denied = any(a.denied for a in answers)
+    problem = "; ".join(dict.fromkeys(failures)) or "cannot connect"
+    if repo is not None and denied and shutil.which("git") is not None:
+        try:
+            content = _git_index(repo[1], repo[2], repo[3])
+        except PackError as exc:
+            problem += f"; git: {' '.join(redact(str(exc)).split())}"
+        else:
+            return _parse_index(content)
+    if repo is not None and denied:
+        private = "If the repository is private, configure git credentials for it"
+        problem += f". {AUTH_HELP if repo[0] is not None else private}"
+    raise StoreError(problem)
 
 
 def _store_url(name: str) -> str:

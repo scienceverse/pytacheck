@@ -1,0 +1,131 @@
+{
+  "id": "module.ref_miscitation.full.db",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "demo"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1234/prior"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "It replicated prior work [1], t(28) = 3.42, see Table 1 and data."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A prior study"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Often miscited"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1234/prior**\n\nA prior study\n\nOften miscited\n\n*1 Instance:*\n\n> It replicated prior work [1], t(28) = 3.42, see Table 1 and data."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 citation to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "miscite_10.1234/prior"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "demo"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

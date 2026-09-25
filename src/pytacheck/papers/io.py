@@ -280,7 +280,7 @@ def paper_to_json(p: Paper) -> dict[str, Any]:
 
 
 def paper_write(
-    p: Paper | PaperList,
+    paper: Paper | PaperList,
     file_name: str | Sequence[str] | None = None,
     save_path: str | PathLike[str] = ".",
     schema_version: str | None = "auto",
@@ -308,12 +308,13 @@ def paper_write(
         raise ValueError('schema_version must be "auto", None or "12.0"')
     save_dir = Path(save_path).resolve()
     save_dir.mkdir(parents=True, exist_ok=True)
-    if isinstance(p, PaperList):
-        names = list(file_name) if file_name is not None else [str(n) for n in p.names]
+    if isinstance(paper, PaperList):
+        names = list(file_name) if file_name is not None else [str(n) for n in paper.names]
         return [
             Path(paper_write(q, f, save_dir, schema_version))  # type: ignore[arg-type]
-            for q, f in zip(p, names, strict=True)
+            for q, f in zip(paper, names, strict=True)
         ]
+    p = paper
     name = str(file_name) if file_name is not None else str(p.paper_id)
     for suffix in (".json", ".zip"):
         name = name.removesuffix(suffix)

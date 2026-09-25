@@ -319,7 +319,7 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
     public bitstreams).
     """
     from pytacheck.archives import _spinner, _tick
-    from pytacheck.archives.dataverse import _cell, _dollar, _empty_or, _paste
+    from pytacheck.archives.dataverse import _cell, _dollar, _empty_or, _field_cell, _paste
 
     with _spinner(pb) as bar:
         _tick(bar, f"* Retrieving info from {_paste(pa_url)}...")
@@ -344,7 +344,14 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
 
-        meta = _psycharchives_rest(f"/items/{_paste(uuid)}?expand=metadata", host=_paste(host))
+        # R: paste0("/items/", uuid, ...) -- several strings for an array, which
+        # httr2::request() refuses inside .psycharchives_rest()'s tryCatch (NULL)
+        upath = _url_piece(uuid)
+        meta = (
+            None
+            if upath is None
+            else _psycharchives_rest(f"/items/{upath}?expand=metadata", host=_paste(host))
+        )
         md = _dollar(meta, "metadata")
         if md is None:
             md = []
@@ -363,15 +370,17 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
             return "; ".join(vals) if vals else None
 
         title = _empty_or(_dollar(item, "name"), None)
-        obj["PA_title"] = _cell(title if title is not None else md_val("dc.title"))
+        obj["PA_title"] = _field_cell(title if title is not None else md_val("dc.title"))
         obj["PA_authors"] = _cell(md_val("dc.contributor.author"))
         obj["PA_doi"] = _cell(md_val("dc.identifier.doi"))
         obj["PA_license"] = _cell(md_val("dc.rights"))
         obj["PA_date"] = _cell(md_val("dc.date.available"))
         obj["PA_abstract"] = _cell(md_val("dc.description.abstract"))
 
-        bitstreams = _psycharchives_rest(
-            f"/items/{_paste(uuid)}/bitstreams?limit=1000", host=_paste(host)
+        bitstreams = (
+            None
+            if upath is None
+            else _psycharchives_rest(f"/items/{upath}/bitstreams?limit=1000", host=_paste(host))
         )
         obj["files"] = _obj_cell(_bitstream_table(bitstreams, _paste(host)))
         return pd.DataFrame(obj)
@@ -418,12 +427,67 @@ def _chr1(x: Any) -> str | None:
     return _chr_elt(x)
 
 
+class PasteLengthError(ValueError):
+    """``paste0()`` of a JSON array with several elements gives several strings."""
+
+
+def _url_piece(x: Any) -> str | None:
+    """:func:`_paste_json` of an id spliced into a request URL; ``None`` for an array
+    of several ids (R builds several URLs, which ``httr2::request()`` refuses)."""
+    try:
+        return _paste_json(x)
+    except PasteLengthError:
+        return None
+
+
 def _paste_json(x: Any) -> str:
-    """``paste0()`` piece for a JSON value (strings as is, numbers as R prints them)."""
+    """``paste0()`` piece for a parsed JSON value: R's ``as.character()`` of it.
+
+    Strings as is, numbers as R prints them, ``NULL`` as ``"NA"`` (a missing
+    field, R's ``NA`` here). An array or object is an R list: empty, it is
+    dropped by ``paste0()`` (``""``); with one element, that element (a
+    nested array, object or ``null`` deparsed, as ``"list(1, 2)"`` or
+    ``"NULL"``); with more, ``paste0()`` returns several strings, which
+    every caller here fails on: :class:`PasteLengthError`.
+    """
     from pytacheck.archives.dataverse import _json_chr
 
     if isinstance(x, str):
         return x
+    if isinstance(x, list | tuple | dict):
+        items = list(x.values()) if isinstance(x, dict) else list(x)
+        if not items:
+            return ""
+        if len(items) > 1:
+            raise PasteLengthError(
+                f"values must be length 1,\n but FUN(X[[1]]) result is length {len(items)}"
+            )
+        v = items[0]
+        return (
+            _deparse_json(v) if v is None or isinstance(v, list | tuple | dict) else _paste_json(v)
+        )
+    s = _json_chr(x)
+    return "NA" if s is None else s
+
+
+def _deparse_json(x: Any) -> str:
+    """R ``deparse()`` of a parsed JSON value (as ``as.character()`` of a list shows it)."""
+    from pytacheck._r import grepl
+    from pytacheck.archives.dataverse import _json_chr
+
+    if x is None:
+        return "NULL"
+    if isinstance(x, str):
+        esc = x.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\t", "\\t")
+        return f'"{esc}"'
+    if isinstance(x, list | tuple):
+        return "list(" + ", ".join(_deparse_json(v) for v in x) + ")"
+    if isinstance(x, dict):
+        parts = []
+        for k, v in x.items():
+            name = k if grepl("^((([A-Za-z]|[.][._A-Za-z])[._A-Za-z0-9]*)|[.])$", k) else f"`{k}`"
+            parts.append(f"{name} = {_deparse_json(v)}")
+        return "list(" + ", ".join(parts) + ")"
     s = _json_chr(x)
     return "NA" if s is None else s
 
@@ -440,7 +504,6 @@ def _psycharchives_rest(path: str, host: str = "www.psycharchives.org") -> Any:
 def _rest_json(url: str) -> Any:
     """``tryCatch(request |> Accept json |> perform; 200 ? resp_body_json : NULL, error = NULL)``."""
     from pytacheck import http
-    from pytacheck.archives.dataverse import _resp_json
 
     try:
         resp = http.request("GET", url, headers={"Accept": "application/json"}, max_tries=1)
@@ -449,6 +512,83 @@ def _rest_json(url: str) -> Any:
     if resp is None or resp.status_code != 200:
         return None
     return _resp_json(resp)
+
+
+def _resp_json(resp: Any) -> Any:
+    """``tryCatch(httr2::resp_body_json(resp), error = \\(e) NULL)`` (``None`` on failure)."""
+    try:
+        return _resp_body_json(resp)
+    except Exception:
+        return None
+
+
+def _resp_body_json(resp: Any) -> Any:
+    """``httr2::resp_body_json(resp)``: the body parsed as jsonlite parses it; raises on failure.
+
+    The media type must be ``application/json`` or carry a ``+json`` suffix.
+    The body is read as ``resp_body_string(resp, "UTF-8")`` does, whatever
+    charset the response names: up to the first NUL byte, and bytes that are
+    not valid UTF-8 give ``NA``, which jsonlite refuses. jsonlite (yajl) then
+    drops a leading byte-order mark with a warning, refuses ``NaN`` and
+    ``Infinity``, ends a string at an escaped NUL (``\\u0000``) and keeps both
+    values of a repeated key, of which ``$`` finds the first (the one kept
+    here).
+    """
+    import json
+
+    from pytacheck._r import regexec
+    from pytacheck.archives.osf_helpers import _CONTENT_TYPE
+
+    header = resp.headers.get("content-type")
+    media = None if header is None else header.split(";", 1)[0].strip()
+    m = regexec(_CONTENT_TYPE, media, perl=True) if media is not None else []
+    base = f"{m[1]}/{m[2]}" if m else ""
+    suffix = (m[3] or "") if m else ""
+    if base != "application/json" and suffix != "json":
+        shown = "NA" if media is None else media
+        raise ValueError(
+            f'Unexpected content type "{shown}".\n'
+            '* Expecting type "application/json" or suffix "json".'
+        )
+    content = resp.content
+    if not content:
+        raise ValueError("Can't retrieve empty body.")
+    try:
+        text = content.split(b"\x00", 1)[0].decode("utf-8")
+    except UnicodeDecodeError:  # R: iconv() gives NA, and fromJSON(NA) fails
+        raise ValueError("missing value where TRUE/FALSE needed") from None
+    if text.startswith("﻿"):
+        warnings.warn("JSON string contains (illegal) UTF8 byte-order-mark!", stacklevel=2)
+        text = text[1:]
+
+    def constant(name: str) -> Any:
+        raise ValueError(f"lexical error: invalid char in json text ({name})")
+
+    def first_wins(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        out: dict[str, Any] = {}
+        for k, v in pairs:
+            if k not in out:
+                out[k] = v
+        return out
+
+    parsed = json.loads(text, parse_constant=constant, object_pairs_hook=first_wins)
+    return _cut_nul(parsed) if "\\u0000" in text else parsed
+
+
+def _cut_nul(x: Any) -> Any:
+    """Strings of parsed JSON ended at their first NUL, as R's strings are."""
+    if isinstance(x, str):
+        return x.split("\x00", 1)[0]
+    if isinstance(x, list):
+        return [_cut_nul(v) for v in x]
+    if isinstance(x, dict):
+        out: dict[str, Any] = {}
+        for k, v in x.items():
+            key = k.split("\x00", 1)[0]
+            if key not in out:
+                out[key] = _cut_nul(v)
+        return out
+    return x
 
 
 # ---------------------------------------------------------------------------

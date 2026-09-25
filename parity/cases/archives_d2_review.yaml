@@ -91,8 +91,8 @@
   "args":
     "x":
       "$expr":
-        "r": "testthat::with_mocked_bindings(rbox_info(rbox_links(test_paper(text = c(\"Materials: researchbox.org/801 and https://researchbox.org/801/ (see RESEARCHBOX.ORG/801).\")))), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda m: m.researchbox.rbox_info(m.researchbox.rbox_links(m.pc.test_paper([\"Materials: researchbox.org/801 and https://researchbox.org/801/ (see RESEARCHBOX.ORG/801).\"], [])))"
+        "r": "testthat::with_mocked_bindings(rbox_info(rbox_links(test_paper(text = c(\"Materials: researchbox.org/801 and https://researchbox.org/801/ (see researchbox.org/801).\")))), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.researchbox.rbox_info(m.researchbox.rbox_links(m.pc.test_paper([\"Materials: researchbox.org/801 and https://researchbox.org/801/ (see researchbox.org/801).\"], [])))"
   "mock_dir": "apis"
   "compare": &id001
     "ignore":
@@ -380,3 +380,288 @@
         "r": "dspace7_links(test_paper(text = c(\"Data: Knb.ecoinformatics.org/view/doi:10.5063/F1K and 10.5063/KX.\", \"Deposit reſhare.ukdataservice.ac.uk/854001 and 10.5255/UKDA-ſN-854002.\", \"Box REſEARCHBOX.ORG/801, data.4tu.nl/articles/x and FSD1234 (fſd2345).\", \"Mendeley DATA.MENDELEY.COM/datasets/abc123/2 and 10.17632/XYZ.1; PsychArchives hdl.handle.net/20.500.12034/17526 and www.pſycharchives.org/en/item/abc\", \"DSpace 7: HTTPS://REPOSITORY.GATECH.EDU/handle/1853/67239. and https://ulir.ul.ie/entities/publication/x\")))"
         "py": "lambda m: m.dspace7.dspace7_links(m.pc.test_paper([\"Data: Knb.ecoinformatics.org/view/doi:10.5063/F1K and 10.5063/KX.\", \"Deposit reſhare.ukdataservice.ac.uk/854001 and 10.5255/UKDA-ſN-854002.\", \"Box REſEARCHBOX.ORG/801, data.4tu.nl/articles/x and FSD1234 (fſd2345).\", \"Mendeley DATA.MENDELEY.COM/datasets/abc123/2 and 10.17632/XYZ.1; PsychArchives hdl.handle.net/20.500.12034/17526 and www.pſycharchives.org/en/item/abc\", \"DSpace 7: HTTPS://REPOSITORY.GATECH.EDU/handle/1853/67239. and https://ulir.ul.ie/entities/publication/x\"], []))"
   "compare": *id001
+- "id": "dataone_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dataone_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.dataone.dataone_links(m.pc.PaperList([]))"
+- "id": "reshare_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "reshare_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.reshare.reshare_links(m.pc.PaperList([]))"
+- "id": "rbox_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "rbox_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.researchbox.rbox_links(m.pc.PaperList([]))"
+- "id": "researchdata4tu_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "researchdata4tu_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.fourtu.researchdata4tu_links(m.pc.PaperList([]))"
+- "id": "fsd_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "fsd_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.fsd.fsd_links(m.pc.PaperList([]))"
+- "id": "mendeley_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "mendeley_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.mendeley.mendeley_links(m.pc.PaperList([]))"
+- "id": "psycharchives_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "psycharchives_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.psycharchives.psycharchives_links(m.pc.PaperList([]))"
+- "id": "dspace_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dspace_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.psycharchives.dspace_links(m.pc.PaperList([]))"
+- "id": "dspace7_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dspace7_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.dspace7.dspace7_links(m.pc.PaperList([]))"
+- "id": "dataone_info.review.null_error"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dataone_info(NULL)"
+        "py": "lambda m: m.dataone.dataone_info(None)"
+- "id": "mendeley_info.review.null_error"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(mendeley_info(NULL), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.mendeley.mendeley_info(None)"
+- "id": "reshare_info.review.null_error"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(reshare_info(NULL), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.reshare.reshare_info(None)"
+- "id": ".psycharchives_info.review.json_904"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.psycharchives_info(\"https://qsardb.org/repository/handle/10967/904\")"
+        "py": "lambda m: m.psycharchives._psycharchives_info(\"https://qsardb.org/repository/handle/10967/904\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".psycharchives_info.review.json_905"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.psycharchives_info(\"https://qsardb.org/repository/handle/10967/905\")"
+        "py": "lambda m: m.psycharchives._psycharchives_info(\"https://qsardb.org/repository/handle/10967/905\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".psycharchives_info.review.json_906"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.psycharchives_info(\"https://qsardb.org/repository/handle/10967/906\")"
+        "py": "lambda m: m.psycharchives._psycharchives_info(\"https://qsardb.org/repository/handle/10967/906\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".psycharchives_info.review.json_907"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.psycharchives_info(\"https://qsardb.org/repository/handle/10967/907\")"
+        "py": "lambda m: m.psycharchives._psycharchives_info(\"https://qsardb.org/repository/handle/10967/907\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".psycharchives_info.review.json_909"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.psycharchives_info(\"https://qsardb.org/repository/handle/10967/909\")"
+        "py": "lambda m: m.psycharchives._psycharchives_info(\"https://qsardb.org/repository/handle/10967/909\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": "psycharchives_file_download.review.json_904"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "psycharchives_file_download(\"https://qsardb.org/repository/handle/10967/904\")"
+        "py": "lambda m: m.psycharchives.psycharchives_file_download(\"https://qsardb.org/repository/handle/10967/904\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".mendeley_info.review.json_bomds"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.mendeley_info(\"bomds\")"
+        "py": "lambda m: m.mendeley._mendeley_info(\"bomds\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".mendeley_info.review.json_nands"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.mendeley_info(\"nands\")"
+        "py": "lambda m: m.mendeley._mendeley_info(\"nands\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".mendeley_info.review.json_latinds"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.mendeley_info(\"latinds\")"
+        "py": "lambda m: m.mendeley._mendeley_info(\"latinds\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".mendeley_info.review.json_dupds"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.mendeley_info(\"dupds\")"
+        "py": "lambda m: m.mendeley._mendeley_info(\"dupds\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": "mendeley_info.review.json_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(mendeley_info(c(\"bomds\", \"https://data.mendeley.com/datasets/nands/2\", \"dupds\")), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.mendeley.mendeley_info([\"bomds\", \"https://data.mendeley.com/datasets/nands/2\", \"dupds\"])"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".reshare_info.review.json_854910"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.reshare_info(\"854910\")"
+        "py": "lambda m: m.reshare._reshare_info(\"854910\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".reshare_info.review.json_854911"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.reshare_info(\"854911\")"
+        "py": "lambda m: m.reshare._reshare_info(\"854911\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".dspace7_info.review.json"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dspace7_info(\"scholarworks.umass.edu\", uuid = \"44444444-5555-6666-7777-888888888888\")"
+        "py": "lambda m: m.dspace7._dspace7_info(\"scholarworks.umass.edu\", uuid=\"44444444-5555-6666-7777-888888888888\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".psycharchives_info.review.arrays_910"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.psycharchives_info(\"https://qsardb.org/repository/handle/10967/910\")"
+        "py": "lambda m: m.psycharchives._psycharchives_info(\"https://qsardb.org/repository/handle/10967/910\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".psycharchives_info.review.arrays_911"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.psycharchives_info(\"https://qsardb.org/repository/handle/10967/911\")"
+        "py": "lambda m: m.psycharchives._psycharchives_info(\"https://qsardb.org/repository/handle/10967/911\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".mendeley_info.review.arrays_shapeds"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.mendeley_info(\"shapeds\")"
+        "py": "lambda m: m.mendeley._mendeley_info(\"shapeds\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".mendeley_info.review.arrays_twonames"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.mendeley_info(\"twonames\")"
+        "py": "lambda m: m.mendeley._mendeley_info(\"twonames\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".reshare_info.review.arrays"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.reshare_info(\"854912\")"
+        "py": "lambda m: m.reshare._reshare_info(\"854912\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".dspace7_info.review.arrays"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dspace7_info(\"scholarworks.umass.edu\", uuid = \"55555555-6666-7777-8888-999999999999\")"
+        "py": "lambda m: m.dspace7._dspace7_info(\"scholarworks.umass.edu\", uuid=\"55555555-6666-7777-8888-999999999999\")"
+  "mock_dir": "tests/archives_d2/mocks_review"
+- "id": ".fsd_info.review.files"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.fsd_info(\"https://urn.fi/urn:nbn:fi:fsd:T-FSD3335\")"
+        "py": "lambda m: m.fsd._fsd_info(\"https://urn.fi/urn:nbn:fi:fsd:T-FSD3335\")"
+  "mock_dir": "tests/archives_d2/mocks_review"

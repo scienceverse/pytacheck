@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "name": "fixture",
+  "description": "A one-pack store for the tests (the real store is thesanogoeffect/pytacheck-modules).",
+  "generated": "2026-09-24T23:58:28Z",
+  "fields": [
+    "general",
+    "psychology",
+    "medicine",
+    "neuroscience",
+    "economics",
+    "education",
+    "biology",
+    "ecology",
+    "sociology",
+    "political-science",
+    "computer-science",
+    "physics"
+  ],
+  "packs": [
+    {
+      "name": "registry",
+      "version": "0.1.0",
+      "title": "Trial registry numbers",
+      "description": "A tiny test pack: finds ClinicalTrials.gov numbers.",
+      "fields": [
+        "medicine"
+      ],
+      "keywords": [
+        "clinical trials"
+      ],
+      "license": "MIT",
+      "authors": [
+        "pytacheck tests"
+      ],
+      "homepage": null,
+      "tree_sha256": "66c42da7109e336b7d388685b98dd65b6d50186021df369b78e80ff325397929",
+      "code": true,
+      "languages": [
+        "python"
+      ],
+      "requires": {
+        "pytacheck": ">=0.3"
+      },
+      "dependencies": [],
+      "modules": [
+        {
+          "name": "nct_ids",
+          "title": "NCT Numbers",
+          "description": "Find ClinicalTrials.gov registration numbers.",
+          "section": "method",
+          "requires": [],
+          "validation": null
+        }
+      ],
+      "presets": {
+        "default": "metacheck's default report plus ClinicalTrials.gov numbers",
+        "only": "Only the ClinicalTrials.gov numbers"
+      },
+      "source": {
+        "path": "packs/registry"
+      },
+      "reviewed": null,
+      "yanked": null
+    }
+  ]
+}

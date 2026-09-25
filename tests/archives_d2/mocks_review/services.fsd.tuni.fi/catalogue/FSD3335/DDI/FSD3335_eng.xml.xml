@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codeBook xmlns="ddi:codebook:2_5" version="2.5">
+  <stdyDscr><citation><titlStmt><titl>Files study</titl>
+    <IDNo agency="FSD">FSD3335</IDNo></titlStmt></citation></stdyDscr>
+  <fileDscr ID="F1"><fileTxt><fileName>a.sav</fileName><dimensns><caseQnty>3.7</caseQnty><varQnty>0x1A</varQnty></dimensns></fileTxt></fileDscr>
+  <fileDscr ID="F2"><fileTxt><fileName>b.csv</fileName><dimensns><caseQnty>2147483648</caseQnty><varQnty>-2147483647.5</varQnty></dimensns><fileType>CSV</fileType></fileTxt></fileDscr>
+  <fileDscr ID="F3"><fileTxt><dimensns><caseQnty>Inf</caseQnty><varQnty>1,000</varQnty></dimensns></fileTxt></fileDscr>
+  <fileDscr ID="F4"><fileTxt><fileName></fileName><dimensns><caseQnty/><varQnty>1e-2</varQnty></dimensns></fileTxt></fileDscr>
+</codeBook>

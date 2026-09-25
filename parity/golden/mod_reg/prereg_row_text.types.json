@@ -1,0 +1,14 @@
+{
+  "id": "prereg_row_text.types",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "n\n0.333333333333333\n\nbig\n1e+05\n\nflag\nTRUE\n\nint\n7\n\ntxt\na\nb\n\npad\n  keep  "
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

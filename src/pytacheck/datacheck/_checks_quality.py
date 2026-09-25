@@ -62,10 +62,36 @@ _DATA_MISSING_SENTINELS: tuple[float, ...] = (
 
 
 def _scale_typo_of(v: float, lo: float, hi: float) -> Any:
-    """``.scale_typo_of()`` (ported in :mod:`pytacheck.datacheck.columns`)."""
+    """``.scale_typo_of()`` (ported in :mod:`pytacheck.datacheck.columns`).
+
+    An *integer* ``v`` (from an integer column) takes R's integer path here:
+    ``as.character(100000L)`` is ``"100000"``, whereas the double ``1e5``
+    becomes ``"1e+05"``, whose "digits" yield the candidate 5. The columns
+    port always works on the double, so integers are handled locally.
+    """
+    if isinstance(v, int) and not isinstance(v, bool):
+        return _scale_typo_of_int(v, lo, hi)
     from pytacheck.datacheck.columns import _scale_typo_of as fn
 
     return fn(v, lo, hi)
+
+
+def _scale_typo_of_int(v: int, lo: float, hi: float) -> int | None:
+    """``.scale_typo_of(v, lo, hi)`` for an R integer ``v`` (digits via ``as.character``)."""
+    if v in set(r_colon(lo, hi)):
+        return None
+    av = abs(v)
+    s = str(av)
+    cand: list[int] = []
+    if len(s) >= 2:
+        cand += [int(c) for c in s]
+        cand += [int(s[1:]), int(s[:-1])]
+    cand.append(-v)
+    inside = [c for c in unique(cand) if lo <= c <= hi]
+    if not inside:
+        return None
+    target = av % 10
+    return min(inside, key=lambda c: abs(c - target))
 
 
 def _finite(v: Any) -> bool:
@@ -275,13 +301,20 @@ def _signif4(e: float) -> str:
 
 
 def _table(v: Any) -> tuple[list[str], list[int]]:
-    """``table(x)`` of a vector without NA: level labels and counts."""
+    """``table(x)`` of a vector without NA: level labels and counts.
+
+    ``table()``'s default ``exclude = c(NA, NaN)`` is coerced to the type of a
+    non-factor *x*, so for a character vector it drops the string ``"NaN"``
+    (a factor keeps a ``"NaN"`` level).
+    """
     if v.kind == "factor":
         labels = list(v.levels or [])
         counts = dict.fromkeys(labels, 0)
         for s in v.values:
             counts[s] += 1
         return labels, [counts[lab] for lab in labels]
+    if v.kind == "character":
+        v = v.subset([s != "NaN" for s in v.values])
     x_chr = chr(v)
     y = unique(zip(v.values, x_chr, strict=True))
     if v.kind == "character":
@@ -306,6 +339,8 @@ def data_check_constant(x: Any, threshold: float = 0.99) -> dict[str, Any]:
     if len(v) == 0:
         return {"problem": False, "message": "", "values": None, "near": False}
     labels, counts = _table(v)
+    if not counts:  # every value was the string "NaN": `tab[[1]]` on an empty table
+        raise IndexError("subscript out of bounds")
     top = max(range(len(counts)), key=lambda i: (counts[i], -i))
     top_frac = counts[top] / len(v)
     if len(counts) == 1:

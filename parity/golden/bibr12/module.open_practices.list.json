@@ -1,0 +1,535 @@
+{
+  "id": "module.open_practices.list",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The Advanced Search also makes it easy to find records that cite data (3) or are linked from various data resources; for example, articles that cite PDB, articles cited in Uniprot or abstracts that have freely available full text in institutional repositories that are not available in Europe PMC (under the External Links tab on abstract pages).",
+              "The External Links service can also be used by repositories that hold the full-text articles for which Europe PMC only has the metadata. See: http://europepmc.org/LabsLink for more details.",
+              "Europe PMC now routinely discovers several types of data citations in the form of accession numbers, for example to the European Nucleotide Archive (8), and DOIs out of the full text of Europe PMC articles (9) via the Europe PMC text-mining engine, which is based on Whatizit (10).",
+              "A quarterly snapshot is archived to make it easier to cite the collection as dataset.",
+              "Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article.",
+              "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).",
+              "All studies were preregistered (see https://aspredicted.org/3tq2y.pdf, https://aspredicted.org/i9vw6.pdf, https://aspredicted.org/ej26f.pdf).",
+              "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).",
+              "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/3tq2y.pdf).",
+              "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/i9vw6.pdf) 2 .",
+              "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/ej26f.pdf).",
+              "1 We also pretested low-status objects for different purposes. The entire stimulus and data sets are available on OSF."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              36,
+              55,
+              56,
+              82,
+              128,
+              8,
+              9,
+              135,
+              146,
+              248,
+              353,
+              626
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              18,
+              19,
+              34,
+              65,
+              2,
+              2,
+              25,
+              26,
+              45,
+              61,
+              116
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10,
+              16,
+              17,
+              24,
+              null,
+              6,
+              6,
+              10,
+              11,
+              17,
+              25,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              1,
+              1,
+              11,
+              12,
+              19,
+              26,
+              12
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Advanced search",
+              "Database records that cite articles",
+              "Articles that cite data",
+              "FTP and RSS",
+              null,
+              "Abstract",
+              "Abstract",
+              "The Current Research",
+              "Study 1",
+              "Discussion",
+              "Study 3",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "method",
+              "method",
+              null,
+              "abstract",
+              "abstract",
+              "intro",
+              "method",
+              "discussion",
+              "method",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              true,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 papers shared both data and code, 1 only data, 0 only code, and 0 neither."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 papers shared both data and code, 1 only data, 0 only code, and 0 neither."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902",
+              "demo",
+              "preprint",
+              "probe",
+              "10.1234/example.5678"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              true,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null,
+              true,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              null,
+              true,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              null,
+              false,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The Advanced Search also makes it easy to find records that cite data (3) or are linked from various data resources; for example, articles that cite PDB, articles cited in Uniprot or abstracts that have freely available full text in institutional repositories that are not available in Europe PMC (under the External Links tab on abstract pages).",
+                  "The External Links service can also be used by repositories that hold the full-text articles for which Europe PMC only has the metadata. See: http://europepmc.org/LabsLink for more details.",
+                  "Europe PMC now routinely discovers several types of data citations in the form of accession numbers, for example to the European Nucleotide Archive (8), and DOIs out of the full text of Europe PMC articles (9) via the Europe PMC text-mining engine, which is based on Whatizit (10).",
+                  "A quarterly snapshot is archived to make it easier to cite the collection as dataset.",
+                  "Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article."
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).",
+                  "1 We also pretested low-status objects for different purposes. The entire stimulus and data sets are available on OSF."
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/)."
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article."
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/)."
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "All studies were preregistered (see https://aspredicted.org/3tq2y.pdf, https://aspredicted.org/i9vw6.pdf, https://aspredicted.org/ej26f.pdf).",
+                  "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/3tq2y.pdf).",
+                  "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/i9vw6.pdf) 2 .",
+                  "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/ej26f.pdf)."
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

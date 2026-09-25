@@ -1,0 +1,14 @@
+{
+  "id": ".encode_value_labels.sci_codes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"1e+05\":\"a\",\"123456\":\"b\",\"0.3\":\"c\",\"-99\":\"d\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
