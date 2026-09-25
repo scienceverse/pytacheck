@@ -30,8 +30,8 @@ Per-case options (``compare:`` in the case YAML):
                 as maps (a name R repeats must be repeated in Python even
                 without this)
 ``error``       when R raised an error, how Python's error message must match
-                R's (see :func:`error_matches`): ``contains`` (default),
-                ``exact`` or ``any``
+                R's (see :func:`error_matches`): ``any`` (default: Python must
+                raise, its message is its own), ``contains`` or ``exact``
 """
 
 from __future__ import annotations
@@ -56,7 +56,7 @@ class Options:
     col_order: bool = True
     ws: bool = False
     strict_names: bool = False
-    error: str = "contains"
+    error: str = "any"
 
     @classmethod
     def from_case(cls, spec: dict[str, Any] | None) -> Options:
@@ -72,7 +72,7 @@ class Options:
             col_order=bool(spec.get("col_order", True)),
             ws=bool(spec.get("ws", False)),
             strict_names=bool(spec.get("strict_names", False)),
-            error=_error_mode(spec.get("error", "contains")),
+            error=_error_mode(spec.get("error", "any")),
         )
 
 

@@ -1,10 +1,15 @@
 # Upstream issues found while porting
 
-pytacheck reproduces metacheck's behaviour, including its bugs (see
-[PORTING.md](PORTING.md)). This page collects problems found in metacheck (`dev` plus
+pytacheck matches metacheck's results on real inputs and fixes metacheck's bugs
+rather than reproducing them (see [PORTING.md](PORTING.md), rule 1). This page
+collects problems found in metacheck (`dev` plus
 pull request [#423](https://github.com/scienceverse/metacheck/pull/423), bibr export
 schema 12.0, as pinned in `parity/UPSTREAM.toml`) so they can be reported upstream, and
-records the few places where pytacheck deliberately differs.
+records where pytacheck differs.
+
+The U-entries below were recorded while pytacheck still reproduced metacheck's bugs.
+They are being fixed in pytacheck; a fixed entry says so and names the parity cases
+marked `kind: r_bug_fixed`.
 
 ## Deliberate differences
 
@@ -39,7 +44,7 @@ records the few places where pytacheck deliberately differs.
 | D27 | `json_expand()`: `jsonlite::fromJSON()` treats a non-JSON string matching `^https?://` as a URL to download and an existing path as a file to read, so an LLM answer such as `https://osf.io/abc` triggers a network request. | Returns `"parsing error"`; never fetches or reads. | Security: model output should not trigger network or file access. |
 | D28 | `causal_relations()` SSE reader: curl 8's `curl_fetch_stream()` ignores the callback's return value, so R keeps reading after the `complete` payload (a later `data:` line overwrites it, and a server that never closes causes a timeout). | Stops at the first `complete` payload. Real Gradio servers close after `complete`; not parity-testable. | The intent of the callback. |
 
-## Bugs reproduced faithfully
+## Upstream issues
 
 | # | where | issue |
 |---|---|---|

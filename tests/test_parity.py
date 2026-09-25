@@ -42,11 +42,19 @@ def test_parity(case) -> None:
 # -- the harness ---------------------------------------------------------------
 
 
-def test_harness_divergences_name_cases() -> None:
+def test_divergence_registry_names_cases() -> None:
     keys = {c.key for c in CASES}
-    assert set(pcases.HARNESS_DIVERGENCES) <= keys
-    for key in pcases.HARNESS_DIVERGENCES:
+    registry = pcases.load_divergences()
+    assert set(registry) <= keys, sorted(set(registry) - keys)
+    for key in registry:
         assert next(c for c in CASES if c.key == key).spec.get("known_divergence")
+
+
+def test_divergence_kinds_are_known() -> None:
+    kinds = set(pcases.DIVERGENCE_KINDS) | {"unclassified"}
+    for case in CASES:
+        kind = pcases.divergence_kind(case.spec)
+        assert kind is None or kind in kinds, (case.key, kind)
 
 
 def _reference_r() -> str:
@@ -264,16 +272,18 @@ def test_check_case_compares_error_messages(tmp_path, monkeypatch) -> None:
         "args": {"repo": {"$expr": {"py": "1/0"}}},
     }
     case = _golden_case(tmp_path, monkeypatch, golden, spec)
+    # by default both sides must fail; pytacheck's message is its own
+    assert check_case(case)[0] == "pass"
+    case.spec["compare"] = {"error": "contains"}
     status, problems, _ = check_case(case)
     assert status == "fail"
     assert "ZeroDivisionError" in problems[0]
-    case.spec["compare"] = {"error": "any"}
-    assert check_case(case)[0] == "pass"
-    case.spec["compare"] = {}
-    case.spec["known_divergence"] = "documented"
+    case.spec["known_divergence"] = {"kind": "r_bug_fixed", "reason": "documented"}
     assert check_case(case)[0] == "xfail"
     golden["error"] = "division by zero"
-    case = _golden_case(tmp_path / "2", monkeypatch, golden, spec)
+    case = _golden_case(
+        tmp_path / "2", monkeypatch, golden, {**spec, "compare": {"error": "exact"}}
+    )
     assert check_case(case)[0] == "pass"
 
 
