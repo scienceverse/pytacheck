@@ -341,6 +341,21 @@ def test_datacite_doi(apis) -> None:
     ]
 
 
+def test_datacite_doi_reads_the_title_fields() -> None:
+    # metacheck takes unlist(x)[[1]], the first field: the title's language
+    # ("en") and the container's type ("Series") in the synthetic record dc2
+    from tests.db.review_helpers import call_mock
+
+    info = call_mock("pytacheck.db.crossref.datacite_doi", ["10.9999/dc1", "10.9999/dc2"])
+    assert info["title"].isna().iat[0] and info["title"].iat[1] == "T2"
+    assert info["container"].isna().iat[0] and info["container"].iat[1] == "S"
+    assert cr._datacite_title([{"title": "Main"}, {"title": "Sub", "titleType": "Subtitle"}]) == (
+        "Main"
+    )
+    assert cr._datacite_title({"type": "DataRepository", "identifier": "x"}) is None
+    assert cr._datacite_title([]) is None
+
+
 def test_datacite_doi_not_found_gets_an_na_row(apis) -> None:
     # U12: R returns NULL for the whole call when one DOI is unknown
     out = cr.datacite_doi(["10.5281/zenodo.2669586", "10.9999/none"])

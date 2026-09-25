@@ -77,7 +77,8 @@ def check_orcid(orcid: Any) -> str | bool:
 
     def invalid() -> bool:
         if verbose():
-            warnings.warn(f"The ORCiD {orcid} is not valid.", stacklevel=3)
+            shown = "NA" if is_na(orcid) else orcid
+            warnings.warn(f"The ORCiD {shown} is not valid.", stacklevel=3)
         return False
 
     # a missing ORCiD, or an X before the check digit, is not valid (metacheck

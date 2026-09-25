@@ -198,6 +198,8 @@ def test_format_call_refs_file_string_after_first_argument() -> None:
             'b <- sprintf("%s/data.csv", d)',
             'c <- paste0(wd, "/x.csv")',
             'd <- paste0("Loaded ", n, " rows from data.csv")',
+            # R's offset also read this as a format call for a file ".R"
+            'source(paste0(path, ".R"))',
         ]
     )
     assert out["call_text"].tolist() == [
@@ -549,6 +551,11 @@ def test_run_order_derives_io_from_code_text() -> None:
     assert out["file_name"].tolist() == ["1_analysis.R", "0_prep.R", "z.R"]
     assert out["order"].tolist() == [2, 1, 3]
     assert out["depends_on"].tolist() == ["0_prep.R", "", "1_analysis.R"]
+    # a file whose code could not be read (NA code_text) has no I/O
+    files["code_text"] = [['d <- read.csv("clean.csv")'], ['write.csv(x, "clean.csv")'], None]
+    out = core.repro_run_order(files)
+    assert out["order"].tolist() == [2, 1, 3]
+    assert out["depends_on"].tolist() == ["0_prep.R", "", ""]
 
 
 def test_missing_inputs_not_downloaded() -> None:

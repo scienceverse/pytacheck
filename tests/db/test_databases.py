@@ -30,6 +30,14 @@ def test_retractionwatch_defaults() -> None:
     assert isinstance(retractionwatch.rw_date(), dt.date)
 
 
+def test_retractionwatch_has_no_blank_doi() -> None:
+    # U15: metacheck keeps the notice whose DOI is "", so joins on doi matched
+    # every reference without a DOI
+    rw = retractionwatch.retractionwatch()
+    doi = rw["doi"]
+    assert not (doi.isna() | (doi.str.strip() == "")).any()
+
+
 def test_retractionwatch_returns_independent_copies() -> None:
     a = retractionwatch.retractionwatch()
     a.loc[0, "doi"] = "changed"

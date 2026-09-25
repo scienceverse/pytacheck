@@ -226,6 +226,12 @@ def test_scientific_notation_is_matched_at_its_own_precision() -> None:
     other = match_reported_output(tiny, _long([("s", "b", "0.00003"), ("s", "p", "0.048")]))
     assert other["n_matched"].tolist() == [1]
     assert not other["found"].iloc[0]
+    # an exponent beyond double range (310 decimals) does not overflow the
+    # tolerance: the same tiny value matches, another one does not
+    for reported, output, found in [("2e-310", "2e-310", True), ("2e-310", "1.5e-05", False)]:
+        tiny = _tt([1], [[_c("p", reported, 1)]])
+        out = match_reported_output(tiny, _long([("s", "p", output)]))
+        assert out["found"].tolist() == [found]
 
 
 def test_duplicated_components_keep_their_own_tests() -> None:

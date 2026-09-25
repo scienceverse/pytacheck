@@ -263,6 +263,25 @@ def _nzchar(s: str) -> bool:
 # ---------------------------------------------------------------------------
 
 
+def _datacite_title(x: Any) -> Any:
+    """The ``title`` field of the first title object (or of the container object).
+
+    metacheck takes ``unlist(x)[[1]]``, the object's first value: the language
+    of ``{"lang": "en", "title": ...}`` or the type of a container
+    ``{"type": "Series", "title": ...}`` (U12).
+    """
+    if not isinstance(x, Mapping | list):
+        return _unlist_first(x)
+    for item in [x] if isinstance(x, Mapping) else x:
+        if isinstance(item, Mapping):
+            title = item.get("title")
+            if isinstance(title, str):
+                return title
+        elif isinstance(item, str):
+            return item
+    return None
+
+
 def _datacite_row(bd: Any) -> dict[str, Any]:
     att = r_dollar(r_dollar(bd, "data"), "attributes")
     authors: list[dict[str, Any]] = []
@@ -278,9 +297,9 @@ def _datacite_row(bd: Any) -> dict[str, Any]:
         "score": None,
         "doi": r_dollar(att, "doi"),
         "bib_type": r_dollar(r_dollar(att, "types"), "bibtex"),
-        "title": _unlist_first(r_dollar(att, "titles")),
+        "title": _datacite_title(r_dollar(att, "titles")),
         "authors": None,
-        "container": _unlist_first(r_dollar(att, "container")),
+        "container": _datacite_title(r_dollar(att, "container")),
         "publisher": att.get("publisher") if isinstance(att, Mapping) else None,
         "year": r_dollar(att, "publicationYear"),
         "date": _unlist_first(r_dollar(att, "dates")),
@@ -308,6 +327,9 @@ def datacite_doi(doi: Any) -> pd.DataFrame | None:
     one row per DOI; a DOI whose lookup fails gets a row of ``NA``.
     metacheck returns ``NULL`` for the whole call on any HTTP error and drops
     the row of a response that is not JSON, shifting later rows (U12).
+    ``title`` and ``container`` are the ``title`` fields of the first title
+    and of the container (metacheck took their first field, which can be the
+    title's language or the container's type).
     """
     import pandas as pd
 

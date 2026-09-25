@@ -561,6 +561,36 @@ def test_failed_registration_source_keeps_the_registration() -> None:
     assert mo["gated_repos"]["repo_url"].tolist() == ["https://osf.io/jqkg7"]
 
 
+def test_failed_registration_source_restores_only_registrations(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # U122: when following a registration fails, the registration comes back
+    # with the error; a link removed as no storage location at all (a user
+    # page) stays removed
+    from pytacheck.modules import _repo_check as rc
+
+    reg, user = "https://osf.io/reg12", "https://osf.io/usr12"
+    listing = pd.DataFrame(
+        {
+            "osf_url": [reg, user],
+            "osf_type": ["registrations", "users"],
+            "parent": ["par12", None],
+            "repo_name": [reg, user],
+        }
+    )
+
+    def fake_listing(urls: list[str], pb: object, cache: bool) -> pd.DataFrame:
+        if urls == [reg, user]:
+            return listing
+        raise RuntimeError("source lookup failed")
+
+    monkeypatch.setattr(rc, "_osf_listing", fake_listing)
+    repos = rc.Repos(rc.repo_rows("p1", [reg, user], "osf", rc.NA_SCALAR))
+    rc.list_osf(repos, [reg, user], "p1", None, False)
+    assert repos.df["repo_url"].tolist() == [reg]
+    assert repos.df["repo_error"].tolist() == ["source lookup failed"]
+
+
 def test_private_osf_file_rows_are_excluded_per_row() -> None:
     # U123: a file marked private (public FALSE) is left out wherever it sits
     # in the listing (R's !isFALSE(public) tests the whole column at once)

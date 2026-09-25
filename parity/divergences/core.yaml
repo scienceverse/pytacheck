@@ -55,3 +55,72 @@
 "llm_review/llm.ollama.no_content.all_empty": *nocontent
 "llm_review/llm.ollama.no_content.two_of_four": *nocontent
 "llm_review/llm.ollama.no_content.frame": *nocontent
+
+# Cases of other lanes' areas that differ from R because of core-lane fixes
+# (text_search(), module_run(), module_report(), llm(), pubpeer_comments()).
+# The module code is unchanged; the core function it calls no longer has the bug.
+"mod_coi/coi_check_oi.demo": &u80_coi
+  kind: r_bug_fixed
+  ref: U80
+  reason: the table's header column holds the section's header (R's text_search(return = "section") groups without it and returns NA)
+"mod_coi/coi_check_oi.psychsci": *u80_coi
+"mod_coi/coi_check_oi.problems": *u80_coi
+"mod_coi/coi_check_oi.has_coi": *u80_coi
+"mod_coi/coi_check_oi.paperlist": *u80_coi
+"mod_coi/coi_check_oi.financial_excluded": *u80_coi
+"mod_coi/coi_check_oi.interest_words": *u80_coi
+"mod_coi/coi_check_oi.merged_section": *u80_coi
+"mod_coi/coi_check_oi.fuzz_paperlist": *u80_coi
+"mod_coi_review/coi_check_oi.fixture_sections": *u80_coi
+"mod_coi_review/coi_check_oi.fixture_header_only": *u80_coi
+"mod_coi_review/coi_check_oi.newline_in_sentence": *u80_coi
+"mod_coi_review/coi_check_oi.emoji": *u80_coi
+"mod_coi_review/coi_check_oi.coi_lowercase_word": *u80_coi
+"mod_coi_review/coi_check_oi.paperlist_one_errors": *u80_coi
+"mod_coi_review/coi_check_oi.paperlist_empty_middle": *u80_coi
+"bibr12/module.coi_check_oi.preprint": *u80_coi
+"bibr12/module.coi_check_oi.PMC4383902": *u80_coi
+"bibr12/module.coi_check_oi.mixed": *u80_coi
+"grobid12/module.coi_check_oi.demo": *u80_coi
+"grobid12/module.coi_check_oi.0956797615569889": *u80_coi
+"mod_causal_review/causal_claims.review.error.empty_paperlist": &u79_empty
+  kind: r_bug_fixed
+  ref: U79
+  reason: an empty paper list runs (text_search() gives a typed empty text table; R types the missing columns as logical NA, drops `text` and the module fails)
+"mod_funding_review/funding_check.paperlist_empty": *u79_empty
+"mod_funding_review/funding_check_oi.paperlist_empty": *u79_empty
+"mod_urls_open_review/open_practices.review.empty_list": *u79_empty
+"mod_effect_size_review/stat_effect_size.review.empty_paperlist": *u79_empty
+"mod_urls_open_review/all_urls.review.chain_after_open_practices": &u77_chain
+  kind: r_bug_fixed
+  ref: U77
+  reason: all_urls' na_replace = 0 fills only its own columns (R recycles it over the chained summary table, so open_practices' NA cells became 0 and its logical columns numeric)
+"mod_urls_open_review/all_urls.review.chain_after_open_practices_none": *u77_chain
+"mod_urls_open_review/all_urls.review.chain_after_open_practices_twice": *u77_chain
+"mod_urls_open_review/all_urls.review.chain_single_after_open_practices": *u77_chain
+"mod_p_values_review/module_report.stat_p_exact.na": &u6_authors
+  kind: r_bug_fixed
+  ref: U6
+  reason: the How It Works callout credits both authors of stat_p_exact's single @author line (R's greedy email gsub keeps only Lisa DeBruine)
+"mod_p_values_review/module_report.stat_p_exact.green": *u6_authors
+"mod_p_values_review/module_report.stat_p_exact.imprecise": *u6_authors
+"mod_p_values_review/module_report.stat_p_exact.zero": *u6_authors
+"mod_p_values_review/module_report.stat_p_exact.both": *u6_authors
+"mod_power_review/power.review.llm.control_char": &u19_power
+  kind: r_bug_fixed
+  ref: U19
+  reason: llm() joins answers back by text position, so a paragraph with a control character keeps its answer (R joins on the sanitised text, gets NA and reports no power analysis)
+"mod_power_review/power.review.llm.control_char_mixed": *u19_power
+"mod_power_review/power.review.fallback.control_char": &u19_power_fallback
+  kind: r_bug_fixed
+  ref: U19
+  reason: the failed structured call is recorded for its paragraph, so the module falls back to the unstructured call (not recorded in the mocks, so it reports that the LLM check failed); R loses the error in the join on the sanitised text and reports no power analysis
+"mod_power_review/power.review.fallback.control_char_mixed": *u19_power_fallback
+"mod_power_review/power.review.fallback.partial_http_fail":
+  kind: r_bug_fixed
+  ref: U19
+  reason: when one text's call fails the others keep their answers (R's bind_rows() cannot combine ellmer_output with NA and the module fails)
+"mod_ref_pubpeer_summary_review/ref_pubpeer.nourl_only":
+  kind: r_bug_fixed
+  ref: U14
+  reason: pubpeer_comments() always returns the url and users columns, so feedback without a url is reported (R's table lacks the column and the module fails)
