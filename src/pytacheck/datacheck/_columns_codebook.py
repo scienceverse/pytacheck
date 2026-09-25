@@ -526,11 +526,84 @@ def _strip_rtf(text: str) -> str:
 _W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 
+def _run_content_text(el: Any, name: str) -> str:
+    """officer's ``run_content_text`` of one run child (``NA`` -> ``""``)."""
+    if name == "t" or name == "instrText":
+        return "".join(el.itertext())
+    if name == "noBreakHyphen":
+        return "-"
+    if name in ("br", "cr"):
+        return "\n"
+    if name == "tab":
+        return "\t"
+    if name == "sym":
+        return next((v for k, v in el.attrib.items() if k.endswith("}char") or k == "char"), "")
+    return ""  # softHyphen, delText, drawing, footnoteReference, ...
+
+
+def _docx_orphan_copies(root: Any, doc_index: dict[Any, int]) -> int:
+    """How many table rows an orphan run (one with no ``doc_index``) is joined to.
+
+    officer's ``infotbl_tables_compute()`` renumbers each row's cells by their
+    column span and then ``tidyr::complete()``s table x row x cell: every
+    missing combination is a row with an ``NA`` ``doc_index``, and dplyr joins
+    ``NA`` to ``NA``, so a run whose ``doc_index`` is ``NA`` becomes one
+    "table cell" per missing combination.
+    """
+    from lxml import etree
+
+    w = f"{{{_W}}}"
+    tbl_index = {t: i + 1 for i, t in enumerate(root.iter(f"{w}tbl"))}
+    tr_index = {t: i + 1 for i, t in enumerate(root.iter(f"{w}tr"))}
+    tc_index = {t: i + 1 for i, t in enumerate(root.iter(f"{w}tc"))}
+    rows: list[tuple[int, int, int, Any, int]] = []
+    for p in root.iter(f"{w}p"):
+        tc = p.getparent()
+        tr = tc.getparent() if tc is not None and tc.tag == f"{w}tc" else None
+        tbl = tr.getparent() if tr is not None and tr.tag == f"{w}tr" else None
+        if tbl is None or tbl.tag != f"{w}tbl":
+            continue
+        span_el = tc.find(f"{w}tcPr/{w}gridSpan")
+        span = "1" if span_el is None else span_el.get(f"{w}val")
+        rows.append((tbl_index[tbl], tr_index[tr], tc_index[tc], span, doc_index[p]))
+    if not rows:
+        return 0
+    rows.sort(key=lambda r: (r[0], r[1], r[2], r[4]))
+    combos: set[tuple[Any, Any, Any]] = set()
+    prev_key = None
+    prev_span: Any = "1"
+    prev_cell: Any = None
+    consecutive = 0
+    cum: Any = 0
+    for t, r, c, span, _ in rows:
+        if (t, r) != prev_key:
+            prev_key, prev_span, prev_cell, consecutive, cum = (t, r), "1", None, 0, 0
+        try:
+            add = int(prev_span) - 1
+        except (TypeError, ValueError):
+            add = None
+        cum = None if cum is None or add is None else cum + add
+        if c != prev_cell:
+            consecutive += 1
+            prev_cell = c
+        combos.add((t, r, None if cum is None else consecutive + cum))
+        prev_span = span
+    n_t = len({k[0] for k in combos})
+    n_r = len({k[1] for k in combos})
+    n_c = len({k[2] for k in combos})
+    del etree
+    return n_t * n_r * n_c - len(combos)
+
+
 def _docx_text(path: str | os.PathLike[str]) -> str:
     """``officer::docx_summary(read_docx(path))$text`` joined as ``.extract_rich_text()`` does.
 
     One entry per paragraph (runs' ``w:t`` text, tabs, breaks, hyphens, field
     codes): body paragraphs in document order, then table-cell paragraphs.
+    officer's quirks are kept: within a run, contents are ordered by their
+    document-wide index compared as *text* (so ``"10"`` sorts before ``"9"``),
+    and runs outside any paragraph (e.g. in an inline content control) are
+    joined to the missing table cells that ``tidyr::complete()`` invents.
     """
     from lxml import etree
 
@@ -540,40 +613,42 @@ def _docx_text(path: str | os.PathLike[str]) -> str:
         )
     p_tag, r_tag, rpr_tag = f"{{{_W}}}p", f"{{{_W}}}r", f"{{{_W}}}rPr"
     doc_index = {p: i + 1 for i, p in enumerate(root.iter(p_tag))}
+    run_index = {r: i + 1 for i, r in enumerate(root.iter(r_tag))}
     in_cell = set(root.xpath("//w:tbl/w:tr/w:tc/w:p", namespaces={"w": _W}))
-    pieces: dict[int | None, list[str]] = {}
-    for r in root.iter(r_tag):
-        parent = r.getparent()
+    cell_idx = {doc_index[p] for p in in_cell}
+    items: list[tuple[bool, int, int, str, str]] = []
+    k = 0
+    for el in root.iter():
+        if not isinstance(el.tag, str) or el.tag == rpr_tag:
+            continue
+        run = el.getparent()
+        if run is None or run.tag != r_tag:
+            continue
+        k += 1
+        parent = run.getparent()
         gp = parent.getparent() if parent is not None else None
         if parent is not None and parent.tag == p_tag:
-            di: int | None = doc_index[parent]
+            di = doc_index[parent]
         elif gp is not None and gp.tag == p_tag:
             di = doc_index[gp]
         else:
-            di = None
-        for child in r:
-            if not isinstance(child.tag, str) or child.tag == rpr_tag:
-                continue
-            name = etree.QName(child).localname
-            if name == "t" or name == "instrText":
-                txt = "".join(child.itertext())
-            elif name == "noBreakHyphen":
-                txt = "-"
-            elif name in ("br", "cr"):
-                txt = "\n"
-            elif name == "tab":
-                txt = "\t"
-            elif name == "sym":
-                txt = next((v for k, v in child.attrib.items() if k.endswith("char")), "") or ""
-            else:
-                txt = ""
-            pieces.setdefault(di, []).append(txt)
-    cell_idx = {doc_index[p] for p in in_cell}
-    par = sorted(k for k in pieces if k is not None and k not in cell_idx)
-    if None in pieces:
-        par.append(None)  # type: ignore[arg-type]
-    tbl = sorted(k for k in pieces if k is not None and k in cell_idx)
-    texts = ["".join(pieces[k]) for k in [*par, *tbl]]
+            di = 0  # NA
+        text = _run_content_text(el, etree.QName(el).localname)
+        items.append((di == 0, di, run_index[run], str(k), text))
+    items.sort(key=lambda it: it[:4])  # dplyr::arrange(doc_index, run_index, "<index>")
+    pieces: dict[int, list[str]] = {}
+    for _, di, _, _, text in items:
+        pieces.setdefault(di, []).append(text)
+    par = [k for k in pieces if k != 0 and k not in cell_idx]
+    tbl = [k for k in pieces if k != 0 and k in cell_idx]
+    texts = ["".join(pieces[k]) for k in par]
+    orphan = "".join(pieces[0]) if 0 in pieces else None
+    copies = _docx_orphan_copies(root, doc_index) if orphan is not None else 0
+    if orphan is not None and copies == 0:
+        texts.append(orphan)
+    texts += ["".join(pieces[k]) for k in tbl]
+    if orphan is not None:
+        texts += [orphan] * copies
     return "\n".join(t for t in texts if trimws(t) != "")
 
 

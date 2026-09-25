@@ -6,15 +6,17 @@
 # reshare_info() / mendeley_info() in reshare.py (_info_by_id), the file-listing
 # extension/type join in psycharchives.py (_add_ext_type), the XML helpers and the
 # text-search prefilter of every *_links() in dataone.py; the file-by-file download
-# engine of reshare_file_download() is archives_d1's (dataverse.py).
+# engine of reshare_file_download() is archives_d1's (dataverse.py). httr2's
+# resp_body_json() as metacheck sees it (always UTF-8, jsonlite's parser) is
+# psycharchives.py's _resp_body_json, used by every JSON-based port here.
 [files]
 "R/archive-dataone.R" = ["src/pytacheck/archives/dataone.py"]
 "R/archive-dspace7.R" = ["src/pytacheck/archives/dspace7.py", "src/pytacheck/archives/psycharchives.py"]
 "R/archive-4tu.R" = ["src/pytacheck/archives/fourtu.py", "src/pytacheck/archives/figshare.py"]
 "R/archive-psycharchives.R" = ["src/pytacheck/archives/psycharchives.py"]
 "R/archive-researchbox.R" = ["src/pytacheck/archives/researchbox.py", "src/pytacheck/archives/psycharchives.py"]
-"R/archive-reshare.R" = ["src/pytacheck/archives/reshare.py", "src/pytacheck/archives/dataverse.py"]
-"R/archive-mendeley.R" = ["src/pytacheck/archives/mendeley.py", "src/pytacheck/archives/reshare.py"]
+"R/archive-reshare.R" = ["src/pytacheck/archives/reshare.py", "src/pytacheck/archives/dataverse.py", "src/pytacheck/archives/psycharchives.py"]
+"R/archive-mendeley.R" = ["src/pytacheck/archives/mendeley.py", "src/pytacheck/archives/reshare.py", "src/pytacheck/archives/psycharchives.py"]
 "R/archive-fsd.R" = ["src/pytacheck/archives/fsd.py", "src/pytacheck/archives/psycharchives.py"]
 
 [functions]

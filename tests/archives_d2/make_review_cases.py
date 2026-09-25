@@ -853,6 +853,53 @@ expr_case(
     'uuid="55555555-6666-7777-8888-999999999999")',
 )
 
+# table input whose columns collide with the looked-up fields: stale id columns are
+# dropped, a clashing field gets the suffix, the id column is not the first
+MOCK1 = "tests/archives_d2/mocks"
+PA = "https://hdl.handle.net/20.500.12034/17526"
+expr_case(
+    "psycharchives_info.review.table_collisions",
+    online(
+        f"psycharchives_info(data.frame(x = 1:3, href = c({rq(PA)}, NA, {rq(PA)}), "
+        'pa_url = c("old1", "old2", "old3"), PA_title = "mine"), id_col = 2)'
+    ),
+    f"lambda m: m.psycharchives.psycharchives_info(m.pd.DataFrame({{'x': [1, 2, 3], "
+    f"'href': [{rq(PA)}, None, {rq(PA)}], 'pa_url': ['old1', 'old2', 'old3'], "
+    "'PA_title': ['mine'] * 3}), id_col=2)",
+    APIS,
+)
+expr_case(
+    "mendeley_info.review.table_collisions",
+    online(
+        'mendeley_info(data.frame(u = c("10.17632/vjtxybrc28.2", "zzz999", "nope nope"), '
+        'mendeley_url = "old", mendeley_id = "stale", title = "mine"), id_col = "u")'
+    ),
+    "lambda m: m.mendeley.mendeley_info(m.pd.DataFrame({'u': ['10.17632/vjtxybrc28.2', "
+    "'zzz999', 'nope nope'], 'mendeley_url': ['old'] * 3, 'mendeley_id': ['stale'] * 3, "
+    "'title': ['mine'] * 3}), id_col='u')",
+    MOCK1,
+)
+expr_case(
+    "dataone_info.review.table_collisions",
+    'dataone_info(data.frame(dataone_pid = "stale", u = c("10.18739/A2GT5FG86", '
+    '"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86", "10.18739/MISSING"), '
+    'dataone_host = "stale", title = "mine"), id_col = 2)',
+    "lambda m: m.dataone.dataone_info(m.pd.DataFrame({'dataone_pid': ['stale'] * 3, "
+    "'u': ['10.18739/A2GT5FG86', 'https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86', "
+    "'10.18739/MISSING'], 'dataone_host': ['stale'] * 3, 'title': ['mine'] * 3}), id_col=2)",
+    MOCK1,
+)
+expr_case(
+    "reshare_info.review.table_collisions",
+    online(
+        'reshare_info(data.frame(reshare_id = "stale", u = c("854001", "10.5255/UKDA-SN-854001"),'
+        ' files = "mine"), id_col = "u")'
+    ),
+    "lambda m: m.reshare.reshare_info(m.pd.DataFrame({'reshare_id': ['stale'] * 2, "
+    "'u': ['854001', '10.5255/UKDA-SN-854001'], 'files': ['mine'] * 2}), id_col='u')",
+    MOCK1,
+)
+
 # FSD: as.integer() of the DDI counts, a file without a name, no DOI
 expr_case(
     ".fsd_info.review.files",
