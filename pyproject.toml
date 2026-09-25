@@ -49,12 +49,12 @@ dependencies = [
 # Tight integration with bibr: `pytacheck.read("paper.pdf")` and
 # `pytacheck check paper.pdf` run the bibr extraction pipeline in-process.
 bibr = ["bibr>=0.5.1"]
-# Readers for SPSS/Stata/SAS/Excel/ODS data files used by data_check & co.
+# data_check & co.: SPSS/Stata/SAS files (pyreadstat), legacy .xls (xlrd; .xlsx
+# and .ods are read without extra packages) and distribution plots (matplotlib).
 data = [
     "pyreadstat>=1.2.7",
-    "openpyxl>=3.1",
-    "odfpy>=1.4.1",
     "xlrd>=2.0.1",
+    "matplotlib>=3.8",
 ]
 # REST API server (port of metacheck's plumber API).
 api = [

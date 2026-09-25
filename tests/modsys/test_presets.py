@@ -251,7 +251,14 @@ def test_replace_of_absent_module_warns(lab) -> None:
         expand("t")
 
 
-def test_validate_imports_everything(lab) -> None:
+def test_validate_imports_everything(lab, monkeypatch) -> None:
+    import pytacheck.presets as presets
+
+    # pretend repo_check is one of metacheck's modules that is not ported yet
+    ported = presets._builtin_names()
+    monkeypatch.setattr(
+        presets, "_builtin_names", lambda: tuple(n for n in ported if n != "repo_check")
+    )
     assert [m for m, _ in select(preset="metacheck::repository")]  # tolerated by default
     with pytest.raises(PresetError, match="repo_check: metacheck's 'repo_check' is not ported yet"):
         select(preset="metacheck::repository", validate=True)
