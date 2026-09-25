@@ -314,7 +314,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc1'])"
 - "id": "datacite_doi.mock.dc2"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "title and container are the title fields and the year a number (R: the title language \"en\" as the title, the container type \"Series\" as the container and the year as text)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -323,7 +323,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc2'])"
 - "id": "datacite_doi.mock.both"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row, fields are text and the year a number, and title and container are the title fields (R: a bind_rows() type error, the title language \"en\" as the title and the container type \"Series\" as the container)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -825,7 +825,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(NA, NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', [None, None])"
 - "id": "datacite_doi.mock.na_dc2"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row, fields are text and the year a number, and title and container are the title fields (R: a bind_rows() type error, the title language \"en\" as the title and the container type \"Series\" as the container)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
