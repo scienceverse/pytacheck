@@ -25,7 +25,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r.base import paste, trimws
-from pytacheck._r.regex import grepl, gsub, regextract_all, strsplit
+from pytacheck._r.regex import grepl, gsub, regexec, regextract_all, strsplit
 from pytacheck.module import module
 from pytacheck.report import scroll_table
 from pytacheck.text import text_search
@@ -263,8 +263,8 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
 
     Extract a conflict of interest statement from the sentences of one paper,
     adapted from rtransparent. Returns ``""`` when none is found. Indices are
-    1-based, as in R. Raises :class:`ValueError` where R's ``if`` meets ``NA``
-    (a short COI heading without a "no" as the last sentence: R errors there).
+    1-based, as in R. A short COI heading that is the last sentence is
+    returned as it is (metacheck stops there, U97).
     """
     splitted = [None if _is_na(s) else str(s) for s in splitted]
     n = len(splitted)
@@ -336,23 +336,28 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
 
     coi_text: str = paste(sel(index), collapse=" ")
 
-    # Identify text that may have been missed because it was in a new line
+    # Identify text that may have been missed because it was in a new line.
+    # A heading that is the last sentence has nothing to add (metacheck stops
+    # on `if (nchar(NA) == 0)`), and sentences past the end are not pasted as
+    # a literal "NA" (U97).
     if len(index) == 1:
         no_stop_words = gsub(" of ", " ", coi_text, ignore_case=True)
-        if len(strsplit(no_stop_words, " ")) < 4 and not grepl(
-            "no", at(index[0]), ignore_case=True
+        nxt = at(index[0] + 1)
+        if (
+            len(strsplit(no_stop_words, " ")) < 4
+            and not grepl("no", at(index[0]), ignore_case=True)
+            and nxt is not None
         ):
-            nxt = at(index[0] + 1)
-            if nxt is None:
-                # R: if (nchar(NA_character_) == 0) -> error
-                raise ValueError("missing value where TRUE/FALSE needed")
             second = index[0] + 2 if len(nxt) == 0 else index[0] + 1
             index = [index[0], second]
-            new_str = gsub("^.+(None.*$)", r"\1", at(second))
-            if grepl(r"^.*\.$", new_str):  # make sure this is a whole sentence
-                coi_text = paste(coi_text, new_str)
-            else:
-                coi_text = paste(coi_text, new_str, at(second + 1))
+            new_str = at(second)
+            if new_str is not None:
+                new_str = gsub("^.+(None.*$)", r"\1", new_str)
+                if grepl(r"^.*\.$", new_str):  # make sure this is a whole sentence
+                    coi_text = paste(coi_text, new_str)
+                else:
+                    parts = [coi_text, new_str, at(second + 1)]
+                    coi_text = " ".join(x for x in parts if x is not None)
 
     # Exclude other mentions of disclosure that are not disclosures of interest
     if is_disclosure and not the_conflicts:
@@ -373,9 +378,13 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
         if not grepl(val, coi_text, ignore_case=True):
             coi_text = gsub(r"^.*?(Disclosure.*$)", r"\1", coi_text)
 
-    # If only None/No/Nothing appear, stop after the fullstop.
-    # (R keeps only groups 1-4: a match of a later alternative empties the text)
-    coi_text = gsub(_NONE_STOP, r"\1\2\3\4", coi_text, ignore_case=True)
+    # If only None/No/Nothing appear, stop after the fullstop. metacheck's
+    # replacement keeps only groups 1-4 of the 11 alternatives, so a match of a
+    # later one ("Nil.", "No.", "Nothing to declare.", ...) emptied the text and
+    # lost the statement (U95); keep the group that matched.
+    m = regexec(_NONE_STOP, coi_text, ignore_case=True)
+    if m:
+        coi_text = next((g for g in m[1:] if g), "")
 
     # Correct statements with repeating sentences
     new = strsplit(coi_text, r"\. {0,1}")

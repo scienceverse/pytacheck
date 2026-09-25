@@ -192,18 +192,24 @@ def test_figshare_file_download(mock_api: object, tmp_path: Path) -> None:
         dl = figshare_file_download("10.6084/m9.figshare.18093368.v1", download_to=str(tmp_path))
     assert dl is not None
     assert dl.columns.tolist() == list(figshare._FILE_COLUMNS)
-    assert dl["key"].tolist() == ["data.csv", "readme.txt", "missing.csv"]
-    assert dl["downloaded"].tolist() == [True, False, False]
+    # the omitted (too large) video stays in the table, not downloaded (U36)
+    assert dl["key"].tolist() == ["data.csv", "readme.txt", "video.mp4", "missing.csv"]
+    assert dl["downloaded"].tolist() == [True, False, False, False]
+    assert dl["path"].isna().tolist() == [False, False, True, True]
     assert (tmp_path / "figshare_18093368" / "data.csv").exists()
+    assert not (tmp_path / "figshare_18093368" / "video.mp4").exists()
 
 
-def test_figshare_file_download_folder_suffix_quirk(mock_api: object, tmp_path: Path) -> None:
-    # R strips "_<digits>" from the whole folder name, so an existing
-    # "figshare_18093368" makes the next download go to "figshare_1"
+def test_figshare_file_download_folder_suffix(mock_api: object, tmp_path: Path) -> None:
+    # U37: an existing "figshare_18093368" gives "figshare_18093368_1", then
+    # "_2" (metacheck strips "_<digits>" from the name itself: "figshare_1")
     (tmp_path / "figshare_18093368").mkdir()
     with pytest.warns(UserWarning):
         dl = figshare_file_download("18093368", download_to=str(tmp_path))
-    assert dl is not None and set(dl["folder"]) == {"figshare_1"}
+    assert dl is not None and set(dl["folder"]) == {"figshare_18093368_1"}
+    with pytest.warns(UserWarning):
+        dl = figshare_file_download("18093368", download_to=str(tmp_path))
+    assert dl is not None and set(dl["folder"]) == {"figshare_18093368_2"}
 
 
 def test_figshare_file_download_nothing(mock_api: object, tmp_path: Path) -> None:
@@ -277,14 +283,15 @@ def test_link_prefilters_are_exact(
 # ---------------------------------------------------------------- review round 2
 
 
-def test_figshare_file_download_aborts_on_an_empty_body(mock_api: object, tmp_path: Path) -> None:
-    with pytest.raises(ValueError, match="Can't retrieve empty body"):
-        figshare.figshare_file_download("700006", download_to=str(tmp_path))
-    # a vectorised call warns and drops that article
-    with pytest.warns(UserWarning, match="700006 resulted in an error"):
-        out = figshare.figshare_file_download(["700006", "700009"], download_to=str(tmp_path))
+def test_figshare_file_download_keeps_an_empty_file(mock_api: object, tmp_path: Path) -> None:
+    # U36: a zero-byte file is downloaded as one (metacheck aborts the download)
+    out = figshare.figshare_file_download("700006", download_to=str(tmp_path))
     assert out is not None
-    assert set(out["figshare_id"]) == {"700009"}
+    empty = out[out["size"] == 0]
+    assert len(empty) >= 1 and empty["downloaded"].all()
+    out = figshare.figshare_file_download(["700006", "700009"], download_to=str(tmp_path))
+    assert out is not None
+    assert set(out["figshare_id"]) == {"700006", "700009"}
 
 
 def test_figshare_file_listing_given_as_an_object(mock_api: object, tmp_path: Path) -> None:

@@ -54,14 +54,15 @@ def test_module_info() -> None:
     assert list(info.author) == ["Daniel Lakens (\\email{D.Lakens@tue.nl})"]
 
 
-# grepl(include_re / exclude_re, x, perl = TRUE) in R 4.5.3
+# grepl(include_re / exclude_re, x, perl = TRUE) in R 4.5.3, except where marked
+# U85 (British spellings and negations, which pytacheck handles and metacheck misses)
 PATTERN_CASES = [
     ("Participants were randomly assigned to conditions.", True, False),
     ("Participants were Randomly Assigned to one of two groups.", True, False),
     ("Subjects were assigned at random to groups.", True, False),
     ("They were assigned randomly to the treatment.", True, False),
     ("Randomization was done by computer.", True, False),
-    ("We randomise participants.", False, False),
+    ("We randomise participants.", True, False),  # U85
     ("The sample was randomly divided into two halves.", True, False),
     ("Stratified random assignment was used.", True, False),
     ("We fit a model with random effects of participant.", False, True),
@@ -73,7 +74,12 @@ PATTERN_CASES = [
     ("Successful random assignment was checked.", True, True),
     ("Participants were randomly\nassigned.", True, False),
     ("random assignment with non-breaking space", False, False),
-    ("randomisation (British spelling) was used.", False, False),
+    ("randomisation (British spelling) was used.", True, False),  # U85
+    ("Participants were not randomized.", True, True),  # U85
+    ("This was a non-randomised study.", True, True),  # U85
+    ("Participants were not randomly assigned to groups.", True, True),  # U85
+    ("There was no random assignment to conditions.", True, True),  # U85
+    ("Stimuli were shown in randomised order.", True, True),  # U85
     ("We RANDOMIZED everything.", True, False),
     ("Participants (N = 40) were randomly-assigned to groups.", False, False),
     ("randomizedness is a word", False, False),
@@ -118,16 +124,18 @@ def test_randomization_sentences() -> None:
         "Participants were randomly assigned to one of three conditions.",
         "Randomization was performed with a computer script.",
         "A random sample of 200 adults was drawn.",
+        # U85: "random order" is not assignment, "participants were randomized" is
+        # (metacheck drops the whole sentence)
         "Trials were presented in random order after participants were randomized.",
     ]
     res = pc.module_run(untitled(texts), "causal_claims")
     assert res["summary_text"].startswith(
-        "\n-  We identified 2 sentences describing randomization."
+        "\n-  We identified 3 sentences describing randomization."
     )
     report = res["report"]
-    assert report[2] == "We identified 2 sentences describing randomization."
+    assert report[2] == "We identified 3 sentences describing randomization."
     (table,) = _tables(report)
-    assert table.iloc[:, 0].tolist() == texts[:2]
+    assert table.iloc[:, 0].tolist() == [texts[0], texts[1], texts[3]]
     assert report[4].startswith("If this was a study that contained random assignment")
     assert report[5].startswith("1. Random assignment method")
     assert res["traffic_light"] == "green"
@@ -142,10 +150,33 @@ def test_empty_paper() -> None:
     assert len(res["table"]) == 0
 
 
-def test_na_title_is_an_error() -> None:
-    # R: causal_relations(NA) -> "missing value where TRUE/FALSE needed"
-    with pytest.raises(ModuleError, match="missing value where TRUE/FALSE needed"):
-        pc.module_run(untitled(["Some text."], title=None), "causal_claims")
+def test_na_title_is_skipped() -> None:
+    # U84: metacheck stops on causal_relations(NA) ("missing value where TRUE/FALSE needed")
+    res = pc.module_run(untitled(["Some text."], title=None), "causal_claims")
+    assert res["traffic_light"] == "green"
+    assert "No causal claims were observed in the title." in res["report"]
+
+
+def test_describes_randomization() -> None:
+    # U85: an exclusion removes only its own words; negations do not count
+    from pytacheck.modules.causal_claims import _describes_randomization
+
+    texts = pd.Series(
+        [
+            "Participants were randomly assigned to conditions, and we modelled random intercepts.",
+            "Participants were randomised to conditions.",
+            "Participants were not randomized.",
+            "This was a non-randomized study.",
+            "Without random assignment, causal claims are limited.",
+            "Participants had not been randomly allocated.",
+            "Stimuli were presented in randomised order.",
+            "We fit a model with random effects of participant.",
+            "Participants were randomly assigned; those not randomized were excluded.",
+        ]
+    )
+    assert _describes_randomization(texts).tolist() == [
+        True, True, False, False, False, False, False, False, True,
+    ]  # fmt: skip
 
 
 def test_causal_abstract_without_randomization_is_yellow() -> None:
@@ -203,7 +234,7 @@ def test_causal_title() -> None:
     assert res["summary_table"]["causal"].tolist() == [0]  # sum(FALSE)
 
 
-def test_paper_list_skips_title_and_counts_per_paper() -> None:
+def test_paper_list_titles_and_counts_per_paper() -> None:
     papers = pc.PaperList(
         [
             mk(["X causes Y.", "Same sentence here."], [], title="Heat causes thirst", id="p1"),
@@ -219,14 +250,24 @@ def test_paper_list_skips_title_and_counts_per_paper() -> None:
 
     with mock.patch("pytacheck.text.causal.causal_relations", recording):
         res = pc.module_run(papers, "causal_claims")
-    # paper$info on a paper list is NULL: the titles are never classified
-    assert calls == [[], ["X causes Y.", "Same sentence here.", "X causes Y."]]
-    assert res["traffic_light"] == "green"
-    # the repeated sentence matches both papers (many-to-many join)
+    # U84: every paper's title is classified (metacheck reads paper$info$title,
+    # NULL for a paper list), blank and missing titles are skipped
+    assert calls == [["Heat causes thirst"], ["X causes Y.", "Same sentence here.", "X causes Y."]]
+    assert res["traffic_light"] == "green"  # p2 describes random assignment
+    assert "Causal claims were detected in the title." in res["report"]
+    # U84: each paper counts its own sentences (metacheck's join by text counted
+    # the repeated sentence twice for both papers: 2, 2, 0)
     assert res["summary_table"].to_dict("list") == {
         "paper_id": ["p1", "p2", "p3"],
-        "causal": [2, 2, 0],
+        "causal": [1, 1, 0],
     }
+
+
+def test_repeated_sentence_counts_once_per_occurrence() -> None:
+    # U84: metacheck counts a sentence repeated k times k * k times (4 here)
+    paper = mk(["X causes Y.", "X causes Y.", "Nothing."], [], id="dup")
+    res = _run(paper)
+    assert res["summary_table"].to_dict("list") == {"paper_id": ["dup"], "causal": [2]}
 
 
 def test_does_not_mutate_paper() -> None:
@@ -279,7 +320,8 @@ def test_with_mocked_space() -> None:
             )
         )
         res = pc.module_run(paper, "causal_claims")
-    assert res["traffic_light"] == "green"  # "not randomized" still matches randomiz(ed)
+    # U85: "not randomized" is not random assignment (metacheck: green)
+    assert res["traffic_light"] == "yellow"
     assert res["table"]["effect"].tolist() == ["cancer", "heart disease"]
     i = res["report"].index("Causal claims were detected in the title.")
     title_table = res["report"][i + 1].data

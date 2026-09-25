@@ -713,24 +713,17 @@ def _label_name(label: Any) -> str:
 
 
 def _knit_code_get(state: _State, label: Any) -> list[str] | None:
-    """``knit_code$get(label)``: by name, or by position for a logical/number."""
+    """``knit_code$get(label)``: the code stored under the chunk's label.
+
+    A numeric or logical label (``#| label: 3``) is looked up by the name it
+    was stored under, ``"3"``; knitr uses it as a position, so ``3`` fails
+    ("subscript out of bounds") or picks another chunk's code and ``TRUE``
+    the first chunk's (UPSTREAM_ISSUES U153).
+    """
     if isinstance(label, str):
         return state.knit_code.get(label)
-    if isinstance(label, Const) and label.kind in ("logical", "integer", "double"):
-        if label.na:
-            return None
-        values = list(state.knit_code.values())
-        if label.kind == "logical":
-            k = 1 if label.value else 0
-        else:
-            k = int(label.value)
-        if k < 0:
-            raise PurlError("invalid negative subscript in get1index <real>")
-        if k == 0:
-            raise PurlError("attempt to select less than one element in get1index <real>")
-        if k > len(values):
-            raise PurlError("subscript out of bounds")
-        return values[k - 1]
+    if isinstance(label, Const) and label.na:
+        return None
     return state.knit_code.get(_label_name(label))
 
 

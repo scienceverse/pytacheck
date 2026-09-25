@@ -143,12 +143,12 @@ def test_zenodo_info_incompatible_licence_types_stop(review: object) -> None:
         zenodo_info(["5559007", "5559001"])
 
 
-def test_zenodo_info_na_row_names_only_without_duplicates(review: object) -> None:
+def test_zenodo_info_na_in_a_table(review: object) -> None:
     from pytacheck.archives.zenodo import zenodo_info
 
-    with pytest.raises(ValueError, match="row names contain missing values"):
-        zenodo_info(pd.DataFrame({"u": ["5559007", None]}))
-    # duplicated URLs: data.frame() warns and drops the names instead
+    # U33: metacheck fails on the NA ("row names contain missing values")
+    out = zenodo_info(pd.DataFrame({"u": ["5559007", None]}))
+    assert out["title"].tolist()[0] == "T7"
     out = zenodo_info(pd.DataFrame({"u": ["5559007", None, "5559007"]}))
     assert out["title"].tolist()[0] == "T7"
     out = zenodo_info(pd.DataFrame({"u": [None, "5559007", None]}))

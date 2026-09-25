@@ -1,20 +1,15 @@
-"""R's handling of strings that are not valid UTF-8.
+"""Strings that are not valid UTF-8.
 
-File names read as bytes -- zip members without the UTF-8 flag (CP437 names
-from older Windows tools), files extracted from such archives -- are kept as
-Python strings with the undecodable bytes as lone surrogates
-(``errors="surrogateescape"``), the way R keeps them as invalid UTF-8
-strings. R's string functions treat those specially, and the ports reproduce
-that where metacheck feeds them such names: ``grepl()`` is ``FALSE`` (with a
-warning), ``strsplit()`` gives ``NA``, and ``sub()``/``gsub()``/``regexec()``
-raise ``input string 1 is invalid``.
+File names read as bytes that are not valid UTF-8 (a local file name in
+another encoding) are kept as Python strings with the undecodable bytes as
+lone surrogates (``errors="surrogateescape"``), the way R keeps them as
+invalid UTF-8 strings. Zip member names are decoded instead (UTF-8, else
+CP437: ``pytacheck.archives.zip_peek._decode_zip_name``).
 """
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-
-__all__ = ["as_bytes_text", "invalid_utf8", "raise_if_invalid"]
+__all__ = ["as_bytes_text", "invalid_utf8"]
 
 
 def invalid_utf8(x: object) -> bool:
@@ -26,13 +21,6 @@ def invalid_utf8(x: object) -> bool:
     except UnicodeEncodeError:
         return True
     return False
-
-
-def raise_if_invalid(values: Iterable[object], msg: str = "input string {i} is invalid") -> None:
-    """Raise ``ValueError`` as R's ``sub()``/``gsub()`` do for the first invalid string."""
-    for i, v in enumerate(values, start=1):
-        if invalid_utf8(v):
-            raise ValueError(msg.format(i=i))
 
 
 def as_bytes_text(x: str) -> str:

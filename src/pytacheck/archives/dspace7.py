@@ -204,8 +204,10 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
     uuid = None if is_na(uuid) else uuid
     handle = None if is_na(handle) else handle
     with _spinner(pb) as bar:
-        # R: (uuid %||% handle) -- NA is not NULL, so a missing uuid prints "NA"
-        _tick(bar, f"* Retrieving info from {_paste(host)} ({_paste(uuid)})...")
+        # the item is named by its uuid, else its handle (metacheck's
+        # `uuid %||% handle` never falls back from NA and prints "(NA)": U42)
+        ident = _paste(uuid if uuid is not None and str(uuid) != "" else handle)
+        _tick(bar, f"* Retrieving info from {_paste(host)} ({ident})...")
         obj: dict[str, pd.Series] = {"dspace7_host": _cell(host)}
 
         item = None
@@ -222,7 +224,7 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
                     item = _dspace7_rest(f"/core/items/{piece}", host=_paste(host))
         item_uuid = _dollar(item, "uuid")
         if item is None or item_uuid is None:
-            warnings.warn(f"{_paste(host)} ({_paste(uuid)}) could not be found", stacklevel=2)
+            warnings.warn(f"{_paste(host)} ({ident}) could not be found", stacklevel=2)
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
         obj["dspace7_uuid"] = _field_cell(item_uuid)
@@ -324,10 +326,7 @@ def dspace7_file_download(dspace7_url: Any, pb: Any = None) -> pd.DataFrame | No
             info = bind_rows(file_lists)
             orig = pd.DataFrame({"dspace7_url": pd.Series(urls, dtype="string")})
             if "dspace7_url" not in info.columns:
-                raise ValueError(
-                    "Join columns in `y` must be present in the data.\n"
-                    "✖ Problem with `dspace7_url`."
-                )
+                return None  # every URL failed (metacheck's join errors here: U43)
             return left_join(orig, info, by="dspace7_url")
 
         url = urls[0] if urls else None

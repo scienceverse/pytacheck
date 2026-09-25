@@ -191,21 +191,14 @@ def _full_text(paper: Any) -> str:
     return " ".join("NA" if is_na(t) else str(t) for t in text["text"].tolist())
 
 
-def _count(j: Sequence[str | None], value: str) -> Any:
-    """``sum(j == value)``: ``NA`` when any judgement is ``NA``."""
-    if any(v is None for v in j):
-        return pd.NA
-    return sum(v == value for v in j)
+def _count(j: Sequence[str | None], value: str) -> int:
+    """``sum(j == value, na.rm = TRUE)``.
 
-
-def _fmt_d(n: Any) -> str:
-    """``sprintf("%d", n)`` (``"NA"`` for ``NA``)."""
-    return "NA" if n is pd.NA or n is None else f"{n:d}"
-
-
-def _plural(n: Any) -> str:
-    """``plural(n)`` pasted by ``sprintf("%s")`` (``ifelse()`` keeps ``NA``)."""
-    return "NA" if n is pd.NA or n is None else plural(n)
+    A missing judgement is not counted; R's count without ``na.rm`` is
+    ``NA``, which printed "flagged NA potential deviationNA" and became 0
+    through ``na_replace`` (UPSTREAM_ISSUES U120).
+    """
+    return sum(v == value for v in j if v is not None)
 
 
 @module(
@@ -382,6 +375,7 @@ def reg_check(
         raise ValueError(f"arguments imply differing number of rows: {len(paper_col)}, {len(j)}")
     n_dev = _count(j, "yes")
     n_unclear = _count(j, "missing")
+    n_no_judgement = sum(v is None for v in j)
     n_prereg_compared = len(dict.fromkeys(prereg_col))
 
     # summarise(.by = "paper_id"): groups in first-appearance order
@@ -408,10 +402,16 @@ def reg_check(
     summary_text = (
         f"RegCheck compared the paper with {n_prereg_compared} "
         f"preregistration{plural(n_prereg_compared)} on {n_rows} dimension{plural(n_rows)}, "
-        f"and flagged {_fmt_d(n_dev)} potential deviation{_plural(n_dev)} "
-        f"({_fmt_d(n_unclear)} dimension{_plural(n_unclear)} not specified in the "
+        f"and flagged {n_dev} potential deviation{plural(n_dev)} "
+        f"({n_unclear} dimension{plural(n_unclear)} not specified in the "
         "preregistration)."
     )
+    if n_no_judgement > 0:
+        # say so rather than count them as nothing (UPSTREAM_ISSUES U120)
+        summary_text += (
+            f" RegCheck gave no judgement for {n_no_judgement} "
+            f"dimension{plural(n_no_judgement)}."
+        )
 
     # report ----
     report_intro = f"{summary_text} {_DISCLAIMER}"
@@ -429,18 +429,20 @@ def reg_check(
     }
     report_cols["deviation_judgement"] = raw_judgements
 
-    prereg_sections: list[Any] = []
-    for rid in dict.fromkeys(prereg_col):
-        # R: regcheck_table[regcheck_table$prereg_id == rid, ] on a data.frame,
-        # where an NA comparison selects a row of NAs (so an NA rid gives only
-        # NA rows, and rows with an NA prereg_id add NA rows to every section)
-        if rid is None:
-            rows: list[int | None] = [None] * len(prereg_col)
-        else:
-            rows = [
-                None if r is None else i for i, r in enumerate(prereg_col) if r is None or r == rid
-            ]
+    # one section per paper and preregistration: a preregistration linked by
+    # several papers gets a section per paper, named after it. R groups by
+    # preregistration only, so the papers' rows shared one section without
+    # saying which paper each belongs to, and its regcheck_table[prereg_id ==
+    # rid, ] added a row of NAs for every NA prereg_id (UPSTREAM_ISSUES U120)
+    sections: dict[tuple[str | None, str | None], list[int]] = {}
+    for i, key in enumerate(zip(paper_col, prereg_col, strict=True)):
+        sections.setdefault(key, []).append(i)
+    papers_of: dict[str | None, set[str | None]] = {}
+    for pid, rid in sections:
+        papers_of.setdefault(rid, set()).add(pid)
 
+    prereg_sections: list[Any] = []
+    for (pid, rid), rows in sections.items():
         raw = _take(report_cols["deviation_judgement"], rows)
         labels = [
             _JUDGEMENT_LABEL.get(v, as_character(orig)) if v is not None else None
@@ -464,12 +466,16 @@ def reg_check(
             }
         )
         label = "NA" if rid is None else rid
-        evidence = collapse_section(
-            scroll_table(evidence_table, maxrows=5), f"RegCheck evidence for {label}"
-        )
+        heading = f"Comparison with preregistration {label}:"
+        evidence_title = f"RegCheck evidence for {label}"
+        if len(papers_of[rid]) > 1:
+            paper_label = "NA" if pid is None else pid
+            heading = f"Comparison of paper {paper_label} with preregistration {label}:"
+            evidence_title = f"{evidence_title} ({paper_label})"
+        evidence = collapse_section(scroll_table(evidence_table, maxrows=5), evidence_title)
         prereg_sections.extend(
             [
-                f"Comparison with preregistration {label}:",
+                heading,
                 scroll_table(judgement_table),
                 *(evidence if isinstance(evidence, list) else [evidence]),
             ]

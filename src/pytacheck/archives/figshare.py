@@ -22,12 +22,10 @@ from pytacheck._r import compile_r, grepl, is_na, trimws
 from pytacheck.archives.dataverse import (
     _as_numeric,
     _cell,
-    _check_named_ids,
     _chr_elt,
     _chr_values,
     _collect_links,
     _dollar,
-    _dollars,
     _download_file_table,
     _download_many,
     _elements,
@@ -39,7 +37,6 @@ from pytacheck.archives.dataverse import (
     _json_chr,
     _link_matches,
     _list_cell,
-    _mark_named_ids,
     _paste,
     _query,
     _resp_json,
@@ -209,7 +206,7 @@ def figshare_links(paper: Any) -> pd.DataFrame:
         [bool(s) and is_na(i) for s, i in zip(share, links["figshare_id"].tolist(), strict=True)],
         dtype=bool,
     )
-    return _mark_named_ids(links, "figshare_id")
+    return links
 
 
 @functools.cache
@@ -351,7 +348,6 @@ def figshare_info(
     with _spinner(pb, "Figshare Retrieve") as bar:
         table = _info_table(figshare_url, id_col, "figshare_url", ("figshare_id",))
         urls = table["figshare_url"].tolist()
-        _check_named_ids(urls, figshare_url, id_col)
         ids = pd.DataFrame(
             {
                 "figshare_url": table["figshare_url"].to_numpy(),
@@ -455,7 +451,12 @@ def _figshare_info(
         obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "published_date"), None))
         obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "modified_date"), None))
         obj["authors"] = _list_cell(authors)
-        obj["license"] = _field_cell(_empty_or(_dollars(rec, "license", "name"), None))
+        # a plain-string licence is the licence name (metacheck's `license$name`
+        # fails on it: U34)
+        licence = _dollar(rec, "license")
+        if not isinstance(licence, str):
+            licence = _dollar(licence, "name")
+        obj["license"] = _field_cell(_empty_or(licence, None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
 
@@ -542,7 +543,15 @@ def figshare_file_download(
     """
     from pytacheck.archives import _spinner, _tick
 
-    ids = list(dict.fromkeys(i for i in _as_list(_figshare_id(figshare_id)) if i is not None))
+    if host == "data.4tu.nl":
+        # 4TU ids (numeric or uuid) resolve as 4TU ids: .figshare_id() knows no
+        # uuid, so metacheck silently downloads nothing for one (U41)
+        from pytacheck.archives.fourtu import _researchdata4tu_id
+
+        resolved = _researchdata4tu_id(figshare_id)
+    else:
+        resolved = _figshare_id(figshare_id)
+    ids = list(dict.fromkeys(i for i in _as_list(resolved) if i is not None))
     if not ids:
         return None
 

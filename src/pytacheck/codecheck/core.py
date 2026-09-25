@@ -251,15 +251,31 @@ def _ipynb_lang(file_name: Any) -> str:
     nb = _json_load("\n".join(txt))
     if nb is None:
         return "Python"
-    meta = _dollar(nb, "metadata")
-    lang = _dollar(_dollar(meta, "kernelspec"), "language")
+    # a notebook that is not a JSON object (or whose metadata is malformed)
+    # falls back to the default; R's `$` errors escape (UPSTREAM_ISSUES U68)
+    meta = _get(nb, "metadata")
+    lang = _get(_get(meta, "kernelspec"), "language")
     if lang is None:
-        lang = _dollar(_dollar(meta, "language_info"), "name")
-    if lang is None:
-        lang = ""
-    value = _r_as_character1(lang)
-    lang_s = (value if value is not None else "").lower()
+        lang = _get(_get(meta, "language_info"), "name")
+    lang_s = (_first_chr(lang) or "").lower()
     return "R" if lang_s in ("r", "ir") else "Python"
+
+
+def _get(x: Any, name: str) -> Any:
+    """``x$name`` of a parsed JSON/YAML object; ``None`` for any other value."""
+    if not isinstance(x, RList | dict):
+        return None
+    return _dollar(x, name)
+
+
+def _first_chr(x: Any) -> str | None:
+    """``as.character(x)[[1]]``; ``None`` when *x* has no (text) value."""
+    if x is None or isinstance(x, RList | dict):
+        return None
+    try:
+        return _r_as_character1(x)
+    except (IndexError, TypeError, ValueError):
+        return None
 
 
 def _yaml_loader() -> Any:
@@ -368,22 +384,23 @@ def _qmd_lang(file_name: Any) -> str:
         rest = grepl(r"^---\s*$", txt[1:])
         end = next((i + 1 for i, hit in enumerate(rest) if hit), None)
         if end is not None:
-            # R: txt[2:end] -- a descending 2:1 when the fence closes at once
-            front = [txt[1], txt[0]] if end == 1 else txt[1:end]
-            doc = _yaml_load("\n".join(front))
-            jupyter = _dollar(doc, "jupyter")
+            # the lines between the fences: none when the fence closes at once
+            # (R's txt[2:end] then reads the two fences in reverse), and a
+            # scalar or array front matter has no `jupyter` key (R's `$`
+            # errors escape code_lang(); UPSTREAM_ISSUES U68)
+            doc = _yaml_load("\n".join(txt[1:end]))
+            jupyter = _get(doc, "jupyter")
             value: Any = None
             if isinstance(jupyter, dict | list):  # is.list()
-                value = _dollar(_dollar(jupyter, "kernelspec"), "language")
+                value = _get(_get(jupyter, "kernelspec"), "language")
                 if value is None:
-                    value = _dollar(jupyter, "language")
+                    value = _get(jupyter, "language")
             elif isinstance(jupyter, str) or (
                 isinstance(jupyter, tuple) and all(isinstance(v, str) for v in jupyter)
             ):
                 value = jupyter
-            if value is not None:
-                first = _r_as_character1(value)
-                yaml_lang = first.lower() if first is not None else None
+            first = _first_chr(value)
+            yaml_lang = first.lower() if first is not None else None
     if yaml_lang is not None:
         if yaml_lang.startswith("py"):
             return "Python"
@@ -819,14 +836,21 @@ def _as_lang_list(x: Any) -> list[Any]:
 
 def _code_expand_zip(
     all_files: pd.DataFrame,
-    skip_on_api_limit: bool = False,  # noqa: ARG001 - unused in R too
+    skip_on_api_limit: bool = False,
 ) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
     Port of ``R/code_check.R::.code_expand_zip()``: the archive is peeked
     with range requests and only members :func:`code_lang` recognises are
-    fetched, one new row each (the ``.zip`` row itself is kept).
+    fetched, one new row each (the ``.zip`` row itself is kept). Under
+    *skip_on_api_limit* a rate-limited host is skipped rather than waited
+    out (R accepts the argument but never passes it on, UPSTREAM_ISSUES U66).
     """
+    if skip_on_api_limit is True:
+        from pytacheck import http
+
+        with http.skip_on_api_limit(True):
+            return _code_expand_zip(all_files)
     names = _col(all_files, "file_name")
     urls = _col(all_files, "file_url")
     is_zip = [
@@ -1054,9 +1078,8 @@ def code_parse_r(
         lines = code_read(fp) if fp != "" else given
         if lines is None:
             raise TypeError("argument is of length zero")
-        if not lines:
-            raise IndexError("subscript out of bounds")
-        if lines[0] is not None and grepl(r"^---\s*$", lines[0]):
+        # an empty file parses (R: "subscript out of bounds", UPSTREAM_ISSUES U87)
+        if lines and lines[0] is not None and grepl(r"^---\s*$", lines[0]):
             lines = code_extract_r(text=lines)
         texts.append(["NA" if v is None else v for v in lines])
     if not paths:
@@ -1115,15 +1138,9 @@ def code_abs_path(code_text: str | Sequence[str]) -> pd.DataFrame:
     two-segment Unix (``/Users/x``) paths. Returns a frame with columns
     ``abs_path`` and ``line``.
     """
-    lines = _split_lines(code_text)
-    if lines is None:
-        # R: a zero-column tibble loses `text`; select() keeps only `line`
-        return pd.DataFrame(
-            {
-                "line": pd.Series([], dtype="Int64"),
-                "abs_path": pd.Series([], dtype="string"),
-            }
-        )
+    # no code (character(0)) has no paths; R returns its columns the other
+    # way round and warns (UPSTREAM_ISSUES U67)
+    lines = _split_lines(code_text) or []
     # R runs search_text() twice: the first (return = "sentence") keeps the
     # matching lines but normalises their text the way search_text() does for
     # every non-"match" return (whitespace runs -> " ", " , " -> ", ", the
@@ -1434,10 +1451,10 @@ def code_line_stats(
     ``None``).
     """
     lang = _match_arg(lang)
-    lines = _split_lines(code_text)
-    total = 0 if lines is None else len(lines)
-    code_lines = len(code_remove_comments(lines, lang))  # type: ignore[arg-type]
-    assert lines is not None
+    # no code (character(0)) counts like "" (R errors, UPSTREAM_ISSUES U67)
+    lines = _split_lines(code_text) or []
+    total = len(lines)
+    code_lines = len(code_remove_comments(lines, lang))
     flags = _code_comment_flags(lines, lang)
     blank = trimws(lines)
     # R: sum(flags & trimws(code_text) != ""), where a flagged NA line gives
@@ -1645,6 +1662,35 @@ def _code_version_pin_check(
     ``sessioninfo_files`` and ``file_location`` (a Series of the candidate
     files' local paths, indexed by file name).
     """
+    return _version_pin_scan(
+        all_files,
+        code_text_list,
+        max_file_size=max_file_size,
+        max_download_size=max_download_size,
+        cache=cache,
+        skip_on_api_limit=skip_on_api_limit,
+        max_files_per_repo=max_files_per_repo,
+    )[0]
+
+
+def _version_pin_scan(
+    all_files: pd.DataFrame | None,
+    code_text_list: Any = None,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
+    cache: bool = False,
+    skip_on_api_limit: bool = False,
+    max_files_per_repo: float = math.inf,
+) -> tuple[dict[str, Any], dict[int, Any]]:
+    """:func:`_code_version_pin_check` plus where each candidate file lies.
+
+    The second value maps the row positions of *all_files* whose file was
+    looked for to its local path. ``code_check()`` copies these back by row,
+    where R matches them by file name, so of two files of one name (two
+    READMEs) both locations went to the first row: that row then held the
+    other file, and a paper could be credited with another paper's
+    ``sessionInfo()`` (UPSTREAM_ISSUES U89).
+    """
     out: dict[str, Any] = {
         "pinned": False,
         "mechanisms": [],
@@ -1654,8 +1700,9 @@ def _code_version_pin_check(
         "sessioninfo_files": [],
         "file_location": pd.Series([], dtype=object),
     }
+    positions: dict[int, Any] = {}
     if all_files is None or len(all_files) == 0:
-        return out
+        return out, positions
     all_files = all_files.reset_index(drop=True)
     names = _col(all_files, "file_name")
     base_nm = [
@@ -1686,7 +1733,9 @@ def _code_version_pin_check(
         ]
         if any(need):
             rows = _set_locations(rows, need, _download(rows.loc[need], all_files, **dl_args))
-        locations.extend(zip(_col(rows, "file_name"), _col(rows, "file_location"), strict=True))
+        locs = _col(rows, "file_location")
+        locations.extend(zip(_col(rows, "file_name"), locs, strict=True))
+        positions.update(zip([i for i, m in enumerate(mask) if m], locs, strict=True))
         return rows
 
     # renv.lock
@@ -1774,7 +1823,7 @@ def _code_version_pin_check(
     out["file_location"] = pd.Series(
         [loc for _, loc in locations], index=[n for n, _ in locations], dtype=object
     )
-    return out
+    return out, positions
 
 
 # ---------------------------------------------------------------------------

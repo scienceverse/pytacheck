@@ -72,6 +72,9 @@ def test_body_is_read_as_utf8_up_to_the_first_nul() -> None:
 
 def test_content_type_check() -> None:
     assert _resp_body_json(_resp(b"[1]", "application/vnd.api+json; charset=utf-8")) == [1]
-    for ctype in ("text/html", "Application/JSON", None):
+    # U152: media types are case-insensitive (httr2's check is not)
+    assert _resp_body_json(_resp(b"[1]", "Application/JSON")) == [1]
+    assert _resp_body_json(_resp(b"[1]", "APPLICATION/VND.API+JSON")) == [1]
+    for ctype in ("text/html", None):
         with pytest.raises(ValueError, match="Unexpected content type"):
             _resp_body_json(_resp(b"[1]", ctype))

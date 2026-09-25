@@ -83,16 +83,21 @@ def scroll_table(
     if len(table) == 0 or table.shape[1] == 0:
         return ""
     table = table.copy()
-    seen: set[str] = set()
-    for i, col in enumerate(table.columns):
-        # R: `for (col in names(table)) if (is.character(table[[col]]))`: factors
-        # are not character, a blank name (a vector's column) selects nothing and
-        # a repeated name selects its first column again
+    for i in range(table.shape[1]):
+        # every text column, factors included (metacheck's `table[[col]]` loop
+        # skipped blank names, i.e. a vector's column, repeated names and
+        # factors; U131)
         s = table.iloc[:, i]
-        name = str(col)
-        if name == "" or name in seen or isinstance(s.dtype, pd.CategoricalDtype):
+        if isinstance(s.dtype, pd.CategoricalDtype):
+            cats = s.cat.categories
+            if cats.dtype == object or pd.api.types.is_string_dtype(cats.dtype):
+                new_cats = [c.replace("\n", "<br>") if isinstance(c, str) else c for c in cats]
+                if len(set(new_cats)) == len(new_cats):
+                    table.isetitem(i, s.cat.rename_categories(new_cats))
+                else:
+                    values = [v.replace("\n", "<br>") if isinstance(v, str) else v for v in s]
+                    table.isetitem(i, pd.Series(values, index=s.index, dtype="category"))
             continue
-        seen.add(name)
         if pd.api.types.is_string_dtype(s.dtype) or s.dtype == object:
             values = [v.replace("\n", "<br>") if isinstance(v, str) else v for v in s.tolist()]
             keep = s.dtype if pd.api.types.is_string_dtype(s.dtype) and s.dtype != object else None
@@ -155,9 +160,10 @@ def link(url: Any, text: Any = None, new_window: bool = True, type: str = "") ->
     scalar = isinstance(url, str) or url is None
     urls = [url] if scalar else list(url)
     if type == "doi":
-        # R: sprintf("https://doi.org/%s", gsub(...)) makes an NA url ".../NA"
+        # a missing DOI stays missing (metacheck's sprintf() linked it to
+        # "https://doi.org/NA"; U8)
         urls = [
-            "https://doi.org/" + ("NA" if _is_na(u) else gsub(r"https?://doi.org/", "", u))
+            None if _is_na(u) else "https://doi.org/" + gsub(r"https?://doi.org/", "", u)
             for u in urls
         ]
     # R's default `text = url` is only evaluated now, after the doi rewrite

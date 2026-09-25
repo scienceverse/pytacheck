@@ -119,14 +119,13 @@ def _info_by_id(
     """
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
-    from pytacheck.archives.dataverse import _check_named_ids, _info_table, _string_series
+    from pytacheck.archives.dataverse import _info_table, _string_series
     from pytacheck.archives.psycharchives import _cached
     from pytacheck.utils import left_join
 
     with _spinner(pb, f"{label} Retrieve") as bar:
         table = _info_table(x, id_col, url_col, (id_name,))
         urls = table[url_col].tolist()
-        _check_named_ids(urls)
         ids = pd.DataFrame(
             {url_col: table[url_col].to_numpy(), id_name: _string_series([to_id(u) for u in urls])}
         )

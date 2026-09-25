@@ -156,13 +156,17 @@ def test_captcha_stops_retrieval(monkeypatch: pytest.MonkeyPatch) -> None:
     assert "AP_title" not in info.columns
 
 
-def test_http_error_raises() -> None:
+def test_http_error_is_the_pages_error() -> None:
+    # U54: an HTTP error status is this page's error, with a warning
+    # (metacheck's req_perform() raises first, aborting every URL)
     import httpx
 
     with respx.mock() as router:
         router.get("https://aspredicted.org/missing").mock(return_value=httpx.Response(404))
-        with pytest.raises(RuntimeError, match="HTTP 404"):
-            _aspredicted_info("https://aspredicted.org/missing")
+        with pytest.warns(UserWarning, match="missing error: Not Found"):
+            out = _aspredicted_info("https://aspredicted.org/missing")
+    assert out["error"].tolist() == ["Not Found"]
+    assert out["ap_url"].tolist() == ["https://aspredicted.org/missing"]
 
 
 def test_html_text2_layout() -> None:

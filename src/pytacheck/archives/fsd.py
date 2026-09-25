@@ -28,34 +28,30 @@ _FSD_DDI_BASE = "https://services.fsd.tuni.fi/catalogue"
 _STUDY_RX = r"(?i)fsd[:_-]?([0-9]{3,6})"
 
 
-def _fsd_study_id(url: Any) -> str | None:
+def _fsd_study_id(url: Any) -> Any:
     """Port of R/archive-fsd.R::.fsd_study_id(): the ``FSD<digits>`` study id in a reference.
 
     Accepts the catalogue URL, the ``10.60686/t-fsd<digits>`` DOI, the
     ``urn.fi`` URN or a bare ``FSD<digits>`` mention; ``None`` when there is
-    no study id. As in R, a vector with several matches is an error.
+    no study id. A string gives a string, a sequence a list aligned with it
+    (metacheck is not vectorised: a vector with two ids is an error and one
+    without a match in every element loses its alignment: U44).
     """
-    from pytacheck._r import as_character, regextract
+    from pytacheck._r import as_character, regextract, sub
 
     if url is None:
-        vals: list[Any] = []
-    elif isinstance(url, str) or not isinstance(url, list | tuple | pd.Series):
-        vals = [url]
-    else:
-        vals = list(url)
+        return None
+    scalar = isinstance(url, str) or not isinstance(url, list | tuple | pd.Series)
+    vals = [url] if scalar else list(url)
     strs = [None if is_na(v) else (v if isinstance(v, str) else as_character(v)) for v in vals]
-    found = [m for m in regextract(_STUDY_RX, strs, perl=True) if m is not None]
-    if not found:
-        return None
-    if len(found) > 1:
-        raise ValueError("'length = 2' in coercion to 'logical(1)'")
-    m = found[0]
-    if m == "":
-        return None
-    from pytacheck._r import sub
-
-    digits = sub(r"(?i).*?([0-9]{3,6})$", r"\1", m, perl=True)
-    return f"FSD{digits}"
+    out: list[str | None] = []
+    for m in regextract(_STUDY_RX, strs, perl=True):
+        if m is None or m == "":
+            out.append(None)
+            continue
+        digits = sub(r"(?i).*?([0-9]{3,6})$", r"\1", m, perl=True)
+        out.append(f"FSD{digits}")
+    return out[0] if scalar else out
 
 
 _FSD_URL_RX = (

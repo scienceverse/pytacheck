@@ -172,6 +172,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "coi_check.heading_last_sentence"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U97", "reason": "A COI heading that is the last sentence is returned as the statement; metacheck stops on if (nchar(NA) == 0)."}
   "module": "coi_check"
   "args":
     "paper":
@@ -227,6 +228,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "coi_check.heading_next_is_last"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U97", "reason": "No literal 'NA' is appended for a sentence past the end of the paper."}
   "module": "coi_check"
   "args":
     "paper":
@@ -331,6 +333,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "coi_check.nil_dropped"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U95", "reason": "'Conflict of interest: Nil.' is kept; metacheck's replacement keeps only groups 1-4 and empties matches of alternatives 5-11."}
   "module": "coi_check"
   "args":
     "paper":

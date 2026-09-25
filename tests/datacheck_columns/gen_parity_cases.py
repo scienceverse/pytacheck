@@ -819,6 +819,8 @@ files = [
     "survey.qsf",
     "not_qsf.qsf",
     "no_sq.qsf",
+    # U64: valid UTF-8 with an "NA" cell (R re-reads it as Latin-1: "Ã©")
+    "utf8_na.csv",
 ]
 for f in files:
     case(f"parse_codebook.{f}", "parse_codebook", {"path": fix(f)})

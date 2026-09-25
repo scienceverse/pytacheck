@@ -85,23 +85,35 @@ def test_direct_statcheck_warns_and_continues() -> None:
 
 
 @pytest.mark.parametrize(
-    ("txt", "message"),
+    ("txt", "raw", "error"),
     [
-        ("Zero df t(0) = 2.1, p = .03.", "missing value where TRUE/FALSE needed"),
-        ("Perfect r(20) = 1.00, p < .001.", "missing value where TRUE/FALSE needed"),
-        ("Bracket t(20) = (2.1, p = .03.", "the condition has length > 1"),
-        ("Twin the MZ = 2.1, p = .03 difference.", "argument is of length zero"),
+        # R: "missing value where TRUE/FALSE needed" (pt() with df = 0 is NaN)
+        ("Zero df t(0) = 2.1, p = .03.", None, None),
+        # R: the same (r = 1.005 is checked); the interval is capped at 1
+        ("Perfect r(20) = 1.00, p < .001.", "r(20) = 1.00, p < .001", False),
+        ("Perfect r(20) = 1.00, p = .001.", "r(20) = 1.00, p = .001", True),
+        ("Perfect r(20) = -1.00, p < .001.", "r(20) = -1.00, p < .001", False),
+        # R: "the condition has length > 1" (two test-name candidates)
+        ("Bracket t(20) = (2.1, p = .03.", "t(20) = (2.1, p = .03", True),
+        # R: "argument is of length zero" (no test name: not a Z test)
+        ("Twin the MZ = 2.1, p = .03 difference.", None, None),
+        # R: the unparseable p-value fails on if (NA)
+        ("Range F(1, 20) = 3.1, p = .05-.10.", None, None),
     ],
 )
-def test_direct_statcheck_raises_r_errors(txt: str, message: str) -> None:
+def test_statcheck_skips_results_it_cannot_check(txt: str, raw: str | None, error) -> None:
+    # U5: R stops the whole call; pytacheck checks what it can and keeps the rest
+    fine = "t(28) = 2.20, p = .036"
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", StatcheckWarning)
-        with pytest.raises(RError, match=message):
-            statcheck(txt, messages=False)
-        # metacheck's stats() swallows the error: the sentence gives no rows
-        sources, columns = _statcheck_quiet([txt, "t(28) = 2.20, p = .036"])
-    assert sources == [1]
-    assert columns["raw"].tolist() == ["t(28) = 2.20, p = .036"]
+        result = statcheck([txt, fine], messages=False)
+        sources, columns = _statcheck_quiet([txt, fine])
+    expected = ([raw] if raw else []) + [fine]
+    assert result["raw"].tolist() == expected
+    assert columns["raw"].tolist() == expected
+    assert sources == ([0] if raw else []) + [1]
+    if raw:
+        assert result["error"].tolist()[0] is error
 
 
 def test_quiet_mode_restores_warning_handler() -> None:

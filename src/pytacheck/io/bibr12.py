@@ -19,7 +19,8 @@ expects; 12.x writes them bare (``"28"``).
 :func:`_paper_to_bibr12` and :func:`_bibr12_json` write a paper back as a 12.0
 file, byte for byte as metacheck's ``paper_write(schema_version = "12.0")``
 does (``jsonlite::write_json(auto_unbox = TRUE, pretty = TRUE, digits = NA)``),
-except that pytacheck names itself, not metacheck, as the ``converter``.
+except that pytacheck names itself, not metacheck, as the ``converter``, and
+writes a double that 15 significant digits would change in full (U22).
 """
 
 from __future__ import annotations
@@ -40,7 +41,7 @@ import pandas as pd
 
 from pytacheck._r.base import as_character, trimws
 from pytacheck._r.regex import grepl, is_na, sub
-from pytacheck.papers.io import _dollar
+from pytacheck.papers.io import _field
 from pytacheck.papers.model import Paper
 from pytacheck.papers.schema import (
     SCHEMA_DTYPES,
@@ -497,16 +498,6 @@ def _flat_first(e: Any) -> list[Any]:
     return [_jnum(f)]
 
 
-def _replacement(flat: list[Any], n: int) -> list[Any] | str:
-    """``df[[col]] <- flat`` on an *n*-row data frame: the column, or R's error message."""
-    size = len(flat)
-    if size == n:
-        return flat
-    if 0 < size < n and n % size == 0:
-        return flat * (n // size)
-    return f"replacement has {size} rows, data has {n}"
-
-
 def _as_character_list(v: Any) -> list[str | None]:
     """``as.character(v)`` of a parsed JSON value (``character(0)`` for NULL)."""
     if v is None:
@@ -528,7 +519,7 @@ def _dollar_atomic(x: Any, name: str) -> Any:
     """``x$name``, which stops for a scalar (an atomic vector in R)."""
     if x is not None and not isinstance(x, list | Mapping):
         raise ValueError("$ operator is invalid for atomic vectors")
-    return _dollar(x, name)
+    return _field(x, name)
 
 
 def _is_list_column(v: Any) -> bool:
@@ -714,27 +705,26 @@ def _bibr12_df(
 
 def _bibr12_records(
     rows: Any, cols: Mapping[str, str], drop: Sequence[str] = ()
-) -> tuple[list[dict[str, Any]], list[str]]:
+) -> list[dict[str, Any]]:
     """The rows of one 12.0 table as normalised records (for lazy materialisation).
 
-    ``records_to_frame()`` builds from these records exactly the data frame
+    ``records_to_frame()`` builds from these records the data frame
     ``.bibr12_df(.bibr12_rows(rows, cols), cols)`` makes, coerced by
     ``.paper_coerce()``: every 12.0 column is in the merged paper schema with
     the same type. Columns in *drop* are all NA. A row whose values need no
     normalisation is kept as parsed (keys 12.0 does not define are never read).
 
-    Also returns the errors ``.paper_coerce()`` stops with for this table, in
-    column order: a scalar column whose values ``unlist()`` to another length
-    than the table's rows (an array of arrays, ``[null]``) cannot be assigned
-    back to the data frame (a shorter one is recycled when it divides it).
+    A scalar column holding an array or object (which bibr does not write)
+    keeps its first value, NA for ``null``, ``[]`` or ``[null]``, row by row.
+    metacheck ``unlist()``s the column, so such a value moves the values of
+    the rows after it to the rows before them, is recycled across the table,
+    or fails the paper ("replacement has 2 rows, data has 3"; U24).
     """
     records = _as_rows(rows)
     for row in records:
         _r_index(row, "")  # a scalar row stops, as .bibr12_rows() does
-    n = len(records)
     scalar = [col for col, typ in cols.items() if typ in _SCALAR_SCHEMA and col not in drop]
     special = [(col, typ) for col, typ in cols.items() if typ in ("chr[]", "int[]", "chr[][]")]
-    irregular: set[str] = set()
     out = []
     for row in records:
         r: dict[str, Any] = row if isinstance(row, dict) else {}
@@ -746,13 +736,9 @@ def _bibr12_records(
                 continue
             if t is int and -_INT_MAX <= v <= _INT_MAX:
                 continue
-            flat = _flat_first(v)
-            if len(flat) != 1:
-                irregular.add(col)
-                continue
             if rec is None:
                 rec = dict(r)
-            rec[col] = flat[0]
+            rec[col] = _first_value(v)
         for col, typ in special:
             if rec is None:
                 rec = dict(r)
@@ -762,51 +748,46 @@ def _bibr12_records(
                 rec = dict(r)
             rec[col] = None
         out.append(r if rec is None else rec)
-    issues: list[str] = []
-    for col in (c for c in scalar if c in irregular):
-        flat_col: list[Any] = []
-        for row in records:
-            flat_col.extend(_flat_first(row.get(col) if isinstance(row, dict) else None))
-        values = _replacement(flat_col, n)
-        if isinstance(values, str):
-            issues.append(values)
-            continue
-        for i, value in enumerate(values):
-            if out[i] is records[i]:
-                out[i] = dict(out[i])
-            out[i][col] = value
-    return out, issues
+    return out
+
+
+def _first_value(e: Any) -> Any:
+    """A scalar field's value: the first value of an array or object (``None`` for none).
+
+    What ``unlist(if (length(e) == 0) NA else e[[1]])`` gives when that is one
+    value (``[{"given": "A"}]`` is ``"A"``); an array or object as first
+    element gives its first value, and ``[null]`` gives ``None`` (see
+    :func:`_bibr12_records`).
+    """
+    flat = _flat_first(e)
+    return flat[0] if flat else None
+
+
+def _chr_first(v: Any) -> str | None:
+    """``as.character()`` of a field's value (its first value; ``None`` for none)."""
+    e = _first_value(v)
+    return None if e is None else as_character(e)
 
 
 def _bibr12_info(
     metadata: Any, source: Any, schema_version: str, extraction: Any
-) -> tuple[pd.DataFrame, list[str]]:
+) -> pd.DataFrame:
     """Port of ``R/import-bibr12.R::.bibr12_info()``: the one-row ``info`` table of a 12.x paper.
 
     *extraction* is the export's extraction block (R reads ``$producer`` of
-    it lazily, after the source). Also returns the errors ``.paper_coerce()``
-    stops with for the metadata columns (see :func:`_bibr12_records`).
+    it lazily, after the source). A field holding an array keeps its first
+    value (metacheck fails the paper; U24, see :func:`_bibr12_records`).
     """
     meta = metadata if isinstance(metadata, Mapping) else {}
     row: dict[str, Any] = {}
-    issues: list[str] = []
     for col, typ in BIBR12_COLS["metadata"].items():
         if typ in _SCALAR_SCHEMA:
-            values = _replacement(_flat_first(meta.get(col)), 1)
-            if isinstance(values, str):
-                issues.append(values)
-                row[col] = None
-            else:
-                row[col] = values[0]
+            row[col] = _first_value(meta.get(col))
         else:
             row[col] = _cell(meta.get(col), typ)
     for col in ("file_name", "sha256", "input_format"):
         # info$file_name <- as.character(source$file_name %||% NA)
-        v = _dollar_atomic(source, col)
-        values = [None] if v is None else _as_character_list(v)
-        if len(values) != 1:
-            raise ValueError(f"replacement has {len(values)} rows, data has 1")
-        row[col] = values[0]
+        row[col] = _chr_first(_dollar_atomic(source, col))
     row["schema_version"] = schema_version
     # the older info columns paper.json requires
     sha = row["sha256"]
@@ -814,13 +795,10 @@ def _bibr12_info(
     row["bibr_version"] = None
     producer = _dollar_atomic(extraction, "producer")
     if _dollar_atomic(producer, "name") == "bibr":
-        version = _as_character_list(_dollar(producer, "version"))
-        if len(version) != 1:
-            raise ValueError(f"replacement has {len(version)} rows, data has 1")
-        row["bibr_version"] = version[0]
+        row["bibr_version"] = _chr_first(_field(producer, "version"))
     frame = records_to_frame("info", [row], list(row))
     frame["keywords"] = pd.Series([row["keywords"]], dtype=object)
-    return frame, issues
+    return frame
 
 
 def _chr1(v: Any) -> str | None:
@@ -849,35 +827,27 @@ def _names_records(persons: Any) -> Any:
     if not people:
         return _EMPTY_NAMES.copy(deep=False)  # zero rows: nothing to share
     out = []
-    for i, p in enumerate(people, start=1):
+    for p in people:
         if p is not None and not isinstance(p, list | Mapping):
             raise ValueError("$ operator is invalid for atomic vectors")
         # NULL$given and an unnamed list's $given are NULL: NA
         person = p if isinstance(p, Mapping) else {}
         out.append(
             {
-                "given": _person_name(person.get("given"), i),
-                "family": _person_name(person.get("family"), i),
+                "given": _person_name(person.get("given")),
+                "family": _person_name(person.get("family")),
             }
         )
     return out
 
 
-def _person_name(v: Any, i: int) -> str | None:
-    """``as.character(p$given %||% NA)`` as ``vapply(..., "")`` accepts it (one string)."""
-    if isinstance(v, list | Mapping):
-        values = list(v.values()) if isinstance(v, Mapping) else v
-        if len(values) != 1:
-            raise ValueError(
-                f"values must be length 1,\n but FUN(X[[{i}]]) result is length {len(values)}"
-            )
-        e = values[0]
-        if e is None:
-            return "NULL"
-        if isinstance(e, list | Mapping):
-            return orjson.dumps(e).decode()  # R deparses it; not a name bibr writes
-        return as_character(_jnum(e))
-    return _chr1(_jnum(v))
+def _person_name(v: Any) -> str | None:
+    """``as.character(p$given %||% NA)``: the name, its first value when it is an array.
+
+    (metacheck's ``vapply()`` fails the paper when a name is an array of
+    other than one value, and reads ``[null]`` as ``"NULL"``; U24.)
+    """
+    return _chr_first(v)
 
 
 _EMPTY_NAMES = pd.DataFrame(
@@ -937,7 +907,7 @@ def _bibr12_paper(
 
 def _schema_version(x: Mapping[str, Any]) -> str:
     """``as.character(x$schema_version[[1]])``."""
-    v = _dollar(x, "schema_version")
+    v = _field(x, "schema_version")
     if isinstance(v, list):
         if not v:
             raise ValueError("subscript out of bounds")
@@ -956,10 +926,9 @@ def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str
     """``.read_bibr12()`` on already parsed JSON (``file_name`` names it in errors).
 
     Malformed input stops where and as metacheck stops: a scalar table row
-    (``.bibr12_rows()``), a ``df`` array of other than one element, a scalar
-    ``source``/``extraction``/``producer`` (``$``), a scalar person
-    (``names_df()``), then a scalar column that cannot be assigned back
-    (``.paper_coerce()``, in the order it coerces the paper's tables).
+    (``.bibr12_rows()``), a scalar ``source``/``extraction``/``producer``
+    (``$``), a scalar person (``names_df()``). A scalar field holding an
+    array keeps its first value (see :func:`_bibr12_records`).
     """
     version = _schema_version(x)
     if not grepl(r"^12\.", version):
@@ -978,81 +947,30 @@ def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str
         {**r, "df": _paren_df(r.get("df"))} if isinstance(r, dict) else r for r in raw["eq"]
     ]
 
-    # R reads these with `$`, which matches a unique prefix (metadata_match
-    # stands in for a missing metadata object)
-    extraction = _dollar(x, "extraction")
-    info, info_issues = _bibr12_info(
-        _dollar(x, "metadata"), _dollar(x, "source"), version, extraction
-    )
+    # exact keys (metacheck's `$` also matches a prefix: metadata_match stands
+    # in for a missing metadata object; U25)
+    extraction = _field(x, "extraction")
+    info = _bibr12_info(_field(x, "metadata"), _field(x, "source"), version, extraction)
 
     tables: dict[str, list[dict[str, Any]]] = {}
-    issues: dict[str, list[str]] = {"metadata": info_issues}
     for tbl in BIBR12_TABLES:
         drop = ("image",) if tbl == "figure" and not include_images else ()
-        tables[tbl], issues[tbl] = _bibr12_records(raw[tbl], BIBR12_COLS[tbl], drop)
-
-    p = _bibr12_paper(_dollar(x, "paper_id"), info, tables, extraction)
-    # .paper_coerce() stops at the first column it cannot assign back
-    for tbl in _COERCE_ORDER:
-        if issues[tbl]:
-            raise ValueError(issues[tbl][0])
-    return p
+        tables[tbl] = _bibr12_records(raw[tbl], BIBR12_COLS[tbl], drop)
+    return _bibr12_paper(_field(x, "paper_id"), info, tables, extraction)
 
 
-# the order .paper_coerce() coerces a 12.x paper's tables in (12.0 names):
-# paper()'s tables, then those .bibr12_paper() adds
-_COERCE_ORDER = (
-    "metadata",
-    "author",
-    "text",
-    "section",
-    "url",
-    "bib",
-    "xref",
-    "figure",
-    "table",
-    "eq",
-    "affiliation",
-    "funding",
-    "footnote",
-    "metadata_match",
-    "affiliation_match",
-    "funding_match",
-    "bib_match",
-)
+def _paren_df(df: Any) -> str | None:
+    """Degrees of freedom in parentheses: ``"28"`` is ``"(28)"``, ``"(28)"`` stays.
 
-
-def _paren_df(df: Any) -> Any:
-    """``if (is.null(df) || grepl("^\\(.*\\)$", df)) df else paste0("(", df, ")")``.
-
-    A JSON array or object ``df`` is an R list: ``grepl()`` and ``paste0()``
-    see ``as.character()`` of its one element (``"NULL"`` for null), an empty
-    one stops with "missing value where TRUE/FALSE needed" and a longer one
-    with "'length = n' in coercion to 'logical(1)'", as in metacheck.
+    An empty ``df`` is no df (``None``; metacheck makes it ``"()"``), and an
+    array keeps its first value (metacheck fails the paper for an empty or
+    longer one; U24).
     """
-    if df is None:
-        return df
-    if isinstance(df, list | dict):
-        values = list(df.values()) if isinstance(df, dict) else df
-        if not values:
-            raise ValueError("missing value where TRUE/FALSE needed")
-        if len(values) > 1:
-            raise ValueError(f"'length = {len(values)}' in coercion to 'logical(1)'")
-        e = values[0]
-        s = (
-            "NULL"
-            if e is None
-            else as_character(_jnum(e))
-            if not isinstance(e, list | dict)
-            else None
-        )
-        if s is None:
-            s = "NA" if not isinstance(e, list | dict) else orjson.dumps(e).decode()
-    else:
-        s = as_character(_jnum(df))
-        s = "NA" if s is None else s
+    s = _chr_first(df)
+    if s is None or s.strip() == "":
+        return None
     if grepl(r"^\(.*\)$", s):
-        return df
+        return s
     return f"({s})"
 
 
@@ -1378,8 +1296,22 @@ def _rows_out(columns: Mapping[str, list[Any]], cols: Mapping[str, str]) -> list
 _encode_basestring = json.encoder.encode_basestring
 
 
+def _json_double(x: float) -> str:
+    """A double as jsonlite writes it (15 significant digits), or with all the
+    digits it needs when 15 do not give it back.
+
+    (jsonlite's ``digits = NA`` rounds to 15 significant digits, so rewriting a
+    bibr export changed its values: 0.9411764705882353 became
+    0.941176470588235; U22.)
+    """
+    if math.isnan(x) or math.isinf(x):
+        return "null"
+    s = f"{x:.15g}"
+    return s if float(s) == x else repr(x)
+
+
 def _json_atom(x: Any) -> str:
-    """A scalar as jsonlite writes it (``na = "null"``, ``digits = NA``)."""
+    """A scalar as jsonlite writes it (``na = "null"``), doubles as :func:`_json_double`."""
     tx = type(x)
     if tx is str:
         return _encode_basestring(x).replace("</", "<\\/")
@@ -1388,19 +1320,18 @@ def _json_atom(x: Any) -> str:
     if tx is bool:
         return "true" if x else "false"
     if tx is int:
-        return str(x) if -_INT_MAX <= x <= _INT_MAX else f"{float(x):.15g}"
+        return str(x) if -_INT_MAX <= x <= _INT_MAX else _json_double(float(x))
     if tx is float:
-        return "null" if math.isnan(x) or math.isinf(x) else f"{x:.15g}"
+        return _json_double(x)
     if isinstance(x, str):
         return _json_string(x)
     if isinstance(x, bool | np.bool_):
         return "true" if x else "false"
     if isinstance(x, int | np.integer):
         v = int(x)
-        return str(v) if -_INT_MAX <= v <= _INT_MAX else f"{float(v):.15g}"
+        return str(v) if -_INT_MAX <= v <= _INT_MAX else _json_double(float(v))
     if isinstance(x, float | np.floating):
-        f = float(x)
-        return "null" if math.isnan(f) or math.isinf(f) else f"{f:.15g}"
+        return _json_double(float(x))
     return _json_string(str(x))
 
 
@@ -1460,9 +1391,10 @@ def bibr12_json(x: Any) -> str:
 
     Objects (dicts) and lists are written over several lines with two-space
     indentation, an ``_Array`` (an R vector in ``I()``) inline; doubles use 15
-    significant digits (``%.15g``), integers beyond R's integer range are
-    doubles, and NaN/Inf are null. Only ``"``, ``\\`` and control characters
-    are escaped.
+    significant digits (``%.15g``) unless that changes their value, when they
+    are written in full (a difference from jsonlite, which rounds them; U22);
+    integers beyond R's integer range are doubles, and NaN/Inf are null. Only
+    ``"``, ``\\`` and control characters are escaped.
     """
     out: list[str] = []
     _json_pretty(x, "", out)

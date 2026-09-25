@@ -1847,6 +1847,12 @@
   "args":
     "path":
       "$file": "tests/datacheck_files/data/nope.R"
+- "id": "data_code_refs.latin1"
+  "r": ".data_code_refs"
+  "py": "pytacheck.datacheck.files._data_code_refs"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/script_latin1.R"
 - "id": "strip_llm_wrapper.prefixed"
   "r": ".strip_llm_wrapper"
   "py": "pytacheck.datacheck.files._strip_llm_wrapper"

@@ -27,7 +27,7 @@ _REPORT = {
 }
 
 _CAVEAT = (
-    "This module relies on Grobid correctly parsing the references. There are likley to be "
+    "This module relies on Grobid correctly parsing the references. There are likely to be "
     "some false positives."
 )
 

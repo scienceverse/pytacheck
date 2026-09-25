@@ -25,10 +25,12 @@ __all__ = [
 
 _HOST = "data.4tu.nl"
 
+# the bare uuid comes before the numeric id: metacheck tries 10.4121/([0-9]+)
+# first, so 10.4121/7f866e02-... gave the id "7" (U41)
 _ID_PATTERNS = (
     r"10\.4121/uuid:([0-9a-f-]{36})",
-    r"10\.4121/([0-9]+)",
     r"10\.4121/([0-9a-f-]{36})",
+    r"10\.4121/([0-9]+)",
     r"data\.4tu\.nl/datasets/([0-9a-f-]{36})",
     r"data\.4tu\.nl/articles/(?:dataset/[^/]+/)?([0-9]+)",
 )
@@ -86,7 +88,7 @@ def researchdata4tu_info(
 
     *researchdata4tu_url* is a URL/DOI/id, a sequence of them, or a table
     whose *id_col* (1-based position or name) holds them (e.g. from
-    :func:`researchdata4tu_links`); as in R, only that column is kept. Each
+    :func:`researchdata4tu_links`). Each
     article is fetched from ``data.4tu.nl``'s Figshare-compatible API (with
     *cache*, from the on-disk listing cache shared with
     ``figshare_info(host = "data.4tu.nl")``); the rows are returned with
@@ -96,14 +98,12 @@ def researchdata4tu_info(
     """
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
-    from pytacheck.archives.dataverse import _as_values, _check_named_ids, _string_series
+    from pytacheck.archives.dataverse import _info_table, _string_series
     from pytacheck.archives.figshare import _figshare_info
-    from pytacheck.archives.psycharchives import _cached, _column, _vector
+    from pytacheck.archives.psycharchives import _cached
     from pytacheck.utils import left_join, online
 
-    if isinstance(researchdata4tu_url, pd.DataFrame):
-        raw = researchdata4tu_url[_column(researchdata4tu_url, id_col)].tolist()
-    elif researchdata4tu_url is None:
+    if researchdata4tu_url is None:
         # R: data.frame(researchdata4tu_url = NULL) has no columns, so the final
         # left_join() by "researchdata4tu_url" fails (after the online() check)
         if not online(_HOST):
@@ -112,16 +112,16 @@ def researchdata4tu_info(
             "Join columns in `x` must be present in the data.\n"
             "✖ Problem with `researchdata4tu_url`."
         )
-    else:
-        raw, _ = _as_values(researchdata4tu_url)
-    raw = [None if is_na(v) else v for v in raw]
-    table = pd.DataFrame({"researchdata4tu_url": _vector(raw)})
+    # a table keeps its columns and a vector is de-duplicated without NA, as in
+    # the other *_info() functions (metacheck keeps only the id column of a
+    # table, and a vector with an NA fails: U33)
+    table = _info_table(researchdata4tu_url, id_col, "researchdata4tu_url", ("researchdata4tu_id",))
+    raw = [None if is_na(v) else v for v in table["researchdata4tu_url"].tolist()]
 
     if not online(_HOST):
         raise ConnectionError("data.4tu.nl seems to be offline")
 
     with _spinner(pb, "4TU.ResearchData Retrieve") as bar:
-        _check_named_ids(raw)
         ids = pd.DataFrame(
             {
                 "researchdata4tu_url": table["researchdata4tu_url"].to_numpy(),
@@ -196,9 +196,9 @@ def researchdata4tu_file_download(
 
     :func:`figshare_file_download` with ``host = "data.4tu.nl"``, authenticated
     with :func:`researchdata4tu_pat` rather than :func:`figshare_pat`; the
-    ``figshare_id`` column of the result is named ``researchdata4tu_id``. As
-    in R, ids are re-resolved as Figshare ids, so an article known only by
-    its uuid is not downloaded.
+    ``figshare_id`` column of the result is named ``researchdata4tu_id``.
+    Articles known only by their uuid are downloaded too (metacheck
+    re-resolves the ids as Figshare ids, which drops them: U41).
     """
     from pytacheck.archives.figshare import figshare_file_download
     from pytacheck.archives.reshare import _unique_ids

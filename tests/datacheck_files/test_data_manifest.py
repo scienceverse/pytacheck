@@ -139,13 +139,16 @@ def test_manifest_merge_null_removes_na_keeps(tmp_path: Path) -> None:
     F.manifest_merge(path, {"a": 1.0, "b": "x", "c": None})
     assert _read(path) == {"a": 1, "b": "x", "c": None}
     F.manifest_merge(path, {"b": F.R_NULL, "d": True})
-    # jsonlite reads the stored null back as NULL and writes it as {}
-    assert _read(path) == {"a": 1, "c": {}, "d": True}
+    # U62: a stored null stays null (metacheck re-reads it as NULL and writes {})
+    assert _read(path) == {"a": 1, "c": None, "d": True}
+    F.manifest_merge(path, {"e": 2.0})
+    assert _read(path) == {"a": 1, "c": None, "d": True, "e": 2}
 
 
 def test_manifest_merge_jsonlite_layout(tmp_path: Path) -> None:
     # R: manifest_merge(p, list(x = c(1, 2), l = list(1, 2), y = list(z = 0.000012345),
     #                           n = 5e8, t = 1e-7, s = "a"))
+    # jsonlite's layout, but numbers at full precision (U62: digits = 4 writes 0 for z)
     path = tmp_path / "m.json"
     F.manifest_merge(path, {"x": F.RVector([1.0, 2.0]), "l": [1.0, 2.0],
                             "y": {"z": 0.000012345}, "n": 5e8, "t": 1e-7, "s": "a"})  # fmt: skip
@@ -157,7 +160,7 @@ def test_manifest_merge_jsonlite_layout(tmp_path: Path) -> None:
         "    2",
         "  ],",
         '  "y": {',
-        '    "z": 0',
+        '    "z": 1.2345e-05',
         "  },",
         '  "n": 500000000,',
         '  "t": 1e-07,',

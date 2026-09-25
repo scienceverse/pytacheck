@@ -103,7 +103,7 @@ def _results(table: pd.DataFrame) -> dict[str, Any]:
     title="Funding Check",
     description="Identify and extract funding statements.",
     details="""
-        The Funding Check module uses regular expressions to check sentences for words related to funding statements. It will return the sentences in which the conflict of interest statement was found.
+        The Funding Check module uses regular expressions to check sentences for words related to funding statements. It will return the sentences in which the funding statement was found.
 
         The function incorporates code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
     """,

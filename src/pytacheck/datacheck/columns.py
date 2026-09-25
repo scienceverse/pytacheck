@@ -26,6 +26,7 @@ from __future__ import annotations
 import functools
 import importlib
 import math
+import re
 from collections.abc import Sequence
 from typing import Any
 
@@ -945,18 +946,6 @@ def _column(df: pd.DataFrame, name: str) -> list[Any] | None:
     return [None if _na(v) else v for v in _col(df, name).tolist()]
 
 
-def _check_df_rows(sizes: list[int]) -> None:
-    """R ``data.frame()``'s recycling check over its arguments' row counts.
-
-    A shorter argument is recycled only when it is non-empty and divides the
-    longest; otherwise R stops with ``unique(nrows)`` in argument order.
-    """
-    nr = max(sizes)
-    if any(s < nr and not (s > 0 and nr % s == 0) for s in sizes):
-        shown = ", ".join(str(s) for s in dict.fromkeys(sizes))
-        raise ValueError(f"arguments imply differing number of rows: {shown}")
-
-
 def _paste_unique(values: list[Any] | None) -> str:
     """``paste(unique(x), collapse = " | ")`` (``NA`` -> ``"NA"``)."""
     if values is None:
@@ -976,7 +965,10 @@ def _which_max_nchar(labels: list[Any]) -> int | None:
     return best
 
 
-_RANGE_PAT = r"^([A-Za-z]*)\s*(\d+)\s*[-" + "–" + r"]\s*(\d+)$"
+# "V1-V10", "V1-10", "Q3 – Q7", "1-5": a prefix, the first number, then the last
+# number with the prefix optionally repeated. (R's pattern has no second prefix,
+# so the "V1-V10" its own comment names is never expanded.)
+_RANGE_RE = re.compile(r"^([A-Za-z]*)\s*([0-9]+)\s*[-–]\s*(?:\1)?([0-9]+)$")
 _QSF_PARADATA_RE = r"_(First\.Click|Last\.Click|Page\.Submit|Click\.Count)$"
 
 
@@ -987,17 +979,24 @@ def _as_int_str(s: str) -> int | None:
     return int(v)
 
 
-def _expand_ranges(cb: pd.DataFrame) -> pd.DataFrame:
-    """Expand range notation ("V1-V10") into one codebook row per variable."""
+def _expand_ranges(cb: pd.DataFrame, keep_names: set[str] | frozenset[str] = frozenset()) -> pd.DataFrame:
+    """Expand range notation ("V1-V10") into one codebook row per variable.
+
+    A range whose own normalised name is in *keep_names* (a data column is
+    literally called e.g. ``T1-T2``) is a variable, not a range, and is kept.
+    """
     var = _chr_vec(cb["codebook_variable"]) if "codebook_variable" in cb.columns else []
-    hits = grepl(_RANGE_PAT, var, perl=True)
-    range_rows = [i for i, h in enumerate(hits) if h]
-    if not range_rows:
-        return cb
+    range_rows: list[int] = []
     expanded: list[pd.DataFrame] = []
-    for i in range_rows:
-        parts = regexec(_RANGE_PAT, var[i], perl=True)
-        prefix, start, end = parts[1], _as_int_str(parts[2]), _as_int_str(parts[3])
+    for i, v in enumerate(var):
+        m = None if v is None else _RANGE_RE.match(v)
+        if m is None:
+            continue
+        range_rows.append(i)
+        if normalize_varname([v])[0] in keep_names:
+            range_rows.pop()
+            continue
+        prefix, start, end = m.group(1), _as_int_str(m.group(2)), _as_int_str(m.group(3))
         if start is None or end is None or start > end:
             continue
         row = cb.iloc[[i] * (end - start + 1)].copy()
@@ -1027,12 +1026,15 @@ def match_column_labels(
     label of a Qualtrics ``.qsf`` question whose export tag prefixes the
     column name (paradata timing columns excluded).
 
-    As in R, a column whose group is ``NA`` compared against a group-scoped
-    codebook row picks up an all-``NA`` row (R's ``df[NA, ]``), so it is
-    labelled with ``NA`` or gets an ``" | NA"`` conflict.
+    A column whose group is ``NA`` takes only unscoped definitions; when
+    there are none, group-scoped ones make it ``ambiguous_experiment`` (R
+    compares ``NA == group`` and labels such a column ``NA``). The result
+    always has one row per column and all 14 columns: an absent
+    ``paper_id`` / ``source_file`` / ``column_name`` is ``NA``, and ``None``
+    or a zero-row *columns_df* gives zero rows (R fails on all of these).
     """
     if columns_df is None:
-        raise ValueError("invalid 'times' argument")
+        columns_df = pd.DataFrame()
     n = len(columns_df)
     group_col = (
         _column(columns_df, "group")
@@ -1043,25 +1045,18 @@ def match_column_labels(
     )
     col_group: list[Any] = group_col if group_col is not None else [None] * n
     paper = _column(columns_df, "paper_id")
-    source = _column(columns_df, "source_file")
     colname = _column(columns_df, "column_name")
 
     def frame(status: list[str], label: list[Any], cbk: list[Any], src: list[Any],
               method: list[Any], vl: list[Any], mv: list[Any], q: list[Any], ci: list[Any],
-              sg: list[Any], empty: bool = False) -> pd.DataFrame:  # fmt: skip
-        # R's data.frame(): an absent column (NULL) has 0 rows; make_empty() passes
-        # length-1 NA / status values that recycle to n.
-        sizes = [0 if v is None else n for v in (paper, source, colname)] + [n]
-        sizes.append(1 if empty else n)
-        _check_df_rows(sizes)
+              sg: list[Any]) -> pd.DataFrame:  # fmt: skip
         data: dict[str, pd.Series] = {}
-        for nm, vals in (("paper_id", paper), ("source_file", source), ("column_name", colname)):
-            if vals is not None:
-                data[nm] = (
-                    columns_df[nm].reset_index(drop=True)
-                    if nm in columns_df.columns
-                    else pd.Series(vals)
-                )
+        for nm in ("paper_id", "source_file", "column_name"):
+            data[nm] = (
+                columns_df[nm].reset_index(drop=True)
+                if nm in columns_df.columns
+                else pd.Series([None] * n, dtype="string")
+            )
         gser = (
             columns_df["group"] if "group" in columns_df.columns
             else columns_df["experiment_group"] if "experiment_group" in columns_df.columns
@@ -1081,12 +1076,11 @@ def match_column_labels(
 
     na_n: list[Any] = [None] * n
     if n == 0 or codebook_vars_df is None or len(codebook_vars_df) == 0:
-        return frame(["unlabelled"] * n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n,
-                     empty=True)  # fmt: skip
+        return frame(["unlabelled"] * n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n)
 
-    cb = _expand_ranges(codebook_vars_df)
-    cb = cb.reset_index(drop=True)
     norm_col = normalize_varname([_chr(v) for v in (colname or [None] * n)])
+    cb = _expand_ranges(codebook_vars_df, keep_names={v for v in norm_col if v is not None})
+    cb = cb.reset_index(drop=True)
     norm_var = (
         normalize_varname(_chr_vec(cb["codebook_variable"]))
         if "codebook_variable" in cb.columns
@@ -1152,10 +1146,10 @@ def match_column_labels(
             continue
         scoped = [k for k in name_idx if cb_group[k] is not None]
         unscoped = [k for k in name_idx if cb_group[k] is None]
-        # R: scoped[!is.na(group) & group == cg, ] -- an NA cg gives NA rows
+        # a column of unknown group: no scoped definition is its own
         if cg is None:
-            same_group: list[int | None] = [None] * len(scoped)
-            other_scoped: list[int | None] = [None] * len(scoped)
+            same_group: list[int | None] = []
+            other_scoped: list[int | None] = list(scoped)
         else:
             cgs = _chr(cg)
             same_group = [k for k in scoped if _chr(cb_group[k]) == cgs]
@@ -1243,37 +1237,24 @@ def match_column_labels(
         ord_ = sorted(range(len(qsf_tags)), key=lambda t: -len(qsf_tags[t]))
         cb_q = carry["question"] or [None] * ncb
         cb_vl = carry["value_labels"]
-        # startsWith() refuses a column_name that is not character (an all-NA
-        # column is logical in R)
-        from pytacheck.datacheck._checks_rvec import rvec
-        from pytacheck.datacheck._columns_labels import _col
-
-        cn_chr = colname is not None and rvec(_col(columns_df, "column_name")).kind == "character"
         for i in [k for k in range(n) if status_out[k] == "unlabelled"]:
-            if colname is None:
-                # R: if (grepl(re, NULL)) -- a zero-length condition
-                raise ValueError("argument is of length zero")
-            cn = _chr(colname[i])
-            if grepl(_QSF_PARADATA_RE, cn, perl=True, ignore_case=True):
+            # an absent or NA column name cannot carry a question tag (R fails
+            # on both, and on a column_name that is not character)
+            cn = None if colname is None else _chr(colname[i])
+            if cn is None or grepl(_QSF_PARADATA_RE, cn, perl=True, ignore_case=True):
                 continue
-            if not cn_chr:
-                raise ValueError("non-character object(s)")
-            if cn is None:
-                raise ValueError("missing value where TRUE/FALSE needed")
             hit = next(
                 (t for t in ord_ if cn.startswith(qsf_tags[t] + "_") or cn == qsf_tags[t]), None
             )
             if hit is None:
                 continue
             r = tag_row[hit]
-            if cb_vl is None or cb_src is None:
-                raise ValueError("replacement has length zero")
             status_out[i] = "labelled"
             label_out[i] = cb_q[r]
             cbk_out[i] = qsf_tags[hit]
-            src_out[i] = cb_src[r]
+            src_out[i] = cb_src[r] if cb_src is not None else None
             method_out[i] = "qsf_question_tag"
-            vl_out[i] = cb_vl[r]
+            vl_out[i] = cb_vl[r] if cb_vl is not None else None
             q_out[i] = cb_q[r]
             sg_out[i] = qsf_tags[hit]
 
@@ -1303,10 +1284,10 @@ def _scale_typo_of(v: Any, lo: float, hi: float) -> float | int | None:
 
     Port of ``.scale_typo_of()``: the most plausible intended value inside
     ``[lo, hi]`` (a repeated / doubled digit, a dropped or added minus, an
-    extra leading digit), or ``None``. A Python ``int`` is an R integer, whose
-    digits come from ``as.character(100000L)`` = ``"100000"``; a ``float`` is
-    a double, and ``as.character(1e5)`` is ``"1e+05"`` (so its "digits" are
-    ``1``, ``0``, ``5`` and the leading ``"1e+0"`` parses as 1).
+    extra leading digit), or ``None``. The digits of a whole number are its
+    plain decimal digits whether it is an integer or a double (R takes a
+    double's digits from ``as.character()``, which writes ``1e5`` as
+    ``"1e+05"`` and so "finds" a typo of 5 in 100000).
     """
     if _na(v):
         return None
@@ -1316,8 +1297,8 @@ def _scale_typo_of(v: Any, lo: float, hi: float) -> float | int | None:
         return None
     cand: list[float | int | None] = []
     av = abs(v)
-    if is_int or v == _r_round0(v):
-        s = str(av) if is_int else (_chr(av) or "")
+    if is_int or (math.isfinite(v) and v == _r_round0(v)):
+        s = str(int(av))
         if len(s) >= 2:
             cand += [_as_int_str(c) for c in s]
             cand += [_as_int_str(s[1:]), _as_int_str(s[:-1])]

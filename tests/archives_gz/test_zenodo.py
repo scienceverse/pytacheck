@@ -222,10 +222,12 @@ def test_zenodo_info_on_zenodo_links_output_with_unfound_record(apis: object) ->
     assert info["error"].tolist() == ["unfound"]
 
 
-def test_zenodo_info_na_url_in_table_errors_as_in_metacheck(apis: object) -> None:
+def test_zenodo_info_na_url_in_table(apis: object) -> None:
+    # U33: metacheck fails ("row names contain missing values")
     tbl = pd.DataFrame({"url": ["10.5281/zenodo.2669586", None]})
-    with pytest.raises(ValueError, match="row names contain missing values"):
-        zenodo_info(tbl)
+    out = zenodo_info(tbl)
+    assert out["zenodo_id"].tolist()[0] == "2669586"
+    assert pd.isna(out["zenodo_id"].iloc[1])
 
 
 def test_zenodo_info_cache(apis: object, tmp_path: Path) -> None:
@@ -278,10 +280,11 @@ def test_zenodo_file_download(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -
     # small.csv has no URL, so it cannot arrive: the warning reports that
     with pytest.warns(UserWarning, match="did not arrive intact"):
         dl = zenodo_file_download("12345", download_to=str(tmp_path), max_file_size=10)
-    assert len(dl) == 1
-    assert dl["zenodo_id"].tolist() == ["12345"]
-    assert dl["key"].tolist() == ["small.csv"]
-    assert dl["downloaded"].tolist() == [False]
+    # the omitted (too large) big.bin stays in the table, not downloaded (U36)
+    assert len(dl) == 2
+    assert dl["zenodo_id"].tolist() == ["12345", "12345"]
+    assert dl["key"].tolist() == ["small.csv", "big.bin"]
+    assert dl["downloaded"].tolist() == [False, False]
 
     folder = tmp_path / "12345"
     assert folder.is_dir()
@@ -295,6 +298,28 @@ def test_zenodo_file_download(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -
     assert not dl2["downloaded"].any()
     # the second download of 12345 went into a new folder
     assert (tmp_path / "12345_1").is_dir()
+
+    # every file omitted: listed, none downloaded, no folder made (U36)
+    dl3 = zenodo_file_download("13579", download_to=str(tmp_path), max_file_size=1e-6)
+    assert dl3["key"].tolist() == ["small.csv", "big.bin"]
+    assert not dl3["downloaded"].any()
+    assert dl3["folder"].isna().all()
+    assert not (tmp_path / "13579").exists()
+
+
+def test_zenodo_file_download_folder_suffix(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # an existing record folder gives "<id>_1", then "<id>_2"
+    monkeypatch.setattr(
+        zenodo,
+        "zenodo_info",
+        _mock_info([{"id": "a_{zid}", "key": "a.csv", "size": 1, "links": {"self": None}}]),
+    )
+    for expected in ("12345", "12345_1", "12345_2"):
+        with pytest.warns(UserWarning):
+            dl = zenodo_file_download("12345", download_to=str(tmp_path))
+        assert dl["folder"].tolist() == [expected]
 
 
 def test_zenodo_file_download_ok(
@@ -460,7 +485,9 @@ def test_zenodo_file_download_recorded(mocks: object, tmp_path: Path) -> None:
         capped = zenodo_file_download(
             "5550004", download_to=str(tmp_path), max_file_size=None, max_download_size=10
         )
-    assert capped["key"].tolist() == ["a.bin", "c.txt"]  # b.bin, the largest, was omitted
+    # b.bin, the largest, was omitted: listed, not downloaded (U36)
+    assert capped["key"].tolist() == ["a.bin", "b.bin", "c.txt"]
+    assert capped["downloaded"].tolist()[1] is False
 
 
 def test_zenodo_verify_downloads(tmp_path: Path) -> None:

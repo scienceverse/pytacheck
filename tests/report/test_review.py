@@ -89,14 +89,18 @@ def test_deparse_factor_columns():
     assert 'class = c("ordered", "factor")' in out
 
 
-def test_scroll_table_follows_r_column_loop():
-    # a vector's column has a blank name: R leaves its line breaks alone
+def test_scroll_table_breaks_lines_in_every_text_column():
+    # U131: R's `table[[col]]` loop skips a vector's blank-named column,
+    # repeated names and factors, so their line breaks stayed
     block = scroll_table(["a\nb", "c"])
-    assert block.data.iloc[0, 0] == "a\nb"
-    assert '"a\\nb"' in table_chunk(block)
-    # factors are not character: kept as factors (and class stays before row.names)
-    fac = scroll_table(pd.DataFrame({"f": pd.Categorical(["x\ny"])}))
+    assert block.data.iloc[0, 0] == "a<br>b"
+    assert '"a<br>b"' in table_chunk(block)
+    rep = pd.DataFrame([["x\ny", "p\nq"]], columns=["a", "a"])
+    assert scroll_table(rep).data.iloc[0].tolist() == ["x<br>y", "p<br>q"]
+    # factors stay factors (and class stays before row.names)
+    fac = scroll_table(pd.DataFrame({"f": pd.Categorical(["x\ny", "z"])}))
     assert isinstance(fac.data["f"].dtype, pd.CategoricalDtype)
+    assert fac.data["f"].tolist() == ["x<br>y", "z"]
     chunk = scroll_table_qmd(pd.DataFrame({"f": pd.Categorical(["b", "a"])}))
     assert 'class = "data.frame", row.names = c(NA, ' in chunk
     # string dtype survives the replacement
@@ -164,9 +168,12 @@ def test_link_and_cap_num_like_r():
     assert link("10.1234/abc", type="doi") == (
         "<a href='https://doi.org/10.1234/abc' target='_blank'>doi.org/10.1234/abc</a>"
     )
-    assert link([None], type="doi") == [
-        "<a href='https://doi.org/NA' target='_blank'>doi.org/NA</a>"
+    # U8: a missing DOI gives no link (R: a link to https://doi.org/NA)
+    assert link([None, "http://doi.org/10.2/y"], type="doi") == [
+        None,
+        "<a href='https://doi.org/10.2/y' target='_blank'>doi.org/10.2/y</a>",
     ]
+    assert link(None, type="doi") is None
     assert link([None, "http://a.b"]) == [None, "<a href='http://a.b' target='_blank'>a.b</a>"]
     assert _cap_num(3.0000000001) == "3"
     assert _cap_num(1e-9) == "0"

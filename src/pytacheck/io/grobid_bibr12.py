@@ -20,8 +20,12 @@ Grobid TEI file into a paper in bibr export schema 12.x form, the form
   header), else the time of the conversion;
 * the converter's own warning codes start with ``METACHECK_``.
 
-The body sentences are made exactly as the older conversion
-(:func:`pytacheck.io.grobid._grobid_to_bibr`) makes them.
+The body sentences are made as the older conversion
+(:func:`pytacheck.io.grobid._grobid_to_bibr`) makes them, with their
+whitespace squished as in captions and footnotes (metacheck keeps the body's
+runs of spaces; U27). Each URL's href is printed where its link is, in that
+row only (see :func:`pytacheck.io.grobid._print_hrefs`; U28), and an
+author's ORCID is the first one printed (U28).
 
 Deliberate difference: ``extraction.converter`` names pytacheck and its
 version (metacheck names itself), as :func:`pytacheck.io.bibr12.paper_to_bibr12`
@@ -39,7 +43,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r.base import trimws
-from pytacheck._r.regex import grepl, gsub, strsplit, sub
+from pytacheck._r.regex import grepl, gsub, regextract, strsplit, sub
 from pytacheck.io.bibr12 import (
     BIBR12_COLS,
     _bibr12_bib_type,
@@ -58,6 +62,7 @@ from pytacheck.io.grobid import (
     _header_text,
     _html_refs,
     _na,
+    _print_hrefs,
     _r_max,
     _series_list,
     _tei_authors,
@@ -410,9 +415,13 @@ def _bibr12_utc(x: Any) -> str | None:
         total = math.floor(float(whole) + frac)
         days, rem = divmod(total, 86400)
         y, m, d = _civil_from_days(days)
+        if not 0 <= y <= 9999:
+            # not a 12.0 date-time (metacheck writes "-1-12-31T23:00:30Z"; U26)
+            return None
         hh, rem = divmod(rem, 3600)
         mi, ss = divmod(rem, 60)
-        return f"{y}-{m:02d}-{d:02d}T{hh:02d}:{mi:02d}:{ss:02d}Z"
+        # four-digit years (metacheck drops the zero padding: "26-05-27..."; U26)
+        return f"{y:04d}-{m:02d}-{d:02d}T{hh:02d}:{mi:02d}:{ss:02d}Z"
     return None
 
 
@@ -487,6 +496,9 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     body = {
         c: [tt[c][k] for k in keep] for c in ("text", "paragraph_id", "section_id", "formatted")
     }
+    # whitespace squished, as in captions, footnotes and the abstract (and in
+    # bibr's own exports); metacheck keeps the body's runs of spaces (U27)
+    body["text"] = [_squish(t) for t in body["text"]]
 
     # the same header text the older conversion makes
     sec_header = [_header_text(s[1]) for s in sec]
@@ -652,8 +664,9 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
         "foot": ids(notes),
     }
 
+    # the printed contents squished, as the text they are found in (U27)
     refs: list[tuple[Any, Any, Any, int]] = [
-        (xml_attr(node, "type"), xml_attr(node, "target"), xml_text(node), text_id[k])
+        (xml_attr(node, "type"), xml_attr(node, "target"), _squish(xml_text(node)), text_id[k])
         for k, node in _html_refs(markup, "//ref")
     ]
     urls = [r for r in refs if r[0] == "url"]
@@ -687,16 +700,8 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     link_text: list[Any] = [u[2] for u in urls]
     strip_scheme = gsub("^https?://", "", href)
     link_nospace = gsub("^https?://", "", gsub(r"\s", "", link_text))
-    for lt, h in zip(link_text, href, strict=True):
-        if lt is None:
-            text = [None] * len(text)
-            continue
-        if lt == "":
-            raise ValueError("zero-length pattern")
-        text = [
-            t if t is None or lt not in t else (None if h is None else t.replace(lt, h))
-            for t in text
-        ]
+    # each link text is replaced once, in its own row (U28)
+    text = _print_hrefs(text, text_id, link_text, href, [u[3] for u in urls])
     link_text = [
         None if (a is not None and b is not None and a == b) else lt
         for a, b, lt in zip(strip_scheme, link_nospace, link_text, strict=True)
@@ -730,10 +735,9 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     aff = _na_if_empty(au_col("affiliation"))
     aff_text = list(dict.fromkeys(a for a in aff if a is not None))
     orcid_raw = au_col("orcid")
+    # the first ORCID printed (metacheck's greedy ".*(" keeps the last; U28)
     orcid = [
-        None
-        if o is None or not grepl(_ORCID, o)
-        else str(sub(f".*({_ORCID}).*", r"https://orcid.org/\1", o))
+        None if o is None or not grepl(_ORCID, o) else f"https://orcid.org/{regextract(_ORCID, o)}"
         for o in orcid_raw
     ]
     author = {
@@ -890,7 +894,7 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
 
     # the metadata are strings (keywords a list of them): nothing for
     # .paper_coerce() to stop at
-    info, _issues = _bibr12_info(metadata, source, "12.0", extraction)
+    info = _bibr12_info(metadata, source, "12.0", extraction)
     return _bibr12_paper(paper_id, info, tables, extraction)
 
 

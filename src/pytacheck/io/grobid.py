@@ -1,11 +1,19 @@
 """Grobid TEI XML import (port of ``R/import-grobid.R``).
 
-``grobid_to_bibr()`` turns a Grobid TEI XML file into a paper object exactly
-as metacheck does: the same sentence splitting (ICU sentence boundaries, as
+``grobid_to_bibr()`` turns a Grobid TEI XML file into a paper object as
+metacheck does: the same sentence splitting (ICU sentence boundaries, as
 ``tidytext::unnest_sentences()`` finds them through stringi), the same text,
 section and paragraph ids, header handling, table/figure/footnote rows,
 bibliography parsing, cross-references, URL clean-up and equation table.
-``convert_grobid()`` is the HTTP client for a Grobid server.
+Where metacheck gets it wrong, pytacheck does not (docs/UPSTREAM_ISSUES.md
+U16, U17, U28): numbers before a tag are not glued to the word before them,
+nested divisions do not repeat paragraphs, back matter outside an inner
+division is kept, each reference gets its own raw text (with its DOI joined
+where the PDF broke it), a page range may lack an end, tables without rows,
+references without text rows and URLs without a target or link text do not
+fail the paper, a URL's href is printed only where its link is, the paper's
+DOI comes from the header, and figure/table rows are made for figure/table
+sections only. ``convert_grobid()`` is the HTTP client for a Grobid server.
 
 The TEI is parsed with lxml, which wraps the same libxml2 as R's xml2, so
 node serialisation (the ``formatted`` column, table HTML) and HTML-to-text
@@ -394,20 +402,17 @@ def _classify(ft: dict[str, list[Any]]) -> dict[str, list[Any]]:
     no_header = [None if h is None else h[:4] == "[div" for h in headers]
     for label, pattern in (("figure", r"^Figure\s*\d+"), ("table", r"^Table\s*\d+")):
         hits = grepl(pattern, text)
-        selected: list[Any] = []
+        # every div with a qualifying sentence (metacheck matches against a
+        # one-column tibble, which only works when exactly one sentence
+        # qualifies; U17)
+        targets = {
+            r_as_character(div[k])
+            for k in range(n)
+            if not _na(p[k]) and p[k] == 1 and no_header[k] and hits[k] and not _na(div[k])
+        }
         for k in range(n):
-            first = None if _na(p[k]) else p[k] == 1
-            conds = (first, no_header[k], hits[k])
-            if any(c is False for c in conds):
-                continue
-            selected.append(div[k] if all(c is True for c in conds) else None)
-        # `ft$div %in% ft[sel, "div"]` matches against a one-column data
-        # frame, which only works when exactly one (non-NA) row is selected
-        if len(selected) == 1 and not _na(selected[0]):
-            target = r_as_character(selected[0])
-            for k in range(n):
-                if not _na(div[k]) and r_as_character(div[k]) == target:
-                    section[k] = label
+            if not _na(div[k]) and r_as_character(div[k]) in targets:
+                section[k] = label
 
     # assume sections are the same class as previous if unclassified
     for i in range(1, n):
@@ -469,6 +474,18 @@ def _process_full_text(full_text: pd.DataFrame | None) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 
+def _nearest_div(node: Any) -> Any:
+    for a in node.iterancestors():
+        if a.tag == "div":
+            return a
+    return None
+
+
+def _own(nodes: Sequence[Any], div: Any) -> list[Any]:
+    """The *nodes* whose nearest enclosing ``<div>`` is *div*."""
+    return [n for n in nodes if _nearest_div(n) is div]
+
+
 def _tei_text_columns(xml: Any) -> dict[str, list[Any]]:
     header: list[Any] = []
     formatted: list[Any] = []
@@ -484,13 +501,18 @@ def _tei_text_columns(xml: Any) -> dict[str, list[Any]]:
     ## abstract
     add("Abstract", as_character(xml_find_all(xml, ".//abstract //p")), 0.0, "abstract")
 
-    ## body
-    divs = xml_find_all(xml, "//text //body //div")
+    ## body: the divs of the body text (a div in a figure or note is part of it)
+    divs = [
+        d
+        for d in xml_find_all(xml, "//text //body //div")
+        if not any(a.tag in ("figure", "note") for a in d.iterancestors())
+    ]
     for i, d in enumerate(divs, 1):
-        h = as_character(xml_find_first(d, ".//head"))
-        if h is None:
-            h = f"[div-{i:02d}]"
-        ps = xml_find_all(d, ".//p")
+        # a div's own head and paragraphs, not those of a div nested in it
+        # (metacheck repeats a nested div's paragraphs in the outer div; U17)
+        heads = _own(xml_find_all(d, ".//head"), d)
+        h = as_character(heads[0]) if heads else f"[div-{i:02d}]"
+        ps = _own(xml_find_all(d, ".//p"), d)
         add(h, as_character(ps) if ps else [h], float(i), None)
 
     ## back matter
@@ -501,13 +523,21 @@ def _tei_text_columns(xml: Any) -> dict[str, list[Any]]:
             types.append(t)
     back_rows: list[tuple[Any, int, Any, str]] | None = None
     for t in types:
-        bdivs = xml_find_all(xml, f"//back //div[@type='{t}'] //div")
+        # the divs inside a typed div, and the typed div itself when it holds
+        # paragraphs of its own (metacheck drops those; U17)
+        typed = f"//back //div[@type='{t}']"
+        bdivs = [
+            d
+            for d in xml_find_all(xml, f"{typed} | {typed} //div")
+            if d.get("type") != t or _own(xml_find_all(d, ".//p"), d)
+        ]
         if not bdivs:
             continue
         back_rows = back_rows or []
         for d in bdivs:
-            h = as_character(xml_find_first(d, ".//head"))
-            for k, node in enumerate(xml_find_all(d, ".//p"), 1):
+            heads = _own(xml_find_all(d, ".//head"), d)
+            h = as_character(heads[0]) if heads else None
+            for k, node in enumerate(_own(xml_find_all(d, ".//p"), d), 1):
                 back_rows.append((h, k, as_character(node), t))
     if back_rows is not None:
         # number the back-matter divs after the body divs (one per first <p>)
@@ -707,6 +737,55 @@ def _tei_url_columns(formatted: Sequence[Any], text_ids: Sequence[Any]) -> dict[
     }
 
 
+def _prints_url(link_text: str, href: str) -> bool:
+    """Whether *link_text* prints (part of) the URL *href* (``osf  .io/abc``, ``OSF``)."""
+    printed = regex.sub(r"\s", "", link_text).lower()
+    printed = regex.sub(r"^https?://", "", printed).strip("([<.,;:)]>")
+    return printed != "" and printed in regex.sub(r"^https?://", "", href.lower())
+
+
+def _print_hrefs(
+    text: Sequence[Any],
+    text_ids: Sequence[Any],
+    link_text: Sequence[Any],
+    href: Sequence[Any],
+    url_text_ids: Sequence[Any],
+) -> list[Any]:
+    """The text rows with each URL's (cleaned) href printed where its link is.
+
+    In the row the ``<ref type="url">`` is in, after the URLs of that row
+    handled before it, a link text that prints the URL (with the stray spaces
+    of PDF extraction, or part of it: ``https:// osf.io/abc``, ``OSF``) is
+    replaced by the href, and a link text in words (``the GitHub repo``) is
+    kept with the href printed after it, so text searches find every URL and
+    no words are lost.
+
+    metacheck replaces every occurrence of each link text in every row by the
+    href, one URL after another: a short link text (``Fig``, ``osf``) is also
+    replaced inside other words, other rows (references, captions) and
+    earlier replacements (``https://https://osf.io/q2.io/q2``), the words of a
+    link Grobid drew around a whole sentence are lost (with the statistics in
+    it), a URL without a target turns every row printing its link text into
+    NA and an empty link text fails the paper (U17, U28). URLs without a
+    target or link text are left alone.
+    """
+    out = list(text)
+    row_of = {tid: k for k, tid in enumerate(text_ids) if not _na(tid)}
+    cursor: dict[int, int] = {}
+    for lt, h, tid in zip(link_text, href, url_text_ids, strict=True):
+        k = None if _na(tid) else row_of.get(tid)
+        if k is None or not lt or not h or out[k] is None:
+            continue
+        t = out[k]
+        at = t.find(lt, cursor.get(k, 0))
+        if at < 0:
+            continue
+        printed = h if _prints_url(lt, h) else f"{lt} {h}"
+        out[k] = t[:at] + printed + t[at + len(lt) :]
+        cursor[k] = at + len(printed)
+    return out
+
+
 def _url_frame(cols: dict[str, list[Any]]) -> pd.DataFrame:
     return pd.DataFrame(
         {
@@ -759,15 +838,16 @@ def _xml2bib(ref: Any) -> dict[str, Any]:
     if page_unit is not None:
         pages = xml_text(page_unit)
         if pages == "":
+            # a page range in the attributes; either end may be missing
+            # (metacheck fails the whole paper then; U17)
             attrs = {
                 (k.rsplit("}", 1)[-1] if k.startswith("{") else k): v
                 for k, v in reversed(page_unit.attrib.items())
             }
-            if "from" not in attrs or "to" not in attrs:
-                raise IndexError("subscript out of bounds")
-            b["pages"] = f"{attrs['from']}-{attrs['to']}"
-            b["first_page"] = attrs["from"]
-            b["last_page"] = attrs["to"]
+            if "from" in attrs:
+                b["first_page"] = attrs["from"]
+            if "to" in attrs:
+                b["last_page"] = attrs["to"]
         else:
             b["pages"] = pages
             b["first_page"] = pages
@@ -790,6 +870,25 @@ def _xml2bib(ref: Any) -> dict[str, Any]:
     return b
 
 
+def _join_doi(text: str, doi: Any) -> str:
+    """*text* with the spaces removed from the reference's own DOI where it prints it.
+
+    Grobid's raw reference text keeps the line breaks of the PDF as spaces,
+    also inside a DOI (``https://doi.org/10.1037/0022- 3514.91.2.295``). A
+    DOI has no spaces, so where the text prints the DOI Grobid parsed for the
+    reference (``<idno type="DOI">``) with spaces in it, they are removed.
+    (metacheck's clean-up of numbers before a tag happened to join the part of
+    a DOI on the last line of a reference; see U16.)
+    """
+    if not text or _na(doi) or not doi or " " not in text:
+        return text
+    pattern = r"\s*".join(regex.escape(c) for c in str(doi))
+    m = regex.search(pattern, text, flags=regex.IGNORECASE)
+    if m is None or " " not in m.group():
+        return text
+    return text[: m.start()] + m.group().replace(" ", "") + text[m.end() :]
+
+
 def _tei_bib_columns(xml: Any) -> dict[str, list[Any]]:
     refs = xml_find_all(xml, "//listBibl //biblStruct")
     if not refs:
@@ -801,21 +900,16 @@ def _tei_bib_columns(xml: Any) -> dict[str, list[Any]]:
             if k not in names:
                 names.append(k)
     cols: dict[str, list[Any]] = {k: [r.get(k) for r in records] for k in names}
-    n = len(records)
 
     ids = gsub("b", "", xml_attr(refs, "id"))
     cols["bib_id"] = list(coerce_column(pd.Series(ids, dtype=object), "integer"))
 
-    raw = _xml_find_text(refs, ".//note[@type='raw_reference']")
+    # each reference's own raw text ("" without one): metacheck collects the
+    # notes of all references at once, so one missing note fails the paper
+    # (or, with a single note, gives its text to every reference; U17)
+    raw = [_xml_find_text(r, ".//note[@type='raw_reference']")[0] for r in refs]
     raw = [sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", t)) for t in gsub(r"\s+", " ", raw)]
-    if len(raw) == 1:
-        raw = raw * n
-    elif len(raw) != n:
-        raise ValueError(
-            f"Assigned data `value` must be compatible with existing data. "
-            f"Existing data has {n} rows. Assigned data has {len(raw)} rows."
-        )
-    cols["bib_text"] = raw
+    cols["bib_text"] = [_join_doi(t, d) for t, d in zip(raw, cols["doi"], strict=True)]
 
     # extract first occurrence of year from string
     year = regextract(r"\b[12]\d{3}[a-z]?\b", cols["year"])
@@ -1018,7 +1112,9 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
     keywords: list[str] | None = _xml_find_text(xml, ".//textClass/keywords/term")
     if keywords is not None and keywords[0] == "":
         keywords = None
-    doi = _xml_find1_text(xml, ".//idno[@type='DOI']")
+    # the paper's DOI is in the header (metacheck takes the first DOI anywhere,
+    # which is a reference's when the paper has none; U17)
+    doi = _xml_find1_text(xml, "//teiHeader//idno[@type='DOI']")
     grobid_version = xml_attr(xml_find_first(xml, ".//application[@ident='GROBID']"), "version")
     input_format = "Unknown TEI XML" if grobid_version is None else f"grobid {grobid_version}"
     p.info = pd.DataFrame(
@@ -1065,11 +1161,13 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
     }
 
     # figure / table ----
+    # (metacheck's logical index also makes a row, with section_id NA, for
+    # every section without a type; U17)
     def sections_of(kind: str) -> list[Any]:
         return [
-            None if st is None else sid
+            sid
             for sid, st in zip(section["section_id"], section["section_type"], strict=True)
-            if st is None or st == kind
+            if st == kind
         ]
 
     fig_sec = sections_of("figure")
@@ -1087,23 +1185,14 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
     contents: list[Any] = [None] * len(tab_sec)
     tabs = xml_find_all(xml, "//figure[@type='table']")
     if len(tabs) == len(tab_sec):
-        n_tab = len(tab_sec)
         for i, tab in enumerate(tabs):
             tab_node = xml_find_first(tab, ".//table")
-            html[i] = "NA" if tab_node is None else as_character(tab_node)
-            value = _tei_table_contents(tab_node)
-            if value is not None:
-                contents[i] = value
-                continue
-            # R: `paper$table$contents[[i]] <- NULL` drops element i; the
-            # tibble then recycles a length-1 list and rejects other lengths
-            shortened = contents[:i] + contents[i + 1 :]
-            if len(shortened) != 1:
-                raise ValueError(
-                    "Assigned data `*vtmp*` must be compatible with existing data. "
-                    f"Existing data has {n_tab} rows. Assigned data has {len(shortened)} rows."
-                )
-            contents = shortened * n_tab
+            # a table without a <table> node has no html (metacheck: "NA"), and
+            # one without rows no contents (metacheck's `contents[[i]] <- NULL`
+            # drops the element, which fails the paper or, with two tables,
+            # gives the other table's contents to both; U17)
+            html[i] = None if tab_node is None else as_character(tab_node)
+            contents[i] = _tei_table_contents(tab_node)
     p.table = pd.DataFrame(
         {
             "table_id": _column(range(1, len(tab_sec) + 1), "Int64"),
@@ -1118,10 +1207,7 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
     bib = _tei_bib_columns(xml)
     n_bib = len(bib["bib_text"])
     if n_bib > 0:
-        if not sec:
-            # R: sapply() over zero headers returns list(), and bind_rows()
-            # cannot combine that list column with the "References" row
-            raise ValueError("Can't combine `..1$header` <list> and `..2$header` <character>.")
+        # (metacheck fails when the paper has references but no text; U17)
         section_id = _r_max(section["section_id"]) + 1
         section["section_id"].append(section_id)
         section["header"].append("References")
@@ -1162,18 +1248,7 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
     link_text = url["link_text"]
     strip_scheme = gsub("^https?://", "", href)
     link_nospace = gsub("^https?://", "", gsub(r"\s", "", link_text))
-    body = text["text"]
-    for lt, h in zip(link_text, href, strict=True):
-        if lt is None:
-            body = [None] * len(body)
-            continue
-        if lt == "":
-            raise ValueError("zero-length pattern")
-        body = [
-            t if t is None or lt not in t else (None if h is None else t.replace(lt, h))
-            for t in body
-        ]
-    text["text"] = body
+    text["text"] = _print_hrefs(text["text"], text["text_id"], link_text, href, url["text_id"])
     link_text = [
         None if (a is not None and b is not None and a == b) else lt
         for a, b, lt in zip(strip_scheme, link_nospace, link_text, strict=True)

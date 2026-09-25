@@ -133,11 +133,14 @@ def test_dryad_info_errors_and_offline(mock_api: object, monkeypatch: pytest.Mon
         dryad_info("10.5061/dryad.j1fd7")
 
 
-def test_dryad_info_table_with_missing_url_errors_like_r(mock_api: object) -> None:
-    # R: data.frame() takes .dryad_doi()'s URL names as row names and fails on NA
+def test_dryad_info_table_with_a_missing_url(mock_api: object) -> None:
+    # U33: metacheck's data.frame() takes .dryad_doi()'s URL names as row names
+    # and fails on the NA; the row is kept without a DOI
     table = pd.DataFrame({"u": ["10.5061/dryad.j1fd7", None]})
-    with pytest.raises(ValueError, match="row names contain missing values"):
-        dryad_info(table)
+    out = dryad_info(table)
+    assert out["u"].tolist()[0] == "10.5061/dryad.j1fd7"
+    assert out["dryad_doi"].tolist()[0] == "10.5061/dryad.j1fd7"
+    assert pd.isna(out["dryad_doi"].iloc[1])
 
 
 def test_dryad_info_uses_the_listing_cache(mock_api: object) -> None:
@@ -172,6 +175,41 @@ def test_private_dryad_info_requests_encoded_doi(serve: object) -> None:
     assert info["files"].iloc[0] == []
     assert seen[0].headers["User-Agent"] == "metacheck"
     assert "Authorization" not in seen[0].headers
+
+
+def test_dryad_info_follows_the_file_listing_pages(serve: object) -> None:
+    # U38: metacheck reads only the first page of a version's file listing
+    base = "https://datadryad.org/api/v2"
+    body = {
+        "title": "T",
+        "identifier": "doi:10.5061/dryad.p",
+        "_links": {"stash:version": {"href": "/api/v2/versions/9"}},
+    }
+
+    def page(names: list[str], nxt: str | None) -> httpx.Response:
+        links = {"self": {"href": "x"}}
+        if nxt is not None:
+            links["next"] = {"href": nxt}
+        files = [{"path": n, "size": 1} for n in names]
+        return httpx.Response(200, json={"_embedded": {"stash:files": files}, "_links": links})
+
+    seen = serve(  # type: ignore[operator]
+        {
+            f"{base}/datasets/doi%3A10.5061%2Fdryad.p": httpx.Response(200, json=body),
+            f"{base}/versions/9/files": page(["a.csv", "b.csv"], "/api/v2/versions/9/files?page=2"),
+            f"{base}/versions/9/files?page=2": page(["c.csv"], "/api/v2/versions/9/files?page=3"),
+            f"{base}/versions/9/files?page=3": page([], None),
+        }
+    )
+    info = _dryad_info("10.5061/dryad.p")
+    assert [f["path"] for f in info["files"].iloc[0]] == ["a.csv", "b.csv", "c.csv"]
+    assert len(seen) == 4
+    # a listing that points back at a page already read stops there
+    serve(  # type: ignore[operator]
+        {f"{base}/versions/9/files?page=3": page(["d.csv"], "/api/v2/versions/9/files")}
+    )
+    info = _dryad_info("10.5061/dryad.p")
+    assert [f["path"] for f in info["files"].iloc[0]] == ["a.csv", "b.csv", "c.csv", "d.csv"]
 
 
 # --------------------------------------------------------------------------- tokens
@@ -427,8 +465,9 @@ def test_dryad_file_download(mock_api: object, tmp_path: Path) -> None:
         dl = dryad_file_download("https://doi.org/10.5061/dryad.j1fd7", download_to=str(tmp_path))
     assert dl is not None
     assert dl.columns.tolist() == list(dryad._FILE_COLUMNS)
-    assert dl["key"].tolist() == ["data.csv", "README.md", "sub/notes.txt", "nolink.txt"]
-    assert dl["downloaded"].tolist() == [True, False, True, False]
+    # the omitted (too large) big.bin stays in the table, not downloaded (U36)
+    assert dl["key"].tolist() == ["data.csv", "README.md", "big.bin", "sub/notes.txt", "nolink.txt"]
+    assert dl["downloaded"].tolist() == [True, False, False, True, False]
     assert dl["checksum_ok"].tolist()[:2] == [True, False]
     folder = tmp_path / "10.5061_dryad.j1fd7"
     assert (folder / "data.csv").read_bytes() == b"x,y\n1,2\n"
@@ -439,10 +478,11 @@ def test_dryad_file_download(mock_api: object, tmp_path: Path) -> None:
 def test_dryad_file_download_nothing_to_do(mock_api: object, tmp_path: Path) -> None:
     assert dryad_file_download("not a doi", download_to=str(tmp_path)) is None
     assert dryad_file_download("10.5061/dryad.nofiles", download_to=str(tmp_path)) is None
-    assert (
-        dryad_file_download("10.5061/dryad.j1fd7", download_to=str(tmp_path), max_file_size=1e-6)
-        is None
-    )
+    # every file omitted: listed, none downloaded, no folder made (U36)
+    out = dryad_file_download("10.5061/dryad.j1fd7", download_to=str(tmp_path), max_file_size=1e-6)
+    assert out is not None and len(out) == 5
+    assert not out["downloaded"].any()
+    assert out["folder"].isna().all()
     assert os.listdir(tmp_path) == []
 
 
@@ -523,6 +563,10 @@ def test_dryad_links_on_an_empty_paper_list() -> None:
     assert len(out) == 0
 
 
-def test_dryad_file_download_aborts_on_an_empty_body(mock_api: object, tmp_path: Path) -> None:
-    with pytest.raises(ValueError, match="Can't retrieve empty body"):
-        dryad.dryad_file_download("10.5061/dryad.rev2", download_to=str(tmp_path))
+def test_dryad_file_download_keeps_an_empty_file(mock_api: object, tmp_path: Path) -> None:
+    # U36: metacheck aborts the whole download on a zero-byte file
+    out = dryad.dryad_file_download("10.5061/dryad.rev2", download_to=str(tmp_path))
+    assert out is not None
+    empty = out[out["key"] == "empty.txt"]
+    assert empty["downloaded"].tolist() == [True]
+    assert empty["size_on_disk"].tolist() == [0]

@@ -207,11 +207,13 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper('x'), 'rp_no_details')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['x']), 'rp_no_details')"}}
 - "id": "module_report.null_summary"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U129", "reason": "a module without a summary_text shows its report (R shows '...' and drops the report: all(NULL == report) is TRUE)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper('x'), 'rp_null_summary')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['x']), 'rp_null_summary')"}}
 - "id": "module_report.bad_traffic_light"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U128", "reason": "an undefined traffic light keeps the heading, without an emoji (R's sprintf() with NULL drops it)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
@@ -266,6 +268,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_report_qmd(demopaper(), 'marginal')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(pc.demopaper(), 'marginal')"}}
 - "id": "report_qmd.demo.all_sections"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U128", "reason": "the summary line of an undefined traffic light is written without an emoji (R: literal 'character(0)'), its heading is kept and a module without a summary_text shows its report (U129)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
@@ -276,6 +279,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_report_qmd(test_paper('Nothing.'), c('rp_list_summary', 'rp_error'), list(rp_list_summary = list(na = TRUE)))}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(pc.test_paper(['Nothing.']), ['rp_list_summary', 'rp_error'], {'rp_list_summary': {'na': True}})"}}
 - "id": "report_qmd.no_paper"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U128", "reason": "report_qmd() without a paper writes the report without title or DOI (R's default paper = list() always errors)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
@@ -387,6 +391,7 @@
 
 # --- report_repository() ------------------------------------------------------------
 - "id": "report_repository.stand_in"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U129", "reason": "a module with a description but no details keeps its How It Works callout (R's gregexpr() on NULL details errors and drops it)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":

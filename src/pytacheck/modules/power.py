@@ -166,12 +166,12 @@ def _summary_table(table: pd.DataFrame) -> pd.DataFrame:
 @module(
     title="Power Analysis Check",
     description="""
-        This module uses uses regular expressions to identify sentences that contain a statistical power analysis. If specified by the user, it also uses a large language module (LLM) to extract information reported in power analyses, including the statistical test, sample size, alpha level, desired level of power, and magnitude and type of effect size.
+        This module uses regular expressions to identify sentences that contain a statistical power analysis. If specified by the user, it also uses a large language model (LLM) to extract information reported in power analyses, including the statistical test, sample size, alpha level, desired level of power, and magnitude and type of effect size.
     """,
     details="""
-        The Power Analysis Check module uses regular expressions to identify sentences that contain a statistical power analysis. Without the use of an LMM, the module uses regular expressions to classify the power analysis as a-priori, sensitivity or post-hoc. With the use of an LMM, it checks if the power analysis is reported with all required information.
+        The Power Analysis Check module uses regular expressions to identify sentences that contain a statistical power analysis. Without the use of an LLM, the module uses regular expressions to classify the power analysis as a-priori, sensitivity or post-hoc. With the use of an LLM, it checks if the power analysis is reported with all required information.
 
-        The regular expressions can miss power analyses, or fail to classify them correctly. The type of power analysis is often difficult to classify, which can easily be solved by explicitly specifying the type of power analysis as 'a-priori', 'sensitivity', or 'post-hoc'. Note that 'post-hoc' or 'observed' power is rarely useful. The LMM can fail to identify information in the paper, and will not have access to information in paragraphs in the paper other than those that contain the word 'power'. This package was validated by the Metacheck team on articles in Psychological Science.
+        The regular expressions can miss power analyses, or fail to classify them correctly. The type of power analysis is often difficult to classify, which can easily be solved by explicitly specifying the type of power analysis as 'a-priori', 'sensitivity', or 'post-hoc'. Note that 'post-hoc' or 'observed' power is rarely useful. The LLM can fail to identify information in the paper, and will not have access to information in paragraphs in the paper other than those that contain the word 'power'. This package was validated by the Metacheck team on articles in Psychological Science.
 
         <validation>In a sample of 128 papers with 246 instances of power statements, 203 were correctly detected (true positives), 22 were missed (false negatives) and 21 were incorrectly detected (false positives). Overall, among all instances flagged as power statements, 90.6% were correct (positive predictive value).</validation>
     """,

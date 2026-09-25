@@ -7,7 +7,7 @@ The live-data helper the module relies on, ``.detect_live_data()``
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import pandas as pd
@@ -179,13 +179,30 @@ def _may_mention_ethics(frame: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def _check_levels(paper_ids: Sequence[str]) -> None:
-    """R's ``factor(x, paper_ids)`` refuses duplicated levels."""
-    seen: set[str] = set()
-    for i, pid in enumerate(paper_ids):
-        if pid in seen:
-            raise ValueError(f"factor level [{i + 1}] is duplicated")
-        seen.add(pid)
+def _paper_ids(paper: Any) -> list[str]:
+    """The IDs of the papers, once each, in list order.
+
+    metacheck uses ``paper_id(paper)`` (the ``info`` tables) as factor levels,
+    so duplicated IDs stop the module ("factor level [2] is duplicated", U101),
+    and a paper without an ``info`` row is left out of the summary while its
+    sentences get an ``NA`` paper ID (U102). Here each paper contributes its
+    ``info`` IDs, or its own ID when its ``info`` table is empty.
+    """
+    from pytacheck.papers.tables import paper_id
+
+    if isinstance(paper, Paper):
+        papers: list[Any] = [paper]
+    elif is_paper_list(paper):
+        papers = list(paper.values()) if isinstance(paper, Mapping) else list(paper)
+    else:
+        return paper_id(paper)  # a table: "paper must be a paper or paperlist object."
+    ids: list[str] = []
+    for p in papers:
+        own = paper_id(p)
+        if not own and isinstance(p, Paper) and isinstance(p.paper_id, str):
+            own = [p.paper_id]
+        ids.extend(own)
+    return list(dict.fromkeys(ids))
 
 
 def _arrange(table: pd.DataFrame, paper_ids: Sequence[str]) -> pd.DataFrame:
@@ -336,23 +353,26 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     data; ``green``: every such paper has an ethics statement; ``red``: some
     lack one), a summary text and, for a single paper, the report.
 
-    Like R, *paper* may also be a plain list of papers. Reproduces R's errors:
-    duplicated paper IDs (``factor level [i] is duplicated``), an empty paper
-    list, a paper whose ``info`` table is empty (``paper()``), which has no
-    paper ID, a table or a character vector instead of a paper, and a text
-    table without a ``text`` column whose first column matches a pattern.
+    Like R, *paper* may also be a plain list of papers. Papers with duplicated
+    IDs are summarised together, a paper without an ``info`` row is summarised
+    under its own ID, and a text table without a ``text`` column has no
+    sentences (metacheck stops or mislabels these, U101/U102). Reproduces R's
+    errors for an empty paper list, a table or a character vector instead of a
+    paper.
     """
-    from pytacheck.papers.tables import paper_id
     from pytacheck.text.extract import _detect_live_data
 
     # R runs text_search(paper, ethics_words) first, which rejects anything but a
     # paper, a paper list (a plain list of papers too) or a table
     frame = _search_frame(paper)
+    if "text" not in frame.columns:
+        # a text table without a `text` column has no sentences to search
+        # (metacheck searches its first column instead and fails, U102)
+        frame = frame.iloc[0:0]
     # a table fails here: "paper must be a paper or paperlist object."
-    paper_ids = paper_id(paper)
-    # R: these checks fail later in the module (factor(), left_join() and the
-    # list-column assignment on a 0-row summary table); failing first is cheaper
-    _check_levels(paper_ids)
+    paper_ids = _paper_ids(paper)
+    # R: these checks fail later in the module (left_join() and the list-column
+    # assignment on a 0-row summary table); failing first is cheaper
     if not paper_ids:
         if not isinstance(paper, Paper) and is_paper_list(paper) and len(paper) == 0:
             # paper_id() is NULL, and data.frame(paper_id = NULL) has no column to join by
@@ -363,10 +383,6 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     table = text_search(_may_mention_ethics(frame), list(_ETHICS_WORDS))
     table["ethics"] = pd.Series([True] * len(table), index=table.index, dtype="boolean")
     if "text" not in table.columns:
-        # the paper's text table has no `text` column (text_search() searched its
-        # first column instead and dropped `text`)
-        if len(table) > 0:
-            raise ValueError("Assigned data `character(0)` must be compatible with existing data.")
         table["text"] = pd.Series([], dtype="string")
 
     live_table = _detect_live_data(frame).copy()
@@ -425,8 +441,10 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     # report ----
     report: str | None = None
     if n_papers == 1:
-        # R: table$text[table$ethics] -- every ethics row, not just the unique texts
-        ethics_quote = "\n\n> ".join(_as_text(t) for t in table["text"].tolist())
+        # each statement once (metacheck quotes `table$text[table$ethics]`, every
+        # row, so a sentence found at several text_ids was repeated, U102)
+        statements = ethics_rows[0][1] or []
+        ethics_quote = "\n\n> ".join(_as_text(t) for t in statements)
         if not needs[0]:
             report = _REPORT_APPROVED.format(ethics_quote) if approved[0] else _REPORT_NONE
         else:

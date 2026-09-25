@@ -44,7 +44,6 @@ _EOCD_SIG = b"PK\x05\x06"  # End-Of-Central-Directory record
 _CD_SIG = b"PK\x01\x02"  # central-directory file header
 _LOCAL_SIG = b"PK\x03\x04"  # local file header
 _ZIP64 = 4294967295.0  # 0xFFFFFFFF: the Zip64 sentinel in a 4-byte field
-_INFLATE_DEFAULT_BUFFER = 32768  # zip::inflate()'s output buffer when size = NULL
 
 _COLUMNS = ("name", "size", "method", "csize", "offset", "crc")
 
@@ -82,11 +81,8 @@ def _chr_list(x: Any) -> list[str | None]:
 
 
 def _grepl(pattern: str, x: Sequence[str | None], ignore_case: bool = False) -> list[bool]:
-    """``grepl()``: ``FALSE`` for ``NA`` and for a string that is not valid UTF-8."""
-    from pytacheck.fileinfo._strings import invalid_utf8
-
-    hits = grepl(pattern, x, ignore_case=ignore_case)
-    return [bool(h) and not invalid_utf8(v) for h, v in zip(hits, x, strict=True)]
+    """``grepl()`` (``FALSE`` for ``NA``)."""
+    return [bool(h) for h in grepl(pattern, x, ignore_case=ignore_case)]
 
 
 def _entry_frame(rows: dict[str, list[Any]]) -> pd.DataFrame:
@@ -117,26 +113,10 @@ def _le_int(raw: Any, at: int, n: int) -> float:
     return float(int.from_bytes(chunk, "little"))
 
 
-def _raw_slice(data: bytes, first: int, last: int) -> bytes:
-    """R ``raw[first:last]`` (1-based, inclusive; a descending range reads backwards).
+def _raw_to_char(b: bytes, utf8_flag: bool = True) -> str:
+    """``rawToChar()`` of a member name, decoded by :func:`_decode_zip_name`.
 
-    Out-of-range positions read as ``00``; position 0 is dropped, as in R.
-    """
-    step = 1 if last >= first else -1
-    out = bytearray()
-    for i in range(first, last + step, step):
-        if i == 0:
-            continue
-        out.append(data[i - 1] if 0 < i <= len(data) else 0)
-    return bytes(out)
-
-
-def _raw_to_char(b: bytes) -> str:
-    """``rawToChar()`` + ``Encoding(x) <- "UTF-8"``.
-
-    Trailing nuls are dropped and an embedded nul is an error, as in R; bytes
-    that are not valid UTF-8 are kept (as lone surrogates, see
-    :mod:`pytacheck.fileinfo._strings`).
+    Trailing nuls are dropped and an embedded nul is an error, as in R.
     """
     b = b.rstrip(b"\x00")
     if b"\x00" in b:
@@ -144,7 +124,25 @@ def _raw_to_char(b: bytes) -> str:
             "\\0" if c == 0 else (f"\\{c:03o}" if c < 32 or c == 127 else chr(c)) for c in b
         )
         raise ValueError(f"embedded nul in string: '{shown}'")
-    return b.decode("utf-8", errors="surrogateescape")
+    return _decode_zip_name(b, utf8_flag)
+
+
+def _decode_zip_name(raw: bytes, utf8_flag: bool) -> str:
+    """A zip member name as text.
+
+    Flagged UTF-8 (general purpose bit 11) is UTF-8. An unflagged name is
+    UTF-8 when it decodes as UTF-8 (many tools write UTF-8 without the flag),
+    else CP437, the zip format's default (older Windows tools). metacheck
+    reads every name as UTF-8, and its string functions then fail on a CP437
+    name (U76). A flagged name that is not valid UTF-8 keeps its undecodable
+    bytes as lone surrogates.
+    """
+    if not utf8_flag:
+        try:
+            return raw.decode("utf-8")
+        except UnicodeDecodeError:
+            return raw.decode("cp437")
+    return raw.decode("utf-8", errors="surrogateescape")
 
 
 def _parse_zip_central_dir(raw: Any) -> pd.DataFrame | None:
@@ -187,6 +185,7 @@ def _parse_zip_central_dir(raw: Any) -> pd.DataFrame | None:
             break
         if data[p - 1 : p + 3] != _CD_SIG:
             break
+        flags = int(_le_int(data, p + 8, 2))
         method = _le_int(data, p + 10, 2)
         crc = _le_int(data, p + 16, 4)
         csize = _le_int(data, p + 20, 4)
@@ -195,7 +194,13 @@ def _parse_zip_central_dir(raw: Any) -> pd.DataFrame | None:
         extra_len = int(_le_int(data, p + 30, 2))
         comm_len = int(_le_int(data, p + 32, 2))
         offset = _le_int(data, p + 42, 4)
-        nm = _raw_to_char(_raw_slice(data, p + 46, p + 46 + name_len - 1))
+        # an empty name is "" (metacheck's raw[(p+46):(p+45)] reads 2 bytes
+        # backwards, which can fail with an embedded-nul error: U72)
+        nm = (
+            _raw_to_char(data[p + 45 : p + 45 + name_len], bool(flags & 0x800))
+            if name_len > 0
+            else ""
+        )
         rows["name"].append(nm)
         rows["size"].append(usize)
         rows["method"].append(method)
@@ -235,14 +240,20 @@ def _head_total(url: str) -> float | None:
     return _content_length(resp)
 
 
+#: *total* for :func:`_http_range_tail` when a HEAD answered without a Content-Length.
+_NO_LENGTH = "no content-length"
+
+
 def _http_range_tail(url: str, n: float, total: Any = None) -> bytes | None:
     """Port of ``R/zip-peek.R::.http_range_tail()``: the last *n* bytes of *url*.
 
     Uses an HTTP ``Range`` request (a ``HEAD`` first for the total size when
-    *total* is ``None``). Returns the bytes -- possibly fewer than *n* for a
-    small file -- or ``None`` on failure, when the size is unknown, or when
-    the server answered neither 206 nor 200. A 200 (range ignored) still
-    yields the tail of the whole body.
+    *total* is ``None``). When the HEAD answer has no ``Content-Length``
+    (*total* :data:`_NO_LENGTH`), a suffix range (``bytes=-<n>``) asks for
+    the tail without it (metacheck fails there: U72). Returns the bytes --
+    possibly fewer than *n* for a small file -- or ``None`` on failure, when
+    the size cannot be read, or when the server answered neither 206 nor 200.
+    A 200 (range ignored) still yields the tail of the whole body.
     """
     from pytacheck.archives.download import _storage_request, _wait_out_known_rate_limit
 
@@ -250,12 +261,18 @@ def _http_range_tail(url: str, n: float, total: Any = None) -> bytes | None:
         if total is None:
             _wait_out_known_rate_limit(url)
             total = _head_total(url)
-        if total is None or is_na(total) or total <= 0:
-            return None
-        total = float(total)
-        start = max(0.0, total - n)
+            if total is None:
+                total = _NO_LENGTH
+        if isinstance(total, str) and total == _NO_LENGTH:
+            rng = f"bytes=-{float(n):.0f}"
+        else:
+            if is_na(total) or total <= 0:
+                return None
+            total = float(total)
+            start = max(0.0, total - n)
+            rng = f"bytes={start:.0f}-{total - 1:.0f}"
         _wait_out_known_rate_limit(url)
-        r = _storage_request("GET", url, headers={"Range": f"bytes={start:.0f}-{total - 1:.0f}"})
+        r = _storage_request("GET", url, headers={"Range": rng})
         if r.status_code == 206:
             return bytes(r.content)
         if r.status_code == 200:
@@ -320,9 +337,7 @@ def zip_peek(url: str, tail_bytes: float = 131072) -> pd.DataFrame | None:
     except Exception:
         total = float("nan")
     if total is None:
-        # R: no Content-Length is numeric(0), which .http_range_tail() cannot use
-        # (its `||` test errors, so it returns NULL without another request)
-        total = float("nan")
+        total = _NO_LENGTH  # the size is unknown: ask for the tail by a suffix range
 
     def done(value: pd.DataFrame | None) -> pd.DataFrame | None:
         with _CACHE_LOCK:
@@ -337,7 +352,10 @@ def zip_peek(url: str, tail_bytes: float = 131072) -> pd.DataFrame | None:
         if cd is not None:
             keep = [not d for d in _grepl("/$", cd["name"].tolist())]  # drop directories
             return done(cd.loc[keep].reset_index(drop=True))
-        if total is not None and not is_na(total) and nb >= total:
+        if isinstance(total, str):
+            if len(raw) < nb:
+                break  # whole file seen
+        elif not is_na(total) and nb >= total:
             break  # whole file seen
     return done(None)
 
@@ -349,11 +367,12 @@ def _zip_inflate_member(comp: Any, method: Any, size: Any = None) -> bytes | Non
     """Port of ``R/zip-peek.R::.zip_inflate_member()``: decompress one member.
 
     Method 0 (stored) returns *comp* as is, method 8 (deflate) is inflated,
-    any other method gives ``None``. Reproduces ``zip::inflate()`` as metacheck
-    calls it: with *size* (the member's uncompressed size) the whole member
-    comes back; without it the output stops at 32768 bytes (the zip package's
-    buffer never grows -- see upstream issue #384). Undecodable data gives
-    whatever could be decoded (often nothing), as ``zip::inflate()`` does.
+    any other method gives ``None``. With *size* (the member's uncompressed
+    size) the output stops one byte past it, so an over-long member shows up
+    as a size mismatch; without it the whole member is inflated
+    (``zip::inflate()``, as metacheck calls it, silently stops at 32768
+    bytes: U71). Undecodable data gives whatever could be decoded (often
+    nothing), as ``zip::inflate()`` does.
     """
     data = _as_bytes(comp)
     m = _num(method)
@@ -362,21 +381,23 @@ def _zip_inflate_member(comp: Any, method: Any, size: Any = None) -> bytes | Non
     if m != 8:
         return None
     s = _num(size)
-    limit = int(s) + 1 if not is_na(s) and s >= 0 else _INFLATE_DEFAULT_BUFFER
-    limit = max(limit, _INFLATE_DEFAULT_BUFFER)
+    limit = int(s) + 1 if not is_na(s) and s >= 0 else None
     d = zlib.decompressobj(-15)
     out = bytearray()
     try:
         # feed in pieces so the output decoded before a corrupt block is kept
-        for i in range(0, len(data), 4096):
-            out += d.decompress(data[i : i + 4096], max(limit - len(out), 1))
+        for i in range(0, len(data), 65536):
+            if limit is None:
+                out += d.decompress(data[i : i + 65536])
+                continue
+            out += d.decompress(data[i : i + 65536], max(limit - len(out), 1))
             if len(out) >= limit or d.unconsumed_tail:
                 break
+        if limit is None:
+            out += d.flush()
     except zlib.error:
         pass
-    if is_na(s) or s < 0:
-        return bytes(out[:_INFLATE_DEFAULT_BUFFER])
-    return bytes(out[:limit])
+    return bytes(out if limit is None else out[:limit])
 
 
 def _crc32(bytes: Any) -> float:
@@ -394,18 +415,13 @@ def _zip_crc_ok(
     ``True``/``False``, or ``None`` (R ``NA``, "not checked") when *crc* is
     missing. metacheck hashes with ``digest`` when it is installed (it is a
     dependency of its test tools), so *max_slow_bytes* -- the limit of its
-    pure-R fallback -- never applies here. As in R the comparison is
-    ``isTRUE(all.equal(got, crc))``, i.e. equal within a relative tolerance of
-    1.5e-8 (so two large CRCs a few units apart count as equal).
+    pure-R fallback -- never applies here. The CRCs must be equal (metacheck
+    compares with ``all.equal()``, whose relative tolerance accepts a stored
+    CRC a few dozen units off a large computed one: U70).
     """
     if _is_missing(crc):
         return None
-    got = _crc32(bytes)
-    want = float(crc)
-    tol = 1.5e-8
-    diff = abs(got - want)
-    rel = diff / abs(got) if abs(got) > tol else diff
-    return bool(rel <= tol)
+    return _crc32(bytes) == float(crc)
 
 
 def _entry_row(entry: Any) -> dict[str, Any] | None:
@@ -491,8 +507,6 @@ def _zip_fetch_members(
     """
     import pandas as pd
 
-    from pytacheck.fileinfo._strings import raise_if_invalid
-
     try:
         cd = zip_peek(url)
     except Exception:
@@ -516,8 +530,6 @@ def _zip_fetch_members(
         data = _zip_member_fetch(url, want.iloc[[i]], verify=verify)
         if data is None:
             continue
-        # R: gsub() refuses a name that is not valid UTF-8 (a CP437 name)
-        raise_if_invalid([member_names[i]])
         rel = _safe_member_path(member_names[i])
         if rel is None:
             continue
@@ -611,22 +623,11 @@ def _list_files_all(root: str) -> list[str]:
 
 
 def _file_ext(x: list[str]) -> list[str]:
-    """``tools::file_ext()``.
-
-    A string that is not valid UTF-8 has no extension (``regexpr()`` is -1),
-    but once any other element has one, ``substring()`` meets the invalid
-    string and fails, as in R.
-    """
+    """``tools::file_ext()`` (a name with undecodable bytes has its extension too:
+    R's ``file_ext()`` fails on it, U76)."""
     from pytacheck._r import regextract
-    from pytacheck.fileinfo._strings import as_bytes_text, invalid_utf8
 
-    bad = [invalid_utf8(v) for v in x]
-    found = regextract(
-        r"\.([[:alnum:]]+)$", [None if b else v for v, b in zip(x, bad, strict=True)]
-    )
-    if any(bad) and any(m is not None for m in found):
-        first = next(v for v, b in zip(x, bad, strict=True) if b)
-        raise ValueError(f"invalid multibyte string at '{as_bytes_text(first)}'")
+    found = regextract(r"\.([[:alnum:]]+)$", x)
     return ["" if m is None else m[1:] for m in found]
 
 
@@ -641,7 +642,6 @@ def _archive_rows(
     archive_row: pd.DataFrame,
     label: str,
     skip_types: Any,
-    _sizes: dict[str, float] | None = None,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.archive_rows()``: rows for the files of an extracted archive.
 
@@ -689,9 +689,6 @@ def _archive_rows(
     rows = archive_row.iloc[[0] * len(loc)].reset_index(drop=True)
     sizes = []
     for p in loc:
-        if _sizes is not None and p in _sizes:
-            sizes.append(_sizes[p])
-            continue
         try:
             sizes.append(float(os.path.getsize(p)))
         except OSError:
@@ -723,14 +720,12 @@ def _zip_raw_name(info: Any) -> bytes:
 
 
 def _zip_names(zf: Any) -> list[str]:
-    """Member names as R's ``unzip(list = TRUE)`` reads them.
+    """Member names as text (see :func:`_decode_zip_name`)."""
+    return [_zip_name(info) for info in zf.infolist()]
 
-    The stored bytes taken as UTF-8 (R's native encoding), whether or not the
-    archive flags them as UTF-8; bytes that are not valid UTF-8 (a CP437 name
-    from an old Windows tool) are kept as lone surrogates, as R keeps an
-    invalid string.
-    """
-    return [_zip_raw_name(info).decode("utf-8", "surrogateescape") for info in zf.infolist()]
+
+def _zip_name(info: Any) -> str:
+    return _decode_zip_name(_zip_raw_name(info), bool(info.flag_bits & 0x800))
 
 
 #: Compression methods R's internal unzip (minizip) can extract: stored,
@@ -802,7 +797,10 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
     os.makedirs(ex, exist_ok=True)
     with zipfile.ZipFile(zip_path) as zf, open(zip_path, "rb") as fp:
         for info in zf.infolist():
-            out = ex + b"/" + _r_member_path(_zip_raw_name(info))
+            # a CP437 name is written as UTF-8, so the files on disk have
+            # readable names (R writes the raw bytes: U76)
+            name = _zip_name(info).encode("utf-8", "surrogateescape")
+            out = ex + b"/" + _r_member_path(name)
             if out.endswith(b"/"):  # a directory entry
                 if not os.path.exists(out):
                     try:
@@ -960,30 +958,21 @@ def _expand_compressed(
     dest = f"{gz_path}.contents"
     inner_name = sub("[.](gz|bz2|xz)$", "", os.path.basename(gz_path), ignore_case=True)
     out = f"{dest}/{inner_name}"
-    sizes: dict[str, float] | None = None
     if not os.path.exists(out):
         try:
             os.makedirs(dest, exist_ok=True)
-            total = 0
             with _open_compressed(gz_path, ext) as con, open(out, "wb") as oc:
                 while True:
                     chunk = con.read(1048576)
                     if not chunk:
                         break
                     oc.write(chunk)
-                    total += len(chunk)
         except Exception:
             return empty
-        # R closes the output connection only when .expand_compressed() returns
-        # (on.exit), so .archive_rows() sees the file before its last, partly
-        # filled stdio buffer is flushed: file.size() is the size rounded down
-        # to the file system block size (0 for a small file).
-        try:
-            blk = int(getattr(os.stat(out), "st_blksize", 4096)) or 4096
-        except OSError:
-            blk = 4096
-        sizes = {out: float(total - total % blk)}
-    return _archive_rows(dest, gz_row, os.path.basename(gz_path), skip_types, _sizes=sizes)
+    # the file is closed before its size is read (metacheck reads it before the
+    # last buffer is flushed, so the size is rounded down to the block size,
+    # 0 for a small file: U69)
+    return _archive_rows(dest, gz_row, os.path.basename(gz_path), skip_types)
 
 
 # -- zip_decision() ------------------------------------------------------------
@@ -1027,9 +1016,6 @@ def zip_decision(url: str, skip_types: Any = "materials") -> dict[str, Any]:
         os.path.basename(str(n).rstrip("/")) if n is not None else None
         for n in _chr_list(peek["name"])
     ]
-    # R: data_classify_files() -> tools::file_ext() fails on a name that is not
-    # valid UTF-8 (a CP437 member name) as soon as another name has an extension
-    _file_ext([n for n in names if n is not None])
     types = data_classify_files(names)
     roles = _data_doc_role(names)
     skip = set(_chr_list(skip_types))

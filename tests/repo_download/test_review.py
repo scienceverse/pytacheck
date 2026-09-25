@@ -72,51 +72,48 @@ def test_raw_to_char_drops_trailing_nuls_and_refuses_embedded_ones() -> None:
         _raw_to_char(b"a\x00b.csv")
 
 
-def test_empty_member_name_reads_backwards_like_r() -> None:
+def test_empty_member_name_is_empty() -> None:
+    # U72: metacheck's raw[(p+46):(p+45)] reads two bytes backwards ("P")
     cd = _parse_zip_central_dir((REVIEW / "emptyname.cd").read_bytes())
     assert cd is not None
-    assert cd["name"].tolist() == ["P", "b.R"]  # R: raw[(p+46):(p+45)] is "P", "\0"
+    assert cd["name"].tolist() == ["", "b.R"]
     cd = _parse_zip_central_dir((REVIEW / "bigoffset.cd").read_bytes())
-    assert cd is not None and cd["name"].tolist() == ["P\x01", "z.R"]
+    assert cd is not None and cd["name"].tolist() == ["", "z.R"]
 
 
 # -- names that are not valid UTF-8 (CP437 zips) ------------------------------
 
 
-def test_zip_peek_keeps_invalid_directory_entries() -> None:
+def test_zip_peek_decodes_cp437_names() -> None:
+    # U76: a name without the UTF-8 flag that is not UTF-8 is CP437 (0x82 is
+    # "é"); metacheck keeps the bytes, and its grepl("/$") then keeps the folder
     out = rv.serve(_routes("cp437.zip"), zip_peek, f"{SRV}/cp437.zip")
-    names = [rv._bytes_text(n) for n in out["name"]]
-    # grepl("/$") is FALSE for an invalid string, so R keeps the folder entry
-    assert names == [
-        "donn<82>es/",
-        "donn<82>es/r<82>sum<82>.csv",
-        "caf<82>.R",
-        "plain.csv",
-        "nul.csv",
-    ]
+    assert out["name"].tolist() == ["données/résumé.csv", "café.R", "plain.csv", "nul.csv"]
 
 
-def test_invalid_names_fail_where_r_fails() -> None:
-    with pytest.raises(ValueError):
-        rv.serve(_routes("cp437.zip"), zip_decision, f"{SRV}/cp437.zip")
-    with pytest.raises(ValueError, match="invalid"):
-        rv.serve(_routes("cp437.zip"), _zip_fetch_members, f"{SRV}/cp437.zip", dest="/nonexistent")
-    with pytest.raises(ValueError, match="input string 1 is invalid"):
-        check_file_naming(["caf\udc82.csv"])
-    with pytest.raises(ValueError, match="input string 1 is invalid"):
-        check_file_naming("ok.csv", file_path="d\udc82/ok.csv")
-    # a folder that is not valid UTF-8 only matters for the path budgets
-    assert len(check_file_naming("d\udc82/ok.csv", file_path="d/ok.csv")) == 0
+def test_cp437_zips_and_invalid_names_work(tmp_path: Path) -> None:
+    # U76: metacheck's string functions fail on names that are not valid UTF-8
+    decision = rv.serve(_routes("cp437.zip"), zip_decision, f"{SRV}/cp437.zip")
+    assert decision["worth"] is True
+    out = rv.serve(_routes("cp437.zip"), _zip_fetch_members, f"{SRV}/cp437.zip", dest=str(tmp_path))
+    assert "données/résumé.csv" in out["name"].tolist()
+    assert (tmp_path / "données" / "résumé.csv").exists()
+    # an undecodable byte in a local name is a naming problem, not an error
+    rules = check_file_naming(["caf\udc82.csv"])["rule"].tolist()
+    assert rules == ["special-characters", "diacritics"]
+    assert len(check_file_naming("ok.csv", file_path="d\udc82/ok.csv")) == 0
 
 
-def test_invalid_names_do_not_match_like_grepl() -> None:
+def test_invalid_names_are_classified() -> None:
+    # U76: metacheck's grepl()/strsplit() classify a name that is not valid
+    # UTF-8 as nothing; its extension still says what it is
     x = ["caf\udc82.csv", "ok.R", "READ\udc82ME.txt", "code\udc82book.csv"]
     fc = file_category(x)
-    assert fc["filetype"].tolist() == ["", "code", "", ""]
-    assert fc["file_category"].tolist()[0] is pd.NA
+    assert fc["filetype"].tolist() == ["data", "code", "text", "data"]
+    assert fc["file_category"].tolist()[0] == "data"
     assert fc["file_category"].tolist()[1] == "code"
-    assert filetype(x).tolist() == ["NA", "code", "NA", "NA"]  # strsplit() gives NA
-    assert _is_readable_archive(["a\udc82.zip", "b.zip"]) == [False, True]
+    assert filetype(x).tolist() == ["data", "code", "text", "data"]
+    assert _is_readable_archive(["a\udc82.zip", "b.zip"]) == [True, True]
 
 
 # -- member fetches -------------------------------------------------------------
@@ -262,14 +259,18 @@ def test_zip_to_cache_waits_once_unless_the_argument_says_skip(
     assert out["file_location"].tolist() == [str(tmp_path / "out0")]
 
 
-def test_zip_to_cache_refuses_invalid_entry_names(tmp_path: Path) -> None:
+def test_zip_to_cache_matches_cp437_entry_names(tmp_path: Path) -> None:
+    # U76: a CP437 member name matches the listing's (UTF-8) name; metacheck
+    # fails on the archive
     url = "https://zip.example.org/c.zip"
     with respx.mock(assert_all_called=False) as router:
         router.get(url).mock(
             return_value=httpx.Response(200, content=(REVIEW / "cp437.zip").read_bytes())
         )
-        with pytest.raises(ValueError, match="input string"):
-            _download_zip_to_cache(_files(tmp_path, ["plain.csv"]), [0], url)
+        out = _download_zip_to_cache(_files(tmp_path, ["plain.csv", "café.R"]), [0, 1], url)
+    loc = out["file_location"].tolist()
+    assert loc[0] is not None and loc[1] is not None
+    assert Path(loc[1]).exists()
 
 
 def test_download_repo_files_archive_members_with_collisions() -> None:

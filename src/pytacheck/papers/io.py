@@ -33,18 +33,16 @@ __all__ = [
 _BIBR_TABLES = ("author", "bib", "eq", "figure", "url", "section", "table", "text", "xref")
 
 
-def _dollar(x: Any, name: str) -> Any:
-    """R's ``x$name`` on a parsed JSON object: an exact key, else the one key it prefixes.
+def _field(x: Any, name: str) -> Any:
+    """The value of key *name* of a parsed JSON object (``None`` when it has none).
 
-    metacheck's readers use ``$``, so a file without ``bib`` but with
-    ``bib_match`` reads its ``bib_match`` rows as ``bib`` too.
+    metacheck reads these with R's ``$``, which also matches a unique prefix
+    of a key: a file without ``bib`` but with ``bib_match`` reads the
+    ``bib_match`` rows as its references, one without ``info`` or ``metadata``
+    reads ``info_match`` or ``metadata_match`` as its own metadata (U25). The
+    key must match exactly here.
     """
-    if not isinstance(x, Mapping):
-        return None
-    if name in x:
-        return x[name]
-    hits = [k for k in x if isinstance(k, str) and k.startswith(name)]
-    return x[hits[0]] if len(hits) == 1 else None
+    return x.get(name) if isinstance(x, Mapping) else None
 
 
 def paper(paper_id: str | None = None) -> Paper:
@@ -149,7 +147,7 @@ def from_bibr(data: Mapping[str, Any] | Any, include_images: bool = False) -> Pa
         data = getattr(data, "data", data)
     if not isinstance(data, Mapping):
         raise TypeError("from_bibr() needs a dict of bibr JSON or a bibr.Result")
-    if _dollar(data, "schema_version") is not None:
+    if _field(data, "schema_version") is not None:
         from pytacheck.io.bibr12 import _bibr12_from_json
 
         # the JSON values metacheck would read, detached from the caller's dict
@@ -163,14 +161,14 @@ def from_bibr(data: Mapping[str, Any] | Any, include_images: bool = False) -> Pa
 
 def _from_bibr_legacy(data: Mapping[str, Any], include_images: bool) -> Paper:
     """``.read_bibr()`` of a file without a root ``schema_version`` (bibr v10.x and older)."""
-    p = Paper(_dollar(data, "paper_id"))
+    p = Paper(_field(data, "paper_id"))
     # R: paper$paper_id <- data$paper_id (NULL when missing)
-    p.paper_id = _dollar(data, "paper_id")
+    p.paper_id = _field(data, "paper_id")
     # R: info <- data$info (NULL when absent) still yields a one-row table
-    p.info = _info_frame(_dollar(data, "info"))
+    p.info = _info_frame(_field(data, "info"))
 
     for name in _BIBR_TABLES:
-        records = _dollar(data, name)  # data$bib is data$bib_match without a bib key
+        records = _field(data, name)
         if not records:
             continue
         records = [dict(r) for r in records]
@@ -197,7 +195,7 @@ def _from_bibr_legacy(data: Mapping[str, Any], include_images: bool) -> Paper:
         _empty_record_frames(records, columns)
         p._set_raw(name, records, columns)
 
-    bib_match = _dollar(data, "bib_match")
+    bib_match = _field(data, "bib_match")
     if bib_match:
         records = [dict(r) for r in bib_match]
         columns = _union_columns(records)
@@ -219,7 +217,7 @@ def read_bibr(file_path: str | PathLike[str], include_images: bool = False) -> P
     without one read exactly as before.
     """
     data = orjson.loads(Path(file_path).read_bytes())
-    if isinstance(data, Mapping) and _dollar(data, "schema_version") is not None:
+    if isinstance(data, Mapping) and _field(data, "schema_version") is not None:
         from pytacheck.io.bibr12 import _bibr12_from_json
 
         return _bibr12_from_json(data, include_images, os.path.basename(file_path))

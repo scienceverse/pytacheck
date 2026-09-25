@@ -249,8 +249,8 @@ def test_pb_say_pads() -> None:
     _pb_say(Bar(), "short")
     _pb_say(Bar(), "x" * 200)
     assert said[0] == "short".ljust(68)
-    # as in metacheck, a truncated line is width - 1 characters plus "..."
-    assert len(said[1]) == 70 and said[1].endswith("...")
+    # a truncated line fits the width, "..." included (U50: metacheck's is 2 over)
+    assert len(said[1]) == 68 and said[1].endswith("...")
 
 
 def test_zenodo_upload_validates_input() -> None:

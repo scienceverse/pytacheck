@@ -56,11 +56,9 @@ def local_files(path: Any, recursive: bool = False) -> pd.DataFrame:
     Returns ``repo_url`` (the *path* given), ``file_name``, ``file_url``
     (always missing), ``file_location`` (absolute), ``file_size`` and
     ``file_type`` (from :func:`~pytacheck.fileinfo.category.file_category`),
-    for use with ``code_check()``. Several paths are combined; a path that
+    for use with ``code_check()``. Several paths are combined, each listed
+    with *recursive* (metacheck lists them non-recursively: U49); a path that
     does not exist warns and contributes no rows.
-
-    As in metacheck, *recursive* is not passed on when several paths are
-    given (each is then listed non-recursively).
     """
     from pytacheck._r import bind_rows
 
@@ -70,7 +68,7 @@ def local_files(path: Any, recursive: bool = False) -> pd.DataFrame:
             # R: `if (dir.exists(character(0)))`
             raise ValueError("argument is of length zero")
         if len(paths) != 1:
-            return bind_rows([local_files(p) for p in paths])
+            return bind_rows([local_files(p, recursive=recursive) for p in paths])
         path = paths[0]
     path = os.fspath(path)
     # R's file functions expand a leading "~"; `repo_url` keeps the path as given

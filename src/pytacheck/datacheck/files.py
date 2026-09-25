@@ -48,6 +48,7 @@ import functools
 import json
 import math
 import os
+import re
 import shutil
 import sys
 import warnings
@@ -620,59 +621,15 @@ class RVector(tuple):  # type: ignore[type-arg]
     """An R atomic vector of length != 1 (jsonlite writes it on one line)."""
 
 
-def _json_num(x: float, digits: int = 4) -> str:
-    """jsonlite's ``num_to_char()`` for a double with ``digits = 4``."""
+def _json_num(x: float) -> str:
+    """A double as JSON: whole numbers without a fraction, others at full
+    precision (shortest round-trip form). metacheck writes with jsonlite's
+    ``digits = 4``, which turns ``0.000012345`` into ``0``."""
     if not math.isfinite(x):
         return "null"
-    if -1 < digits < 10 and abs(x) < 2147483647 and abs(x) > 1e-5:
-        return _modp_dtoa2(x, digits)
-    decimals = math.ceil(min(17, max(1, math.log10(abs(x)) if x != 0 else -math.inf) + digits))
-    return _c_g(x, decimals)
-
-
-def _c_g(x: float, prec: int) -> str:
-    """C's ``%.<prec>g``."""
-    s = f"{x:.{prec}g}"
-    if "e" in s:
-        mant, exp = s.split("e")
-        sign = exp[0]
-        digits = exp[1:].lstrip("0").rjust(2, "0")
-        s = f"{mant}e{sign}{digits}"
-    return s
-
-
-def _modp_dtoa2(value: float, prec: int) -> str:
-    """stringencoders' modp_dtoa2() as vendored by jsonlite."""
-    neg = value < 0
-    if neg:
-        value = -value
-    whole = int(value)
-    tmp = (value - whole) * (10**prec)
-    frac = int(tmp)
-    diff = tmp - frac
-    if (
-        diff > 0.5
-        or (diff == 0.5 and prec > 0 and frac & 1)
-        or (diff == 0.5 and prec == 0 and whole & 1)
-    ):
-        frac += 1
-        if frac >= 10**prec:
-            frac = 0
-            whole += 1
-    count = prec
-    if prec > 0:
-        while count > 0 and frac % 10 == 0:
-            count -= 1
-            frac //= 10
-    digits = ""
-    while count > 0:
-        count -= 1
-        digits = str(frac % 10) + digits
-        frac //= 10
-    if frac > 0:
-        whole += 1
-    out = str(whole) + ("." + digits if digits else "")
-    return ("-" if neg else "") + out
+    if x == int(x) and abs(x) < 1e17:
+        return str(int(x))
+    return repr(x)
 
 
 def _json_str(s: str) -> str:
@@ -717,9 +674,12 @@ def to_json_pretty(x: Any, indent: int = 0) -> str:
 
 
 def _from_json(value: Any) -> Any:
-    """``jsonlite::fromJSON(simplifyVector = FALSE)``: JSON null becomes NULL."""
-    if value is None:
-        return R_NULL
+    """A parsed manifest as the writer's values: JSON null stays null (``None``).
+
+    (metacheck reads it back with ``jsonlite::fromJSON(simplifyVector = FALSE)``,
+    where null becomes ``NULL``, which it then writes as ``{}``: every re-merge
+    turns a null into an empty object.)
+    """
     if isinstance(value, dict):
         return {k: _from_json(v) for k, v in value.items()}
     if isinstance(value, list):
@@ -733,9 +693,9 @@ def manifest_merge(path: str | os.PathLike[str], patch: dict[str, Any]) -> str:
     Port of ``R/data_check_helpers.R::manifest_merge()``: reads any existing
     ``*.manifest.json``, replaces each key in *patch* wholesale (an
     :data:`R_NULL` value -- R's ``NULL`` -- removes the key; ``None`` is R's
-    ``NA`` and is written as ``null``) and writes it back as jsonlite does.
-    As in R, JSON ``null`` values read back from the existing file are written
-    as ``{}``.
+    ``NA`` and is written as ``null``) and writes it back in jsonlite's
+    layout. JSON ``null`` values already in the file stay ``null`` (metacheck
+    rewrites them as ``{}``), and numbers keep their full precision.
     """
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -927,9 +887,7 @@ def _data_check_write_manifest(
                 f"exceeds max_file_size ({_cap_num(max_file_size)} MB): skipped by the per-file cap"
             )
             intentional[i] = True
-        elif not has_repo:  # if (NULL %in% gated_urls) -> if (logical(0))
-            raise ValueError("argument is of length zero")
-        elif repo_urls[i] in gated_urls:
+        elif has_repo and repo_urls[i] in gated_urls:
             reason[i], intentional[i] = "repository refused by the size caps", True
         elif key in fail_err:
             reason[i] = "download failed after retries: " + fail_err[key]
@@ -1000,8 +958,9 @@ def _data_check_write_manifest(
         if skip:
             doc["skip_types"] = list(skip)
         doc["caps"] = {
-            "max_file_size_mb": R_NULL if max_file_size is None else max_file_size,
-            "max_download_size_mb": R_NULL if max_download_size is None else max_download_size,
+            # no cap / no repository URL: null (metacheck writes R's NULL as {})
+            "max_file_size_mb": max_file_size,
+            "max_download_size_mb": max_download_size,
         }
         doc["provenance"] = provenance
         doc["n_files"] = len(idx)
@@ -1012,7 +971,7 @@ def _data_check_write_manifest(
             "unintentional_files": [
                 {
                     "file_name": names[i],
-                    "repo_url": repo_urls[i] if has_repo else R_NULL,
+                    "repo_url": repo_urls[i] if has_repo else None,
                     "reason": reason[i],
                 }
                 for i in unint
@@ -1271,14 +1230,12 @@ def _data_code_refs(path: str | None, max_bytes: float = 2e6) -> list[str]:
     if size > max_bytes:
         return []
     try:
-        txt = "\n".join(_read_text_lines(path))
+        # lines that are not valid UTF-8 are read as Latin-1 (in R an 8-bit
+        # script stops the whole study-grouping pass)
+        txt = "\n".join(s or "" for s in _utf8_lines(_read_text_lines(path)))
     except OSError:
         return []
     if not txt:
-        return []
-    if _has_invalid_utf8(txt):
-        # R's gregexpr(perl = TRUE) warns on invalid UTF-8 and matches nothing
-        warnings.warn("input string 1 is invalid UTF-8", stacklevel=2)
         return []
     pat = "(?:" + _CODE_READ_FNS + ")\\s*\\([^)\"']*[\"']([^\"']+)[\"']"
     matches = [
@@ -1573,6 +1530,14 @@ def _data_group_llm_impl(
 # -----------------------------------------------------------------------------
 
 
+def _split_text_lines(txt: str) -> list[str]:
+    """``strsplit(txt, "\r\n|\n|\r")[[1]]``: no trailing empty piece."""
+    parts = re.split(r"\r\n|\n|\r", txt)
+    if parts and parts[-1] == "":
+        parts.pop()
+    return parts
+
+
 def _utf8_lines(x: Sequence[str | None]) -> list[str | None]:
     """Reinterpret invalid-UTF-8 lines as Latin-1 (``.utf8_lines()``).
 
@@ -1615,9 +1580,9 @@ def text_peek(path: str | os.PathLike[str] | None, n: float = 20) -> list[str]:
     """The first *n* lines of a text file, tolerating BOMs and UTF-16.
 
     Port of ``R/data_check_helpers.R::text_peek()``: returns ``[]`` for a
-    missing, empty or unreadable file. As in R, 8-bit text that is not valid
-    UTF-8 raises ``ValueError("input string 1 is invalid")`` (R's line
-    splitting fails before the Latin-1 repair is reached).
+    missing, empty or unreadable file. Lines that are not valid UTF-8 are
+    read as Latin-1 (in R, splitting such text into lines fails before its
+    Latin-1 repair is reached, so an 8-bit file cannot be peeked at all).
     """
     if path is None or isinstance(path, list | tuple):
         return []
@@ -1648,11 +1613,8 @@ def text_peek(path: str | os.PathLike[str] | None, n: float = 20) -> list[str]:
         if b"\0" in raw:
             return []
         txt = raw.decode("utf-8", "surrogateescape")
-        if _has_invalid_utf8(txt):
-            raise ValueError("input string 1 is invalid")
     txt = txt.removeprefix("﻿")
-    lines = strsplit(txt, "\r\n|\n|\r")
-    lines = _utf8_lines(lines)
+    lines = _utf8_lines(_split_text_lines(txt))
     return [s for s in lines if s is not None][: int(n) if math.isfinite(n) else None]
 
 
@@ -1859,11 +1821,12 @@ def _read_delim_fast(
     except (FreadError, ValueError, OSError):  # tryCatch(fread(...), error = NULL)
         pass
     df = read_delim(path, sep=sep, header=header, nrows=n_rows)
-    # is.na(iconv(col, "UTF-8", "UTF-8")) is TRUE for invalid UTF-8 *and* for NA:
-    # any character column holding an NA also triggers the latin1 re-read
+    # re-read as Latin-1 only when a text cell is not valid UTF-8 (metacheck's
+    # is.na(iconv(col, "UTF-8", "UTF-8")) is also TRUE for an NA cell, so a
+    # valid UTF-8 file with an empty cell is re-read and "é" becomes "Ã©")
     has_invalid = any(
         isinstance(df.iloc[:, j].dtype, pd.StringDtype)
-        and any(_is_na(v) or _has_invalid_utf8(v) for v in df.iloc[:, j].tolist())
+        and any(isinstance(v, str) and _has_invalid_utf8(v) for v in df.iloc[:, j].tolist())
         for j in range(df.shape[1])
     )
     if has_invalid:

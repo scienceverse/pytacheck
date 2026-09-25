@@ -39,6 +39,7 @@
     "paper":
       "$paper": "tests/mod_coi/fixtures/coi_headers.json"
 - "id": "coi_check.heading_blank_last"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U97", "reason": "No literal 'NA NA' is appended for sentences past the end of the paper."}
   "module": "coi_check"
   "args":
     "paper":
@@ -96,6 +97,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "coi_check.disclosure_heading_blank"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U97", "reason": "No literal 'NA' is appended for a sentence past the end of the paper."}
   "module": "coi_check"
   "args":
     "paper":
@@ -185,6 +187,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "coi_check.lower_nil_stop"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U95", "reason": "'conflict of interest: nil.' is kept; metacheck's replacement empties matches of alternatives 5-11."}
   "module": "coi_check"
   "args":
     "paper":
@@ -197,6 +200,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "coi_check.none_mentioned_dropped"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U95", "reason": "'Competing interests: None mentioned.' is kept; metacheck's replacement empties matches of alternatives 5-11."}
   "module": "coi_check"
   "args":
     "paper":
@@ -299,6 +303,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "coi_check.paperlist_one_errors"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U97", "reason": "A paper whose last sentence is a COI heading no longer fails the module for the whole list."}
   "module": "coi_check"
   "args":
     "paper":

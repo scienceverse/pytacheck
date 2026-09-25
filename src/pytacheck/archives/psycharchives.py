@@ -329,7 +329,10 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
         if len(parsed) == 0:
             raise IndexError("subscript out of bounds")
         host_v = parsed["host"].iloc[0]
-        host = None if is_na(host_v) else str(host_v)  # R: NA %||% ... stays NA
+        # a handle on no known host is looked up on PsychArchives, the intent of
+        # metacheck's `%||%`, which never falls back from NA (it requests
+        # https://NA/rest/...: U42)
+        host = "www.psycharchives.org" if is_na(host_v) else str(host_v)
         handle_v = parsed["handle"].iloc[0]
         if is_na(handle_v):
             warnings.warn(f"{_paste(pa_url)} is not a valid PsychArchives handle", stacklevel=2)
@@ -547,7 +550,8 @@ def _file_ext(names: Sequence[Any]) -> list[str]:
 def _add_ext_type(df: pd.DataFrame) -> pd.DataFrame:
     """``df$ext <- <extension>; left_join(df, metacheck::file_types, by = "ext")``.
 
-    An extension listed under several types gives one row per type, as in R.
+    One row per file: an extension listed under several types takes the first
+    (metacheck repeats the file once per type: U46).
     """
     from pytacheck.archives.github import _file_types
     from pytacheck.utils import left_join
@@ -596,9 +600,7 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
             info = bind_rows(file_lists)
             orig = pd.DataFrame({"pa_url": pd.Series(urls, dtype="string")})
             if "pa_url" not in info.columns:
-                raise ValueError(
-                    "Join columns in `y` must be present in the data.\n✖ Problem with `pa_url`."
-                )
+                return None  # every URL failed (metacheck's join errors here: U43)
             df = left_join(orig, info, by="pa_url")
             # R: unlist(lapply(file_lists, attr, "rights")) -- NULL (no attribute) if none
             for name in ("rights", "doi"):

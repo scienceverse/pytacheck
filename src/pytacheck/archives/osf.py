@@ -101,8 +101,9 @@ def osf_api_check(osf_api: str | None = None, on_error: str = "stop") -> str:
 
     Returns the status description (``"OK"`` when up). When the server does
     not answer 200, *on_error* decides: ``"stop"`` raises, ``"warn"`` warns,
-    ``"ignore"`` only returns the status. Without internet access, returns
-    ``"no internet"``.
+    ``"ignore"`` only returns the status. Without internet access the status
+    is ``"no internet"``, and *on_error* applies too (metacheck returns it
+    silently whatever *on_error* says: U53).
     """
     from pytacheck import http
     from pytacheck.archives.osf_helpers import _osf_headers
@@ -115,10 +116,11 @@ def osf_api_check(osf_api: str | None = None, on_error: str = "stop") -> str:
     status_code = 0
     try:
         if not _has_internet():
-            return "no internet"
-        resp = http.client().request("GET", osf_api, headers=_osf_headers()["headers"])
-        status_code = resp.status_code
-        status = resp.reason_phrase
+            status = "no internet"
+        else:
+            resp = http.client().request("GET", osf_api, headers=_osf_headers()["headers"])
+            status_code = resp.status_code
+            status = resp.reason_phrase
     except Exception as exc:
         status = str(exc) or type(exc).__name__
 
@@ -227,6 +229,11 @@ def _dollar(params: list[tuple[str, str]], name: str) -> str | None:
     return partial[0] if len(partial) == 1 else None
 
 
+#: 5-letter OSF page names that follow a project ID in a URL (osf.io/<id>/files/).
+#: Neither can be a GUID: OSF draws GUIDs from an alphabet without i, l and o.
+_OSF_ROUTES = frozenset({"files", "forks"})
+
+
 def _osf_check_one(osf_id: Any) -> str | None:
     from pytacheck._r import as_character
 
@@ -248,21 +255,24 @@ def _osf_check_one(osf_id: Any) -> str | None:
         while len(last) > 1 and last[-1] == "":
             last.pop()  # R's strsplit() drops the trailing empty piece
         tail = last[-1]
-        if grepl(r"^[a-z0-9]{5}(_v\d+)?$", tail):
+        # a project page such as osf.io/j3gcx/files/ ends in a route name, not
+        # an ID, and a 24-character ID is alphanumeric (metacheck returns
+        # "files", or any 24-character segment: U51)
+        if grepl(r"^[a-z0-9]{5}(_v\d+)?$", tail) and tail not in _OSF_ROUTES:
             view_only = _dollar(query, "view_only")
             if view_only is not None:
                 tail = f"{tail}?view_only={view_only}"
             return tail
-        if len(tail) == 24:
+        if grepl("^[a-z0-9]{24}$", tail):
             return tail
         raise _UrlParseError("not an OSF ID")
     except _UrlParseError:
         matches = regextract_all(r"(?<=osf\.io/)[a-z0-9]{5}(_v\d+)?[?/]?", ident, perl=True)
-        # R: regmatches() gives a list; sub() then coerces it with as.character(),
-        # so only a single match survives as an ID (none or several are not IDs).
-        if len(matches) == 1:
-            id5 = sub("[?/]$", "", matches[0])
-            if len(id5) in (5, 8, 9):
+        # the first osf.io ID (metacheck coerces the list of matches with
+        # as.character(), so a URL with two is rejected: U51)
+        for m in matches:
+            id5 = sub("[?/]$", "", m)
+            if len(id5) in (5, 8, 9) and id5 not in _OSF_ROUTES:
                 return id5
         warnings.warn(f"{ident} is not a valid OSF ID", stacklevel=3)
         return None
@@ -1385,10 +1395,8 @@ def _osf_file_download_ids(
             ret["path"] = pd.Series([None] * len(ret), dtype="string")
             ret["downloaded"] = pd.Series([False] * len(ret), dtype="boolean")
     else:
-        if len(ret) == 0:
-            # R: `ret$downloaded <- FALSE` on a zero-row table (a listing with
-            # folders but no files) fails
-            raise ValueError("replacement has 1 row, data has 0")
+        # a project with folders but no files gives a zero-row table (metacheck's
+        # `ret$downloaded <- FALSE` fails on it: U53)
         ret["downloaded"] = pd.Series([False] * len(ret), dtype="boolean")
 
     ret["download_path"] = pd.Series([download_to] * len(ret), dtype="string")

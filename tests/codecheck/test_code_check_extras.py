@@ -245,8 +245,29 @@ def test_notebook_and_quarto_languages() -> None:
     assert core.code_lang(str(qmd / "jupyter_ir.qmd")) == "R"
     assert core.code_lang(str(qmd / "first_chunk_python.qmd")) == "Python"
     assert core.code_lang(str(qmd / "r_default.qmd")) == "R"
-    with pytest.raises(TypeError, match=r"\$ operator"):
-        core.code_lang(str(qmd / "scalar_yaml.qmd"))
+    # a scalar front matter has no `jupyter` key: the first chunk decides
+    # (R's `$` error escapes code_lang(), U68)
+    assert core.code_lang(str(qmd / "scalar_yaml.qmd")) == "Python"
+
+
+def test_malformed_front_matter_and_notebooks_fall_back(tmp_path: Path) -> None:
+    # U68: an empty, scalar or array front matter and a notebook that is not a
+    # JSON object fall back to the default / the first chunk's engine
+    cases = {
+        "empty.qmd": ("---\n---\n```{python}\nx = 1\n```\n", "Python"),
+        "empty_r.qmd": ("---\n---\n```{r}\nx <- 1\n```\n", "R"),
+        "scalar.qmd": ("---\nhello\n---\n```{python}\nx = 1\n```\n", "Python"),
+        "array.qmd": ("---\n- a\n- b\n---\n```{python}\nx = 1\n```\n", "Python"),
+        "no_lang.qmd": ("---\njupyter: []\n---\n```{python}\n```\n", "Python"),
+        "string.ipynb": ('"hello"\n', "Python"),
+        "array.ipynb": ("[1, 2]\n", "Python"),
+        "meta_scalar.ipynb": ('{"metadata": 3}\n', "Python"),
+        "lang_empty.ipynb": ('{"metadata": {"kernelspec": {"language": []}}}\n', "Python"),
+        "lang_list.ipynb": ('{"metadata": {"kernelspec": {"language": ["R"]}}}\n', "R"),
+    }
+    for name, (text, lang) in cases.items():
+        (tmp_path / name).write_text(text, encoding="utf-8")
+        assert core.code_lang(str(tmp_path / name)) == lang, name
 
 
 def test_code_extract_qmd_py() -> None:

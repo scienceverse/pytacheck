@@ -36,10 +36,12 @@
   "module": "open_practices"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "open_practices.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2 of 4; metacheck counts only papers with a flagged sentence)."}
   "module": "open_practices"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
 - "id": "open_practices.psychsci_single"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"}}
 - "id": "open_practices.psychsci_single_2"
@@ -52,6 +54,7 @@
   "module": "open_practices"
   "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"}}
 - "id": "open_practices.data_only"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper": {"$test_paper": {"text": ["Data for all experiments have been made publicly available on OSF at https://osf.io/hk4yq/.", "We tested 40 people."]}}
@@ -72,16 +75,19 @@
     "paper": {"$test_paper": {"text": ["Our R scripts can be found on GitHub (https://github.com/me/proj).", "Raw data are archived in a Zenodo repository.", "Questionnaires are available as supplementary materials online.", "The study was preregistered on AsPredicted (https://aspredicted.org/abc.pdf).", "Figures are shared at https://figshare.com/x."]}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.on_request"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper": {"$test_paper": {"text": ["Data available upon request."]}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.on_request_with_repo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper": {"$test_paper": {"text": ["Data are available at https://osf.io/hk4yq/; raw data on request."]}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.on_request_multiple"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "'available ON REQUEST' is flagged on_request (case-insensitive, like the repository search), and one paragraph quotes every on-request sentence."}
   "module": "open_practices"
   "args":
     "paper": {"$test_paper": {"text": ["The analysis code is available on GitHub at https://github.com/me/code.", "The data are available from the corresponding author on reasonable request.", "Materials can be shared by request.", "Analysis scripts are available ON REQUEST."]}}
@@ -127,16 +133,19 @@
     "paper": {"$expr": {"r": 'paperlist(test_paper("Open code is available at https://github.com/repo/mine."), test_paper("Data available upon request."))', "py": 'pc.PaperList([pc.test_paper(["Open code is available at https://github.com/repo/mine."]), pc.test_paper(["Data available upon request."])])'}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.paperlist_mixed"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (3; metacheck 1)."}
   "module": "open_practices"
   "args":
     "paper": {"$expr": {"r": 'paperlist(test_paper("The data and code are available at https://osf.io/abcde."), test_paper("Nothing to see."), test_paper(c("Data are on OSF: https://osf.io/q.", "Materials are available on request.")), test_paper("Our analysis code is on GitHub (https://github.com/a/b)."))', "py": 'pc.PaperList([pc.test_paper(["The data and code are available at https://osf.io/abcde."]), pc.test_paper(["Nothing to see."]), pc.test_paper(["Data are on OSF: https://osf.io/q.", "Materials are available on request."]), pc.test_paper(["Our analysis code is on GitHub (https://github.com/a/b)."])])'}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.paperlist_one_hit"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "A list of two papers gets the paper-list summary (info), not the single-paper light of the one paper with a flagged sentence."}
   "module": "open_practices"
   "args":
     "paper": {"$expr": {"r": 'paperlist(test_paper("Nothing to see."), test_paper(c("Data are available at https://osf.io/abc.", "Data are also available on request.")))', "py": 'pc.PaperList([pc.test_paper(["Nothing to see."]), pc.test_paper(["Data are available at https://osf.io/abc.", "Data are also available on request."])])'}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.paperlist_none"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "A list of two papers without flagged sentences gets the paper-list summary (info, 2 neither), not a single-paper red."}
   "module": "open_practices"
   "args":
     "paper": {"$expr": {"r": 'paperlist(test_paper("Nothing to see."), test_paper("Or here."))', "py": 'pc.PaperList([pc.test_paper(["Nothing to see."]), pc.test_paper(["Or here."])])'}}
@@ -147,10 +156,12 @@
     "paper": {"$test_paper": {"text": ["Data , , are available , , at https://osf.io/x.", "The code<~p~>is available at https://github.com/x/y.", "Data can be found on the open\n\nscience framework.", "Materials were shared by\n  reasonable\trequest."]}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.duplicate_ids"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U101", "reason": "Papers with duplicated IDs are summarised together; metacheck stops ('factor level [2] is duplicated')."}
   "module": "open_practices"
   "args":
     "paper": {"$expr": {"r": "paperlist(demopaper(), demopaper())", "py": "pc.PaperList([pc.demopaper(), pc.demopaper()])"}}
 - "id": "open_practices.debruine"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "A list of four papers without flagged sentences gets the paper-list summary (info, 4 neither), not a single-paper red."}
   "module": "open_practices"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"]}

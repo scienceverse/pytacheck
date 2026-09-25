@@ -582,18 +582,16 @@ def _is_missing_label(labels: list[Any]) -> list[bool]:
     return [x or y for x, y in zip(a, b, strict=True)]
 
 
-def _looks_like_freetext_labels(labs: Any) -> bool | None:
+def _looks_like_freetext_labels(labs: Any) -> bool:
     """Port of ``.looks_like_freetext_labels()``: are these labels free-text prose?
 
-    ``None`` is R's ``NA`` (a missing label).
+    Missing (``NA``) labels are left out like empty ones (in R they make the
+    answer ``NA``, and the caller's ``&&`` then fails).
     """
-    txt = [_trim(v) for v in _chr_vec(labs)]
-    txt = [t for t in txt if _nzchar(t)]
+    txt = [t for t in (_trim(v) for v in _chr_vec(labs)) if t is not None and t != ""]
     if len(txt) < 5:
         return False
-    if any(t is None for t in txt):
-        return None
-    return _mean([len(t) > 40 for t in txt if t is not None]) > 0.2
+    return _mean([len(t) > 40 for t in txt]) > 0.2
 
 
 def _label_pairs(labs: Any) -> list[tuple[Any, Any]]:
@@ -644,10 +642,7 @@ def _haven_value_labels(col: Any, attrs: Mapping[str, Any] | None = None) -> dic
     miss_codes: list[Any] = []
     miss_reasons: list[str | None] = []
     if pairs:
-        freetext = _looks_like_freetext_labels([p[0] for p in pairs])
-        if freetext is None:  # R: `&& NA` inside if()
-            raise ValueError("missing value where TRUE/FALSE needed")
-        if freetext:
+        if _looks_like_freetext_labels([p[0] for p in pairs]):
             pairs = []
     if pairs:
         codes = [p[1] for p in pairs]

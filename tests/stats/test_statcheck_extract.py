@@ -247,9 +247,18 @@ def test_types_of_q_tests() -> None:
     assert result[VAR_TYPE].tolist() == ["Qw"] * 3 + ["Qb"] * 3
 
 
-def test_q_between_capitalised_is_read_as_q_within() -> None:
-    # upstream quirk, reproduced: "Between" has a "w" but no lower-case "b"
-    assert sc("Q-Between(2) = 2.20, p = .03")[VAR_TYPE].tolist() == ["Qw"]
+def test_q_subtype_is_read_from_the_q_token() -> None:
+    # U5: statcheck looks for a lowercase "b" and then "w" anywhere, so
+    # "Q-Between" (a "w", no "b") was a Qw test and "QWithin" a plain Q test
+    texts = [
+        "Q-Between(2) = 2.20, p = .33",
+        "QWithin(3) = 2.20, p = .53",
+        "QB(2) = 2.20, p = .33",
+        "Q-w(3) = 2.20, p = .53",
+        "Qbetween(2) = 2.20, p = .33",
+        "Q(2) = 2.20, p = .33",
+    ]
+    assert sc(texts)[VAR_TYPE].tolist() == ["Qb", "Qw", "Qb", "Qw", "Qb", "Q"]
 
 
 def test_stats_that_only_look_like_q_tests(capsys: pytest.CaptureFixture[str]) -> None:

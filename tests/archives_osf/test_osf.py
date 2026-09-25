@@ -143,8 +143,13 @@ def test_osf_api_check_without_internet(monkeypatch: pytest.MonkeyPatch) -> None
         assert osf_api_check(on_error="ignore") == "offline"
         with pytest.raises(ValueError, match="should be one of"):
             osf_api_check(on_error="loud")
+    # U53: offline, on_error applies too (metacheck returns "no internet" silently)
     monkeypatch.setattr(osf, "_has_internet", lambda: False)
-    assert osf_api_check() == "no internet"
+    with pytest.raises(RuntimeError, match="Error 0: no internet"):
+        osf_api_check()
+    with pytest.warns(UserWarning, match="no internet"):
+        assert osf_api_check(on_error="warn") == "no internet"
+    assert osf_api_check(on_error="ignore") == "no internet"
 
 
 def test_osf_get_all_pages(mock_api: respx.MockRouter) -> None:

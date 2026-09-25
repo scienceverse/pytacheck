@@ -47,6 +47,7 @@
         - "none"
   "compare": *id001
 - "id": "stats.synthetic"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -121,6 +122,7 @@
         - "Nothing here but 42 participants."
   "compare": *id001
 - "id": "stats.synthetic.OneTailedTxt"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -128,6 +130,7 @@
     "OneTailedTxt": !!bool "true"
   "compare": *id001
 - "id": "stats.synthetic.OneTailedTests"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -135,6 +138,7 @@
     "OneTailedTests": !!bool "true"
   "compare": *id001
 - "id": "stats.synthetic.pEqualAlphaSig"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -142,6 +146,7 @@
     "pEqualAlphaSig": !!bool "false"
   "compare": *id001
 - "id": "stats.synthetic.pZeroError"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -149,6 +154,7 @@
     "pZeroError": !!bool "false"
   "compare": *id001
 - "id": "stats.synthetic.alpha"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -156,6 +162,7 @@
     "alpha": !!float "0.01"
   "compare": *id001
 - "id": "stats.synthetic.AllPValues"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -163,6 +170,7 @@
     "AllPValues": !!bool "true"
   "compare": *id001
 - "id": "stats.synthetic.stat.t"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -170,6 +178,7 @@
     "stat": "t"
   "compare": *id001
 - "id": "stats.synthetic.stat.tF"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -180,6 +189,7 @@
       - "F"
   "compare": *id001
 - "id": "stats.synthetic.stat.cor_chisq"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -190,6 +200,7 @@
       - "chisq"
   "compare": *id001
 - "id": "stats.synthetic.stat.ZQ"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -225,12 +236,14 @@
     "text": *id003
     "AllPValues": !!bool "true"
 - "id": "stats.df.messages_arg"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "an argument statcheck() does not accept raises TypeError; R swallows the error of every statcheck() call and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
     "text": *id003
     "messages": !!bool "true"
 - "id": "stats.df.unknown_arg"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "an argument statcheck() does not accept raises TypeError; R swallows the error of every statcheck() call and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -246,6 +259,7 @@
         - "no numbers"
         - "at all"
 - "id": "stats.character.error"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() of a character vector checks the strings (R: 'argument is of length zero')"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -261,6 +275,7 @@
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
       - "upstream/metacheck/inst/demos/to_err_is_human.json"
 - "id": "statcheck.synthetic"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -329,6 +344,7 @@
       - "Nothing here but 42 participants."
     "messages": !!bool "false"
 - "id": "statcheck.synthetic.OneTailedTxt"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -337,6 +353,7 @@
     "messages": !!bool "false"
     "OneTailedTxt": !!bool "true"
 - "id": "statcheck.synthetic.OneTailedTests"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -345,6 +362,7 @@
     "messages": !!bool "false"
     "OneTailedTests": !!bool "true"
 - "id": "statcheck.synthetic.pEqualAlphaSig"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -353,6 +371,7 @@
     "messages": !!bool "false"
     "pEqualAlphaSig": !!bool "false"
 - "id": "statcheck.synthetic.pZeroError"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -361,6 +380,7 @@
     "messages": !!bool "false"
     "pZeroError": !!bool "false"
 - "id": "statcheck.synthetic.alpha"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -401,6 +421,7 @@
     "messages": !!bool "false"
     "stat": *id006
 - "id": "statcheck.synthetic.stat.ZQ"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -462,6 +483,7 @@
     "messages": !!bool "false"
     "AllPValues": !!bool "true"
 - "id": "statcheck.warning.zero_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -476,36 +498,42 @@
     "texts": "t(28) = 2.20, p = .036 and p = .05-.10"
     "messages": !!bool "false"
 - "id": "statcheck.error.zero_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
     "texts": "Zero df t(0) = 2.1, p = .03."
     "messages": !!bool "false"
 - "id": "statcheck.error.perfect_r"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "r = 1.00 is checked with the rounding interval capped at 1 (R computes p for r = 1.005 and fails on if (NA))"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
     "texts": "Perfect r(20) = 1.00, p < .001."
     "messages": !!bool "false"
 - "id": "statcheck.error.condition_length"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "t(20) = (2.1 uses the first test name instead of failing on a length-2 if ()"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
     "texts": "Bracket t(20) = (2.1, p = .03."
     "messages": !!bool "false"
 - "id": "statcheck.error.no_test_type"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
     "texts": "Twin the MZ = 2.1, p = .03 difference."
     "messages": !!bool "false"
 - "id": "statcheck.recycled_p"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
     "texts": "QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03"
     "messages": !!bool "false"
 - "id": "statcheck.error.differing_rows"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -550,6 +578,7 @@
       - "Z"
       - "Q"
 - "id": "extract_stats.2"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "Q-Between(2) is a Qb test (statcheck looks for a lowercase b and then w anywhere)"}
   "r": "statcheck:::extract_stats"
   "py": "pytacheck.stats.statcheck.extract_stats"
   "args":
@@ -2235,6 +2264,7 @@
         - !!int "3"
         - !!int "4"
 - "id": "summary.statcheck.0"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "statcheck:::summary.statcheck"
   "py": "pytacheck.stats.statcheck.summary_statcheck"
   "args":
@@ -2504,6 +2534,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "stat_check.red.several"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
   "module": "stat_check"
   "args":
     "paper": *id002

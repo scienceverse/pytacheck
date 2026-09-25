@@ -143,7 +143,13 @@ CELL_BLANK, CELL_LOGICAL, CELL_DATE, CELL_NUMERIC, CELL_TEXT = 1, 2, 3, 4, 5
 
 
 def _is_date_format(code: str) -> bool:
-    """readxl's isDateFormat() (including its ``General`` shortcut)."""
+    """readxl's isDateFormat(): does a number format code show a date or time?
+
+    A ``General`` section is not a date. (readxl's shortcut for it tests for a
+    NUL among the next six characters instead of matching ``General``, so any
+    ``g`` with six characters after it -- a Japanese era date such as
+    ``ggge"年"m"月"d"日"`` -- ends the scan and the date is read as a number.)
+    """
     escaped = False
     bracket = False
     i = 0
@@ -164,7 +170,7 @@ def _is_date_format(code: str) -> bool:
         elif c == "]":
             if not escaped:
                 bracket = False
-        elif lc == "g" and i + 6 < n and all(code[i + k] != "\0" for k in range(1, 7)):
+        elif lc == "g" and code[i : i + 7].lower() == "general":
             return False
         i += 1
     return False
@@ -1202,25 +1208,34 @@ def read_jasp_omv(path: str, ext: str, n_rows: float) -> pd.DataFrame | None:
 
 
 def read_rds_head(path: str, n_rows: float) -> pd.DataFrame | None:
-    """``obj <- readRDS(path); if (is.data.frame(obj)) head(obj, n_rows) else NULL``."""
+    """``obj <- readRDS(path); if (is.data.frame(obj)) head(obj, n_rows) else NULL``.
+
+    Column attributes (variable and value labels, formats, classes) are kept
+    as stored. (R's ``head()`` drops the ``label`` of unclassed and factor
+    columns, and keeps a ``haven_labelled`` column's labels only when vctrs
+    happens to be loaded, so there the result depends on the session.)
+    """
     from pytacheck.datacheck._files_rdata import is_data_frame, r_frame_to_pandas, read_rds
 
     obj = read_rds(path)
     if not is_data_frame(obj):
         return None
-    return r_frame_to_pandas(obj, n_rows)
+    return r_frame_to_pandas(obj, n_rows, subset=False)
 
 
 def read_rdata_first_df(path: str | os.PathLike[str], n_rows: float) -> pd.DataFrame | None:
-    """The first data frame ``as.list()`` lists after ``load()``, head of *n_rows*."""
+    """The first data frame ``as.list()`` lists after ``load()``, head of *n_rows*.
+
+    Column attributes are kept as stored, whatever *n_rows* is (in R the
+    child process calls ``head()`` only for a finite *n_rows*, without vctrs,
+    so labels survive only a full read).
+    """
     from pytacheck.datacheck._files_rdata import r_frame_to_pandas, workspace_first_data_frame
 
     obj = workspace_first_data_frame(Path(path))
     if obj is None:
         return None
-    # The R child process only calls head() for a finite n_rows, and it has no
-    # vctrs methods loaded (so haven-labelled columns lose their attributes).
-    return r_frame_to_pandas(obj, n_rows, subset=math.isfinite(n_rows), vctrs=False)
+    return r_frame_to_pandas(obj, n_rows, subset=False)
 
 
 __all__ = [

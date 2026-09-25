@@ -37,7 +37,8 @@ def test_parse_checks_content_type_like_httr2() -> None:
     data = {"id": "n1", "type": "nodes"}
     for ok in ("application/json", "application/vnd.api+json; charset=utf-8"):
         assert len(_osf_parse_response(_single(data, ok))) == 1
-    for bad in (None, "text/html", "Application/JSON"):
+    assert len(_osf_parse_response(_single(data, "Application/JSON"))) == 1  # U152
+    for bad in (None, "text/html"):
         with pytest.raises(ValueError, match="Unexpected content type"):
             _osf_parse_response(_single(data, bad))
 
@@ -70,10 +71,12 @@ def test_parse_single_resource_partial_matching() -> None:
             "relationships": {"root_folder": {"data": {"id": "rf"}}},
         }
     )
+    # U52: fields are matched by their exact names (R's `$` takes a unique
+    # prefix: att$title -> titles, relationships$root -> root_folder)
     row = _osf_parse_response(resp, osf_id="n1").iloc[0]
-    assert row["name"] == "A"  # att$title -> titles
-    assert bool(row["public"]) is True  # att$public -> publicity
-    assert row["project"] == "rf"  # relationships$root -> root_folder
+    assert pd.isna(row["name"])
+    assert pd.isna(row["public"])
+    assert pd.isna(row["project"])
 
 
 def test_parse_listing_null_column_is_present() -> None:

@@ -239,10 +239,14 @@ def _header_level(header: Any) -> int | None:
 
 
 def _strip_email(author: str) -> str:
-    # R: gsub("\\s*\\(.*email\\{.+\\})", "", author) -- TRE reads the unmatched ")"
-    # as a literal, so it is escaped here. pytacheck modules write "Name <email>"
-    # instead of roxygen's "Name (\email{email})".
-    a = gsub(r"\s*\(.*email\{.+\}\)", "", author)
+    """An author line without its emails: roxygen's ``Name (\\email{email})`` or ``Name <email>``.
+
+    metacheck's greedy ``gsub("\\s*\\(.*email\\{.+\\})", "", author)`` removed
+    everything from the first email on, so a line naming two authors
+    (``stat_p_exact``) kept only the first name (U6); each email is removed
+    on its own here.
+    """
+    a = gsub(r"\s*\([^()]*email\{[^{}]*\}\)", "", author)
     return re.sub(r"\s*<[^<>]*@[^<>]*>", "", a)
 
 
@@ -273,10 +277,9 @@ def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
     try:
         info = module_info(module)
         details = info.details or None
-        if details is None:
-            # R: gregexpr() on NULL details errors, dropping the whole section
-            return None, validation
-        found = regextract_all(r"<validation>.*?</validation>", details)
+        # metacheck's gregexpr() on NULL details errors inside its tryCatch(),
+        # which dropped the whole callout, description and authors too (U129)
+        found = [] if details is None else regextract_all(r"<validation>.*?</validation>", details)
         if found:
             validation = [
                 sub(
@@ -294,8 +297,11 @@ def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
             else:
                 authors = ", ".join(a[:-1]) + " and " + a[-1]
             author_ack = f"This module was developed by {authors}"
-        details = gsub(r"\s*<validation>.*</validation>\s*", "", details)
+        if details is not None:
+            details = gsub(r"\s*<validation>.*</validation>\s*", "", details)
         paragraphs = [p for p in (info.description or None, details, author_ack) if p is not None]
+        if not paragraphs:
+            return None, validation
         return collapse_section(paragraphs, "How It Works", callout="note"), validation
     except Exception:
         return None, validation
@@ -307,30 +313,37 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
     title = module_output.title
     level = _header_level(header)
     head: list[str]
+    # an undefined traffic light has no emoji: metacheck's sprintf() with NULL
+    # dropped the whole heading (U128); here it has no symbol
+    symbol = "" if tl_symbol is None else f"{tl_symbol} "
     if header is None:
         head = [""]
     elif level == 0:
-        head = [] if tl_symbol is None else [f"{tl_symbol} {title}"]
+        head = [f"{symbol}{title}"]
     elif level is not None and 1 <= level <= 6:
         anchor = str(title).lower().replace(" ", "-")
-        head = (
-            [] if tl_symbol is None else [f"{'#' * level} {tl_symbol} {title} {{#{anchor} .{tl}}}"]
-        )
+        head = [f"{'#' * level} {symbol}{title} {{#{anchor} .{tl}}}"]
     else:
         head = [_as_text(header)]
 
     summary_text = module_output.summary_text
-    summary = _flatten(summary_text) if summary_text is not None else ["..."]
+    # without a summary text, metacheck showed "..." and dropped the report
+    # (`all(NULL == report)` is TRUE; U129): here the report is the summary
+    summary = _flatten(summary_text) if summary_text is not None else []
     report = module_output.report if module_output.report is not None else summary_text
     blocks: list[Any] | None = _flatten(report)
     if blocks is not None and all(isinstance(b, str) and b == "" for b in blocks):
         blocks = None
+    if summary_text is None and blocks is None:
+        summary = ["..."]
 
     hiw, validation = _how_it_works(module_output.module)
 
     pre: str | None = "<details><summary>View detailed feedback</summary><div>"
     post: str | None = "</div></details>"
-    if blocks is None or _all_equal(summary, blocks, summary_text is None):
+    if summary_text is None and blocks is not None:
+        pre = post = None
+    elif blocks is None or _all_equal(summary, blocks, False):
         pre = post = None
         blocks = None
     elif len("\n\n".join(_block_text(b) for b in blocks)) < 300:
@@ -510,19 +523,17 @@ def _summary_line(mo: ModuleOutput) -> str:
         summary_text = " ".join("NA" if s is None else str(s) for s in _flatten(summary_text))
     if summary_text and summary_text[0] == "\n":
         summary_text = summary_text.replace("\n", "\n    ")
-    if emoji is None:
-        # R: sprintf() with a NULL argument gives character(0), which paste() prints
-        return "character(0)"
+    # an undefined traffic light has no emoji (metacheck's sprintf() with NULL
+    # printed the line as "character(0)"; U128)
+    symbol = "" if emoji is None else f"{emoji} "
     anchor = gsub(r"\s", "-", str(mo.title).lower())
-    return f"- {emoji} [{mo.title}](#{anchor}){{.{tl}}}: {summary_text}  "
+    return f"- {symbol}[{mo.title}](#{anchor}){{.{tl}}}: {summary_text}  "
 
 
 def _report_parts(module_output: Any, paper: Any = None) -> _ReportParts:
-    if paper is None or getattr(paper, "author", None) is None:
-        # R: `if (nrow(paper$author) > 0)` fails without a paper
-        raise ValueError(
-            "report_qmd() needs the paper the modules ran on (argument is of length zero)"
-        )
+    # metacheck's default `paper = list()` always failed (`nrow(paper$author) > 0`),
+    # and a paper whose info lacks a title or DOI lost the report header
+    # (`ifelse(logical(0), ...)`); here they are just left out (U128)
     outputs = _module_output_list(module_output)
     lines = _template_lines()
     cut_after = lines.index("<!-- Demo -->")
@@ -531,22 +542,14 @@ def _report_parts(module_output: Any, paper: Any = None) -> _ReportParts:
     rt_head = re.sub(r"%(?![sdfi])", "%%", rt_head)
 
     titles = _info_values(paper, "title")
-    if titles:
-        subtitle_raw = "NA" if _is_na(titles[0]) else str(titles[0])
-    else:
-        # paper$info$title %||% "" (a zero-row info table drops the header below)
-        subtitle_raw = ""
+    subtitle_raw = ("NA" if _is_na(titles[0]) else str(titles[0])) if titles else ""
     subtitle = subtitle_raw.replace('"', '\\"')
     dois = _info_values(paper, "doi")
     version = _report_version()
     date = _dt.date.today().isoformat()
-    if dois is None or len(dois) == 0 or (titles is not None and len(titles) == 0):
-        # R: ifelse(logical(0), ...) makes sprintf() return character(0)
-        head, doi_text = "", ""
-    else:
-        doi = dois[0]
-        doi_text = "" if _is_na(doi) or doi == "" else f"DOI: [{doi}](https://doi.org/{doi})"
-        head = rt_head % (subtitle, version, date, doi_text)
+    doi = dois[0] if dois else None
+    doi_text = "" if _is_na(doi) or doi == "" else f"DOI: [{doi}](https://doi.org/{doi})"
+    head = rt_head % (subtitle, version, date, doi_text)
 
     summary_list = [_summary_line(mo) for mo in outputs]
     summary = "## Summary\n\n{}\n\n".format("\n".join(summary_list))
@@ -735,7 +738,8 @@ def report(
     output_file:
         Where to save the report; defaults to ``<paper_id>_report.<format>``.
         For a paper list, one path per paper, or one path whose file name is
-        prefixed with each paper ID.
+        prefixed with each paper ID and ``_`` (``report.html`` gives
+        ``<paper_id>_report.html``).
     output_format:
         ``"html"`` (default), ``"qmd"`` or ``"md"``.
     args:
@@ -780,7 +784,10 @@ def report(
             first = os.fspath(files[0])
             base = os.path.basename(first)
             folder = os.path.dirname(first) or "."
-            files = [os.path.join(folder, f"{p.paper_id}{base}") for p in papers]
+            # "<id>_report.html" from the default "_report.html"; a given name
+            # gets a separator (metacheck pasted "<id>report.html"; U130)
+            sep = "" if base[:1] in ("_", "-", ".") else "_"
+            files = [os.path.join(folder, f"{p.paper_id}{sep}{base}") for p in papers]
         out = ReportList()
         for p, of in zip(papers, files, strict=True):
             try:

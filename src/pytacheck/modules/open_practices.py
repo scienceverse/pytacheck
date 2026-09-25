@@ -57,6 +57,10 @@ _CODE_WORDS = (
     r"\bR\b",
     r"\bpython\b",
 )
+# U107: metacheck searches `\bR\b` case-insensitively, so a lone "r" (a
+# correlation, "r = .45") counted as a code word; only a capital R names the
+# language (see `_code_rows()`)
+_CODE_WORDS_NOT_R = "|".join(w for w in _CODE_WORDS if w != r"\bR\b")
 _MATERIALS_WORDS = (
     r"\bmaterials?\b",
     r"\bquestionnaires?\b",
@@ -95,7 +99,7 @@ _NO_DATA_REPORT = (
 )
 _NO_CODE_REPORT = (
     "We did not detect open sharing of code, which could be because there is no code related "
-    "to this article, or the repository is not reconized by our code. If there is code, please "
+    "to this article, or the repository is not recognized by our code. If there is code, please "
     "consider sharing it in a repository."
 )
 _DATA_REPORT = "Data was openly shared for this article, based on the following text:\n\n> {}"
@@ -128,6 +132,16 @@ def _search_frame(paper: Any) -> Any:
     frame = frame.loc[keep.to_numpy()]
     first = grepl(_FIRST_STAGE_ANY, frame["text"].tolist(), ignore_case=True)
     return frame.loc[first]
+
+
+def _code_rows(frame: Any) -> Any:
+    """Rows of *frame* with a code word, where "R" must be a capital (U107)."""
+    if not isinstance(frame, pd.DataFrame) or "text" not in frame.columns or len(frame) == 0:
+        return frame
+    texts = frame["text"].tolist()
+    other = pd.Series(grepl(_CODE_WORDS_NOT_R, texts, ignore_case=True), index=frame.index)
+    capital_r = pd.Series(grepl(r"\bR\b", texts), index=frame.index)
+    return frame.loc[(other | capital_r).astype(bool).to_numpy()]
 
 
 def _chain(frame: Any, *steps: tuple[str | Sequence[str], bool]) -> pd.DataFrame:
@@ -176,12 +190,11 @@ def _full_join(
 
 
 def _arrange(table: pd.DataFrame, paper_ids: list[str]) -> pd.DataFrame:
-    """``paper_id`` as ``factor(paper_id, paper_ids)``, then ``arrange(paper_id, text_id)``."""
-    seen: dict[str, int] = {}
-    for i, pid in enumerate(paper_ids):
-        if pid in seen:
-            raise ValueError(f"factor level [{i + 1}] is duplicated")
-        seen[pid] = i
+    """``paper_id`` as ``factor(paper_id, paper_ids)``, then ``arrange(paper_id, text_id)``.
+
+    *paper_ids* are unique (metacheck's ``factor()`` stops on duplicated IDs, U101).
+    """
+    seen = {pid: i for i, pid in enumerate(paper_ids)}
     pids = table["paper_id"].tolist() if "paper_id" in table.columns else [None] * len(table)
     codes = [None if p is None or p is pd.NA or p != p else seen.get(p) for p in pids]
     keys = pd.DataFrame(
@@ -261,7 +274,7 @@ def open_practices(paper: Any) -> dict[str, Any]:
     repo = (_REPO_WORDS, False)
     avail = (_AVAILABILITY, False)
     data = _chain(frame, (_DATA_WORDS, False), repo, avail)
-    code = _chain(frame, (_CODE_WORDS, False), repo, avail)
+    code = _chain(_code_rows(frame), (_CODE_WORDS, False), repo, avail)
     materials = _chain(frame, (_MATERIALS_WORDS, False), repo, avail)
     prereg = _chain(
         frame,
@@ -291,12 +304,14 @@ def open_practices(paper: Any) -> dict[str, Any]:
             )
         raise ValueError("In argument: `data_statements = list(unique(text[data]))`.")
 
-    # flag on_request
+    # flag on_request, ignoring case like the repository search that found the
+    # sentence (metacheck's case-sensitive grepl() misses "ON REQUEST", U107)
     texts = table["text"].tolist()
-    table["on_request"] = pd.Series(grepl(_ON_REQUEST, texts), dtype="boolean")
+    table["on_request"] = pd.Series(grepl(_ON_REQUEST, texts, ignore_case=True), dtype="boolean")
 
     # re-order by paper_id (same as paper) and text_id (inc)
-    table = _arrange(table, paper_id(paper))
+    paper_ids = list(dict.fromkeys(paper_id(paper)))
+    table = _arrange(table, paper_ids)
 
     # summary_table ----
     # sentences that only matched repo_words because of "on request"
@@ -306,17 +321,35 @@ def open_practices(paper: Any) -> dict[str, Any]:
     summary_table = _summarise(table, in_repo)
 
     # traffic_light / summary_text ----
-    n = len(summary_table)
-    if n > 1:
+    # branch on the number of papers (metacheck branches on the rows of
+    # summary_table, i.e. the papers with a flagged sentence, U106)
+    several = len(paper_ids) > 1
+    # one paper: the single-paper branch when it has a flagged sentence
+    single = not several and len(summary_table) == 1
+    if several:
         tl = "info"
-        d = summary_table["data_open"].to_numpy(dtype=bool)
-        c = summary_table["code_open"].to_numpy(dtype=bool)
-        summary_text = (
-            f"{int((d & c).sum()):d} papers shared both data and code, "
-            f"{int((d & ~c).sum()):d} only data, {int((~d & c).sum()):d} only code, "
-            f"and {int((~d & ~c).sum()):d} neither."
+        found = dict(
+            zip(
+                summary_table["paper_id"].tolist(),
+                zip(
+                    summary_table["data_open"].tolist(),
+                    summary_table["code_open"].tolist(),
+                    strict=True,
+                ),
+                strict=True,
+            )
         )
-    elif n == 0:
+        # papers without a flagged sentence shared neither
+        opened = [found.get(pid, (False, False)) for pid in paper_ids]
+        both = sum(bool(d) and bool(c) for d, c in opened)
+        only_data = sum(bool(d) and not c for d, c in opened)
+        only_code = sum(not d and bool(c) for d, c in opened)
+        neither = sum(not d and not c for d, c in opened)
+        summary_text = (
+            f"{both:d} papers shared both data and code, {only_data:d} only data, "
+            f"{only_code:d} only code, and {neither:d} neither."
+        )
+    elif not single:
         summary_text = "Neither shared data nor code detected."
         tl = "red"
     else:
@@ -340,7 +373,7 @@ def open_practices(paper: Any) -> dict[str, Any]:
 
     # report ----
     report: list[str] | None = None
-    if n == 1:
+    if single:
         data_flag = table["data"].tolist()
         code_flag = table["code"].tolist()
         if not data_open:
@@ -355,8 +388,12 @@ def open_practices(paper: Any) -> dict[str, Any]:
             code_report = _CODE_REPORT.format("\n\n> ".join(shared))
         report = [data_report, code_report]
         if bool(summary_table["on_request"].iloc[0]):
+            # one paragraph quoting each on-request sentence once (metacheck repeats
+            # the paragraph for every matching row, U107)
             asked = [t for t, f in zip(texts, table["on_request"].tolist(), strict=True) if f]
-            report.extend(_ON_REQUEST_REPORT.format(t) for t in gsub("\n\n", "\n\n> ", asked))
+            asked = list(dict.fromkeys(asked))
+            quoted = "\n\n> ".join(gsub("\n\n", "\n\n> ", asked))
+            report.append(_ON_REQUEST_REPORT.format(quoted))
 
     # return a list ----
     return {

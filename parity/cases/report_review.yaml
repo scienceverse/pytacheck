@@ -56,17 +56,19 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); tp <- test_paper('x'); tp$info$title <- NA; tp$info$doi <- ''; rp_report_qmd(tp, c('rv_flex', 'rp_no_details'), list(rv_flex = list(summary_text = 'Plain', report = c('R1', 'R2'), traffic_light = 'yellow')))}", "py": "(lambda tp: (setattr(tp, 'info', tp.info.assign(title=pd.Series([None], dtype='string'), doi=pd.Series([''], dtype='string'))), __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(tp, ['rv_flex', 'rp_no_details'], {'rv_flex': {'summary_text': 'Plain', 'report': ['R1', 'R2'], 'traffic_light': 'yellow'}}))[-1])(pc.test_paper(['x']))"}}
 - "id": "report_qmd.zero_row_info"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U128", "reason": "a paper whose info has no rows or no doi column keeps the report header (R: ifelse(logical(0)) makes sprintf() return character(0))"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); tp <- test_paper('x'); tp2 <- tp; tp2$info <- tp2$info[0, ]; rp_report_qmd(tp, 'rv_flex', list(), qmd_paper = tp2)}", "py": "(lambda tp, cp: (setattr(cp, 'info', cp.info.iloc[0:0]), __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(tp, ['rv_flex'], {}, qmd_paper=cp))[-1])(pc.test_paper(['x']), pc.test_paper(['x']))"}}
 - "id": "report_qmd.no_doi_column"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U128", "reason": "a paper whose info has no rows or no doi column keeps the report header (R: ifelse(logical(0)) makes sprintf() return character(0))"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); tp <- test_paper('x'); tp2 <- tp; tp2$info$doi <- NULL; rp_report_qmd(tp, 'rv_flex', list(), qmd_paper = tp2)}", "py": "(lambda tp, cp: (setattr(cp, 'info', cp.info.drop(columns=['doi'])), __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(tp, ['rv_flex'], {}, qmd_paper=cp))[-1])(pc.test_paper(['x']), pc.test_paper(['x']))"}}
 - "id": "report_qmd.vector_summary"
-  "known_divergence": "R 4.3+ errors in report_qmd() ('length = 2' in coercion to 'logical(1)' from `nzchar(summary_text) && ...`) when a module's summary_text has several elements, failing the whole report; pytacheck writes the summary line with the parts joined by a space."
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U7", "reason": "R 4.3+ errors in report_qmd() ('length = 2' in coercion to 'logical(1)' from `nzchar(summary_text) && ...`) when a module's summary_text has several elements, failing the whole report; pytacheck writes the summary line with the parts joined by a space."}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
@@ -101,6 +103,7 @@
 
 # --- report() -------------------------------------------------------------------------------
 - "id": "report.paperlist.one_file"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U130", "reason": "one output_file for a paper list gives <id>_<name> (R pastes <id><name>)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
@@ -208,6 +211,7 @@
   "args":
     "table": {"$expr": {"r": "data.frame(f = factor(c('b', 'a')), s = c('x\\ny', 'z'))", "py": "pd.DataFrame({'f': pd.Categorical(['b', 'a']), 's': ['x\\ny', 'z']})"}}
 - "id": "scroll_table.vector_newlines"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U131", "reason": "line breaks in a vector's blank-named column become <br> like in every other text column (R's table[[\"\"]] is NULL)"}
   "r": "scroll_table"
   "py": "pytacheck.report.render.scroll_table_qmd"
   "args":
@@ -258,6 +262,7 @@
     "url": "10.1234/abc"
     "type": "doi"
 - "id": "link.doi_vector_na"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U8", "reason": "a missing DOI gives no link (R links it to https://doi.org/NA)"}
   "r": "link"
   "py": "pytacheck.report.blocks.link"
   "args":
@@ -318,6 +323,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_report_module_run(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json')), c('stat_p_nonsig', 'stat_p_exact', 'marginal'))}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_module_run(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json']), ['stat_p_nonsig', 'stat_p_exact', 'marginal'])"}}
 - "id": "module_report.stat_p_exact.headers"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U6", "reason": "the How It Works callout credits both authors of stat_p_exact's single @author line (R's greedy email gsub keeps only Lisa DeBruine)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":

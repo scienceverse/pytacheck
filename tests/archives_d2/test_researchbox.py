@@ -154,9 +154,10 @@ def test_file_download_posts_for_a_zip_and_lists_it(
     assert body["box_id"] == "801"
     assert body["reference"] == "kkqtZcbEDQeScj3Ywc8pcf0hlkrBhcKipatjzfQlJHg"
     assert len(body["files"]) == 9 and all(isinstance(v, int) for v in body["files"])
-    # "sh" is listed under two file types, so run.sh appears twice (as in R)
-    assert files["name"].tolist() == ["data/x.csv", "README.md", "run.sh", "run.sh"]
-    assert files["type"].tolist() == ["data", "text", "code", "exec"]
+    # U46: "sh" is listed under two file types; run.sh is one row with the
+    # first (metacheck repeats it once per type)
+    assert files["name"].tolist() == ["data/x.csv", "README.md", "run.sh"]
+    assert files["type"].tolist() == ["data", "text", "code"]
     assert all(Path(p).exists() for p in files["file_location"])
 
     # a second call reuses the unzipped cache without any request

@@ -219,11 +219,11 @@ def test_github_files_types_and_order(apis: object) -> None:
 
 
 def test_github_files_duplicate_extensions(mocks: object) -> None:
-    # metacheck::file_types lists html as both "code" and "web": the file is
-    # repeated once per type, as dplyr::left_join() does
+    # U46: metacheck::file_types lists html as both "code" and "web"; the file
+    # is one row with the first type (metacheck repeats it once per type)
     files = github_files("gzorg/fallrepo")
-    assert files["name"].tolist() == ["A.csv", "b.txt", "page.html", "page.html"]
-    assert files["type"].tolist() == ["data", "text", "code", "web"]
+    assert files["name"].tolist() == ["A.csv", "b.txt", "page.html"]
+    assert files["type"].tolist() == ["data", "text", "code"]
 
 
 def test_github_files_rate_limited(mocks: object) -> None:
@@ -268,7 +268,7 @@ def test_github_tree_files(mocks: object) -> None:
         files["download_url"].iloc[0]
         == "https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md"
     )
-    assert files["path"].tolist().count("code/config.json") == 2  # json: code and data
+    assert files["path"].tolist().count("code/config.json") == 1  # json: one row (U46)
     assert pd.isna(files.loc[files["name"] == "weird.file-name", "size"]).all()
 
 
@@ -311,5 +311,9 @@ def test_github_tree_files_fallbacks(mocks: object) -> None:
 def test_file_types_table() -> None:
     ft = github._file_types()
     assert list(ft.columns) == ["ext", "type"]
-    assert len(ft) == 404
-    assert ft.loc[ft["ext"] == "json", "type"].tolist() == ["code", "data"]
+    # one row per extension (the raw table has 404 rows, 27 extensions twice):
+    # the first type in table order (U46)
+    assert len(ft) == 377
+    assert ft["ext"].is_unique
+    assert ft.loc[ft["ext"] == "json", "type"].tolist() == ["code"]
+    assert ft.loc[ft["ext"] == "ts", "type"].tolist() == ["web"]
