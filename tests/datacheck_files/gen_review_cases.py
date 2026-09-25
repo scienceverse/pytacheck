@@ -108,6 +108,7 @@ HEAD_FILES = [
     "rt_mb_error.csv", "rt_dup_rownames.txt", "rt_rownames.txt", "rt_wrap.csv",
     "rt_nul_quote_header.csv", "rt_fallback_latin1.csv", "rt_nul_value.csv", "rt_cr_cr.csv", "rt_nrows.csv",
     "stata_int_na.dta", "zero_rows.sav", "zero_rows.dta", "all_na_dates.sav", "list_cells.rds",
+    "dup_names.csv",
 ]  # fmt: skip
 for name in HEAD_FILES:
     typed_head(name)

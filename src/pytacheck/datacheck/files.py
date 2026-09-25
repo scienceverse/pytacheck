@@ -1890,7 +1890,7 @@ def _set_names(df: pd.DataFrame, names: list[str]) -> None:
     old = list(df.columns)
     df.columns = pd.Index(names, dtype=object)
     col_attrs = df.attrs.get("col_attrs")
-    if col_attrs:
+    if col_attrs or getattr(col_attrs, "positional", None):  # a ColAttrs may key no name
         df.attrs["col_attrs"] = rename_col_attrs(col_attrs, old, names)
 
 

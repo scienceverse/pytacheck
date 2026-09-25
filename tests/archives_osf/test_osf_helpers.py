@@ -218,7 +218,9 @@ def _node(nid: str, title: str | None, root: str | None, public: bool = True) ->
     }
 
 
-def test_osf_user_projects_and_expansion(capsys: pytest.CaptureFixture[str]) -> None:
+def test_osf_user_projects_and_expansion(
+    capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
     listing = {
         "data": [
             _node("proj1", "Project One", "proj1"),
@@ -269,9 +271,9 @@ def test_osf_user_projects_and_expansion(capsys: pytest.CaptureFixture[str]) -> 
         assert projects["public"].tolist() == [True, False, True]
         assert projects["osf_url"].tolist()[0] == "https://osf.io/proj1"
 
-        from pytacheck.config import verbose
+        from pytacheck.config import _state
 
-        verbose(True)
+        monkeypatch.setitem(_state, "verbose", True)
         expanded = _osf_expand_user_ids(["proj9", "user1", "proj1"])
         assert expanded == ["proj9", "proj1", "proj3", "proj2"]
         assert "projects to download" in capsys.readouterr().err

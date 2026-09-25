@@ -330,7 +330,97 @@ def _fix_name(col_name: Any) -> Any:
     return col_name
 
 
-def data_col_type(col_name: Any, values: Any) -> dict[str, Any]:
+def _r_classes(values: Any, col_class: Any = None) -> list[str]:
+    """The R ``class()`` recorded for a column (``[]`` when unknown).
+
+    *col_class* wins; otherwise a Series' own ``attrs["class"]``, else its
+    frame's ``attrs["col_attrs"][name]["class"]`` (pandas copies a frame's
+    ``attrs`` to the columns taken from it).
+    """
+    cls = col_class
+    if cls is None:
+        attrs = getattr(values, "attrs", None)
+        if isinstance(attrs, dict):
+            cls = attrs.get("class")
+            ca = attrs.get("col_attrs")
+            name = getattr(values, "name", None)
+            if cls is None and isinstance(ca, dict) and name in ca:
+                cls = (ca.get(name) or {}).get("class")
+    if cls is None:
+        return []
+    return [cls] if isinstance(cls, str) else [str(c) for c in cls]
+
+
+def _hms_character(secs: list[float | None]) -> list[str | None]:
+    """``as.character()`` of an ``hms`` vector (``hms:::format_hms()``).
+
+    ``[-]HH:MM:SS`` with the hours padded to a common width and, when any
+    value has a fraction of a second, a common number of decimals (at most 6).
+    """
+    tps = 1_000_000  # hms' TICS_PER_SECOND
+    parts = []
+    for v in secs:
+        if v is None:
+            parts.append(None)
+            continue
+        x = v * tps
+        xr = round(x)
+        a = abs(xr)
+        tics = float(a % tps)
+        if tics == 0 and xr != x:
+            tics = 0.25  # fake_zero: a fraction that rounds away still shows decimals
+        parts.append((xr < 0, a // (3600 * tps), a // (60 * tps) % 60, a // tps % 60, tics))
+    present = [q for q in parts if q is not None]
+    if not present:
+        return [None] * len(secs)
+
+    def decimals(t: float) -> int:  # nchar(format(t, digits = 7)) - 2
+        txt = f"{float(f'{t / tps:.7g}'):.15f}".rstrip("0")
+        return max(len(txt.split(".")[1]), 0) if "." in txt else 0
+
+    digits = max(min(max(decimals(q[4]) for q in present), 6), 0)
+    hours = [f"{q[1]:02d}" for q in present]
+    width = max(len(h) for h in hours)
+    out: list[str | None] = []
+    for q in parts:
+        if q is None:
+            out.append(None)
+            continue
+        frac = f"{q[4] / tps:.{digits}f}"[1:] if digits else ""
+        sign = "-" if q[0] else ""
+        out.append(f"{sign}{f'{q[1]:02d}'.rjust(width)}:{q[2]:02d}:{q[3]:02d}{frac}")
+    return out
+
+
+def _classed_values(values: Any, col_class: Any = None) -> Any:
+    """*values* as R sees them when its class makes ``is.numeric()`` ``FALSE``.
+
+    ``hms``/``difftime`` (and ``Date``/``POSIXct`` kept as numbers) are not
+    numeric in R, and ``as.character()`` gives ``"01:02:03"``, the plain
+    number, or the date; such a column is returned as those strings (``None``
+    for NA), which is how every rule after ``is.numeric()`` sees it. Other
+    columns are returned unchanged.
+    """
+    classes = _r_classes(values, col_class)
+    if not classes or not {"hms", "difftime", "Date", "POSIXct"} & set(classes):
+        return values
+    arr = _double_array(values)
+    if arr is None:  # already dates / datetimes / text
+        return values
+    nums: list[float | None] = [None if math.isnan(v) else float(v) for v in arr.tolist()]
+    if "hms" in classes:
+        return _hms_character(nums)
+    if "difftime" in classes:
+        return [None if v is None else _chr(v) for v in nums]
+    if "Date" in classes:
+        import datetime as dt
+
+        epoch = dt.date(1970, 1, 1)
+        return [None if v is None else _chr(epoch + dt.timedelta(days=math.floor(v))) for v in nums]
+    return [None if v is None else _chr(pd.Timestamp(v, unit="s")) for v in nums]
+
+
+def data_col_type(col_name: Any, values: Any, col_class: Any = None) -> dict[str, Any]:
     """Classify a single data column by rule.
 
     Port of ``R/data_check_helpers.R::data_col_type()``. Rule order: all-NA ->
@@ -340,9 +430,12 @@ def data_col_type(col_name: Any, values: Any) -> dict[str, Any]:
 
     Returns a dict with ``col_type`` (``None`` when only the LLM could decide),
     ``ambiguous``, ``numeric_values`` (the numeric values for stats, or
-    ``None``), ``n_coerced`` and ``is_numeric``.
+    ``None``), ``n_coerced`` and ``is_numeric``. *col_class* is the column's R
+    ``class()`` (by default read from the Series' ``attrs``): ``hms`` and
+    ``difftime`` columns are not numeric in R and are typed from their text.
     """
     col_name = _fix_name(col_name)
+    values = _classed_values(values, col_class)
 
     def out(col_type: str | None, ambiguous: bool = False, numeric_values: Any = None,
             n_coerced: int | None = None, is_numeric: bool = False) -> dict[str, Any]:  # fmt: skip

@@ -289,6 +289,67 @@
       - !!float "1.5"
       - !!float "2.5"
       - !!float "3.5"
+- "id": "data_col_type.class.hms"
+  "r": "data_col_type"
+  "py": "pytacheck.datacheck.columns.data_col_type"
+  "args":
+    "col_name": "x"
+    "values":
+      "$expr":
+        "r": "hms::hms(c(3600, 3723, 7200, 10, NA, 59, 90000, 61.5))"
+        "py": "pd.Series([3600, 3723, 7200, 10, None, 59, 90000, 61.5], dtype='float64')"
+  "py_args":
+    "col_class":
+    - "hms"
+    - "difftime"
+- "id": "data_col_type.class.hms_whole"
+  "r": "data_col_type"
+  "py": "pytacheck.datacheck.columns.data_col_type"
+  "args":
+    "col_name": "dur"
+    "values":
+      "$expr":
+        "r": "hms::hms(c(60, 120, 180, 240, 300))"
+        "py": "pd.Series([60, 120, 180, 240, 300], dtype='float64')"
+  "py_args":
+    "col_class":
+    - "hms"
+    - "difftime"
+- "id": "data_col_type.class.difftime"
+  "r": "data_col_type"
+  "py": "pytacheck.datacheck.columns.data_col_type"
+  "args":
+    "col_name": "x"
+    "values":
+      "$expr":
+        "r": "as.difftime(c(1.5, 2, 3, 4, NA, 10), units = 'mins')"
+        "py": "pd.Series([1.5, 2, 3, 4, None, 10], dtype='float64')"
+  "py_args":
+    "col_class":
+    - "difftime"
+- "id": "data_col_type.class.difftime_many"
+  "r": "data_col_type"
+  "py": "pytacheck.datacheck.columns.data_col_type"
+  "args":
+    "col_name": "x"
+    "values":
+      "$expr":
+        "r": "as.difftime(1:25 + 0.5, units = 'secs')"
+        "py": "pd.Series([v + 0.5 for v in range(1, 26)], dtype='float64')"
+  "py_args":
+    "col_class":
+    - "difftime"
+- "id": "data_col_type.class.hms_frame_attrs"
+  "r": "data_col_type"
+  "py": "pytacheck.datacheck.columns.data_col_type"
+  "args":
+    "col_name": "x"
+    "values":
+      "$expr":
+        "r": "hms::hms(c(3600, 3723, 7200, 10, NA, 59, 90000, 61.5))"
+        "py": "(lambda df: (df.attrs.update({'col_attrs': {'x': {'class': ['hms', 'difftime'], 'units':\
+          \ 'secs'}}}), df.iloc[:, 0])[1])(pd.DataFrame({'x': [3600, 3723, 7200, 10, None, 59, 90000,\
+          \ 61.5]}, dtype='float64'))"
 - "id": "data_col_stats.overflow_sq"
   "r": "data_col_stats"
   "py": "pytacheck.datacheck.columns.data_col_stats"

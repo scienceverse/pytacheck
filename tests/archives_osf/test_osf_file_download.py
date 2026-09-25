@@ -12,6 +12,7 @@ import inspect
 import io
 import os
 import zipfile
+from collections.abc import Iterator
 from pathlib import Path
 
 import httpx
@@ -25,9 +26,21 @@ from pytacheck.config import verbose
 
 
 @pytest.fixture(autouse=True)
-def _fresh_cache() -> None:
+def _fresh_cache() -> Iterator[None]:
+    from pytacheck.config import _state
+
     osf_cache_clear()
+    saved = _state.get("verbose", _UNSET)
     verbose(True)
+    yield
+    # do not leak verbose(True) into other tests in this worker
+    if saved is _UNSET:
+        _state.pop("verbose", None)
+    else:
+        _state["verbose"] = saved
+
+
+_UNSET = object()
 
 
 def _output(capsys: pytest.CaptureFixture[str]) -> str:

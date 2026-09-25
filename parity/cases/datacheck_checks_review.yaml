@@ -98,6 +98,31 @@
       "$expr":
         "r": "c(\"2022_Sep_08_523\", \"2022_Sep_09_845\", \"2022_Oct_01_959\")"
         "py": "pd.Series(['2022_Sep_08_523', '2022_Sep_09_845', '2022_Oct_01_959'], dtype='string')"
+- "id": "data_col_facets.review.class_hms"
+  "r": "data_col_facets"
+  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "args":
+    "col_name": "start_time"
+    "values":
+      "$expr":
+        "r": "hms::hms(c(3600, 3723, 7200, 10, NA, 59, 90000, 61.5))"
+        "py": "pd.Series([3600, 3723, 7200, 10, None, 59, 90000, 61.5], dtype='float64')"
+  "py_args":
+    "col_class":
+    - "hms"
+    - "difftime"
+- "id": "data_col_facets.review.class_difftime"
+  "r": "data_col_facets"
+  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "args":
+    "col_name": "rt"
+    "values":
+      "$expr":
+        "r": "as.difftime(c(350, 420.5, 515, 610, 380, 455), units = 'secs')"
+        "py": "pd.Series([350, 420.5, 515, 610, 380, 455], dtype='float64')"
+  "py_args":
+    "col_class":
+    - "difftime"
 - "id": "data_check_constant.review.nan_string"
   "r": "data_check_constant"
   "py": "pytacheck.datacheck.checks.data_check_constant"

@@ -130,6 +130,39 @@ for cid, name, values in [
 ]:
     case(f"data_col_type.{cid}", "data_col_type", {"col_name": name, "values": values})
 
+# R classes that make is.numeric() FALSE: hms / difftime columns are typed from
+# their as.character() text. Python passes the class (col_class, or a frame's
+# col_attrs carried on the Series' attrs).
+_HMS = "[3600, 3723, 7200, 10, None, 59, 90000, 61.5]"
+for cid, name, r_x, py_x, cls in [
+    ("hms", "x", "hms::hms(c(3600, 3723, 7200, 10, NA, 59, 90000, 61.5))", _HMS,
+     ["hms", "difftime"]),
+    ("hms_whole", "dur", "hms::hms(c(60, 120, 180, 240, 300))", "[60, 120, 180, 240, 300]",
+     ["hms", "difftime"]),
+    ("difftime", "x", "as.difftime(c(1.5, 2, 3, 4, NA, 10), units = 'mins')",
+     "[1.5, 2, 3, 4, None, 10]", ["difftime"]),
+    ("difftime_many", "x", "as.difftime(1:25 + 0.5, units = 'secs')",
+     "[v + 0.5 for v in range(1, 26)]", ["difftime"]),
+]:  # fmt: skip
+    case(
+        f"data_col_type.class.{cid}",
+        "data_col_type",
+        {"col_name": name, "values": expr(r_x, f"pd.Series({py_x}, dtype='float64')")},
+        py_args={"col_class": cls},
+    )
+case(
+    "data_col_type.class.hms_frame_attrs",
+    "data_col_type",
+    {
+        "col_name": "x",
+        "values": expr(
+            "hms::hms(c(3600, 3723, 7200, 10, NA, 59, 90000, 61.5))",
+            f"(lambda df: (df.attrs.update({{'col_attrs': {{'x': {{'class': ['hms', 'difftime'], "
+            f"'units': 'secs'}}}}}}), df.iloc[:, 0])[1])(pd.DataFrame({{'x': {_HMS}}}, dtype='float64'))",
+        ),
+    },
+)
+
 # --------------------------------------------------------------- data_col_stats
 for cid, xs in [
     ("overflow_sq", [1e200, -1e200, 3.0, 5.0]),

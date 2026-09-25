@@ -390,7 +390,9 @@ def _is_true(x: Any) -> bool:
     return v.kind == "logical" and len(v) == 1 and v.values[0] is True
 
 
-def data_col_facets(col_name: Any, values: Any, in_scale_block: Any = None) -> dict[str, Any]:
+def data_col_facets(
+    col_name: Any, values: Any, in_scale_block: Any = None, col_class: Any = None
+) -> dict[str, Any]:
     """Describe a data column as orthogonal facets (DDI-style).
 
     Port of ``R/data_check_helpers.R::data_col_facets()``: ``representation``,
@@ -398,10 +400,13 @@ def data_col_facets(col_name: Any, values: Any, in_scale_block: Any = None) -> d
     ``parse_note``, plus ``data_col_type()``'s ``numeric_values``,
     ``n_coerced``, ``is_numeric`` and ``ambiguous``. *in_scale_block* is
     ``True`` when the caller found the column inside a scale block (``None``
-    means unknown, R's ``NA``).
+    means unknown, R's ``NA``). *col_class* is the column's R ``class()`` (by
+    default read from the Series' ``attrs``): an ``hms``/``difftime`` column is
+    described from its text, as R's ``as.character()`` gives it.
     """
-    from pytacheck.datacheck.columns import data_col_type
+    from pytacheck.datacheck.columns import _classed_values, data_col_type
 
+    values = _classed_values(values, col_class)
     prim = data_col_type(col_name, values)
     ct = prim.get("col_type")
     if ct is not None and ct != ct:

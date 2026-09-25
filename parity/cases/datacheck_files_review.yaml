@@ -614,6 +614,23 @@
   "py_args":
     "path": "tests/datacheck_files/data/review/list_cells.rds"
     "n_rows": null
+- "id": "review.read_head_typed.dup_names.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.read_head_typed"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/dup_names.csv\"), n_rows\
+          \ = Inf); if (is.null(d)) return(NULL); types <- unname(lapply(d, function(x) c(typeof(x), class(x))));\
+          \ for (j in seq_along(d)) {if (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]],\
+          \ \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))}; list(names\
+          \ = names(d), types = types, data = d)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/dup_names.csv"
+    "n_rows": null
 - "id": "review.read_head_typed.tab_in_quotes.tsv.n5"
   "r": "identity"
   "py": "tests.datacheck_files.review_helpers.read_head_typed"

@@ -227,9 +227,19 @@ def test_manifest_without_repo_url(tmp_path: Path) -> None:
 
 
 def test_duplicate_names_attrs_describe_the_first_column(tmp_path: Path) -> None:
-    # col_attrs is keyed by name; with duplicated names it describes the first
-    # column, the one R's df$x / df[["x"]] returns
+    # col_attrs keyed by name describes the first column of a repeated name, the
+    # one R's df$x / df[["x"]] returns; by position every column keeps its own
+    from pytacheck.datacheck._colattrs import col_attrs_at
+
     first_date = fread(_write(tmp_path, "a.csv", "x,x\n2020-01-01,1\n2020-01-02,2\n"), ",", True)
     assert first_date.attrs["col_attrs"] == {"x": {"class": ["IDate", "Date"]}}
+    assert [col_attrs_at(first_date, j) for j in range(2)] == [{"class": ["IDate", "Date"]}, {}]
     first_int = fread(_write(tmp_path, "b.csv", "x,x\n1,2020-01-01\n2,2020-01-02\n"), ",", True)
-    assert "col_attrs" not in first_int.attrs
+    assert first_int.attrs["col_attrs"] == {}
+    assert [col_attrs_at(first_int, j) for j in range(2)] == [{}, {"class": ["IDate", "Date"]}]
+    # a renamed frame (names(df) <- ...) keeps the attributes by position
+    from pytacheck.datacheck.files import _set_names
+
+    _set_names(first_int, ["a", "b"])
+    assert first_int.attrs["col_attrs"] == {"b": {"class": ["IDate", "Date"]}}
+    assert col_attrs_at(first_int, 1) == {"class": ["IDate", "Date"]}
