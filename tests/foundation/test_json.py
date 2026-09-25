@@ -138,3 +138,15 @@ def test_error_is_the_standard_json_error() -> None:
 def test_very_deep_nesting_raises_a_json_error() -> None:
     with pytest.raises(JSONDecodeError):
         loads("[" * 100_000 + "]" * 100_000)
+
+
+@pytest.mark.parametrize("data", [5, None, [1], 1.5])
+def test_non_text_input_is_a_type_error(data: object) -> None:
+    # bytes(5) would parse five NUL bytes and report a JSON error instead
+    with pytest.raises(TypeError):
+        loads(data)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("wrap", [bytes, bytearray, memoryview])
+def test_bytes_like_input(wrap: type) -> None:
+    assert loads(wrap(b'\xef\xbb\xbf{"a": [1, "\\ud800"]}')) == {"a": [1, "�"]}

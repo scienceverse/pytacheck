@@ -3,9 +3,12 @@
 # metacheck on these within the margins of the accuracy contract.
 #
 # A parity case is tier 1 (realistic) when its area is not *_review or rcompat*,
-# it reads at least one input listed here and nothing outside it, and it builds
-# no synthetic input ($test_paper, $df, $chr/$int/$dbl/$lgl/$list, or an $expr
-# that names no corpus path). Every other case is tier 2 (synthetic edge cases).
+# it reads at least one input listed here (a file that exists: a case about a
+# missing file is an edge case) and nothing outside it, and it builds no
+# synthetic input ($test_paper, $df, $chr/$int/$dbl/$lgl/$list, or an $expr that
+# builds a test_paper() or names no corpus path; an $expr that is only a constant
+# or a temporary path, such as Inf or tempfile(), is an argument, not an input).
+# Every other case is tier 2 (synthetic edge cases).
 # `parity.cases.classify_tier` applies the rule; [[override]] below and a
 # `tier: {level, reason}` on a hand-written case file or case overrides it.
 #
@@ -32,8 +35,13 @@ files = [
     "upstream/metacheck/tests/testthat/fixtures/repro/**",
     "upstream/metacheck/tests/testthat/fixtures/parse-errors/**",
     "upstream/metacheck/tests/testthat/fixtures/study_1_script.do",
-    # the fixtures of every tests/ package (minus the exclusions below)
-    "tests/*/fixtures/**",
+    # pytacheck's own fixtures that stand for real inputs: a small analysis
+    # project, knitted and exported reports, papers saved by R. The other
+    # tests/*/fixtures are made up to reach one branch (an empty .spv, a notebook
+    # without cells, a TEI without a body, a codebook that is not one): tier 2.
+    "tests/mod_repro/fixtures/project/**",
+    "tests/report/fixtures/**",
+    "tests/io/fixtures/*.rds",
 ]
 # recorded metacheck API responses (`mock_dir: apis`, httptest2 mock dirs)
 mocks = [
@@ -50,8 +58,6 @@ exclude = [
     "**/edge_*/**",
     "**/*_edges.*",
     "**/fake_*",
-    # one short script per encoding and line-ending oddity
-    "tests/codecheck/fixtures/encodings/**",
 ]
 
 # Explicit tiers: an override sets the tier of the cases whose key "<area>/<id>"
@@ -88,4 +94,33 @@ cases = [
     "mod_data_check/data_check_tables.careless_two",
     "mod_data_check/data_check_tables.spreadsheets",
     "mod_data_check/data_check_tables.groups",
+]
+
+[[override]]
+tier = 2
+reason = """ref_summary on the demo paper's ref_accuracy/ref_pubpeer output with made-up \
+mismatch flags or a column dropped: the rule sees only the demo paper"""
+cases = [
+    "mod_ref_pubpeer_summary/ref_summary.accuracy.all_false",
+    "mod_ref_pubpeer_summary/ref_summary.accuracy.all_na",
+    "mod_ref_pubpeer_summary/ref_summary.accuracy.several",
+    "mod_ref_pubpeer_summary/ref_summary.accuracy.no_match_na",
+    "mod_ref_pubpeer_summary/ref_summary.accuracy.no_no_match_col",
+    "mod_ref_pubpeer_summary/ref_summary.pubpeer.no_url_col",
+]
+
+[[override]]
+tier = 2
+reason = """report() and report_module_run() on the demo paper with test modules made up in \
+tests/report/parity_helpers (rp_error, rp_validation, rp_chained, ...): the rule sees only \
+the demo paper"""
+cases = [
+    "report/module_report.validation.hits",
+    "report/report_module_run.demo.sections",
+    "report/report_module_run.demo.error_*",
+    "report/report_module_run.args",
+    "report/report_module_run.paperlist",
+    "report/report_qmd.demo.all_sections",
+    "report/report.qmd.demo",
+    "report/report.qmd.args",
 ]

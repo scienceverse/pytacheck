@@ -64,8 +64,9 @@ files, recorded API responses), 2 for synthetic edge cases. ``tier: {level: 1
 
 A mark whose difference is text that pytacheck corrects (a typo, a plural, a
 full stop in report prose) says how with ``r_text``, a list of substitutions
-applied in order to every string value of R's golden (and R's error message)
-before the comparison::
+applied in order to every string value of R's golden before the comparison (R's
+error text is never compared, so an ``r_text`` mark on a case where R fails is
+stale)::
 
     known_divergence:
       kind: r_bug_fixed
@@ -78,10 +79,12 @@ before the comparison::
 rewritten result equals Python's and fails on any other difference, and a
 substitution that changes nothing in R's golden fails it (a stale mark), as
 does a match with R's golden as it is (the substitutions changed only text the
-comparison skips). A case
-that also differs for other reasons adds ``xfail: true``; it stays an expected
-failure and ``r_text`` only removes the text corrections from its reported
-differences.
+comparison skips). A case that also differs for other reasons adds ``xfail:
+true``; it stays an expected failure, locked against R's rewritten golden, and
+``r_text`` only removes the text corrections from its reported differences.
+
+A case where R fails and Python returns a value can only be marked
+``r_bug_fixed``, ``better_logic`` or ``deliberate`` (``VALUE_WHERE_R_FAILS_KINDS``).
 
 ``needs_r: true`` marks a case whose Python side runs R. Such cases, and any
 case whose Python side starts ``Rscript``/``R`` (the harness watches for it),
@@ -186,6 +189,9 @@ DIVERGENCE_KINDS = {
 TIER1_KINDS = frozenset({"r_bug_fixed", "better_logic", "deliberate", "r_nondeterministic"})
 #: kinds that need a docs/UPSTREAM_ISSUES.md entry of this series
 REF_SERIES = {"r_bug_fixed": "U", "better_logic": "D", "deliberate": "D"}
+#: the kinds that may mark a case where R fails and Python returns a value: a value
+#: where metacheck gives none is a documented fix or decision, never a quirk
+VALUE_WHERE_R_FAILS_KINDS = frozenset(REF_SERIES)
 #: U-entry statuses an ``r_bug_fixed`` mark may cite (when the table has a status column)
 FIXED_STATUSES = ("fixed", "partly fixed")
 MARK_KEYS = frozenset({"kind", "ref", "reason", "r_text", "xfail"})
@@ -446,11 +452,16 @@ class TierOverride:
 
 @dataclass
 class Corpus:
-    """parity/corpus.toml: the realistic inputs, and explicit tiers."""
+    """parity/corpus.toml: the realistic inputs, and explicit tiers.
+
+    With a *root*, a path must also exist under it: a file a case names only to
+    see what happens when it is missing is not a realistic input.
+    """
 
     include: re.Pattern[str]
     exclude: re.Pattern[str]
     overrides: tuple[TierOverride, ...] = ()
+    root: Path | None = None
     _memo: dict[str, bool] = field(default_factory=dict, repr=False, compare=False)
 
     def __contains__(self, path: object) -> bool:
@@ -459,7 +470,10 @@ class Corpus:
         known = self._memo.get(path)
         if known is None:
             p = _normpath(path)
-            known = self._memo[path] = bool(self.include.match(p)) and not self.exclude.match(p)
+            known = bool(self.include.match(p)) and not self.exclude.match(p)
+            if known and self.root is not None:
+                known = (self.root / p).exists()
+            self._memo[path] = known
         return known
 
     def override(self, key: str) -> TierOverride | None:
@@ -470,7 +484,9 @@ class Corpus:
 
 
 @functools.cache
-def load_corpus(path: Path = CORPUS_FILE) -> Corpus:
+def load_corpus(path: Path = CORPUS_FILE, root: Path | None = ROOT) -> Corpus:
+    """parity/corpus.toml (*path*); its inputs must exist under *root* (``None``:
+    globs only)."""
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     corpus = data.get("corpus", {})
     include = [g for part in ("papers", "files", "mocks") for g in corpus.get(part, [])]
@@ -486,7 +502,7 @@ def load_corpus(path: Path = CORPUS_FILE) -> Corpus:
             raise ValueError(f"{where}: an explicit tier needs a reason")
         pattern = re.compile("|".join(f"(?:{_key_glob(c).pattern})" for c in cases), re.DOTALL)
         overrides.append(TierOverride(tuple(cases), o["tier"], o["reason"], pattern))
-    return Corpus(_any_glob(include), _any_glob(corpus.get("exclude", [])), tuple(overrides))
+    return Corpus(_any_glob(include), _any_glob(corpus.get("exclude", [])), tuple(overrides), root)
 
 
 def _normpath(path: str) -> str:
@@ -503,6 +519,14 @@ _UPSTREAM_TESTS = "upstream/metacheck/tests/testthat/"
 _REPO_PATH = re.compile(r"(?:upstream|tests|parity)/")
 _CODE_PATH = re.compile(r"""["']((?:upstream|tests|parity)/[^"'\s]*)["']""")
 _CODE_DEMO = re.compile(r"\bdemopaper\(")
+#: ``$expr`` R code that is only a constant or a temporary path (``n_rows = Inf``,
+#: ``save_path = tempfile()``): an argument, neither an input nor a synthetic one
+_CODE_CONSTANT = re.compile(
+    r"\s*(?:-?Inf|NaN|NA(?:_[a-z]+_)?|TRUE|FALSE|NULL|-?\d+(?:\.\d+)?L?"
+    r"|tempfile\([^()]*\)|tempdir\(\))\s*"
+)
+#: ``$expr`` code that builds a synthetic paper, whatever corpus paths it also names
+_CODE_TEST_PAPER = re.compile(r"\btest_paper\(")
 #: helper code a case sources or imports (not an input): a script at the top of
 #: a tests/ package or of parity/
 _HELPER = re.compile(r"(?:tests/[^/]+|parity(?:/r)?)/[^/]+\.(?:R|py)\Z")
@@ -520,8 +544,9 @@ class CaseInputs:
 
 def case_inputs(spec: dict[str, Any], corpus: Corpus | None = None) -> CaseInputs:
     """The inputs of a case: the paths its arguments and ``$expr`` code name
-    (helper scripts aside) and its synthetic constructors; an ``$expr`` that
-    names no corpus path counts as synthetic."""
+    (helper scripts aside) and its synthetic constructors. An ``$expr`` counts as
+    synthetic when it names no corpus path or builds a ``test_paper()``; one that
+    is only a constant or a temporary path (``Inf``, ``tempfile()``) is no input."""
     corpus = corpus or load_corpus()
     found = CaseInputs()
     _collect(spec.get("args"), found, corpus)
@@ -556,11 +581,13 @@ def _collect_constructor(key: str, val: Any, found: CaseInputs, corpus: Corpus) 
         found.paths += [str(v) for v in (val if isinstance(val, list) else [val])]
     elif key == "$expr":
         val = val or {}
+        if _CODE_CONSTANT.fullmatch(str(val.get("r") or "")):
+            return
         code = f"{val.get('r') or ''}\n{val.get('py') or ''}"
         paths = [p for p in _CODE_PATH.findall(code) if not _HELPER.search(p)]
         if _CODE_DEMO.search(code):
             paths.append(DEMO_PAPER)
-        if not any(p in corpus for p in paths):
+        if _CODE_TEST_PAPER.search(code) or not any(p in corpus for p in paths):
             found.synthetic.append("$expr")
         found.paths += paths
     elif key == "$call":
@@ -577,8 +604,9 @@ def rule_tier(area: str, spec: dict[str, Any], corpus: Corpus | None = None) -> 
     """The tier parity/corpus.toml's rule gives a case (explicit tiers aside).
 
     Tier 1 when the area is not ``*_review`` or ``rcompat*``, the case reads at
-    least one corpus input and nothing outside the corpus, and it builds no
-    synthetic input; tier 2 otherwise.
+    least one corpus input (an existing file of parity/corpus.toml) and nothing
+    outside the corpus, and it builds no synthetic input (``case_inputs``); tier 2
+    otherwise.
     """
     if area.endswith("_review") or area.startswith("rcompat"):
         return 2

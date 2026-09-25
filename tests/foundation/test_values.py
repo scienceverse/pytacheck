@@ -384,3 +384,80 @@ def test_field_of_missing_or_scalar_objects() -> None:
     assert field([1, 2], 1) == 2
     assert field((1, 2), 0) == 1
     assert field({1: "int key"}, 1) == "int key"
+
+
+# -- edge values found in review ----------------------------------------------------
+
+
+@pytest.mark.parametrize("x", [complex("nan"), np.complex128(complex("nan")), Decimal("NaN")])
+def test_nan_of_other_numeric_types_is_missing(x: complex | Decimal) -> None:
+    assert is_missing(x) is True
+    assert pd.isna(x)  # type: ignore[arg-type]  # the same answer as pandas
+
+
+def test_signalling_decimal_nan_is_missing() -> None:
+    assert is_missing(Decimal("sNaN")) is True  # pd.isna() raises InvalidOperation
+
+
+def test_is_true_of_a_pandas_array() -> None:
+    assert is_true(pd.array([True], dtype="boolean")) is True
+    assert is_true(pd.array([pd.NA], dtype="boolean")) is False
+    assert is_true(pd.array([True, True], dtype="boolean")) is False
+
+
+@pytest.mark.parametrize(
+    ("text", "r_value"),
+    # R 4.5.3 reads a hexadecimal number without digits as 0; these are not numbers
+    [("0x.", 0.0), ("0x.p1", 0.0), ("0xp1", 0.0), ("-0x.", 0.0)],
+)
+def test_as_float_needs_a_digit_in_a_hexadecimal_number(text: str, r_value: float) -> None:
+    assert as_float(text) is None
+    assert as_int(text) is None
+
+
+def test_as_float_is_correctly_rounded() -> None:
+    # R 4.5.3's long-double reading gives Inf and 0 for these
+    assert as_float("1.7976931348623158e308") == 1.7976931348623157e308
+    assert as_float("0x1p-1074") == 5e-324
+
+
+def test_as_float_of_huge_fractions_is_infinite() -> None:
+    assert as_float(Fraction(10**400, 3)) == INF
+    assert as_float(Fraction(-(10**400), 3)) == -INF
+
+
+def test_as_int_of_integer_strings_beyond_python_digit_limit() -> None:
+    assert as_int("1" * 4300) == int("1" * 4300)
+    # longer digit strings are beyond the double range as numbers: NA, never an error
+    assert as_int("1" * 5000) is None
+    assert as_int("-" + "1" * 5000) is None
+    assert as_float("1" * 5000) == INF
+
+
+@pytest.mark.parametrize(
+    "x",
+    [
+        pd.DataFrame({"a": [1]}),
+        pd.array([1]),
+        pd.Categorical(["a"]),
+        range(3),
+        {"a": 1}.keys(),
+        {"a": 1}.values(),
+        (i for i in range(2)),
+        iter([1]),
+        np.array(1.5),
+    ],
+)
+def test_as_str_of_containers_and_iterators_is_missing(x: object) -> None:
+    assert as_str(x) is None
+
+
+def test_as_str_of_a_memoryview_decodes_it() -> None:
+    assert as_str(memoryview(b"caf\xc3\xa9")) == "café"
+
+
+def test_field_takes_numpy_integer_indexes() -> None:
+    assert field(RECORD, "authors", np.int64(0), "name") == "Ann"
+    assert field(RECORD, "attributes", "tags", np.int32(-1)) == "b"
+    assert field(RECORD, "authors", np.int64(5), default="d") == "d"
+    assert field(RECORD, "authors", np.bool_(True), default="d") == "d"  # type: ignore[arg-type]

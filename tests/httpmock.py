@@ -209,35 +209,37 @@ def _proxies() -> set[tuple[str, int]]:
 
 def _is_loopback(host: Any) -> bool:
     try:
-        return ipaddress.ip_address(str(host).split("%", 1)[0]).is_loopback
+        return bool(ipaddress.ip_address(str(host).split("%", 1)[0]).is_loopback)
     except ValueError:
-        return host == "localhost"
+        return bool(host == "localhost")
 
 
 @contextlib.contextmanager
 def no_network(attempts: list[str] | None = None) -> Iterator[list[str]]:
     """Refuse every internet connection and every lookup of a host name.
 
-    A socket connecting to another host, or to a proxy the environment
-    configures (``HTTPS_PROXY``, ...), and ``getaddrinfo()``/``gethostbyname()``
-    of a name other than ``localhost`` raise :class:`NetworkUse`, and the attempt
-    is added to *attempts* (yielded), so code that catches the error still shows
-    up. Any other loopback address is refused as a closed port would refuse it
-    (``ConnectionRefusedError``, not an attempt: code may probe a local port on
-    purpose). Unix sockets (``asyncio``'s self-pipe) work as before; recorded
-    responses served by :func:`replay` never open a socket.
+    A socket connecting (or sending a datagram) to another host, or to a proxy
+    the environment configures (``HTTPS_PROXY``, ...), and ``getaddrinfo()``/
+    ``gethostbyname()`` of a name other than ``localhost`` raise
+    :class:`NetworkUse`, and the attempt is added to *attempts* (yielded), so
+    code that catches the error still shows up. Any other loopback address is
+    refused as a closed port would refuse it (``ConnectionRefusedError``, not an
+    attempt: code may probe a local port on purpose). Unix sockets (``asyncio``'s
+    self-pipe) work as before; recorded responses served by :func:`replay` never
+    open a socket. This process only: a program it starts (``git``, ``Rscript``)
+    is not watched.
     """
     tried: list[str] = [] if attempts is None else attempts
     proxies = _proxies()
 
-    def check(sock: socket.socket, address: Any) -> None:
+    def check(sock: socket.socket, address: Any, how: str = "connect to") -> None:
         if sock.family not in (socket.AF_INET, socket.AF_INET6):
             return
         host, port = address[0], address[1]
         is_proxy = any(port == p and (host == h or _is_loopback(h)) for h, p in proxies)
         if _is_loopback(host) and not is_proxy:
             raise ConnectionRefusedError(errno.ECONNREFUSED, "no network in a parity case")
-        what = f"connect to {address!r}" + (" (a proxy)" if is_proxy else "")
+        what = f"{how} {address!r}" + (" (a proxy)" if is_proxy else "")
         tried.append(what)
         raise NetworkUse(f"no network in a parity case: {what}")
 
@@ -248,6 +250,13 @@ def no_network(attempts: list[str] | None = None) -> Iterator[list[str]]:
     def connect_ex(self: socket.socket, address: Any) -> int:
         check(self, address)
         return saved_connect_ex(self, address)
+
+    def sendto(self: socket.socket, data: Any, *args: Any) -> int:
+        # sendto(data, address) or sendto(data, flags, address): a datagram (a
+        # DNS query of its own) needs no connect()
+        if args:
+            check(self, args[-1], "send a datagram to")
+        return saved_sendto(self, data, *args)
 
     def lookup(fn: Any) -> Any:
         def guarded(host: Any, *args: Any, **kwargs: Any) -> Any:
@@ -260,16 +269,22 @@ def no_network(attempts: list[str] | None = None) -> Iterator[list[str]]:
         return guarded
 
     saved_connect, saved_connect_ex = socket.socket.connect, socket.socket.connect_ex
+    saved_sendto = socket.socket.sendto
     lookups = {n: getattr(socket, n) for n in ("getaddrinfo", "gethostbyname", "gethostbyname_ex")}
-    own = {n: n in vars(socket.socket) for n in ("connect", "connect_ex")}
-    socket.socket.connect = connect  # type: ignore[method-assign]
-    socket.socket.connect_ex = connect_ex  # type: ignore[method-assign]
+    own = {n: n in vars(socket.socket) for n in ("connect", "connect_ex", "sendto")}
+    socket.socket.connect = connect  # type: ignore[method-assign,assignment]
+    socket.socket.connect_ex = connect_ex  # type: ignore[method-assign,assignment]
+    socket.socket.sendto = sendto  # type: ignore[method-assign,assignment]
     for name, fn in lookups.items():
         setattr(socket, name, lookup(fn))
     try:
         yield tried
     finally:
-        for name, restore in (("connect", saved_connect), ("connect_ex", saved_connect_ex)):
+        for name, restore in (
+            ("connect", saved_connect),
+            ("connect_ex", saved_connect_ex),
+            ("sendto", saved_sendto),
+        ):
             if own[name]:
                 setattr(socket.socket, name, restore)
             else:  # inherited from _socket.socket

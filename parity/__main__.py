@@ -64,6 +64,7 @@ from parity.canonical import canonical
 from parity.cases import (
     NEEDS_R_REASON,
     ROOT,
+    VALUE_WHERE_R_FAILS_KINDS,
     Case,
     RWithoutReference,
     expected_to_fail,
@@ -301,6 +302,16 @@ def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseR
         res.r_error = str(golden.get("error") or "")
     if not expected:
         return res.done(ERROR if golden["ok"] and err is not None else FAIL, problems)
+    if res.r_error is not None and res.kind not in VALUE_WHERE_R_FAILS_KINDS:
+        return res.done(
+            FAIL,
+            [
+                f"R fails and Python returns a value, which only a mark of kind "
+                f"{' / '.join(sorted(VALUE_WHERE_R_FAILS_KINDS))} (with its U/D-entry) "
+                f"explains, not {res.kind}",
+                *problems,
+            ],
+        )
 
     fp = Fingerprint(
         r=r_digest(golden),
