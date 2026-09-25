@@ -10,12 +10,11 @@
 # R/stat_helpers.R must be applied to the files listed below.
 #
 # The statcheck R package (1.5.0, a pinned dependency of metacheck, not part of
-# the upstream submodule) is ported in src/pytacheck/stats/statcheck.py (its
-# file front ends in src/pytacheck/stats/statcheck_files.py, R's nmath/round
-# primitives it relies on in src/pytacheck/stats/_rmath.py); its functions are
-# listed with a "statcheck::" prefix. Not ported: plot.statcheck(),
-# identify.statcheck() (interactive graphics) and statcheckReport() (an
-# rmarkdown report).
+# the upstream submodule) is ported in src/pytacheck/stats/statcheck.py (R's
+# nmath/round primitives it relies on in src/pytacheck/stats/_rmath.py); its
+# functions are listed with a "statcheck::" prefix. Not ported (porting/skip.toml):
+# its PDF/HTML file front ends, plot.statcheck(), identify.statcheck() and
+# statcheckReport(), none of which metacheck calls.
 
 [files]
 "R/stats.R" = ["src/pytacheck/stats/core.py"]
@@ -53,10 +52,3 @@ stats = "pytacheck.stats.core:stats"
 "statcheck:::decision_error_test" = "pytacheck.stats.statcheck:decision_error_test"
 "statcheck:::process_stats" = "pytacheck.stats.statcheck:process_stats"
 "statcheck:::calc_APA_factor" = "pytacheck.stats.statcheck:calc_APA_factor"
-"statcheck:::getHTML" = "pytacheck.stats.statcheck_files:getHTML"
-"statcheck:::getPDF" = "pytacheck.stats.statcheck_files:getPDF"
-"statcheck::checkHTML" = "pytacheck.stats.statcheck_files:checkHTML"
-"statcheck::checkHTMLdir" = "pytacheck.stats.statcheck_files:checkHTMLdir"
-"statcheck::checkPDF" = "pytacheck.stats.statcheck_files:checkPDF"
-"statcheck::checkPDFdir" = "pytacheck.stats.statcheck_files:checkPDFdir"
-"statcheck::checkdir" = "pytacheck.stats.statcheck_files:checkdir"

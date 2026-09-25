@@ -334,56 +334,67 @@
  ".code_comment_flags": {
   "file": "R/code_check.R",
   "line": 1332,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_comment_flags"
  },
  ".code_expand_html": {
   "file": "R/code_check.R",
   "line": 504,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_expand_html"
  },
  ".code_expand_mplus": {
   "file": "R/code_check.R",
   "line": 439,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_expand_mplus"
  },
  ".code_expand_smcl": {
   "file": "R/code_check.R",
   "line": 380,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_expand_smcl"
  },
  ".code_expand_spv": {
   "file": "R/code_check.R",
   "line": 318,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_expand_spv"
  },
  ".code_expand_zip": {
   "file": "R/code_check.R",
   "line": 594,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_expand_zip"
  },
  ".code_has_docstring": {
   "file": "R/code_check.R",
   "line": 1424,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_has_docstring"
  },
  ".code_pos_in_string": {
   "file": "R/code_check.R",
   "line": 1149,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_pos_in_string"
  },
  ".code_predownload": {
   "file": "R/code_check.R",
   "line": 254,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_predownload"
  },
  ".code_strip_inline_comment": {
   "file": "R/code_check.R",
   "line": 1168,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_strip_inline_comment"
  },
  ".code_version_pin_check": {
   "file": "R/code_check.R",
   "line": 1776,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_code_version_pin_check"
  },
  ".coerce_bib_authors": {
@@ -1141,6 +1152,7 @@
  ".ipynb_lang": {
   "file": "R/code_check.R",
   "line": 69,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_ipynb_lang"
  },
  ".ipynb_read_tables": {
@@ -2144,6 +2156,7 @@
  ".qmd_lang": {
   "file": "R/code_check.R",
   "line": 131,
+  "ported": true,
   "python": "pytacheck.codecheck.core:_qmd_lang"
  },
  ".qsf_export_col": {
@@ -3779,76 +3792,91 @@
  "code_abs_path": {
   "file": "R/code_check.R",
   "line": 906,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_abs_path"
  },
  "code_extract_py": {
   "file": "R/code_check.R",
   "line": 734,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_extract_py"
  },
  "code_extract_qmd_py": {
   "file": "R/code_check.R",
   "line": 803,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_extract_qmd_py"
  },
  "code_extract_r": {
   "file": "R/code_check.R",
   "line": 642,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_extract_r"
  },
  "code_file_refs": {
   "file": "R/code_check.R",
   "line": 1956,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_file_refs"
  },
  "code_install_packages": {
   "file": "R/code_check.R",
   "line": 1071,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_install_packages"
  },
  "code_lang": {
   "file": "R/code_check.R",
   "line": 195,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_lang"
  },
  "code_library_lines": {
   "file": "R/code_check.R",
   "line": 1498,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_library_lines"
  },
  "code_library_names": {
   "file": "R/code_check.R",
   "line": 1598,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_library_names"
  },
  "code_line_stats": {
   "file": "R/code_check.R",
   "line": 1448,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_line_stats"
  },
  "code_packages": {
   "file": "R/code_check.R",
   "line": 1706,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_packages"
  },
  "code_parse_r": {
   "file": "R/code_check.R",
   "line": 862,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_parse_r"
  },
  "code_read": {
   "file": "R/code_check.R",
   "line": 11,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_read"
  },
  "code_remove_comments": {
   "file": "R/code_check.R",
   "line": 1211,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_remove_comments"
  },
  "code_setwd": {
   "file": "R/code_check.R",
   "line": 996,
+  "ported": true,
   "python": "pytacheck.codecheck.core:code_setwd"
  },
  "collapse_section": {
@@ -5934,18 +5962,6 @@
   "ported": true,
   "python": "pytacheck.stats.statcheck:extract_test_stats"
  },
- "statcheck:::getHTML": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.stats.statcheck_files:getHTML"
- },
- "statcheck:::getPDF": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.stats.statcheck_files:getPDF"
- },
  "statcheck:::process_stats": {
   "file": "",
   "line": 0,
@@ -5975,36 +5991,6 @@
   "line": 0,
   "ported": true,
   "python": "pytacheck.stats.statcheck:summary_statcheck"
- },
- "statcheck::checkHTML": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.stats.statcheck_files:checkHTML"
- },
- "statcheck::checkHTMLdir": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.stats.statcheck_files:checkHTMLdir"
- },
- "statcheck::checkPDF": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.stats.statcheck_files:checkPDF"
- },
- "statcheck::checkPDFdir": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.stats.statcheck_files:checkPDFdir"
- },
- "statcheck::checkdir": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.stats.statcheck_files:checkdir"
  },
  "statcheck::statcheck": {
   "file": "",

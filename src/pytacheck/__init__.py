@@ -169,6 +169,10 @@ _EXPORTS: dict[str, str] = {
     "dataverse_info": "pytacheck.archives.dataverse",
     "dataverse_links": "pytacheck.archives.dataverse",
     "dataverse_pat": "pytacheck.archives.dataverse",
+    "download_repo_files": "pytacheck.archives.download",
+    "repo_cache_clear": "pytacheck.archives.download",
+    "repo_cache_dir": "pytacheck.archives.download",
+    "repo_cache_size": "pytacheck.archives.download",
     "dryad_auth": "pytacheck.archives.dryad",
     "dryad_file_download": "pytacheck.archives.dryad",
     "dryad_info": "pytacheck.archives.dryad",
@@ -229,6 +233,8 @@ _EXPORTS: dict[str, str] = {
     "zenodo_links": "pytacheck.archives.zenodo",
     "zenodo_pat": "pytacheck.archives.zenodo_upload",
     "zenodo_upload": "pytacheck.archives.zenodo_upload",
+    "zip_decision": "pytacheck.archives.zip_peek",
+    "zip_peek": "pytacheck.archives.zip_peek",
     # file categories and naming
     "file_category": "pytacheck.fileinfo.category",
     "filetype": "pytacheck.fileinfo.category",
@@ -273,6 +279,22 @@ _EXPORTS: dict[str, str] = {
     "manifest_merge": "pytacheck.datacheck.files",
     "text_peek": "pytacheck.datacheck.files",
     "txt_classify_content": "pytacheck.datacheck.files",
+    # code checks
+    "code_abs_path": "pytacheck.codecheck.core",
+    "code_extract_py": "pytacheck.codecheck.core",
+    "code_extract_qmd_py": "pytacheck.codecheck.core",
+    "code_extract_r": "pytacheck.codecheck.core",
+    "code_file_refs": "pytacheck.codecheck.core",
+    "code_install_packages": "pytacheck.codecheck.core",
+    "code_lang": "pytacheck.codecheck.core",
+    "code_library_lines": "pytacheck.codecheck.core",
+    "code_library_names": "pytacheck.codecheck.core",
+    "code_line_stats": "pytacheck.codecheck.core",
+    "code_packages": "pytacheck.codecheck.core",
+    "code_parse_r": "pytacheck.codecheck.core",
+    "code_read": "pytacheck.codecheck.core",
+    "code_remove_comments": "pytacheck.codecheck.core",
+    "code_setwd": "pytacheck.codecheck.core",
     # statistical software output
     "export_jasp_html": "pytacheck.statout.jasp",
     "import_jasp": "pytacheck.statout.jasp",
@@ -303,6 +325,7 @@ _EXPORTS: dict[str, str] = {
     "coerce_paper": "pytacheck.papers.io",
     "is_paper": "pytacheck.papers.model",
     "is_paper_list": "pytacheck.papers.model",
+    "load_schema": "pytacheck.papers.schema",
     "message": "pytacheck.utils",
     "online": "pytacheck.utils",
     "path_sanitize": "pytacheck.utils",
@@ -418,6 +441,12 @@ if TYPE_CHECKING:  # pragma: no cover
         dataverse_links,
         dataverse_pat,
     )
+    from pytacheck.archives.download import (
+        download_repo_files,
+        repo_cache_clear,
+        repo_cache_dir,
+        repo_cache_size,
+    )
     from pytacheck.archives.dryad import (
         dryad_auth,
         dryad_file_download,
@@ -475,6 +504,24 @@ if TYPE_CHECKING:  # pragma: no cover
     from pytacheck.archives.reshare import reshare_file_download, reshare_info, reshare_links
     from pytacheck.archives.zenodo import zenodo_file_download, zenodo_info, zenodo_links
     from pytacheck.archives.zenodo_upload import zenodo_pat, zenodo_upload
+    from pytacheck.archives.zip_peek import zip_decision, zip_peek
+    from pytacheck.codecheck.core import (
+        code_abs_path,
+        code_extract_py,
+        code_extract_qmd_py,
+        code_extract_r,
+        code_file_refs,
+        code_install_packages,
+        code_lang,
+        code_library_lines,
+        code_library_names,
+        code_line_stats,
+        code_packages,
+        code_parse_r,
+        code_read,
+        code_remove_comments,
+        code_setwd,
+    )
     from pytacheck.datacheck.checks import (
         data_check_case_issues,
         data_check_colname,
@@ -558,6 +605,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
     from pytacheck.papers.io import coerce_paper
     from pytacheck.papers.model import is_paper, is_paper_list
+    from pytacheck.papers.schema import load_schema
     from pytacheck.report.blocks import (
         cap_gate_count,
         collapse_section,

@@ -1,9 +1,0 @@
-{
-  "id": "checkHTMLdir.review.no_html",
-  "ok": false,
-  "error": "No HTML found",
-  "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
-  "r_version": "R version 4.5.3 (2026-03-11)"
-}

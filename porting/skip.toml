@@ -51,7 +51,14 @@
 "ellmer::chat_snowflake" = "Needs Snowflake key-pair/OAuth auth. pytacheck raises a clear error."
 "ellmer::chat_posit" = "Posit AI (subscription service) needs its own OAuth. pytacheck raises a clear error."
 
-# statcheck parts metacheck never uses (see also [drop.statcheck_files])
+# statcheck parts metacheck never uses
+"statcheck::checkHTML" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
+"statcheck::checkHTMLdir" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
+"statcheck::checkPDF" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
+"statcheck::checkPDFdir" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
+"statcheck::checkdir" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
+"statcheck:::getHTML" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
+"statcheck:::getPDF" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
 "statcheck::plot.statcheck" = "Interactive base-R graphics."
 "statcheck::identify.statcheck" = "Interactive base-R graphics."
 "statcheck::statcheckReport" = "An rmarkdown report of statcheck results. pytacheck's report comes from the stat_check module."
@@ -75,31 +82,6 @@
 "_metacheck.Rproj" = "RStudio project file."
 "makefile" = "R package build helper."
 "codecov.yml" = "R CI coverage configuration."
-
-[drop.statcheck_files]
-reason = """statcheck's own PDF/HTML front ends. metacheck never calls them: it gives \
-statcheck::statcheck() the sentences of a paper. They read articles with the external \
-pdftotext binary or a regex HTML stripper. pytacheck papers come from bibr or Grobid, and \
-stat_check / stats() check them."""
-r = [
-    "statcheck::checkHTML",
-    "statcheck::checkHTMLdir",
-    "statcheck::checkPDF",
-    "statcheck::checkPDFdir",
-    "statcheck::checkdir",
-    "statcheck:::getHTML",
-    "statcheck:::getPDF",
-]
-python = ["pytacheck.stats.statcheck_files"]
-files = [
-    "src/pytacheck/stats/statcheck_files.py",
-    "tests/stats/test_review.py: the statcheck_files import, test_get_html, test_check_html_and_dir, the fake_pdftotext fixture, test_get_pdf_and_check_pdf, test_get_pdf_failure",
-    "tests/stats/fixtures/statcheck_html/",
-    "parity/cases/stats_review.yaml: getHTML.review.*, checkHTML.review.*, checkHTMLdir.review.*, checkdir.review.* (14 cases)",
-    "parity/golden/stats_review/ goldens of those 14 cases",
-    "porting/map/stats.toml: the 7 statcheck_files [functions] entries and the header comment about them",
-    "src/pytacheck/stats/statcheck.py: the module docstring's mention of the file front ends",
-]
 
 [drop.bibr_schema_downgrade]
 reason = """pytacheck's own v11/v12 -> v10.x converter (docs/UPSTREAM_ISSUES.md D1). \
