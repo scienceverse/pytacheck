@@ -961,10 +961,16 @@ def _paren_df(df: Any) -> str | None:
     """Degrees of freedom in parentheses: ``"28"`` is ``"(28)"``, ``"(28)"`` stays.
 
     An empty ``df`` is no df (``None``; metacheck makes it ``"()"``), and an
-    array keeps its first value (metacheck fails the paper for an empty or
-    longer one; U24).
+    array holds the degrees of freedom (``[1, 27]`` is ``"(1, 27)"``; metacheck
+    fails the paper for an empty or longer one; U24).
     """
-    s = _chr_first(df)
+    if isinstance(df, list | dict):
+        values: list[Any] = []
+        _flatten(df, values)
+        parts = [str(sub(r"^\((.*)\)$", r"\1", as_character(_jnum(v)))) for v in values]
+        s = ", ".join(parts) if parts else None
+    else:
+        s = _chr_first(df)
     if s is None or s.strip() == "":
         return None
     if grepl(r"^\(.*\)$", s):

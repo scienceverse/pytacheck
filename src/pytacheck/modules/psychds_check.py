@@ -612,7 +612,10 @@ def psychds_check(
             rows.append((pid, sub["counts"]))
         summary_table = _summary(rows)
     else:
-        summary_table = _summary([(_pid(paper, structure_df, columns_df), a["counts"])])
+        # the paper that owns the files: on a paper list it need not be the
+        # first paper, which R's .pid() would credit with them
+        pid = pids[0] if pids else _pid(paper, structure_df, columns_df)
+        summary_table = _summary([(pid, a["counts"])])
 
     status = [
         "excluded" if ex else ("move" if m else "present")

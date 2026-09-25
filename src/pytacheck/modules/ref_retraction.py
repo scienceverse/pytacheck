@@ -89,7 +89,8 @@ def ref_retraction(paper: Any) -> dict[str, Any]:
     report: Any
     if len(table) == 0:
         summary_text = "No citations to articles in the RetractionWatch database were found."
-        report = f"We checked {n_doi:d} references with DOIs. {summary_text}"
+        # plural() as in the other branch (metacheck: "1 references", U82)
+        report = f"We checked {n_doi:d} reference{plural(n_doi)} with DOIs. {summary_text}"
     else:
         n = len(table)
         summary_text = f"You cited {n:d} article{plural(n)} in the RetractionWatch database."

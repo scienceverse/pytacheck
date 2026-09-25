@@ -32,7 +32,7 @@
 "bibr12_review/paper_table.edge_types.eq": &df
   kind: r_bug_fixed
   ref: U24
-  reason: "an empty df is no df (R: '()' for '' and '(NULL)' for [null]), and a df array keeps its first value (R stops for an empty or longer one)"
+  reason: "an empty df is no df (R: '()' for '' and '(NULL)' for [null]), and a df array holds the degrees of freedom ([1, 27] is '(1, 27)'; R stops for an empty or longer one)"
 "bibr12_review/paper_write.legacy_roundtrip.edge_types": *df
 "bibr12_review/paper_write.roundtrip.edge_types": *df
 "bibr12_review/paper_write.roundtrip.images": *df

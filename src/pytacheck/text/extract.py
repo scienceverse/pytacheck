@@ -263,17 +263,15 @@ def extract_eq(paper: Any) -> pd.DataFrame:
 
     This is metacheck's canonical extractor for reported statistics: one row
     per ``name (df) <op> value`` fragment, with the columns ``text_id``,
-    ``grp_id`` (the sentence's number within its paper), ``lhs``, ``df``
+    ``grp_id`` (the sentence group, numbered per paper in search order), ``lhs``, ``df``
     (e.g. ``"(2, 57)"`` or ``NA``), ``comp``, ``rhs`` and ``paper_id``,
     sorted by ``paper_id``, ``text_id`` and ``grp_id``. *paper* can also be a
     text table or strings (``text_id`` and ``paper_id`` are then ``NA`` when
     the table has none).
 
-    Differs from metacheck (U10, U150): ``grp_id`` numbers the sentences in
-    text order (metacheck numbered them in the order its per-operator
-    searches found them, so the first sentence could be group 7); a table
-    without ``paper_id`` works (metacheck failed on ``NA`` comparisons once
-    there were two equations); and strings are accepted (metacheck fails).
+    Differs from metacheck (U10, U150): a table without ``paper_id`` or
+    ``text_id`` works (metacheck failed on ``NA`` comparisons once there were
+    two equations), and strings are accepted (metacheck fails).
     """
     table = _search_table(_strings_table(paper), f"[{_OPS}]")
     if isinstance(table, pd.DataFrame):
@@ -310,20 +308,18 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     lhs = trimws(lhs)
     rhs = trimws(rhs)
 
-    # set group equal to sentence: sentences numbered in text order per paper
+    # set group equal to sentence for now: consecutive matches of one source
+    # sentence share a group, numbered per paper in search order (metacheck's
+    # numbering). Sentences are told apart by their row, so a table without
+    # text_id or paper_id works (metacheck fails on NA comparisons; U10)
     paper_ids = [None if _is_missing(v) else v for v in eq["paper_id"].tolist()]
-    text_ids = eq["text_id"].tolist()
     rows = eq[_ROW].tolist()
-    first: dict[tuple[Any, int], Any] = {}
+    grp: list[float] = []
     for i in range(len(eq)):
-        first.setdefault((paper_ids[i], rows[i]), text_ids[i])
-    sentences = sorted(first, key=lambda k: (_sort_key(k[0]), _sort_key(first[k]), k[1]))
-    number: dict[tuple[Any, int], int] = {}
-    per_paper: dict[Any, int] = {}
-    for key in sentences:
-        per_paper[key[0]] = per_paper.get(key[0], 0) + 1
-        number[key] = per_paper[key[0]]
-    grp = [float(number[(paper_ids[i], rows[i])]) for i in range(len(eq))]
+        if i == 0 or paper_ids[i] != paper_ids[i - 1]:
+            grp.append(1.0)
+        else:
+            grp.append(grp[-1] if rows[i] == rows[i - 1] else grp[-1] + 1)
 
     out = pd.DataFrame(
         {

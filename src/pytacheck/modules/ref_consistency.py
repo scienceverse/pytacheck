@@ -87,8 +87,11 @@ def _align_key(x: pd.DataFrame, y: pd.DataFrame, key: str) -> tuple[pd.DataFrame
     return x, y
 
 
-def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> pd.DataFrame:
-    """``dplyr::full_join()``: x's rows (with matches) then y's unmatched rows, in order."""
+def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> tuple[pd.DataFrame, pd.Series]:
+    """``dplyr::full_join()``: x's rows (with matches) then y's unmatched rows, in order.
+
+    Also returns which rows came from *y* alone (no match in *x*).
+    """
     from pytacheck._r.frames import bind_rows
 
     for k in by:
@@ -97,7 +100,9 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> pd.DataFrame:
     matched = y.merge(x.loc[:, by].drop_duplicates(), on=by, how="left", indicator=True)
     y_only = matched.loc[matched["_merge"] == "left_only"].drop(columns="_merge")
     out = bind_rows([left, y_only])
-    return out.loc[:, list(left.columns)].reset_index(drop=True)
+    out = out.loc[:, list(left.columns)].reset_index(drop=True)
+    from_y = pd.Series([False] * len(left) + [True] * len(y_only), dtype=bool)
+    return out, from_y
 
 
 def _flag_counts(table: pd.DataFrame, flag: pd.Series, papers: pd.Series) -> pd.Series | None:
@@ -158,9 +163,13 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     xrefs = xrefs.reset_index(drop=True)
     text = paper_table(paper, "text").loc[:, ["paper_id", "text_id", "text"]]
 
-    joined = _full_join(bibs, xrefs, _KEYS)
-    keep = joined["contents"].isna() | joined["bib_id"].isna()
-    table = joined.loc[keep.to_numpy()].reset_index(drop=True)
+    joined, from_xref = _full_join(bibs, xrefs, _KEYS)
+    # a citation is missing from the bibliography when it has no bib_id or its
+    # bib_id is not a reference; metacheck keeps only the first (U115)
+    missing = (joined["bib_id"].isna() | from_xref).to_numpy(dtype=bool)
+    keep = joined["contents"].isna().to_numpy(dtype=bool) | missing
+    table = joined.loc[keep].reset_index(drop=True)
+    missing = missing[keep]
     table, text = _align_key(table, text, "text_id")
     table = table.merge(text, on=["paper_id", "text_id"], how="left", sort=False)
     table = table.drop(columns="text_id")
@@ -172,9 +181,10 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     for part in (nbibs, nxrefs):
         part = part.assign(paper_id=part["paper_id"].astype("string"))
         summary_table = summary_table.merge(part, on="paper_id", how="left", sort=False)
+    is_missing = pd.Series(missing, index=table.index, dtype=bool)
     for name, flag in (
-        ("n_missing", table["bib_id"].isna()),
-        ("n_extra", table["contents"].isna()),
+        ("n_missing", is_missing),
+        ("n_extra", table["contents"].isna() & ~is_missing),
     ):
         col = _flag_counts(table, flag, summary_table["paper_id"])
         if col is not None:
@@ -189,12 +199,11 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
         tl = "green"
 
     # report ----
-    contents_na = table["contents"].isna()
     report_table = pd.DataFrame(
         {
             "bib_id": table["bib_id"],
             "type": pd.Series(
-                ["extra" if v else "missing" for v in contents_na.tolist()],
+                ["missing" if v else "extra" for v in missing.tolist()],
                 index=table.index,
                 dtype="string",
             ),

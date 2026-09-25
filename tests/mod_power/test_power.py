@@ -442,7 +442,8 @@ def test_power_falls_back_to_prompt_fenced_extraction(
     assert "answer" in mo.table.columns
     assert mo.traffic_light == "green"
     assert mo.table["complete"].tolist() == [True]
-    assert schema_served.calls.call_count == 1
+    # U108: the bundled schema is used; metacheck downloads it with readLines()
+    assert schema_served.calls.call_count == 0
 
 
 def test_power_fallback_prompt_includes_schema(
@@ -490,6 +491,8 @@ def test_power_fallback_json_expand_details(
     mock_chat(FakeChat(chat_structured=rejects_structured, chat=chat))
     with pytest.warns(UserWarning):
         mo = module_run(paper, "power")
+    # U108: every field is a column (NA when no reply gave it); metacheck's any_of()
+    # skips missing fields, so the first analysis counted as complete
     assert list(mo.table.columns)[8:] == [
         "answer",
         "text.power",
@@ -497,27 +500,40 @@ def test_power_fallback_json_expand_details(
         "sample_size",
         "power",
         "error",
+        "statistical_test",
+        "alpha_level",
+        "effect_size",
+        "effect_size_metric",
+        "software",
         "complete",
         "power_id",
     ]
     assert mo.table["power_type"].tolist() == ["apriori", "posthoc"]
     assert values(mo.table["text.power"]) == ["x", None]
-    assert mo.table["complete"].tolist() == [True, False]
+    assert mo.table["complete"].tolist() == [False, False]
     assert mo.traffic_light == "red"
     assert mo.summary_text == "We detected 2 potential power analyses."
     assert list(mo.summary_table.columns) == [
         "paper_id",
         "power_n",
         "power_complete",
+        "power_statistical_test",
         "power_sample_size",
+        "power_alpha_level",
         "power_power",
+        "power_effect_size",
+        "power_effect_size_metric",
+        "power_software",
     ]
-    assert mo.summary_table.iloc[0, 1:].tolist() == [2, 1, 1, 1]
+    assert mo.summary_table.iloc[0, 1:].tolist() == [2, 0, 0, 1, 0, 1, 0, 0, 0]
     prose = [b for b in mo.report if isinstance(b, str)]
     assert prose[0].startswith(
         "We used the LLM model 'groq/llama-3.3-70b-versatile' to check the contents of 3 paragraphs"
     )
-    assert "Some essential information could not be detected: sample_size, power" in prose
+    assert (
+        "Some essential information could not be detected: statistical_test, sample_size, "
+        "alpha_level, power, effect_size, effect_size_metric, software"
+    ) in prose
     assert any("classified as 'post-hoc'" in b for b in prose)
 
 
@@ -540,23 +556,32 @@ def test_power_reports_failed_llm_check(
     assert mo.traffic_light == "na"
     assert "failed to run" in mo.summary_text
     assert "No power analyses were detected" not in mo.summary_text
-    # R: the empty table keeps llm()'s and json_expand()'s error columns
-    assert list(mo.table.columns)[-5:] == [
+    # R: the empty table keeps llm()'s and json_expand()'s error columns (U108: and
+    # has every extracted field)
+    assert list(mo.table.columns)[-13:] == [
         "answer",
         "error",
         "error_msg",
         "error.power",
+        "power_type",
+        "statistical_test",
+        "sample_size",
+        "alpha_level",
+        "power",
+        "effect_size",
+        "effect_size_metric",
+        "software",
         "complete",
     ]
     assert mo.summary_table["power_n"].tolist() == [0]
 
 
-def test_power_fallback_mixed_errors_propagate_llm_error(
+def test_power_fallback_mixed_errors_drop_the_failed_row(
     llm_on: None, mock_chat: MockChat, schema_served: Any
 ) -> None:
-    # R's llm() cannot bind an errored row (answer = NA) with an ellmer_output answer
-    # ("Can't combine `..1` <vctrs:::common_class_fallback> and `..2` <ellmer_output>."),
-    # so a fallback where only some calls fail stops the module, as in metacheck.
+    # U108/U19: metacheck's llm() cannot bind an errored row (answer = NA) with an
+    # ellmer_output answer ("Can't combine ..."), so a fallback where only some
+    # calls fail stops the module; pytacheck drops the failed row
     def chat(text: str) -> str:
         if "a priori" in text:
             raise RuntimeError("boom")
@@ -570,28 +595,25 @@ def test_power_fallback_mixed_errors_propagate_llm_error(
         [0, 1],
     )
     mock_chat(FakeChat(chat_structured=rejects_structured, chat=chat))
-    with pytest.warns(UserWarning), pytest.raises(ModuleError, match="Can't combine"):
-        module_run(paper, "power")
+    with pytest.warns(UserWarning):
+        mo = module_run(paper, "power")
+    assert mo.table["power_type"].tolist() == ["unknown"]
 
 
 def test_power_fallback_schema_unreachable(llm_on: None, mock_chat: MockChat) -> None:
-    # R: readLines() of the schema URL errors, so the module errors
+    # U108: metacheck's readLines() of the schema URL errors offline, so the module
+    # errors; the bundled schema needs no connection
     mock_chat(FakeChat(chat_structured=rejects_structured, chat=lambda text: FENCED))
-    with respx.mock() as router:
-        router.get(_power.SCHEMA_URL).mock(return_value=httpx.Response(404))
-        with (
-            pytest.warns(UserWarning),
-            pytest.raises(
-                ModuleError,
-                match=r"^Running the module 'power' produced errors: cannot open the connection "
-                r"to 'https://scienceverse\.org/schema/power\.json'$",
-            ),
-        ):
-            module_run(pc.test_paper([SIMPLE]), "power")
-    with respx.mock() as router:
-        router.get(_power.SCHEMA_URL).mock(side_effect=httpx.ConnectError("refused"))
-        with pytest.warns(UserWarning), pytest.raises(ModuleError, match="cannot open"):
-            module_run(pc.test_paper([SIMPLE]), "power")
+    for failure in (
+        {"return_value": httpx.Response(404)},
+        {"side_effect": httpx.ConnectError("refused")},
+    ):
+        with respx.mock(assert_all_called=False) as router:
+            route = router.get(_power.SCHEMA_URL).mock(**failure)
+            with pytest.warns(UserWarning):
+                mo = module_run(pc.test_paper([SIMPLE]), "power")
+            assert route.call_count == 0
+        assert mo.table["power_type"].tolist() == ["apriori"]
 
 
 def test_power_genuine_negative_result(llm_on: None, mock_chat: MockChat) -> None:

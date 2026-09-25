@@ -11,7 +11,6 @@ import numpy as np
 import pytest
 
 import pytacheck as pc
-from pytacheck.module import ModuleError
 from pytacheck.modules import _funding as F
 
 KELVIN = "\u212a"

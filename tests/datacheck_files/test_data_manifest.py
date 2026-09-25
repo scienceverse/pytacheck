@@ -169,6 +169,18 @@ def test_manifest_merge_jsonlite_layout(tmp_path: Path) -> None:
     ]
 
 
+def test_manifest_merge_numpy_scalars_are_json_numbers(tmp_path: Path) -> None:
+    # U62 follow-up: a numpy float is written by value (its repr() is
+    # "np.float64(...)", which is not JSON), a numpy integer as a number
+    import numpy as np
+
+    path = tmp_path / "m.json"
+    F.manifest_merge(
+        path, {"a": np.float64(0.1), "b": np.float64(3.0), "c": np.int64(5), "d": np.bool_(True)}
+    )
+    assert json.loads(path.read_text(encoding="utf-8")) == {"a": 0.1, "b": 3, "c": 5, "d": True}
+
+
 def test_data_check_write_preserves_code_section(tmp_path: Path, llm_off: None) -> None:
     path = tmp_path / "m.json"
     F.manifest_merge(path, {"code": {"packages": ["dplyr"]}})

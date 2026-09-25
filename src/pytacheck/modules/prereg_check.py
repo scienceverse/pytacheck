@@ -64,7 +64,7 @@ def _no_prereg_summary(paper: Any) -> pd.DataFrame:
     )
 
 
-def _rows_frame(rows: Sequence[dict[str, str]]) -> pd.DataFrame:
+def _rows_frame(rows: Sequence[dict[str, str | None]]) -> pd.DataFrame:
     """``dplyr::bind_rows()`` of one-row named lists (empty lists are skipped)."""
     rows = [r for r in rows if r]
     columns = list(dict.fromkeys(c for r in rows for c in r))  # first-appearance order
@@ -121,16 +121,21 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         }
 
     ## AsPredicted preregs ----
-    with suppress_messages():  # R: suppressMessages(aspredicted_info(...))
-        table_ap = aspredicted_info(links_ap["href"].tolist())
+    # only with AsPredicted links: metacheck always calls aspredicted_info(),
+    # which checks that aspredicted.org is online, so OSF-only papers failed
+    # offline (U109)
+    table_ap = pd.DataFrame()
+    if len(links_ap):
+        with suppress_messages():  # R: suppressMessages(aspredicted_info(...))
+            table_ap = aspredicted_info(links_ap["href"].tolist())
     ap_schema_table = _prereg.ap_schema(table_ap)
 
     ## OSF prereg ----
     osf_hrefs = links_osf["href"].tolist()
-    checked = osf_check_id(osf_hrefs)
+    checked = osf_check_id(osf_hrefs) if osf_hrefs else []
     osf_ids = _unique(checked)
-    if not osf_ids:
-        osf_type(osf_ids)  # R: `if (is.na(id))` on a zero-length id -> error
+    # no OSF ids, no lookups: metacheck's osf_type(character(0)) stops the module
+    # for an AsPredicted-only paper (U109)
     link_types = _parallel_map(osf_type, osf_ids)
     reg_ids = [i for i, t in zip(osf_ids, link_types, strict=True) if t == "registrations"]
     inaccessible_ids = {i for i, t in zip(osf_ids, link_types, strict=True) if t == "inaccessible"}
@@ -171,17 +176,37 @@ def prereg_check(paper: Any) -> dict[str, Any]:
             schema_bodies[url] = _prereg.fetch_schema_json(url)
         return schema_bodies[url]
 
-    ps: list[dict[str, str]] = []
-    for url, reg_info in zip(urls, reg_infos, strict=True):
+    ps: list[dict[str, str | None]] = []
+    # which papers link each registration (U110): by OSF id, not by link text
+    papers_of: list[list[Any]] = []
+    osf_papers: dict[Any, list[Any]] = {}
+    for pid, cid in zip(links_osf["paper_id"].tolist(), checked, strict=True):
+        if cid is not None and pid not in osf_papers.setdefault(cid, []):
+            osf_papers[cid].append(pid)
+    for rid, reg_info in zip(reg_ids, reg_infos, strict=True):
         if len(reg_info) == 0:
             if getattr(reg_info, "osf_error", None) is not None:
-                inaccessible_regs.append(url)
+                # the paper's own links, not the API URL metacheck reports (U110)
+                inaccessible_regs.extend(
+                    href for href, cid in zip(osf_hrefs, checked, strict=True) if cid == rid
+                )
             continue
         extracted = _prereg.osf_prereg_extract(reg_info, fetch_schema)
         ps.append(_prereg.flatten_schema(extracted))
+        papers_of.append(osf_papers.get(rid, []))
+
+    # one row per AsPredicted preregistration: metacheck pastes every AsPredicted
+    # prereg of the call (of all papers) into one row, with "NA" for missing
+    # fields, whose joined link then matches no paper (U109)
+    ap_rows = _prereg.schema_rows(ap_schema_table)
+    ap_papers: dict[Any, list[Any]] = {}
+    for pid, href in zip(links_ap["paper_id"].tolist(), links_ap["href"].tolist(), strict=True):
+        if pid not in ap_papers.setdefault(href, []):
+            ap_papers[href].append(pid)
+    papers_of.extend(ap_papers.get(row.get("link"), []) for row in ap_rows)
 
     # make sure all items are not lists
-    prereg_info = _rows_frame([*ps, _prereg.frame_schema(ap_schema_table)])
+    prereg_info = _rows_frame([*ps, *ap_rows])
     n_inacc = len(inaccessible_regs)
     inaccessible_text = (
         "The following registration link"
@@ -204,17 +229,15 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         }
 
     if len(prereg_info):
-        links = [*links_ap["href"].tolist(), *osf_hrefs]
-        ids = [*links_ap["paper_id"].tolist(), *links_osf["paper_id"].tolist()]
-        paper_ids = pd.DataFrame(
-            {
-                "paper_id": pd.Series(ids, dtype="string"),
-                "link": pd.Series(_https(links), dtype="string"),
-            }
-        )
-        prereg_info = prereg_info.merge(
-            paper_ids, on="link", how="left", sort=False, suffixes=(".x", ".y")
-        )
+        # one row per registration and paper that links it: metacheck joins by
+        # link text, so http://, upper-case or view_only links matched no paper
+        # and a link given twice duplicated the registration (U110)
+        rows = [(i, pid) for i, pids in enumerate(papers_of) for pid in (pids or [None])]
+        prereg_info = prereg_info.iloc[[i for i, _ in rows]].reset_index(drop=True)
+        if "paper_id" in prereg_info.columns:
+            # a registration field called "paper_id" keeps its value (dplyr's suffix)
+            prereg_info = prereg_info.rename(columns={"paper_id": "paper_id.x"})
+        prereg_info["paper_id"] = pd.Series([pid for _, pid in rows], dtype="string")
 
     # traffic light ----
     tl = "info"
@@ -306,13 +329,6 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         "report": report,
         "summary_text": summary_text,
     }
-
-
-def _https(links: Sequence[Any]) -> list[Any]:
-    """R ``gsub("^(https://)?", "https://", link)``."""
-    from pytacheck._r import gsub
-
-    return list(gsub("^(https://)?", "https://", [None if pd.isna(v) else v for v in links]))
 
 
 def _col(df: pd.DataFrame, name: str) -> list[Any] | None:

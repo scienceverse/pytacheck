@@ -711,9 +711,7 @@ def _classify_d_coherence(
     unequal_match: bool | None = False
     in_range: list[bool | None] = []
     if use_unequal:
-        in_range = [
-            _fits(d.d_value, d.comp, d_unequal_min, d_unequal_max, tol) for d in d_stats
-        ]
+        in_range = [_fits(d.d_value, d.comp, d_unequal_min, d_unequal_max, tol) for d in d_stats]
         unequal_match = _any(in_range)
 
     if _cond(paired_match):

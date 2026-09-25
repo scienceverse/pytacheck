@@ -173,7 +173,8 @@ def test_light_table_v3_decodes_layers_groups_and_footnotes() -> None:
     assert df["value"].tolist()[:3] == ["120", "34.5678901234568", "0.333333333333333"]
     assert pd.isna(df["value"].iloc[5])  # DBL_MAX "not applicable"
     assert df["value"].iloc[6] == "1e+20"
-    assert df["value"].iloc[8] == "^1 of ^2"  # cells keep the raw template (as R)
+    # a template cell is rendered (R keeps the raw "^1 of ^2", U148)
+    assert df["value"].iloc[8] == "a of 2.5, b"
     assert df.attrs["spv_row_dims"] == ["Variables"]
     assert df.attrs["spv_col_dims"] == ["Statistics"]
     assert df.attrs["spv_layer_dims"] == ["Gender"]
@@ -284,7 +285,12 @@ def test_import_spv_legacy_table() -> None:
 
 def test_import_spv_charts() -> None:
     tabs = quiet(import_spv, FIX / "charts.spv")
-    assert [t["data"].attrs["spv_chart_type"] for t in tabs] == ["point", "interval", "boxplot"]
+    assert [t["data"].attrs["spv_chart_type"] for t in tabs] == [
+        "point",
+        "interval",
+        "boxplot",
+        "boxplot",
+    ]
     point = tabs[0]["data"]
     assert point["x"].tolist() == [150.0, 160.0, 170.5, 180.0]
     fits = point.attrs["spv_chart_fits"]
@@ -378,7 +384,8 @@ def test_table_html_pivot_and_flat() -> None:
 def test_export_spv_html(tmp_path: Path) -> None:
     out = Path(quiet(export_spv_html, FIX / "charts.spv", tmp_path / "c.html"))
     html = out.read_text()
-    assert html.count('<img src="data:image/svg+xml;base64,') == 3
+    # the case-data box plot decodes and is drawn too (U144)
+    assert html.count('<img src="data:image/svg+xml;base64,') == 4
     assert "<h2>Graph</h2><h3>Weight by Height</h3>" in html
     copy = tmp_path / "e.SPV"
     copy.write_bytes((FIX / "empty.spv").read_bytes())

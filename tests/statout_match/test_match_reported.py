@@ -105,7 +105,9 @@ def test_model_described_across_statements_unites_into_one_site() -> None:
         ("> .05", 0.05, 2, ">"),
         ("1,234.5", 1234.5, 1, ""),
         ("-.5", -0.5, 1, ""),
-        ("1.5e-05", 1.5e-05, 1, ""),
+        # the decimals of the number, exponent included (R: 1, U143)
+        ("1.5e-05", 1.5e-05, 6, ""),
+        ("1.5e+03", 1500.0, 0, ""),
         ("3.14abc", 3.14, 2, ""),
         ("abc", None, 0, ""),
         ("", None, 0, ""),
@@ -186,7 +188,7 @@ def test_recompose_eq_groups_and_filters() -> None:
         ("p", 0.05, "<"),
     ]
     assert _recompose_eq(None) == []
-    with pytest.raises(ValueError, match="missing value"):
+    with pytest.raises(TypeError, match="data frame"):
         _recompose_eq(pc.PaperList([pc.test_paper("x")]))
 
 

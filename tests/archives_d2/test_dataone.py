@@ -70,12 +70,11 @@ def test_host_regex_and_vectorisation() -> None:
         None,
         None,
     ]
-    # U40: a host name in the URL wins over a DOI prefix, so a KNB page citing
-    # an Arctic Data Center DOI is KNB's (metacheck: arcticdata.io)
-    assert (
-        _dataone_host("https://knb.ecoinformatics.org/view/doi:10.18739/X1")
-        == "knb.ecoinformatics.org"
-    )
+    # hosts are tried in list order, name before prefix, as in metacheck: a KNB
+    # page citing an Arctic Data Center DOI goes to arcticdata.io, the node that
+    # registered the DOI (U40 lists this order; it is kept)
+    assert _dataone_host("https://knb.ecoinformatics.org/view/doi:10.18739/X1") == "arcticdata.io"
+    assert _dataone_host("https://arcticdata.io/catalog/view/doi:10.5063/X1") == "arcticdata.io"
     assert _dataone_host("https://doi.org/10.18739/X1") == "arcticdata.io"
     # the host name is matched case-sensitively
     assert _dataone_host("ARCTICDATA.IO/view/x") is None

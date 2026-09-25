@@ -291,8 +291,9 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     if not value_cols:
         raise ValueError("`cols` must select at least one column.")
     _check_combinable(acc, value_cols)
-    if "no_match" not in cols:  # summarise(.by = c(paper_id, bib_id, no_match))
-        raise ValueError("Can't select columns that don't exist.\n✖ Column `no_match`")
+    if "no_match" not in cols:
+        # metacheck fails with an empty message (U119): no column, no "no match"
+        acc = acc.assign(no_match=pd.Series([False] * len(acc), index=acc.index, dtype="boolean"))
     names = np.array([str(gsub("_mismatch", "", c)) for c in value_cols], dtype=object)
 
     # filter(!value %in% FALSE): the kept (row, column) cells, row-major
@@ -308,15 +309,61 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     first = rows[order[starts]][appearance]
     joined = [", ".join(parts[i]) for i in appearance.tolist()]
     # tbl$accuracy_mismatch[tbl$no_match %in% TRUE] <- "no match"
-    no_match = _in_bool(acc["no_match"], True)[first]
+    no_match_all = _in_bool(acc["no_match"], True)
+    no_match = no_match_all[first]
     mismatch = np.where(no_match, "no match", np.array(joined, dtype=object))
+    # a reference without a match whose *_mismatch are all FALSE: metacheck's
+    # filter() drops it before the relabel, so it had no accuracy_mismatch (U119)
+    listed = set(codes[first].tolist())
+    extra: list[int] = []
+    for i in np.flatnonzero(no_match_all).tolist():
+        if codes[i] not in listed:
+            listed.add(codes[i])
+            extra.append(i)
+    rows_out = [*first.tolist(), *extra]
+    values = [*mismatch.tolist(), *(["no match"] * len(extra))]
     return pd.DataFrame(
         {
-            "paper_id": acc["paper_id"].iloc[first].reset_index(drop=True),
-            "bib_id": acc["bib_id"].iloc[first].reset_index(drop=True),
-            "accuracy_mismatch": pd.array(mismatch.tolist(), dtype="string"),
+            "paper_id": acc["paper_id"].iloc[rows_out].reset_index(drop=True),
+            "bib_id": acc["bib_id"].iloc[rows_out].reset_index(drop=True),
+            "accuracy_mismatch": pd.array(values, dtype="string"),
         }
     )
+
+
+def _one_per_reference(tbl: pd.DataFrame) -> pd.DataFrame:
+    """One row per reference (``paper_id``, ``bib_id``) of an earlier module's table.
+
+    Several rows for a reference (several FLoRA replications, a DOI that
+    PubPeer lists twice) made metacheck's left joins repeat the reference
+    (U119). Each other column keeps its distinct values, joined with ", "
+    when they are text.
+    """
+    if len(tbl) == 0:
+        return tbl
+    (codes,) = _key_codes([tbl], _KEYS)
+    if len(set(codes.tolist())) == len(codes):
+        return tbl
+    groups: dict[int, list[int]] = {}
+    for i, c in enumerate(codes.tolist()):
+        groups.setdefault(c, []).append(i)
+    first = [rows[0] for rows in groups.values()]
+    out = tbl.iloc[first].reset_index(drop=True)
+    for col in tbl.columns:
+        if col in _KEYS:
+            continue
+        values = tbl[col].tolist()
+        merged = []
+        for rows in groups.values():
+            distinct = list(dict.fromkeys(values[i] for i in rows if not is_na(values[i])))
+            if not distinct:
+                merged.append(None)
+            elif len(distinct) == 1 or not all(isinstance(v, str) for v in distinct):
+                merged.append(distinct[0])
+            else:
+                merged.append(", ".join(distinct))
+        out[col] = pd.Series(merged, dtype=tbl[col].dtype)
+    return out
 
 
 def _first_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -379,7 +426,7 @@ def ref_summary(paper: Any, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG001 - 
     ## accuracy -----
     if _has_rows(tables["accuracy"]):
         tbl = _accuracy_mismatches(tables["accuracy"])
-        table = _join(table, tbl, _KEYS, "left")
+        table = _join(table, _one_per_reference(tbl), _KEYS, "left")
 
     ## pubpeer ----
     if _has_rows(tables["pubpeer"]):
@@ -390,25 +437,27 @@ def ref_summary(paper: Any, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG001 - 
             urls = tbl["url"].tolist()
             tbl["pubpeer"] = pd.array(link(urls, "Link") if urls else [], dtype="string")
             tbl = tbl.drop(columns="url")
-        table = _join(table, tbl, _KEYS, "left")
+        table = _join(table, _one_per_reference(tbl), _KEYS, "left")
 
     ## replication ----
     if _has_rows(tables["replication"]):
         rep = tables["replication"]
         cols = [c for c in ("paper_id", "bib_id", "replication_type") if c in rep.columns]
-        table = _join(table, _select(rep, cols), _KEYS, "left")
+        table = _join(table, _one_per_reference(_select(rep, cols)), _KEYS, "left")
 
     ## retraction ----
     if _has_rows(tables["retraction"]):
         ret = tables["retraction"]
         cols = list(dict.fromkeys(c for c in ret.columns if c not in ("text", "doi")))
-        table = _join(table, _select(ret, cols), _KEYS, "left")
+        table = _join(table, _one_per_reference(_select(ret, cols)), _KEYS, "left")
 
     ## traffic light ----
     tl = "info"
 
     ## summary_text ----
-    n = len(table)
+    # the references (metacheck counts the rows of its one-to-many joins, U119)
+    (keys,) = _key_codes([table], _KEYS)
+    n = len(set(keys.tolist()))
     summary_text = f"Summary information provided for {n:d} reference{plural(n)}"
 
     ## report ----

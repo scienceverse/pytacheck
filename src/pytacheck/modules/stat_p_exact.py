@@ -67,6 +67,7 @@ def _starred(p: pd.DataFrame) -> np.ndarray:
         out[i] = bool(grepl(r"\*\s*$", exp[:start])) and bool(grepl(_STAR_P, txt))
     return out
 
+
 _REPORT_TEXT = (
     "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, "
     "and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values "

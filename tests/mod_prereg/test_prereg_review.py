@@ -17,9 +17,9 @@ def test_view_only_link_keeps_its_token_and_does_not_join() -> None:
     mo = run_prereg(papers=[{"url": [url], "id": "p_vwonl"}], mock="local")
     assert mo.table["id"].tolist() == ["vwonl"]
     assert mo.table["link"].tolist() == ["https://osf.io/vwonl"]
-    # the link in the paper has the token, so the row has no paper_id (R's join)
-    assert mo.table["paper_id"].isna().all()
-    assert mo.summary_table["preregistration"].tolist() == [0]
+    # U110: joined by the OSF id (metacheck's join by link text leaves paper_id NA)
+    assert mo.table["paper_id"].tolist() == ["p_vwonl"]
+    assert mo.summary_table["preregistration"].tolist() == [1]
     assert mo.summary_text == "We found 1 preregistration."
 
 
@@ -36,10 +36,13 @@ def test_registration_without_data_next_to_a_readable_one() -> None:
     assert mo.summary_text == "We found 1 preregistration."
 
 
-def test_field_slugged_to_paper_id_errors_as_in_r() -> None:
-    # left_join() makes paper_id.x / paper_id.y, so count(paper_id) fails
-    with pytest.raises(Exception, match="paper_id"):
-        run_prereg(papers=[{"url": ["https://osf.io/pidsl"], "id": "p"}], mock="local")
+def test_field_slugged_to_paper_id() -> None:
+    # metacheck's left_join() makes paper_id.x / paper_id.y, so count(paper_id)
+    # fails; U110: the registration's field is kept as paper_id.x
+    mo = run_prereg(papers=[{"url": ["https://osf.io/pidsl"], "id": "p"}], mock="local")
+    assert mo.table["paper_id"].tolist() == ["p"]
+    assert "paper_id.x" in mo.table.columns
+    assert mo.summary_table["preregistration"].tolist() == [1]
 
 
 def test_label_case_mapping() -> None:
@@ -145,13 +148,13 @@ def test_scalar_labels_end_up_as_slugged_fields() -> None:
     )
 
 
-def test_label_with_ffff_errors_as_r_tolower() -> None:
+def test_label_with_ffff() -> None:
     from pytacheck.modules._prereg import osf_label_to_field
 
-    # R's utf8towcs() rejects U+FFFE/U+FFFF; other noncharacters are lowered as is
-    with pytest.raises(ValueError, match="in 'utf8towcs'"):
-        osf_label_to_field("Sample " + chr(0xFFFF))
+    # U111: R's utf8towcs() rejects U+FFFE/U+FFFF, which stopped the module;
+    # like other noncharacters they are kept
+    assert osf_label_to_field("Sample " + chr(0xFFFF)) == "sample"
     assert osf_label_to_field("Notes " + chr(0x1FFFF)) == "notes"
     assert osf_label_to_field("Ab" + chr(0xFDD0) + "C") == "ab_c"
-    with pytest.raises(Exception, match="utf8towcs"):
-        run_prereg(papers=[{"url": ["https://osf.io/lblnc"], "id": "p"}], mock="local")
+    mo = run_prereg(papers=[{"url": ["https://osf.io/lblnc"], "id": "p"}], mock="local")
+    assert len(mo.table) == 1

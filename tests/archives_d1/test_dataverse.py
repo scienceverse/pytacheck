@@ -425,6 +425,25 @@ def test_dataverse_parse_matches_each_url_on_its_own() -> None:
     assert parsed["doi"].fillna("NA").tolist() == ["10.18167/DVN1/T0DMFJ", "10.7910/DVN/X", "NA"]
 
 
+def test_dataverse_host_is_not_the_start_of_a_longer_host() -> None:
+    # dataverse.no is not dataverse.northwestern.edu (metacheck's host regex has
+    # no boundary): that URL falls back to its DOI prefix's host
+    parsed = _dataverse_parse(
+        [
+            "https://dataverse.northwestern.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X",
+            "https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/ABC",
+            "https://agh.rodbuk.pl/dataset.xhtml?persistentId=doi:10.58032/AGH/X",
+            "https://dataverse.harvard.edu.",
+        ]
+    )
+    assert parsed["host"].tolist() == [
+        "dataverse.harvard.edu",
+        "dataverse.no",
+        "agh.rodbuk.pl",
+        "dataverse.harvard.edu",
+    ]
+
+
 def test_figshare_dois_are_not_dataverse_links() -> None:
     # U32: metacheck lists Figshare's prefix 10.6084 under dataverse.no
     parsed = _dataverse_parse(["https://doi.org/10.6084/m9.figshare.10744937"])

@@ -32,18 +32,20 @@ def test_render_line_layout_directives() -> None:
 
 def test_render_line_payload_and_quirks() -> None:
     line = "a{dup 3:ab}b{char 65}{c 0x41}{ralign 8:xy}|{center 7:ab}|{lalign 5:z}|{res:-1.5}{it:x}{* c}{bf}"
-    # {c 0xNN} is parsed as a DECIMAL code by metacheck: 0x41 -> 41 -> ")"
-    assert _smcl_render_line(line) == "aabababbA)      xy|  ab   |z    |-1.5x"
+    # {c 0xNN} is hexadecimal: 0x41 is "A" (metacheck reads it as decimal 41,
+    # ")", U146)
+    assert _smcl_render_line(line) == "aabababbAA      xy|  ab   |z    |-1.5x"
     assert _smcl_render_line("unmatched { brace {res:{bf:x}} y") == "unmatched {bf:x} y"
-    # {c -(}/{c )-} become literal braces *before* the directive walk, so the
-    # "{x}" they produce is itself read (and dropped) as a directive -- as in R
-    assert _smcl_render_line("{c -(}x{c )-}{c TT}{c S|}") == "\u252c"
+    # {c -(}/{c )-} are literal braces (metacheck re-parses and drops them, U146)
+    assert _smcl_render_line("{c -(}x{c )-}{c TT}{c S|}") == "{x}\u252c"
+    assert _smcl_render_line("{hi:{c -(}t{c )-}}") == "{t}"
 
 
-def test_render_line_na_propagation() -> None:
-    assert _smcl_render_line("{dup 99999999999:a}q{res:x}") == "NAqx"
-    with pytest.raises(ValueError, match=re.escape("missing value")):
-        _smcl_render_line("{dup 99999999999:a}{col 3}")
+def test_render_line_unusable_dup_count() -> None:
+    # U146: a {dup} count outside the integer range is left out (metacheck
+    # renders "NA" and a later column directive fails the whole read)
+    assert _smcl_render_line("{dup 99999999999:a}q{res:x}") == "qx"
+    assert _smcl_render_line("{dup 99999999999:a}{col 3}x") == "   x"
 
 
 def test_command_chunks() -> None:
@@ -66,6 +68,11 @@ def test_command_chunks() -> None:
     assert chunks[1]["output"] == []
     assert _smcl_command_chunks(["no echo"]) == []
     assert _smcl_command_chunks(["> only continuation"]) == []
+    # output rows that look like numbered echo lines (list's "  1. | ...")
+    # stay output (metacheck counts them into the command, see U140)
+    listed = _smcl_command_chunks([". list x", "     +---+", "  1. | 5 |", "  2. | 7 |"])
+    assert listed[0]["command"] == "list x"
+    assert listed[0]["output"] == ["     +---+", "  1. | 5 |", "  2. | 7 |"]
 
 
 def test_numlike_split_and_rules() -> None:

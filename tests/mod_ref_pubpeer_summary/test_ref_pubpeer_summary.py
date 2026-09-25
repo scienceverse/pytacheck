@@ -101,17 +101,18 @@ def test_ref_pubpeer_multiple_papers() -> None:
     assert out.traffic_light == "info"
     assert len(out.table) >= 2
     assert out.summary_table["paper_id"].tolist() == papers.names
-    # duplicated DOIs join many-to-many (3 references x 3 lookups)
-    assert (out.table["doi"] == "10.9999/pp.dup").sum() == 9
+    # U118: a duplicated DOI joins once per reference (metacheck: 3 references x 3
+    # lookups = 9 rows), and each work counts once per paper
+    assert (out.table["doi"] == "10.9999/pp.dup").sum() == 3
     # the upper-case DOI keeps its case; zero and Statcheck-only comments are dropped
     assert "10.9999/PP.Upper" in out.table["doi"].tolist()
     assert not out.table["doi"].isin(["10.9999/pp.zero", "10.9999/pp.stat"]).any()
-    assert out.summary_table["pubpeer_comments"].tolist() == [10.0, 15.0, 3.0]
-    assert out.summary_text == "You cited 12 references with comments in PubPeer."
-    # the reference without a PubPeer URL is left out of the report table
+    assert out.summary_table["pubpeer_comments"].tolist() == [5.0, 15.0, 1.0]
+    assert out.summary_text == "You cited 5 references with comments in PubPeer."
+    # U118: the reference without a PubPeer URL is listed too, without a link
     report_table = out.report[1].data
-    assert len(report_table) == 11
-    assert report_table["PubPeer Link"].notna().all()
+    assert len(report_table) == 6
+    assert report_table["PubPeer Link"].tolist()[3] == ""
 
 
 @pytest.mark.usefixtures("mock_pubpeer")
@@ -136,12 +137,11 @@ def test_ref_pubpeer_single_reference() -> None:
 
 @pytest.mark.usefixtures("mock_pubpeer")
 def test_ref_pubpeer_request_failed() -> None:
-    # pubpeer_comments() returns NULL and dplyr::inner_join(bib, NULL) fails (U23)
-    with pytest.raises(ModuleError) as err:
-        module_run(H.pp_fail(), "ref_pubpeer")
-    assert str(err.value) == (
-        "Running the module 'ref_pubpeer' produced errors: `x` and `y` must share the same src."
-    )
+    # U23: pubpeer_comments() returns NULL and metacheck's inner_join(bib, NULL)
+    # fails ("`x` and `y` must share the same src."); the failure is reported
+    out = module_run(H.pp_fail(), "ref_pubpeer")
+    assert out.traffic_light == "fail"
+    assert out.summary_text.startswith("PubPeer could not be reached")
 
 
 @pytest.mark.usefixtures("apis")
@@ -228,15 +228,17 @@ def test_ref_summary_extra_arguments(demo: pc.Paper) -> None:
 
 @pytest.mark.usefixtures("mock_pubpeer")
 def test_ref_summary_duplicate_rows() -> None:
-    # FLoRA has two replications of 10.1002/bdm.586: left_join() repeats the reference
+    # FLoRA has two replications of 10.1002/bdm.586: metacheck's left_join() repeats
+    # the reference (7 rows); U119: one row per reference
     out = H.chain(
         H.pp_mixed(),
         ["ref_accuracy", "ref_pubpeer", "ref_replication", "ref_retraction", "ref_summary"],
     )
-    assert out.table["bib_id"].tolist() == [0, 0, 1, 2, 3, 4, 5]
+    assert out.table["bib_id"].tolist() == [0, 1, 2, 3, 4, 5]
+    assert out.table["replication_type"].tolist()[0] == "replication"
     # ref_accuracy failed (no bib_match), so there is no accuracy column
     assert "accuracy_mismatch" not in out.table.columns
-    assert out.summary_text == "Summary information provided for 7 references"
+    assert out.summary_text == "Summary information provided for 6 references"
 
 
 def test_ref_summary_does_not_mutate_prev_outputs(demo: pc.Paper) -> None:
@@ -296,15 +298,18 @@ def test_accuracy_mismatches() -> None:
     )
     out = _accuracy_mismatches(acc)
     assert list(out.columns) == ["paper_id", "bib_id", "accuracy_mismatch"]
-    # bib 1 (all FALSE) and q/0 (all FALSE, even with no_match) drop out
-    assert out["bib_id"].tolist() == [0, 2]
-    assert out["accuracy_mismatch"].tolist() == ["doi, title", "no match"]
+    # bib 1 (all FALSE) drops out; U119: q/0 has no match although its
+    # *_mismatch are all FALSE (metacheck drops it too)
+    assert out["bib_id"].tolist() == [0, 2, 0]
+    assert out["paper_id"].tolist() == ["p", "p", "q"]
+    assert out["accuracy_mismatch"].tolist() == ["doi, title", "no match", "no match"]
 
 
-def test_accuracy_mismatches_requires_no_match() -> None:
+def test_accuracy_mismatches_without_no_match() -> None:
+    # U119: metacheck fails with an empty error message
     acc = pd.DataFrame({"paper_id": ["p"], "bib_id": [0], "doi_mismatch": [True]})
-    with pytest.raises(ValueError):
-        _accuracy_mismatches(acc)
+    out = _accuracy_mismatches(acc)
+    assert out["accuracy_mismatch"].tolist() == ["doi"]
 
 
 # -- review: dplyr suffixes, pivot_longer() types, %in% ---------------------------------
@@ -385,8 +390,9 @@ def test_accuracy_mismatches_in_semantics() -> None:
         no_match=pd.array(["TRUE", "FALSE", None, "1"], dtype="string"),
     )
     out = _accuracy_mismatches(acc)
-    assert out["bib_id"].tolist() == [1, 2, 3]
-    assert out["accuracy_mismatch"].tolist() == ["doi", "doi", "doi"]
+    # U119: bib 0 (no_match "TRUE", doi "FALSE") says "no match"
+    assert out["bib_id"].tolist() == [1, 2, 3, 0]
+    assert out["accuracy_mismatch"].tolist() == ["doi", "doi", "doi", "no match"]
     # factors compare by their labels
     acc = _acc(
         doi_mismatch=pd.Categorical(["FALSE", "x"]),
@@ -451,12 +457,12 @@ def test_ref_pubpeer_edge_feedbacks(mock_pubpeer: None) -> None:
         "10.9999/pp.statcase",
     ]
     assert out.table["users"].tolist() == ["", "Empty Url", "statcheck"]
-    # an NA URL leaves an empty report table ("")
-    out = module_run(H.pp_nourl_some(), "ref_pubpeer")
-    assert out.report[1] == ""
-    # no url column at all: R's report table subsetting fails
-    with pytest.raises(ModuleError):
-        module_run(H.pp_nourl_only(), "ref_pubpeer")
+    # U118: a reference without a URL is listed without a link (metacheck: an
+    # empty report table ""), with or without a url column
+    for paper in (H.pp_nourl_some(), H.pp_nourl_only()):
+        out = module_run(paper, "ref_pubpeer")
+        assert out.report[1].data["PubPeer Link"].tolist() == [""]
+        assert out.report[1].data["Comments"].tolist() == [3.0]
 
 
 def test_ref_pubpeer_case_list_c_locale(mock_pubpeer: None) -> None:

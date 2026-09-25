@@ -40,6 +40,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(empty = c(\"bib\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['bib'])"
 - "id": "ref_accuracy.no_bib_match.dropped"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U30", "reason": "A paper without bib_match rows gets the 'fail' light; metacheck returns 'error', which is not a traffic light."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -47,6 +48,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(drop = c(\"bib_match\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(drop=['bib_match'])"
 - "id": "ref_accuracy.no_bib_match.empty"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U30", "reason": "A paper without bib_match rows gets the 'fail' light; metacheck returns 'error', which is not a traffic light."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -234,6 +236,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 0L, \"doi\", \"\"), list(\"bib\", 4L, \"doi\", \"\"), list(\"bib\", 0L, \"text_id\", 999L), list(\"bib\", 4L, \"text_id\", 999L)))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', ''), ('bib', 0, 'text_id', 999), ('bib', 4, 'text_id', 999)])"
 - "id": "ref_accuracy.duplicate_match"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U114", "reason": "A reference with k bib_match rows is checked once (metacheck's three left joins give k x k x k rows)."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -325,6 +328,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"year\", 2010L))), \"ref_accuracy\", max_authors = 2L))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'year', 2010)]), \"ref_accuracy\", max_authors=2))"
 - "id": "ref_accuracy.report_tables.duplicate_match"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U114", "reason": "A reference with k bib_match rows is listed once (metacheck's three left joins give k x k x k rows)."}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -376,6 +380,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_xrefs(c(NA, NA), c(\"(Nobody 2020)\", \"(Ghost 2021)\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([None, None], ['(Nobody 2020)', '(Ghost 2021)'])"
 - "id": "ref_consistency.unknown_id"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U115", "reason": "A citation whose xref_id is not a bib_id (99) is reported as missing from the bibliography; metacheck never reports it."}
   "module": "ref_consistency"
   "args":
     "paper":
@@ -390,6 +395,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(empty = c(\"xref\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['xref'])"
 - "id": "ref_consistency.paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U115", "reason": "A citation whose xref_id is not a bib_id is reported as missing from the bibliography; metacheck never reports it."}
   "module": "ref_consistency"
   "args":
     "paper":

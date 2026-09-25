@@ -258,34 +258,30 @@
   ref: U39
   reason: "a persistentId decoding to invalid UTF-8 is no DOI for that URL (metacheck aborts the call for every URL)"
 # U40
-"archives_d2/.dataone_host.shapes":
-  kind: r_bug_fixed
-  ref: U40
-  reason: "DataONE: a host name beats a DOI prefix, a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
 "archives_d2/.dataone_pid.shapes":
   kind: r_bug_fixed
   ref: U40
-  reason: "DataONE: a host name beats a DOI prefix, a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
 "archives_d2/dataone_links.mixed":
   kind: r_bug_fixed
   ref: U40
-  reason: "DataONE: a host name beats a DOI prefix, a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
 "archives_d2/dataone_info.mock.links_table":
   kind: r_bug_fixed
   ref: U40
-  reason: "DataONE: a host name beats a DOI prefix, a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
 "archives_d2/dataone_info.mock.id_col_name":
   kind: r_bug_fixed
   ref: U40
-  reason: "DataONE: a host name beats a DOI prefix, a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
 "archives_d2/.dataone_info.mock.eml":
   kind: r_bug_fixed
   ref: U40
-  reason: "DataONE: a host name beats a DOI prefix, a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
 "archives_d2_review/dataone_links.review.unicode_case":
   kind: r_bug_fixed
   ref: U40
-  reason: "DataONE: a host name beats a DOI prefix, a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
 # U41
 "archives_d2/.researchdata4tu_id.shapes":
   kind: r_bug_fixed

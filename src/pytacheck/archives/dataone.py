@@ -150,13 +150,12 @@ def _host_one(url: Any) -> str | None:
     u = _clean_one(url)
     if u is None:
         return None
-    # a host name in the URL wins over a DOI prefix: metacheck tries each host's
-    # name and then its prefix in list order, so a KNB landing page citing a
-    # 10.18739 DOI went to arcticdata.io (U40)
+    # each host's name, then its DOI prefix, in list order: a KNB landing page
+    # citing a 10.18739 DOI goes to arcticdata.io, the member node that
+    # registered the DOI and holds the dataset (U40 lists this; kept)
     for h in DATAONE_HOSTS:
         if str(h["host"]) in u:
             return str(h["host"])
-    for h in DATAONE_HOSTS:
         prefix = h["doi_prefix"]
         if prefix is not None and grepl(_escape_dots(prefix) + "/", u, perl=True):
             return str(h["host"])
@@ -178,8 +177,9 @@ def _map(x: Any, one: Any) -> Any:
 def _dataone_host(dataone_url: Any) -> Any:
     """Port of R/archive-dataone.R::.dataone_host(): the member node of each URL or DOI.
 
-    A URL naming a known host gives that host; otherwise a URL containing a
-    known host's DOI prefix gives that host; anything else ``None``.
+    A URL naming a known host, or containing a known host's DOI prefix, gives
+    that host (hosts are tried in :data:`DATAONE_HOSTS` order, host name
+    before prefix); anything else ``None``.
     """
     return _map(dataone_url, _host_one)
 

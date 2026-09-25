@@ -188,11 +188,6 @@ def _r_seq(a: int, b: int) -> list[int]:
     return list(range(a, b + 1)) if a <= b else list(range(a, b - 1, -1))
 
 
-def _r_index(x: Sequence[str | None], idx: Sequence[int]) -> list[str | None]:
-    """R ``x[idx]`` for 1-based positive indices (``NA`` past the end)."""
-    return [x[i - 1] if 1 <= i <= len(x) else None for i in idx]
-
-
 def _mplus_is_section_header(line: str | None) -> bool:
     """Port of R/mplus.R::.mplus_is_section_header()."""
     tl = _trim(line)
@@ -200,17 +195,20 @@ def _mplus_is_section_header(line: str | None) -> bool:
 
 
 def _mplus_sections(lines: Sequence[str | None]) -> list[dict[str, Any]]:
-    """Port of R/mplus.R::.mplus_sections(): ``{"title", "lines"}`` per section."""
+    """Port of R/mplus.R::.mplus_sections(): ``{"title", "lines"}`` per section.
+
+    A section's lines are those between its header and the next one: none
+    when the header is the last line or directly followed by another header.
+    R's ``(h + 1):end`` then counts down and yields ``NA`` and the header
+    itself (UPSTREAM_ISSUES U147).
+    """
     lines = list(lines)
     header_idx = [i for i, ln in enumerate(lines, 1) if _mplus_is_section_header(ln)]
     if not header_idx:
         return []
     ends = [h - 1 for h in header_idx[1:]] + [len(lines)]
     return [
-        {
-            "title": _trim(lines[h - 1]),
-            "lines": _r_index(lines, _r_seq(h + 1, e)),
-        }
+        {"title": _trim(lines[h - 1]), "lines": lines[h:e]}
         for h, e in zip(header_idx, ends, strict=True)
     ]
 
@@ -531,8 +529,9 @@ def _mplus_syntax_lines(lines: Sequence[str | None]) -> str | None:
     starts = [i for i, ln in enumerate(lines, 1) if _gl(r"^INPUT INSTRUCTIONS\s*$", _trim(ln))]
     if not starts:
         return None
-    start = starts[0] + 1
-    rest = _r_index(lines, _r_seq(start, len(lines)))
+    # the lines after the header (none when it is the last line; R's
+    # (start):length counts down there, UPSTREAM_ISSUES U147)
+    rest = lines[starts[0] :]
     end_rel = [
         k
         for k, ln in enumerate(rest, 1)

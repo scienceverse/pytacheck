@@ -25,8 +25,8 @@ from pytacheck.statout.stat_tables import read_stat_tables
 def test_sanitize_id() -> None:
     assert _stat_sanitize_id("Sample.JASP") == "sample_jasp"
     assert _stat_sanitize_id("  Cohen's d ") == "cohen_s_d"
-    # R's sub("^_|_$", "", x) removes only one of them
-    assert _stat_sanitize_id("_abc_") == "abc_"
+    # both underscores go (R's sub("^_|_$", "", x) removes only one, U138)
+    assert _stat_sanitize_id("_abc_") == "abc"
     assert _stat_sanitize_id("η²") == ""
     assert _stat_sanitize_id(None) is None
 
@@ -48,11 +48,13 @@ def test_result_and_test_ids() -> None:
         "script_r_result_1",
         "script_r_result_2",
     ]
-    # R's default source_file is NA, which pastes as "NA"
-    assert _stat_result_ids([{"table_index": 1}]) == ["NA_t1"]
+    # a missing source file (the default) gives the "result" prefix (R pastes
+    # NA: "NA_t1", U138)
+    assert _stat_result_ids([{"table_index": 1}]) == ["result_t1"]
     assert _stat_test_id({"analysis_id": "4"}, "a.jasp", "a_jasp_t1", "x") == "a_jasp_a4_x"
     assert _stat_test_id({"line": 3}, "s.R", "s_r_l3_1", "") == "s_r_l3_1"
-    assert _stat_test_id({}, "s.R", "s_r_t2_r1", "grp A") == "s_r_s_r_t2_grp_a"
+    # the base id's own source prefix is not repeated (R: "s_r_s_r_t2_grp_a")
+    assert _stat_test_id({}, "s.R", "s_r_t2_r1", "grp A") == "s_r_t2_grp_a"
 
 
 def test_placeholders() -> None:
@@ -115,14 +117,17 @@ def test_stat_output_validate_shapes(data_dir: Path) -> None:
         "Document missing top-level fields: schema_version, paper_id, source_file, "
         "source_format, analyses."
     )
-    # metacheck reads JSON *strings* through a text connection jsonlite cannot
-    # read, so every JSON string is reported as invalid JSON
+    # a JSON string is validated like the file holding it (metacheck reads it
+    # through a text connection jsonlite cannot read: "Input is not valid
+    # JSON.", U136)
     as_string = stat_output_validate('{"schema": "x"}')
-    assert as_string == {
-        "valid": False,
-        "issues": ["Input is not valid JSON."],
-        "summary": {"n_errors": 1, "n_analyses": 0, "n_results": 0},
-    }
+    assert as_string["issues"] == [
+        "Document missing top-level fields: schema_version, paper_id, source_file, "
+        "source_format, analyses."
+    ]
+    text = (data_dir / "stat_output.json").read_text(encoding="utf-8")
+    assert stat_output_validate(text) == ok
+    assert stat_output_validate("not json")["issues"] == ["Input is not valid JSON."]
     with pytest.raises(TypeError, match="atomic"):
         stat_output_validate(str(data_dir / "validate_analyses_string.json"))
     listed = stat_output_validate({"schema": "x", "analyses": []})

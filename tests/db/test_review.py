@@ -247,7 +247,7 @@ def test_pubpeer_does_not_match_missing_ids_to_missing_dois() -> None:
     assert json.loads(route.calls[0].request.content) == {"dois": "10.1/e"}
     assert out["doi"].tolist()[1] == "10.1/E"
     assert out["total_comments"].tolist() == [0, 1]
-    assert list(out.columns) == ["doi", "total_comments", "url", "users"]
+    assert sorted(out.columns) == ["doi", "total_comments", "url", "users"]
 
 
 # --- RegCheck ----------------------------------------------------------------

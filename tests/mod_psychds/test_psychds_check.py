@@ -222,6 +222,11 @@ def test_paper_list_summary_is_per_paper() -> None:
     assert st.loc["0956797613520608"].tolist() == [3, 0, 2, 1, 0]
     assert st.loc["to_err_is_human"].tolist() == [2, 1, 0, 3, 2]
     assert st.loc["0956797614522816"].tolist() == [0, 0, 0, 0, 0]
+    # U113: files that all belong to the list's last paper are counted for that
+    # paper (R credits the first paper with them)
+    st = ps.run_chain("psychsci_last_paper").summary_table.set_index("paper_id")
+    assert st.loc["to_err_is_human"].tolist() == [3, 0, 0, 3, 2]
+    assert st.loc["0956797613520608"].tolist() == [0, 0, 0, 0, 0]
 
 
 def test_pid_falls_back_to_table_paper_ids() -> None:

@@ -13,7 +13,6 @@ import pandas as pd
 import pytest
 
 import pytacheck as pc
-from pytacheck.module import ModuleError
 from pytacheck.modules import _funding as F
 
 FOUND = "This research was funded by UKRI grant #202020."

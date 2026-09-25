@@ -107,7 +107,6 @@
         "text": ["t = 2.1", "F = 3"]
         "paper_id": ["a", "a"]
 - "id": "extract_eq.review.paperlist_ids"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "grp_id numbers sentences in text order within each paper (R: per-operator search order)"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":

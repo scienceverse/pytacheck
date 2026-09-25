@@ -1105,6 +1105,47 @@
    },
    "columns": 2
   },
+  "psychsci_last_paper": {
+   "paper": "psychsci",
+   "structure": {
+    "file_name": [
+     "raw.csv",
+     "dataset_description.json",
+     "run.py"
+    ],
+    "file_path": [
+     "data/raw.csv",
+     "dataset_description.json",
+     "code/run.py"
+    ],
+    "data_type": [
+     "data",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     []
+    ],
+    "paper_id": [
+     "to_err_is_human",
+     "to_err_is_human",
+     "to_err_is_human"
+    ]
+   },
+   "columns": 2
+  },
   "compliant_raw": {
    "paper": "test",
    "structure": {

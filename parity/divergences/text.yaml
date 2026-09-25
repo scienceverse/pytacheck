@@ -123,3 +123,130 @@
   kind: r_bug_fixed
   ref: U105
   reason: sentences in "acknowledgment" sections are favoured as well as "acknowledgement" ones, so "The authors declare no funding." is kept
+
+# ref_pubpeer, ref_summary --------------------------------------------------------
+"mod_ref_pubpeer_summary/ref_pubpeer.request_failed":
+  kind: r_bug_fixed
+  ref: U23
+  reason: a failed PubPeer request gives the "fail" light and says so; metacheck stops ("`x` and `y` must share the same src.")
+"mod_ref_pubpeer_summary/ref_pubpeer.paperlist": &u118_dup
+  kind: r_bug_fixed
+  ref: U118
+  reason: a DOI cited several times joins its PubPeer row once per reference (metacheck joins k x k rows), so comments and "You cited N references" count each work once per paper (5, not 12)
+"mod_ref_pubpeer_summary/ref_pubpeer.paperlist.report_table": *u118_dup
+"mod_ref_pubpeer_summary/ref_summary.paperlist.chain_all":
+  kind: r_bug_fixed
+  ref: U119
+  reason: one row per reference (11, metacheck 17 through the k x k PubPeer join, U118)
+"mod_ref_pubpeer_summary/ref_summary.mixed.chain_all": &u119_rows
+  kind: r_bug_fixed
+  ref: U119
+  reason: one row per reference; several rows of an earlier module for a reference are combined instead of repeating the reference
+"mod_ref_pubpeer_summary/ref_summary.mixed.chain_all.report_table": *u119_rows
+"mod_ref_pubpeer_summary_review/ref_summary.rep_no_type": *u119_rows
+"mod_ref_pubpeer_summary_review/ref_summary.acc_dup": *u119_rows
+"mod_ref_pubpeer_summary_review/ref_summary.acc_dup.report_table": *u119_rows
+"mod_ref_pubpeer_summary/ref_summary.psychsci.chain_all": &u119_nomatch
+  kind: r_bug_fixed
+  ref: U119
+  reason: references without a CrossRef match (no_match TRUE, every *_mismatch FALSE) say "no match"; metacheck's filter drops them first and leaves NA
+"mod_ref_pubpeer_summary/ref_summary.psychsci.chain_accuracy": *u119_nomatch
+"mod_ref_pubpeer_summary/ref_summary.accuracy.all_false": *u119_nomatch
+"mod_ref_pubpeer_summary/ref_summary.accuracy.no_no_match_col":
+  kind: r_bug_fixed
+  ref: U119
+  reason: an accuracy table without a no_match column is summarised (no "no match" labels); metacheck fails with an empty error message
+
+# ref_accuracy --------------------------------------------------------------------
+"mod_ref_accuracy_review/ref_accuracy.xml_fixtures": &u30_light
+  kind: r_bug_fixed
+  ref: U30
+  reason: papers without bib_match rows get the "fail" light; metacheck returns "error", which is not a traffic light
+"mod_ref_accuracy_review/ref_accuracy.problems_203020": *u30_light
+"mod_ref_accuracy_review/ref_accuracy.bibr_golden": *u30_light
+
+# ref_consistency -----------------------------------------------------------------
+"mod_ref_accuracy_review/ref_consistency.na_with_xrefs": &u115_missing
+  kind: r_bug_fixed
+  ref: U115
+  reason: a citation whose xref_id is not a bib_id of the paper is reported as missing from the bibliography; metacheck reports only citations without an xref_id
+"mod_ref_accuracy_review/ref_consistency.report_tables.na_with_xrefs": *u115_missing
+"mod_ref_accuracy_review/ref_consistency.single_reference": *u115_missing
+"mod_ref_accuracy_review/ref_consistency.report_tables.single_reference": *u115_missing
+"mod_ref_accuracy_review/ref_consistency.paperlist.all_empty_bib": *u115_missing
+"mod_ref_accuracy_review/ref_consistency.contents_na": &u115_type
+  kind: r_bug_fixed
+  ref: U115
+  reason: a citation (xref) without contents whose xref_id is not a bib_id is "missing" from the bibliography, not an "extra" reference
+"mod_ref_accuracy_review/ref_consistency.report_tables.contents_na": *u115_type
+"mod_ref_pubpeer_summary/ref_pubpeer.no_comments": &u82_plural
+  kind: r_bug_fixed
+  ref: U82
+  reason: '"We checked 1 reference with DOIs." (metacheck: "1 references")'
+"mod_ref_pubpeer_summary/ref_pubpeer.invalid_doi": *u82_plural
+
+# power ---------------------------------------------------------------------------
+"mod_power_review/power.review.fallback.omitted_key": &u108_complete
+  kind: r_bug_fixed
+  ref: U108
+  reason: a field that no fallback reply gave (alpha_level) is not extracted, so the analysis is incomplete (red); metacheck's any_of() skips the missing column and reports it complete (green)
+"mod_power_review/power.review.fallback.empty_mixed": *u108_complete
+"mod_power_review/power.review.llm.no_key": &u108_cols
+  kind: r_bug_fixed
+  ref: U108
+  reason: the fallback table always has every extracted field (NA when no reply gave it), as the structured path has
+"mod_power_review/power.review.fallback.all_fail": *u108_cols
+"mod_power_review/power.review.fallback.garbled": *u108_cols
+"mod_power_review/power.review.fallback.empty": *u108_cols
+
+# prereg_check --------------------------------------------------------------------
+"mod_prereg/prereg_check.aspredicted_only":
+  kind: r_bug_fixed
+  ref: U109
+  reason: an AsPredicted-only paper is checked; metacheck stops on osf_type(character(0)) ("argument is of length zero")
+"mod_prereg/prereg_check.aspredicted.multiple": &u109_ap_rows
+  kind: r_bug_fixed
+  ref: U109
+  reason: each AsPredicted preregistration is its own row, counted for the paper that links it; metacheck pastes them into one row whose link matches no paper
+"mod_prereg/prereg_check.aspredicted.blind": *u109_ap_rows
+"mod_prereg/prereg_check.aspredicted.paperlist": *u109_ap_rows
+"mod_prereg_review/prereg_check.tables.aspredicted": *u109_ap_rows
+"mod_prereg_review/prereg_check.ap.with_fetch_fails":
+  kind: r_bug_fixed
+  ref: U109
+  reason: missing AsPredicted fields stay missing (metacheck pastes "NA"), and a failed fetch is reported by the paper's link, not the API URL (U110)
+"mod_prereg/prereg_check.fetch_fails": &u110_link
+  kind: r_bug_fixed
+  ref: U110
+  reason: a registration that fails to fetch is reported by the paper's link (https://osf.io/8c3kb), not by the API URL
+"mod_prereg/prereg_check.inaccessible.mixed": *u110_link
+"mod_prereg/prereg_check.report.mixed": *u110_link
+"mod_prereg_review/prereg_check.inaccessible.all_kinds": *u110_link
+"mod_prereg_review/prereg_check.inaccessible.paperlist": *u110_link
+"mod_prereg/prereg_check.duplicate_links": &u110_dup
+  kind: r_bug_fixed
+  ref: U110
+  reason: a registration linked twice by a paper is one preregistration; metacheck's left_join() duplicates the row
+"mod_prereg_review/prereg_check.ap.same_link_twice": *u110_dup
+"mod_prereg/prereg_check.unjoined_links": &u110_join
+  kind: r_bug_fixed
+  ref: U110
+  reason: registrations are joined to papers by OSF id, so http://, upper-case and view_only links count for their paper; metacheck's join by link text leaves paper_id NA
+"mod_prereg_review/prereg_check.unjoined.paperlist": *u110_join
+"mod_prereg_review/prereg_check.synthetic.view_only": *u110_join
+"mod_prereg_review/prereg_check.synthetic.view_only.paperlist": *u110_join
+"mod_prereg_review/prereg_check.synthetic.paper_id_field":
+  kind: r_bug_fixed
+  ref: U110
+  reason: a registration field slugged to "paper_id" is kept as paper_id.x next to the paper's id; metacheck's join makes paper_id.x/.y and count(paper_id) stops
+"mod_prereg/prereg_check.synthetic.prsp": &u111_prsp
+  kind: r_bug_fixed
+  ref: U111
+  reason: prsp() reads response keys exactly (metacheck's $ gives "84-56" for a missing "84-5", another question's answer) and names uploaded files instead of deparsing list(html = ...)
+"mod_prereg_review/prereg_check.tables.synthetic": *u111_prsp
+"mod_prereg_review/prereg_check.synthetic.prsp_deparse": *u111_prsp
+"mod_prereg_review/prereg_check.tables.synthetic.prsp_deparse": *u111_prsp
+"mod_prereg_review/prereg_check.synthetic.label_nonchar":
+  kind: r_bug_fixed
+  ref: U111
+  reason: a schema label containing U+FFFF is lower-cased like any other; R's tolower() stops the module ("invalid input ... in 'utf8towcs'")

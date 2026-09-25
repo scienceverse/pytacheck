@@ -291,6 +291,13 @@ CHAINS: dict[str, dict[str, Any]] = {
         },
         "columns": 2,
     },
+    # U113: a paper list whose files all belong to its last paper; that paper
+    # gets the summary row (R: the first paper, which has no files)
+    "psychsci_last_paper": {
+        "paper": "psychsci",
+        "structure": {**GREEN_PARTIAL, "paper_id": ["to_err_is_human"] * 3},
+        "columns": 2,
+    },
     # U112: a Psych-DS layout with a raw (non-tabular) file in data/, a
     # LICENSE/CHANGES classed "unknown", a ro-crate file and a .tsv data file
     # that already follows the naming rule

@@ -44,11 +44,12 @@ _PREFACE = (
     "the same order as in the paragraphs, bracketed by ```json and ```."
 )
 
-#: the schema the prompt-based fallback downloads (``readLines()`` in R)
+#: the schema metacheck's prompt-based fallback downloads (``readLines()`` in R)
 SCHEMA_URL = "https://scienceverse.org/schema/power.json"
 
 #: R: the (unused) ``schema`` string at the bottom of ``power.R``, a copy of
-#: the JSON schema published at :data:`SCHEMA_URL`
+#: the JSON schema published at :data:`SCHEMA_URL`. The fallback uses it
+#: rather than downloading the schema, so it also works offline (U108).
 SCHEMA = r"""{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://scienceverse.org/schema/power.json",
@@ -410,8 +411,9 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
     # fallback: prompt-instructed JSON + json_expand() ----
     from pytacheck.text.json_expand import json_expand
 
-    schema_text = _read_lines_url(SCHEMA_URL)
-    system_prompt = f"{_PREFACE}\n\n{schema_text}"
+    # the bundled copy of the schema: metacheck downloads it with readLines(),
+    # so the fallback fails without a connection (U108)
+    system_prompt = f"{_PREFACE}\n\n{SCHEMA}"
 
     llm_results = llm(
         text=potential_power,
@@ -423,7 +425,12 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
     fb_model = (llm_results.attrs.get("llm") or {}).get("model")
 
     table = json_expand(llm_results, suffix=("", ".power"))
-    table["complete"] = _complete(table, [c for c in llm_cols if c in table.columns])
+    # a field no reply gave is not extracted: metacheck's any_of() skips the
+    # missing column, so `complete` could be TRUE without it (U108)
+    for col in llm_cols:
+        if col not in table.columns:
+            table[col] = pd.Series([pd.NA] * len(table), index=table.index, dtype="boolean")
+    table["complete"] = _complete(table, llm_cols)
 
     n = len(table)
     if "error" in table.columns:

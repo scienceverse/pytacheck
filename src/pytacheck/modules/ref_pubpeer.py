@@ -12,6 +12,10 @@ from pytacheck.module import module
 __all__ = ["ref_pubpeer"]
 
 _NO_REFS = {"traffic_light": "na", "summary_text": "We found no references with DOIs"}
+_FAILED = (
+    "PubPeer could not be reached (the request failed), so the references were not checked "
+    "for comments."
+)
 
 
 def _refs_with_doi(paper: Any) -> pd.DataFrame:
@@ -32,13 +36,16 @@ def _commented(pp: pd.DataFrame | None) -> pd.DataFrame:
     """
     if pp is None:
         # R: NULL[...] is NULL, and inner_join(bib, NULL) fails in dplyr's
-        # auto_copy() (U23)
+        # auto_copy() (U23); the module reports the failed request instead
         raise TypeError("`x` and `y` must share the same src.")
     if "total_comments" not in pp.columns or "users" not in pp.columns:
         return pp.iloc[0:0]  # R: `NULL > 0` is logical(0), which selects no rows
     tc = pd.to_numeric(pp["total_comments"], errors="coerce")
     keep = ((tc > 0) & (pp["users"].astype("string") != "Statcheck")).fillna(False)
-    out = pp.loc[keep.to_numpy(dtype=bool)].reset_index(drop=True)
+    out = pp.loc[keep.to_numpy(dtype=bool)]
+    # pubpeer_comments() returns a row per requested DOI, so a DOI cited k times
+    # joined k * k rows (U118): one row per DOI
+    out = out.drop_duplicates(subset="doi").reset_index(drop=True)
     if pd.api.types.is_numeric_dtype(out["total_comments"]):
         # R: pubpeer_comments()' `total_comments[is.na(...)] <- 0` makes it a double
         out["total_comments"] = out["total_comments"].astype("float64")
@@ -46,7 +53,11 @@ def _commented(pp: pd.DataFrame | None) -> pd.DataFrame:
 
 
 def _summarise_comments(table: pd.DataFrame) -> pd.DataFrame:
-    """``dplyr::summarise(table, .by = "paper_id", pubpeer_comments = sum(total_comments))``."""
+    """``dplyr::summarise(table, .by = "paper_id", pubpeer_comments = sum(total_comments))``.
+
+    Each DOI counts once per paper (a DOI in two reference entries is one work).
+    """
+    table = table.drop_duplicates(subset=["paper_id", "doi"])
     tc = pd.to_numeric(table["total_comments"], errors="coerce").astype("float64")
     sums = tc.groupby(table["paper_id"], sort=False, dropna=False).sum(min_count=0)
     return pd.DataFrame(
@@ -97,7 +108,11 @@ def ref_pubpeer(paper: Any) -> dict[str, Any]:
         return dict(_NO_REFS)
 
     ## join to  pubpeer ----
-    pp = _commented(pubpeer_comments(bib["doi"].tolist()))
+    found = pubpeer_comments(bib["doi"].tolist())
+    if found is None:
+        # a failed request (non-200) is reported, not a crash (U23)
+        return {"traffic_light": "fail", "summary_text": _FAILED, "report": _FAILED}
+    pp = _commented(found)
     table = _join(bib, pp, ["doi"], "inner")
 
     # traffic_light ----
@@ -111,10 +126,13 @@ def ref_pubpeer(paper: Any) -> dict[str, Any]:
     report: Any
     if len(table) == 0:
         summary_text = "No references with comments in PubPeer were found."
-        report = f"We checked {n_doi:d} references with DOIs. {summary_text}"
+        # plural() as in the other branch (metacheck: "1 references", U82)
+        report = f"We checked {n_doi:d} reference{plural(n_doi)} with DOIs. {summary_text}"
     else:
         ## summary_text ----
-        tc = pd.to_numeric(table["total_comments"], errors="coerce")
+        # each commented work once per paper (U118)
+        works = table.drop_duplicates(subset=["paper_id", "doi"])
+        tc = pd.to_numeric(works["total_comments"], errors="coerce")
         n = int((tc > 0).fillna(False).sum())
         summary_text = f"You cited {n:d} reference{plural(n)} with comments in PubPeer."
 
@@ -127,10 +145,14 @@ def ref_pubpeer(paper: Any) -> dict[str, Any]:
         )
 
         ## report_table ----
-        rows = table["url"].notna().to_numpy(dtype=bool)
-        report_table = table.loc[rows, ["text", "total_comments", "url"]].reset_index(drop=True)
+        # every commented reference, with a link where PubPeer gives one
+        # (metacheck leaves out references without a URL, U118)
+        if "url" not in table.columns:
+            table = table.assign(url=pd.Series([None] * len(table), dtype="string"))
+        report_table = table.loc[:, ["text", "total_comments", "url"]].reset_index(drop=True)
         urls = report_table["url"].tolist()
-        report_table["url"] = pd.array(link(urls, "link") if urls else [], dtype="string")
+        links = [x if isinstance(x, str) else "" for x in (link(urls, "link") if urls else [])]
+        report_table["url"] = pd.array(links, dtype="string")
         report_table.columns = ["Reference", "Comments", "PubPeer Link"]
 
         ## report ----
