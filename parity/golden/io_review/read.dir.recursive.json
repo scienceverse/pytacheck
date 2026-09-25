@@ -1,0 +1,1459 @@
+{
+  "id": "read.dir.recursive",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "paperlist",
+    "names": [
+      "good",
+      "sub",
+      "c",
+      "Z"
+    ],
+    "v": [
+      {
+        "t": "paper",
+        "names": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "good"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "title",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3658ccd4db9f493d"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unknown TEI XML"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "good.xml"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "section_id",
+              "header",
+              "parent_section_id",
+              "section_type",
+              "classification_score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "dbl",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "href",
+              "link_text",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "bib_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "paper",
+        "names": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sub"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "title",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3658ccd4db9f493d"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unknown TEI XML"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "sub.xml"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "section_id",
+              "header",
+              "parent_section_id",
+              "section_type",
+              "classification_score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "dbl",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "href",
+              "link_text",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "bib_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "paper",
+        "names": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "c"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "title",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3658ccd4db9f493d"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unknown TEI XML"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "c.xml"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "section_id",
+              "header",
+              "parent_section_id",
+              "section_type",
+              "classification_score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "dbl",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "href",
+              "link_text",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "bib_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "paper",
+        "names": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Z"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "title",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3658ccd4db9f493d"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unknown TEI XML"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Z.xml"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "section_id",
+              "header",
+              "parent_section_id",
+              "section_type",
+              "classification_score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "dbl",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "href",
+              "link_text",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "bib_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

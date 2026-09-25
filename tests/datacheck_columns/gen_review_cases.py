@@ -572,6 +572,7 @@ for name in [
     "multi_table.md",
     "missing_cols.csv",
     "numeric_vars.csv",
+    "wide_numeric.csv",
     "title_semicolon.csv",
     "values_shapes.json",
     "edge.qsf",

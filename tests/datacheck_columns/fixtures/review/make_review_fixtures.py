@@ -55,6 +55,9 @@ write(
 
 # numeric variable names and a label column of numbers
 write("numeric_vars.csv", "code,description\n1,10\n2,20\n2.50,30\n007,\n")
+# wide format with numeric columns: t() formats them with R's format() (a common
+# fixed or scientific layout) before the header row is looked for
+write("wide_numeric.csv", "n,variable,1,2,3\nmean,label,1.5,1e-10,-7\nsd,x,0.25,3,NA\n")
 
 # semicolon delimiter with a header on row 3 and a stats column
 write(

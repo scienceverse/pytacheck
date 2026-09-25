@@ -374,3 +374,68 @@ def test_read_rds_real_paperlists() -> None:
     xmls = _read_rds(IO_FIXTURES / "debruine_xml_paperlist.rds")
     assert isinstance(xmls, PaperList)
     assert all(len(p.text) > 0 for p in xmls)
+
+
+# ---------------------------------------------------------------------------
+# read(): list.files() scan, twins and errors (parity: read.dir.*, read.list.*)
+# ---------------------------------------------------------------------------
+
+EMPTY_TEI = IO_FIXTURES / "empty_body.tei.xml"
+
+
+def _tei_copies(root: Path, names: list[str]) -> None:
+    for name in names:
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_bytes(EMPTY_TEI.read_bytes())
+
+
+def test_read_dir_lists_like_list_files(tmp_path: Path) -> None:
+    from pytacheck.io.read import read
+
+    _tei_copies(tmp_path, ["good.xml", ".hidden.xml", "UP.XML", "Z.xml", "sub/c.xml"])
+    _tei_copies(tmp_path, [".hid/h.xml", "sub.xml"])
+    # R: lower-case extensions only, no hidden files, ICU order ("Z" after "sub")
+    assert read(tmp_path, schema_version=None).names == ["good", "sub", "Z"]
+    # "sub.xml" sorts before "sub/c.xml" ("." < "/"); hidden directories are not searched
+    assert read(tmp_path, recursive=True, schema_version=None).names == ["good", "sub", "c", "Z"]
+
+
+def test_list_files_sorts_full_paths_as_r(tmp_path: Path) -> None:
+    from pytacheck.io._files import list_files
+
+    for name in ["B.json", "a.json", "a/b.json", "_x.json", "b.json", "e.xml", "x.JSON"]:
+        (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / name).write_text("{}")
+    rel = [p[len(str(tmp_path)) + 1 :] for p in list_files(tmp_path, r"\.(json|xml)$", True)]
+    # R 4.5 list.files(d, "\\.(json|xml)$", recursive = TRUE) (ICU root collation)
+    assert rel == ["_x.json", "a.json", "a/b.json", "b.json", "B.json", "e.xml"]
+    # without recursive, a directory whose name matches is listed, as in R
+    (tmp_path / "dir.json").mkdir()
+    rel = [p[len(str(tmp_path)) + 1 :] for p in list_files(tmp_path, r"\.json$")]
+    assert rel == ["_x.json", "a.json", "b.json", "B.json", "dir.json"]
+
+
+def test_read_list_drops_exact_twins_and_repeats(tmp_path: Path) -> None:
+    from pytacheck.io.read import read
+
+    _tei_copies(tmp_path, ["Z.xml", "p.xml", "q.xml"])
+    probe = IO_FIXTURES.parents[2] / "upstream/metacheck/tests/testthat/fixtures/bibr12"
+    for name in ["p.JSON", "q.json"]:
+        (tmp_path / name).write_bytes((probe / "probe_docx.json").read_bytes())
+    d = str(tmp_path)
+    names = [f"{d}/{n}" for n in ["Z.xml", "p.JSON", "p.xml", "q.json", "q.xml", "Z.xml"]]
+    # setdiff(): only the exact twin of a lower-case ".json" goes, and each path is
+    # read once; "p.JSON" is still read as JSON (grepl(ignore.case = TRUE))
+    assert read(names, schema_version=None).names == ["Z", "probe", "p", "probe"]
+
+
+def test_read_dir_skips_any_unreadable_file(tmp_path: Path) -> None:
+    from pytacheck.io.read import read
+
+    _tei_copies(tmp_path, ["b.xml"])
+    # a JSON file whose root is an array (R: "$ operator is invalid for atomic vectors")
+    (tmp_path / "a.json").write_text("[1, 2]")
+    p = read(tmp_path, schema_version=None)  # D6: logged and skipped
+    assert p.paper_id == "b"
+    with pytest.raises(AttributeError):
+        read(tmp_path / "a.json")  # a single file raises the real error (U21)

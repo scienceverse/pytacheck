@@ -739,25 +739,89 @@ def _row_as_character(df: pd.DataFrame, k: int) -> list[str | None]:
     return out
 
 
-def _format_column(col: pd.Series) -> list[str | None]:
-    """``format()`` of a non-character column inside ``as.matrix()`` (NA kept)."""
-    vals = col.tolist()
-    if pd.api.types.is_bool_dtype(col.dtype):
-        txt = [None if _na(v) else ("TRUE" if v else "FALSE") for v in vals]
-    elif pd.api.types.is_integer_dtype(col.dtype):
-        txt = [None if _na(v) else str(int(v)) for v in vals]
-    else:
-        from pytacheck._r.base import format_num
+def _format_real(vals: list[Any], digits: int = 7) -> list[str]:
+    """R ``format()`` of a double vector (``formatReal()``, ``scipen = 0``).
 
-        fin = [float(v) for v in vals if not _na(v)]
-        decimals = 0
-        for x in fin:
-            s = format_num(x, 7)
-            if "e" not in s and "." in s:
-                decimals = max(decimals, len(s.split(".")[1]))
-        txt = [None if _na(v) else f"{float(v):.{decimals}f}" for v in vals]
-    width = max((len(t) for t in txt if t is not None), default=0)
-    return [None if t is None else t.rjust(width) for t in txt]
+    Every element gets the common layout R picks for the whole vector: fixed
+    notation with the most decimals any element needs to show *digits*
+    significant digits, unless scientific notation (with the most significant
+    digits any element needs) is narrower; right-justified to a common width.
+    """
+    fin: list[float] = []
+    neg = 0
+    mxsl = mxrgt = mxns = 0
+    mxe, mne = -(10**9), 10**9
+    width_other = 0  # NA, NaN, Inf
+    for v in vals:
+        if _na(v):  # a NaN in a float64 column is R's NA (read.delim's "NA")
+            width_other = max(width_other, 2)
+            continue
+        x = float(v)
+        if math.isinf(x):
+            width_other = max(width_other, 4 if x < 0 else 3)
+            continue
+        fin.append(x)
+        if x == 0:
+            kp, nsig, widens, is_neg = 0, 1, False, False
+        else:
+            mant, exp_ = f"{abs(x):.{digits - 1}e}".split("e")
+            kp = int(exp_)
+            nsig = len(mant.replace(".", "").rstrip("0")) or 1
+            # R's roundingwidens: the fixed display does not round up to 10^kp
+            fuzz = 0.5 / 10.0 ** min(max(digits - kp, 0), 22)
+            widens = 0 < kp <= 22 and abs(x) < 10.0**kp - fuzz
+            is_neg = x < 0
+        neg = max(neg, int(is_neg))
+        left = kp + 1 - int(widens)
+        mxsl = max(mxsl, int(is_neg) + (left if left > 0 else 1))
+        mxrgt = max(mxrgt, max(nsig - kp - 1, 0))
+        mxe, mne = max(mxe, kp), min(mne, kp)
+        mxns = max(mxns, nsig)
+    if not fin:
+        return [_format_other(v).rjust(width_other) for v in vals]
+    e = 1 if mxe < 100 and mne > -100 else 2
+    d_sci = mxns - 1
+    w_sci = neg + (d_sci > 0) + d_sci + 4 + e
+    w_fix = mxsl + mxrgt + (mxrgt != 0)
+    fixed = w_fix <= w_sci
+    w = max(w_fix if fixed else w_sci, width_other)
+    out = []
+    for v in vals:
+        if _na(v):
+            out.append("NA".rjust(w))
+            continue
+        x = float(v)
+        if math.isinf(x):
+            out.append(_format_other(x).rjust(w))
+        elif fixed:
+            out.append(f"{x:.{mxrgt}f}".rjust(w))
+        else:
+            out.append(f"{x:.{d_sci}e}".rjust(w))
+    return out
+
+
+def _format_other(v: Any) -> str:
+    if _na(v):
+        return "NA"
+    return "Inf" if float(v) > 0 else "-Inf"
+
+
+def _format_column(col: pd.Series) -> list[str | None]:
+    """``format()`` of a non-character column inside ``as.matrix()``.
+
+    ``as.matrix.data.frame()`` formats the whole column (so an ``NA`` still
+    counts as ``"NA"`` for the common width) and then puts the ``NA`` back.
+    """
+    vals = col.tolist()
+    miss = [_na(v) for v in vals]
+    if pd.api.types.is_bool_dtype(col.dtype):
+        txt = ["NA" if m else ("TRUE" if v else "FALSE") for v, m in zip(vals, miss, strict=True)]
+    elif pd.api.types.is_integer_dtype(col.dtype):
+        txt = ["NA" if m else str(int(v)) for v, m in zip(vals, miss, strict=True)]
+    else:
+        txt = _format_real(vals)
+    width = max((len(t) for t in txt), default=0)
+    return [None if m else t.rjust(width) for t, m in zip(txt, miss, strict=True)]
 
 
 def _transpose_wide(raw: pd.DataFrame) -> pd.DataFrame:

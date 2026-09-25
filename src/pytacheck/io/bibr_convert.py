@@ -180,13 +180,9 @@ def convert_bibr(
         else [os.fspath(f) for f in file_path]
     )
     if len(paths) == 1 and Path(paths[0]).is_dir():
-        from pytacheck.io.grobid import _list_files
+        from pytacheck.io._files import list_files
 
-        paths = [
-            p
-            for p in _list_files(paths[0], r"\.(docx?|pdf)$")
-            if grepl(r"\.(docx?|pdf)$", Path(p).name)
-        ]
+        paths = list_files(paths[0], r"\.(docx?|pdf)$")
 
     if len(paths) > 1:
         out: list[Any] = []

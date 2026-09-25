@@ -19,7 +19,13 @@ character -> ``string``; integer -> ``Int64``; double -> ``float64``;
 logical -> ``boolean``; factor -> ``category``; ``Date``/``IDate`` ->
 ``object`` column of :class:`datetime.date`; ``POSIXct`` -> UTC
 ``datetime64`` (converted to the column's ``tzone`` when R had one);
-bit64 ``integer64`` -> ``Int64``. Per-column R attributes that matter
+bit64 ``integer64`` -> ``Int64``. Known limits of these types: a ``Date``
+holds whole days, so a fractional R ``Date`` (an SPSS date carrying a time of
+day) is floored and a date outside years 1-9999 becomes ``None``; an ODS
+date-time outside pandas' ``Timestamp`` range (years 1677-2262) becomes
+``NaT``. The visible effect is mostly that out-of-range values count as
+missing (``as.character()`` of a fractional ``Date`` shows the floored day
+in R too). Per-column R attributes that matter
 downstream (haven's ``label``, ``labels``, ``na_values``, ``na_range``,
 ``format.*``, ``display_width``, plus ``class``, ``tzone`` and ``units``) are
 kept in ``df.attrs["col_attrs"][column]`` exactly as R's ``attributes()``
