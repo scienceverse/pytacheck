@@ -1,0 +1,24 @@
+{
+ "data": {
+  "project": {
+   "repository": {
+    "blobs": {
+     "nodes": [
+      {
+       "path": "README.md",
+       "size": "1234"
+      },
+      {
+       "path": "data/d1.csv",
+       "size": 56
+      },
+      {
+       "path": "src/run.py",
+       "size": "789"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

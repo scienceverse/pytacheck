@@ -1,0 +1,805 @@
+{
+  "id": "local_path.mixed_local_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "version_pin"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Code Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id",
+          "language",
+          "checked",
+          "parse_error",
+          "parse_error_msg",
+          "code_abs_path",
+          "absolute_paths",
+          "code_setwd",
+          "setwd_calls",
+          "code_install_packages",
+          "install_packages_calls",
+          "library_lines",
+          "library_max_between",
+          "packages_n",
+          "packages",
+          "comment_lines",
+          "code_lines",
+          "percentage_comment",
+          "has_docstring",
+          "loaded_files_missing",
+          "loaded_files_missing_names"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed",
+              "tests/mod_code/fixtures/mixed"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.do",
+              "analysis.R",
+              "fit.m",
+              "model.inp",
+              "model.sas",
+              "notebook.ipynb",
+              "notes.qmd",
+              "report.Rmd",
+              "script.py",
+              "syntax.sps",
+              "results.jasp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<ROOT>/tests/mod_code/fixtures/mixed/analysis.do",
+              "<ROOT>/tests/mod_code/fixtures/mixed/analysis.R",
+              "<ROOT>/tests/mod_code/fixtures/mixed/fit.m",
+              "<ROOT>/tests/mod_code/fixtures/mixed/model.inp",
+              "<ROOT>/tests/mod_code/fixtures/mixed/model.sas",
+              "<ROOT>/tests/mod_code/fixtures/mixed/notebook.ipynb",
+              "<ROOT>/tests/mod_code/fixtures/mixed/notes.qmd",
+              "<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd",
+              "<ROOT>/tests/mod_code/fixtures/mixed/script.py",
+              "<ROOT>/tests/mod_code/fixtures/mixed/syntax.sps",
+              "<ROOT>/tests/mod_code/fixtures/mixed/results.jasp"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              59,
+              263,
+              89,
+              95,
+              145,
+              2489,
+              50,
+              176,
+              155,
+              68,
+              11513
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "code",
+              null,
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.do",
+              "analysis.R",
+              "fit.m",
+              "model.inp",
+              "model.sas",
+              "notebook.ipynb",
+              "notes.qmd",
+              "report.Rmd",
+              "script.py",
+              "syntax.sps",
+              "results.jasp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Stata",
+              "R",
+              "MATLAB",
+              "Mplus",
+              "SAS",
+              "Python",
+              "R",
+              "R",
+              "Python",
+              "SPSS",
+              "JASP"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              false,
+              null,
+              null,
+              null,
+              null,
+              true,
+              false,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "line:2:1: unexpected symbol\n1: x <- (1\n2: y\n   ^",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              2,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "C:/Users/lisa/project | C:/Users/lisa/project/raw.csv",
+              "",
+              "",
+              "C:\\Users\\lisa\\data.xlsx",
+              "",
+              "",
+              "",
+              "/home/lisa/data/trials.csv",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "setwd(\"C:/Users/lisa/project\")",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "install.packages(\"lme4\")",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              2,
+              1,
+              0,
+              0,
+              3,
+              0,
+              1,
+              2,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              9,
+              null,
+              null,
+              null,
+              1,
+              null,
+              null,
+              1,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              3,
+              0,
+              0,
+              0,
+              3,
+              0,
+              2,
+              2,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "dplyr, ggplot2, lme4",
+              "",
+              "",
+              "",
+              "numpy, pandas, scipy",
+              "",
+              "readr, tidyr",
+              "numpy, pandas",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              1,
+              1,
+              1,
+              2,
+              2,
+              0,
+              1,
+              0,
+              1,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              11,
+              3,
+              4,
+              4,
+              8,
+              2,
+              3,
+              6,
+              2,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5,
+              0.0833333333333333,
+              0.25,
+              0.2,
+              0.333333333333333,
+              0.25,
+              0,
+              0.25,
+              0,
+              0.333333333333333,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              false,
+              null,
+              null,
+              true,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.dta",
+              "raw.csv, model_fit.rds",
+              "matlab_data.csv",
+              "",
+              "",
+              "trials.csv",
+              "",
+              "",
+              "trials.csv",
+              "survey.sav",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"% Comments\" = c(\"50%\", \"8%\", \"25%\", \"20%\", \"33%\", \"25%\", \n    \"0%\", \"25%\", \"0%\", \"33%\", \"\"), \"Missing Files\" = c(1L, 2L, \n    1L, 0L, 0L, 1L, 0L, 0L, 1L, 1L, NA), \"Absolute Paths\" = c(0L, \n    2L, 0L, 0L, 1L, 0L, 0L, 0L, 1L, 0L, NA), \"Code Between Libraries\" = c(NA, \n    9L, NA, NA, NA, 1L, NA, NA, 1L, NA, NA)), row.names = c(NA, \n11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code Comments",
+          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). Note: this percentage counts only `#` comments; 1 of these Python file is documented via docstrings (`\"\"\"...\"\"\"`), which are not counted as comments here since they are string literals, not comment syntax.",
+          "#### Missing Files",
+          "The scripts load files, but 6 scripts loaded 7 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"analysis.do\", \"analysis.R\", \"fit.m\", \n\"notebook.ipynb\", \"script.py\", \"syntax.sps\"), \"Missing Files\" = c(\"data.dta\", \n\"raw.csv, model_fit.rds\", \"matlab_data.csv\", \"trials.csv\", \"trials.csv\", \n\"survey.sav\")), row.names = c(1L, 2L, 3L, 6L, 9L, 10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Absolute Paths",
+          "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. The following absolute file paths were found in 3 code files. However, these may be false positives in code like `paste0(dir, '/file.csv')`. ",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"analysis.R\", \"model.sas\", \"script.py\"\n), \"Absolute paths found\" = c(\"C:/Users/lisa/project | C:/Users/lisa/project/raw.csv\", \n\"C:\\\\Users\\\\lisa\\\\data.xlsx\", \"/home/lisa/data/trials.csv\")), row.names = c(2L, \n5L, 9L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Working Directory (setwd)",
+          "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. `setwd()` calls were found in 1 code file.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"analysis.R\", \"setwd() calls found\" = \"setwd(\\\"C:/Users/lisa/project\\\")\"), row.names = 2L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Package Installation (install.packages)",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). `install.packages()` calls were found in 1 code file.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"analysis.R\", \"install.packages() calls found\" = \"install.packages(\\\"lme4\\\")\"), row.names = 2L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Libraries / Imports",
+          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In 1 code files, libraries/imports were at multiple places (i.e., with more than 3 non-comment lines in between).",
+          "#### Packages / Dependencies",
+          "The code files load 8 distinct packages/libraries: dplyr, ggplot2, lme4, numpy, pandas, readr, scipy, tidyr. These are the names found in the source (no version information is available from static analysis).",
+          "#### Reproducible Environment",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
+          "",
+          "#### Parsable code",
+          "We encountered parsing issues when trying to read in R-type code files. The following errors were found in 1 code file:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"notes.qmd\", \"Error Message\" = \"line:2:1: unexpected symbol<br>1: x <- (1<br>2: y<br>   ^\"), row.names = 7L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 3 R, 2 Python, 1 SAS, 1 SPSS, 1 Stata, 1 Mplus, 1 MATLAB, and 1 JASP code files.\n-  2 code files had no comments.\n-  7 files loaded in the code were missing in the repository.\n-  Absolute file paths were found.\n-  setwd() calls were found.\n-  install.packages() calls were found.\n-  Libraries/imports were loaded in multiple places.\n-  The code loaded 8 distinct packages.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  Parsing issues of R-type files were found."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "code_n",
+          "code_checked",
+          "code_abs_path",
+          "code_setwd",
+          "code_install_packages",
+          "code_missing_files",
+          "code_min_comments",
+          "code_parse_errors",
+          "code_packages_n",
+          "code_version_pinned"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "code_n"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "pinned",
+          "mechanisms",
+          "r_versions",
+          "renv_files",
+          "renv_packages",
+          "sessioninfo_files",
+          "file_location"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<ROOT>/tests/mod_code/fixtures/mixed/README.md"
+            ],
+            "names": [
+              "README.md"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

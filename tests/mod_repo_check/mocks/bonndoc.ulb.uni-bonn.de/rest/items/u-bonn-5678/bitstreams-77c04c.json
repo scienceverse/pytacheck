@@ -1,0 +1,1 @@
+[{"uuid": "bs-1", "name": "readme.txt", "type": "bitstream", "bundleName": "ORIGINAL", "sizeBytes": 812, "retrieveLink": "/rest/bitstreams/bs-1/retrieve"}, {"uuid": "bs-2", "name": "trial data.csv", "type": "bitstream", "bundleName": "ORIGINAL", "sizeBytes": 20480, "retrieveLink": "/rest/bitstreams/bs-2/retrieve"}]

@@ -1257,8 +1257,9 @@ def _data_code_refs(path: str | None, max_bytes: float = 2e6) -> list[str]:
     if not txt:
         return []
     if _has_invalid_utf8(txt):
-        # R's gregexpr(perl = TRUE) stops on invalid UTF-8
-        raise ValueError("input string 1 is invalid UTF-8")
+        # R's gregexpr(perl = TRUE) warns on invalid UTF-8 and matches nothing
+        warnings.warn("input string 1 is invalid UTF-8", stacklevel=2)
+        return []
     pat = "(?:" + _CODE_READ_FNS + ")\\s*\\([^)\"']*[\"']([^\"']+)[\"']"
     matches = [
         txt[s - 1 : s - 1 + n] for s, n in gregexpr_all(pat, txt, ignore_case=True, perl=True)
@@ -1959,25 +1960,25 @@ def _promote_header(df: pd.DataFrame, raw_rows: list[list[str]]) -> dict[str, An
     return dict(fn(df, raw_rows=raw_rows))
 
 
-def _raw_rows(raw: pd.DataFrame) -> list[list[str]]:
-    """``lapply(seq_len(nrow(raw)), function(i) as.character(raw[i, , drop = TRUE]))``."""
-    rows: list[list[str]] = []
-    single = raw.shape[1] == 1
-    for i in range(len(raw)):
-        cells = raw.iloc[i].tolist()
-        out: list[str] = []
-        for v in cells:
-            if single:
-                s = _r_as_character(v)
-            elif isinstance(v, dt.date) and not isinstance(v, dt.datetime):
-                s = str((v - dt.date(1970, 1, 1)).days)
-            elif isinstance(v, pd.Timestamp):
-                s = _r_as_character(v.timestamp())
-            else:
-                s = _r_as_character(v)
-            out.append("NA" if s is None else s)
-        rows.append(out)
-    return rows
+def _raw_rows(raw: pd.DataFrame) -> list[list[str | None]]:
+    """``lapply(seq_len(nrow(raw)), function(i) as.character(raw[i, , drop = TRUE]))``.
+
+    ``raw[i, , drop = TRUE]`` of a one-column frame is a vector, whose
+    ``as.character()`` keeps every ``NA``; of a wider frame it is a list, whose
+    ``as.character()`` keeps a character ``NA`` but turns any other ``NA``
+    into ``"NA"`` (a date is its day number, a date-time its seconds).
+    """
+    from pytacheck.datacheck._checks_rvec import chr as r_chr
+    from pytacheck.datacheck._checks_rvec import row_as_character, rvec
+
+    if raw.shape[1] == 1:
+        return [[v] for v in r_chr(raw.iloc[:, 0])]
+    cols = [rvec(raw.iloc[:, j]) for j in range(raw.shape[1])]
+    kinds = [c.kind for c in cols]
+    levels = [c.levels for c in cols]
+    return [
+        row_as_character([c.values[i] for c in cols], kinds, levels) for i in range(len(raw))
+    ]
 
 
 def data_read_head(

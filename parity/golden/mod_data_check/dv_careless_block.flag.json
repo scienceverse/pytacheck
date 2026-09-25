@@ -1,0 +1,88 @@
+{
+  "id": "dv_careless_block.flag",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "scale",
+      "respondent",
+      "longstring",
+      "irv",
+      "reason",
+      "n_items",
+      "straight_cut",
+      "scale_range"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "panas (1-5, 6 items)",
+          "panas (1-5, 6 items)",
+          "panas (1-5, 6 items)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "r1",
+          "r3",
+          "r4"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          5,
+          6,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.41,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "straightlining",
+          "straightlining",
+          "straightlining"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          6,
+          6,
+          6
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          5,
+          5,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1-5",
+          "1-5",
+          "1-5"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

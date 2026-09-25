@@ -1,0 +1,542 @@
+{
+  "id": "code_check.na_pid",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "version_pin"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Code Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "language",
+          "checked",
+          "parse_error",
+          "parse_error_msg",
+          "code_abs_path",
+          "absolute_paths",
+          "code_setwd",
+          "setwd_calls",
+          "code_install_packages",
+          "install_packages_calls",
+          "library_lines",
+          "library_max_between",
+          "packages_n",
+          "packages",
+          "comment_lines",
+          "code_lines",
+          "percentage_comment",
+          "has_docstring",
+          "loaded_files_missing",
+          "loaded_files_missing_names"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p2",
+              "p1",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pkgs",
+              "green",
+              "rev"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/pkgs",
+              "https://osf.io/green",
+              "https://osf.io/gaps"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pkgs.R",
+              "analysis.R",
+              "gap4.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pkgs.R",
+              "analysis.R",
+              "gap4.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_code/fixtures/review/pkgs/pkgs.R",
+              "tests/mod_code/fixtures/green/analysis.R",
+              "tests/mod_code/fixtures/review/gaps/gap4.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              156,
+              90,
+              10
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R",
+              "R",
+              "R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abc, B2, data.table, ggplot2, Hmisc, MASS, Matrix, zoo",
+              "dplyr, tidyr",
+              "a, b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10,
+              3,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.0909090909090909,
+              0.4,
+              0.166666666666667
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "data.csv",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_), \"% Comments\" = c(\"9%\", \"40%\", \"17%\"), \"Missing Files\" = c(0L, \n1L, 0L), \"Absolute Paths\" = c(0L, 0L, 0L), \"Code Between Libraries\" = c(1L, \n1L, 4L)), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code Comments",
+          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
+          "#### Missing Files",
+          "The scripts load files, but 1 script loaded 1 file that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"analysis.R\", \"Missing Files\" = \"data.csv\"), row.names = 2L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Absolute Paths",
+          "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
+          "",
+          "#### Working Directory (setwd)",
+          "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
+          "",
+          "#### Package Installation (install.packages)",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+          "",
+          "#### Libraries / Imports",
+          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In 1 code files, libraries/imports were at multiple places (i.e., with more than 3 non-comment lines in between).",
+          "#### Packages / Dependencies",
+          "The code files load 12 distinct packages/libraries: a, abc, b, B2, data.table, dplyr, ggplot2, Hmisc, MASS, Matrix, tidyr, zoo. These are the names found in the source (no version information is available from static analysis).",
+          "#### Reproducible Environment",
+          "The repository pins its analysis environment via an `renv.lock` file. Declared R version: 4.3.1. The `renv.lock` file locks 2 package versions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Lockfile = c(\"renv.lock\", \"renv.lock\"), Package = c(\"dplyr\", \n\"tidyr\"), Version = c(\"1.1.3\", \"1.3.0\"), Source = c(\"Repository\", \n\"Repository\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Parsable code",
+          "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 3 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  1 file loaded in the code was missing in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  Libraries/imports were loaded in multiple places.\n-  The code loaded 12 distinct packages.\n-  A pinned R/package environment was found (renv.lock).\n-  No parsing issues of R-type files were found."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "code_n",
+          "code_checked",
+          "code_abs_path",
+          "code_setwd",
+          "code_install_packages",
+          "code_missing_files",
+          "code_min_comments",
+          "code_parse_errors",
+          "code_packages_n",
+          "code_version_pinned"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.4,
+              0.0909090909090909
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              8
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "code_n"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "pinned",
+          "mechanisms",
+          "r_versions",
+          "renv_files",
+          "renv_packages",
+          "sessioninfo_files",
+          "file_location"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "renv.lock"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4.3.1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "renv.lock"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "renv.lock",
+                  "renv.lock"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "dplyr",
+                  "tidyr"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.1.3",
+                  "1.3.0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Repository",
+                  "Repository"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_code/fixtures/green/renv.lock"
+            ],
+            "names": [
+              "renv.lock"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

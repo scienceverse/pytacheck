@@ -91,12 +91,13 @@ def col(df: pd.DataFrame, name: str, default: Any = None) -> list[Any]:
 
 
 def _r_tolower(x: str) -> str:
-    """R ``tolower()``: a per-character (``towlower``) mapping."""
-    out = []
-    for ch in x:
-        low = ch.lower()
-        out.append(low if len(low) == 1 else ch)
-    return "".join(out)
+    """R ``tolower()``: a per-character (``towlower``) mapping.
+
+    ``towlower`` is Unicode's simple lowercase mapping; Python's full mapping
+    differs only where it yields several characters (``"İ".lower()`` is
+    ``"i̇"``), whose first one is the simple mapping (``"i"``).
+    """
+    return "".join(ch.lower()[0] for ch in x)
 
 
 def _r_basename(x: str) -> str:
@@ -226,7 +227,13 @@ def analyse_files(
     names = col(checked_files, "file_name")
     langs = col(checked_files, "language")
     locs = col(checked_files, "file_location")
-    urls = col(checked_files, "file_url")
+    # R reads `the_file$file_url`: NULL without the column, else a string or
+    # NA -- which R's readers take as the path "NA" (e.g. "'NA' does not exist")
+    urls = (
+        ["NA" if u is None else u for u in col(checked_files, "file_url")]
+        if "file_url" in checked_files.columns
+        else [None] * n
+    )
     repos = col(checked_files, "repo_url")
     has_pid = "paper_id" in checked_files.columns
     pids = [None if v is None else str(as_character(v)) for v in col(checked_files, "paper_id")]
@@ -254,7 +261,12 @@ def analyse_files(
             continue
         if langs[i] == "R":
             pid = pids[i] if has_pid else "_all"
-            r_text_by_paper.setdefault(pid, {})[names[i]] = lines
+            if pid is None:
+                # R: r_text_by_paper[[NA]] never finds the entry it assigned, so
+                # each NA-paper file replaces the texts of the ones before it
+                r_text_by_paper[None] = {names[i]: lines}
+            else:
+                r_text_by_paper.setdefault(pid, {})[names[i]] = lines
         row["parse_error"] = None
         row["parse_error_msg"] = None
         if langs[i] == "R":

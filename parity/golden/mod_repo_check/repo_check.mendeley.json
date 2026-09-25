@@ -1,0 +1,378 @@
+{
+  "id": "repo_check.mendeley",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "vjtxybrc28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://data.mendeley.com/datasets/vjtxybrc28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://data.mendeley.com/x/survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_mendeley"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://data.mendeley.com/datasets/vjtxybrc28' target='_blank'>data.mendeley.com/datasets/vjtxybrc28<\/a>\", \n    Platform = \"mendeley\", \"All Files\" = 1L, \"Data Files\" = 1L, \n    \"Code Files\" = 0L, READMEs = 0L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"https://data.mendeley.com/datasets/vjtxybrc28\", \n    File = \"<a href='https://data.mendeley.com/x/survey.csv' target='_blank'>survey.csv<\/a>\", \n    Size = \"—\", Type = \"data\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"survey.csv\", Group = \"ex1\", Path = \"survey.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 1 file in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_mendeley"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://data.mendeley.com/datasets/vjtxybrc28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.17632/vjtxybrc28.1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Creative Commons Attribution 4.0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_mendeley"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

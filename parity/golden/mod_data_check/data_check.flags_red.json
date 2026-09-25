@@ -1,0 +1,1304 @@
+{
+  "id": "data_check.flags_red",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags",
+              "https://osf.io/flags"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "Gender",
+              "score_txt",
+              "empty_col",
+              "filter_$",
+              "email",
+              "latitude",
+              "longitude",
+              "comments",
+              "a b",
+              "a_b",
+              "rt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "numeric",
+              "empty",
+              "numeric",
+              "text",
+              "numeric",
+              "numeric",
+              "text",
+              "numeric",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "ratio",
+              null,
+              "nominal",
+              "nominal",
+              "ratio",
+              "ratio",
+              "nominal",
+              "ratio",
+              "ratio",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "gender",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "reaction_time"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "milliseconds"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "empty",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "mostly_numeric",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 | 2 | 3 | 4 | 5",
+              "Male  | male | Female | female | Male",
+              "12 | 13 | n/a | 15 | 16",
+              "",
+              "1 | 1 | 1 | 1 | 0",
+              "person01@example.org | person02@example.org | person03@example.org | person04@example.org | person05@example.org",
+              "52.1 | 52.2 | 51.9 | 52 | 52.3",
+              "4.3 | 4.4 | 4.2 | 4.5 | 4.1",
+              "I found the task quite hard because the letters moved too quickly for me | The second block was easier than the first one and I enjoyed it a lot more | My neighbour Jan helped me set up the laptop before I started the session | I was a bit tired today since I had to work late at the hospital yesterday | Everything went fine, although the room was rather noisy during block three",
+              "-0.395836027095826 | 0.619648670891013 | -0.0846293125066132 | 0.0263976116173211 | -1.32798063744909",
+              "-0.891335142307256 | 0.141393843324655 | 0.22491938952134 | -0.25709661229311 | 1.71214684090207",
+              "300 | 432 | 512 | 272 | 683"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              12,
+              11,
+              0,
+              12,
+              12,
+              12,
+              12,
+              12,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              5,
+              12,
+              0,
+              2,
+              12,
+              8,
+              6,
+              12,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              17.8181818181818,
+              null,
+              null,
+              null,
+              52.0833333333333,
+              4.35,
+              null,
+              0.0503551620579379,
+              0.244335383573053,
+              422.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              3.6005050150828,
+              null,
+              null,
+              null,
+              0.212488858887978,
+              0.144599761096244,
+              null,
+              1.04869372149247,
+              1.13572191409623,
+              158.610156730841
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              1.08559310825659,
+              null,
+              null,
+              null,
+              0.0613402499393852,
+              0.0417423554968361,
+              null,
+              0.302731801200573,
+              0.327854676414007,
+              45.7868083423798
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              18,
+              null,
+              null,
+              null,
+              52.1,
+              4.35,
+              null,
+              -0.029115850444646,
+              0.183156616422997,
+              422.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              12,
+              null,
+              null,
+              null,
+              51.7,
+              4.1,
+              null,
+              -1.47911310496303,
+              -1.69914567778504,
+              220
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              23,
+              null,
+              null,
+              null,
+              52.4,
+              4.6,
+              null,
+              1.73122030858823,
+              1.77032412081383,
+              683
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              11,
+              null,
+              null,
+              null,
+              0.699999999999996,
+              0.5,
+              null,
+              3.21033341355126,
+              3.46946979859887,
+              463
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              15.5,
+              null,
+              null,
+              null,
+              51.975,
+              4.275,
+              null,
+              -0.564111736580422,
+              -0.61785155499828,
+              276.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              20.5,
+              null,
+              null,
+              null,
+              52.225,
+              4.425,
+              null,
+              0.753980809546147,
+              1.19677862630977,
+              564.75
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              5,
+              null,
+              null,
+              null,
+              0.250000000000007,
+              0.150000000000001,
+              null,
+              1.31809254612657,
+              1.81463018130805,
+              288.25
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              -0.1581964858035,
+              null,
+              null,
+              null,
+              -0.270225160245248,
+              3.85044322182103e-15,
+              null,
+              0.183096753856259,
+              -0.0678355725609556,
+              0.129134691241159
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              -1.4241151767013,
+              null,
+              null,
+              null,
+              -1.19745826013843,
+              -1.11771424070574,
+              null,
+              -1.32377654600287,
+              -1.4414764569573,
+              -1.65929529355895
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://osf.io/flags**",
+          "```\n└── data/\n    └── messy.csv  📊 data ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## messy.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:12, Gender = c(\"Male \", \"male\", \"Female\", \n\"female\", \"Male\", \"Female\", \"Male\", \"female\", \"Female\", \"Male\", \n\"male\", \"Female\"), score_txt = c(\"12\", \"13\", \"n/a\", \"15\", \"16\", \n\"17\", \"18\", \"19\", \"20\", \"21\", \"22\", \"23\"), empty_col = c(NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA), \"filter_$\" = c(1L, \n1L, 1L, 1L, 0L, 1L, 1L, 1L, 0L, 1L, 1L, 1L), email = c(\"person01@example.org\", \n\"person02@example.org\", \"person03@example.org\", \"person04@example.org\", \n\"person05@example.org\", \"person06@example.org\", \"person07@example.org\", \n\"person08@example.org\", \"person09@example.org\", \"person10@example.org\", \n\"person11@example.org\", \"person12@example.org\"), latitude = c(52.1, \n52.2, 51.9, 52, 52.3, 51.8, 52.4, 52.1, 52, 51.7, 52.2, 52.3), \n    longitude = c(4.3, 4.4, 4.2, 4.5, 4.1, 4.6, 4.3, 4.4, 4.2, \n    4.5, 4.3, 4.4), comments = c(\"I found the task quite hard because the letters moved too quickly for me\", \n    \"The second block was easier than the first one and I enjoyed it a lot more\", \n    \"My neighbour Jan helped me set up the laptop before I started the session\", \n    \"I was a bit tired today since I had to work late at the hospital yesterday\", \n    \"Everything went fine, although the room was rather noisy during block three\", \n    \"I think I pressed the wrong key a few times near the end of the experiment\", \n    \"The instructions were clear and the break between the blocks was welcome\", \n    \"I did not understand what to do in the practice trials at the very start\", \n    \"My daughter was playing in the next room so I was distracted at times today\", \n    \"Nothing special to report, it all worked as expected on my own computer\", \n    \"I would have liked more practice trials before the real task started here\", \n    \"The sounds were too loud at first but I turned the volume down afterwards\"\n    ), \"a b\" = c(-0.395836027095826, 0.619648670891013, -0.0846293125066132, \n    0.0263976116173211, -1.32798063744909, -1.47911310496303, \n    1.73122030858823, 1.54399635750641, 1.15697722551155, -0.480178881741254, \n    -0.815910301097926, 0.109670035434469), a_b = c(-0.891335142307256, \n    0.141393843324655, 0.22491938952134, -0.25709661229311, 1.71214684090207, \n    1.52761254943381, 1.77032412081383, -0.541585291404239, -1.69914567778504, \n    0.704940276515888, -0.846650345780404, 1.08650065193509), \n    rt = c(300L, 432L, 512L, 272L, 683L, 278L, 573L, 562L, 220L, \n    413L, 241L, 584L)), row.names = c(NA, 12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 2 columns with at least one missing value. 1 column is empty (no values in any row); store data without empty columns.",
+          "::: {.panel-tabset}\n\n## messy.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"empty_col\", \"score_txt\", \"Gender\", \n\"a b\", \"a_b\", \"comments\", \"email\", \"filter_$\", \"id\", \"latitude\", \n\"longitude\", \"rt\"), Representation = c(\"empty\", \"numeric\", \"text\", \n\"numeric\", \"numeric\", \"text\", \"text\", \"numeric\", \"text\", \"numeric\", \n\"numeric\", \"numeric\"), Level = c(\"\", \"ratio\", \"nominal\", \"ratio\", \n\"ratio\", \"nominal\", \"nominal\", \"nominal\", \"nominal\", \"ratio\", \n\"ratio\", \"ratio\"), Concept = c(\"\", \"\", \"gender\", \"\", \"\", \"\", \n\"\", \"\", \"id\", \"\", \"\", \"reaction_time\"), Role = c(\"measure\", \"measure\", \n\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n\"identifier\", \"measure\", \"measure\", \"measure\"), Unit = c(\"\", \n\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"milliseconds\"), Rows = c(12L, \n12L, 12L, 12L, 12L, 12L, 12L, 12L, 12L, 12L, 12L, 12L), \"% Missing\" = c(100, \n8.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(0L, 12L, 5L, \n12L, 12L, 12L, 12L, 2L, 12L, 8L, 6L, 12L), Mean = c(NA, 17.818, \nNA, 0.05, 0.244, NA, NA, NA, NA, 52.083, 4.35, 422.5), SD = c(NA, \n3.601, NA, 1.049, 1.136, NA, NA, NA, NA, 0.212, 0.145, 158.61\n), Min = c(NA, 12, NA, -1.479, -1.699, NA, NA, NA, NA, 51.7, \n4.1, 220), Max = c(NA, 23, NA, 1.731, 1.77, NA, NA, NA, NA, 52.4, \n4.6, 683)), row.names = c(\"empty_col\", \"score_txt\", \"Gender\", \n\"a b\", \"a_b\", \"comments\", \"email\", \"filter_$\", \"id\", \"latitude\", \n\"longitude\", \"rt\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 12 columns across 1 data file.",
+          "#### Issues Identified",
+          "10 file/column combinations have at least one issue.\n\n**About the personal-information flags.** These are pattern matches, not confirmed disclosures, and they are tuned to over-report rather than miss something. Expect false positives:\n\n- **Column names** are matched against identifying words in English and other European languages (`email`, `telefoonnummer`, `geboortedatum`, ...). A column called `phone_number` flags whether or not it holds one, and an empty or already-anonymised column flags on its name alone.\n- **Values** are matched against the shape of an identifier. An IP address pattern also matches a version string or a dotted numeric code; a card-number pattern requires both a real issuer prefix and a checksum, but a long numeric ID can still coincide.\n- **Free text** is flagged when a column holds long, mostly-distinct prose — the shape open-ended answers take. Most such columns contain no names at all.\n\nA flag means *look at this column*. Where the data is already de-identified (an `ip` column reading `Anonymized`, a `name` column the authors emptied), no action is needed.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"messy.csv\", \"messy.csv\", \"messy.csv\", \n\"messy.csv\", \"messy.csv\", \"messy.csv\", \"messy.csv\", \"messy.csv\", \n\"messy.csv\", \"messy.csv\"), Column = c(\"Gender\", \"a b\", \"a_b\", \n\"comments\", \"email\", \"empty_col\", \"filter_$\", \"latitude\", \"longitude\", \n\"score_txt\"), Issues = c(\"<span title='Categories differing only by case: Female/female; male/Male'>🔤 Case issues — Categories differing only by case: Female/female<\/span><br><span title='1 value with leading/trailing whitespace: \\\"Male \\\"'>↔️ Whitespace — 1 value with leading/trailing whitespace: \\\"Male \\\"<\/span>\", \n\"<span title='Column name becomes \\\"a_b\\\" when special characters are replaced, the same as \\\"a_b\\\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"a_b\\\" when special characters are replaced, the...<\/span>\", \n\"<span title='Column name becomes \\\"a_b\\\" when special characters are replaced, the same as \\\"a b\\\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"a_b\\\" when special characters are replaced, the...<\/span>\", \n\"<span title='Free-text column (median 73 characters, 100% distinct) may contain names or other personal detail. Review before sharing.'>🔒 Personally Identifying Information — Free-text column (median 73 characters, 100% distinct) may contain ...<\/span>\", \n\"<span title='Values look like personal information: email (12 values, 100%). Review before sharing. Column name suggests personal information (matched: email). Review before sharing.'>🔒 Personally Identifying Information — Values look like personal information: email (12 values, 100%); Column name suggests personal information (matched: email)<\/span>\", \n\"<span title='Column is empty: all 12 values are missing.'>⬜ Empty column — Column is empty: all 12 values are missing<\/span>\", \n\"<span title='SPSS \\\"Select Cases\\\" filter variable: 10 of 12 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them.'>🧮 SPSS filter variable — SPSS \\\"Select Cases\\\" filter variable: 10 of 12 rows are selected (va...<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: latitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: latitude)<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: longitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: longitude)<\/span>\", \n\"<span title='Column is 92% numeric but 1 value cannot be parsed: \\\"n/a\\\"'>#️⃣ Numeric as text — Column is 92% numeric but 1 value cannot be parsed: \\\"n/a\\\"<\/span>\"\n)), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "#### Careless Responding",
+          "No file could be screened for careless responding.",
+          "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 12 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 12 columns; 10 columns have at least one potential issue (3 columns whose name suggests personal information; 2 columns whose names become identical when special characters are removed; 2 columns that look like geographic coordinates; 1 column with inconsistent category casing; 1 column with no observed values (entirely empty); 1 column of free text that may contain personal detail; 1 column with numeric values stored as text; 1 column whose values look like personal information; 1 column holding an SPSS \"Select Cases\" filter (analyses may have used only a subset of rows); 1 column with leading/trailing whitespace). We detected demographic column for Gender."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_empty",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv",
+              "messy.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Gender",
+              "Gender",
+              "score_txt",
+              "empty_col",
+              "filter_$",
+              "email",
+              "email",
+              "latitude",
+              "latitude",
+              "longitude",
+              "longitude",
+              "comments",
+              "a b",
+              "a_b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Case issues",
+              "Whitespace",
+              "Numeric as text",
+              "Empty column",
+              "SPSS filter variable",
+              "Personal info (values)",
+              "Personal info (column name)",
+              "Personal info (column name)",
+              "Geographic coordinates",
+              "Personal info (column name)",
+              "Geographic coordinates",
+              "Free-text (may hold PII)",
+              "Colliding column names",
+              "Colliding column names"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Categories differing only by case: Female/female; male/Male",
+              "1 value with leading/trailing whitespace: \"Male \"",
+              "Column is 92% numeric but 1 value cannot be parsed: \"n/a\"",
+              "Column is empty: all 12 values are missing.",
+              "SPSS \"Select Cases\" filter variable: 10 of 12 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them.",
+              "Values look like personal information: email (12 values, 100%). Review before sharing.",
+              "Column name suggests personal information (matched: email). Review before sharing.",
+              "Column name suggests personal information (matched: latitude). Review before sharing.",
+              "Column name suggests geographic coordinates. Review before sharing.",
+              "Column name suggests personal information (matched: longitude). Review before sharing.",
+              "Column name suggests geographic coordinates. Review before sharing.",
+              "Free-text column (median 73 characters, 100% distinct) may contain names or other personal detail. Review before sharing.",
+              "Column name becomes \"a_b\" when special characters are replaced, the same as \"a_b\": tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.",
+              "Column name becomes \"a_b\" when special characters are replaced, the same as \"a b\": tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "messy.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Gender"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gender"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "flags"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/flags"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "messy.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/messy.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/flags/data/messy.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2128
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "messy.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 12,
+            "names": [
+              "id",
+              "Gender",
+              "score_txt",
+              "empty_col",
+              "filter_$",
+              "email",
+              "latitude",
+              "longitude",
+              "comments",
+              "a b",
+              "a_b",
+              "rt"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Male ",
+                  "male",
+                  "Female",
+                  "female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "female",
+                  "Female",
+                  "Male",
+                  "male",
+                  "Female"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "12",
+                  "13",
+                  "n/a",
+                  "15",
+                  "16",
+                  "17",
+                  "18",
+                  "19",
+                  "20",
+                  "21",
+                  "22",
+                  "23"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  1,
+                  1,
+                  1,
+                  0,
+                  1,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "person01@example.org",
+                  "person02@example.org",
+                  "person03@example.org",
+                  "person04@example.org",
+                  "person05@example.org",
+                  "person06@example.org",
+                  "person07@example.org",
+                  "person08@example.org",
+                  "person09@example.org",
+                  "person10@example.org",
+                  "person11@example.org",
+                  "person12@example.org"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  52.1,
+                  52.2,
+                  51.9,
+                  52,
+                  52.3,
+                  51.8,
+                  52.4,
+                  52.1,
+                  52,
+                  51.7,
+                  52.2,
+                  52.3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  4.3,
+                  4.4,
+                  4.2,
+                  4.5,
+                  4.1,
+                  4.6,
+                  4.3,
+                  4.4,
+                  4.2,
+                  4.5,
+                  4.3,
+                  4.4
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "I found the task quite hard because the letters moved too quickly for me",
+                  "The second block was easier than the first one and I enjoyed it a lot more",
+                  "My neighbour Jan helped me set up the laptop before I started the session",
+                  "I was a bit tired today since I had to work late at the hospital yesterday",
+                  "Everything went fine, although the room was rather noisy during block three",
+                  "I think I pressed the wrong key a few times near the end of the experiment",
+                  "The instructions were clear and the break between the blocks was welcome",
+                  "I did not understand what to do in the practice trials at the very start",
+                  "My daughter was playing in the next room so I was distracted at times today",
+                  "Nothing special to report, it all worked as expected on my own computer",
+                  "I would have liked more practice trials before the real task started here",
+                  "The sounds were too loud at first but I turned the volume down afterwards"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  -0.395836027095826,
+                  0.619648670891013,
+                  -0.0846293125066132,
+                  0.0263976116173211,
+                  -1.32798063744909,
+                  -1.47911310496303,
+                  1.73122030858823,
+                  1.54399635750641,
+                  1.15697722551155,
+                  -0.480178881741254,
+                  -0.815910301097926,
+                  0.109670035434469
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  -0.891335142307256,
+                  0.141393843324655,
+                  0.22491938952134,
+                  -0.25709661229311,
+                  1.71214684090207,
+                  1.52761254943381,
+                  1.77032412081383,
+                  -0.541585291404239,
+                  -1.69914567778504,
+                  0.704940276515888,
+                  -0.846650345780404,
+                  1.08650065193509
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  300,
+                  432,
+                  512,
+                  272,
+                  683,
+                  278,
+                  573,
+                  562,
+                  220,
+                  413,
+                  241,
+                  584
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,80 @@
+{
+  "status": "OK",
+  "data": {
+    "persistentUrl": "https://doi.org/10.7910/DVN/ABC123",
+    "publicationDate": "2019-12-31",
+    "latestVersion": {
+      "releaseTime": "2020-01-01T00:00:00Z",
+      "lastUpdateTime": "2020-01-02T00:00:00Z",
+      "license": {
+        "name": "CC0 1.0",
+        "uri": "x"
+      },
+      "metadataBlocks": {
+        "citation": {
+          "fields": [
+            {
+              "typeName": "title",
+              "value": "Example Dataset"
+            },
+            {
+              "typeName": "author",
+              "value": [
+                {
+                  "authorName": {
+                    "value": "Doe, Jane"
+                  }
+                },
+                {
+                  "authorAffiliation": {
+                    "value": "Uni"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "files": [
+        {
+          "label": "data.csv",
+          "dataFile": {
+            "id": 999,
+            "filename": "data.csv",
+            "filesize": 8,
+            "checksum": {
+              "type": "MD5",
+              "value": "344fd2323dd33d5c058b7cf27de029e8"
+            }
+          }
+        },
+        {
+          "label": "codebook.pdf",
+          "dataFile": {
+            "id": 1000,
+            "filename": "codebook.pdf",
+            "filesize": 11,
+            "checksum": {
+              "type": "SHA-1",
+              "value": "abc"
+            }
+          }
+        },
+        {
+          "dataFile": {
+            "id": 1001,
+            "filename": "fallback_name.txt",
+            "filesize": 5
+          }
+        },
+        {
+          "label": "huge.dat",
+          "dataFile": {
+            "id": 1002,
+            "filesize": 11534336
+          }
+        }
+      ]
+    }
+  }
+}

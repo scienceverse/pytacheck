@@ -1,0 +1,656 @@
+{
+  "id": "repo_check.osf.paperlist.order",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 18,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_name",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/msfcn",
+              "https://osf.io/msfcn",
+              "https://osf.io/msfcn",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data_Experiment_1.xlsx",
+              "Data_Experiment_2.xlsx",
+              "Suplemental Material_Chairs used for data collection.docx",
+              "bad.R",
+              "bad.R",
+              "bad.Rmd",
+              "bad.Rmd",
+              "example2.csv",
+              "example2.csv",
+              "Archive.zip",
+              "Archive.zip",
+              "data.xlsx",
+              "README",
+              "test-1.txt",
+              "README",
+              "test-2.txt",
+              "test-3.txt",
+              "test-4.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data_Experiment_1.xlsx",
+              "Data_Experiment_2.xlsx",
+              "Suplemental Material_Chairs used for data collection.docx",
+              "bad.R",
+              "bad.R",
+              "bad.Rmd",
+              "bad.Rmd",
+              "example2.csv",
+              "example2.csv",
+              "Archive.zip",
+              "Archive.zip",
+              "data.xlsx",
+              "README",
+              "nest-1/test-1.txt",
+              "nest-1/README",
+              "nest-1/nest-2/test-2.txt",
+              "nest-1/nest-2/nest-3/test-3.txt",
+              "nest-1/nest-2/nest-3/nest-4/test-4.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/download/5qsc6/",
+              "https://osf.io/download/4v5hd/",
+              "https://osf.io/download/x6n74/",
+              "https://osf.io/download/6935bc117049c887a125cb25/",
+              "https://osf.io/download/6935bc117049c887a125cb25/",
+              "https://osf.io/download/uq347/",
+              "https://osf.io/download/uq347/",
+              "https://osf.io/download/6935c4679ca0f02ea72a1a31/",
+              "https://osf.io/download/6935c4679ca0f02ea72a1a31/",
+              "https://osf.io/download/6976438ff9da155d0565c720/",
+              "https://osf.io/download/6976438ff9da155d0565c720/",
+              "https://osf.io/download/k6gbt/",
+              "https://osf.io/download/ez87j/",
+              "https://osf.io/download/hn9fs/",
+              "https://osf.io/download/qfvpy/",
+              "https://osf.io/download/b7eds/",
+              "https://osf.io/download/zyf34/",
+              "https://osf.io/download/3wv7h/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              251048,
+              181695,
+              122354,
+              172,
+              172,
+              413,
+              413,
+              5,
+              5,
+              6410,
+              6410,
+              9113,
+              52,
+              12,
+              58,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "text",
+              "code",
+              "code",
+              "code",
+              "code",
+              "data",
+              "data",
+              "archive",
+              "archive",
+              "data",
+              "readme",
+              "text",
+              "readme",
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "msfcn",
+              "msfcn",
+              "msfcn",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "data",
+              "code",
+              "code",
+              "code",
+              "code",
+              "data",
+              "data",
+              "unknown",
+              "unknown",
+              "data",
+              "documentation",
+              "documentation",
+              "documentation",
+              "documentation",
+              "documentation",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "readme",
+              "supplemental",
+              "readme",
+              "supplemental",
+              "supplemental",
+              "supplemental"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2",
+              "ex1",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex3",
+              null,
+              "ex3",
+              null,
+              "ex3",
+              "ex3",
+              "ex3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "zeta",
+              "zeta",
+              "zeta",
+              "Alpha",
+              "alpha",
+              "Alpha",
+              "alpha",
+              "Alpha",
+              "alpha",
+              "Alpha",
+              "alpha",
+              "alpha",
+              "alpha",
+              "alpha",
+              "alpha",
+              "alpha",
+              "alpha",
+              "alpha"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/msfcn' target='_blank'>osf.io/msfcn<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/j3gcx' target='_blank'>osf.io/j3gcx<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"osf\"), \"All Files\" = c(3L, \n4L, 7L, 4L), \"Data Files\" = c(2L, 1L, 1L, 1L), \"Code Files\" = c(0L, \n2L, 0L, 2L), READMEs = c(0L, 0L, 2L, 0L), Archives = c(0L, 1L, \n0L, 1L)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/msfcn\", \"https://osf.io/msfcn\", \n\"https://osf.io/msfcn\", \"https://osf.io/629bx\", \"https://osf.io/629bx\", \n\"https://osf.io/629bx\", \"https://osf.io/629bx\", \"https://osf.io/629bx\", \n\"https://osf.io/629bx\", \"https://osf.io/629bx\", \"https://osf.io/629bx\", \n\"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \n\"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \n\"https://osf.io/j3gcx\"), File = c(\"<a href='https://osf.io/download/5qsc6/' target='_blank'>Data_Experiment_1.xlsx<\/a>\", \n\"<a href='https://osf.io/download/4v5hd/' target='_blank'>Data_Experiment_2.xlsx<\/a>\", \n\"<a href='https://osf.io/download/x6n74/' target='_blank'>Suplemental Material_Chairs used for data collection.docx<\/a>\", \n\"<a href='https://osf.io/download/6935bc117049c887a125cb25/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/6935bc117049c887a125cb25/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/6935c4679ca0f02ea72a1a31/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/6935c4679ca0f02ea72a1a31/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/6976438ff9da155d0565c720/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/6976438ff9da155d0565c720/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/k6gbt/' target='_blank'>data.xlsx<\/a>\", \n\"<a href='https://osf.io/download/ez87j/' target='_blank'>README<\/a>\", \n\"<a href='https://osf.io/download/hn9fs/' target='_blank'>test-1.txt<\/a>\", \n\"<a href='https://osf.io/download/qfvpy/' target='_blank'>README<\/a>\", \n\"<a href='https://osf.io/download/b7eds/' target='_blank'>test-2.txt<\/a>\", \n\"<a href='https://osf.io/download/zyf34/' target='_blank'>test-3.txt<\/a>\", \n\"<a href='https://osf.io/download/3wv7h/' target='_blank'>test-4.txt<\/a>\"\n), Size = c(\"251 kB\", \"181.7 kB\", \"122.4 kB\", \"172 B\", \"172 B\", \n\"413 B\", \"413 B\", \"5 B\", \"5 B\", \"6.4 kB\", \"6.4 kB\", \"9.1 kB\", \n\"52 B\", \"12 B\", \"58 B\", \"12 B\", \"12 B\", \"12 B\"), Type = c(\"data\", \n\"data\", \"text\", \"code\", \"code\", \"code\", \"code\", \"data\", \"data\", \n\"archive\", \"archive\", \"data\", \"readme\", \"text\", \"readme\", \"text\", \n\"text\", \"text\")), row.names = c(NA, -18L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "#### Unclassified Files\n\nWe could not classify 2 files by name or extension: Archive.zip, Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 3 naming problems that should be fixed, and 1 file with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Suplemental Material_Chairs used for data collection.docx\", \n\"Archive.zip\", \"Archive.zip\", \"Suplemental Material_Chairs used for data collection.docx\"\n), Rule = c(\"spaces\", \"unclassifiable\", \"unclassifiable\", \"filename-length-50\"\n), Severity = c(\"bad\", \"bad\", \"bad\", \"suggestion\"), Detail = c(\"contains a space\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"filename-length-50 is 57 characters, over the 50-character budget\"\n)), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (4 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.R\", \"bad.Rmd\", \"bad.Rmd\"\n), Group = c(\"ex2\", \"ex2\", \"ex2\", \"ex2\"), Path = c(\"bad.R\", \"bad.R\", \n\"bad.Rmd\", \"bad.Rmd\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (6 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Data_Experiment_1.xlsx\", \"Data_Experiment_2.xlsx\", \n\"Suplemental Material_Chairs used for data collection.docx\", \n\"example2.csv\", \"example2.csv\", \"data.xlsx\"), Group = c(\"ex1\", \n\"ex2\", \"ex1\", \"ex2\", \"ex2\", \"ex3\"), Path = c(\"Data_Experiment_1.xlsx\", \n\"Data_Experiment_2.xlsx\", \"Suplemental Material_Chairs used for data collection.docx\", \n\"example2.csv\", \"example2.csv\", \"data.xlsx\")), row.names = c(NA, \n-6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (6 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README\", \"test-1.txt\", \"README\", \"test-2.txt\", \n\"test-3.txt\", \"test-4.txt\"), Group = c(\"—\", \"ex3\", \"—\", \"ex3\", \n\"ex3\", \"ex3\"), Path = c(\"README\", \"nest-1/test-1.txt\", \"nest-1/README\", \n\"nest-1/nest-2/test-2.txt\", \"nest-1/nest-2/nest-3/test-3.txt\", \n\"nest-1/nest-2/nest-3/nest-4/test-4.txt\")), row.names = c(NA, \n-6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\"), Group = c(\"ex2\", \n\"ex2\"), Path = c(\"Archive.zip\", \"Archive.zip\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 18 files in 4 repositories.\n-  We found 2 README files and 3 repositories without READMEs.\n-  We found 2 archive files.\n-  We could not classify 2 files.\n-  We found 3 file naming problems to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "zeta",
+              "Alpha",
+              "alpha"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              4,
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              1,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip",
+              "Archive.zip",
+              "Suplemental Material_Chairs used for data collection.docx",
+              "Suplemental Material_Chairs used for data collection.docx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable",
+              "unclassifiable",
+              "spaces",
+              "filename-length-50"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "suggestion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "contains a space",
+              "filename-length-50 is 57 characters, over the 50-character budget"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "alpha",
+              "Alpha",
+              "zeta",
+              "zeta"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2",
+              "ex3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2",
+              "ex3"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

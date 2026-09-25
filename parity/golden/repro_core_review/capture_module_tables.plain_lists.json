@@ -1,0 +1,150 @@
+{
+  "id": "capture_module_tables.plain_lists",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "file",
+      "prev",
+      "m1",
+      "m2",
+      "m3",
+      "sum",
+      "m3_title",
+      "m3_extra",
+      "m3_previews"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "P1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "m1",
+          "module_2",
+          "module_3"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "a"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "P1",
+              "P1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "b"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "P1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "c"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "P1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "k",
+          "j"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "P1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "module_3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "kept"
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

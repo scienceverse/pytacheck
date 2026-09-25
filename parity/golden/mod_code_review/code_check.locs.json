@@ -1,0 +1,546 @@
+{
+  "id": "code_check.locs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "version_pin"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Code Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "language",
+          "checked",
+          "parse_error",
+          "parse_error_msg",
+          "code_abs_path",
+          "absolute_paths",
+          "code_setwd",
+          "setwd_calls",
+          "code_install_packages",
+          "install_packages_calls",
+          "library_lines",
+          "library_max_between",
+          "packages_n",
+          "packages",
+          "comment_lines",
+          "code_lines",
+          "percentage_comment",
+          "has_docstring",
+          "loaded_files_missing",
+          "loaded_files_missing_names",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nopin",
+              "rev",
+              "rev",
+              "rev"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/locs",
+              "https://osf.io/locs",
+              "https://osf.io/locs",
+              "https://osf.io/locs"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "clean.R",
+              "naloc.R",
+              "naloc.Rmd",
+              "naloc.py"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "clean.R",
+              "naloc.R",
+              "naloc.Rmd",
+              "naloc.py"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_code/fixtures/review/nopin/clean.R",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              33,
+              10,
+              10,
+              10
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R",
+              "R",
+              "R",
+              "Python"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.333333333333333,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "'NA' does not exist in current working directory ('<ROOT>').",
+              "'NA' does not exist in current working directory ('<ROOT>').",
+              "'NA' does not exist in current working directory ('<ROOT>')."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_), \"% Comments\" = c(\"33%\", \"\", \"\", \n\"\"), \"Missing Files\" = c(0L, NA, NA, NA), \"Absolute Paths\" = c(0L, \nNA, NA, NA), \"Code Between Libraries\" = c(NA_integer_, NA_integer_, \nNA_integer_, NA_integer_)), row.names = c(NA, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code Comments",
+          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
+          "#### Missing Files",
+          "All files loaded in the code were present in the repository.",
+          "",
+          "#### Absolute Paths",
+          "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
+          "",
+          "#### Working Directory (setwd)",
+          "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
+          "",
+          "#### Package Installation (install.packages)",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+          "",
+          "#### Libraries / Imports",
+          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
+          "#### Packages / Dependencies",
+          "The code files load 1 distinct package/library: stats. These are the names found in the source (no version information is available from static analysis).",
+          "#### Reproducible Environment",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
+          "",
+          "#### Parsable code",
+          "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 3 R, 1 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  All files loaded in the code were present in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  The code loaded 1 distinct package.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  No parsing issues of R-type files were found."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "code_n",
+          "code_checked",
+          "code_abs_path",
+          "code_setwd",
+          "code_install_packages",
+          "code_missing_files",
+          "code_min_comments",
+          "code_parse_errors",
+          "code_packages_n",
+          "code_version_pinned"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.333333333333333
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "code_n"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "pinned",
+          "mechanisms",
+          "r_versions",
+          "renv_files",
+          "renv_packages",
+          "sessioninfo_files",
+          "file_location"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

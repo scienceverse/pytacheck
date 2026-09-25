@@ -1,0 +1,14 @@
+{
+  "id": "repo_check.local.unknown_many.report",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### 🔍 Repository Check {#repository-check .yellow}\n\n\n-  We found 13 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We could not classify 12 files.\n-  We found 12 file naming problems to fix.\n\n<details><summary>View detailed feedback<\/summary><div>\n\n#### Repositories\n\n\n<R-CHUNK>\n\n\n#### Files\n\n\n<R-CHUNK>\n\n\nREADME files were found in all repositories.\n\n#### Unclassified Files\n\nWe could not classify 12 files by name or extension: blob01.qqz1, blob02.qqz2, blob03.qqz3, blob04.qqz4, blob05.qqz5, blob06.qqz6, blob07.qqz7, blob08.qqz8, blob09.qqz9, blob10.qqz10. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.\n\n#### File Naming\n\nFile names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 12 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).\n\n\n<R-CHUNK>\n\n\n#### File Classification\n\n::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**documentation** (1 file)\n\n\n<R-CHUNK>\n\n\n**unknown** (12 files)\n\n\n<R-CHUNK>\n\n\n:::\n\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nThis module retrieves information from repositories.\n\nThe Repository Check module lists files on the OSF, GitHub, ResearchBox, DSpace (PsychArchives and other legacy- and DSpace 7-based installations), Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, and DataONE (Arctic Data Center, KNB, and other member nodes) based on links in the manuscript.\n\nWhen a linked OSF page is a registration, its `registered_from` project (the\none it was registered from, which the manuscript itself may never link\ndirectly) is also checked: if that project is public its files are listed\nunder its own URL, and if it is closed or otherwise inaccessible the report\nflags it explicitly, since some registrations only describe their content\nrather than mirroring it.\n\nIf you want to extend the package to be able to download files from additional data repositories reach out to the Metacheck development team.\n\nThis module was developed by Daniel Lakens and Lisa DeBruine\n\n:::\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

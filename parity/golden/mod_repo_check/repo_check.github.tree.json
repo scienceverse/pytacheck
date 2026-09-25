@@ -1,0 +1,485 @@
+{
+  "id": "repo_check.github.tree",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "treerepo",
+              "treerepo",
+              "treerepo",
+              "treerepo",
+              "treerepo",
+              "treerepo",
+              "treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/gzorg/treerepo",
+              "https://github.com/gzorg/treerepo",
+              "https://github.com/gzorg/treerepo",
+              "https://github.com/gzorg/treerepo",
+              "https://github.com/gzorg/treerepo",
+              "https://github.com/gzorg/treerepo",
+              "https://github.com/gzorg/treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "study 1.csv",
+              "analysis.R",
+              "config.json",
+              "LICENSE",
+              "archive.tar.gz",
+              "weird.file-name"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "data/study 1.csv",
+              "code/analysis.R",
+              "code/config.json",
+              "LICENSE",
+              "archive.tar.gz",
+              "weird.file-name"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/archive.tar.gz",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/weird.file-name"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              120,
+              2048,
+              512,
+              64,
+              1070,
+              99999,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "readme",
+              "data",
+              "code",
+              "code",
+              "file",
+              "archive",
+              "file"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "documentation",
+              "data",
+              "code",
+              "code",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "readme",
+              null,
+              null,
+              null,
+              "license",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "ex1",
+              "ex1",
+              "ex1",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_github_tree",
+              "p_github_tree",
+              "p_github_tree",
+              "p_github_tree",
+              "p_github_tree",
+              "p_github_tree",
+              "p_github_tree"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://github.com/gzorg/treerepo' target='_blank'>github.com/gzorg/treerepo<\/a>\", \n    Platform = \"github\", \"All Files\" = 7L, \"Data Files\" = 1L, \n    \"Code Files\" = 2L, READMEs = 1L, Archives = 1L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\"\n), File = c(\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv' target='_blank'>study 1.csv<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json' target='_blank'>config.json<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE' target='_blank'>LICENSE<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/archive.tar.gz' target='_blank'>archive.tar.gz<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/weird.file-name' target='_blank'>weird.file-name<\/a>\"\n), Size = c(\"120 B\", \"2 kB\", \"512 B\", \"64 B\", \"1.1 kB\", \"100 kB\", \n\"—\"), Type = c(\"readme\", \"data\", \"code\", \"code\", \"file\", \"archive\", \n\"file\")), row.names = c(NA, -7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### Archive Files\n\nThe following files are not ZIP archives: archive.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, or `.tar.gz`.",
+          "#### Unclassified Files\n\nWe could not classify 3 files by name or extension: LICENSE, archive.tar.gz, weird.file-name. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 4 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"study 1.csv\", \"LICENSE\", \"archive.tar.gz\", \n\"weird.file-name\"), Rule = c(\"spaces\", \"unclassifiable\", \"unclassifiable\", \n\"unclassifiable\"), Severity = c(\"bad\", \"bad\", \"bad\", \"bad\"), \n    Detail = c(\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n    \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n    \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n    )), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"analysis.R\", \"config.json\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"code/analysis.R\", \"code/config.json\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"study 1.csv\", Group = \"ex1\", Path = \"data/study 1.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"LICENSE\", \"archive.tar.gz\", \"weird.file-name\"\n), Group = c(\"—\", \"—\", \"—\"), Path = c(\"LICENSE\", \"archive.tar.gz\", \n\"weird.file-name\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 7 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 1 archive file.\n-  We could not classify 3 files.\n-  We found 4 file naming problems to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_github_tree"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "study 1.csv",
+              "LICENSE",
+              "archive.tar.gz",
+              "weird.file-name"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "spaces",
+              "unclassifiable",
+              "unclassifiable",
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "contains a space",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_github_tree",
+              "p_github_tree",
+              "p_github_tree",
+              "p_github_tree"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/gzorg/treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MIT"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_github_tree"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

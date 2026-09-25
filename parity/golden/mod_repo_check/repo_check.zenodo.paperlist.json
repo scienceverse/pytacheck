@@ -1,0 +1,425 @@
+{
+  "id": "repo_check.zenodo.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "17754445",
+              "123456789"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/records/17754445",
+              "https://zenodo.org/records/123456789"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ResearchBox_4377.zip",
+              "data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ResearchBox_4377.zip",
+              "data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/api/records/17754445/files/ResearchBox_4377.zip/content",
+              "https://files.example/f1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1828,
+              101
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_z1",
+              "p_z2"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://zenodo.org/records/17754445' target='_blank'>zenodo.org/records/17754445<\/a>\", \n\"<a href='https://zenodo.org/records/123456789' target='_blank'>zenodo.org/records/123456789<\/a>\"\n), Platform = c(\"zenodo\", \"zenodo\"), \"All Files\" = c(1L, 1L), \n    \"Data Files\" = 0:1, \"Code Files\" = c(0L, 0L), READMEs = c(0L, \n    0L), Archives = 1:0), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://zenodo.org/records/17754445\", \n\"https://zenodo.org/records/123456789\"), File = c(\"<a href='https://zenodo.org/api/records/17754445/files/ResearchBox_4377.zip/content' target='_blank'>ResearchBox_4377.zip<\/a>\", \n\"<a href='https://files.example/f1' target='_blank'>data.csv<\/a>\"\n), Size = c(\"1.8 kB\", \"101 B\"), Type = c(\"archive\", \"data\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: ResearchBox_4377.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"ResearchBox_4377.zip\", Rule = \"unclassifiable\", \n    Severity = \"bad\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"data.csv\", Group = \"ex2\", Path = \"data.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"ResearchBox_4377.zip\", Group = \"ex1\", \n    Path = \"ResearchBox_4377.zip\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 2 files in 2 repositories.\n-  We found 0 README files and 2 repositories without READMEs.\n-  We found 1 archive file.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_z1",
+              "p_z2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ResearchBox_4377.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_z1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/records/17754445",
+              "https://zenodo.org/records/123456789"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.5281/zenodo.17754445",
+              "10.5281/zenodo.123456789"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cc-by-4.0",
+              "cc-by-4.0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_z1",
+              "p_z2"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "load_module_tables.review.hidden",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "mymod"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "x"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              99
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

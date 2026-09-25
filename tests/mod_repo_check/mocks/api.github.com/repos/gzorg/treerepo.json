@@ -1,0 +1,10 @@
+{
+ "id": 1,
+ "full_name": "gzorg/treerepo",
+ "default_branch": "dev",
+ "license": {
+  "key": "mit",
+  "name": "MIT License",
+  "spdx_id": "MIT"
+ }
+}

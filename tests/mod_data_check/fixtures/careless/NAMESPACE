@@ -1,0 +1,3 @@
+# Vendored subset of careless 1.2.2 (see DESCRIPTION)
+export(irv)
+export(longstring)

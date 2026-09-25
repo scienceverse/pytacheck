@@ -52,9 +52,56 @@ def bind_rows(frames: Iterable[pd.DataFrame | None]) -> pd.DataFrame:
             if c not in out.columns:
                 out[c] = pd.Series([], dtype=_first_dtype(parts, c))
         return out.loc[:, columns].reset_index(drop=True)
-    aligned = [_align(f, columns, parts) for f in non_empty]
+    aligned = _harmonize([_align(f, columns, parts) for f in non_empty], columns)
     out = pd.concat(aligned, ignore_index=True, sort=False)
     return out.loc[:, columns]
+
+
+def _kind(dtype: object) -> str | None:
+    if pd.api.types.is_bool_dtype(dtype):
+        return "lgl"
+    if pd.api.types.is_integer_dtype(dtype):
+        return "int"
+    if pd.api.types.is_float_dtype(dtype):
+        return "dbl"
+    return None
+
+
+def _harmonize(frames: list[pd.DataFrame], columns: list[str]) -> list[pd.DataFrame]:
+    """Cast each column to dplyr's (vctrs') common type before concatenating.
+
+    ``pd.concat`` turns logical + integer/double into an ``object`` column;
+    dplyr combines logical < integer < double (``TRUE`` becomes 1), and an
+    all-``NA`` logical column is "unspecified" and takes the other parts' type.
+    """
+    if len(frames) < 2 or any(not f.columns.is_unique for f in frames):
+        return frames
+    out = list(frames)
+    for c in columns:
+        dtypes = [f[c].dtype for f in out]
+        kinds = [_kind(d) for d in dtypes]
+        if len({str(d) for d in dtypes}) < 2 or ("lgl" not in kinds and None in kinds):
+            continue
+        if None not in kinds:
+            if len(set(kinds)) < 2:
+                continue
+            # only logical parts need casting (integer + double concatenate as dplyr does)
+            if "dbl" in kinds:
+                first = next(d for d, k in zip(dtypes, kinds, strict=True) if k == "dbl")
+                target = "float64" if first == "float64" else "Float64"
+            else:
+                target = "Int64"
+            for i, k in enumerate(kinds):
+                if k == "lgl":
+                    out[i] = out[i].copy()
+                    out[i][c] = out[i][c].astype(target)
+            continue
+        other = next(d for d, k in zip(dtypes, kinds, strict=True) if k is None)
+        for i, k in enumerate(kinds):
+            if k == "lgl" and out[i][c].isna().all():
+                out[i] = out[i].copy()
+                out[i][c] = pd.Series([None] * len(out[i]), index=out[i].index, dtype=other)
+    return out
 
 
 def _first_dtype(parts: Sequence[pd.DataFrame], col: str) -> object:

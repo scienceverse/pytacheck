@@ -1,0 +1,62 @@
+{
+  "id": "report_tables.paperlist_jasp",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File Name",
+          "% Comments",
+          "Missing Files",
+          "Absolute Paths",
+          "Code Between Libraries"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "9%",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

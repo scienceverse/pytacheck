@@ -1,0 +1,372 @@
+{
+ "data": {
+  "project": {
+   "repository": {
+    "blobs": {
+     "nodes": [
+      {
+       "path": "f001.txt",
+       "size": "10"
+      },
+      {
+       "path": "f002.txt",
+       "size": "20"
+      },
+      {
+       "path": "f003.txt",
+       "size": "30"
+      },
+      {
+       "path": "f004.txt",
+       "size": "40"
+      },
+      {
+       "path": "f005.txt",
+       "size": "50"
+      },
+      {
+       "path": "f006.txt",
+       "size": "60"
+      },
+      {
+       "path": "f007.txt",
+       "size": "70"
+      },
+      {
+       "path": "f008.txt",
+       "size": "80"
+      },
+      {
+       "path": "f009.txt",
+       "size": "90"
+      },
+      {
+       "path": "f010.txt",
+       "size": "100"
+      },
+      {
+       "path": "f011.txt",
+       "size": "110"
+      },
+      {
+       "path": "f012.txt",
+       "size": "120"
+      },
+      {
+       "path": "f013.txt",
+       "size": "130"
+      },
+      {
+       "path": "f014.txt",
+       "size": "140"
+      },
+      {
+       "path": "f015.txt",
+       "size": "150"
+      },
+      {
+       "path": "f016.txt",
+       "size": "160"
+      },
+      {
+       "path": "f017.txt",
+       "size": "170"
+      },
+      {
+       "path": "f018.txt",
+       "size": "180"
+      },
+      {
+       "path": "f019.txt",
+       "size": "190"
+      },
+      {
+       "path": "f020.txt",
+       "size": "200"
+      },
+      {
+       "path": "f021.txt",
+       "size": "210"
+      },
+      {
+       "path": "f022.txt",
+       "size": "220"
+      },
+      {
+       "path": "f023.txt",
+       "size": "230"
+      },
+      {
+       "path": "f024.txt",
+       "size": "240"
+      },
+      {
+       "path": "f025.txt",
+       "size": "250"
+      },
+      {
+       "path": "f026.txt",
+       "size": "260"
+      },
+      {
+       "path": "f027.txt",
+       "size": "270"
+      },
+      {
+       "path": "f028.txt",
+       "size": "280"
+      },
+      {
+       "path": "f029.txt",
+       "size": "290"
+      },
+      {
+       "path": "f030.txt",
+       "size": "300"
+      },
+      {
+       "path": "f031.txt",
+       "size": "310"
+      },
+      {
+       "path": "f032.txt",
+       "size": "320"
+      },
+      {
+       "path": "f033.txt",
+       "size": "330"
+      },
+      {
+       "path": "f034.txt",
+       "size": "340"
+      },
+      {
+       "path": "f035.txt",
+       "size": "350"
+      },
+      {
+       "path": "f036.txt",
+       "size": "360"
+      },
+      {
+       "path": "f037.txt",
+       "size": "370"
+      },
+      {
+       "path": "f038.txt",
+       "size": "380"
+      },
+      {
+       "path": "f039.txt",
+       "size": "390"
+      },
+      {
+       "path": "f040.txt",
+       "size": "400"
+      },
+      {
+       "path": "f041.txt",
+       "size": "410"
+      },
+      {
+       "path": "f042.txt",
+       "size": "420"
+      },
+      {
+       "path": "f043.txt",
+       "size": "430"
+      },
+      {
+       "path": "f044.txt",
+       "size": "440"
+      },
+      {
+       "path": "f045.txt",
+       "size": "450"
+      },
+      {
+       "path": "f046.txt",
+       "size": "460"
+      },
+      {
+       "path": "f047.txt",
+       "size": "470"
+      },
+      {
+       "path": "f048.txt",
+       "size": "480"
+      },
+      {
+       "path": "f049.txt",
+       "size": "490"
+      },
+      {
+       "path": "f050.txt",
+       "size": "500"
+      },
+      {
+       "path": "f051.txt",
+       "size": "510"
+      },
+      {
+       "path": "f052.txt",
+       "size": "520"
+      },
+      {
+       "path": "f053.txt",
+       "size": "530"
+      },
+      {
+       "path": "f054.txt",
+       "size": "540"
+      },
+      {
+       "path": "f055.txt",
+       "size": "550"
+      },
+      {
+       "path": "f056.txt",
+       "size": "560"
+      },
+      {
+       "path": "f057.txt",
+       "size": "570"
+      },
+      {
+       "path": "f058.txt",
+       "size": "580"
+      },
+      {
+       "path": "f059.txt",
+       "size": "590"
+      },
+      {
+       "path": "f060.txt",
+       "size": "600"
+      },
+      {
+       "path": "f061.txt",
+       "size": "610"
+      },
+      {
+       "path": "f062.txt",
+       "size": "620"
+      },
+      {
+       "path": "f063.txt",
+       "size": "630"
+      },
+      {
+       "path": "f064.txt",
+       "size": "640"
+      },
+      {
+       "path": "f065.txt",
+       "size": "650"
+      },
+      {
+       "path": "f066.txt",
+       "size": "660"
+      },
+      {
+       "path": "f067.txt",
+       "size": "670"
+      },
+      {
+       "path": "f068.txt",
+       "size": "680"
+      },
+      {
+       "path": "f069.txt",
+       "size": "690"
+      },
+      {
+       "path": "f070.txt",
+       "size": "700"
+      },
+      {
+       "path": "f071.txt",
+       "size": "710"
+      },
+      {
+       "path": "f072.txt",
+       "size": "720"
+      },
+      {
+       "path": "f073.txt",
+       "size": "730"
+      },
+      {
+       "path": "f074.txt",
+       "size": "740"
+      },
+      {
+       "path": "f075.txt",
+       "size": "750"
+      },
+      {
+       "path": "f076.txt",
+       "size": "760"
+      },
+      {
+       "path": "f077.txt",
+       "size": "770"
+      },
+      {
+       "path": "f078.txt",
+       "size": "780"
+      },
+      {
+       "path": "f079.txt",
+       "size": "790"
+      },
+      {
+       "path": "f080.txt",
+       "size": "800"
+      },
+      {
+       "path": "f081.txt",
+       "size": "810"
+      },
+      {
+       "path": "f082.txt",
+       "size": "820"
+      },
+      {
+       "path": "f083.txt",
+       "size": "830"
+      },
+      {
+       "path": "f084.txt",
+       "size": "840"
+      },
+      {
+       "path": "f085.txt",
+       "size": "850"
+      },
+      {
+       "path": "f086.txt",
+       "size": "860"
+      },
+      {
+       "path": "f087.txt",
+       "size": "870"
+      },
+      {
+       "path": "f088.txt",
+       "size": "880"
+      },
+      {
+       "path": "f089.txt",
+       "size": "890"
+      },
+      {
+       "path": "f090.txt",
+       "size": "900"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

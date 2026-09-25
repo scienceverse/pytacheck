@@ -633,7 +633,8 @@ def _literal_template(repl: str, perl: bool, translated: str) -> str | None:
     """A ``regex.sub`` template for *repl*, if it is plain text and *translated*
     provably cannot match the empty string; otherwise ``None``."""
     if "\\" in repl:
-        stripped = regex.sub(r"\\(.)", r"\1", repl, flags=regex.DOTALL)
+        # an escaped character stands for itself; a trailing lone backslash is dropped
+        stripped = regex.sub(r"\\(.)|\\\Z", r"\1", repl, flags=regex.DOTALL)
         if regex.search(r"\\[1-9]", repl) or (perl and regex.search(r"\\[ULE]", repl)):
             return None
     else:
@@ -652,14 +653,18 @@ def _r_replacement(repl: str, perl: bool) -> Callable[[regex.Match[str]], str]:
     """Build a replacement function implementing R's replacement syntax.
 
     ``\\1``-``\\9`` are backreferences (``\\0`` is a literal ``0``); with ``perl=TRUE``
-    ``\\U``/``\\L``/``\\E`` switch case conversion. Any other escaped
-    character stands for itself.
+    ``\\U``/``\\L``/``\\E`` switch case conversion, which (as in R's
+    ``R_pcre_string_adj()``) applies to the back-referenced text only, never
+    to literal text. Any other escaped character stands for itself, and a
+    trailing lone backslash is dropped.
     """
     parts: list[tuple[str, Any]] = []
     i, n = 0, len(repl)
     lit: list[str] = []
     while i < n:
         c = repl[i]
+        if c == "\\" and i + 1 == n:
+            break  # R drops a trailing lone backslash
         if c == "\\" and i + 1 < n:
             e = repl[i + 1]
             if e in "123456789":
@@ -693,12 +698,12 @@ def _r_replacement(repl: str, perl: bool) -> Callable[[regex.Match[str]], str]:
                     piece = m.group(val) or ""
                 except IndexError:
                     piece = ""
+                if mode == "U":
+                    piece = piece.upper()
+                elif mode == "L":
+                    piece = piece.lower()
             else:
                 piece = val
-            if mode == "U":
-                piece = piece.upper()
-            elif mode == "L":
-                piece = piece.lower()
             buf.append(piece)
         return "".join(buf)
 

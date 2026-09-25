@@ -48,6 +48,7 @@ from pytacheck.repro.core import (
     _message,
     _ordered_names,
     _pre_run_outcome,
+    _r_is_true,
     _read_cap,
     _read_lines,
     _repro_classify_install_message,
@@ -140,7 +141,7 @@ def repro_docker_available() -> dict[str, Any]:
 def _repro_docker_container_name() -> str:
     """A unique container name for one ``docker run`` (``.repro_docker_container_name()``)."""
     raw = f"repro_{secrets.token_hex(6)}"  # basename(tempfile("repro_"))
-    return "repro_" + gsub("[^a-zA-Z0-9_.-]", "", raw)
+    return "repro_" + str(gsub("[^a-zA-Z0-9_.-]", "", raw))
 
 
 def _repro_docker_stop(name: str, timeout: float = 30) -> None:
@@ -160,10 +161,17 @@ def _repro_docker_resource_args() -> list[str]:
     if limits is None:
         return []
 
-    def get(key: str) -> Any:
-        return limits.get(key) if isinstance(limits, Mapping) else getattr(limits, key, None)
+    def get(key: str) -> list[str]:
+        # as.character(limits$<key>): a missing element is character(0), NA is "NA"
+        v = limits.get(key) if isinstance(limits, Mapping) else getattr(limits, key, None)
+        if v is None:
+            return []
+        vals = list(v) if isinstance(v, list | tuple) else [v]
+        return [_chr(x) or "NA" for x in vals]
 
-    return ["--cpus", as_character(get("cpus")), "--memory", f"{as_character(get('memory_gb'))}g"]
+    memory = get("memory_gb")
+    # paste0(limits$memory_gb, "g"): NULL pastes as "g"
+    return ["--cpus", *get("cpus"), "--memory", *([f"{m}g" for m in memory] or ["g"])]
 
 
 def _normalize_path(path: str, must_work: bool = False) -> str:
@@ -199,7 +207,7 @@ def _repro_docker_image_for(
     ``rocker/r-ver:<the first cleanly-shaped declared R version>`` (or
     ``rocker/r-ver:latest``).
     """
-    if use_declared_version is not True:
+    if not _r_is_true(use_declared_version):
         return _REPRO_DOCKER_DEFAULT_IMAGE
     versions = _chr_list(r_versions)
     clean = [
@@ -355,9 +363,8 @@ def repro_install_deps_docker(
             "-v", f"{_normalize_path(lib)}:/rlib",
             image, "Rscript", "/sandbox/install.R",
         ]  # fmt: skip
-        res = _docker(args, timeout=timeout, stdout=out_file, merge_stderr=True)
-        if isinstance(res, Exception):
-            res = None
+        raw = _docker(args, timeout=timeout, stdout=out_file, merge_stderr=True)
+        res = None if isinstance(raw, Exception) else raw
         if res is None or res.get("timeout"):
             _repro_docker_stop(container_name)
 
@@ -375,7 +382,8 @@ def repro_install_deps_docker(
             if res.get("timeout"):
                 msg = f"docker install timed out after {as_character(timeout)}s"
             else:
-                msg = f"docker install failed (status {as_character(res.get('status'))}): {txt}"
+                status = as_character(res.get("status")) or "NA"
+                msg = f"docker install failed (status {status}): {txt}"
         else:
             msg = "docker run could not be started"
     finally:
@@ -492,9 +500,9 @@ def repro_run_scripts_docker(
     lib_dir: str | os.PathLike[str] | None = None,
     image: str = "rocker/r-ver:latest",
     timeout: float = 600,
-    skip: Sequence[str] = (),
-    parses: Mapping[str, Any] | None = None,
-    failed_deps: Sequence[str] = (),
+    skip: Sequence[str] | str = (),
+    parses: Mapping[str, Any] | pd.Series | None = None,
+    failed_deps: Sequence[str] | str = (),
 ) -> pd.DataFrame:
     """Run the paper's scripts, in order, each in an isolated Docker container.
 

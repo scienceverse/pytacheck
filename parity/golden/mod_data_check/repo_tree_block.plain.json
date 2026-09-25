@@ -1,0 +1,17 @@
+{
+  "id": "repo_tree_block.plain",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "#### Data Tree",
+      "Where the files sit within each repository. Each file is followed by how it was classified.",
+      "**Repository: r**",
+      "```\n├── a.csv  NA NA\n└── b.csv  NA NA\n```"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

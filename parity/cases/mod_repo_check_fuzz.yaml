@@ -1,0 +1,898 @@
+"area": "mod_repo_check_fuzz"
+"cases":
+- "id": "repo_check.fuzz.00"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz00\", c(\"We ran Study 1 online.\", \"Study 4 is in the supplement.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep00\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz00"
+      "text":
+      - "We ran Study 1 online."
+      - "Study 4 is in the supplement."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep00"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.01"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz01\", c(\"We report all measures.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep01\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz01"
+      "text":
+      - "We report all measures."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep01"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.02"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz02\", c(\"The data are available.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep02\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz02"
+      "text":
+      - "The data are available."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep02"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.03"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz03\", c(\"Study 2 replicated Study 1.\", \"A pilot study (Pilot 1) was run first.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep03\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz03"
+      "text":
+      - "Study 2 replicated Study 1."
+      - "A pilot study (Pilot 1) was run first."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep03"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.04"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz04\", c(\"Study 4 is in the supplement.\", \"We ran Study 1 online.\", \"We report all measures.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep04\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz04"
+      "text":
+      - "Study 4 is in the supplement."
+      - "We ran Study 1 online."
+      - "We report all measures."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep04"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.05"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz05\", c(\"Experiment 3 used new stimuli.\", \"A pilot study (Pilot 1) was run first.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep05\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz05"
+      "text":
+      - "Experiment 3 used new stimuli."
+      - "A pilot study (Pilot 1) was run first."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep05"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.06"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz06\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep06\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz06"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep06"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.07"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz07\", c(\"A pilot study (Pilot 1) was run first.\", \"Study 4 is in the supplement.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz07"
+      "text":
+      - "A pilot study (Pilot 1) was run first."
+      - "Study 4 is in the supplement."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.08"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz08\", c(\"Experiment 3 used new stimuli.\", \"Study 2 replicated Study 1.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep08\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz08"
+      "text":
+      - "Experiment 3 used new stimuli."
+      - "Study 2 replicated Study 1."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep08"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.09"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz09\", c(\"We ran Study 1 online.\", \"A pilot study (Pilot 1) was run first.\", \"Experiment 3 used new stimuli.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep09\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz09"
+      "text":
+      - "We ran Study 1 online."
+      - "A pilot study (Pilot 1) was run first."
+      - "Experiment 3 used new stimuli."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep09"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.10"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz10\", c(\"A pilot study (Pilot 1) was run first.\", \"Study 2 replicated Study 1.\", \"Experiment 3 used new stimuli.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep10\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz10"
+      "text":
+      - "A pilot study (Pilot 1) was run first."
+      - "Study 2 replicated Study 1."
+      - "Experiment 3 used new stimuli."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep10"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.11"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz11\", c(\"A pilot study (Pilot 1) was run first.\", \"Study 4 is in the supplement.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep11\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz11"
+      "text":
+      - "A pilot study (Pilot 1) was run first."
+      - "Study 4 is in the supplement."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep11"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.12"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz12\", c(\"Study 4 is in the supplement.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep12\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz12"
+      "text":
+      - "Study 4 is in the supplement."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep12"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.13"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz13\", c(\"A pilot study (Pilot 1) was run first.\", \"Experiment 3 used new stimuli.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep13\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz13"
+      "text":
+      - "A pilot study (Pilot 1) was run first."
+      - "Experiment 3 used new stimuli."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep13"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.14"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz14\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep14\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz14"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep14"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.15"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz15\", c(\"Experiment 2a and 2b differed.\", \"Study 2 replicated Study 1.\", \"We ran Study 1 online.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep15\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz15"
+      "text":
+      - "Experiment 2a and 2b differed."
+      - "Study 2 replicated Study 1."
+      - "We ran Study 1 online."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep15"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.16"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz16\", c(\"We ran Study 1 online.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep16\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz16"
+      "text":
+      - "We ran Study 1 online."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep16"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.17"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz17\", c(\"The data are available.\", \"Experiment 3 used new stimuli.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep17\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz17"
+      "text":
+      - "The data are available."
+      - "Experiment 3 used new stimuli."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep17"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.18"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz18\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep18\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz18"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep18"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.19"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz19\", c(\"Experiment 2a and 2b differed.\", \"Study 2 replicated Study 1.\", \"We report all measures.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep19\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz19"
+      "text":
+      - "Experiment 2a and 2b differed."
+      - "Study 2 replicated Study 1."
+      - "We report all measures."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep19"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.20"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz20\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep20\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz20"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep20"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.21"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz21\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep21\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz21"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep21"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.22"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz22\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep22\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz22"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep22"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.23"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz23\", c(\"A pilot study (Pilot 1) was run first.\", \"Experiment 3 used new stimuli.\", \"Study 2 replicated Study 1.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep23\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz23"
+      "text":
+      - "A pilot study (Pilot 1) was run first."
+      - "Experiment 3 used new stimuli."
+      - "Study 2 replicated Study 1."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep23"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.24"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz24\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep24\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz24"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep24"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.25"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz25\", c(\"Experiment 2a and 2b differed.\", \"We report all measures.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep25\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz25"
+      "text":
+      - "Experiment 2a and 2b differed."
+      - "We report all measures."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep25"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.26"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz26\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep26\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz26"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep26"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.27"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz27\"), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep27\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz27"
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep27"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.28"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz28\", c(\"We report all measures.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep28\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz28"
+      "text":
+      - "We report all measures."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep28"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.29"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz29\", c(\"Experiment 2a and 2b differed.\", \"We ran Study 1 online.\", \"Study 4 is in the supplement.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep29\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz29"
+      "text":
+      - "Experiment 2a and 2b differed."
+      - "We ran Study 1 online."
+      - "Study 4 is in the supplement."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep29"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.30"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz30\", c(\"We report all measures.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep30\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz30"
+      "text":
+      - "We report all measures."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep30"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.31"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz31\", c(\"We ran Study 1 online.\", \"A pilot study (Pilot 1) was run first.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep31\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz31"
+      "text":
+      - "We ran Study 1 online."
+      - "A pilot study (Pilot 1) was run first."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep31"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.32"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz32\", c(\"Study 2 replicated Study 1.\", \"A pilot study (Pilot 1) was run first.\", \"Experiment 2a and 2b differed.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep32\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz32"
+      "text":
+      - "Study 2 replicated Study 1."
+      - "A pilot study (Pilot 1) was run first."
+      - "Experiment 2a and 2b differed."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep32"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.33"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz33\", c(\"A pilot study (Pilot 1) was run first.\", \"Study 2 replicated Study 1.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep33\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz33"
+      "text":
+      - "A pilot study (Pilot 1) was run first."
+      - "Study 2 replicated Study 1."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep33"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.34"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz34\", c(\"We ran Study 1 online.\", \"Study 4 is in the supplement.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep34\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz34"
+      "text":
+      - "We ran Study 1 online."
+      - "Study 4 is in the supplement."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep34"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.35"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz35\", c(\"Study 2 replicated Study 1.\", \"Study 4 is in the supplement.\", \"Experiment 2a and 2b differed.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep35\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz35"
+      "text":
+      - "Study 2 replicated Study 1."
+      - "Study 4 is in the supplement."
+      - "Experiment 2a and 2b differed."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep35"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.36"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz36\", c(\"Study 4 is in the supplement.\", \"Study 2 replicated Study 1.\", \"Experiment 3 used new stimuli.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep36\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz36"
+      "text":
+      - "Study 4 is in the supplement."
+      - "Study 2 replicated Study 1."
+      - "Experiment 3 used new stimuli."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep36"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.37"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz37\", c(\"Study 4 is in the supplement.\", \"Experiment 3 used new stimuli.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz37"
+      "text":
+      - "Study 4 is in the supplement."
+      - "Experiment 3 used new stimuli."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.38"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz38\", c(\"We ran Study 1 online.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep38\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz38"
+      "text":
+      - "We ran Study 1 online."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep38"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.fuzz.39"
+  "note": "fuzz"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"fz39\", c(\"Experiment 2a and 2b differed.\", \"Experiment 3 used new stimuli.\")), \"repo_check\", local_path = \"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep39\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "fz39"
+      "text":
+      - "Experiment 2a and 2b differed."
+      - "Experiment 3 used new stimuli."
+    "args":
+      "local_path": "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep39"
+  "compare":
+    "ignore":
+    - "table.file_location"

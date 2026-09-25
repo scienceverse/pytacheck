@@ -1,0 +1,761 @@
+{
+  "id": "data_check.encoding",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/encod",
+              "https://osf.io/encod",
+              "https://osf.io/encod"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "latin1.csv",
+              "latin1.csv",
+              "latin1.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "city",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 | 2 | 3 | 4",
+              "Zürich | Malmö | Paris | Köln",
+              "3 | 4 | 5 | 2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              3,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              3.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              1.29099444873581
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              0.645497224367903
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              3.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              2.75
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              4.25
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              1.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              -2.0775
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://osf.io/encod**",
+          "```\n└── latin1.csv  📊 data ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## latin1.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:4, city = c(\"Zürich\", \"Malmö\", \"Paris\", \n\"Köln\"), score = c(3L, 4L, 5L, 2L)), utf8_repaired = c(city = 3L), row.names = c(NA, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
+          "::: {.panel-tabset}\n\n## latin1.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"city\", \"id\", \"score\"), Representation = c(\"text\", \n\"text\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"ratio\"), \n    Concept = c(\"\", \"id\", \"\"), Role = c(\"measure\", \"identifier\", \n    \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(4L, 4L, 4L), \"% Missing\" = c(0, \n    0, 0), \"N Unique\" = c(4L, 4L, 4L), Mean = c(NA, NA, 3.5), \n    SD = c(NA, NA, 1.291), Min = c(NA, NA, 2), Max = c(NA, NA, \n    5)), row.names = c(\"city\", \"id\", \"score\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 3 columns across 1 data file.",
+          "#### Issues Identified",
+          "1 file/column combination has at least one issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"latin1.csv\", Column = \"city\", Issues = \"<span title='3 values are not valid UTF-8 (bytes from a legacy encoding such as Latin-1/Windows-1252, e.g. a mis-encoded accent or apostrophe); metacheck re-interpreted them as Latin-1 to continue. Such characters corrupt silently when the file is opened on another system. Re-save the file with UTF-8 encoding: in Excel use &#39;Save As &gt; CSV UTF-8 (Comma delimited)&#39;; in R, write.csv(..., fileEncoding = \\\"UTF-8\\\"); in SPSS, &#39;Save as type: CSV&#39; with Encoding &#39;UTF-8&#39;.'>🔣 Mixed encoding — 3 values are not valid UTF-8 (bytes from a legacy encoding such as ...<\/span>\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "#### Careless Responding",
+          "No file could be screened for careless responding.",
+          "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 3 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 3 columns; 1 column has at least one potential issue (1 column with values in a legacy (non-UTF-8) encoding)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "latin1.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "city"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Mixed encoding"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3 values are not valid UTF-8 (bytes from a legacy encoding such as Latin-1/Windows-1252, e.g. a mis-encoded accent or apostrophe); metacheck re-interpreted them as Latin-1 to continue. Such characters corrupt silently when the file is opened on another system. Re-save the file with UTF-8 encoding: in Excel use 'Save As > CSV UTF-8 (Comma delimited)'; in R, write.csv(..., fileEncoding = \"UTF-8\"); in SPSS, 'Save as type: CSV' with Encoding 'UTF-8'."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "encoding"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/encod"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "latin1.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "latin1.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/encoding/latin1.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              54
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "latin1.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "id",
+              "city",
+              "score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Zürich",
+                  "Malmö",
+                  "Paris",
+                  "Köln"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3,
+                  4,
+                  5,
+                  2
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

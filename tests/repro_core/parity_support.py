@@ -95,7 +95,9 @@ def materialize(plan: Any, structure_df: Any) -> dict[str, Any]:
 
 
 def _unroot(x: Any, root: str) -> Any:
-    if x is None:
+    import pandas as pd
+
+    if x is None or x is pd.NA:
         return None
     return str(x).replace(root, "<root>")
 
@@ -176,6 +178,32 @@ def run_scripts(
         return out
 
 
+def materialize_review() -> dict[str, Any]:
+    """Twin of ``rc_materialize_review()``: copies that fail quietly next to good ones."""
+    import pandas as pd
+
+    with tempfile.TemporaryDirectory() as td:
+        src = os.path.join(td, "src.csv")
+        Path(src).write_text("a\n", encoding="utf-8")
+        srcdir = os.path.join(td, "adir")
+        os.makedirs(srcdir)
+        plan = pd.DataFrame(
+            {
+                "file_name": ["src.csv", "src2.csv", "adir", "missing.csv", "src.csv"],
+                "target_path": ["a", "a/b.csv", "d/dir", "m/x.csv", "e/f/g.csv"],
+                "original_target": [None, "a/c/orig.csv", None, "m/orig.csv", ""],
+            }
+        )
+        sd = pd.DataFrame(
+            {"file_name": ["src.csv", "src2.csv", "adir"], "file_location": [src, src, srcdir]}
+        )
+        x = materialize(plan, sd)
+        mat = x["materialised"].copy()
+        mat["source"] = mat["source"].map(lambda v: _unroot(v, td)).astype("string")
+        x["materialised"] = mat
+        return x
+
+
 def _namespace() -> types.SimpleNamespace:
     import pandas as pd
 
@@ -194,6 +222,7 @@ def _namespace() -> types.SimpleNamespace:
         files_df=files_df,
         run_order_full=run_order_full,
         materialize=materialize,
+        materialize_review=materialize_review,
         write_scripts=write_scripts,
         run_scripts=run_scripts,
         tmp=tmp,

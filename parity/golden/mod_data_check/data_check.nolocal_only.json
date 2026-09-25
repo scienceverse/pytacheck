@@ -1,0 +1,331 @@
+{
+  "id": "data_check.nolocal_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "dv_summary_text",
+      "dv_report",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "na"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "column_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "column_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no readable tabular data files to validate."
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "remote",
+              "remote",
+              "remote"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/remot",
+              "https://osf.io/remot",
+              "https://osf.io/remot"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a.csv",
+              "b.sav",
+              "readme.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/a.csv",
+              "data/b.sav",
+              "readme.md"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              120,
+              120,
+              120
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular",
+              "tabular",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,943 @@
+{
+  "id": "data_check.local.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/basic",
+              "tests/mod_data_check/fixtures/repos/basic",
+              "tests/mod_data_check/fixtures/repos/basic",
+              "tests/mod_data_check/fixtures/repos/basic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "study.csv",
+              "study.csv",
+              "study.csv",
+              "study.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "age",
+              "gender",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "age",
+              "gender",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "years",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 | 2 | 3 | 4 | 5",
+              "23 | 35 | 41 | 29 | 30",
+              "Male | Female | Male | Female | Male",
+              "0.5 | 1 | 1.5 | 2 | 2.5"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20,
+              20,
+              20,
+              20
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20,
+              20,
+              2,
+              20
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              35.25,
+              null,
+              5.25
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              12.051970793194,
+              null,
+              2.95803989154981
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              2.69490259564237,
+              null,
+              0.661437827766148
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              34,
+              null,
+              5.25
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              19,
+              null,
+              0.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              61,
+              null,
+              10
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              42,
+              null,
+              9.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              25.75,
+              null,
+              2.875
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              41.75,
+              null,
+              7.625
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              16,
+              null,
+              4.75
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0.524374854431403,
+              null,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              -0.881103230230981,
+              null,
+              -1.38092857142857
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: tests/mod_data_check/fixtures/repos/basic**",
+          "```\n├── data/\n│   └── study.csv     📊 data      ex1\n├── materials/\n│   └── stimulus.png  📁 materials ex1\n├── analysis.R        💻 code      ex1\n└── README.md         📄 readme\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:20, age = c(23L, 35L, 41L, 29L, 30L, 22L, \n19L, 55L, 61L, 44L, 38L, 27L, 33L, 25L, 48L, 52L, 36L, 40L, 21L, \n26L), gender = c(\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \n\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\"), score = c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, \n5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10)), row.names = c(NA, \n20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
+          "::: {.panel-tabset}\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"gender\", \"id\", \"score\"), Representation = c(\"numeric\", \n\"text\", \"text\", \"numeric\"), Level = c(\"ratio\", \"nominal\", \"nominal\", \n\"ratio\"), Concept = c(\"age\", \"gender\", \"id\", \"\"), Role = c(\"measure\", \n\"measure\", \"identifier\", \"measure\"), Unit = c(\"years\", \"\", \"\", \n\"\"), Rows = c(20L, 20L, 20L, 20L), \"% Missing\" = c(0, 0, 0, 0\n), \"N Unique\" = c(20L, 2L, 20L, 20L), Mean = c(35.25, NA, NA, \n5.25), SD = c(12.052, NA, NA, 2.958), Min = c(19, NA, NA, 0.5\n), Max = c(61, NA, NA, 10)), row.names = c(\"age\", \"gender\", \"id\", \n\"score\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 4 columns across 1 data file.",
+          "#### Careless Responding",
+          "No file could be screened for careless responding.",
+          "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 4 files: 1 data, 1 code, 1 documentation, 1 materials.\n-  We found 1 tabular data file and extracted 4 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n-  The study-group step did not get an answer for 3 files (the model request failed); they were grouped by the fallback rules instead. We ran automated data-quality checks on 4 columns and found no issues. We detected demographic columns for Age, Gender."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "study.csv",
+              "study.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "age",
+              "gender"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "age",
+              "gender"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id",
+          "data_format",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "basic",
+              "basic",
+              "basic",
+              "basic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/basic",
+              "tests/mod_data_check/fixtures/repos/basic",
+              "tests/mod_data_check/fixtures/repos/basic",
+              "tests/mod_data_check/fixtures/repos/basic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "study.csv",
+              "stimulus.png",
+              "README.md"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/basic/analysis.R",
+              "tests/mod_data_check/fixtures/repos/basic/data/study.csv",
+              "tests/mod_data_check/fixtures/repos/basic/materials/stimulus.png",
+              "tests/mod_data_check/fixtures/repos/basic/README.md"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60,
+              360,
+              4,
+              48
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "data",
+              null,
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "data/study.csv",
+              "materials/stimulus.png",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "data",
+              "materials",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "tabular",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "study.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 20,
+            "names": [
+              "id",
+              "age",
+              "gender",
+              "score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  23,
+                  35,
+                  41,
+                  29,
+                  30,
+                  22,
+                  19,
+                  55,
+                  61,
+                  44,
+                  38,
+                  27,
+                  33,
+                  25,
+                  48,
+                  52,
+                  36,
+                  40,
+                  21,
+                  26
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female",
+                  "Male",
+                  "Female"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.5,
+                  1,
+                  1.5,
+                  2,
+                  2.5,
+                  3,
+                  3.5,
+                  4,
+                  4.5,
+                  5,
+                  5.5,
+                  6,
+                  6.5,
+                  7,
+                  7.5,
+                  8,
+                  8.5,
+                  9,
+                  9.5,
+                  10
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
