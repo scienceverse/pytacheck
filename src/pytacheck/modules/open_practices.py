@@ -7,6 +7,7 @@ from typing import Any
 
 import pandas as pd
 
+from pytacheck._r.base import plural
 from pytacheck._r.frames import bind_rows
 from pytacheck._r.regex import grepl, gsub
 from pytacheck.module import module
@@ -346,8 +347,9 @@ def open_practices(paper: Any) -> dict[str, Any]:
         only_data = sum(bool(d) and not c for d, c in opened)
         only_code = sum(not d and bool(c) for d, c in opened)
         neither = sum(not d and not c for d, c in opened)
+        # "1 paper shared" (metacheck: "1 papers", U82)
         summary_text = (
-            f"{both:d} papers shared both data and code, {only_data:d} only data, "
+            f"{both:d} paper{plural(both)} shared both data and code, {only_data:d} only data, "
             f"{only_code:d} only code, and {neither:d} neither."
         )
     elif not single:

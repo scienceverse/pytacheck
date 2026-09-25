@@ -36,7 +36,7 @@
   "module": "open_practices"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "open_practices.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2 of 4; metacheck counts only papers with a flagged sentence)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2 of 4; metacheck counts only papers with a flagged sentence). The summary says '1 paper shared both' (metacheck '1 papers', U82)."}
   "module": "open_practices"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
@@ -133,7 +133,7 @@
     "paper": {"$expr": {"r": 'paperlist(test_paper("Open code is available at https://github.com/repo/mine."), test_paper("Data available upon request."))', "py": 'pc.PaperList([pc.test_paper(["Open code is available at https://github.com/repo/mine."]), pc.test_paper(["Data available upon request."])])'}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.paperlist_mixed"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (3; metacheck 1)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (3; metacheck 1). The summary says '1 paper shared both' (metacheck '1 papers', U82)."}
   "module": "open_practices"
   "args":
     "paper": {"$expr": {"r": 'paperlist(test_paper("The data and code are available at https://osf.io/abcde."), test_paper("Nothing to see."), test_paper(c("Data are on OSF: https://osf.io/q.", "Materials are available on request.")), test_paper("Our analysis code is on GitHub (https://github.com/a/b)."))', "py": 'pc.PaperList([pc.test_paper(["The data and code are available at https://osf.io/abcde."]), pc.test_paper(["Nothing to see."]), pc.test_paper(["Data are on OSF: https://osf.io/q.", "Materials are available on request."]), pc.test_paper(["Our analysis code is on GitHub (https://github.com/a/b)."])])'}}

@@ -263,7 +263,7 @@
   "module": "ref_miscitation"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "ref_miscitation.demo.custom_db"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation. (The demo's 'Figure 1' xref was taken as a citation of bib 1.)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation. (The demo's 'Figure 1' xref was taken as a citation of bib 1.) The reference, now without an in-text citation, says 'No in-text citations were detected.' instead of quoting '> NA'."}
   "module": "ref_miscitation"
   "args":
     "paper": {"$paper": "demo"}
@@ -273,7 +273,7 @@
         "reftext": ["The full reference (this is a test)"]
         "warning": ["Lorem ipsum this is a test..."]
 - "id": "ref_miscitation.demo.two_db"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation. References without an in-text citation say 'No in-text citations were detected.'"}
   "module": "ref_miscitation"
   "args":
     "paper": {"$paper": "demo"}
@@ -299,6 +299,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); demo_no_refs()"
         "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).demo_no_refs()"
 - "id": "ref_miscitation.instances"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A reference without an in-text citation in a paper is not quoted as '> NA' or counted as an instance (metacheck quotes every row of the join)."}
   "module": "ref_miscitation"
   "args":
     "paper":

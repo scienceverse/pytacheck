@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import heapq
-from itertools import islice
 from typing import Any
 
 import pandas as pd
@@ -225,39 +223,29 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
         n = len(table)
         summary_text = f"We found {n:d} citation{plural(n)} to papers that are commonly miscited."
 
-        # R: all_instances <- xrefs$citation[xrefs$doi == warn_doi]; a comparison
-        # with NA selects NA, so rows with an NA DOI give an NA instance for every
-        # DOI (and an NA warn_doi selects NA for every row). The rows of each DOI
-        # are indexed once instead of scanning xrefs for every DOI.
-        all_dois = xrefs["doi"].tolist()
-        citations = xrefs["citation"].tolist()
-        doi_rows: dict[Any, list[int]] = {}
-        na_rows: list[int] = []
-        for i, d in enumerate(all_dois):
-            if _is_na(d):
-                na_rows.append(i)
-            else:
-                doi_rows.setdefault(d, []).append(i)
+        # the in-text citations of each DOI, in table order. metacheck quotes
+        # every row (`xrefs$citation[xrefs$doi == warn_doi]`), so a reference
+        # without an in-text citation, or whose sentence is missing, is quoted as
+        # "> NA" (U117). The DOIs are never missing here: references without a
+        # DOI are dropped before the join.
+        cited: dict[Any, list[Any]] = {}
+        for d, c in zip(xrefs["doi"].tolist(), xrefs["citation"].tolist(), strict=True):
+            quotes_of = cited.setdefault(_key(d), [])
+            if not _is_na(c):
+                quotes_of.append(c)
 
         report = []
         for warn_doi, warning, reftext in to_warn.itertuples(index=False, name=None):
-            if _is_na(warn_doi):
-                n_all = len(all_dois)
-                instances: list[Any] = [None] * min(5, n_all)
-            else:
-                rows = doi_rows.get(warn_doi, [])
-                n_all = len(rows) + len(na_rows)
-                head = list(islice(heapq.merge(rows, na_rows), 5)) if na_rows else rows[:5]
-                instances = [None if _is_na(all_dois[i]) else citations[i] for i in head]
-
-            n_head = len(instances)
+            head = f"**{_chr(warn_doi)}**\n\n{_chr(reftext)}\n\n{_chr(warning)}\n\n"
+            all_instances = cited.get(_key(warn_doi), [])
+            if not all_instances:
+                report.append(f"{head}*No in-text citations were detected.*")
+                continue
+            instances = all_instances[:5]
+            n_head, n_all = len(instances), len(all_instances)
             instance_n = f"{n_head:d} of {n_all:d}" if n_head < n_all else f"{n_head:d}"
-            quotes = "\n\n".join(f"> {_chr(c)}" for c in instances) if instances else "> "
-
-            report.append(
-                f"**{_chr(warn_doi)}**\n\n{_chr(reftext)}\n\n{_chr(warning)}\n\n"
-                f"*{instance_n} Instance{plural(n_all)}:*\n\n{quotes}"
-            )
+            quotes = "\n\n".join(f"> {_chr(c)}" for c in instances)
+            report.append(f"{head}*{instance_n} Instance{plural(n_all)}:*\n\n{quotes}")
 
     # return a list ----
     return {

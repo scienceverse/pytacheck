@@ -121,6 +121,7 @@
           "r": "data.frame(note = c(\"n1\", \"n2\"), doi = c(\"10.1000/b\", \"10.1000/a\"), warning = c(\"Warn B\", \"Warn A\"), score = c(1.5, 2), reftext = c(\"Ref B\", \"Ref A\"))"
           "py": "pd.DataFrame({\"note\": [\"n1\", \"n2\"], \"doi\": [\"10.1000/b\", \"10.1000/a\"], \"warning\": [\"Warn B\", \"Warn A\"], \"score\": [1.5, 2.0], \"reftext\": [\"Ref B\", \"Ref A\"]})"
   - "id": "ref_miscitation.paperlist_order"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A reference without an in-text citation in a paper is not quoted as '> NA' or counted as an instance (metacheck quotes every row of the join)."}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -132,6 +133,7 @@
           "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
           "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
   - "id": "ref_miscitation.bib_id_order"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A reference without an in-text citation in a paper is not quoted as '> NA' or counted as an instance (metacheck quotes every row of the join)."}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -221,6 +223,7 @@
           "reftext": ["r"]
           "warning": ["w"]
   - "id": "ref_miscitation.stress"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A reference without an in-text citation in a paper is not quoted as '> NA' or counted as an instance (metacheck quotes every row of the join)."}
     "module": "ref_miscitation"
     "args":
       "paper":

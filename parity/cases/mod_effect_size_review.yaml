@@ -116,7 +116,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- F / eta labels and values
 - "id": "stat_effect_size.review.f_variants"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "'partial η²' is a partial eta-squared and is checked (match); metacheck reads it as eta-squared."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "'partial η²' is a partial eta-squared and is checked (match), and 'beta' is not an eta-squared (not verifiable); metacheck reads both as eta-squared."}
   "module": "stat_effect_size"
   "args":
     "paper":

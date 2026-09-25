@@ -539,25 +539,35 @@ def _eta_label(raw_label: str) -> str:
         # Omega squared (partial or not) depends on the total sample size N which
         # cannot yet be recovered.
         return "non_checkable"
-    if has("η") or has("eta"):
+    # "eta" as a word of its own: "beta", "theta" and "zeta" are not an eta
+    # (labels have no spaces, so "partial eta" is "partialeta")
+    if has("η") or has("(^|[^a-z]|partial|generali[sz]ed)eta"):
         return "partial_eta_squared" if has("partial") or has("p") else "eta_squared"
     # d, g, r, R2, beta, ... next to an F-test: not an eta-squared (metacheck
     # labels them "eta_squared" and says "Eta-squared reported", U126)
     return "non_checkable"
 
 
-def _after_partial(sentence: str | None, lhs: str) -> bool:
-    """Whether *lhs* follows the word "partial" in *sentence* ("partial η2 = .12")."""
-    if not isinstance(sentence, str) or not lhs:
+def _after_partial(sentence: str | None, lhs: str, comp: str, value: str) -> bool:
+    """Whether this value follows the word "partial" in *sentence* ("partial η2 = .12").
+
+    The whole "<lhs> <comp> <value>" is looked up, so a plain "η2 = .05" in a
+    sentence that also has a "partial η2 = .20" stays an eta-squared.
+    """
+    import re
+
+    if not isinstance(sentence, str) or not lhs or not value:
         return False
-    low, target = sentence.lower(), lhs.lower()
-    start = low.find("partial")
-    while start >= 0:
-        rest = low[start + len("partial") :].lstrip(" -\u00a0")
-        if rest.startswith(target):
-            return True
-        start = low.find("partial", start + 1)
-    return False
+    pattern = (
+        r"partial[\s\-\u00a0]*"
+        + re.escape(lhs)
+        + r"\s*"
+        + re.escape(comp)
+        + r"\s*"
+        + re.escape(value)
+        + r"(?![0-9])"
+    )
+    return re.search(pattern, sentence, flags=re.IGNORECASE) is not None
 
 
 def _parse_eta_stats(es_text: str | None, sentence: str | None = None) -> list[_EtaStat]:
@@ -583,7 +593,7 @@ def _parse_eta_stats(es_text: str | None, sentence: str | None = None) -> list[_
         raw_label = gsub(r"\s+", "", raw_label)
         raw_label = gsub("²", "2", raw_label)
         label = _eta_label(raw_label)
-        if label == "eta_squared" and _after_partial(sentence, lhs):
+        if label == "eta_squared" and _after_partial(sentence, lhs, g[2], g[3]):
             label = "partial_eta_squared"
         out.append(_EtaStat(label, _num(g[3]), x, g[2]))
     return out
@@ -1100,7 +1110,7 @@ def _string_frame(rows: list[dict[str, str | None]], columns: Sequence[str]) -> 
         "F-tests."
     ),
     details="""
-        The Effect Size check searches for regular expressions that match typical ways in which effect sizes are reported. It subsequently checks different ways in which Cohen's d, g, ηp2, and ωp2 can be computed against the reported value. If effects are missing, or might be incorrect, you the module provides a warning. The module was validated on APA reported statistical tests, and might miss effect sizes that were reported in other reporting styles. It was validated by the Metacheck team on papers published in Psychological Science.
+        The Effect Size check searches for regular expressions that match typical ways in which effect sizes are reported. It subsequently checks different ways in which Cohen's d, g, ηp2, and ωp2 can be computed against the reported value. If effects are missing, or might be incorrect, the module provides a warning. The module was validated on APA reported statistical tests, and might miss effect sizes that were reported in other reporting styles. It was validated by the Metacheck team on papers published in Psychological Science.
 
         This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
 

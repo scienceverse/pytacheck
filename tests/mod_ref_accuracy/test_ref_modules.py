@@ -410,3 +410,10 @@ def test_param_help_keeps_roxygen_line_breaks() -> None:
         "how many of the leading authors to compare against the\nretrieved record."
     )
     assert "\n" not in params["paper"]
+
+
+def test_help_text_without_metacheck_typos() -> None:
+    # U83: metacheck's details say "..., of mistakes in citations. You will need check ..."
+    details = pc.module_info("ref_accuracy").details
+    assert "or mistakes in citations. You will need to check the original source." in details
+    assert "will need check" not in details

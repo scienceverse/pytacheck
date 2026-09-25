@@ -1,7 +1,7 @@
 "area": "mod_urls_open_review"
 "cases":
 - "id": "open_practices.review.read_reversed"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 0)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 0). The summary says '1 paper shared both' (metacheck '1 papers', U82)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -11,7 +11,7 @@
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
 - "id": "open_practices.review.list_order"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1). The summary says '1 paper shared both' (metacheck '1 papers', U82)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -309,13 +309,13 @@
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
 - "id": "open_practices.review.single_0956797617737129"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "Three 'r(76) = ... (see Fig https://...)' sentences are no longer code statements: only a capital R is a code word."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "Correlation sentences ('r(68) = .58', 'r(76) = .10') are no longer code statements: only a capital R is a code word. The sentences read from the TEI also differ (io fix U16: URL link texts are not replaced in other sentences), which changes the flagged rows."}
   "module": "open_practices"
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
 - "id": "open_practices.review.chain_twice"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1). The summary says '1 paper shared both' (metacheck '1 papers', U82)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -342,7 +342,7 @@
               "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"p1\"), p)[1])(pc.test_paper([\"The data and code are available at https://osf.io/abcde.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p2\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p3\"), p)[1])(pc.test_paper([\"Materials are available on request.\", \"See www.example.com.\"]))])"
           "module": "open_practices"
 - "id": "open_practices.review.chain_after_all_urls"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1). The summary says '1 paper shared both' (metacheck '1 papers', U82)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -382,7 +382,7 @@
               "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"n1\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"n2\"), p)[1])(pc.test_paper([\"Or here, see www.example.com.\"]))])"
           "module": "open_practices"
 - "id": "open_practices.review.chain_after_marginal"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1). The summary says '1 paper shared both' (metacheck '1 papers', U82)."}
   "module": "open_practices"
   "args":
     "paper":
