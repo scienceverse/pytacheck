@@ -101,7 +101,10 @@ def expand(fn: str, fixture: str, skip_types: Any = "materials", minimal: bool =
         out = getattr(zip_peek, fn)(f, row, skip_types=skip_types)
         if "file_location" in out.columns:
             out["file_location"] = pd.Series(
-                [None if v is None or v is pd.NA else str(v).replace(d, "<TMP>") for v in out["file_location"].tolist()],
+                [
+                    None if v is None or v is pd.NA else str(v).replace(d, "<TMP>")
+                    for v in out["file_location"].tolist()
+                ],
                 dtype="string",
             )
         return out
@@ -118,7 +121,10 @@ def fetch_members(url: str, names: Any = None) -> Any:
         out = _zip_fetch_members(url, names=names, dest=d)
         if out is not None and "path" in out.columns:
             out["path"] = pd.Series(
-                [None if v is None or v is pd.NA else str(v).replace(d, "<TMP>") for v in out["path"].tolist()],
+                [
+                    None if v is None or v is pd.NA else str(v).replace(d, "<TMP>")
+                    for v in out["path"].tolist()
+                ],
                 dtype="string",
             )
         return out
@@ -127,7 +133,10 @@ def fetch_members(url: str, names: Any = None) -> Any:
 
 
 def download(
-    files: pd.DataFrame, file_url: list[str | None] | None = None, twice: bool = False, **kwargs: Any
+    files: pd.DataFrame,
+    file_url: list[str | None] | None = None,
+    twice: bool = False,
+    **kwargs: Any,
 ) -> dict[str, Any]:
     """``download_repo_files(files, ...)`` into a throwaway session dir; paths as ``<SESSION>``.
 
@@ -155,7 +164,10 @@ def download(
         if twice:
             dl = download_repo_files(files, **kwargs)
         assert dl is not None
-        loc = [None if v is None or v is pd.NA else str(v).replace(sess, "<SESSION>") for v in dl["file_location"].tolist()]
+        loc = [
+            None if v is None or v is pd.NA else str(v).replace(sess, "<SESSION>")
+            for v in dl["file_location"].tolist()
+        ]
         return {
             "file_location": loc,
             "gated": dl.attrs["gated"],
@@ -170,17 +182,25 @@ def download(
 def _failed(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
     out["file_url"] = pd.Series(
-        [None if v is None or v is pd.NA else str(v).replace(str(DATA), "<DATA>") for v in out["file_url"].tolist()],
+        [
+            None if v is None or v is pd.NA else str(v).replace(str(DATA), "<DATA>")
+            for v in out["file_url"].tolist()
+        ],
         dtype="string",
     )
     out["error"] = pd.Series(
-        [None if v is None or v is pd.NA else str(v).replace(str(DATA), "<DATA>") for v in out["error"].tolist()],
+        [
+            None if v is None or v is pd.NA else str(v).replace(str(DATA), "<DATA>")
+            for v in out["error"].tolist()
+        ],
         dtype="string",
     )
     return out
 
 
-def rate_limit_response(status: int, headers: dict[str, str], reset_offset: float | None = None) -> Any:
+def rate_limit_response(
+    status: int, headers: dict[str, str], reset_offset: float | None = None
+) -> Any:
     """An ``httr2::response()``-like object; *reset_offset* adds ``now + offset`` resets."""
     import time
 
@@ -194,3 +214,13 @@ def rate_limit_response(status: int, headers: dict[str, str], reset_offset: floa
 
 def nan() -> float:
     return math.nan
+
+
+def do_call(what: Any, args: dict[str, Any] | None = None) -> Any:
+    """R ``do.call(what, args)`` with a named argument list."""
+    return what(**(args or {}))
+
+
+def identity(x: Any = None) -> Any:
+    """R ``identity()``."""
+    return x
