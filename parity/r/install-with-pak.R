@@ -1,6 +1,8 @@
 # Portable (non-conda) way to build the R reference: installs the package
 # versions in parity/r/packages.lock with pak, then metacheck from the
-# upstream/metacheck submodule. Run from the repository root.
+# upstream/metacheck submodule, then metacheck's suggested package careless
+# into its own library for the accuracy report (see install-suggests.R). Run
+# from the repository root.
 lock <- readLines("parity/r/packages.lock")
 lock <- lock[nzchar(lock)]
 if (!requireNamespace("pak", quietly = TRUE)) {
@@ -11,3 +13,6 @@ if (!requireNamespace("pak", quietly = TRUE)) {
 }
 pak::pkg_install(sub("==", "@", lock, fixed = TRUE), upgrade = FALSE, ask = FALSE)
 pak::local_install("upstream/metacheck", upgrade = FALSE, ask = FALSE)
+suggests <- file.path(R.home(), "suggests")
+dir.create(suggests, showWarnings = FALSE, recursive = TRUE)
+pak::pkg_install("careless@1.2.2", lib = suggests, upgrade = FALSE, ask = FALSE)

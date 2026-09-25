@@ -4,9 +4,10 @@ You are maintaining pytacheck, the Python port of the R package metacheck. metac
 
 Read, in this order:
 1. `.upstream-sync/brief.md` — what changed upstream (commits, files, functions, diff),
-   which pytacheck files correspond to each changed R file, and which parity goldens
+   which pytacheck files correspond to each changed R file, which parity goldens
    changed when regenerated with the new metacheck (those are behaviour changes you must
-   port).
+   port), the marked cases whose golden changed (`r_changed`) or that now match R
+   (`xpass`), and the accuracy report on the realistic corpus before porting.
 2. `docs/PORTING.md` and `docs/PARITY.md` — binding rules, above all the accuracy
    contract (`docs/PORTING.md`, section 1).
 
@@ -30,9 +31,21 @@ Then port the upstream changes:
   `src/pytacheck/resources/schema/`; if demos changed, copy `inst/demos/*`.
 
 Done means all of these pass:
-    uv run python -m parity check
-    uv run pytest -n auto -m "not network and not r"
+    uv run python -m parity check --jobs 0
+    uv run python -m parity accuracy --gate
+    uv run pytest -n auto -m "not network and not r and not parity"   # parity check ran them
     uv run ruff check . && uv run ruff format --check .
+
+The accuracy report (`docs/PARITY.md`, "Accuracy") runs every offline module on the real
+papers and repositories of `parity/accuracy/matrix.toml` and scores pytacheck's results
+against metacheck's (the goldens under `parity/accuracy/golden/` were regenerated with the
+new metacheck). Port the changes until its differences are those that
+`parity/accuracy/expected.yaml` explains. A new difference that is a metacheck bug pytacheck
+fixes, or a deliberate difference, gets an entry there citing its U- or D-entry, like a mark;
+an entry that no longer explains anything (`stale`) is removed. Changes to that file, to the
+marks of tier-1 (realistic) cases or to D-entries make the pull request a draft that needs
+human review, so keep them to what the upstream changes require and explain each in
+`.upstream-sync/notes.md`.
 
 Every difference from R's goldens is marked, never hidden:
 - If the new R code is clearly wrong (a crash on valid input, a mis-parse, a wrong count,

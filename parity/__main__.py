@@ -6,6 +6,7 @@ generate  Run the R reference (metacheck) and write golden JSON files.
 check     Run the Python port and compare it with the goldens.
 lock      Pin the marked cases' differences in parity/lock/<area>.json.
 list      List cases, their tiers and whether they have goldens.
+accuracy  Score pytacheck against metacheck on the realistic corpus (parity.accuracy).
 
 Examples::
 
@@ -17,6 +18,7 @@ Examples::
     python -m parity check --report out.json       # the per-case JSON report
     python -m parity lock --area text              # after changing a marked case
     python -m parity lock -k json_expand --suggest # also propose marks for R crashes
+    python -m parity accuracy --gate               # the realistic-corpus report and gate
 
 ``generate`` uses the ``Rscript`` on PATH unless ``PYTACHECK_RSCRIPT`` or
 ``--rscript`` points elsewhere, and always runs R under ``C.UTF-8`` / UTC
@@ -918,6 +920,9 @@ def main(argv: list[str] | None = None) -> int:
     ls.add_argument("--area")
     ls.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)
     ls.set_defaults(func=cmd_list)
+    from parity import accuracy
+
+    accuracy.add_parser(sub)
     ns = parser.parse_args(argv)
     return int(ns.func(ns))
 

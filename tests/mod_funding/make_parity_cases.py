@@ -86,7 +86,6 @@ def paper_expr(r: str, py: str) -> dict[str, Any]:
 
 LOCATORS = [
     "get_support_1",
-    "get_support_2",
     "get_support_3",
     "get_support_4",
     "get_support_5",
@@ -107,7 +106,6 @@ LOCATORS = [
     "get_fund_2",
     "get_fund_3",
     "get_fund_acknow",
-    "get_fund_acknow_new",
     "get_supported_1",
     "get_financial_1",
     "get_financial_2",
@@ -125,28 +123,12 @@ LOCATORS = [
     "get_acknow_1",
     "get_acknow_2",
 ]
-NEGATORS = ["negate_disclosure_1", "negate_disclosure_2", "negate_conflict_1", "negate_absence_1"]
-WHERE = [".where_refs_txt", ".where_acknows_txt", ".where_methods_txt"]
-OBLITERATORS = [
-    "obliterate_fullstop_1",
-    ".obliterate_semicolon_1",
-    ".obliterate_comma_1",
-    ".obliterate_apostrophe_1",
-    ".obliterate_hash_1",
-    ".obliterate_punct_1",
-    ".obliterate_line_break_1",
-    ".obliterate_refs_1",
-    "obliterate_conflict_1",
-    "obliterate_disclosure_1",
-]
-PATTERN_FNS = [
-    *LOCATORS,
-    *NEGATORS,
-    *WHERE,
-    "obliterate_conflict_1",
-    "obliterate_disclosure_1",
-    ".obliterate_refs_1",
-]
+# the rtransparent helpers funding_check() uses (get_support_2, get_fund_acknow_new,
+# negate_disclosure_*, negate_conflict_1, .where_methods_txt and the obliterate_*
+# cleaners are not called, and not ported)
+NEGATORS = ["negate_absence_1"]
+WHERE = [".where_refs_txt", ".where_acknows_txt"]
+PATTERN_FNS = [*LOCATORS, *NEGATORS, *WHERE]
 
 
 def add_pattern_cases() -> None:
@@ -181,31 +163,6 @@ def add_pattern_cases() -> None:
         ),
         ("title", ".title", r_chr(["A", "B"]), py_list(["A", "B"])),
         ("title_within", ".title", q("A") + ", within_text = TRUE", q("A") + ", within_text=True"),
-        ("title_strict", ".title_strict", r_chr(["A", "B"]), py_list(["A", "B"])),
-        (
-            "title_strict_within",
-            ".title_strict",
-            q("A") + ", within_text = TRUE",
-            q("A") + ", within_text=True",
-        ),
-        (
-            "first_capital",
-            ".first_capital",
-            r_chr(["Funding", "abc", "X"]),
-            py_list(["Funding", "abc", "X"]),
-        ),
-        (
-            "first_capital_start",
-            ".first_capital",
-            r_chr(["Funding", "abc"]) + ', "start"',
-            py_list(["Funding", "abc"]) + ', "start"',
-        ),
-        (
-            "first_capital_end",
-            ".first_capital",
-            r_chr(["Funding", "abc"]) + ', "end"',
-            py_list(["Funding", "abc"]) + ', "end"',
-        ),
     ]
     for id_, fn, r_args, py_args in small:
         expr_case(
@@ -215,10 +172,8 @@ def add_pattern_cases() -> None:
         )
     for id_, fn, r_args, py_args in [
         ("bound_unknown", ".bound", '"a", "middle"', '["a"], "middle"'),
-        ("first_capital_unknown", ".first_capital", '"a", "middle"', '["a"], "middle"'),
         ("not_character", "get_support_1", "1", "[1]"),
         ("not_character_null", "rtransparent_funding", "NULL", "None"),
-        ("obliterate_not_character", "obliterate_fullstop_1", "TRUE", "True"),
     ]:
         expr_case(
             f"helpers.error.{id_}",
@@ -474,54 +429,6 @@ def add_funding_cases() -> None:
 
 
 # ---------------------------------------------------------------------------
-# obliterate_*() (stringr/ICU in R)
-# ---------------------------------------------------------------------------
-
-OBLITERATE_TEXT = [
-    "J. R. R. Tolkien wrote it.",
-    "A. B. Smith and C.D. Jones.",
-    "See Fig. 2. It shows e.g. this.",
-    "Dr. Smith went.Home now.",
-    "Value was 3.14 and v.2.0 ok.",
-    "Section A1.B2 here. (see below).",
-    "End of sentence. New one. ABC1 test.ABC2.",
-    "Question?. Exclaim!. Dash.- x. .",
-    "Mr.\u00a0Smith and Mrs.\u2003Jones.\u00a7 sign.",
-    "Tabs.\tand\nlines.\u2028sep",
-    "(a; b) and (c; d; e) then x; y",
-    "It's the authors' work, isn't it? the cats' toys",
-    'Price: $5 #1 @home ~50% ^caret &amp *star {b} _u +p "q" <a> ?/=',
-    "one, two, three,four",
-    "no hash # here ##",
-    "line\nbreak\n",
-    "Smith et al. (2020) found.",
-    "Jones (2019) showed.",
-    "et al.",
-    "There were no financial relationships with conflicts here.",
-    "Competing interests: no association with financial gain interest.",
-    "The authors declare no conflict and were not funded by anyone.",
-    "Conflicts of interest and funding",
-    "Nothing to see.",
-    "",
-    None,
-]
-
-
-def add_obliterate_cases() -> None:
-    for fn in OBLITERATORS:
-        expr_case(
-            f"obliterate.{fn.lstrip('.')}",
-            ENV_R + f"fc_env()${fn}({r_chr(OBLITERATE_TEXT)})",
-            f"{SUPPORT}.call({q(fn)}, {py_list(OBLITERATE_TEXT)})",
-        )
-    expr_case(
-        "obliterate.fullstop_scalar",
-        ENV_R + "fc_env()$obliterate_fullstop_1('A. B. C. Smith.')",
-        f"{SUPPORT}.call('obliterate_fullstop_1', 'A. B. C. Smith.')",
-    )
-
-
-# ---------------------------------------------------------------------------
 # modules
 # ---------------------------------------------------------------------------
 
@@ -651,7 +558,6 @@ def main() -> None:
     add_pattern_cases()
     add_locator_cases()
     add_funding_cases()
-    add_obliterate_cases()
     add_module_cases()
     doc = {"area": "mod_funding", "cases": CASES}
     with OUT.open("w", encoding="utf-8") as fh:

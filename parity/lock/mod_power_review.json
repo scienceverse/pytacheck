@@ -10,5 +10,7 @@
 "power.review.fallback.partial_http_fail": {"r": "ac5146cf65ca52a8", "py": "09f8e16740126209", "diff": ["<R error, Python value>"]},
 "power.review.llm.control_char": {"r": "7c633fcadd430786", "py": "3604e63bf717a1af", "diff": ["report[]", "summary_table", "summary_table.power_complete[]", "summary_table.power_n[]", "summary_text[]", "table", "traffic_light[]"]},
 "power.review.llm.control_char_mixed": {"r": "54e1a0f8e949c287", "py": "09481a5ed4c88892", "diff": ["summary_table.power_alpha_level[]", "summary_table.power_complete[]", "summary_table.power_effect_size[]", "summary_table.power_effect_size_metric[]", "summary_table.power_n[]", "summary_table.power_power[]", "summary_table.power_sample_size[]", "summary_table.power_software[]", "summary_table.power_statistical_test[]", "summary_text[]", "table"]},
-"power.review.llm.no_key": {"r": "e892d635a3ffbe1b", "py": "5f43ef45f4990f87", "diff": ["table"]}
+"power.review.llm.no_key": {"r": "e892d635a3ffbe1b", "py": "5f43ef45f4990f87", "diff": ["table"]},
+"power.review.tricky": {"r": "8cebbf10fd539fec", "py": "060845c751270d02", "diff": ["summary_table.power_n[]", "summary_text[]", "table"]},
+"power.review.tricky.tables": {"r": "91481c1d43ae25fc", "py": "079b58b318e10ba6", "diff": ["[]"]}
 }

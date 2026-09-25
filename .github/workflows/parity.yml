@@ -2,7 +2,9 @@ name: Parity (R reference)
 
 # Regenerates every golden by running metacheck in R at the pinned commit and
 # fails if any golden differs from the committed one, so the goldens that
-# `pytest` compares against can never drift from R. Then runs the Python side.
+# `pytest` compares against can never drift from R. The same for the accuracy
+# report's R outputs (parity/accuracy/golden). Then runs the Python side and
+# the accuracy gate.
 
 on:
   pull_request:
@@ -47,7 +49,7 @@ jobs:
           environment-name: r-reference
           cache-environment: true
 
-      - name: Install httptest2 and metacheck at the pinned commits
+      - name: Install httptest2 and metacheck at the pinned commits, and careless
         env:
           # non-ASCII names in metacheck's code only survive a UTF-8 install locale
           LANG: C.UTF-8
@@ -57,6 +59,8 @@ jobs:
           git -C /tmp/httptest2 checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
           R CMD INSTALL /tmp/httptest2
           R CMD INSTALL --no-test-load upstream/metacheck
+          # metacheck's suggested careless, in the library only the accuracy report loads
+          Rscript parity/r/install-suggests.R
           echo "PYTACHECK_RSCRIPT=$(command -v Rscript)" >> "$GITHUB_ENV"
 
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
@@ -68,25 +72,36 @@ jobs:
       - name: Regenerate all goldens
         run: uv run python -m parity generate
 
+      - name: Regenerate the accuracy report's R outputs, and score them
+        run: >-
+          uv run python -m parity accuracy --generate --gate
+          --report parity/_out/accuracy.json --md "$GITHUB_STEP_SUMMARY"
+
       - name: Goldens must match the committed ones
+        if: always()
         run: |
-          if ! git diff --quiet -- parity/golden; then
-            git diff --stat -- parity/golden
+          if ! git diff --quiet -- parity/golden parity/accuracy/golden; then
+            git diff --stat -- parity/golden parity/accuracy/golden
             echo "::error::Goldens regenerated from R differ from the committed goldens."
             exit 1
           fi
-          untracked=$(git ls-files --others --exclude-standard -- parity/golden)
+          untracked=$(git ls-files --others --exclude-standard -- parity/golden parity/accuracy/golden)
           if [ -n "$untracked" ]; then
             echo "$untracked"
-            echo "::error::Cases without committed goldens."
+            echo "::error::Cases or accuracy modules without committed goldens."
             exit 1
           fi
 
       - name: Python matches R
-        run: uv run python -m parity check --report parity/_out/report.json
+        if: always()
+        run: >-
+          uv run python -m parity check --jobs 0
+          --report parity/_out/report.json --md "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: parity-report
-          path: parity/_out/report.json
+          path: |
+            parity/_out/report.json
+            parity/_out/accuracy.json

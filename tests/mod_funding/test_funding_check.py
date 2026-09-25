@@ -199,7 +199,7 @@ def test_character_checks() -> None:
     with pytest.raises(TypeError, match=r"is\.character\(article\) is not TRUE"):
         F.get_support_1([1, 2])
     with pytest.raises(TypeError, match=r"is\.character\(article\) is not TRUE"):
-        F.obliterate_fullstop_1(None)
+        F.negate_absence_1(None)
     assert F.get_support_1("This study was funded by the ERC.") == [0]
     assert F.get_support_1(pd.Series(["x", "This study was funded by the ERC."])) == [1]
 
@@ -212,9 +212,7 @@ def test_bound_and_title_helpers() -> None:
         F._bound(["a"], "middle")
     assert F._encase(["a", "b"]) == "(a|b)"
     assert F._title("X") == "^X(|:|\\.)$"
-    assert F._title_strict("X", within_text=True) == "X( [A-Z][a-zA-Z]|:|\\.|\\s*-+)"
     assert F._max_words("x") == "x(?:\\s+\\w+){0,3}"
-    assert F._first_capital(["Funding", "abc"]) == ["F(?i)unding(?-i)", "abc"]
 
 
 def test_create_synonyms_is_a_copy() -> None:
@@ -222,19 +220,6 @@ def test_create_synonyms_is_a_copy() -> None:
     syn["financial"].append("for supporting")
     assert "for supporting" not in F._create_synonyms()["financial"]
     assert syn["txt"] == ["[a-zA-Z0-9\\s,()\\[\\]/:-]*"]
-
-
-def test_obliterate_icu_classes() -> None:
-    # ICU's \s includes NBSP and its [[:punct:]] excludes symbols such as "$"
-    # (R: obliterate_fullstop_1(c("Mr.\u00a0smith", "x.$", "x.!", "x. $", "x. !")))
-    nbsp = "\u00a0"
-    assert F.obliterate_fullstop_1([f"Mr.{nbsp}smith", "x.$", "x.!", "x. $", "x. !"]) == [
-        "Mr smith",
-        "x$",
-        "x!",
-        "x. $",
-        "x !",
-    ]
 
 
 # ---------------------------------------------------------------------------
@@ -266,10 +251,22 @@ def test_required_literals() -> None:
 def test_prefilter_matches_full_scan(psychsci: pc.PaperList) -> None:
     from pytacheck._r.regex import grepl
     from pytacheck.text import text_search
-    from tests.mod_funding.make_parity_cases import BATTERY, BATTERY_2, OBLITERATE_TEXT
+    from tests.mod_funding.make_parity_cases import BATTERY, BATTERY_2
 
     texts = text_search(psychsci)["text"].tolist()
-    texts += BATTERY + BATTERY_2 + [t for t in OBLITERATE_TEXT if t is not None]
+    texts += (
+        BATTERY
+        + BATTERY_2
+        + [
+            "J. R. R. Tolkien wrote it.",
+            "Mr.\u00a0Smith and Mrs.\u2003Jones.\u00a7 sign.",
+            "It's the authors' work, isn't it? the cats' toys",
+            "There were no financial relationships with conflicts here.",
+            "The authors declare no conflict and were not funded by anyone.",
+            "Conflicts of interest and funding",
+            "",
+        ]
+    )
     texts += [t.upper() for t in BATTERY] + [t.lower() for t in BATTERY]
     for pattern in _all_patterns():
         for ignore_case in (False, True):

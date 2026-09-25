@@ -3,10 +3,12 @@
 metacheck's ``funding_check`` module embeds a copy of the funding detector of
 `rtransparent <https://github.com/serghiou/rtransparent>`_: a dictionary of
 synonyms (:func:`_create_synonyms`), small pattern builders (:func:`_encase`,
-:func:`_bound`, ...), ~40 ``get_*`` sentence locators, some negation helpers
-and text cleaners (``obliterate_*``, unused by the module but ported for
-completeness), and :func:`rtransparent_funding`, which combines them for one
-paper. This file is not a module (it starts with ``_``).
+:func:`_bound`, ...), the ``get_*`` sentence locators, the absence negation
+(:func:`negate_absence_1`) and :func:`rtransparent_funding`, which combines them
+for one paper. The rtransparent helpers the module never calls (``get_support_2``,
+``get_fund_acknow_new``, ``negate_disclosure_*``, ``negate_conflict_1``,
+``.where_methods_txt`` and the ``obliterate_*`` cleaners) are not ported. This
+file is not a module (it starts with ``_``).
 
 Conventions of the port:
 
@@ -29,11 +31,6 @@ Conventions of the port:
   lack the literal text every match needs (:func:`_required`, looked up in a
   word index of the column): a necessary condition only, so results are
   unchanged (``tests/mod_funding`` compares against full scans).
-
-The ``obliterate_*`` cleaners call ``stringr::str_replace_all()`` (the ICU
-engine) in R; their patterns are written here with ICU's Unicode classes
-spelled out (``\\s`` is White_Space, ``[[:punct:]]`` is ``\\p{P}``, ``.``
-excludes all line terminators) and run through the PCRE helpers.
 """
 
 from __future__ import annotations
@@ -45,7 +42,7 @@ from typing import Any
 
 import numpy as np
 
-from pytacheck._r.regex import grepl, gsub
+from pytacheck._r.regex import _casefold, grepl
 
 __all__ = [
     "get_acknow_1",
@@ -68,14 +65,12 @@ __all__ = [
     "get_fund_2",
     "get_fund_3",
     "get_fund_acknow",
-    "get_fund_acknow_new",
     "get_grant_1",
     "get_project_acknow",
     "get_received_1",
     "get_received_2",
     "get_recipient_1",
     "get_support_1",
-    "get_support_2",
     "get_support_3",
     "get_support_4",
     "get_support_5",
@@ -88,12 +83,6 @@ __all__ = [
     "get_thank_1",
     "get_thank_2",
     "negate_absence_1",
-    "negate_conflict_1",
-    "negate_disclosure_1",
-    "negate_disclosure_2",
-    "obliterate_conflict_1",
-    "obliterate_disclosure_1",
-    "obliterate_fullstop_1",
     "rtransparent_funding",
 ]
 
@@ -302,71 +291,6 @@ def _prefilter_pieces(pattern: str) -> tuple[tuple[str, ...], ...]:
 # Character vectors with shared, lazily computed regex matches
 # ---------------------------------------------------------------------------
 
-_Key = tuple[str, bool, bool]
-
-#: R's PCRE2 does not match Turkish ``İ`` (U+0130) / ``ı`` (U+0131) caselessly
-#: with ``i`` / ``I`` (they have no simple case folding), the `regex` engine
-#: does. For caseless PCRE patterns they are replaced by ``×`` (U+00D7), which
-#: every construct of these (ASCII) patterns treats alike (``.`` and negated
-#: classes match it; ``\\w``, ``\\s``, ``\\d``, ``\\b``, ``[[:alnum:]]`` and
-#: literals do not).
-_DOTTED_I = str.maketrans({"\u0130": "\u00d7", "\u0131": "\u00d7"})
-
-
-def _is_posix_only_class(body: str) -> bool:
-    """Is a class body (between ``[`` and ``]``) made only of POSIX classes and
-    ``\\w``-like escapes (the members PCRE2 does not case-fold)?
-
-    ``[:^upper:]`` / ``[:^lower:]`` are left to the engine (not scoped)."""
-    j = 1 if body.startswith("^") else 0
-    if j >= len(body):
-        return False
-    while j < len(body):
-        if body.startswith("[:", j):
-            end = body.find(":]", j + 2)
-            if end == -1 or body[j + 2 : end] in ("^upper", "^lower"):
-                return False
-            j = end + 2
-        elif body[j] == "\\" and j + 1 < len(body) and body[j + 1] in "wdshv":
-            j += 2
-        else:
-            return False
-    return True
-
-
-@cache
-def _caseless_pcre(pattern: str) -> str:
-    """*pattern* with ``\\w`` / ``\\W`` and POSIX-only classes scoped case-sensitive.
-
-    In PCRE2, caseless matching folds literals and explicit class members
-    (``[a-z]`` matches ``ſ`` and the Kelvin sign) but not ``\\w``, ``\\W`` or
-    ``[[:alnum:]]``; the `regex` translation of those is an explicit ASCII
-    class, which it would fold. ``(?-i:...)`` gives PCRE's meaning in both
-    engines. Caseless ``[:upper:]`` and ``[:lower:]`` match every ASCII letter
-    in PCRE2 (and still not ``ſ`` or the Kelvin sign): they become
-    ``[:alpha:]``.
-    """
-    out: list[str] = []
-    i, n = 0, len(pattern)
-    while i < n:
-        c = pattern[i]
-        if c == "\\" and i + 1 < n:
-            e = pattern[i + 1]
-            out.append(f"(?-i:\\{e})" if e in "wW" else pattern[i : i + 2])
-            i += 2
-        elif c == "[":
-            j = _class_end(pattern, i)
-            cls = pattern[i:j]
-            if _is_posix_only_class(cls[1:-1]):
-                cls = cls.replace("[:upper:]", "[:alpha:]").replace("[:lower:]", "[:alpha:]")
-                cls = f"(?-i:{cls})"
-            out.append(cls)
-            i = j
-        else:
-            out.append(c)
-            i += 1
-    return "".join(out)
-
 
 class _Article:
     """A character vector ``texts[start:stop]`` whose regex matches are cached.
@@ -404,7 +328,7 @@ class _Article:
             for row, text in enumerate(self._texts):
                 if text is None:
                     continue
-                for word in set(text.casefold().split()):
+                for word in set(_casefold(text).split()):
                     rows = index.get(word)
                     if rows is None:
                         index[word] = [row]
@@ -453,46 +377,21 @@ class _Article:
             cand = m if cand is None else cand & m
         return cand
 
-    def _dotted_i_rows(self) -> np.ndarray:
-        """Rows containing a Turkish ``İ`` / ``ı`` (see :data:`_DOTTED_I`)."""
-        rows = self._cache.get("dotted_i")
-        if rows is None:
-            rows = np.fromiter(
-                (i for i, t in enumerate(self._texts) if t is not None and ("İ" in t or "ı" in t)),
-                dtype=np.intp,
-            )
-            self._cache["dotted_i"] = rows
-        return rows
-
     def _column_mask(self, pattern: str, ignore_case: bool, perl: bool) -> np.ndarray:
         key = (pattern, ignore_case, perl)
         mask = self._cache.get(key)
         if mask is None:
             texts = self._texts
             cand = self._candidates(pattern, perl)
-            caseless = perl and (ignore_case or "(?i)" in pattern)
-            run = _caseless_pcre(pattern) if caseless else pattern
             if cand is None:
-                hits = grepl(run, texts, ignore_case=ignore_case, perl=perl)
+                hits = grepl(pattern, texts, ignore_case=ignore_case, perl=perl)
                 mask = np.fromiter(hits, dtype=bool, count=len(texts))
             else:
                 mask = np.zeros(len(texts), dtype=bool)
                 rows = np.flatnonzero(cand)
                 if len(rows):
-                    hits = grepl(run, [texts[i] for i in rows], ignore_case=ignore_case, perl=perl)
-                    mask[rows] = np.fromiter(hits, dtype=bool, count=len(rows))
-            if caseless:
-                # PCRE2's caseless matching leaves U+0130/U+0131 alone; the
-                # `regex` engine folds them to i/I: rematch those rows without them
-                rows = self._dotted_i_rows()
-                if cand is not None:
-                    rows = rows[cand[rows]]
-                if len(rows):
                     hits = grepl(
-                        run,
-                        [texts[i].translate(_DOTTED_I) for i in rows],  # type: ignore[union-attr]
-                        ignore_case=ignore_case,
-                        perl=perl,
+                        pattern, [texts[i] for i in rows], ignore_case=ignore_case, perl=perl
                     )
                     mask[rows] = np.fromiter(hits, dtype=bool, count=len(rows))
             self._cache[key] = mask
@@ -944,26 +843,6 @@ def _title(x: Any, within_text: bool = False) -> Any:
     return one(x) if isinstance(x, str) else [one(v) for v in x]
 
 
-def _title_strict(x: Any, within_text: bool = False) -> Any:
-    """Port of ``.title_strict()``."""
-
-    def one(v: str) -> str:
-        return v + "( [A-Z][a-zA-Z]|:|\\.|\\s*-+)" if within_text else "^.{0,4}" + v + ".{0,4}$"
-
-    return one(x) if isinstance(x, str) else [one(v) for v in x]
-
-
-def _first_capital(x: Any, location: str = "both") -> Any:
-    """Port of ``.first_capital()``: case-insensitive after the first letter."""
-    if location == "both":
-        return gsub("^([A-Z])(.*)$", "\\1(?i)\\2(?-i)", x)
-    if location == "start":
-        return gsub("^(.)(.*)$", "\\1(?i)\\2", x)
-    if location == "end":
-        return gsub("^(.*)$", "\\1(?-i)", x)
-    raise ValueError("Unknown location in .first_capital")
-
-
 def _groups(
     words: Sequence[str],
     fn: Callable[[list[str]], Any] = _bound,
@@ -980,120 +859,6 @@ _TXT = "[a-zA-Z0-9\\s,()\\[\\]/:-]*"  # synonyms$txt
 def _joined(words: Sequence[str], sep: str = _TXT, location: str = "end") -> str:
     """``paste(unlist(lapply(lapply(synonyms[words], .bound, location), .encase)), collapse = sep)``."""
     return sep.join(_groups(words, lambda v: _bound(v, location)))
-
-
-# ---------------------------------------------------------------------------
-# Text obliteration/cleanup (stringr/ICU in R; unused by the module)
-# ---------------------------------------------------------------------------
-
-# ICU classes spelled out for the PCRE helpers
-_ICU_S = "\t\n\x0b\x0c\r\x85\\p{Z}"  # \s = White_Space
-_ICU_DOT = "[^\n\x0b\x0c\r\x85\u2028\u2029]"  # . excludes every line terminator
-_ICU_PUNCT = "\\p{P}"  # [[:punct:]]
-
-_FULLSTOP_PATTERNS = (
-    # R: "([A-Z])(\\.)\\s*([A-Z])(\\.)\\s*([A-Z])(\\.)" = "\\1 \\3 \\5"
-    (f"([A-Z])(\\.)[{_ICU_S}]*([A-Z])(\\.)[{_ICU_S}]*([A-Z])(\\.)", "\\1 \\3 \\5"),
-    (f"([A-Z])(\\.)[{_ICU_S}]*([A-Z])(\\.)", "\\1 \\3"),
-    (f"([{_ICU_S}][A-Z])(\\.) ([A-Z][a-z]+)", "\\1 \\3"),
-    (f"\\.[{_ICU_S}]*([a-z0-9])", " \\1"),
-    ("\\.([A-Z])", " \\1"),
-    (f"\\.[{_ICU_S}]*([A-Z]+[0-9])", " \\1"),
-    (f"\\.([^{_ICU_S}0-9\\[])", "\\1"),
-    (f"\\.[{_ICU_S}]+(\\()", " \\1"),
-    ("([0-9])\\.([0-9])", "\\1\\2"),
-    (f"\\.([{_ICU_S}]*[{_ICU_PUNCT}])", "\\1"),
-)
-
-
-def _str_replace_all(article: Any, pattern: str, replacement: str) -> Any:
-    """``stringr::str_replace_all()`` with an ICU pattern pre-translated to PCRE."""
-    return gsub(pattern, replacement, article, perl=True)
-
-
-def obliterate_fullstop_1(article: Any) -> Any:
-    """Port of ``obliterate_fullstop_1()``: remove full stops unlikely to end a sentence."""
-    _stopifnot_character(article)
-    out = article
-    for pattern, replacement in _FULLSTOP_PATTERNS:
-        out = _str_replace_all(out, pattern, replacement)
-    return out
-
-
-def _obliterate_semicolon_1(article: Any) -> Any:
-    """Port of ``.obliterate_semicolon_1()``."""
-    _stopifnot_character(article)
-    return _str_replace_all(article, f"(\\({_ICU_DOT}*); ({_ICU_DOT}*\\))", "\\1 - \\2")
-
-
-def _obliterate_comma_1(article: Any) -> Any:
-    """Port of ``.obliterate_comma_1()``."""
-    _stopifnot_character(article)
-    return gsub(", ", " ", article, fixed=True)
-
-
-def _obliterate_apostrophe_1(article: Any) -> Any:
-    """Port of ``.obliterate_apostrophe_1()``."""
-    _stopifnot_character(article)
-    x = _str_replace_all(article, "([a-zA-Z])'([a-zA-Z])", "\\1\\2")
-    return _str_replace_all(x, "[a-z]+s'", "s")
-
-
-def _obliterate_hash_1(article: Any) -> Any:
-    """Port of ``.obliterate_hash_1()``."""
-    _stopifnot_character(article)
-    return gsub("#", "", article, fixed=True)
-
-
-def _obliterate_punct_1(article: Any) -> Any:
-    """Port of ``.obliterate_punct_1()``."""
-    _stopifnot_character(article)
-    return _str_replace_all(article, '[~@#$%^&*{}_+"<>?/=]', "")
-
-
-def _obliterate_line_break_1(article: Any) -> Any:
-    """Port of ``.obliterate_line_break_1()``."""
-    _stopifnot_character(article)
-    return gsub("\n", " ", article, fixed=True)
-
-
-def _obliterate_refs_1(article: Any) -> Any:
-    """Port of ``.obliterate_refs_1()``."""
-    _stopifnot_character(article)
-    article = gsub("^.*\\([0-9]{4}\\).*$", "References", article)
-    return gsub("^.* et al\\..*$", "References", article)
-
-
-@cache
-def _pattern_obliterate_conflict_1() -> str:
-    financial_1 = "(funding|financial|support)"
-    financial_2 = "(financial|support)"
-    relationship = _encase(_bound(_syn("relationship")))
-    conflict = _encase(_bound(_syn("conflict")))
-    financial_interest = "(financial(?:\\s+\\w+){0,3} interest)"
-    regex_1 = _TXT.join([financial_1, relationship, conflict])
-    regex_2 = _TXT.join([conflict, relationship, financial_2])
-    regex_3 = _TXT.join([relationship, financial_interest])
-    return _encase([regex_1, regex_2, regex_3])
-
-
-def obliterate_conflict_1(article: Any) -> Any:
-    """Port of ``obliterate_conflict_1()``: remove COI mentions that cause false positives."""
-    _stopifnot_character(article)
-    return gsub(_pattern_obliterate_conflict_1(), "", article, perl=True)
-
-
-@cache
-def _pattern_obliterate_disclosure_1() -> str:
-    words = ("conflict", "and", "not", "funded")
-    parts = _encase(_bound([v for w in words for v in _syn(w)]))
-    return _TXT + parts + _TXT + "($|.)"
-
-
-def obliterate_disclosure_1(article: Any) -> Any:
-    """Port of ``obliterate_disclosure_1()``: remove misleading disclosure sentences."""
-    _stopifnot_character(article)
-    return gsub(_pattern_obliterate_disclosure_1(), "", article, perl=True)
 
 
 # ---------------------------------------------------------------------------
@@ -1137,27 +902,6 @@ def _where_acknows_txt(article: Any) -> list[int]:
     return [all_min if (all_max - all_min) <= 10 else all_max]
 
 
-@cache
-def _patterns_where_methods() -> tuple[str, str]:
-    methods = _syn("Methods")
-    pats = [s[:-1] for s in _title_strict(methods)]  # stringr::str_sub(s, end = -2)
-    pats2 = [s + "\\s*[A-Z]" for s in _title_strict(methods, within_text=True)]
-    return _encase(pats), _encase(pats2)
-
-
-def _where_methods_txt(article: Any) -> list[int]:
-    """Port of ``.where_methods_txt()``: the (last) methods title line, or ``[]``."""
-    art = _as_article(article)
-    pattern, pattern2 = _patterns_where_methods()
-    idx = art.grep(pattern)
-    if idx:
-        return [idx[-1]]
-    idx = art.grep(pattern2)
-    if idx:
-        return [idx[-1]]
-    return []
-
-
 # ---------------------------------------------------------------------------
 # Patterned builders
 # ---------------------------------------------------------------------------
@@ -1199,24 +943,6 @@ def get_support_1(article: Any) -> list[int]:
     if idx:
         return idx
     return art.grep(plural)
-
-
-@cache
-def _patterns_support_2() -> tuple[str, str]:
-    return (
-        _joined(["funded_funding", "this_singular", "research_singular"]),
-        _joined(["funded", "these", "researches"]),
-    )
-
-
-def get_support_2(article: Any) -> list[int]:
-    """Port of ``get_support_2()`` (not used by metacheck)."""
-    art = _as_article(article)
-    first, second = _patterns_support_2()
-    idx = art.grep(first)
-    if idx:
-        return idx
-    return art.grep(second)
 
 
 @cache
@@ -1456,18 +1182,6 @@ def get_fund_acknow(article: Any) -> list[int]:
 
 
 @cache
-def _pattern_fund_acknow_new() -> str:
-    words = ("acknowledge", "support_only", "grant|foundation|institute|organization")
-    # the last name is not a synonym: .bound(NULL) is "\\b"
-    return _encase([v for w in words for v in _bound(_syn(w))])
-
-
-def get_fund_acknow_new(article: Any) -> list[int]:
-    """Port of ``get_fund_acknow_new()`` (not used by metacheck)."""
-    return _as_article(article).grep(_pattern_fund_acknow_new(), ignore_case=True)
-
-
-@cache
 def _pattern_supported_1() -> str:
     return _joined(["Supported", "by"], sep=" ") + " [a-zA-Z]+"
 
@@ -1619,89 +1333,9 @@ def get_common_5(article: Any) -> list[int]:
 # ---------------------------------------------------------------------------
 
 
-@cache
-def _patterns_negate_disclosure_1() -> tuple[str, str]:
-    txt = "[a-zA-Z0-9\\s,()-]*"
-    disclose = _encase(["[Dd]isclose(|s)(|:|\\.)", "[Dd]isclosure(|s)(|:|\\.)"])
-    conflict = _encase(
-        [
-            "conflict(|s) of interest",
-            "conflicting interest",
-            "conflicting financial interest",
-            "conflicting of interest",
-            "conflits d'int",
-            "conflictos de Inter",
-            "competing interest",
-            "competing of interest",
-            "competing financial interest",
-        ]
-    )
-    and_ = _encase(["and", "&", "or"])
-    not_ = _encase(["not"])
-    funded_synonyms = [
-        "\\bfunded",
-        "\\bfinanced",
-        "\\bsupported",
-        "\\bsponsored",
-        "\\bresourced",
-    ]
-    funded = _encase(funded_synonyms)
-    regex_1 = txt.join([disclose, conflict, and_, not_, funded])
-    funded_2 = _encase([*funded_synonyms, *_syn("funding")])
-    regex_2 = txt.join([disclose, funded_2, conflict])
-    return regex_1, regex_2
-
-
 def _grepl_list(pattern: str, article: Any, ignore_case: bool = False) -> list[bool]:
     art = _as_article(article)
     return art.mask(pattern, ignore_case).tolist()
-
-
-def negate_disclosure_1(article: Any) -> list[bool]:
-    """Port of ``negate_disclosure_1()`` (not used by the module)."""
-    regex_1, regex_2 = _patterns_negate_disclosure_1()
-    a = _grepl_list(regex_1, article)
-    if any(a):
-        return a
-    return _grepl_list(regex_2, article)
-
-
-@cache
-def _pattern_negate_disclosure_2() -> str:
-    disclosure_title = _encase(
-        [
-            "F(?i)inancial disclosure(|s)(?-i)(|:|\\.)",
-            "F(?i)inancial declaration(|s)(?-i)(|:|\\.)",
-            "Disclosure(|:|\\.)",
-            "Declaration(|:|\\.)",
-        ]
-    )
-    disclosure = _encase(
-        ["financial disclosure(|s)", "financial declaration(|s)", "disclosure", "declaration"]
-    )
-    disclose = _encase(["to disclose", "to declare", "to report"])
-    no = _encase(_syn("No"))
-    no_1 = "(no|not have any)"
-    no_2 = "(nil|nothing)"
-    regex_1 = _encase([disclosure_title + " " + no])
-    regex_2 = _encase([_TXT.join([disclosure_title, no_1 + " " + disclosure])])
-    regex_3 = _encase([_TXT.join([disclosure_title, no_2 + " " + disclose])])
-    return "|".join([regex_1, regex_2, regex_3])
-
-
-def negate_disclosure_2(article: Any) -> list[bool]:
-    """Port of ``negate_disclosure_2()`` (not used by the module)."""
-    return _grepl_list(_pattern_negate_disclosure_2(), article)
-
-
-@cache
-def _pattern_negate_conflict_1() -> str:
-    return _patterns_title("conflict_title")[0]
-
-
-def negate_conflict_1(article: Any) -> list[bool]:
-    """Port of ``negate_conflict_1()`` (not used by the module)."""
-    return _grepl_list(_pattern_negate_conflict_1(), article)
 
 
 @cache

@@ -359,36 +359,138 @@ area's `tests/<package>/` directory; edit the generator and rerun it, not the YA
 read as numbers or booleans by R's YAML reader); infinities are `!!float ".inf"` and
 `!!float "-.inf"`.
 
-## Accuracy (phase B, to come)
+## Accuracy
 
-Parity cases check functions branch by branch. The accuracy report will check the
-end result on the realistic corpus: `python -m parity accuracy [--generate] [--gate]
-[-m MODULE] [--md OUT]` will run 21 papers through the 19 offline paper modules and
-10 repositories through `code_check`, `data_check`, `repo_check` and
-`codebook_check` on both sides, and score each output (runs, traffic lights exactly,
-summary tables, tables, summary text and report text and numbers). R's outputs will
-be committed under `parity/accuracy/golden/`, so the report needs no R, and every
-difference must match an entry of `parity/accuracy/expected.yaml` that cites a U- or
-D-entry. The gate requires no unexplained difference and no stale entry. Until it
-lands, the parity cases are the check.
+Parity cases check functions branch by branch. The accuracy report checks the end
+result users see, on the realistic corpus:
+
+```bash
+python -m parity accuracy                    # score Python against R's committed outputs
+python -m parity accuracy --gate             # ... and fail on anything unexplained (CI)
+python -m parity accuracy -m all_urls -m marginal --md accuracy.md
+python -m parity accuracy --generate         # first rewrite R's outputs (reference R)
+```
+
+```
+parity/
+  accuracy.py                the report: runners, scorer, expectations, gate
+  accuracy/matrix.toml       which modules run on which corpus inputs
+  accuracy/expected.yaml     every difference it may find, and why
+  accuracy/golden/*.json.gz  R's outputs, one file per module (committed)
+  r/install-suggests.R       careless for the reference R (see below)
+```
+
+**What runs.** `parity/accuracy/matrix.toml` lists the inputs, each of which must be
+in the corpus (`parity/corpus.toml`): 21 real papers (the demo paper as TEI and JSON,
+Grobid TEI of published papers and preprints, the problem papers, the psychsci JSONs
+and the bibr 12.0 exports) through the 19 offline paper modules, and 10 real
+repositories (the `tests/mod_data_check` repositories and metacheck's `demo`,
+`code_files`, `notebooks` and `parse-errors` fixtures) through `code_check`,
+`data_check`, `repo_check` and `codebook_check`, on the demo paper with `local_path`
+and `local_only = TRUE`. Every module runs with its default arguments: 439 outputs.
+Python reads each paper once and gives every module its own copy, runs offline (an
+output that uses the network or starts R is a problem that fails the gate) and uses
+pytacheck's port of R's parser (`PYTACHECK_R_PARSER=python`), so the result does not
+depend on whether R is installed. It takes about 35 s.
+
+**R's outputs** are committed under `parity/accuracy/golden/<module>.json.gz`
+(gzip without a time stamp, so regenerating unchanged outputs rewrites the same
+bytes): about 0.4 MB, so the report needs no R. `--generate` writes a transient case
+file and runs it with `parity/r/run_cases.R --out`, which reads each paper once per
+session; R's network is disabled (its proxy points at a closed port), because an R
+module that reached the network would give other results where it is reachable. It
+takes about 105 s. R runs as a user with metacheck's suggested packages installed:
+`careless`, which `data_check` needs to screen survey data for careless responding,
+lives in its own library, `<R.home()>/suggests`, which only this report puts on R's
+library path (`parity/r/install-suggests.R` installs it, and `setup-reference.sh`,
+`install-with-pak.R` and the workflows call it). The parity cases keep switching
+`careless` on and off themselves (`tests/mod_data_check/dc_helpers.R`), so their
+goldens do not depend on it.
+
+**Scoring.** Each output is compared field by field:
+
+| field | agreement |
+|---|---|
+| `run` | both succeed, or both fail |
+| `traffic_light` | exact |
+| `summary_table` | column names and order and the row count exact; numbers to a relative 1e-9; text after whitespace normalisation (cells) |
+| `table` | row count and column names exact; the rows as a multiset, text whitespace-normalised and numbers to 10 digits (row F1) |
+| `summary_text`, `report` | after whitespace normalisation (runs of whitespace are one space; the report as its prose, as parity cases compare it), and the multiset of numbers in it, with their minus signs |
+
+Every difference has a level: `whitespace` (equal once all whitespace is removed:
+`p =0.152` vs `p = 0.152`), `wording` (other text, the same numbers) or `values`
+(numbers, rows, columns, traffic lights, a failed run). The report prints, per
+module, the share of outputs that agree on each field, and lists the differences.
+
+**Expected differences.** Every difference must be explained by an entry of
+`parity/accuracy/expected.yaml`:
+
+```yaml
+differences:
+  - module: [all_p_values, stat_p_exact]      # globs, or lists of globs
+    input: problems/0956797617737129.xml       # the path or its short name
+    field: [summary_text, summary_table.p_values, table]
+    match: values                              # the highest level it explains
+    kind: r_bug_fixed                          # as a mark on a tier-1 case
+    ref: U28
+    reason: the link text keeps its p-value; metacheck replaces link text in every row
+floors:
+  - module: ref_accuracy
+    traffic_light: 0.4
+    kind: r_bug_fixed
+    ref: U30
+    reason: 12 of the 21 papers have no bib_match rows (pytacheck 'fail', metacheck 'error')
+```
+
+`field` is `run`, `traffic_light`, `summary_text`, `report`, `summary_table` or
+`table` (their columns or row counts), or `summary_table.<column>` / `table.<column>`.
+An entry is validated like a mark on a tier-1 case: `r_bug_fixed` cites a fixed or
+partly fixed U-entry, `better_logic` and `deliberate` a D-entry, and `c_quirk` and
+`type_detail` are not allowed. Today 19 entries explain the 188 differences, all of
+them metacheck bugs pytacheck fixes (Grobid clean-up and URL handling U16/U28, U3,
+U30, U80, U82, U83, U86, U98, U99, U115, U123, U125, U158).
+
+**The gate** (`--gate`) fails on a difference no entry explains, an entry that
+explains none (stale; checked on full runs, not with `-m`), a missing golden, or an
+output that used the network or started R. A module whose traffic lights agree with
+metacheck's on fewer than 90% of its inputs is a warning, unless a `floors` entry
+names the share expected and why; the upstream sync turns such a warning into the
+`needs-human-review` label. The JSON report (`--report PATH`, by default
+`parity/_out/accuracy-<time>-<pid>.json`) has the scores, every difference and the
+entry that explains it, and `passed` and `needs_review`; `--md` writes a Markdown
+summary.
+
+After a change that moves a realistic result, run the report: a new difference is
+either a regression to fix or a documented improvement that gets an entry (and its
+U- or D-entry). Changing the matrix means `--generate` with the reference R.
 
 ## CI
 
-Today:
-
-* **every push** (`ci.yml`): `pytest -m "not network and not r"`, which includes
-  every parity case against the committed goldens (no R needed; the cases whose
-  Python side runs R are skipped), then `python -m parity check`;
-* **parity workflow** (`parity.yml`, with R): regenerates every golden at the pinned
-  commit and fails when one differs from the committed goldens, or a case has none,
-  so the goldens cannot drift from R; then runs `python -m parity check`;
+* **every push** (`ci.yml`, no R needed):
+  * the test matrix (Linux on Python 3.11 to 3.14, macOS, Windows) runs
+    `pytest -n auto -m "not network and not r and (not parity or tier1)"`: the unit
+    tests and the tier-1 parity cases on every platform;
+  * the `parity` job runs every parity case once, `python -m parity check --jobs 0`,
+    with the per-case report as an artifact and the Markdown summary (statuses by
+    tier, marks by tier, kind and ref) on the run page, then the accuracy gate,
+    `python -m parity accuracy --gate`, from the committed R outputs;
+  * the `parity-pyarrow` job runs the tier-1 cases with pyarrow installed
+    (`uv run --with pyarrow pytest -m "parity and tier1"`): pandas 3 then stores
+    strings in Arrow, which rejects text that is not valid Unicode;
+* **parity workflow** (`parity.yml`, with the reference R, when `parity/**` or
+  `upstream/**` change and weekly): regenerates every golden and the accuracy
+  report's R outputs at the pinned commit and fails when one differs from the
+  committed ones, or a case or module has none, so neither can drift from R; then runs
+  `python -m parity check --jobs 0` and the accuracy gate;
 * **upstream-sync workflow**: when metacheck `dev` moves (or, while the pin names a
-  pull request, that pull request's head), regenerates the goldens at the new commit
-  and asks an AI agent to port the changes until parity is green again.
-
-Planned with the accuracy report (phase B): parity run once per push with the tier
-marks and a single report (`check --jobs 4 --report ... --md $GITHUB_STEP_SUMMARY`),
-the accuracy gate on every push and in the upstream sync, a leg with pyarrow
-installed that runs the tier-1 cases, and a sync that lists `r_changed` and `xpass`
-cases and asks for human review when tier-1 marks, `expected.yaml` or D-entries
-change.
+  pull request, that pull request's head), regenerates the goldens and the accuracy
+  outputs at the new commit and writes a brief (`scripts/upstream_sync.py`) with the
+  goldens that changed, the marked cases whose golden changed (`r_changed`) or that
+  now match R (`xpass`), the failing cases, and the accuracy report before porting.
+  An AI agent then ports the changes until `parity check`, the accuracy gate, the
+  tests and the linters pass. The pull request is a draft labelled
+  `needs-human-review` when tier-1 marks, `parity/accuracy/expected.yaml` or
+  D-entries changed, or the accuracy report warns or fails
+  (`scripts/upstream_sync.py review`); `.github/CODEOWNERS` requires a code owner's
+  review of changes to the marks, the lock, `expected.yaml` and
+  `docs/UPSTREAM_ISSUES.md`.

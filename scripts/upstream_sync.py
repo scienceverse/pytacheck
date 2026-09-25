@@ -26,6 +26,23 @@ log, the changed files, the R diff, the Python files mapped to each changed R
 file (porting/map/*.toml and porting/symbols.json), and added/removed/changed R
 functions; .upstream-sync/meta.json has the pull request's title and summary.
 The workflow then regenerates the goldens in R and appends which ones changed.
+
+Around the porting agent, the workflow also calls:
+
+    uv run python scripts/upstream_sync.py brief-parity --check C.json --accuracy A.json
+    uv run python scripts/upstream_sync.py tier1-marks --out .upstream-sync/tier1-marks.json
+    uv run python scripts/upstream_sync.py review --marks .upstream-sync/tier1-marks.json \
+        --accuracy A.json
+
+``brief-parity`` appends to the brief the parity check and the accuracy report
+run after the goldens were regenerated, before porting: the marked cases whose R
+golden changed (``r_changed``) or that now match R (``xpass``: upstream may have
+fixed the bug), the failing cases and the accuracy differences no entry of
+parity/accuracy/expected.yaml explains. ``tier1-marks`` records the marks of the
+tier-1 (realistic) cases before porting; ``review`` says, after porting, whether
+the pull request needs human review: tier-1 marks, parity/accuracy/expected.yaml
+or D-entries of docs/UPSTREAM_ISSUES.md changed, or the accuracy report warns
+or fails.
 """
 
 from __future__ import annotations
@@ -521,6 +538,131 @@ def cmd_prepare(ns: argparse.Namespace) -> int:
     return 0
 
 
+# --- parity and accuracy in the brief; what needs human review -------------------
+
+
+def _json(path: str) -> Any:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def _cases_table(rows: list[dict[str, Any]], limit: int = 80) -> list[str]:
+    out = ["| case | tier | mark | first problem |", "|---|---|---|---|"]
+    for r in rows[:limit]:
+        mark = " ".join(x for x in (r.get("kind"), r.get("ref")) if x) or "-"
+        first = (r.get("problems") or [""])[0].replace("|", "\\|").replace("\n", " ")[:200]
+        out.append(f"| `{r['case']}` | {r['tier']} | {mark} | {first} |")
+    if len(rows) > limit:
+        out.append(f"| ... and {len(rows) - limit} more | | | |")
+    return out
+
+
+def parity_brief(check: list[dict[str, Any]], accuracy: dict[str, Any] | None) -> list[str]:
+    """The brief's sections on parity and accuracy with the new goldens, before porting."""
+    counts: dict[str, int] = {}
+    for r in check:
+        counts[r["status"]] = counts.get(r["status"], 0) + 1
+    out = [
+        "## Parity after regeneration (before porting)",
+        "",
+        f"{len(check)} cases: " + ", ".join(f"{n} {s}" for s, n in sorted(counts.items())),
+        "",
+    ]
+    sections = (
+        ("r_changed", "Marked cases whose R golden changed: check that each mark still holds"),
+        ("xpass", "Marked cases that now match R: upstream may have fixed the bug, drop the mark"),
+    )
+    for status, title in sections:
+        rows = [r for r in check if r["status"] == status]
+        if rows:
+            out += [f"### {title} ({len(rows)})", "", *_cases_table(rows), ""]
+    failing = [r for r in check if r.get("failing") and r["status"] not in ("r_changed", "xpass")]
+    if failing:
+        out += [f"### Failing cases ({len(failing)})", "", *_cases_table(failing), ""]
+    if accuracy is not None:
+        out += ["## Accuracy before porting (new metacheck, old pytacheck)", ""]
+        unexplained = [d for d in accuracy["differences"] if d["explained_by"] is None]
+        out.append(
+            f"{accuracy['outputs']} outputs, {len(accuracy['differences'])} differences, "
+            f"{len(unexplained)} not explained by parity/accuracy/expected.yaml; stale "
+            f"entries: {len(accuracy['stale'])}."
+        )
+        out += [""] + [f"- warning: {w}" for w in accuracy["warnings"]]
+        if unexplained:
+            out += ["", "| module | input | field | level | detail |", "|---|---|---|---|---|"]
+            for d in unexplained[:150]:
+                detail = d["detail"].replace("|", "\\|").replace("\n", " ")[:200]
+                out.append(
+                    f"| {d['module']} | `{d['input']}` | {d['field']} | {d['level']} | {detail} |"
+                )
+        out += [f"- stale: {e}" for e in accuracy["stale"]]
+        out.append("")
+    return out
+
+
+def cmd_brief_parity(ns: argparse.Namespace) -> int:
+    accuracy = _json(ns.accuracy) if ns.accuracy and Path(ns.accuracy).exists() else None
+    if Path(ns.check).exists():
+        lines = parity_brief(_json(ns.check), accuracy)
+    else:
+        lines = ["## Parity after regeneration (before porting)", "", "`parity check` failed."]
+    brief = BRIEF_DIR / "brief.md"
+    with brief.open("a", encoding="utf-8") as f:
+        f.write("\n" + "\n".join(lines) + "\n")
+    return 0
+
+
+def tier1_marks() -> dict[str, Any]:
+    """The marks of the tier-1 (realistic) parity cases, by case key."""
+    sys.path.insert(0, str(ROOT))
+    from parity.cases import load_cases
+
+    return {
+        c.key: c.spec["known_divergence"]
+        for c in load_cases()
+        if c.tier == 1 and c.spec.get("known_divergence")
+    }
+
+
+def cmd_tier1_marks(ns: argparse.Namespace) -> int:
+    Path(ns.out).write_text(json.dumps(tier1_marks(), indent=1, sort_keys=True), encoding="utf-8")
+    return 0
+
+
+_D_ROW = re.compile(r"^[+-]\| D\d+ ")
+
+
+def review_reasons(before: dict[str, Any], accuracy: dict[str, Any] | None) -> list[str]:
+    """Why the pull request needs human review (empty: it does not)."""
+    reasons = []
+    after = tier1_marks()
+    changed = sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
+    if changed:
+        shown = ", ".join(changed[:20]) + (" ..." if len(changed) > 20 else "")
+        reasons.append(
+            f"{len(changed)} tier-1 (realistic) marks added, removed or changed: {shown}"
+        )
+    if git("status", "--porcelain", "--", "parity/accuracy/expected.yaml", cwd=ROOT).strip():
+        reasons.append("parity/accuracy/expected.yaml changed")
+    diff = git("diff", "HEAD", "--", "docs/UPSTREAM_ISSUES.md", cwd=ROOT)
+    d_rows = [line for line in diff.splitlines() if _D_ROW.match(line)]
+    if d_rows:
+        reasons.append(f"D-entries of docs/UPSTREAM_ISSUES.md changed ({len(d_rows)} lines)")
+    if accuracy is None:
+        reasons.append("the accuracy report did not run")
+    else:
+        if not accuracy["passed"]:
+            reasons.append("the accuracy gate fails")
+        reasons += [f"accuracy: {w}" for w in accuracy["warnings"]]
+    return reasons
+
+
+def cmd_review(ns: argparse.Namespace) -> int:
+    accuracy = _json(ns.accuracy) if Path(ns.accuracy).exists() else None
+    reasons = review_reasons(_json(ns.marks), accuracy)
+    print(json.dumps({"needs_review": bool(reasons), "reasons": reasons}, indent=1))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -540,6 +682,17 @@ def main(argv: list[str] | None = None) -> int:
             "sync to the branch and drop pull_request/base_commit from the pin",
         )
         p.set_defaults(func=func)
+    b = sub.add_parser("brief-parity", help="append parity and accuracy to the brief")
+    b.add_argument("--check", required=True, help="the report of `python -m parity check`")
+    b.add_argument("--accuracy", help="the report of `python -m parity accuracy`")
+    b.set_defaults(func=cmd_brief_parity)
+    t = sub.add_parser("tier1-marks", help="record the tier-1 cases' marks")
+    t.add_argument("--out", required=True)
+    t.set_defaults(func=cmd_tier1_marks)
+    r = sub.add_parser("review", help="whether the pull request needs human review (JSON)")
+    r.add_argument("--marks", required=True, help="the tier-1 marks recorded before porting")
+    r.add_argument("--accuracy", required=True, help="the accuracy report after porting")
+    r.set_defaults(func=cmd_review)
     ns = parser.parse_args(argv)
     return int(ns.func(ns))
 

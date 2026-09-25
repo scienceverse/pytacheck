@@ -1,8 +1,9 @@
-"""Unit tests for the R regex emulation (parity/cases/rcompat.yaml checks it against R)."""
+"""Unit tests for R's regex functions (parity/cases/rcompat.yaml checks them against R)."""
 
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -59,6 +60,7 @@ def test_prefilter_never_changes_grepl() -> None:
         "a borderline sig",
         "TREND towards significance",
         "ÉCOLE",
+        "Thİs study, NıH",
         "",
     ]
     patterns = [
@@ -70,6 +72,7 @@ def test_prefilter_never_changes_grepl() -> None:
         r"écol|ecol",
         r"(?i)TREND|margin",
         r"data|code|material",
+        r"this study|NIH grant|nih",
     ]
     for pat in patterns:
         for icase in (False, True):
@@ -88,3 +91,40 @@ def test_prefilter_never_changes_grepl() -> None:
 
 def rx_grepl(pattern: str, texts: list[str], icase: bool, perl: bool) -> list[bool]:
     return rx.grepl(pattern, texts, ignore_case=icase, perl=perl)
+
+
+def test_gregexpr_and_gsub_empty_matches_follow_r() -> None:
+    # R 4.5: gregexpr("x*", c("", "ab", "abx")) and the same with perl = TRUE
+    assert rx.gregexpr_all("x*", ["", "ab", "abx"]) == [
+        [],
+        [(1, 0), (2, 0)],
+        [(1, 0), (2, 0), (3, 1)],
+    ]
+    assert rx.gregexpr_all("x*", ["", "ab"], perl=True) == [[(1, 0)], [(1, 0), (2, 0)]]
+    assert rx.gregexpr_all("b|$", "ab") == [(2, 1)]
+    # gsub("x*", "-", "abxd") is "-a-b-d-" (Python's re.sub gives "-a-b--d-")
+    assert rx.gsub("x*", "-", ["abxd", ""]) == ["-a-b-d-", "-"]
+    assert rx.gsub("x*", "-", "abxd", perl=True) == "-a-b-d-"
+
+
+def test_pcre_inline_flags_and_ascii_sets() -> None:
+    # (?i) in the middle of a pattern holds to the end of its group, as in PCRE2
+    assert not rx.grepl("G(?i)rant [Ss]upport", "grant support", perl=True)
+    assert rx.grepl("G(?i)rant [Ss]upport", "GRANT SUPPORT", perl=True)
+    # POSIX classes and \w in a PCRE set are ASCII, also ignoring case
+    assert not rx.grepl(r"^[[:alpha:]\w]+$", "naïve", ignore_case=True, perl=True)
+    assert rx.grepl(r"^[[:alpha:]]+$", "naïve", ignore_case=True)
+
+
+def test_lazy_tre_patterns_stay_lazy() -> None:
+    assert (
+        rx.sub("^JaspColumn_.*?_Encoded_", "", "JaspColumn_1_Encoded_x_Encoded_y") == "x_Encoded_y"
+    )
+    assert rx.regextract_all("<v>.*?</v>", "<v>a</v> x <v>b</v>") == ["<v>a</v>", "<v>b</v>"]
+
+
+def test_tre_classes_and_invalid_patterns() -> None:
+    assert rx.grepl(r"a\sb", "a b") and not rx.grepl(r"a\sb", "a b")  # glibc iswspace
+    assert rx.grepl(r"\d", "5") and not rx.grepl(r"\d", "٥")  # [0-9] only
+    with pytest.raises(rx.RegexError):
+        rx.grepl("(a", "a")

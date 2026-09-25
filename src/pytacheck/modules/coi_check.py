@@ -228,17 +228,19 @@ _AUTHORS_NO = "|".join(
         r"^.*(None of the author.+no.*conflict.+interest.*$)",
     ]
 )
-# R's `vals` (val1 ... val7): TRE resolves their minimal `.*?` / `{0,12}?` in its
-# own way, which pytacheck._r.regex reproduces (pytacheck._r._tnfa)
+# R's `vals` (val1 ... val7) cut the text after the COI sentence. Their greedy
+# `^.*` and `.+` get that result in R only through TRE's rules for mixing
+# greedy and minimal repetitions; the lazy quantifiers here state that intent
+# for any engine (the same results on the realistic COI statements).
 _AUTHORS_LAST = "|".join(
     [
-        r"(^.*The author.+no.*competing.+interest.*?\.) [A-Z].*$",
-        r"(^.*The author.+no.*conflict.+interest.*?\.) [A-Z].*$",
-        r"(^.*All authors.+no.*conflict.+interest.*?\.) [A-Z].*$",
-        r"(^.*Both authors.+no.*conflict.+interest.*?\.) [A-Z].*$",
-        r"(^.*No conflicts of interest.{0,12}?\.) [A-Z].*$",
-        r"(^.*No conflicting.{0,12} interest.{0,12}?\.) [A-Z].*$",
-        r"(^.*No competing.{0,12} interest.{0,12}?\.) [A-Z].*$",
+        r"(^.*?The author.+?no.*?competing.+?interest.*?\.) [A-Z].*$",
+        r"(^.*?The author.+?no.*?conflict.+?interest.*?\.) [A-Z].*$",
+        r"(^.*?All authors.+?no.*?conflict.+?interest.*?\.) [A-Z].*$",
+        r"(^.*?Both authors.+?no.*?conflict.+?interest.*?\.) [A-Z].*$",
+        r"(^.*?No conflicts of interest.{0,12}?\.) [A-Z].*$",
+        r"(^.*?No conflicting.{0,12} interest.{0,12}?\.) [A-Z].*$",
+        r"(^.*?No competing.{0,12} interest.{0,12}?\.) [A-Z].*$",
     ]
 )
 

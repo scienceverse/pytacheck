@@ -1,10 +1,12 @@
 # Run parity cases against the installed metacheck and write golden JSON.
 #
 # Usage:
-#   Rscript parity/r/run_cases.R <repo_root> <cases.yaml> [<cases.yaml> ...] [--only id1,id2]
+#   Rscript parity/r/run_cases.R <repo_root> <cases.yaml> [<cases.yaml> ...]
+#           [--only id1,id2] [--out DIR]
 #
-# Writes parity/golden/<area>/<case id>.json for each case. Run through
-# `python -m parity generate`, which sets the locale (C.UTF-8) and paths.
+# Writes parity/golden/<area>/<case id>.json (with --out, DIR/<area>/<case
+# id>.json) for each case. Run through `python -m parity generate` or `python -m
+# parity accuracy --generate`, which set the locale (C.UTF-8) and paths.
 
 suppressPackageStartupMessages({
   library(metacheck)
@@ -33,11 +35,15 @@ local({
 argv <- commandArgs(trailingOnly = TRUE)
 root <- normalizePath(argv[[1]])
 only <- NULL
+out <- file.path(root, "parity", "golden")
 files <- character(0)
 i <- 2
 while (i <= length(argv)) {
   if (argv[[i]] == "--only") {
     only <- strsplit(argv[[i + 1]], ",")[[1]]
+    i <- i + 2
+  } else if (argv[[i]] == "--out") {
+    out <- argv[[i + 1]]
     i <- i + 2
   } else {
     files <- c(files, argv[[i]])
@@ -95,6 +101,25 @@ rpath <- function(p) {
   if (grepl("^/", p)) p else file.path(root, p)
 }
 
+# Papers read from files are read once per session: R values are immutable,
+# and the accuracy report runs every module on the same corpus papers. The
+# read's warnings are signalled again on every later use, so each case's golden
+# still lists them. A read that numbered an id-less paper (.pc_next_id) is not
+# kept, since that id depends on the case.
+.pc_papers <- new.env()
+read_once <- function(key, read) {
+  hit <- .pc_papers[[key]]
+  if (!is.null(hit)) {
+    for (w in hit$warnings) warning(w)
+    return(hit$value)
+  }
+  n <- .pc_ids$n
+  caught <- list()
+  value <- withCallingHandlers(read(), warning = function(w) caught[[length(caught) + 1]] <<- w)
+  if (.pc_ids$n == n) .pc_papers[[key]] <- list(value = value, warnings = caught)
+  value
+}
+
 # Decode a YAML argument spec into an R value -------------------------------
 # A YAML list as an atomic vector, with YAML nulls as NA (unlist() drops them).
 na_vec <- function(val) {
@@ -109,8 +134,13 @@ decode <- function(x) {
     key <- names(x)[[1]]
     val <- x[[1]]
     return(switch(key,
-      "$paper" = if (identical(val, "demo")) demopaper() else metacheck::read(rpath(val)),
-      "$read" = metacheck::read(vapply(unlist(val), rpath, character(1))),
+      "$paper" = read_once(paste0("paper:", val), function() {
+        if (identical(val, "demo")) demopaper() else metacheck::read(rpath(val))
+      }),
+      "$read" = {
+        paths <- vapply(unlist(val), rpath, character(1))
+        read_once(paste(c("read:", paths), collapse = "\n"), function() metacheck::read(paths))
+      },
       "$test_paper" = {
         txt <- unlist(val$text %||% LETTERS)
         url <- unlist(val$url %||% character(0))
@@ -269,7 +299,7 @@ yaml_float <- function(x) {
 for (f in files) {
   spec <- yaml::read_yaml(f, handlers = list(float = yaml_float))
   area <- spec$area
-  outdir <- file.path(root, "parity", "golden", area)
+  outdir <- file.path(out, area)
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
   for (case in spec$cases) {
     if (!is.null(only) && !(case$id %in% only)) next

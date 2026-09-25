@@ -1,0 +1,200 @@
+# Every difference between metacheck and pytacheck that the accuracy report
+# (`python -m parity accuracy`, docs/PARITY.md) finds on the realistic corpus,
+# and why. `--gate` fails on a difference no entry explains and on an entry that
+# explains none.
+#
+# differences: `module`, `input` (the path or its short name, e.g.
+# problems/203020.xml) and `field` (run, traffic_light, summary_text, report,
+# summary_table, summary_table.<column>, table, table.<column>) are globs, or
+# lists of globs, where `*` matches anything; `match` is the highest level of
+# difference the entry explains: whitespace (equal once whitespace is removed),
+# wording (other text, same numbers) or values. `kind`, `ref` and `reason` are
+# those of a parity mark on a tier-1 case (docs/UPSTREAM_ISSUES.md).
+#
+# floors: a module whose traffic lights agree with metacheck's on fewer than 90%
+# of its inputs is a warning (the upstream sync asks for human review), unless
+# a floor here names the share expected and why.
+#
+# This file has code owners (.github/CODEOWNERS): a change needs their review.
+
+differences:
+  # Grobid TEI clean-up -------------------------------------------------------
+  - module: "*"
+    input: "*.xml"
+    field: "table.*"
+    match: whitespace
+    kind: r_bug_fixed
+    ref: U16
+    reason: >-
+      numbers before a TEI tag keep their space ('p = 0.152', 'Study 1', 'Henry, 2019',
+      '24 July 2025') and DOIs split by a PDF line break are rejoined; metacheck's
+      number-before-operator clean-up treats a closing tag's '<' as an operator and glues them
+  - module: all_urls
+    input: demos/to_err_is_human.xml
+    field: table.text_id
+    match: values
+    kind: r_bug_fixed
+    ref: U16
+    reason: >-
+      the unlinked footnote marker after '(Table 1, Figure 1).' is a text row of its own,
+      so later sentences of the demo paper have text_ids one higher
+  - module: [all_p_values, stat_p_exact]
+    input: problems/0956797617737129.xml
+    field: [summary_text, summary_table.p_values, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U28
+    reason: >-
+      the link text 'both indices, r(68) = .58, p < .001 (see Fig' keeps its text in its own
+      row; metacheck replaces the URL's link text in every row, which removes this p-value
+      (37 p-values, metacheck finds 36)
+  - module: [stat_check, stat_effect_size, stat_p_nonsig]
+    input: problems/0956797617737129.xml
+    field: [table.text, table.expanded]
+    match: values
+    kind: r_bug_fixed
+    ref: U28
+    reason: >-
+      sentences keep 'see Fig. 3a' and 'see Fig. 4'; metacheck's link-text replacement over
+      every row turns 'Fig' into the supplement's URL
+  - module: all_urls
+    input: problems/0956797617737129.xml
+    field: [summary_table.urls, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U28
+    reason: >-
+      20 URLs, each at its own link text; metacheck's replacement of link text over every
+      row multiplies the supplement URL (31)
+  - module: open_practices
+    input: problems/0956797617737129.xml
+    field: [report, summary_table.*_statements, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U28
+    reason: >-
+      the data statement links osf.io/6b4ag (metacheck: file://localhost/opt/grobid/...
+      from a link without a target) and the statements keep their text where metacheck
+      replaced 'Supplemental Material' with the URL in every row
+  # URLs ------------------------------------------------------------------------
+  - module: all_urls
+    input: psychsci/0956797613520608.json
+    field: [traffic_light, summary_table.urls, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U158
+    reason: "'et al.Premotor' is not a URL (metacheck lists the host name 'al.Premotor')"
+  # module text -----------------------------------------------------------------
+  - module: coi_check_oi
+    input: "*"
+    field: table.header
+    match: wording
+    kind: r_bug_fixed
+    ref: U80
+    reason: the table names the section the statement is in (metacheck leaves the header NA)
+  - module: marginal
+    input: "*"
+    field: report
+    match: wording
+    kind: r_bug_fixed
+    ref: U3
+    reason: >-
+      the report cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)';
+      metacheck's bibentry re-parse writes 'Hartgerink &amp;, J. CH'
+  - module: [open_practices, ref_accuracy, ref_consistency]
+    input: "*"
+    field: report
+    match: wording
+    kind: r_bug_fixed
+    ref: U83
+    reason: >-
+      typos in report text are corrected: 'recognized' (metacheck: 'reconized'),
+      'Such an incoherence' ('incoherent'), 'likely' ('likley')
+  - module: [code_check, data_check]
+    input: [parse-errors, repos/careless]
+    field: report
+    match: wording
+    kind: r_bug_fixed
+    ref: U82
+    reason: >-
+      plurals agree with their counts: 'In 1 code file', '1 distinct respondent was
+      flagged' (metacheck: 'In 1 code files', '1 distinct respondent were flagged')
+  - module: stat_effect_size
+    input: "*"
+    field: summary_text
+    match: wording
+    kind: r_bug_fixed
+    ref: U125
+    reason: the missing-effect-size summary ends with a full stop
+  # references ------------------------------------------------------------------
+  - module: ref_accuracy
+    input: "*"
+    field: traffic_light
+    match: values
+    kind: r_bug_fixed
+    ref: U30
+    reason: >-
+      a paper without bib_match rows (every Grobid conversion) gets the light 'fail';
+      metacheck gives 'error', which is not one of its lights
+  - module: ref_consistency
+    input: "*"
+    field: summary_table
+    match: values
+    kind: r_bug_fixed
+    ref: U115
+    reason: >-
+      summary_table always has n_missing and n_extra; metacheck adds each only when a row
+      is flagged, so its columns vary with the paper
+  - module: ref_consistency
+    input: bibr12/full.json
+    field: table
+    match: values
+    kind: r_bug_fixed
+    ref: U115
+    reason: the citation '[1]' whose bib_id is not in the bibliography is reported as missing
+  # repositories ----------------------------------------------------------------
+  - module: code_check
+    input: notebooks
+    field: "*"
+    match: values
+    kind: r_bug_fixed
+    ref: U86
+    reason: >-
+      a notebook's language is read from its local copy, so the R notebook is checked as R
+      (dplyr, ggplot2 and its missing scores.csv are found); metacheck reads a path relative
+      to the working directory and checks it as Python
+  - module: [data_check, codebook_check]
+    input: [demo, notebooks, parse-errors]
+    field: [summary_text, report, summary_table, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U98
+    reason: >-
+      with no readable data file data_check still returns its summary text, report and
+      per-paper summary table (codebook_check reports data_check's column table); metacheck
+      returns only the validation half
+  - module: data_check
+    input: repos/spreadsheets
+    field: summary_text
+    match: values
+    kind: r_bug_fixed
+    ref: U99
+    reason: the extracted-file count counts the files read (8); metacheck counts unreadable ones (9)
+  - module: repo_check
+    input: [demo, repos/basic]
+    field: [summary_text, summary_table.files_zip, table.file_type]
+    match: values
+    kind: r_bug_fixed
+    ref: U123
+    reason: >-
+      a local file whose extension has one type takes it (archive, image, config), so the
+      local archive counts in files_zip as an online one does; metacheck leaves file_type NA
+
+floors:
+  - module: ref_accuracy
+    traffic_light: 0.4
+    kind: r_bug_fixed
+    ref: U30
+    reason: >-
+      12 of the 21 papers have no bib_match rows: pytacheck's light is 'fail' where
+      metacheck's is 'error' (not one of its lights)

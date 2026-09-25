@@ -4,8 +4,9 @@ Run ``python tests/mod_funding/make_review_cases.py``, then
 ``python -m parity generate --area mod_funding_review``.
 
 The cases target branches the first round of ``mod_funding`` cases did not
-reach: PCRE caseless matching of non-ASCII letters (Turkish dotted/dotless
-i, long s, the Kelvin sign) through the locators' shared column cache, the
+reach: caseless matching of non-ASCII letters (Turkish dotted/dotless i, long
+s, the Kelvin sign; pytacheck does not emulate PCRE2's rules for them, see
+``parity/divergences/regex.yaml``) through the locators' shared column cache, the
 100-sentence window and 10-sentence gap of the acknowledgements fallback,
 duplicate paper ids, empty paper lists, blank and missing sentences, the
 row order of ``funding_check_oi`` and its section preference in paper lists.
@@ -254,12 +255,6 @@ def add_limit_cases() -> None:
         ENV_R
         + f"fc_env()$negate_absence_1(c({q(long)}, 'No information of funding was received'))",
         f"{SUPPORT}.call('negate_absence_1', [{q(long)}, 'No information of funding was received'])",
-        known_divergence=(
-            "PCRE2 resource limit in R: on this 640-character sentence grepl(perl = TRUE) stops "
-            "with 'match limit exceeded' (a warning) and returns FALSE; the regex engine has no "
-            "such limit and finds the match. Only reached by pathologically repetitive text "
-            "(no metacheck fixture sentence reaches the limit with any funding pattern)."
-        ),
     )
 
 

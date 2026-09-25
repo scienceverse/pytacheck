@@ -1,10 +1,11 @@
-"""Small R base-library equivalents with R's exact output conventions.
+"""R's base-library conventions that reach users.
 
-These exist so that text produced by ported modules (summary texts, report
-sentences, table cells) is byte-identical to metacheck's, which the parity
-suite checks. Prefer them over ad-hoc ``str()``/f-string formatting of
-numbers whenever the R code relied on ``paste()``, ``as.character()`` or
-``format()`` of a double.
+Number formatting and rounding (``format()``, ``as.character()``, ``round()``,
+``signif()``), ``paste()``, ``trimws()`` and R's string collation for sorted
+listings: text produced by ported modules (summary texts, report sentences,
+table cells) uses these so that it reads as metacheck's does. Prefer them over
+``str()``/f-string formatting of numbers wherever the R code relied on
+``paste()``, ``as.character()`` or ``format()`` of a double.
 """
 
 from __future__ import annotations
@@ -15,21 +16,20 @@ import unicodedata
 from collections.abc import Iterable, Sequence
 from typing import Any
 
-from pytacheck._r.regex import compile_r, is_na
+import numpy as np
+
+from pytacheck._r.regex import _vectorize, is_na
 
 __all__ = [
     "as_character",
     "format_num",
     "is_na",
-    "nchar",
     "paste",
-    "paste0",
     "plural",
     "r_round",
     "r_sort_key",
     "r_sorted",
     "signif",
-    "substr",
     "trimws",
 ]
 
@@ -50,7 +50,7 @@ def format_num(x: Any, digits: int = 7) -> str:
     if isinstance(x, bool):
         return "TRUE" if x else "FALSE"
     if isinstance(x, int):
-        return _format_int(x)
+        return str(x)  # R integers never use scientific notation
     x = float(x)
     if math.isinf(x):
         return "Inf" if x > 0 else "-Inf"
@@ -70,11 +70,6 @@ def format_num(x: Any, digits: int = 7) -> str:
     return sci_repr
 
 
-def _format_int(x: int) -> str:
-    # R integers never use scientific notation in as.character()/paste().
-    return str(x)
-
-
 def as_character(x: Any) -> str | None:
     """R ``as.character()`` for a single value (``None`` for ``NA``).
 
@@ -86,23 +81,12 @@ def as_character(x: Any) -> str | None:
         return None
     if isinstance(x, str):
         return x
-    if isinstance(x, bool):
+    if isinstance(x, bool | np.bool_):
         return "TRUE" if x else "FALSE"
-    if isinstance(x, int):
-        return str(x)
-    if isinstance(x, float):
-        return format_num(x, digits=15)
-    try:
-        import numpy as np
-
-        if isinstance(x, np.bool_):
-            return "TRUE" if bool(x) else "FALSE"
-        if isinstance(x, np.integer):
-            return str(int(x))
-        if isinstance(x, np.floating):
-            return format_num(float(x), digits=15)
-    except ImportError:  # pragma: no cover
-        pass
+    if isinstance(x, int | np.integer):
+        return str(int(x))
+    if isinstance(x, float | np.floating):
+        return format_num(float(x), digits=15)
     return str(x)
 
 
@@ -111,19 +95,13 @@ def _paste_str(x: Any) -> str:
     return "NA" if s is None else s
 
 
-def _as_vector(x: Any) -> list[Any]:
-    if isinstance(x, str) or not isinstance(x, Iterable):
-        return [x]
-    return list(x)
-
-
 def paste(*args: Any, sep: str = " ", collapse: str | None = None) -> Any:
     """R ``paste()``: vectorised with recycling; ``NA`` becomes ``"NA"``.
 
     Returns a list of strings, or a single string when *collapse* is given
     (or when every argument is a scalar).
     """
-    vectors = [_as_vector(a) for a in args]
+    vectors = [[a] if isinstance(a, str) or not isinstance(a, Iterable) else list(a) for a in args]
     if not any(vectors):
         return "" if collapse is not None else []
     # zero-length arguments recycle as "" (R: paste("A", character(0)) is "A ")
@@ -137,11 +115,6 @@ def paste(*args: Any, sep: str = " ", collapse: str | None = None) -> Any:
     return out
 
 
-def paste0(*args: Any, collapse: str | None = None) -> Any:
-    """R ``paste0()``."""
-    return paste(*args, sep="", collapse=collapse)
-
-
 def plural(n: Any, singular: str = "", plural_: str = "s") -> Any:
     """metacheck's ``plural()``: ``singular`` when ``n == 1`` else ``plural_``."""
     if isinstance(n, Iterable) and not isinstance(n, str):
@@ -149,39 +122,15 @@ def plural(n: Any, singular: str = "", plural_: str = "s") -> Any:
     return singular if n == 1 else plural_
 
 
-def trimws(x: Any, which: str = "both", whitespace: str = "[ \t\r\n]") -> Any:
-    """R ``trimws()``; *whitespace* is a TRE regex (default: space, tab, CR, LF)."""
-    from pytacheck._r.regex import _vectorize
-
-    left = compile_r(f"^{whitespace}+", perl=False)
-    right = compile_r(f"{whitespace}+$", perl=False)
-
-    def trim(v: Any) -> str | None:
-        if is_na(v):
-            return None
-        s = str(v)
-        if which in ("both", "left"):
-            s = left.sub("", s, count=1)
-        if which in ("both", "right"):
-            s = right.sub("", s, count=1)
-        return s
-
-    return _vectorize(x, trim)
+#: R's trimws() default whitespace, "[ \t\r\n]"
+_TRIM = " \t\r\n"
+_STRIP = {"both": str.strip, "left": str.lstrip, "right": str.rstrip}
 
 
-def nchar(x: Any) -> int:
-    """R ``nchar(type = "chars")`` for one value (``NA`` gives 2, as in R)."""
-    if is_na(x):
-        return 2
-    return len(str(x))
-
-
-def substr(x: str, start: int, stop: int) -> str:
-    """R ``substr()`` with 1-based inclusive positions."""
-    start = max(start, 1)
-    if stop < start:
-        return ""
-    return x[start - 1 : stop]
+def trimws(x: Any, which: str = "both") -> Any:
+    """R ``trimws()`` with its default whitespace (space, tab, CR, LF)."""
+    strip = _STRIP[which]
+    return _vectorize(x, lambda v: None if is_na(v) else strip(str(v), _TRIM))
 
 
 _LOG10_2 = math.log10(2.0)

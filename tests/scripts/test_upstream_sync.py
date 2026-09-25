@@ -372,3 +372,103 @@ def test_write_pin_is_stable_on_the_repository_pin(tmp_path, monkeypatch) -> Non
     assert (tmp_path / "_version.py").read_text() == (
         REPO / "src" / "pytacheck" / "_version.py"
     ).read_text()
+
+
+def _load_script() -> ModuleType:
+    spec = importlib.util.spec_from_file_location("upstream_sync_brief_under_test", SCRIPT)
+    assert spec and spec.loader
+    us = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(us)
+    return us
+
+
+def _accuracy(**over: Any) -> dict[str, Any]:
+    report = {
+        "passed": True,
+        "outputs": 3,
+        "differences": [
+            {
+                "module": "m",
+                "input": "a.xml",
+                "field": "run",
+                "level": "values",
+                "detail": "only R fails",
+                "explained_by": None,
+            },
+            {
+                "module": "m",
+                "input": "b.xml",
+                "field": "report",
+                "level": "wording",
+                "detail": "R='likley'",
+                "explained_by": 0,
+            },
+        ],
+        "stale": [],
+        "warnings": [],
+    }
+    return {**report, **over}
+
+
+def test_brief_lists_changed_goldens_xpasses_and_unexplained_accuracy() -> None:
+    us = _load_script()
+    check = [
+        {
+            "case": "a/x",
+            "tier": 1,
+            "status": "r_changed",
+            "failing": True,
+            "kind": "r_bug_fixed",
+            "ref": "U1",
+            "problems": ["R's golden changed"],
+        },
+        {
+            "case": "a/y",
+            "tier": 2,
+            "status": "xpass",
+            "failing": True,
+            "kind": "c_quirk",
+            "ref": None,
+            "problems": ["matches R"],
+        },
+        {
+            "case": "a/z",
+            "tier": 1,
+            "status": "fail",
+            "failing": True,
+            "kind": None,
+            "ref": None,
+            "problems": ["x | y"],
+        },
+        {"case": "a/w", "tier": 1, "status": "pass", "failing": False, "problems": []},
+    ]
+    text = "\n".join(us.parity_brief(check, _accuracy()))
+    assert "4 cases: 1 fail, 1 pass, 1 r_changed, 1 xpass" in text
+    assert "golden changed" in text and "`a/x` | 1 | r_bug_fixed U1" in text
+    assert "now match R" in text and "`a/y`" in text
+    assert "Failing cases (1)" in text and "x \\| y" in text
+    assert "1 not explained" in text and "only R fails" in text and "likley" not in text
+
+
+def test_review_needs_a_human_for_tier1_marks_and_accuracy_warnings(monkeypatch) -> None:
+    us = _load_script()
+    monkeypatch.setattr(us, "tier1_marks", lambda: {"a/x": {"kind": "r_bug_fixed", "ref": "U1"}})
+    monkeypatch.setattr(us, "git", lambda *args, **kw: "")
+    same = {"a/x": {"kind": "r_bug_fixed", "ref": "U1"}}
+    assert us.review_reasons(same, _accuracy()) == []
+    reasons = us.review_reasons({}, _accuracy(warnings=["m: below 90%"], passed=False))
+    assert reasons[0].startswith("1 tier-1 (realistic) marks")
+    assert "the accuracy gate fails" in reasons
+    assert "accuracy: m: below 90%" in reasons
+    assert us.review_reasons(same, None) == ["the accuracy report did not run"]
+
+    def git(*args: str, **kw: Any) -> str:
+        if args[0] == "status":
+            return " M parity/accuracy/expected.yaml\n"
+        return "+| D30 | new deliberate difference |\n"
+
+    monkeypatch.setattr(us, "git", git)
+    assert us.review_reasons(same, _accuracy()) == [
+        "parity/accuracy/expected.yaml changed",
+        "D-entries of docs/UPSTREAM_ISSUES.md changed (1 lines)",
+    ]

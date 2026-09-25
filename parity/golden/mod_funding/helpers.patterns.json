@@ -7,7 +7,6 @@
     "t": "list",
     "names": [
       "get_support_1",
-      "get_support_2",
       "get_support_3",
       "get_support_4",
       "get_support_5",
@@ -28,7 +27,6 @@
       "get_fund_2",
       "get_fund_3",
       "get_fund_acknow",
-      "get_fund_acknow_new",
       "get_supported_1",
       "get_financial_1",
       "get_financial_2",
@@ -45,16 +43,9 @@
       "get_common_5",
       "get_acknow_1",
       "get_acknow_2",
-      "negate_disclosure_1",
-      "negate_disclosure_2",
-      "negate_conflict_1",
       "negate_absence_1",
       ".where_refs_txt",
-      ".where_acknows_txt",
-      ".where_methods_txt",
-      "obliterate_conflict_1",
-      "obliterate_disclosure_1",
-      ".obliterate_refs_1"
+      ".where_acknows_txt"
     ],
     "v": [
       {
@@ -62,13 +53,6 @@
         "v": [
           "(This\\b|The\\b|Our\\b).{0,15}([Ww]ork\\b|[Rr]esearch\\b|[Ss]tudy\\b|[Pp]roject\\b|[Tt]rial\\b|[Pp]ublication\\b|[Rr]eport\\b|[Pp]rogram\\b|[Pp]aper\\b|[Mm]anuscript\\b|[Aa]nalysis\\b|[Ii]nvestigation\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(is\\b|was\\b|have\\b|has\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Ff]unded\\b|[Ss]elf-funded\\b|[Ff]inanced\\b|[Ss]upported\\b|[Ss]ponsored\\b|[Rr]esourced\\b|[Aa]ided\\b|[Ff]unding\\b|[Ff]unds\\b|[Ss]elf-funding\\b|[Ff]und support(|s)\\b|[Ss]upport\\b|[Ss]ponsorship\\b|\\b[Aa]id\\b|[Rr]esources\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(by\\b|from\\b|within\\b|under\\b)",
           "(These\\b|Our\\b|Research\\b|All\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Ww]orks\\b|[Ss]tudies\\b|[Pp]rojects\\b|[Tt]rials\\b|[Pp]ublications\\b|[Rr]eports\\b|[Pp]rograms\\b|[Pp]papers\\b|[Mm]anuscripts\\b|[Aa]nalyses\\b|[Ii]nvestigations\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(are\\b|were\\b|have\\b|had\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Ff]unded\\b|[Ss]elf-funded\\b|[Ff]inanced\\b|[Ss]upported\\b|[Ss]ponsored\\b|[Rr]esourced\\b|[Aa]ided\\b|[Ff]unding\\b|[Ff]unds\\b|[Ss]elf-funding\\b|[Ff]und support(|s)\\b|[Ss]upport\\b|[Ss]ponsorship\\b|\\b[Aa]id\\b|[Rr]esources\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(by\\b|from\\b|within\\b|under\\b)"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "([Ff]unded\\b|[Ss]elf-funded\\b|[Ff]inanced\\b|[Ss]upported\\b|[Ss]ponsored\\b|[Rr]esourced\\b|[Aa]ided\\b|[Ff]unding\\b|[Ff]unds\\b|[Ss]elf-funding\\b|[Ff]und support(|s)\\b|[Ss]upport\\b|[Ss]ponsorship\\b|\\b[Aa]id\\b|[Rr]esources\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(this\\b|the\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Ww]ork\\b|[Rr]esearch\\b|[Ss]tudy\\b|[Pp]roject\\b|[Tt]rial\\b|[Pp]ublication\\b|[Rr]eport\\b|[Pp]rogram\\b|[Pp]aper\\b|[Mm]anuscript\\b|[Aa]nalysis\\b|[Ii]nvestigation\\b)",
-          "([Ff]unded\\b|[Ss]elf-funded\\b|[Ff]inanced\\b|[Ss]upported\\b|[Ss]ponsored\\b|[Rr]esourced\\b|[Aa]ided\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(these\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Ww]orks\\b|[Ss]tudies\\b|[Pp]rojects\\b|[Tt]rials\\b|[Pp]ublications\\b|[Rr]eports\\b|[Pp]rograms\\b|[Pp]papers\\b|[Mm]anuscripts\\b|[Aa]nalyses\\b|[Ii]nvestigations\\b)"
         ]
       },
       {
@@ -197,12 +181,6 @@
       {
         "t": "chr",
         "v": [
-          "(acknowledge\\b|recognize\\b|disclose\\b|declare\\b|report\\b|appreciate\\b|[Ss]upport(|s)\\b|\\b)"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
           "(Supported\\b) (by\\b|from\\b|within\\b|under\\b) [a-zA-Z]+"
         ]
       },
@@ -302,25 +280,6 @@
       {
         "t": "chr",
         "v": [
-          "([Dd]isclose(|s)(|:|\\.)|[Dd]isclosure(|s)(|:|\\.))[a-zA-Z0-9\\s,()-]*(conflict(|s) of interest|conflicting interest|conflicting financial interest|conflicting of interest|conflits d'int|conflictos de Inter|competing interest|competing of interest|competing financial interest)[a-zA-Z0-9\\s,()-]*(and|&|or)[a-zA-Z0-9\\s,()-]*(not)[a-zA-Z0-9\\s,()-]*(\\bfunded|\\bfinanced|\\bsupported|\\bsponsored|\\bresourced)",
-          "([Dd]isclose(|s)(|:|\\.)|[Dd]isclosure(|s)(|:|\\.))[a-zA-Z0-9\\s,()-]*(\\bfunded|\\bfinanced|\\bsupported|\\bsponsored|\\bresourced|[Ff]unding|[Ff]unds|[Ss]elf-funding|[Ff]und support(|s)|[Ss]upport|[Ss]ponsorship|\\b[Aa]id|[Rr]esources)[a-zA-Z0-9\\s,()-]*(conflict(|s) of interest|conflicting interest|conflicting financial interest|conflicting of interest|conflits d'int|conflictos de Inter|competing interest|competing of interest|competing financial interest)"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "((F(?i)inancial disclosure(|s)(?-i)(|:|\\.)|F(?i)inancial declaration(|s)(?-i)(|:|\\.)|Disclosure(|:|\\.)|Declaration(|:|\\.)) (N(?i)o(?-i)|N(?i)il(?-i)|N(?i)one(?-i)|N(?i)othing(?-i)))|((F(?i)inancial disclosure(|s)(?-i)(|:|\\.)|F(?i)inancial declaration(|s)(?-i)(|:|\\.)|Disclosure(|:|\\.)|Declaration(|:|\\.))[a-zA-Z0-9\\s,()\\[\\]/:-]*(no|not have any) (financial disclosure(|s)|financial declaration(|s)|disclosure|declaration))|((F(?i)inancial disclosure(|s)(?-i)(|:|\\.)|F(?i)inancial declaration(|s)(?-i)(|:|\\.)|Disclosure(|:|\\.)|Declaration(|:|\\.))[a-zA-Z0-9\\s,()\\[\\]/:-]*(nil|nothing) (to disclose|to declare|to report))"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "(^C(?i)onflict(|s) of interest(|s)(?-i)(|:|\\.)$|^C(?i)onflict(|s) of interest(|s) declaration(?-i)(|:|\\.)$|^C(?i)onflicting interest(|s)(?-i)(|:|\\.)$|^C(?i)onflicting interest(|s) declaration(?-i)(|:|\\.)$|^C(?i)onflicting financial intere(|:|\\.)$|^C(?i)onflicting of interest(|s)(?-i)(|:|\\.)$|^C(?i)onflits d'int(?-i)(|:|\\.)$|^C(?i)onflictos de Inter(?-i)(|:|\\.)$|^C(?i)ompeting interest(|s)(?-i)(|:|\\.)$|^C(?i)ompeting interest(|s) declaration(?-i)(|:|\\.)$|^C(?i)ompeting of interest(|s)(?-i)(|:|\\.)$|^C(?i)ompeting financial interest(|s)(?-i)(|:|\\.)$|^D(?i)eclaration of interest(|s)(?-i)(|:|\\.)$|^D(?i)eclaration of conflicting interest(|s)(?-i)(|:|\\.)$|^D(?i)uality of interest(|s)(?-i)(|:|\\.)$|^S(?i)ource(|s) of bias(?-i)(|:|\\.)$|^F(?i)unding and (|\\w+ )(conflict(|s)|competing) (|of )interest(|s)(?-i)(|:|\\.)$)"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
           "(N(?i)o(?-i)\\b|N(?i)il(?-i)\\b|N(?i)one(?-i)\\b|N(?i)othing(?-i)\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(info(|rmation)\\b\\b|detail(|s)\\b|particulars\\b|data\\b\\b|material\\b\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(of\\b|about\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Ff]unding\\b|[Ff]unds\\b|[Ss]elf-funding\\b|[Ff]und support(|s)\\b|[Ss]upport\\b|[Ss]ponsorship\\b|\\b[Aa]id\\b|[Rr]esources\\b|[Ff]inancial support(|s)\\b|[Ff]inancial source(|s)\\b|[Ff]inancial or other support(|s)\\b|[Ff]inancial assistance\\b|[Ff]inancial aid(|s)\\b|[Ff]inancial sponsorship(|s)\\b|[Ff]inancial support(|s) and sponsorship(|s)\\b|[Gg]rant support(|s)\\b|[Gg]rant assistance\\b|[Gg]rant aid(|s)\\b|[Gg]rant sponsorship(|s)\\b|[Gg]rant(|s)\\b|(?<![Ss]pecialty) [Ff]ellowship(|s)\\b|[Aa]ward(|s|ing)\\b|[Ss]cholar(|s|ship|ships)\\b|[Ee]ndowment(|s)\\b|[Ss]tipend(|s)\\b|[Bb]ursar(y|ies)\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(is\\b|are\\b|was\\b|were\\b|been\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Rr]eceived\\b|[Aa]ccepted\\b|[Aa]cquired\\b|[Pp]rovided\\b|[Gg]ranted\\b|[Aa]warded\\b|[Gg]iven\\b|[Oo]ffered\\b|[Aa]llotted\\b|[Dd]isclosed\\b|[Dd]eclared\\b|[Ss]upplied\\b|[Pp]resented\\b)"
         ]
       },
@@ -341,32 +300,6 @@
           "(F(?i)inancial support(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s)(?-i)(|:|\\.)|S(?i)ource(|s) of financial support(|s)(?-i)(|:|\\.)|F(?i)inancial or other support(|s)(?-i)(|:|\\.)|F(?i)inancial assistance(?-i)(|:|\\.)|F(?i)inancial aid(?-i)(|:|\\.)|F(?i)inancial sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial support(|s) and sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s) for the stud(y|ies)(?-i)(|:|\\.)|F(?i)inancial information(?-i)(|:|\\.)|F(?i)inancial statement(|s)(?-i)(|:|\\.)|F(?i)inanciamento(?-i)(|:|\\.))",
           "(^G(?i)rant(|s)(?-i)(|:|\\.)$|^G(?i)rant sponsor(|s|ship(|s))(?-i)(|:|\\.)$|^G(?i)rant support(|s)(?-i)(|:|\\.)$|^G(?i)rant assistance(?-i)(|:|\\.)$|^G(?i)rant aid(|s)(?-i)(|:|\\.)$|^^[A-Z]\\w+ grant sponsor(|s|ship(|s))(?-i)(|:|\\.)$)",
           "(G(?i)rant [Ss]upport(|s)(|:|\\.)|G(?i)rant \\b[Aa]id(|s)(|:|\\.)|G(?i)rant [Aa]ssistance(|:|\\.)|G(?i)rant [Ss]ponsorship(|s)(|:|\\.)|G(?i)rant [Ff]under(|:|\\.)|G(?i)rant [Ss]ponsor(|:|\\.)|G(?i)rant [Ss]upporter(|:|\\.)|^[A-Z](?i)\\w+ grant [Ss]upport(|s)(|:|\\.)|^[A-Z](?i)\\w+ grant \\b[Aa]id(|s)(|:|\\.)|^[A-Z](?i)\\w+ grant [Aa]ssistance(|:|\\.)|^[A-Z](?i)\\w+ grant [Ss]ponsorship(|s)(|:|\\.)|^[A-Z](?i)\\w+ grant [Ff]under(|:|\\.)|^[A-Z](?i)\\w+ grant [Ss]ponsor(|:|\\.)|^[A-Z](?i)\\w+ grant [Ss]upporter(|:|\\.)|Contract grant [Ss]upport(|s)(|:|\\.)|Contract grant \\b[Aa]id(|s)(|:|\\.)|Contract grant [Aa]ssistance(|:|\\.)|Contract grant [Ss]ponsorship(|s)(|:|\\.)|Contract grant [Ff]under(|:|\\.)|Contract grant [Ss]ponsor(|:|\\.)|Contract grant [Ss]upporter(|:|\\.))"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "(^.{0,4}.{0,4}M(?i)ethod(|s)(?-i).{0,4}|^.{0,4}.{0,4}O(?i)nline method(|s)(?-i).{0,4}|^.{0,4}.{0,4}M(?i)aterial(|s) and Method(|s)(?-i).{0,4}|^.{0,4}.{0,4}M(?i)aterial(|s)/Method(|s)(?-i).{0,4}|^.{0,4}.{0,4}M(?i)ethod(|s) and Material(|s)(?-i).{0,4}|^.{0,4}.{0,4}M(?i)ethod(|s)/Material(|s)(?-i).{0,4}|^.{0,4}.{0,4}S(?i)ubjects and method(|s)(?-i).{0,4}|^.{0,4}.{0,4}P(?i)atients and method(|s)(?-i).{0,4}|^.{0,4}.{0,4}P(?i)articipants and method(|s)(?-i).{0,4}|^.{0,4}.{0,4}M(?i)ethods and preliminary analysis(?-i).{0,4}|^.{0,4}.{0,4}E(?i)xperimental section(?-i).{0,4}|^.{0,4}.{0,4}M(?i)ethodology(?-i).{0,4}|^.{0,4}.{0,4}M(?i)etodologia(?-i).{0,4}|^.{0,4}.{0,4}M(?i)etodologie(?-i).{0,4})",
-          "(.{0,4}M(?i)ethod(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}O(?i)nline method(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)aterial(|s) and Method(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)aterial(|s)/Method(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)ethod(|s) and Material(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)ethod(|s)/Material(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}S(?i)ubjects and method(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}P(?i)atients and method(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}P(?i)articipants and method(|s)(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)ethods and preliminary analysis(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}E(?i)xperimental section(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)ethodology(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)etodologia(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z]|.{0,4}M(?i)etodologie(?-i)( [A-Z][a-zA-Z]|:|\\.|\\s*-+)\\s*[A-Z])"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "((funding|financial|support)[a-zA-Z0-9\\s,()\\[\\]/:-]*(relation(|s|ship(|s))\\b|connection(|s)\\b|association(|s)\\b|involvement(|s)\\b|tie(|s)\\b|contract(|s)\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*([Cc]onflict(|ing)(|s)\\b|[Cc]ompet(e|ing)\\b|source(|s) of bias\\b|[Cc]onflits\\b|[Cc]onflictos\\b)|([Cc]onflict(|ing)(|s)\\b|[Cc]ompet(e|ing)\\b|source(|s) of bias\\b|[Cc]onflits\\b|[Cc]onflictos\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(relation(|s|ship(|s))\\b|connection(|s)\\b|association(|s)\\b|involvement(|s)\\b|tie(|s)\\b|contract(|s)\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(financial|support)|(relation(|s|ship(|s))\\b|connection(|s)\\b|association(|s)\\b|involvement(|s)\\b|tie(|s)\\b|contract(|s)\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(financial(?:\\s+\\w+){0,3} interest))"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "[a-zA-Z0-9\\s,()\\[\\]/:-]*([Cc]onflict(|ing)(|s)\\b|[Cc]ompet(e|ing)\\b|source(|s) of bias\\b|[Cc]onflits\\b|[Cc]onflictos\\b|and\\b|&\\b|or\\b|not\\b|[Ff]unded\\b|[Ss]elf-funded\\b|[Ff]inanced\\b|[Ss]upported\\b|[Ss]ponsored\\b|[Rr]esourced\\b|[Aa]ided\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*($|.)"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "^.*\\([0-9]{4}\\).*$",
-          "^.* et al\\..*$"
         ]
       }
     ]
