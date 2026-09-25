@@ -4,63 +4,50 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 2,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "a",
+      "tags..x.",
+      "tags..y.",
+      "X.z."
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "text",
-          "a",
-          "tags..x.",
-          "tags..y.",
-          "X.z."
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "schema two",
-              "schema one"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              2,
-              1
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "x",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "y",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              "z"
-            ]
-          }
+          "schema two",
+          "schema one"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          1
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "x",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "y",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "z"
+        ]
       }
     ]
   },

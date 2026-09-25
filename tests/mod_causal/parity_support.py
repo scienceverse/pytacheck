@@ -155,14 +155,6 @@ def with_section_types(p: Any, section_type: Sequence[str]) -> Any:
     return p
 
 
-def error_message(x: Callable[[], Any]) -> Any:
-    """R ``tryCatch(x, error = function(e) conditionMessage(e))``."""
-    try:
-        return x()
-    except Exception as exc:
-        return str(exc)
-
-
 def report_qmd(out: Any) -> list[str]:
     """``module_run(...)$report`` as R holds it: table blocks become the R
     chunk ``scroll_table()`` returns, so tables are compared too."""

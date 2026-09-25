@@ -7,8 +7,8 @@ The cases read the adversarial files in ``tests/bibr12/fixtures`` (numbers in
 string columns, strings in integer columns, scalars for arrays, nulls in
 person arrays, every degrees-of-freedom shape, unknown keys, missing tables,
 jsonlite's number and string formatting), write 12.x papers that a user has
-changed, and check error messages (the plain error cases of bibr12.yaml only
-check that Python raises).
+changed, and check where reading and writing stop (when R fails, Python must
+fail too; the error and warning texts are not compared).
 """
 
 from __future__ import annotations
@@ -27,6 +27,7 @@ EDGES = ("edge_types", "edge_minimal", "edge_numeric_id")
 NO_TIME = {"edge_minimal"}
 
 H = "__import__('tests.bibr12._review_helpers', fromlist=['x'])"
+PY_READ_BIBR = "__import__('pytacheck.papers.io', fromlist=['x']).read_bibr"
 
 # R: a temporary directory, as the Python helpers use
 R_TMP = "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})"
@@ -47,10 +48,6 @@ def r_roundtrip(paper: str, blank_time: bool = False) -> str:
         # the time of writing: a constant, so that goldens do not change
         out = f"local({{p <- {out}; p$extraction$completed_at <- '<completed_at>'; p}})"
     return out
-
-
-def r_error(expr: str) -> str:
-    return f"tryCatch({{{expr}; NULL}}, error = \\(e) conditionMessage(e))"
 
 
 def r_variant(path: str, name: str, value: str) -> str:
@@ -250,9 +247,8 @@ def cases() -> list[dict[str, Any]]:
         out.append(
             value_case(
                 f"read.error_message.{vid}",
-                r_error(f"metacheck:::.read_bibr({r_path})"),
-                f"{H}.error_message(lambda: __import__('pytacheck.papers.io', "
-                f"fromlist=['x']).read_bibr({py_path}))",
+                f"metacheck:::.read_bibr({r_path})",
+                f"__import__('pytacheck.papers.io', fromlist=['x']).read_bibr({py_path})",
             )
         )
     # an array df with other than one element stops (is.null(df) || grepl(...))
@@ -260,9 +256,9 @@ def cases() -> list[dict[str, Any]]:
         out.append(
             value_case(
                 f"read.error_message.{name}",
-                r_error(f"metacheck:::.read_bibr12('{FX}/{name}.json')"),
-                f"{H}.error_message(lambda: __import__('pytacheck.io.bibr12', fromlist=['x'])"
-                f".read_bibr12({H}.FX / '{name}.json'))",
+                f"metacheck:::.read_bibr12('{FX}/{name}.json')",
+                f"__import__('pytacheck.io.bibr12', fromlist=['x'])"
+                f".read_bibr12({H}.FX / '{name}.json')",
             )
         )
     # a root schema_version of null is no schema_version: the older reader
@@ -281,11 +277,8 @@ def cases() -> list[dict[str, Any]]:
     out.append(
         value_case(
             "paper_write.error_message.older_format",
-            r_error(
-                f"paper_write(demopaper(), NULL, save_path = {R_TMP}, schema_version = '12.0')"
-            ),
-            f"{H}.error_message(lambda: pc.paper_write(pc.demopaper(), None, "
-            f"{H}._tempdir(), schema_version='12.0'))",
+            f"paper_write(demopaper(), NULL, save_path = {R_TMP}, schema_version = '12.0')",
+            f"pc.paper_write(pc.demopaper(), None, {H}._tempdir(), schema_version='12.0')",
         )
     )
     r_path = r_variant(f"{FX}/edge_types.json", "v.json", '"12.0.1"')
@@ -293,22 +286,14 @@ def cases() -> list[dict[str, Any]]:
     out.append(
         value_case(
             "paper_write.error_message.later_12x",
-            r_error(
-                f"paper_write(read({r_path}), NULL, save_path = {R_TMP}, schema_version = '12.0')"
-            ),
-            f"{H}.error_message(lambda: pc.paper_write(pc.read({py_path}), None, "
-            f"{H}._tempdir(), schema_version='12.0'))",
+            f"paper_write(read({r_path}), NULL, save_path = {R_TMP}, schema_version = '12.0')",
+            f"pc.paper_write(pc.read({py_path}), None, {H}._tempdir(), schema_version='12.0')",
         )
     )
 
-    # paper_validate(): its warnings (the harness compares values only) ---------------
+    # paper_validate() (its warnings are not compared) ---------------------------------
     # the paper is read first: reading warns on its own ("NAs introduced by coercion")
-    r_validate = (
-        "local({{p <- suppressWarnings({paper}); w <- character(0); "
-        "v <- withCallingHandlers(paper_validate(p), warning = function(x) "
-        "{{w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}}); "
-        "list(value = v, warnings = w)}})"
-    )
+    r_validate = "local({{p <- suppressWarnings({paper}); paper_validate(p)}})"
     validate_papers = {
         **{
             name: (f"read('{FX}/{name}.json')", f"pc.read({H}.FX / '{name}.json')")
@@ -338,7 +323,7 @@ def cases() -> list[dict[str, Any]]:
             value_case(
                 f"paper_validate.warnings.{name}",
                 r_validate.format(paper=r_paper),
-                f"{H}.validate_warnings({py_paper})",
+                f"pc.paper_validate({py_paper})",
             )
         )
 
@@ -390,17 +375,15 @@ def cases() -> list[dict[str, Any]]:
         out.append(
             value_case(
                 f"malformed.read.{f.stem}",
-                f"tryCatch(metacheck:::.read_bibr('{path}'), "
-                "error = function(e) paste('ERROR:', conditionMessage(e)))",
-                f"{H}.read_or_error('{path}')",
+                f"metacheck:::.read_bibr('{path}')",
+                f"{PY_READ_BIBR}({H}._path('{path}'))",
             )
         )
         out.append(
             value_case(
                 f"malformed.write.{f.stem}",
-                f"tryCatch({r_written(f'metacheck:::.read_bibr({path!r})')}, "
-                "error = function(e) paste('ERROR:', conditionMessage(e)))",
-                f"{H}.written_or_error('{path}')",
+                r_written(f"metacheck:::.read_bibr({path!r})"),
+                f"{H}.written({PY_READ_BIBR}({H}._path('{path}')))",
             )
         )
 

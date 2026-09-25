@@ -1,14 +1,9 @@
 {
   "id": "regcheck_compare.msg.no_server",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "Could not connect to the local RegCheck server at http://127.0.0.1:9.\nStart it first with regcheck_start_local(), then try again.\nSee http://www.scienceverse.org/metacheck_book/ for setup instructions.",
   "warnings": [],
-  "value": {
-    "t": "chr",
-    "v": [
-      "ERROR: Could not connect to the local RegCheck server at http://127.0.0.1:9.\nStart it first with regcheck_start_local(), then try again.\nSee http://www.scienceverse.org/metacheck_book/ for setup instructions."
-    ]
-  },
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

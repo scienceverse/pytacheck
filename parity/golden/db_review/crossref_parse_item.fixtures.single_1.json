@@ -7189,25 +7189,11 @@
             ]
           },
           {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "df",
-            "nrow": 1,
+            "t": "list",
             "names": [
-              "content-domain.\"journals.sagepub.com\"",
-              "content-domain.crossmark-restriction"
+              "error"
             ],
             "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "journals.sagepub.com"
-                ]
-              },
               {
                 "t": "lgl",
                 "v": [
@@ -7239,9 +7225,39 @@
             ]
           },
           {
-            "t": "chr",
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-domain.\"journals.sagepub.com\"",
+              "content-domain.crossmark-restriction"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "chr",
+                "v": [
+                  "journals.sagepub.com"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
@@ -7267,9 +7283,17 @@
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
@@ -7295,32 +7319,11 @@
             ]
           },
           {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "df",
-            "nrow": 1,
+            "t": "list",
             "names": [
-              "content-domain.domain.\"elsevier.com\"",
-              "content-domain.domain.\"sciencedirect.com\"",
-              "content-domain.crossmark-restriction"
+              "error"
             ],
             "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "elsevier.com"
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "sciencedirect.com"
-                ]
-              },
               {
                 "t": "lgl",
                 "v": [
@@ -7417,171 +7420,424 @@
             ]
           },
           {
-            "t": "chr",
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-domain.domain.\"elsevier.com\"",
+              "content-domain.domain.\"sciencedirect.com\"",
+              "content-domain.crossmark-restriction"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "chr",
+                "v": [
+                  "elsevier.com"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "sciencedirect.com"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
@@ -7607,43 +7863,53 @@
             ]
           },
           {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "df",
-            "nrow": 1,
+            "t": "list",
             "names": [
-              "content-domain.\"www.tandfonline.com\"",
-              "content-domain.crossmark-restriction"
+              "error"
             ],
             "v": [
               {
-                "t": "chr",
+                "t": "lgl",
                 "v": [
-                  "www.tandfonline.com"
+                  true
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
               {
                 "t": "lgl",
                 "v": [
@@ -7675,45 +7941,123 @@
             ]
           },
           {
-            "t": "chr",
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-domain.\"www.tandfonline.com\"",
+              "content-domain.crossmark-restriction"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "chr",
+                "v": [
+                  "www.tandfonline.com"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
@@ -7739,37 +8083,11 @@
             ]
           },
           {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "df",
-            "nrow": 1,
+            "t": "list",
             "names": [
-              "content-domain.\"journals.sagepub.com\"",
-              "content-domain.crossmark-restriction"
+              "error"
             ],
             "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "journals.sagepub.com"
-                ]
-              },
               {
                 "t": "lgl",
                 "v": [
@@ -7779,37 +8097,25 @@
             ]
           },
           {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
-            ]
-          },
-          {
-            "t": "df",
-            "nrow": 1,
+            "t": "list",
             "names": [
-              "content-domain.\"journals.sagepub.com\"",
-              "content-domain.crossmark-restriction"
+              "error"
             ],
             "v": [
               {
-                "t": "chr",
+                "t": "lgl",
                 "v": [
-                  "journals.sagepub.com"
+                  true
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
               {
                 "t": "lgl",
                 "v": [
@@ -7841,19 +8147,39 @@
             ]
           },
           {
-            "t": "df",
-            "nrow": 1,
+            "t": "list",
             "names": [
-              "content-domain.\"journals.sagepub.com\"",
-              "content-domain.crossmark-restriction"
+              "error"
             ],
             "v": [
               {
-                "t": "chr",
+                "t": "lgl",
                 "v": [
-                  "journals.sagepub.com"
+                  true
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
               {
                 "t": "lgl",
                 "v": [
@@ -7907,87 +8233,265 @@
             ]
           },
           {
-            "t": "chr",
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-domain.\"journals.sagepub.com\"",
+              "content-domain.crossmark-restriction"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "chr",
+                "v": [
+                  "journals.sagepub.com"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-domain.\"journals.sagepub.com\"",
+              "content-domain.crossmark-restriction"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "chr",
+                "v": [
+                  "journals.sagepub.com"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-domain.\"journals.sagepub.com\"",
+              "content-domain.crossmark-restriction"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "chr",
+                "v": [
+                  "journals.sagepub.com"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           },
           {
-            "t": "chr",
+            "t": "list",
+            "names": [
+              "error"
+            ],
             "v": [
-              "ERROR: arguments imply differing number of rows: 0, 1"
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "error"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
             ]
           }
         ]

@@ -123,7 +123,7 @@ for name, when in FIXTURES.items():
         }
     )
 
-# the error messages (the harness only checks that both sides fail)
+# conversions that fail in R (Python must fail too, whatever its message)
 ERRORS = {
     "corrupt": "upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml",
     "url_empty": "tests/io/fixtures/url_empty.tei.xml",
@@ -137,9 +137,9 @@ for name, path in ERRORS.items():
             "py": "tests.grobid12._parity_helpers.identity",
             "args": {
                 "x": expr(
-                    f"tryCatch(.grobid_to_bibr('{path}', schema_version = '12.0'), "
-                    "error = conditionMessage)",
-                    f"{H}.convert_error({path!r})",
+                    f".grobid_to_bibr('{path}', schema_version = '12.0')",
+                    f"__import__('pytacheck.io.grobid', fromlist=['x'])"
+                    f"._grobid_to_bibr(str({H}._path({path!r})), None, '12.0')",
                 )
             },
         }

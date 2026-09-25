@@ -1,35 +1,9 @@
 {
   "id": "llm_use.string_yes",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "Set llm_use with TRUE or FALSE",
   "warnings": [],
-  "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
-    "v": [
-      {
-        "t": "list",
-        "names": [
-          "error"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "Set llm_use with TRUE or FALSE"
-            ]
-          }
-        ]
-      },
-      {
-        "t": "chr",
-        "v": []
-      }
-    ]
-  },
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

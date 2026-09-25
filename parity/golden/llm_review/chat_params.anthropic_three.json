@@ -2,39 +2,26 @@
   "id": "chat_params.anthropic_three",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Ignoring unsupported parameters: \"frequency_penalty\", \"presence_penalty\", and\n\"log_probs\""
+  ],
   "value": {
     "t": "list",
     "names": [
-      "value",
-      "warnings"
+      "max_tokens",
+      "stop_sequences"
     ],
     "v": [
       {
-        "t": "list",
-        "names": [
-          "max_tokens",
-          "stop_sequences"
-        ],
+        "t": "dbl",
         "v": [
-          {
-            "t": "dbl",
-            "v": [
-              4096
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": []
-          }
+          4096
         ]
       },
       {
-        "t": "chr",
-        "v": [
-          "Ignoring unsupported parameters: \"frequency_penalty\", \"presence_penalty\", and\n\"log_probs\""
-        ]
+        "t": "list",
+        "names": null,
+        "v": []
       }
     ]
   },

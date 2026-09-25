@@ -2,26 +2,13 @@
   "id": "paper_validate.warnings.test_paper",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "The section_id column of the text table is a double type, but should be a integer type\nThe paragraph_id column of the text table is a double type, but should be a integer type\nThe section_id column of the section table is a double type, but should be a integer type"
+  ],
   "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
+    "t": "lgl",
     "v": [
-      {
-        "t": "lgl",
-        "v": [
-          true
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "The section_id column of the text table is a double type, but should be a integer type\nThe paragraph_id column of the text table is a double type, but should be a integer type\nThe section_id column of the section table is a double type, but should be a integer type"
-        ]
-      }
+      true
     ]
   },
   "metacheck_version": "0.3.1",

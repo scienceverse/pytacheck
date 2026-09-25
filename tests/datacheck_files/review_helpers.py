@@ -15,6 +15,7 @@ import math
 import tempfile
 from pathlib import Path
 from typing import Any
+from unittest import mock
 
 import pandas as pd
 
@@ -99,7 +100,11 @@ def manifest_scenario(scenario: str) -> Any:
         if scenario == "no_repo_url_gated":  # R: if (NULL %in% gated_urls) is an error
             files = pd.DataFrame({"file_name": ["b.csv"], "file_url": ["https://osf.io/b/"]})
             path = str(Path(tmp) / "m.json")
-            F._data_check_write_manifest(path, files, [True], None, "p1", "data", 100, 500)
+            # the listing leaves b.csv unsized, so the manifest asks the server
+            # for its size (a HEAD request); parity cases run offline, where the
+            # probe finds no size
+            with mock.patch.object(F, "_remote_size", return_value=None):
+                F._data_check_write_manifest(path, files, [True], None, "p1", "data", 100, 500)
             return json.loads(Path(path).read_text(encoding="utf-8"))
         if scenario == "dir_slash":
             files = pd.DataFrame({"repo_url": ["u"], "file_name": ["a.csv"]})
@@ -150,18 +155,15 @@ def _unescape(s: str | None) -> str | None:
     return raw.decode("utf-8", "surrogateescape")  # type: ignore[union-attr]
 
 
-def classify_or_error(
+def classify(
     file_name: list[str | None], file_path: list[str | None] | None = None, fn: str = "classify"
 ) -> Any:
-    """``data_classify_files()`` / ``.data_doc_role()`` of escaped names, or the error message."""
+    """``data_classify_files()`` / ``.data_doc_role()`` of escaped names."""
     names = [_unescape(v) for v in file_name]
     paths = None if file_path is None else [_unescape(v) for v in file_path]
-    try:
-        if fn == "doc_role":
-            return F._data_doc_role(names)
-        return F.data_classify_files(names, paths)
-    except ValueError as e:
-        return str(e)
+    if fn == "doc_role":
+        return F._data_doc_role(names)
+    return F.data_classify_files(names, paths)
 
 
 def read_head_invalid_name() -> Any:

@@ -4,63 +4,50 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 4,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "cached_input",
+      "input",
+      "output"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 4,
-        "names": [
-          "id",
-          "cached_input",
-          "input",
-          "output"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "gemini-2.5-flash",
-              "gemini-2.5-flash-image",
-              "gemini-2.5-flash-lite",
-              "Gemma-3-1b-it"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.03,
-              0.03,
-              0.01,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.3,
-              0.3,
-              0.1,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              2.5,
-              2.5,
-              0.4,
-              null
-            ]
-          }
+          "gemini-2.5-flash",
+          "gemini-2.5-flash-image",
+          "gemini-2.5-flash-lite",
+          "Gemma-3-1b-it"
         ]
       },
       {
-        "t": "chr",
-        "v": []
+        "t": "dbl",
+        "v": [
+          0.03,
+          0.03,
+          0.01,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.3,
+          0.3,
+          0.1,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2.5,
+          2.5,
+          0.4,
+          null
+        ]
       }
     ]
   },

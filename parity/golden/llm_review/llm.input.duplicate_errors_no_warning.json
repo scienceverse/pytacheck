@@ -4,55 +4,42 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 2,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "answer",
+      "error",
+      "error_msg"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "text",
-          "answer",
-          "error",
-          "error_msg"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "unauthorized",
-              "unauthorized"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true,
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "HTTP 401 Unauthorized.\nℹ Invalid API Key\n  Provider says: Invalid API Key",
-              "HTTP 401 Unauthorized.\nℹ Invalid API Key\n  Provider says: Invalid API Key"
-            ]
-          }
+          "unauthorized",
+          "unauthorized"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "HTTP 401 Unauthorized.\nℹ Invalid API Key\n  Provider says: Invalid API Key",
+          "HTTP 401 Unauthorized.\nℹ Invalid API Key\n  Provider says: Invalid API Key"
+        ]
       }
     ]
   },

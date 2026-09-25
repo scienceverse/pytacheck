@@ -30,7 +30,6 @@ __all__ = [
     "P",
     "RInt",
     "T",
-    "catch",
     "identity",
     "ollama_no_content",
     "ollama_reply",
@@ -45,27 +44,6 @@ LLM_ON = {"metacheck.llm.use": True, "metacheck.llm.cache": False}
 def identity(x: Any) -> Any:
     """R ``base::identity()``."""
     return x
-
-
-def catch(fn: Callable[[], Any]) -> dict[str, Any]:
-    """``fn()`` with its error and warning texts, for comparing them with R.
-
-    The R side of such a case is ``tryCatch(withCallingHandlers(...))``
-    returning ``list(value = <value or list(error = msg)>, warnings = msgs)``.
-    Only ``UserWarning``\\ s (R ``warning()``) are recorded.
-    """
-    import warnings
-
-    with warnings.catch_warnings(record=True) as ws:
-        warnings.simplefilter("always")
-        try:
-            value = fn()
-        except Exception as e:
-            value = {"error": str(e.args[0]) if len(e.args) == 1 else str(e)}
-    return {
-        "value": value,
-        "warnings": [str(w.message) for w in ws if issubclass(w.category, UserWarning)],
-    }
 
 
 @contextlib.contextmanager

@@ -4,58 +4,45 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "name",
+      "n",
+      "tags",
+      "sub"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "text",
-          "name",
-          "n",
-          "tags",
-          "sub"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "single nulls"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null
-            ]
-          }
+          "single nulls"
         ]
       },
       {
-        "t": "chr",
-        "v": []
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
       }
     ]
   },

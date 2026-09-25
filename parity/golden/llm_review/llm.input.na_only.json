@@ -4,37 +4,24 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "answer"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "text",
-          "answer"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "NA answer"
-            ]
-          }
+          null
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "NA answer"
+        ]
       }
     ]
   },

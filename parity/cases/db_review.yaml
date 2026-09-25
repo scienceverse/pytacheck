@@ -676,80 +676,80 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\"\\u00a0\"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('\\u00a0'))"
+        "r": "regcheck_compare(\"\\u00a0\")"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('\\u00a0')"
 - "id": "regcheck_compare.msg.blank_paper"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\" \\t\\n\"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare(' \\t\\n'))"
+        "r": "regcheck_compare(\" \\t\\n\")"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare(' \\t\\n')"
 - "id": "regcheck_compare.msg.both"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\"p\", prereg_text = \"r\", registration_id = \"NCT1\"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='r', registration_id='NCT1'))"
+        "r": "regcheck_compare(\"p\", prereg_text = \"r\", registration_id = \"NCT1\")"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='r', registration_id='NCT1')"
 - "id": "regcheck_compare.msg.blank_prereg"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\"p\", prereg_text = \"  \"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='  '))"
+        "r": "regcheck_compare(\"p\", prereg_text = \"  \")"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='  ')"
 - "id": "regcheck_compare.msg.client_vector"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\"p\", \"r\", client = c(\"groq\", \"openai\")))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client=['groq', 'openai']))"
+        "r": "regcheck_compare(\"p\", \"r\", client = c(\"groq\", \"openai\"))"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client=['groq', 'openai'])"
 - "id": "regcheck_compare.msg.client_unknown"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\"p\", \"r\", client = \"llama\"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='llama'))"
+        "r": "regcheck_compare(\"p\", \"r\", client = \"llama\")"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='llama')"
 - "id": "regcheck_compare.msg.client_partial_token"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\"p\", \"r\", client = \"gr\"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='gr'))"
+        "r": "regcheck_compare(\"p\", \"r\", client = \"gr\")"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='gr')"
 - "id": "regcheck_compare.msg.no_server"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_compare(\"p\", \"r\", base_url = \"http://127.0.0.1:9/\"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', base_url='http://127.0.0.1:9/'))"
+        "r": "regcheck_compare(\"p\", \"r\", base_url = \"http://127.0.0.1:9/\")"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', base_url='http://127.0.0.1:9/')"
 - "id": "regcheck_start_local.msg.bad_method"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_start_local(\"podman\"))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local('podman'))"
+        "r": "regcheck_start_local(\"podman\")"
+        "py": "__import__('pytacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local('podman')"
 - "id": "regcheck_start_local.msg.method_vector"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); review_try(regcheck_start_local(c(\"docker\", \"x\")))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local(['docker', 'x']))"
+        "r": "regcheck_start_local(c(\"docker\", \"x\"))"
+        "py": "__import__('pytacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local(['docker', 'x'])"
 - "id": "doi_resolves.mock.codes"
   "r": "identity"
   "py": "copy.copy"
@@ -805,8 +805,8 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); vapply(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/orcid_fuzz.json\"))), \\(o) { r <- review_try(check_orcid(o)); if (isFALSE(r)) \"<FALSE>\" else r }, character(1), USE.NAMES = FALSE)"
-        "py": "(lambda h, o: [(lambda r: '<FALSE>' if r is False else r)(h.try_(lambda s=s: o.check_orcid(s))) for s in __import__('json').load(open('tests/db/data/orcid_fuzz.json'))])(__import__('tests.db.review_helpers', fromlist=['x']), __import__('pytacheck.db.orcid', fromlist=['x']))"
+        "r": "lapply(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/orcid_fuzz.json\"))), \\(o) pc_catch(check_orcid(o)))"
+        "py": "(lambda catch, o: [catch(lambda s=s: o.check_orcid(s)) for s in __import__('json').load(open('tests/db/data/orcid_fuzz.json', encoding='utf-8'))])(__import__('parity.pyhelpers', fromlist=['x']).catch, __import__('pytacheck.db.orcid', fromlist=['x']))"
 - "id": "doi_lookup.mock.na_numvol"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -908,13 +908,13 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); withr::with_envvar(c(REGCHECK_API_TOKEN = NA), review_try(regcheck_compare(\"paper text\", client = NULL)))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', client=None))"
+        "r": "withr::with_envvar(c(REGCHECK_API_TOKEN = NA), regcheck_compare(\"paper text\", client = NULL))"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', client=None)"
 - "id": "regcheck_compare.msg.null_client_both"
   "r": "identity"
   "py": "copy.copy"
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/review.R\")); withr::with_envvar(c(REGCHECK_API_TOKEN = NA), review_try(regcheck_compare(\"paper text\", prereg_text = \"r\", registration_id = \"NCT1\", client = NULL)))"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', prereg_text='r', registration_id='NCT1', client=None))"
+        "r": "withr::with_envvar(c(REGCHECK_API_TOKEN = NA), regcheck_compare(\"paper text\", prereg_text = \"r\", registration_id = \"NCT1\", client = NULL))"
+        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', prereg_text='r', registration_id='NCT1', client=None)"

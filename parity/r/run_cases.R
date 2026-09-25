@@ -133,6 +133,7 @@ decode <- function(x) {
         fn <- get_fn(val$r)
         do.call(fn, decode_args(val$args %||% list()))
       },
+      "$catch" = pc_catch(decode(val)),
       stop("unknown argument constructor ", key)
     ))
   }

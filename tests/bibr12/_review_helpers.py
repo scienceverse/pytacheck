@@ -7,7 +7,6 @@ and modified 12.x papers through the reader, the writer and the modules.
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -20,15 +19,6 @@ from tests.bibr12._parity_helpers import _path, _tempdir, normalise_converter, r
 ROOT = Path(__file__).resolve().parents[2]
 FX = ROOT / "tests" / "bibr12" / "fixtures"
 F12 = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "bibr12"
-
-
-def error_message(fn: Callable[[], Any]) -> str | None:
-    """``tryCatch(expr, error = \\(e) conditionMessage(e))``: the error message, or None."""
-    try:
-        fn()
-    except Exception as exc:  # the message is the result
-        return str(exc)
-    return None
 
 
 def written(paper: Any, blank_time: bool = False) -> list[str]:
@@ -121,16 +111,6 @@ def modified_edge() -> Any:
     return p
 
 
-def validate_warnings(paper: Any) -> dict[str, Any]:
-    """``paper_validate(paper)`` and the warnings it gives."""
-    import warnings
-
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        value = pc.paper_validate(paper)
-    return {"value": value, "warnings": [str(w.message) for w in caught]}
-
-
 def legacy_roundtrip(paper: Any) -> Any:
     """``read(paper_write(paper))``: metacheck's default writer (``schema_version=None``)."""
     path = pc.paper_write(paper, None, _tempdir(), schema_version=None)
@@ -158,23 +138,3 @@ def full_with_crossref_matches() -> Any:
         }
     )
     return call("pytacheck.db.crossref.add_bib_match", p, 0)
-
-
-def read_or_error(path: str) -> Any:
-    """``tryCatch(.read_bibr(path), error = \\(e) paste("ERROR:", conditionMessage(e)))``."""
-    from pytacheck.papers.io import read_bibr
-
-    try:
-        return read_bibr(_path(path))
-    except Exception as exc:  # the message is the result
-        return f"ERROR: {exc}"
-
-
-def written_or_error(path: str) -> Any:
-    """The lines of ``paper_write(.read_bibr(path), schema_version = "12.0")``, or the error."""
-    from pytacheck.papers.io import read_bibr
-
-    try:
-        return written(read_bibr(_path(path)))
-    except Exception as exc:  # the message is the result
-        return f"ERROR: {exc}"

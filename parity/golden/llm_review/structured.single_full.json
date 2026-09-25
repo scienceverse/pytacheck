@@ -4,68 +4,55 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 3,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "name",
+      "n",
+      "tags",
+      "a"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 3,
-        "names": [
-          "text",
-          "name",
-          "n",
-          "tags",
-          "a"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "single full",
-              "single full",
-              "single full"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "s",
-              "s",
-              "s"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              4,
-              4,
-              4
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "x",
-              "y",
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              2.5,
-              2.5,
-              2.5
-            ]
-          }
+          "single full",
+          "single full",
+          "single full"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "s",
+          "s",
+          "s"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          4,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          "y",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2.5,
+          2.5,
+          2.5
+        ]
       }
     ]
   },

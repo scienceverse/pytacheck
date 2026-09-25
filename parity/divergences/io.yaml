@@ -12,7 +12,6 @@
   reason: "a scalar field holding an array reads its first value (NA for [null]) row by row, where R shifts the column's values between rows, recycles them or stops ('replacement has n rows, data has m')"
 "bibr12_review/malformed.read.order_coerce": *malformed
 "bibr12_review/malformed.read.order_coerce_info": *malformed
-"bibr12_review/malformed.read.order_names_editor": *malformed
 "bibr12_review/malformed.read.producer_version_array": *malformed
 "bibr12_review/malformed.read.scalar_nested_long": *malformed
 "bibr12_review/malformed.read.scalar_null_array": *malformed
@@ -22,7 +21,6 @@
 "bibr12_review/malformed.write.metadata_null_array": *malformed
 "bibr12_review/malformed.write.order_coerce": *malformed
 "bibr12_review/malformed.write.order_coerce_info": *malformed
-"bibr12_review/malformed.write.order_names_editor": *malformed
 "bibr12_review/malformed.write.producer_version_array": *malformed
 "bibr12_review/malformed.write.scalar_nested_long": *malformed
 "bibr12_review/malformed.write.scalar_null_array": *malformed

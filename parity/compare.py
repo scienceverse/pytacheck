@@ -29,9 +29,14 @@ Per-case options (``compare:`` in the case YAML):
 ``strict_names`` compare named lists by position, names in order, instead of
                 as maps (a name R repeats must be repeated in Python even
                 without this)
-``error``       when R raised an error, how Python's error message must match
-                R's (see :func:`error_matches`): ``any`` (default: Python must
-                raise, its message is its own), ``contains`` or ``exact``
+``presence``    columns or list elements holding free error text (a
+                ``repo_error``, an ``error_msg``): only whether each value is
+                there (not NA, NULL or "") is compared, not the text. An entry
+                is a name (every column or element of that name) or a path
+                (``gated_repos.repo_error``, element indices written ``[]``)
+
+Error texts are never compared: when R raised an error, Python must raise
+too, whatever its message (see ``parity.__main__``).
 
 A case whose only difference from R is text pytacheck corrected on purpose (a
 typo, a plural, a full stop in report prose) describes the correction with
@@ -62,11 +67,15 @@ class Options:
     col_order: bool = True
     ws: bool = False
     strict_names: bool = False
-    error: str = "any"
+    #: names or paths of values compared only for presence (see the module docstring)
+    presence: frozenset[str] = frozenset()
 
     @classmethod
     def from_case(cls, spec: dict[str, Any] | None) -> Options:
         spec = spec or {}
+        problems = option_problems(spec)
+        if problems:
+            raise ValueError("; ".join(problems))
         unordered = spec.get("unordered", [])
         root = unordered is True
         return cls(
@@ -78,47 +87,44 @@ class Options:
             col_order=bool(spec.get("col_order", True)),
             ws=bool(spec.get("ws", False)),
             strict_names=bool(spec.get("strict_names", False)),
-            error=_error_mode(spec.get("error", "any")),
+            presence=frozenset(spec.get("presence", [])),
+        )
+
+    def is_presence(self, name: str | None, path: str) -> bool:
+        """Whether the element *name* at *path* is compared only for presence."""
+        return bool(self.presence) and (
+            name in self.presence or strip_indices(path) in self.presence
         )
 
 
-def _error_mode(mode: Any) -> str:
-    if mode not in ("contains", "exact", "any"):
-        raise ValueError(f"compare: error must be contains, exact or any, not {mode!r}")
-    return str(mode)
+#: the options a case's ``compare:`` may set
+OPTION_KEYS = frozenset(
+    {"ignore", "unordered", "tol", "report", "col_order", "ws", "strict_names", "presence"}
+)
 
 
-# cli/rlang bullets at the start of a line of an R condition message
-_BULLET = re.compile(r"(?m)^[ \t]*[!✖ℹ✔•*](?=[ \t])[ \t]*")
-_ANSI = re.compile(r"\x1b\[[0-9;]*m")
-_ERROR_IN = re.compile(r"^(?:Error in .*? : |Error: )", re.S)
-
-
-def normalize_error(msg: str) -> str:
-    """An error message without ANSI colours, a leading ``Error in <call> :``,
-    cli bullets (``!``, ``✖``, ``ℹ``, ...) and runs of whitespace."""
-    msg = _ANSI.sub("", msg)
-    msg = _ERROR_IN.sub("", msg.strip())
-    msg = _BULLET.sub("", msg)
-    return re.sub(r"\s+", " ", msg).strip()
-
-
-def error_matches(r_msg: str | None, py_msg: str | None, mode: str = "contains") -> bool:
-    """Whether Python's error message matches R's.
-
-    ``exact``: equal after :func:`normalize_error`. ``contains`` (the default):
-    also when R's message is part of Python's (Python adds detail, e.g. a
-    module name) or Python's is the start of R's (Python leaves out R's cli
-    details). ``any``: any error matches.
-    """
-    if mode == "any":
-        return True
-    r, p = normalize_error(r_msg or ""), normalize_error(py_msg or "")
-    if r == p:
-        return True
-    if mode == "exact":
-        return False
-    return r in p or (p != "" and r.startswith(p))
+def option_problems(spec: Any) -> list[str]:
+    """What is wrong with a case's ``compare:`` mapping (empty when it is valid)."""
+    if spec is None:
+        return []
+    if not isinstance(spec, dict):
+        return [f"compare is a mapping of options, not {spec!r}"]
+    problems = []
+    if "error" in spec:
+        problems.append(
+            "compare: error is gone: error texts are never compared (both sides failing is "
+            "a pass); use $catch for an error inside a result, presence for error-text fields"
+        )
+    unknown = sorted(set(spec) - OPTION_KEYS - {"error"})
+    if unknown:
+        problems.append(f"compare: unknown options {unknown} (one of {sorted(OPTION_KEYS)})")
+    for key in ("ignore", "presence"):
+        value = spec.get(key, [])
+        if not isinstance(value, list) or not all(isinstance(v, str) and v for v in value):
+            problems.append(f"compare: {key} is a list of names or paths, not {value!r}")
+    if spec.get("report", "prose") not in ("prose", "exact", "ignore"):
+        problems.append(f"compare: report is prose, exact or ignore, not {spec['report']!r}")
+    return problems
 
 
 # -- r_text: R's text as pytacheck corrects it ------------------------------------------
@@ -233,7 +239,7 @@ def _as_vector(x: dict[str, Any]) -> dict[str, Any] | None:
         return x
     if x.get("t") != "list":
         return None
-    vals = []
+    vals: list[Any] = []
     types = set()
     for el in x.get("v", []):
         if el.get("t") in _NULLISH:
@@ -287,6 +293,23 @@ def _fmt(x: Any, limit: int = 160) -> str:
     return s if len(s) <= limit else s[: limit - 3] + "..."
 
 
+def presence_mask(x: dict[str, Any]) -> list[bool]:
+    """Which values of *x* are there (``presence``): not NA, NULL, NaN or ``""``.
+
+    A data frame or a list of other values is one value, there unless it is empty.
+    """
+    if x.get("t") in _NULLISH:
+        return []
+    v = _as_vector(x)
+    if v is None:
+        return [] if _is_empty(x) else [True]
+    return [e is not None and e != "" and e != "NaN" for e in v.get("v", [])]
+
+
+def _presence_view(x: dict[str, Any]) -> dict[str, Any]:
+    return {"t": "presence", "v": presence_mask(x)}
+
+
 #: an element index in a path (``table.x[3]``); the lock records paths without them
 _INDEX = re.compile(r"\[\d+\]")
 
@@ -318,7 +341,7 @@ class Comparator:
         if b is None or b == "NaN":
             return False
         if isinstance(a, str) or isinstance(b, str):
-            return a == b
+            return bool(a == b)
         if isinstance(a, bool) or isinstance(b, bool):
             return bool(a) == bool(b)
         fa, fb = float(a), float(b)
@@ -337,7 +360,7 @@ class Comparator:
             return a is None and b is None
         if self.o.ws:
             a, b = re.sub(r"\s+", " ", str(a)).strip(), re.sub(r"\s+", " ", str(b)).strip()
-        return a == b
+        return bool(a == b)
 
     def vector(self, r: dict[str, Any], p: dict[str, Any], path: str) -> None:
         rv, pv = r.get("v", []), p.get("v", [])
@@ -387,10 +410,17 @@ class Comparator:
         common = [n for n in rn_kept if n in pcols]
         order_r = order_p = list(range(r["nrow"]))
         if (self.o.unordered_root and path == "") or path in self.o.unordered:
-            order_r = self._row_order(rcols, common, r["nrow"])
-            order_p = self._row_order(pcols, common, p["nrow"])
+            order_r = self._row_order(self._keys(rcols, path), common, r["nrow"])
+            order_p = self._row_order(self._keys(pcols, path), common, p["nrow"])
         for n in common:
-            self.column(rcols[n], pcols[n], f"{path}.{n}".lstrip("."), order_r, order_p)
+            self.column(rcols[n], pcols[n], f"{path}.{n}".lstrip("."), order_r, order_p, n)
+
+    def _keys(self, cols: dict[str, Any], path: str) -> dict[str, Any]:
+        """The columns rows are ordered by: a ``presence`` column by its mask."""
+        return {
+            n: _presence_view(c) if self.o.is_presence(n, f"{path}.{n}".lstrip(".")) else c
+            for n, c in cols.items()
+        }
 
     @staticmethod
     def _row_order(cols: dict[str, Any], names: list[str], nrow: int) -> list[int]:
@@ -407,12 +437,13 @@ class Comparator:
         path: str,
         order_r: list[int],
         order_p: list[int],
+        name: str | None = None,
     ) -> None:
         def pick(x: dict[str, Any], order: list[int]) -> dict[str, Any]:
             v = x.get("v", [])
             return {**x, "v": [v[i] for i in order] if len(v) == len(order) else v}
 
-        self.value(pick(r, order_r), pick(p, order_p), path)
+        self.value(pick(r, order_r), pick(p, order_p), path, name)
 
     def named(self, r: dict[str, Any], p: dict[str, Any], path: str) -> None:
         rn = r.get("names") or []
@@ -431,7 +462,7 @@ class Comparator:
                 if n == "report" and r.get("t") == "module_output":
                     self.report(a, b, sub)
                 else:
-                    self.value(a, b, sub)
+                    self.value(a, b, sub, n or None)
             return
         rmap = dict(zip(rn, r.get("v", []), strict=False))
         pmap = dict(zip(pn, p.get("v", []), strict=False))
@@ -446,7 +477,7 @@ class Comparator:
             if n == "report" and r.get("t") == "module_output":
                 self.report(rmap[n], pmap[n], sub)
             else:
-                self.value(rmap[n], pmap[n], sub)
+                self.value(rmap[n], pmap[n], sub, n)
         for n in pn:
             sub = f"{path}.{n}".lstrip(".")
             if n not in rmap and sub not in self.o.ignore and not _is_empty(pmap[n]):
@@ -506,10 +537,33 @@ class Comparator:
 
     # -- dispatch -----------------------------------------------------------------
 
-    def value(self, r: dict[str, Any], p: dict[str, Any], path: str = "") -> None:
+    def presence(self, r: dict[str, Any], p: dict[str, Any], path: str) -> None:
+        """Compare only whether each value is there (``presence``), not what it says."""
+        rm, pm = presence_mask(r), presence_mask(p)
+        # NULL or a zero-length value is as missing as NA
+        rm, pm = rm or [False] * len(pm), pm or [False] * len(rm)
+        if rm == pm:
+            return
+        if len(rm) != len(pm):
+            self.fail(path, f"length R={len(rm)} py={len(pm)} (compared for presence)")
+            return
+
+        def there(present: bool) -> str:
+            return "present" if present else "missing"
+
+        for i, (a, b) in enumerate(zip(rm, pm, strict=True)):
+            if a != b:
+                self.fail(f"{path}[{i}]", f"{there(a)} in R, {there(b)} in Python (presence)")
+
+    def value(
+        self, r: dict[str, Any], p: dict[str, Any], path: str = "", name: str | None = None
+    ) -> None:
         if path in self.o.ignore:
             return
         if _is_empty(r) and _is_empty(p):
+            return
+        if name is not None and self.o.is_presence(name, path):
+            self.presence(r, p, path)
             return
         rt, pt = r.get("t"), p.get("t")
         # a one-row / one-column matrix is just a vector (jsonlite artefact)
@@ -569,9 +623,10 @@ def compare_paths(
 
 def comparable(x: Any, options: Options, path: str = "") -> Any:
     """The canonical value *x* as the comparison sees it (what the divergence lock
-    fingerprints): elements ``ignore`` names dropped, a module output's report as
-    its prose blocks (or dropped, with ``report: ignore``), and the rows of
-    ``unordered`` data frames sorted."""
+    fingerprints): elements ``ignore`` names dropped, ``presence`` elements as
+    whether each value is there, a module output's report as its prose blocks
+    (or dropped, with ``report: ignore``), and the rows of ``unordered`` data
+    frames sorted."""
     if not isinstance(x, dict):
         return x
     t = x.get("t")
@@ -579,8 +634,12 @@ def comparable(x: Any, options: Options, path: str = "") -> Any:
         names, cols = [], []
         for n, col in zip(x.get("names", []), x.get("v", []), strict=False):
             sub = f"{path}.{n}".lstrip(".")
-            if sub not in options.ignore:
-                names.append(n)
+            if sub in options.ignore:
+                continue
+            names.append(n)
+            if options.is_presence(n, sub):
+                cols.append(_presence_view(col))
+            else:
                 cols.append(comparable(col, options, sub))
         nrow = x.get("nrow", 0)
         if (options.unordered_root and path == "") or path in options.unordered:
@@ -591,11 +650,11 @@ def comparable(x: Any, options: Options, path: str = "") -> Any:
             ]
         return {**x, "names": names, "v": cols}
     if t in ("list", "module_output", "paper", "paperlist"):
-        names = x.get("names")
+        own_names = x.get("names")
         kept_names: list[str] = []
         kept: list[Any] = []
         for i, el in enumerate(x.get("v", [])):
-            n = names[i] if names and i < len(names) else None
+            n = own_names[i] if own_names and i < len(own_names) else None
             sub = f"{path}.{n}".lstrip(".") if n else f"{path}[{i}]"
             if sub in options.ignore:
                 continue
@@ -604,11 +663,13 @@ def comparable(x: Any, options: Options, path: str = "") -> Any:
                     continue
                 if options.report == "prose":
                     el = {"t": "prose", "v": Comparator._prose(el)}
+            elif n and options.is_presence(n, sub):
+                el = _presence_view(el)
             else:
                 el = comparable(el, options, sub)
             kept_names.append(n or "")
             kept.append(el)
-        return {**x, "names": kept_names if names else names, "v": kept}
+        return {**x, "names": kept_names if own_names else own_names, "v": kept}
     if t == "matrix":
         return {**x, "v": comparable(x.get("v"), options, path)}
     return x

@@ -76,20 +76,6 @@ def paper_tables(xml_paths: Sequence[str], tables: Sequence[str]) -> dict[str, A
     return {t: pc.paper_table(papers, t) for t in tables}
 
 
-def convert_error(xml_path: str) -> str | None:
-    """``tryCatch(.grobid_to_bibr(xml_path, schema_version = "12.0"), error = conditionMessage)``.
-
-    The parity harness only checks that both sides fail; this compares the message.
-    """
-    from pytacheck.io.grobid import _grobid_to_bibr
-
-    try:
-        _grobid_to_bibr(str(_path(xml_path)), None, "12.0")
-    except Exception as exc:  # any error, as tryCatch(error =)
-        return str(exc)
-    return None
-
-
 def bibr12_utc(x: Sequence[Any]) -> list[str | None]:
     """``vapply(x, .bibr12_utc, "")`` (``.bibr12_utc()`` takes one value)."""
     from pytacheck.io.grobid_bibr12 import _bibr12_utc

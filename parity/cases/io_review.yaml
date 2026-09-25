@@ -326,7 +326,7 @@
   "mock_dir": "tests/io/fixtures/apis_bibr_local"
   "known_divergence": {"kind": "deliberate", "ref": "D2", "reason": "metacheck's convert() passes the argument names instead of their values to convert_bibr() (do.call(convert_bibr, valid_args)), so method = 'bibr' always fails ('second argument must be a list'); pytacheck passes the values and converts the file"}
   "args":
-    "x": {"$expr": {"r": "tryCatch(basename(metacheck::convert(file.path(getwd(), 'upstream/metacheck/inst/demos/to_err_is_human.docx'), file.path(tempdir(), 'pc_io_review_bibr'), method = 'bibr', api_url = 'http://localhost:8000')), error = function(e) conditionMessage(e))", "py": "None"}}
+    "x": {"$expr": {"r": "basename(metacheck::convert(file.path(getwd(), 'upstream/metacheck/inst/demos/to_err_is_human.docx'), file.path(tempdir(), 'pc_io_review_bibr'), method = 'bibr', api_url = 'http://localhost:8000'))", "py": "None"}}
   "py_args":
     "path": {"$expr": {"r": "NULL", "py": "__import__('pytacheck.io.convert', fromlist=['x']).convert(str(__import__('pathlib').Path.cwd() / 'upstream/metacheck/inst/demos/to_err_is_human.docx'), __import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_bibr'), method='bibr', api_url='http://localhost:8000')"}}
   "py_drop": ["x"]

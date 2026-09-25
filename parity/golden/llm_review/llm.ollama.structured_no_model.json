@@ -2,47 +2,34 @@
   "id": "llm.ollama.structured_no_model",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  argument is of length zero"
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      ".error",
+      ".error_msg"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "text",
-          ".error",
-          ".error_msg"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "A"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "argument is of length zero"
-            ]
-          }
+          "A"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  argument is of length zero"
+          "argument is of length zero"
         ]
       }
     ]

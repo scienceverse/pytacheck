@@ -2,97 +2,84 @@
   "id": "structured.probe_overflow",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "NAs introduced by coercion to integer range",
+    "NAs introduced by coercion to integer range"
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 3,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "items.name",
+      "items.count",
+      "items.score",
+      "items.flag",
+      "items.kind",
+      "items.tags"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 3,
-        "names": [
-          "text",
-          "items.name",
-          "items.count",
-          "items.score",
-          "items.flag",
-          "items.kind",
-          "items.tags"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "probe overflow",
-              "probe overflow",
-              "probe overflow"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "big",
-              "frac",
-              "min"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              null,
-              2,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1.23456789012346e+19,
-              -0,
-              9.99988867182683e-321
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "null"
-              },
-              {
-                "t": "null"
-              },
-              {
-                "t": "null"
-              }
-            ]
-          }
+          "probe overflow",
+          "probe overflow",
+          "probe overflow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "NAs introduced by coercion to integer range",
-          "NAs introduced by coercion to integer range"
+          "big",
+          "frac",
+          "min"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          2,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.23456789012346e+19,
+          -0,
+          9.99988867182683e-321
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
         ]
       }
     ]

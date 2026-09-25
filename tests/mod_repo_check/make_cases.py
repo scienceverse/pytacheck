@@ -658,6 +658,12 @@ CASES += [
 ]
 
 
+# cases whose repo_error R fills with its own crash text (a dplyr, match() or
+# data.frame() error) where pytacheck says what went wrong: error texts are not
+# compared, only whether each row has one (compare: presence, docs/PARITY.md)
+REPO_ERROR_PRESENCE = {"osf.invalid_id", "figshare.share_link", "dspace.unfound_two"}
+
+
 def case(cid: str, note: str, spec: dict[str, Any], ignore: Any) -> dict[str, Any]:
     fn = "run_repo"
     py_args = {
@@ -675,9 +681,11 @@ def case(cid: str, note: str, spec: dict[str, Any], ignore: Any) -> dict[str, An
         "py_args": py_args,
     }
     if ignore:
-        out["compare"] = {"ignore": list(ignore)} if isinstance(ignore, list) else ignore
+        out["compare"] = {"ignore": list(ignore)} if isinstance(ignore, list) else dict(ignore)
     if spec.get("tables") or spec.get("report"):
         out.pop("compare", None)
+    if cid in REPO_ERROR_PRESENCE:
+        out.setdefault("compare", {})["presence"] = ["gated_repos.repo_error"]
     return out
 
 

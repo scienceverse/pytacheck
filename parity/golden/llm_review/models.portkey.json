@@ -4,39 +4,26 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 2,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "slug"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "id",
-          "slug"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "gpt-4o",
-              "claude"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "openai-gpt-4o",
-              "anthropic-claude"
-            ]
-          }
+          "gpt-4o",
+          "claude"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "openai-gpt-4o",
+          "anthropic-claude"
+        ]
       }
     ]
   },

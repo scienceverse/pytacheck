@@ -2,10 +2,20 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 from pytacheck._r import base as rb
 from pytacheck._r import regex as rx
+
+
+def catch(fn: Callable[[], Any]) -> Any:
+    """``pc_catch()``: ``fn()``, or ``{"error": True}`` when it raises (the message is
+    dropped: parity never compares error texts). The ``$catch`` constructor."""
+    try:
+        return fn()
+    except Exception:
+        return {"error": True}
 
 
 def as_character(x: list[Any]) -> list[str | None]:

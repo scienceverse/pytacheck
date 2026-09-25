@@ -3,11 +3,6 @@
 
 source(file.path("tests", "report", "parity_helpers.R"))
 
-# a condition message (or the value, when there is no error)
-rv_error <- function(expr) {
-  tryCatch(expr, error = function(e) list(error = conditionMessage(e)))
-}
-
 # report() on a paper list, written into a temporary folder
 rv_report_list <- function(paper, modules, files, output_format = "qmd", args = list()) {
   mods <- vapply(modules, rp_mod, character(1), USE.NAMES = FALSE)
@@ -28,9 +23,4 @@ rv_report_list <- function(paper, modules, files, output_format = "qmd", args = 
       rp_mask(gsub("tests/report/modules/([a-z_]+)\\.[Rr]", "\\1", paste(readLines(file.path(d, f)), collapse = "\n")))
     }))
   )
-}
-
-# the class-free structure of a report_module_run() output
-rv_module_run_list <- function(paper, modules, args = list()) {
-  rv_error(rp_report_module_run(paper, modules, args))
 }

@@ -1,35 +1,9 @@
 {
   "id": "chat_lmstudio.null_model",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "argument is of length zero",
   "warnings": [],
-  "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
-    "v": [
-      {
-        "t": "list",
-        "names": [
-          "error"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "argument is of length zero"
-            ]
-          }
-        ]
-      },
-      {
-        "t": "chr",
-        "v": []
-      }
-    ]
-  },
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

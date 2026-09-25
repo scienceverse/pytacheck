@@ -10,16 +10,20 @@ import shutil
 import struct
 import subprocess
 import time
+import warnings
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
+from parity import __main__ as parity_main
 from parity import cases as pcases
-from parity.__main__ import check_case
+from parity import lockfile
+from parity.__main__ import check_case, run_case, stale_lock_entries
 from parity.canonical import canonical, portable
 from parity.cases import Case, load_cases, parity_id
-from parity.compare import Options, compare, error_matches, normalize_error, summarize
+from parity.compare import Options, comparable, compare, option_problems, summarize
+from parity.lockfile import R_ERROR_PY_VALUE, Fingerprint, LockWarning
 
 CASES = load_cases()
 ROOT = Path(__file__).resolve().parent.parent
@@ -32,14 +36,17 @@ _TIER_MARKS = {1: pytest.mark.tier1, 2: pytest.mark.tier2}
     "case", [pytest.param(c, marks=_TIER_MARKS[c.tier], id=c.key) for c in CASES]
 )
 def test_parity(case) -> None:
-    status, problems, _ = check_case(case)
-    if status == "missing":
+    res = run_case(case)
+    if res.status == "missing":
         pytest.fail(f"no golden for {case.key}: run `python -m parity generate --area {case.area}`")
-    if status == "skip":
-        pytest.skip(problems[0])
-    if status == "xfail":
+    if res.status == "skip":
+        pytest.skip(res.problems[0])
+    if res.warning:  # a tier-2 marked case that changed since it was locked
+        warnings.warn(f"{case.key}: {res.status}\n{summarize(res.problems)}", LockWarning, 1)
+    if res.status == "xfail" or res.warning:
         pytest.xfail(_mark_text(case.spec["known_divergence"]))
-    assert status == "pass", f"{case.key} differs from R:\n{summarize(problems)}"
+    what = "differs from R" if res.status in ("fail", "error") else res.status
+    assert res.status == "pass", f"{case.key} {what}:\n{summarize(res.problems)}"
 
 
 def _mark_text(div: object) -> str:
@@ -220,63 +227,158 @@ def test_zero_by_zero_frame_equals_empty_list() -> None:
     assert compare(with_cols, canonical([1]), Options())
 
 
-# F18: error messages ------------------------------------------------------------
+# errors: both sides failing is a match, texts are never compared -----------------
 
 
-def test_normalize_error() -> None:
-    msg = "Join columns in `y` must be present.\n✖ Problem with `doi`.\nℹ Hint.\n! More."
-    assert (
-        normalize_error(msg)
-        == "Join columns in `y` must be present. Problem with `doi`. Hint. More."
-    )
-    assert normalize_error("Error in f(x) : boom") == "boom"
-    assert (
-        normalize_error("x must be y\n!is.na(x) is not TRUE") == "x must be y !is.na(x) is not TRUE"
-    )
-
-
-@pytest.mark.parametrize(
-    ("r", "py", "mode", "ok"),
-    [
-        ("boom", "boom", "exact", True),
-        ("boom\n✖ detail", "boom detail", "exact", True),
-        ("boom", "Running the module 'x' produced errors: boom", "exact", False),
-        ("boom", "Running the module 'x' produced errors: boom", "contains", True),
-        (
-            "Join columns must be present.\n✖ Problem with `doi`.",
-            "Join columns must be present.",
-            "contains",
-            True,
-        ),
-        ("wrong thing", "other thing", "contains", False),
-        ("some message", "", "contains", False),
-        ("wrong thing", "other thing", "any", True),
-    ],
-)
-def test_error_matches(r: str, py: str, mode: str, ok: bool) -> None:
-    assert error_matches(r, py, mode) is ok
-
-
-def test_check_case_compares_error_messages(tmp_path, monkeypatch) -> None:
+def test_errors_are_never_compared(tmp_path, monkeypatch, lock_dir) -> None:
     golden = {"ok": False, "error": "argument is of length zero", "value": None}
-    spec = {
+    raising = {
         "py": "parity.pyhelpers.github_readme_probe",
         "args": {"repo": {"$expr": {"py": "1/0"}}},
     }
-    case = _golden_case(tmp_path, monkeypatch, golden, spec)
-    # by default both sides must fail; pytacheck's message is its own
-    assert check_case(case)[0] == "pass"
-    case.spec["compare"] = {"error": "contains"}
+    case = _golden_case(tmp_path, monkeypatch, golden, raising)
+    assert check_case(case)[0] == "pass"  # R's message and Python's differ
+    # R fails and Python returns a value: a failure until it is marked and locked
+    returning = {"py": "parity.pyhelpers.r_sort", "args": {"x": {"$chr": ["b", "a"]}}}
+    case = _golden_case(tmp_path / "2", monkeypatch, golden, returning)
     status, problems, _ = check_case(case)
     assert status == "fail"
-    assert "ZeroDivisionError" in problems[0]
-    case.spec["known_divergence"] = {"kind": "r_bug_fixed", "reason": "documented"}
+    assert "argument is of length zero" in problems[0]  # R's text, to say why it failed
+    case.spec["known_divergence"] = _MARK
+    assert _lock(case).diff == (R_ERROR_PY_VALUE,)
     assert check_case(case)[0] == "xfail"
-    golden["error"] = "division by zero"
-    case = _golden_case(
-        tmp_path / "2", monkeypatch, golden, {**spec, "compare": {"error": "exact"}}
+
+
+def test_compare_options_are_checked() -> None:
+    assert option_problems(None) == []
+    assert option_problems({"ignore": ["a.b"], "presence": ["repo_error"], "tol": 1e-6}) == []
+    assert "error texts are never compared" in option_problems({"error": "exact"})[0]
+    assert "unknown options ['ignroe']" in option_problems({"ignroe": ["x"]})[0]
+    assert "presence is a list" in option_problems({"presence": "repo_error"})[0]
+    with pytest.raises(ValueError, match="error texts are never compared"):
+        Options.from_case({"error": "contains"})
+
+
+def test_case_files_reject_bad_compare_options(tmp_path, monkeypatch) -> None:
+    (tmp_path / "harness.yaml").write_text(
+        "area: harness\ncases:\n  - id: c\n    r: identity\n    args: {x: 1}\n"
+        "    compare: {error: exact}\n"
     )
-    assert check_case(case)[0] == "pass"
+    monkeypatch.setattr(pcases, "CASES_DIR", tmp_path)
+    with pytest.raises(ValueError, match="harness.yaml: harness/c: compare: error is gone"):
+        load_cases("harness")
+
+
+def test_catch_constructor() -> None:
+    from parity.cases import decode
+
+    assert decode({"$catch": {"$expr": {"py": "1/0"}}}) == {"error": True}
+    assert decode({"$catch": {"$chr": ["a"]}}) == ["a"]
+    # errors inside a list are caught one by one
+    both = decode({"$list": [{"$catch": {"$expr": {"py": "int('x')"}}}, {"$catch": 2}]})
+    assert both == [{"error": True}, 2]
+    # what R's pc_catch() gives: list(error = TRUE)
+    r_caught = {"t": "list", "names": ["error"], "v": [{"t": "lgl", "v": [True]}]}
+    assert compare(r_caught, canonical({"error": True}), Options()) == []
+    # the inputs inside a $catch count for the tier
+    spec = {"args": {"x": {"$catch": {"$paper": "demo"}}}}
+    assert pcases.case_inputs(spec).paths == [pcases.DEMO_PAPER]
+
+
+def test_catch_leaves_skips_and_network_use_alone(tmp_path, monkeypatch) -> None:
+    from parity.pyhelpers import catch
+
+    def start_r() -> None:
+        raise pcases.RWithoutReference("Rscript")
+
+    with pytest.raises(pcases.RWithoutReference):
+        catch(start_r)
+    golden = {"ok": True, "error": None, "value": canonical({"error": True})}
+    spec = {
+        "py": "parity.pyhelpers.github_readme_probe",
+        "args": {"repo": {"$catch": {"$expr": {"py": "__import__('socket').getaddrinfo('x.org', 443)"}}}},
+    }
+    status, problems, _ = check_case(_golden_case(tmp_path, monkeypatch, golden, spec))
+    assert status == "error"
+    assert "used the network" in problems[0]
+
+
+@pytest.mark.r
+def test_r_runner_catch(tmp_path: Path) -> None:
+    """run_cases.R: ``$catch`` gives the value, or ``list(error = TRUE)`` without the
+    message; an uncaught error is the golden's error, not compared."""
+    root = tmp_path / "repo"
+    (root / "parity" / "cases").mkdir(parents=True)
+    (root / "parity" / "r").symlink_to(ROOT / "parity" / "r")
+    root = root.resolve()
+    cases = root / "parity" / "cases" / "harness.yaml"
+    cases.write_text(
+        "area: harness\ncases:\n"
+        "  - id: caught\n    r: identity\n"
+        '    args: {x: {$list: [{$catch: {$expr: {r: "stop(\'boom\')"}}}, {$catch: {$chr: [a]}}]}}\n'
+        "  - id: uncaught\n    r: identity\n"
+        '    args: {x: {$expr: {r: "stop(\'boom\')"}}}\n'
+    )
+    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    subprocess.run(
+        [_reference_r(), str(ROOT / "parity" / "r" / "run_cases.R"), str(root), str(cases)],
+        check=True,
+        capture_output=True,
+        env=env,
+        cwd=root,
+    )
+    out = root / "parity" / "golden" / "harness"
+    caught = json.loads((out / "caught.json").read_text())
+    assert caught["ok"] is True
+    assert compare(caught["value"], canonical([{"error": True}, "a"]), Options()) == []
+    assert "boom" not in json.dumps(caught)
+    uncaught = json.loads((out / "uncaught.json").read_text())
+    assert (uncaught["ok"], uncaught["error"]) == (False, "boom")
+
+
+# presence: fields of free error text ----------------------------------------------
+
+
+def _frame(**cols: list) -> dict:
+    return canonical(pd.DataFrame(cols))
+
+
+def test_presence_compares_only_whether_values_are_there() -> None:
+    r = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "b", "c"], repo_error=[
+        "ℹ In argument: `x`.\nCaused by error", None, ""])]}
+    same = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "b", "c"], repo_error=[
+        "invalid or inaccessible OSF link", None, None])]}
+    missing = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "b", "c"], repo_error=[
+        None, "x", None])]}
+    assert compare(r, same, Options())  # the texts differ
+    for presence in (["repo_error"], ["repos.repo_error"]):
+        options = Options.from_case({"presence": presence})
+        assert compare(r, same, options) == []
+        problems = compare(r, missing, options)
+        assert problems == [
+            "repos.repo_error[0]: present in R, missing in Python (presence)",
+            "repos.repo_error[1]: missing in R, present in Python (presence)",
+        ]
+        # the lock fingerprints the presence, not the text
+        assert comparable(same, options) == comparable(r, options)
+        assert comparable(missing, options) != comparable(r, options)
+    # other columns are compared as always, and so is a column of another name
+    other = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "x", "c"], repo_error=[
+        "?", None, None])]}
+    assert compare(r, other, Options.from_case({"presence": ["repo_error"]})) == [
+        "repos.url[1]: R='b' py='x'"
+    ]
+    assert compare(r, same, Options.from_case({"presence": ["error"]}))
+
+
+def test_presence_of_list_elements() -> None:
+    r = canonical({"value": 1, "error_msg": "HTTP 401 Unauthorized.\nℹ Invalid API Key"})
+    options = Options.from_case({"presence": ["error_msg"]})
+    assert compare(r, canonical({"value": 1, "error_msg": "unauthorized"}), options) == []
+    assert compare(r, canonical({"value": 1, "error_msg": None}), options) == [
+        "error_msg[0]: present in R, missing in Python (presence)"
+    ]
+    assert compare(canonical({"error_msg": None}), canonical({"error_msg": []}), options) == []
 
 
 # F16: deterministic paper ids, portable paths -------------------------------------
@@ -506,7 +608,7 @@ def test_rewrite_r_text_touches_string_values_only() -> None:
     assert rewrite_r_text("an likley error", subs, [False, False]) == "an likely error"
 
 
-def test_r_text_mark_passes_on_corrected_text_only(tmp_path, monkeypatch) -> None:
+def test_r_text_mark_passes_on_corrected_text_only(tmp_path, monkeypatch, lock_dir) -> None:
     mark = {"kind": "r_bug_fixed", "ref": "U83", "reason": "typo", "r_text": [["likley", "likely"]]}
     golden = _chr_golden("likley", "same")
     case = _golden_case(tmp_path, monkeypatch, golden, _copy_case(["likely", "same"], mark))
@@ -516,9 +618,15 @@ def test_r_text_mark_passes_on_corrected_text_only(tmp_path, monkeypatch) -> Non
     status, problems, _ = check_case(case)
     assert status == "fail"
     assert "other" in problems[0]
-    # ... unless the case also differs for another reason
+    # ... unless the case also differs for another reason (locked as any mark),
+    # where the lock records the paths that still differ once R's text is corrected
     case.spec = _copy_case(["likely", "other"], {**mark, "xfail": True})
+    assert check_case(case)[0] == "unlocked"
+    assert _lock(case).diff == ("[]",)
     assert check_case(case)[0] == "xfail"
+    # it is still compared: another difference is a change
+    case.spec = _copy_case(["likely", "else"], {**mark, "xfail": True})
+    assert check_case(case)[0] == "py_changed"
     # a substitution that changes nothing is a stale mark
     stale = {**mark, "r_text": [["likley", "likely"], ["reconized", "recognized"]]}
     case.spec = _copy_case(["likely", "same"], stale)
@@ -528,17 +636,22 @@ def test_r_text_mark_passes_on_corrected_text_only(tmp_path, monkeypatch) -> Non
     # without r_text, a mark is an expected failure as before
     plain = {"kind": "r_bug_fixed", "ref": "U83", "reason": "typo"}
     case.spec = _copy_case(["likely", "same"], plain)
+    _lock(case)
     assert check_case(case)[0] == "xfail"
+    # an r_text mark without xfail is compared, never locked
+    case.spec = _copy_case(["likely", "same"], mark)
+    assert check_case(case)[0] == "pass"
+    assert stale_lock_entries([case]) == ["harness/c"]
 
 
-def test_r_text_rewrites_r_error_messages(tmp_path, monkeypatch) -> None:
+def test_r_text_on_an_r_error_is_a_stale_mark(tmp_path, monkeypatch) -> None:
+    # R's error text is never compared, so there is nothing for r_text to correct
     golden = {"ok": False, "error": "no such paper: likley", "value": None}
     spec = {
         "py": "parity.pyhelpers.github_readme_probe",
         "args": {
             "repo": {"$expr": {"py": "(_ for _ in ()).throw(ValueError('no such paper: likely'))"}}
         },
-        "compare": {"error": "exact"},
         "known_divergence": {
             "kind": "r_bug_fixed",
             "ref": "U83",
@@ -546,13 +659,9 @@ def test_r_text_rewrites_r_error_messages(tmp_path, monkeypatch) -> None:
             "r_text": [["likley", "likely"]],
         },
     }
-    case = _golden_case(tmp_path, monkeypatch, golden, spec)
-    assert check_case(case)[0] == "pass"
-    # with error: any the message is not compared, so the mark is not needed
-    case.spec["compare"] = {"error": "any"}
-    status, problems, _ = check_case(case)
+    status, problems, _ = check_case(_golden_case(tmp_path, monkeypatch, golden, spec))
     assert status == "fail"
-    assert "without its r_text" in problems[0]
+    assert "changes nothing in R's golden" in problems[0]
 
 
 def test_r_text_on_skipped_text_is_a_stale_mark(tmp_path, monkeypatch) -> None:
@@ -852,3 +961,317 @@ def test_yaml_loader_is_libyaml_with_the_same_values() -> None:
     ]:
         text = f.read_text(encoding="utf-8")
         assert yaml.load(text, Loader=pcases.YAML_LOADER) == yaml.safe_load(text)
+
+
+# -- the divergence lock (parity/lock/<area>.json) ----------------------------------------
+
+
+@pytest.fixture
+def lock_dir(tmp_path, monkeypatch) -> Path:
+    """A throwaway parity/lock directory."""
+    folder = tmp_path / "lock"
+    monkeypatch.setattr(lockfile, "LOCK_DIR", folder)
+    return folder
+
+
+def _lock(case: Case) -> Fingerprint:
+    """Lock *case* as ``python -m parity lock`` would; its fingerprint."""
+    res = run_case(case, {})
+    assert res.status == "unlocked", res.problems
+    assert res.fingerprint is not None
+    lockfile.write_lock(case.area, {**lockfile.read_lock(case.area), case.id: res.fingerprint})
+    return res.fingerprint
+
+
+_MARK = {"kind": "r_bug_fixed", "ref": "U83", "reason": "fixed"}
+
+
+def test_lock_statuses(tmp_path, monkeypatch, lock_dir) -> None:
+    case = _golden_case(tmp_path, monkeypatch, _chr_golden("a"), _copy_case(["b"], _MARK))
+    res = run_case(case)
+    assert (res.status, res.failing) == ("unlocked", True)
+    assert "python -m parity lock -k c" in res.problems[0]
+    fp = _lock(case)
+    assert fp.py != fp.r and fp.diff == ("[]",)
+    assert check_case(case)[0] == "xfail"
+
+    # Python's result changed: a warning for a tier-2 case, a failure for a tier-1 one
+    case.spec = _copy_case(["c"], _MARK)
+    res = run_case(case)
+    assert (res.status, res.failing, res.warning) == ("py_changed", False, True)
+    assert any("Python's result changed" in p for p in res.problems)
+    case.tier = 1
+    assert (run_case(case).status, run_case(case).failing) == ("py_changed", True)
+    # ... and for any case when a value turns into an exception
+    case.tier = 2
+    case.spec = {**_copy_case(["b"], _MARK), "args": {"x": {"$expr": {"py": "1/0"}}}}
+    assert (run_case(case).status, run_case(case).failing) == ("py_changed", True)
+
+    # R's golden changed
+    case.spec = _copy_case(["b"], _MARK)
+    (tmp_path / "harness" / "c.json").write_text(json.dumps(_chr_golden("z")))
+    res = run_case(case)
+    assert (res.status, res.failing) == ("r_changed", False)
+    assert "R's golden changed" in res.problems[0]
+    case.tier = 1
+    assert (run_case(case).status, run_case(case).failing) == ("r_changed", True)
+
+    # Python matches R now: the mark is stale
+    case.spec = _copy_case(["z"], _MARK)
+    res = run_case(case)
+    assert (res.status, res.failing) == ("xpass", True)
+
+
+def test_lock_pins_values_where_r_fails(tmp_path, monkeypatch, lock_dir) -> None:
+    golden = {"ok": False, "error": "subscript out of bounds", "value": None}
+    case = _golden_case(tmp_path, monkeypatch, golden, _copy_case(["fixed"], _MARK))
+    fp = _lock(case)
+    assert fp.diff == (lockfile.R_ERROR_PY_VALUE,)
+    assert check_case(case)[0] == "xfail"
+    # the value Python returns instead of R's error is pinned
+    case.spec = _copy_case(["other"], _MARK)
+    assert check_case(case)[0] == "py_changed"
+    # R's error text is not: pytacheck does not compare it
+    case.spec = _copy_case(["fixed"], _MARK)
+    golden["error"] = "another message"
+    (tmp_path / "harness" / "c.json").write_text(json.dumps(golden))
+    assert check_case(case)[0] == "xfail"
+    # Python raising where R returned a value is locked as the exception type
+    golden = _chr_golden("a")
+    spec = {**_copy_case(["b"], _MARK), "args": {"x": {"$expr": {"py": "{}['k']"}}}}
+    case = _golden_case(tmp_path / "2", monkeypatch, golden, spec)
+    fp = _lock(case)
+    assert (fp.py, fp.diff, fp.raises) == ("raises:KeyError", (lockfile.R_VALUE_PY_ERROR,), True)
+    assert check_case(case)[0] == "xfail"
+
+
+def test_lock_file_format(lock_dir) -> None:
+    entries = {
+        "b.2": Fingerprint("r2", "py2", ("x[]", "y")),
+        "a.1": Fingerprint("r1", "raises:ValueError", (lockfile.R_VALUE_PY_ERROR,)),
+    }
+    lockfile.write_lock("area", entries)
+    text = (lock_dir / "area.json").read_text()
+    lines = text.splitlines()
+    # one sorted line per case, so lanes locking different cases merge cleanly
+    assert lines[0] == "{" and lines[-1] == "}"
+    assert [line.split('"')[1] for line in lines[1:-1]] == ["a.1", "b.2"]
+    assert json.loads(text)["b.2"] == {"r": "r2", "py": "py2", "diff": ["x[]", "y"]}
+    assert lockfile.read_lock("area") == entries
+    assert lockfile.locked_areas() == ["area"]
+    lockfile.write_lock("area", {})
+    assert not (lock_dir / "area.json").exists()
+    (lock_dir / "bad.json").write_text('{"a.1": {"r": "x", "py": "y"}}')
+    with pytest.raises(ValueError, match="a lock entry is"):
+        lockfile.read_lock("bad")
+
+
+def test_digests_leave_out_what_differs_from_run_to_run(monkeypatch) -> None:
+    import tempfile
+
+    digest = lockfile.digest
+    # doubles to 10 significant digits: the comparison allows a relative 1e-9
+    assert digest({"v": [1.0 + 1e-13]}) == digest({"v": [1.0]})
+    assert digest({"v": [1.0 + 1e-6]}) != digest({"v": [1.0]})
+    assert digest({"v": [-0.0]}) == digest({"v": [0.0]})
+
+    def made() -> tuple[str, lockfile.Run]:
+        with lockfile.watch_run() as run:
+            folder = tempfile.mkdtemp(prefix="case-")
+            stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        shutil.rmtree(folder)
+        name = Path(folder).name
+        text = f"{folder}/data.csv, {name}.zip, retrieved {stamp}, analysis.R"
+        return text, run
+
+    (a, run_a), (b, run_b) = made(), made()
+    assert a != b
+    assert digest(a, run_a) == digest(b, run_b)
+    steady = lockfile.steady(a, run_a)
+    assert "analysis.R" in steady and "<tmp>/case-<tempfile>/data.csv" in steady
+    assert "case-<tempfile>.zip" in steady and "retrieved <now>" in steady
+    # a stamp from another time, and /tmp inside another path, are data
+    old = "created 2020-01-01T00:00:00Z at file://localhost/opt/grobid/grobid-home/tmp/osf.io/x"
+    assert lockfile.steady(old, run_a) == old
+    assert lockfile.steady("file:///tmp/x", run_a) == "file://<tmp>/x"
+    # the run's data and cache directories, wherever they are
+    monkeypatch.setenv("PYTACHECK_CACHE_DIR", "/home/me/cache")
+    with lockfile.watch_run() as run:
+        pass
+    assert lockfile.steady("/home/me/cache/llm/x.json", run) == "<cache>/llm/x.json"
+    # R's golden is its ok flag and value, never its error text
+    r = {"ok": False, "error": "boom", "value": None}
+    assert lockfile.r_digest(r) == lockfile.r_digest({**r, "error": "bang"})
+
+
+def test_stale_lock_entries(tmp_path, monkeypatch, lock_dir) -> None:
+    case = _golden_case(tmp_path, monkeypatch, _chr_golden("a"), _copy_case(["b"], _MARK))
+    _lock(case)
+    assert stale_lock_entries([case]) == []
+    del case.spec["known_divergence"]
+    assert stale_lock_entries([case]) == ["harness/c"]
+    # a lock file of an area without cases
+    assert stale_lock_entries([]) == ["harness/c"]
+    assert stale_lock_entries([], areas=[]) == []
+
+
+def test_every_mark_is_locked_and_every_entry_is_a_mark() -> None:
+    expected = [c for c in CASES if pcases.expected_to_fail(c.spec)]
+    assert [c.key for c in expected if c.id not in lockfile.read_lock(c.area)] == []
+    assert stale_lock_entries(CASES) == []
+    for area in lockfile.locked_areas():
+        text = lockfile.lock_path(area).read_text(encoding="utf-8")
+        assert text == lockfile.format_lock(lockfile.read_lock(area)), f"{area}.json"
+
+
+def _harness_cases(tmp_path, monkeypatch, specs: dict[str, tuple[dict, dict]]) -> list[Case]:
+    """Cases of an area ``harness`` with the given goldens, which the CLI loads."""
+    monkeypatch.setattr(pcases, "GOLDEN_DIR", tmp_path / "golden")
+    (tmp_path / "golden" / "harness").mkdir(parents=True)
+    cases = []
+    for case_id, (golden, spec) in specs.items():
+        (tmp_path / "golden" / "harness" / f"{case_id}.json").write_text(json.dumps(golden))
+        cases.append(
+            Case(area="harness", id=case_id, spec={"id": case_id, **spec}, file=tmp_path / "x.yaml")
+        )
+
+    def load(area=None, tier=None):
+        return [c for c in cases if tier is None or c.tier == tier]
+
+    monkeypatch.setattr(parity_main, "load_cases", load)
+    return cases
+
+
+def test_lock_and_check_commands(tmp_path, monkeypatch, lock_dir, capsys) -> None:
+    specs = {
+        "same": (_chr_golden("a"), _copy_case(["a"], None)),
+        "marked": (_chr_golden("a"), _copy_case(["b"], _MARK)),
+        "crash": (
+            {"ok": False, "error": "Error in x[[1]]: subscript out of bounds", "value": None},
+            _copy_case(["value"], None),
+        ),
+    }
+    cases = _harness_cases(tmp_path, monkeypatch, specs)
+    report = tmp_path / "report.json"
+    check = ["check", "--area", "harness", "--report", str(report)]
+    assert parity_main.main(check) == 1  # marked, not locked; crash unmarked
+    by_case = {r["case"]: r for r in json.loads(report.read_text())}
+    assert by_case["harness/marked"]["status"] == "unlocked"
+    assert by_case["harness/crash"]["status"] == "fail"
+    assert by_case["harness/same"] == {**by_case["harness/same"], "status": "pass", "tier": 2}
+
+    capsys.readouterr()
+    assert parity_main.main(["lock", "--area", "harness", "--suggest"]) == 0
+    out = capsys.readouterr().out
+    assert "locked 1 cases in 1 areas (1 new, 0 changed, 0 removed)" in out
+    # --suggest proposes a mark for the R crash, not for anything else
+    assert '"harness/crash": {kind: r_bug_fixed, ref: U?' in out
+    assert "harness/same" not in out and '"harness/marked"' not in out
+    text = (lock_dir / "harness.json").read_text()
+    assert list(json.loads(text)) == ["marked"]
+
+    # locking again changes nothing; a check passes once the crash is marked
+    assert parity_main.main(["lock", "--area", "harness"]) == 0
+    assert (lock_dir / "harness.json").read_text() == text
+    cases[2].spec["known_divergence"] = _MARK
+    assert parity_main.main(["lock", "-k", "crash"]) == 0
+    md = tmp_path / "summary.md"
+    assert parity_main.main([*check, "--md", str(md)]) == 0
+    summary = md.read_text()
+    assert "| 2 | 3 | 1 | 2 |" in summary  # tier 2: 3 cases, 1 pass, 2 xfail
+    assert "| 2 | r_bug_fixed | U83 | 2 | 2 |" in summary
+
+    # a mark removed: its entry is stale until the next lock
+    del cases[1].spec["known_divergence"]
+    cases[1].spec["args"] = {"x": {"$chr": ["a"]}}
+    assert parity_main.main(check) == 1
+    assert "1 lock entries name no marked case" in capsys.readouterr().out
+    assert parity_main.main(["lock", "--area", "harness"]) == 0
+    assert list(json.loads((lock_dir / "harness.json").read_text())) == ["crash"]
+
+
+def test_suggest_recognises_r_crashes() -> None:
+    crashes = [
+        "subscript out of bounds",
+        "argument is of length zero",
+        "missing value where TRUE/FALSE needed",
+        "$ operator is invalid for atomic vectors",
+        "Can't combine `..1$x` <character> and `..2$x` <double>.",
+        "Join columns in `y` must be present in the data.",
+        "object 'doi' not found",
+    ]
+    for message in crashes:
+        assert parity_main.R_CRASH.search(message), message
+    for message in ("The file does not exist", "paper must be a paper object", "HTTP 404"):
+        assert not parity_main.R_CRASH.search(message), message
+
+
+# -- the runner --------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("platform", ["linux", "darwin"])  # forked / spawned workers
+def test_run_cases_in_processes_matches_one_process(platform, monkeypatch) -> None:
+    by_key = {c.key: c for c in CASES}
+    marked = [c for c in CASES if c.area == "text" and pcases.expected_to_fail(c.spec)][:3]
+    picked = [by_key["text/text_search.demo.significant"], *marked]
+    picked += [c for c in CASES if c.area == "rcompat_regex"][:20]
+    one = parity_main.run_cases(picked, jobs=1)
+    monkeypatch.setattr(parity_main.sys, "platform", platform)
+    many = parity_main.run_cases(picked, jobs=3)
+    assert [r.key for r in many] == [c.key for c in picked]
+    assert [(r.status, r.fingerprint) for r in many] == [(r.status, r.fingerprint) for r in one]
+    assert {r.status for r in one} <= {"pass", "xfail"}
+
+
+def test_run_cases_keeps_what_a_case_prints(tmp_path, monkeypatch, capfd) -> None:
+    code = "(print('from python'), __import__('os').system('echo from a program'), 'a')[-1]"
+    spec = {"py": "copy.copy", "args": {"x": {"$expr": {"py": code}}}}
+    case = _golden_case(tmp_path, monkeypatch, _chr_golden("a"), spec)
+    (res,) = parity_main.run_cases([case])
+    assert res.status == "pass"
+    out, err = capfd.readouterr()
+    assert "from" not in out + err
+    assert "from python" in res.output and "from a program" in res.output
+    assert "output" not in res.as_json()  # kept in the report for failing cases only
+
+
+def test_reports_are_per_run() -> None:
+    a = parity_main._default_report()
+    assert a.parent == parity_main.OUT_DIR and a.name.startswith("report-")
+    assert str(os.getpid()) in a.name
+
+
+# -- no network in a case ------------------------------------------------------------
+
+
+def test_network_use_is_an_error(tmp_path, monkeypatch) -> None:
+    import socket
+
+    connect = socket.socket.connect
+    for code in (
+        "__import__('socket').create_connection(('192.0.2.1', 80), timeout=1)",
+        "__import__('socket').getaddrinfo('example.org', 443)",
+        # an attempt the code catches is still an error
+        "__import__('pytacheck.http', fromlist=['_']).request('GET', 'https://example.org/')",
+    ):
+        spec = {"py": "copy.copy", "args": {"x": {"$expr": {"py": code}}}}
+        case = _golden_case(tmp_path / str(len(code)), monkeypatch, _chr_golden("a"), spec)
+        status, problems, _ = check_case(case)
+        assert status == "error", code
+        assert "used the network" in problems[0]
+    assert socket.socket.connect is connect  # the guard is gone after the case
+
+
+def test_no_network_refuses_proxies_and_local_ports(monkeypatch) -> None:
+    import socket
+
+    from tests.httpmock import NetworkUse, no_network
+
+    monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:9")
+    with no_network() as tried:
+        with pytest.raises(NetworkUse), socket.socket() as s:
+            s.connect(("127.0.0.1", 9))  # the proxy: the internet
+        with pytest.raises(ConnectionRefusedError), socket.socket() as s:
+            s.connect(("127.0.0.1", 10))  # another local port: closed, not network use
+        assert socket.getaddrinfo("localhost", 80)
+    assert tried == ["connect to ('127.0.0.1', 9) (a proxy)"]

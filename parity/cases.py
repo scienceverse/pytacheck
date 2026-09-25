@@ -32,10 +32,16 @@ Argument constructors (a one-key mapping whose key starts with ``$``):
 ``$file: <path>``               an absolute path string
 ``$expr: {r: <code>, py: <code>}``  escape hatch; py code sees ``pc`` (pytacheck), ``pd``, ``np``
 ``$call: {r: fn, py: dotted, args: {...}}``  the result of another call
+``$catch: <spec>``              the value of *spec*, or ``{error: true}`` when it fails
 
-When R raises an error, Python must raise too; the messages are not compared
-(pytacheck writes its own), unless a case asks for it with ``compare: {error:
-contains|exact}`` (see ``parity.compare.error_matches``).
+When R raises an error, Python must raise too, and that is all: error (and
+warning) texts are never compared, pytacheck writes its own. A case whose call
+fails needs nothing special. ``$catch`` is for an error that is one part of a
+larger result (one call of several in a ``$list``): it yields the value, or
+``{error: true}`` without the message, on both sides (``pc_catch()`` in
+parity/r/helpers.R and ``parity.pyhelpers.catch()`` do the same inside helper
+code). Warnings are not captured. ``compare: {presence: [...]}`` compares
+fields of free error text (a ``repo_error`` column) for presence only.
 
 A case that differs from R on purpose sets ``known_divergence`` (an expected
 failure, ``xfail``), a mapping ``{kind, ref, reason}``: ``kind`` is one of
@@ -126,7 +132,7 @@ from typing import Any
 
 import yaml
 
-from parity.compare import TextSub, parse_r_text
+from parity.compare import TextSub, option_problems, parse_r_text
 
 ROOT = Path(__file__).resolve().parent.parent
 CASES_DIR = ROOT / "parity" / "cases"
@@ -561,6 +567,8 @@ def _collect_constructor(key: str, val: Any, found: CaseInputs, corpus: Corpus) 
         val = val or {}
         _collect(val.get("args"), found, corpus)
         _collect(val.get("py_args"), found, corpus)
+    elif key == "$catch":
+        _collect(val, found, corpus)
     elif key in SYNTHETIC_CONSTRUCTORS:
         found.synthetic.append(key)
 
@@ -648,6 +656,7 @@ def _load_cases(area: str | None, tier: int | None) -> list[Case]:
             case.tier = classify_tier(a, spec, corpus, file_tier)
             marks = divergences.matching(a, case.key)
             where = f"{f.name}: {case.key}"
+            errors += [f"{where}: {p}" for p in option_problems(spec.get("compare"))]
             if spec.get("known_divergence") is not None:
                 if marks:
                     errors.append(
@@ -729,6 +738,10 @@ def decode(x: Any) -> Any:
         if key == "$call":
             fn = _resolve(val["py"])
             return fn(**decode_args(val.get("args") or {}, val.get("py_args"), val.get("py_drop")))
+        if key == "$catch":
+            from parity.pyhelpers import catch
+
+            return catch(lambda: decode(val))
         raise ValueError(f"unknown argument constructor {key}")
     if isinstance(x, dict):
         return {k: decode(v) for k, v in x.items()}

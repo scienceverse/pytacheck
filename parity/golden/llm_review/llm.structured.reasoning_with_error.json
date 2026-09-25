@@ -2,89 +2,76 @@
   "id": "llm.structured.reasoning_with_error",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Note (not fatal): 1 of 3 LLM extractions failed and was left blank; the other 2 succeeded and all checks continued.\nRow 3: reason\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 3,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "variables.variable_name",
+      "variables.label",
+      "variables.kind",
+      ".reasoning",
+      ".error",
+      ".error_msg"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 3,
-        "names": [
-          "text",
-          "variables.variable_name",
-          "variables.label",
-          "variables.kind",
-          ".reasoning",
-          ".error",
-          ".error_msg"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "two vars",
-              "two vars",
-              "bad schema"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "dv",
-              "iv",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "outcome",
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "a",
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Found two variables: dv and iv.",
-              "Found two variables: dv and iv.",
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              "HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
-            ]
-          }
+          "two vars",
+          "two vars",
+          "bad schema"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Note (not fatal): 1 of 3 LLM extractions failed and was left blank; the other 2 succeeded and all checks continued.\nRow 3: reason\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+          "dv",
+          "iv",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "outcome",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Found two variables: dv and iv.",
+          "Found two variables: dv and iv.",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
         ]
       }
     ]

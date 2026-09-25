@@ -1,5 +1,10 @@
 # R-side wrappers giving base-R idioms a single callable name, so parity
-# cases can target them. Each has a Python counterpart in pytacheck._r.
+# cases can target them. Each has a Python counterpart in parity/pyhelpers.py.
+
+# The value of expr, or list(error = TRUE) when it fails: the message is
+# dropped, parity never compares error texts (the $catch constructor; Python:
+# parity.pyhelpers.catch()). Warnings pass through.
+pc_catch <- function(expr) tryCatch(expr, error = function(e) list(error = TRUE))
 
 pc_grepl <- function(pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE) {
   grepl(pattern, x, ignore.case = ignore.case, perl = perl, fixed = fixed)

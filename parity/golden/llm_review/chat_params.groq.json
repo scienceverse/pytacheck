@@ -2,89 +2,76 @@
   "id": "chat_params.groq",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Ignoring unsupported parameters: \"reasoning_effort\" and \"reasoning_tokens\""
+  ],
   "value": {
     "t": "list",
     "names": [
-      "value",
-      "warnings"
+      "temperature",
+      "top_p",
+      "top_k",
+      "frequency_penalty",
+      "presence_penalty",
+      "seed",
+      "max_completion_tokens",
+      "logprobs",
+      "stop"
     ],
     "v": [
       {
-        "t": "list",
-        "names": [
-          "temperature",
-          "top_p",
-          "top_k",
-          "frequency_penalty",
-          "presence_penalty",
-          "seed",
-          "max_completion_tokens",
-          "logprobs",
-          "stop"
-        ],
+        "t": "dbl",
         "v": [
-          {
-            "t": "dbl",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.5
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              3
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              2
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              10
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "a",
-              "b"
-            ]
-          }
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          10
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Ignoring unsupported parameters: \"reasoning_effort\" and \"reasoning_tokens\""
+          "a",
+          "b"
         ]
       }
     ]

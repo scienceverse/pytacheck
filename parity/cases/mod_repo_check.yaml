@@ -726,6 +726,9 @@
     - "url":
       - "https://osf.io/abc"
       "id": "p_abc"
+  "compare":
+    "presence":
+    - "gated_repos.repo_error"
 - "id": "repo_check.osf_github"
   "note": "OSF and GitHub (the testthat case)"
   "r": "identity"
@@ -1261,6 +1264,8 @@
   "compare":
     "ignore":
     - "table.file_location"
+    "presence":
+    - "gated_repos.repo_error"
 - "id": "repo_check.dryad"
   "note": "a Dryad dataset and one that does not exist"
   "r": "identity"
@@ -1879,6 +1884,8 @@
   "compare":
     "ignore":
     - "table.file_location"
+    "presence":
+    - "gated_repos.repo_error"
 - "id": "repo_check.dspace.found_and_unfound"
   "note": "a PsychArchives item and one that does not exist"
   "r": "identity"

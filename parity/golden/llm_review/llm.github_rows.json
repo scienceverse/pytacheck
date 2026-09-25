@@ -2,54 +2,41 @@
   "id": "llm.github_rows",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "There were errors in the following rows: 1 \n  *  `chat_github()` was deprecated in ellmer 0.5.0 and is now defunct.\nGitHub Models was retired on 2026-07-30.\nℹ `chat_google_gemini()` offers a free tier and `chat_posit()` offers a free\n  trial."
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "answer",
+      "error",
+      "error_msg"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "text",
-          "answer",
-          "error",
-          "error_msg"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "hi"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "`chat_github()` was deprecated in ellmer 0.5.0 and is now defunct.\nGitHub Models was retired on 2026-07-30.\nℹ `chat_google_gemini()` offers a free tier and `chat_posit()` offers a free\n  trial."
-            ]
-          }
+          "hi"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
         "t": "chr",
         "v": [
-          "There were errors in the following rows: 1 \n  *  `chat_github()` was deprecated in ellmer 0.5.0 and is now defunct.\nGitHub Models was retired on 2026-07-30.\nℹ `chat_google_gemini()` offers a free tier and `chat_posit()` offers a free\n  trial."
+          "`chat_github()` was deprecated in ellmer 0.5.0 and is now defunct.\nGitHub Models was retired on 2026-07-30.\nℹ `chat_google_gemini()` offers a free tier and `chat_posit()` offers a free\n  trial."
         ]
       }
     ]

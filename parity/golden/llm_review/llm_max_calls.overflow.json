@@ -1,37 +1,11 @@
 {
   "id": "llm_max_calls.overflow",
-  "ok": true,
-  "error": null,
-  "warnings": [],
-  "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
-    "v": [
-      {
-        "t": "list",
-        "names": [
-          "error"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "missing value where TRUE/FALSE needed"
-            ]
-          }
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "NAs introduced by coercion to integer range"
-        ]
-      }
-    ]
-  },
+  "ok": false,
+  "error": "missing value where TRUE/FALSE needed",
+  "warnings": [
+    "NAs introduced by coercion to integer range"
+  ],
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

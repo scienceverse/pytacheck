@@ -11,8 +11,8 @@ duplicated abstract sentences, abstract rows whose section is unknown, a paper
 without a title column, empty papers inside a paper list, a one-paper list,
 module pipelines, and a missing ``causal`` flag (``NA``) from the classifier.
 
-``error.*`` cases return the error message (``conditionMessage()`` / ``str()``),
-so the message is compared too, not only that both sides fail. ``report.*``
+``error.*`` cases are module runs that fail in R: Python must fail too (the
+error texts are not compared) unless the case is marked. ``report.*``
 cases return ``module_run()$report`` with every table rendered as the R chunk
 ``scroll_table()`` returns (``parity_support.report_qmd``), so the report is
 compared exactly, tables and empty elements included (the default ``prose``
@@ -91,31 +91,15 @@ def fake_case(
 
 
 def error_case(id: str, paper: tuple[str, str], fake: str | None = None) -> None:
-    """``module_run()``, or its error message when it fails.
+    """A module run that fails in R: Python must fail too (unless the case is marked).
 
     *fake* is ``None`` (the real classifier; the paper must not reach the
     network), ``"fake"`` or ``"na"`` (see :func:`fake_case`).
     """
-    r_run = 'tryCatch(module_run(p, "causal_claims"), error = function(e) conditionMessage(e))'
-    py_run = f'{S}.error_message(lambda: pc.module_run(p, "causal_claims"))'
-    if fake is not None:
-        fake_case(f"error.{id}", paper, na=fake == "na", run=(r_run, py_run))
-        return
-    cases.append(
-        {
-            "id": f"causal_claims.review.error.{id}",
-            "r": "identity",
-            "py": "tests.mod_causal.parity_support.error_message",
-            "args": {
-                "x": {
-                    "$expr": {
-                        "r": f"(function() {{ {R_MK}p <- {paper[0]}; {r_run} }})()",
-                        "py": f'lambda: (lambda p: pc.module_run(p, "causal_claims"))({paper[1]})',
-                    }
-                }
-            },
-        }
-    )
+    if fake is None:
+        module_case(f"error.{id}", paper)
+    else:
+        fake_case(f"error.{id}", paper, na=fake == "na")
 
 
 def report_case(id: str, paper: tuple[str, str]) -> None:

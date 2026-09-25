@@ -2,26 +2,13 @@
   "id": "llm_max_calls.negative_fraction",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "n must be greater than 0; it was not changed from 30"
+  ],
   "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
+    "t": "int",
     "v": [
-      {
-        "t": "int",
-        "v": [
-          30
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "n must be greater than 0; it was not changed from 30"
-        ]
-      }
+      30
     ]
   },
   "metacheck_version": "0.3.1",
