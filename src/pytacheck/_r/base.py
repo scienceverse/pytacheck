@@ -268,32 +268,18 @@ def r_sort_key(s: Any) -> tuple[Any, ...]:
 # - variants of a base letter, ranked as that letter plus an overlay mark (ø is
 #   o + U+0338, ł is l + U+0335), or after all of its accented forms ("\uffff")
 # - expansions after their plain spelling: æ = ae, œ = oe, ß = ss
+# fmt: off
 _ICU_VARIANT = {
-    "ø": ("o", "\u0338"),
-    "đ": ("d", "\u0335"),
-    "ł": ("l", "\u0335"),
-    "ħ": ("h", "\u0335"),
-    "ð": ("d", "\uffff"),
-    "æ": ("ae", "\uffff"),
-    "œ": ("oe", "\uffff"),
-    "ß": ("ss", "\uffff"),
+    "ø": ("o", "\u0338"), "đ": ("d", "\u0335"), "ł": ("l", "\u0335"), "ħ": ("h", "\u0335"),
+    "ð": ("d", "\uffff"), "æ": ("ae", "\uffff"), "œ": ("oe", "\uffff"), "ß": ("ss", "\uffff"),
     "ſ": ("s", "\uffff"),
 }
 # - separate letters sorted after every word of their base letter: (base, rank)
 _ICU_AFTER = {
-    "ı": ("i", 1),
-    "ĸ": ("q", 1),
-    "ŋ": ("n", 1),
-    "ŧ": ("t", 1),
-    "ǝ": ("e", 1),
-    "ə": ("e", 2),
-    "ɛ": ("e", 3),
-    "ƒ": ("f", 1),
-    "ɔ": ("o", 1),
-    "ƶ": ("z", 1),
-    "ʒ": ("z", 2),
-    "þ": ("z", 3),
+    "ı": ("i", 1), "ĸ": ("q", 1), "ŋ": ("n", 1), "ŧ": ("t", 1), "ǝ": ("e", 1), "ə": ("e", 2),
+    "ɛ": ("e", 3), "ƒ": ("f", 1), "ɔ": ("o", 1), "ƶ": ("z", 1), "ʒ": ("z", 2), "þ": ("z", 3),
 }
+# fmt: on
 
 
 # ICU root order of the combining diacritics U+0300-U+036F (R's order() of "a" + mark),
