@@ -415,14 +415,14 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_model_object', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_model_object', execute=True, timeout=60, keep_sandbox=True)"
-- "id": "reproducibility_check.exec_timeout"
+- "id": "reproducibility_check.exec_timeout_10s"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_timeout', execute = TRUE, timeout = 2, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_timeout', execute=True, timeout=2, keep_sandbox=True)"
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_timeout', execute = TRUE, timeout = 10, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_timeout', execute=True, timeout=10, keep_sandbox=True)"
   "compare":
     "ignore":
     - "run_results.stdout"

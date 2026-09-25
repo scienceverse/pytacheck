@@ -1,2 +1,2 @@
-Sys.sleep(20)
+Sys.sleep(60)
 cat("done\n")
