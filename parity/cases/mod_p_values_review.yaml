@@ -6,22 +6,27 @@
 "cases":
 # ------------------------------------------------------------------ real papers
 - "id": "all_p_values.real_papers"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "module": "all_p_values"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"]}
 - "id": "stat_p_exact.real_papers"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "module": "stat_p_exact"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"]}
 - "id": "stat_p_nonsig.real_papers"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "module": "stat_p_nonsig"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"]}
 - "id": "stat_p_exact.real_single"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "module": "stat_p_exact"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}
 - "id": "stat_p_nonsig.real_single"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "module": "stat_p_nonsig"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}
@@ -340,6 +345,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'all_p_values')"}}
 - "id": "report_tables.all_p_values.real"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
@@ -381,6 +387,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'stat_p_nonsig')"}}
 - "id": "report_tables.stat_p_nonsig.real"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":

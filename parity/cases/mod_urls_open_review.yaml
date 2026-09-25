@@ -163,6 +163,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "open_practices.review.materials_only"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The no-code report says 'not recognized' (metacheck: 'not reconized')."}
   "module": "open_practices"
   "args":
     "paper":
@@ -262,6 +263,7 @@
       - "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
       - "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
 - "id": "all_urls.review.formats"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The text read from the TEI differs (io fix): 'Study 1' headers (metacheck 'Study1'); each supplement URL is found at its own link only (metacheck repeats it 11 more times where it replaced 'Fig' link texts)."}
   "module": "all_urls"
   "args":
     "paper":
@@ -279,11 +281,13 @@
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"
 - "id": "open_practices.review.single_preprint_pdf_tei"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The text read from the TEI differs (io fix): 'Study 1' headers (metacheck 'Study1'); each supplement URL is found at its own link only (metacheck repeats it 11 more times where it replaced 'Fig' link texts)."}
   "module": "open_practices"
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"
 - "id": "open_practices.review.single_published_pdf_tei"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The text read from the TEI differs (io fix): 'Study 1' headers (metacheck 'Study1'); each supplement URL is found at its own link only (metacheck repeats it 11 more times where it replaced 'Fig' link texts)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -299,6 +303,7 @@
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
 - "id": "open_practices.review.single_0956797615569889"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The no-code report says 'not recognized' (metacheck: 'not reconized')."}
   "module": "open_practices"
   "args":
     "paper":

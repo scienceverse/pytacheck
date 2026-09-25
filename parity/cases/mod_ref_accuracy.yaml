@@ -5,11 +5,13 @@
 "area": "mod_ref_accuracy"
 "cases":
 - "id": "ref_accuracy.demo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "ref_accuracy.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -56,6 +58,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(empty = c(\"bib_match\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['bib_match'])"
 - "id": "ref_accuracy.journal.mismatch"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -63,6 +66,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"A Completely Different Journal Name\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'A Completely Different Journal Name')])"
 - "id": "ref_accuracy.journal.abbreviations"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -70,6 +74,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"Am. Psychol.\"), list(\"bib\", 2L, \"container\", \"Psychological Review\"), list(\"bib\", 3L, \"container\", \"Adv. Methods Pract. Psychol. Sci.\"), list(\"bib\", 0L, \"container\", \"The Journal & Stuff\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'Am. Psychol.'), ('bib', 2, 'container', 'Psychological Review'), ('bib', 3, 'container', 'Adv. Methods Pract. Psychol. Sci.'), ('bib', 0, 'container', 'The Journal & Stuff')])"
 - "id": "ref_accuracy.journal.tokens"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -77,6 +82,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"J. Pers. Soc. Psychol.\"), list(\"bib_match\", 1L, \"container\", \"Journal of Personality &amp; Social Psychology\"), list(\"bib\", 2L, \"container\", \"!!!\"), list(\"bib\", 3L, \"container\", \"  \"), list(\"bib_match\", 3L, \"container\", \"Psychological Science (Wiley-Blackwell)\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'J. Pers. Soc. Psychol.'), ('bib_match', 1, 'container', 'Journal of Personality &amp; Social Psychology'), ('bib', 2, 'container', '!!!'), ('bib', 3, 'container', '  '), ('bib_match', 3, 'container', 'Psychological Science (Wiley-Blackwell)')])"
 - "id": "ref_accuracy.journal.order"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -84,6 +90,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"Psychologist American\"), list(\"bib\", 2L, \"container\", \"Science: Psychological\"), list(\"bib_match\", 3L, \"container\", \"Psychological Science\"), list(\"bib\", 3L, \"container\", \"Psychological Sciences Review\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'Psychologist American'), ('bib', 2, 'container', 'Science: Psychological'), ('bib_match', 3, 'container', 'Psychological Science'), ('bib', 3, 'container', 'Psychological Sciences Review')])"
 - "id": "ref_accuracy.missing_values"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -91,6 +98,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", NA), list(\"bib_match\", 2L, \"container\", \"\"), list(\"bib\", 2L, \"year\", NA), list(\"bib\", 1L, \"title\", NA), list(\"bib_match\", 2L, \"title\", NA), list(\"bib\", 2L, \"authors\", NA)))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', None), ('bib_match', 2, 'container', ''), ('bib', 2, 'year', None), ('bib', 1, 'title', None), ('bib_match', 2, 'title', None), ('bib', 2, 'authors', None)])"
 - "id": "ref_accuracy.authors.mismatch"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -98,6 +106,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"authors\", \"Nonexistent, A; Madeup, B\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'authors', 'Nonexistent, A; Madeup, B')])"
 - "id": "ref_accuracy.authors.mismatch_strict"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -106,6 +115,7 @@
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'authors', 'Nonexistent, A; Madeup, B')])"
     "min_mismatches": !!int "2"
 - "id": "ref_accuracy.authors.diacritics"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -113,6 +123,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", data.frame(given = c(\"Alice H.\", \"Wendy\"), family = c(\"Éagly\", \"Wöod\"))), list(\"bib\", 2L, \"authors\", \"Gînø, F; Wiltermuth, S\"), list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib_match\", 3L, \"authors\", data.frame(given = c(\"D\", \"A\", \"P\", \"Q\", \"R\", \"S\"), family = c(\"Lakens\", \"Straße\", \"Øverland\", \"Łódź\", \"İnce\", \"ΣΟΦΙΑ\"))), list(\"bib\", 3L, \"authors\", \"Lakens, D; Strasse, A; Overland, P; Lodz, Q; Ince, R; σοφια, S\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', [{\"given\": 'Alice H.', \"family\": 'Éagly'}, {\"given\": 'Wendy', \"family\": 'Wöod'}]), ('bib', 2, 'authors', 'Gînø, F; Wiltermuth, S'), ('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib_match', 3, 'authors', [{\"given\": 'D', \"family\": 'Lakens'}, {\"given\": 'A', \"family\": 'Straße'}, {\"given\": 'P', \"family\": 'Øverland'}, {\"given\": 'Q', \"family\": 'Łódź'}, {\"given\": 'R', \"family\": 'İnce'}, {\"given\": 'S', \"family\": 'ΣΟΦΙΑ'}]), ('bib', 3, 'authors', 'Lakens, D; Strasse, A; Overland, P; Lodz, Q; Ince, R; σοφια, S')])"
 - "id": "ref_accuracy.authors.diacritics_fail"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -120,6 +131,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib_match\", 3L, \"authors\", data.frame(given = c(\"D\", \"A\"), family = c(\"Lakens\", \"Gredebäck\"))), list(\"bib\", 3L, \"authors\", \"Lakens, D; Gredeback, A\"), list(\"bib_match\", 2L, \"authors\", data.frame(given = c(\"F\", \"S\"), family = c(\"Gino\", \"Æsop\"))), list(\"bib\", 2L, \"authors\", \"Gino, F; Esop, S\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib_match', 3, 'authors', [{\"given\": 'D', \"family\": 'Lakens'}, {\"given\": 'A', \"family\": 'Gredebäck'}]), ('bib', 3, 'authors', 'Lakens, D; Gredeback, A'), ('bib_match', 2, 'authors', [{\"given\": 'F', \"family\": 'Gino'}, {\"given\": 'S', \"family\": 'Æsop'}]), ('bib', 2, 'authors', 'Gino, F; Esop, S')])"
 - "id": "ref_accuracy.authors.string_record"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -127,6 +139,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", \"Eagly, A; Wood, W\"), list(\"bib_match\", 2L, \"authors\", \"Nobody, X\"), list(\"bib_match\", 3L, \"authors\", \"; Lakens\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', 'Eagly, A; Wood, W'), ('bib_match', 2, 'authors', 'Nobody, X'), ('bib_match', 3, 'authors', '; Lakens')])"
 - "id": "ref_accuracy.authors.string_record_edge"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -134,6 +147,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", \"\"), list(\"bib_match\", 2L, \"authors\", \", Gino; Wiltermuth\"), list(\"bib_match\", 3L, \"authors\", NA_character_)))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', ''), ('bib_match', 2, 'authors', ', Gino; Wiltermuth'), ('bib_match', 3, 'authors', None)])"
 - "id": "ref_accuracy.authors.no_family"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -141,6 +155,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", data.frame(given = c(\"A\", \"B\"))), list(\"bib_match\", 2L, \"authors\", data.frame(given = character(0), family = character(0))), list(\"bib_match\", 3L, \"authors\", data.frame(given = c(\"A\", \"B\"), family = c(NA, \"Lakens\")))))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', [{\"given\": \"A\"}, {\"given\": \"B\"}]), ('bib_match', 2, 'authors', pd.DataFrame({\"given\": pd.Series([], dtype=\"string\"), \"family\": pd.Series([], dtype=\"string\")})), ('bib_match', 3, 'authors', [{\"given\": \"A\", \"family\": None}, {\"given\": \"B\", \"family\": \"Lakens\"}])])"
 - "id": "ref_accuracy.authors.max_authors_default"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -148,6 +163,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963')])"
 - "id": "ref_accuracy.authors.max_authors_1"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -156,6 +172,7 @@
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963')])"
     "max_authors": !!int "1"
 - "id": "ref_accuracy.authors.empty_cited"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -163,6 +180,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"authors\", \"\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'authors', '')])"
 - "id": "ref_accuracy.title.mismatch"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -170,6 +188,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 2L, \"title\", \"A Completely Unrelated Title About Frogs\"), list(\"bib\", 1L, \"title\", \"Something else entirely\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'A Completely Unrelated Title About Frogs'), ('bib', 1, 'title', 'Something else entirely')])"
 - "id": "ref_accuracy.title.and_author_strict"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -178,12 +197,14 @@
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'A Completely Unrelated Title About Frogs'), ('bib', 1, 'title', 'Something else entirely'), ('bib', 2, 'authors', 'Nobody, X')])"
     "min_mismatches": !!int "2"
 - "id": "ref_accuracy.title.similarity_strict"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
       "$paper": "demo"
     "title_similarity": !!float "0.9"
 - "id": "ref_accuracy.title.noise"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -192,6 +213,7 @@
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'Retracted—Evil Genius: How Dis-honesty Can<sup>1</sup> Lead to “Greater” Creati vity.'), ('bib', 1, 'title', 'The <i>origins</i> of sex differences in human behaviour')])"
     "title_similarity": !!float "0.95"
 - "id": "ref_accuracy.year.default"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -199,6 +221,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"year\", 2001L), list(\"bib\", 2L, \"year\", 2015L)))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'year', 2001), ('bib', 2, 'year', 2015)])"
 - "id": "ref_accuracy.year.tolerance_0"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -207,6 +230,7 @@
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'year', 2001), ('bib', 2, 'year', 2015)])"
     "year_tolerance": !!int "0"
 - "id": "ref_accuracy.year.tolerance_5"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -215,6 +239,7 @@
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'year', 2001), ('bib', 2, 'year', 2015)])"
     "year_tolerance": !!int "5"
 - "id": "ref_accuracy.doi.mismatch"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -266,6 +291,7 @@
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', ''), ('bib_match', 3, 'title', '')])"
     "suggest_score": !!int "60"
 - "id": "ref_accuracy.everything_wrong"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -273,6 +299,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 2L, \"title\", \"Zzz\"), list(\"bib\", 2L, \"authors\", \"Nobody, X\"), list(\"bib\", 2L, \"container\", \"Journal of Nothing\"), list(\"bib\", 2L, \"year\", 1990L), list(\"bib_match\", 2L, \"doi\", \"10.9999/other\"), list(\"bib\", 1L, \"authors\", \"\")))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'Zzz'), ('bib', 2, 'authors', 'Nobody, X'), ('bib', 2, 'container', 'Journal of Nothing'), ('bib', 2, 'year', 1990), ('bib_match', 2, 'doi', '10.9999/other'), ('bib', 1, 'authors', '')])"
 - "id": "ref_accuracy.paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The report's guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')."}
   "module": "ref_accuracy"
   "args":
     "paper":
@@ -345,11 +372,13 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(paperlist(demopaper(), ra_demo(list(list(\"bib\", 1L, \"container\", \"A Completely Different Journal Name\")), paper_id = \"demo2\"), ra_demo(drop = c(\"bib_match\"), paper_id = \"demo3\")), \"ref_accuracy\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(pc.PaperList([pc.demopaper(), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'A Completely Different Journal Name')], paper_id='demo2'), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(drop=['bib_match'], paper_id='demo3')]), \"ref_accuracy\"))"
 - "id": "ref_consistency.demo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The caveat says 'likely' (metacheck: 'likley'); where set, ref_consistency's summary_table also has n_missing and n_extra when nothing is flagged (U115)."}
   "module": "ref_consistency"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "ref_consistency.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The caveat says 'likely' (metacheck: 'likley'); where set, ref_consistency's summary_table also has n_missing and n_extra when nothing is flagged (U115)."}
   "module": "ref_consistency"
   "args":
     "paper":
@@ -359,6 +388,7 @@
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
       - "upstream/metacheck/inst/demos/to_err_is_human.json"
 - "id": "ref_consistency.test_paper"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The caveat says 'likely' (metacheck: 'likley'); where set, ref_consistency's summary_table also has n_missing and n_extra when nothing is flagged (U115)."}
   "module": "ref_consistency"
   "args":
     "paper":
@@ -366,6 +396,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_test_paper(\"No references here.\")"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_test_paper(\"No references here.\")"
 - "id": "ref_consistency.green"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The caveat says 'likely' (metacheck: 'likley'); where set, ref_consistency's summary_table also has n_missing and n_extra when nothing is flagged (U115)."}
   "module": "ref_consistency"
   "args":
     "paper":
@@ -373,6 +404,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_xrefs(c(0L, 1L, 3L, 4L), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)'])"
 - "id": "ref_consistency.missing"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The caveat says 'likely' (metacheck: 'likley'); where set, ref_consistency's summary_table also has n_missing and n_extra when nothing is flagged (U115)."}
   "module": "ref_consistency"
   "args":
     "paper":
@@ -388,6 +420,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_xrefs(c(99L), c(\"(Ghost 2020)\"))"
         "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([99], ['(Ghost 2020)'])"
 - "id": "ref_consistency.no_xref"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The caveat says 'likely' (metacheck: 'likley'); where set, ref_consistency's summary_table also has n_missing and n_extra when nothing is flagged (U115)."}
   "module": "ref_consistency"
   "args":
     "paper":
@@ -403,6 +436,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); paperlist(demopaper(), ra_xrefs(c(0L, 1L, 3L, 4L, NA), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\", \"(Nobody)\"), paper = ra_demo(paper_id = \"demo2\")), ra_demo(empty = c(\"bib\"), paper_id = \"demo3\"), ra_xrefs(c(0L, 1L, 3L, 4L), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\"), paper = ra_demo(paper_id = \"demo4\")))"
         "py": "pc.PaperList([pc.demopaper(), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4, None], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)', '(Nobody)'], paper=__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(paper_id='demo2')), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['bib'], paper_id='demo3'), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)'], paper=__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(paper_id='demo4'))])"
 - "id": "ref_consistency.chained"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The caveat says 'likely' (metacheck: 'likley'); where set, ref_consistency's summary_table also has n_missing and n_extra when nothing is flagged (U115)."}
   "module": "ref_consistency"
   "args":
     "paper":
@@ -410,6 +444,7 @@
         "r": "module_run(demopaper(), \"ref_accuracy\")"
         "py": "pc.module_run(pc.demopaper(), \"ref_accuracy\")"
 - "id": "ref_accuracy.chained"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The reports say 'likely' and 'Such an incoherence ... or an AI' (metacheck typos), and ref_consistency's summary_table always has n_missing and n_extra (U115)."}
   "module": "ref_accuracy"
   "args":
     "paper":

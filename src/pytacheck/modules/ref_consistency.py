@@ -140,6 +140,9 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     # detailed table of results ----
     refs = ref_table(paper)
     bibs = refs.loc[:, ["paper_id", "bib_id", "text"]].rename(columns={"text": "reference"})
+    # one row per reference: ref_table() repeats a reference for each of its
+    # bib_match rows, which inflated n_bib and n_extra (U114)
+    bibs = bibs.loc[~bibs.duplicated(subset=_KEYS).to_numpy(dtype=bool)].reset_index(drop=True)
     xref_all = paper_table(paper, "xref")
     if len(xref_all.columns) == 0:
         # a paper list with no xref tables at all: dplyr::select() would fail on it

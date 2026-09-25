@@ -250,3 +250,94 @@
   kind: r_bug_fixed
   ref: U111
   reason: a schema label containing U+FFFF is lower-cased like any other; R's tolower() stops the module ("invalid input ... in 'utf8towcs'")
+
+# prose typos, output columns and TEI text (U83, U115, U125, U16) ------------
+# U83: metacheck's typos in report prose are fixed ("likley", "reconized",
+# "Such an incoherent ... ar an AI"); U125: a missing full stop. Cases of the
+# io lane's generated files (bibr12, grobid12) that run these modules are listed
+# here because the module change, not the conversion, makes them differ.
+"mod_ref_accuracy_review/ref_accuracy.year.character": &u83_incoherent
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')"
+"mod_ref_accuracy_review/ref_accuracy.year.character_ws": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.authors.character_column": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.min_mismatches_0": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.max_authors_negative": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.max_authors_0": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional_small": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.max_authors_inf": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.title_similarity_1": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.year_tolerance_negative": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.doi.url": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.doi.record_missing": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.report.line_breaks": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.authors.metacharacters": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.journal.whitespace": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.title.empty_after_normalising": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.authors.cited_missing": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.paperlist.unsorted": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.bib_match.extra_rows": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.bib_match.double_key": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.single_reference": *u83_incoherent
+"bibr12/module.ref_accuracy.preprint": *u83_incoherent
+"bibr12/module.ref_accuracy.list": *u83_incoherent
+"bibr12/module.ref_accuracy.mixed": *u83_incoherent
+"mod_ref_accuracy_review/ref_consistency.double_key": &u83_likley
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the caveat says 'likely' (metacheck: 'likley'); summary_table always has n_missing and n_extra (U115; metacheck drops a count column when no row has it), and duplicated bib_match rows no longer repeat a reference (U114)"
+"mod_ref_accuracy_review/ref_consistency.xref_type_na": *u83_likley
+"mod_ref_accuracy_review/ref_consistency.text_missing": *u83_likley
+"mod_ref_accuracy_review/ref_consistency.paperlist.unsorted": *u83_likley
+"mod_ref_accuracy_review/ref_consistency.paperlist.no_bib_match": *u83_likley
+"mod_ref_accuracy_review/ref_consistency.duplicate_match": *u83_likley
+"mod_ref_accuracy_review/ref_consistency.problems_203020": *u83_likley
+"bibr12/module.ref_consistency.preprint": *u83_likley
+"bibr12/module.ref_consistency.PMC4383902": *u83_likley
+"bibr12/module.ref_consistency.full": *u83_likley
+"bibr12/module.ref_consistency.list": *u83_likley
+"bibr12/module.ref_consistency.mixed": *u83_likley
+"bibr12_review/module.ref_consistency.edge_types": *u83_likley
+"grobid12/module.ref_consistency.demo": *u83_likley
+"mod_ref_accuracy_review/ref_consistency.xml_fixtures": &u83_likley_tei
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the caveat says 'likely' (metacheck: 'likley'); the reference and citation text read from the TEI also differs (io fix U16: 'Henry, 2019', '24 July 2025')"
+"bibr12/module.open_practices.PMC4383902": &u83_reconized
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the no-code report says 'not recognized' (metacheck: 'not reconized')"
+"grobid12/module.open_practices.0956797615569889": *u83_reconized
+"bibr12/module.stat_effect_size.preprint": &u125_stop
+  kind: r_bug_fixed
+  ref: U125
+  reason: "the missing-effect-size summary ends with a full stop (metacheck leaves it out)"
+"bibr12/module.stat_effect_size.full": *u125_stop
+"bibr12/module.stat_effect_size.mixed": *u125_stop
+"grobid12/module.stat_effect_size.debruine": *u125_stop
+"bibr12/module.ref_accuracy.PMC4383902": &u30_fail_light
+  kind: r_bug_fixed
+  ref: U30
+  reason: "a paper without bib_match rows gets the traffic light 'fail' (metacheck: 'error', which is not one of its lights)"
+"grobid12/module.ref_accuracy.demo": *u30_fail_light
+"grobid12/module.ref_accuracy.preprint": *u30_fail_light
+"grobid12/module.ref_accuracy.published": *u30_fail_light
+"grobid12/module.ref_accuracy.0956797615569889": *u30_fail_light
+"grobid12/module.ref_accuracy.debruine": *u30_fail_light
+"grobid12_review/module.ref_accuracy.review": *u30_fail_light
+"bibr12/module.open_practices.mixed": &u106_list
+  kind: r_bug_fixed
+  ref: U106
+  reason: "a paper list gets the paper-list summary, and its papers without a flagged sentence count as 'neither' (metacheck branches on the rows of summary_table)"
+"grobid12/module.open_practices.debruine": *u106_list
+"bibr12_review/module.ref_summary.edge_types": &u119_count
+  kind: r_bug_fixed
+  ref: U119
+  reason: "'Summary information provided for 2 references' counts references, not table rows (reference 1 has two rows)"
+"mod_power/power.psychsci": &u16_power
+  kind: r_bug_fixed
+  ref: U16
+  reason: "only the sentence text read from the TEI differs ('G*Power 3.1', metacheck 'G*Power3.1'; io fix of the number-before-tag clean-up)"
+"mod_power/power.psychsci.tables": *u16_power

@@ -276,3 +276,12 @@ def test_prefilter_matches_full_scan(psychsci: pc.PaperList) -> None:
             full = np.array(grepl(pattern, texts, ignore_case=ignore_case, perl=True))
             fast = F._Article(texts).mask(pattern, ignore_case)
             assert (full == fast).all(), pattern
+
+
+@pytest.mark.parametrize("module", ["funding_check", "funding_check_oi"])
+def test_help_text_names_funding_statements(module: str) -> None:
+    # U83: metacheck's help (copied from coi_check) says "the conflict of interest
+    # statement was found"
+    details = pc.module_info(module).details
+    assert "the sentences in which the funding statement was found" in details
+    assert "conflict of interest" not in details

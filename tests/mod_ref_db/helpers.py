@@ -101,10 +101,16 @@ def flora_originals(by: int = 1) -> list[str]:
 
 
 def rw_sample(by: int = 100) -> list[str]:
-    """One RetractionWatch DOI per notice type plus every *by*-th DOI."""
-    from pytacheck.db.retractionwatch import retractionwatch
+    """One RetractionWatch DOI per notice type plus every *by*-th DOI.
 
-    d = retractionwatch()
+    Sampled from the stored table, blank DOIs included, as R's ``rw()`` has
+    them: :func:`~pytacheck.db.retractionwatch.retractionwatch` leaves them out
+    (U15), which would shift every *by*-th row and give R and Python different
+    papers.
+    """
+    from pytacheck.db.databases import load_database
+
+    d = load_database("retractionwatch")
     first = d.loc[~d["retractionwatch"].duplicated().to_numpy(dtype=bool), "doi"].tolist()
     return list(dict.fromkeys(first + d["doi"].iloc[::by].tolist()))
 
