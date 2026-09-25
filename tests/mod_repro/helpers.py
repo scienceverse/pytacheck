@@ -24,6 +24,7 @@ import pandas as pd
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 SCENARIOS = HERE / "fixtures" / "scenarios.json"
+REVIEW_SCENARIOS = HERE / "fixtures" / "review_scenarios.json"
 
 PSYCHSCI = [
     "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json",
@@ -35,8 +36,12 @@ PSYCHSCI = [
 
 @cache
 def specs() -> dict[str, Any]:
-    """The scenario file (R: ``rc_specs()``)."""
-    return json.loads(SCENARIOS.read_text(encoding="utf-8"))  # type: ignore[no-any-return]
+    """The scenario files (R: ``rc_specs()``), the review cases' extra ones included."""
+    out: dict[str, Any] = json.loads(SCENARIOS.read_text(encoding="utf-8"))
+    if REVIEW_SCENARIOS.exists():
+        extra = json.loads(REVIEW_SCENARIOS.read_text(encoding="utf-8"))["scenarios"]
+        out["scenarios"] = {**out["scenarios"], **extra}
+    return out
 
 
 def rc_df(cols: dict[str, list[Any]] | None) -> pd.DataFrame | None:

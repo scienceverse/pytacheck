@@ -3413,6 +3413,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pypdf"
+version = "6.19.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1f/ac/63d71aaedb59acbcdef491e6ca6469165e3771c9c74358204818fd9bc5a6/pypdf-6.19.0.tar.gz", hash = "sha256:bbc43aca292369ccc6cbc8a921991ecf2538a3587ab5a116eff06c321d647155", size = 7033266, upload-time = "2026-09-16T09:32:05.946Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3c/2c/c43c03eaf630435f023f1dc61ec4a4a78951ad5530a62c71cc89bde307b7/pypdf-6.19.0-py3-none-any.whl", hash = "sha256:7e5d6e730e7dae87d560a2cee218b852f6498c8be61966f3cd02ead971e48d14", size = 395480, upload-time = "2026-09-16T09:32:04.087Z" },
+]
+
+[[package]]
 name = "pypdfium2"
 version = "5.13.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3499,8 +3508,10 @@ all = [
     { name = "bibr" },
     { name = "fastapi" },
     { name = "matplotlib" },
+    { name = "pypdf" },
     { name = "pyreadstat" },
     { name = "python-multipart" },
+    { name = "snowballstemmer" },
     { name = "uvicorn", extra = ["standard"] },
     { name = "xlrd" },
 ]
@@ -3514,7 +3525,9 @@ bibr = [
 ]
 data = [
     { name = "matplotlib" },
+    { name = "pypdf" },
     { name = "pyreadstat" },
+    { name = "snowballstemmer" },
     { name = "xlrd" },
 ]
 
@@ -3550,12 +3563,14 @@ requires-dist = [
     { name = "orjson", specifier = ">=3.10" },
     { name = "pandas", specifier = ">=3.0" },
     { name = "platformdirs", specifier = ">=4.2" },
+    { name = "pypdf", marker = "extra == 'data'", specifier = ">=5.0" },
     { name = "pyreadstat", marker = "extra == 'data'", specifier = ">=1.2.7" },
     { name = "pytacheck", extras = ["bibr", "data", "api"], marker = "extra == 'all'" },
     { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.31" },
     { name = "regex", specifier = ">=2024.9.11" },
     { name = "rich", specifier = ">=13.7" },
     { name = "scipy", specifier = ">=1.13" },
+    { name = "snowballstemmer", marker = "extra == 'data'", specifier = ">=2.2" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'api'", specifier = ">=0.30" },
     { name = "xlrd", marker = "extra == 'data'", specifier = ">=2.0.1" },
 ]
@@ -4408,6 +4423,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a2/87/a6771e1546d97e7e041b6ae58d80074f81b7d5121207425c964ddf5cfdbd/sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc", size = 20372, upload-time = "2024-02-25T23:20:04.057Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2", size = 10235, upload-time = "2024-02-25T23:20:01.196Z" },
+]
+
+[[package]]
+name = "snowballstemmer"
+version = "3.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/43/f8/0a71edf031f03c40db17503cb8ca78a69a171254e568e7db241b0ab57ea1/snowballstemmer-3.1.1.tar.gz", hash = "sha256:e07bbc54a0d798fe6010a12398422e62a8bfbba95c394fd0956ef58cb4d3e260", size = 123314, upload-time = "2026-06-03T00:56:40.194Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/07/2ebca9b11fb9be7340a818d8d6f63feaebb146be2c4afbd6061701d6df6e/snowballstemmer-3.1.1-py3-none-any.whl", hash = "sha256:7e207fa178741da09cdee59d3ecec3827ad5f92b1fc5c9ff3755b639f71f5752", size = 104164, upload-time = "2026-06-03T00:56:38.614Z" },
 ]
 
 [[package]]

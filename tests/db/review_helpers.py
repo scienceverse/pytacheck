@@ -84,3 +84,19 @@ def call_mock(fn: str, *args: Any, **kwargs: Any) -> Any:
     from tests.db.parity_replay import call
 
     return call(fn, *args, mock_dir=str(MOCK), **kwargs)
+
+
+def call_offline(fn: str, *args: Any, **kwargs: Any) -> Any:
+    """Call *fn* with ``online()`` false (R: ``with_mocked_bindings(online = \\(...) FALSE)``)."""
+    import importlib
+
+    from pytacheck.db import _utils
+
+    module, _, name = fn.rpartition(".")
+    func = getattr(importlib.import_module(module), name)
+    old = _utils.online
+    _utils.online = lambda *_a, **_k: False  # type: ignore[assignment]
+    try:
+        return func(*args, **kwargs)
+    finally:
+        _utils.online = old  # type: ignore[assignment]

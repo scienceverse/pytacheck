@@ -1,0 +1,633 @@
+{
+ "scenarios": {
+  "rv_demo_jasp": {
+   "paper": "demo",
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv",
+     "sample.jasp"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
+     "tests/mod_repro/fixtures/outputs/sample.jasp"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_psychsci_omv": {
+   "paper": "psychsci",
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "sample.omv"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/outputs/sample.omv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_py_only_structure": {
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "script.py",
+     "helper.PY",
+     "data.mat"
+    ],
+    "file_location": [
+     null,
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_spss_spv": {
+   "code": {
+    "file_name": [
+     "syntax.sps"
+    ],
+    "file_location": [
+     null
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "SPSS"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "syntax.sps",
+     "output.spv"
+    ],
+    "file_location": [
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_jasp_nonr": {
+   "code": {
+    "file_name": [
+     "model.sas",
+     "analysis.do",
+     "run.py"
+    ],
+    "file_location": [
+     null,
+     null,
+     null
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "SAS",
+     "Stata",
+     "Python"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "sample.jasp",
+     "model.sas",
+     "analysis.do",
+     "run.py"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/outputs/sample.jasp",
+     null,
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_unreadable": {
+   "code": {
+    "file_name": [
+     "gone.R",
+     "gone.R",
+     "ok.R"
+    ],
+    "file_location": [
+     null,
+     null,
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_no_loc_col": {
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv",
+     "data.sav",
+     "analysis.sps"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_base_pkgs": {
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     "zzzpkg, stats, tidyr, utils"
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_no_file_name_col": {
+   "code": {
+    "language": [
+     "R",
+     "Python"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     null
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_qmd": {
+   "code": {
+    "file_name": [
+     "analysis.qmd"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/review/analysis.qmd"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "rv_latin1": {
+   "code": {
+    "file_name": [
+     "latin1_crlf.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/review/latin1_crlf.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_rv_latin1": {
+   "code": {
+    "file_name": [
+     "latin1_crlf.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/review/latin1_crlf.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_rv_definers": {
+   "code": {
+    "file_name": [
+     "user.R",
+     "def_a.R",
+     "def_b.R",
+     "fn_user.R",
+     "setwd_var.R",
+     "quiet.R",
+     "msg_only.R",
+     "warn.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/review/user.R",
+     "tests/mod_repro/fixtures/review/def_a.R",
+     "tests/mod_repro/fixtures/review/def_b.R",
+     "tests/mod_repro/fixtures/review/fn_user.R",
+     "tests/mod_repro/fixtures/review/setwd_var.R",
+     "tests/mod_repro/fixtures/review/quiet.R",
+     "tests/mod_repro/fixtures/review/msg_only.R",
+     "tests/mod_repro/fixtures/review/warn.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R",
+     "R",
+     "R",
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_rv_both": {
+   "code": {
+    "file_name": [
+     "undef_user.R",
+     "undef_definer.R",
+     "needs_stringr.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/undef_user.R",
+     "tests/mod_repro/fixtures/scripts/undef_definer.R",
+     "tests/mod_repro/fixtures/scripts/needs_stringr.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_rv_base_pkgs": {
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     "zzzpkg, stats, tidyr, utils"
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  }
+ }
+}

@@ -59,6 +59,15 @@ def _is_true(x: Any) -> bool:
     return isinstance(x, bool | np.bool_) and bool(x)
 
 
+def _as_list(x: Any) -> list[Any]:
+    """One list cell (or attribute) as a list: ``NULL``/``NA`` is empty, a string is one value."""
+    if x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x)):
+        return []
+    if isinstance(x, str):
+        return [x]
+    return list(x)
+
+
 def _has_cols(df: Any, *cols: str) -> bool:
     return isinstance(df, pd.DataFrame) and all(c in df.columns for c in cols)
 
@@ -118,15 +127,18 @@ class RNamedList(Mapping[str, Any]):
             raise ValueError("names and values differ in length")
         self._names = [str(n) for n in names]
         self._values = list(values)
+        self._first: dict[str, int] = {}
+        for i, n in enumerate(self._names):
+            self._first.setdefault(n, i)
 
     def __getitem__(self, key: str) -> Any:
-        for n, v in zip(self._names, self._values, strict=True):
-            if n == key:
-                return v
-        raise KeyError(key)
+        i = self._first.get(key) if isinstance(key, str) else None
+        if i is None:
+            raise KeyError(key)
+        return self._values[i]
 
     def __contains__(self, key: object) -> bool:
-        return key in self._names
+        return isinstance(key, str) and key in self._first
 
     def __iter__(self) -> Iterator[str]:
         return iter(list(self._names))

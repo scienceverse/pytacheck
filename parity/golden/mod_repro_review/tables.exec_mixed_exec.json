@@ -1,0 +1,176 @@
+{
+  "id": "tables.exec_mixed_exec",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "json_dump.R",
+              "missing_input.R",
+              "parse_error.R",
+              "writes_then_reads.R",
+              "reads_written.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "—",
+              "—",
+              "—",
+              "writes_then_reads.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none",
+              "none",
+              "dependency"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Status",
+          "Reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "not_in_repo.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "absent"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "referenced file is not present in the repository"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Detected",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "json_dump.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_r_content"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "file content does not appear to be R (detected: JSON)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "File",
+          "Outcome",
+          "Detail",
+          "Time (s)"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "json_dump.R",
+              "missing_input.R",
+              "parse_error.R",
+              "writes_then_reads.R",
+              "reads_written.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_parsed",
+              "skipped_missing_inputs",
+              "not_parsed",
+              "ran_ok",
+              "errored"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "runtime"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -812,3 +812,51 @@
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\", NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc1', None])"
+- "id": "crossref_query.offline.df"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = c(\"T1\", \"T2\"), authors = c(\"A1\", \"A2\"), container = c(\"C1\", \"C2\")))), online = function(...) FALSE, .package = \"metacheck\")"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2'], 'authors': ['A1', 'A2'], 'container': ['C1', 'C2']}))"
+- "id": "crossref_query.offline.df_journal_na"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = c(\"T1\", \"T2\", \"T3\"), author = c(\"A\", NA, \"C\"), journal = c(\"J\", NA, \"K\"), booktitle = c(\"B1\", \"B2\", \"B3\")))), online = function(...) FALSE, .package = \"metacheck\")"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2', 'T3'], 'author': ['A', None, 'C'], 'journal': ['J', None, 'K'], 'booktitle': ['B1', 'B2', 'B3']}))"
+- "id": "crossref_query.offline.df_single"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = \"T\", authors = \"A\", container = NA_character_))), online = function(...) FALSE, .package = \"metacheck\")"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T'], 'authors': ['A'], 'container': pd.array([None], dtype='string')}))"
+- "id": "crossref_query.offline.df_list_author"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = c(\"T\", NA), authors = I(list(\"Lisa\", c(\"A\", \"B\"))), container = c(\"C\", NA)))), online = function(...) FALSE, .package = \"metacheck\")"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T', None], 'authors': [['Lisa'], ['A', 'B']], 'container': ['C', None]}))"
+- "id": "crossref_query.offline.df_zero_rows_error"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = character(0), authors = character(0), container = character(0)))), online = function(...) FALSE, .package = \"metacheck\")"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': pd.array([], dtype='string'), 'authors': pd.array([], dtype='string'), 'container': pd.array([], dtype='string')}))"
+- "id": "crossref_query.offline.text"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(c(\"ref one\", NA, \"ref two\"))), online = function(...) FALSE, .package = \"metacheck\")"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', ['ref one', None, 'ref two'])"

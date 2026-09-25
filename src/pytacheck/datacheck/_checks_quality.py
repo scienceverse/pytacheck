@@ -67,39 +67,6 @@ _DATA_MISSING_SENTINELS: tuple[float, ...] = (
 )  # fmt: skip
 
 
-def _scale_typo_of(v: float, lo: float, hi: float) -> Any:
-    """``.scale_typo_of()`` (ported in :mod:`pytacheck.datacheck.columns`).
-
-    An *integer* ``v`` (from an integer column) takes R's integer path here:
-    ``as.character(100000L)`` is ``"100000"``, whereas the double ``1e5``
-    becomes ``"1e+05"``, whose "digits" yield the candidate 5. The columns
-    port always works on the double, so integers are handled locally.
-    """
-    if isinstance(v, int) and not isinstance(v, bool):
-        return _scale_typo_of_int(v, lo, hi)
-    from pytacheck.datacheck.columns import _scale_typo_of as fn
-
-    return fn(v, lo, hi)
-
-
-def _scale_typo_of_int(v: int, lo: float, hi: float) -> int | None:
-    """``.scale_typo_of(v, lo, hi)`` for an R integer ``v`` (digits via ``as.character``)."""
-    if v in set(r_colon(lo, hi)):
-        return None
-    av = abs(v)
-    s = str(av)
-    cand: list[int] = []
-    if len(s) >= 2:
-        cand += [int(c) for c in s]
-        cand += [int(s[1:]), int(s[:-1])]
-    cand.append(-v)
-    inside = [c for c in unique(cand) if lo <= c <= hi]
-    if not inside:
-        return None
-    target = av % 10
-    return min(inside, key=lambda c: abs(c - target))
-
-
 def _finite(v: Any) -> bool:
     return v is not None and v == v and not math.isinf(v)
 
@@ -211,6 +178,9 @@ def data_check_scale_values(
 
     declared_num = {f for f in num(declared) if f is not None} if declared is not None else set()
     sentinel_set = {f for f in num(sentinels) if f is not None} if sentinels is not None else set()
+
+    # .scale_typo_of(): an int e (integer column) takes R's integer path there
+    from pytacheck.datacheck.columns import _scale_typo_of
 
     def classify(e: Any) -> str:
         if e in declared_num:

@@ -274,6 +274,111 @@
   "args":
     "zenodo_id": "5559007"
   "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_comments"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559201"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_repeated_key"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559202"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_nul_escape"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559203"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_bom"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559204"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_declared_latin1"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559205"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_nan"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559206"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_invalid_utf8"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559207"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_nul_byte_bigint"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559208"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_vnd_suffix"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559209"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.json_empty_body"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id": "5559210"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.vector"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id":
+      "$expr":
+        "r": "c(\"5559001\", \"5559007\")"
+        "py": "[\"5559001\", \"5559007\"]"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.vector_urls"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id":
+      "$expr":
+        "r": "c(\"5559007\", \"5559001\", \"https://zenodo.org/records/5559002\")"
+        "py": "[\"5559007\", \"5559001\", \"https://zenodo.org/records/5559002\"]"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.vector_unfound_error"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id":
+      "$expr":
+        "r": "c(\"5559004\", \"5559001\")"
+        "py": "[\"5559004\", \"5559001\"]"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.vector_parse_error"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id":
+      "$expr":
+        "r": "c(\"5559006\", \"5559001\")"
+        "py": "[\"5559006\", \"5559001\"]"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_info.review.vector_empty_error"
+  "r": ".zenodo_info"
+  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "args":
+    "zenodo_id":
+      "$expr":
+        "r": "character(0)"
+        "py": "[]"
+  "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_info.review.mixed"
   "r": "identity"
   "py": "tests.archives_gz.parity_support.run"
@@ -321,6 +426,39 @@
         "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info([5559007.0,\
           \ 5559007.0])"
   "mock_dir": "tests/archives_gz/mocks_review"
+- "id": ".zenodo_verify_downloads.review.character_downloaded"
+  "r": ".zenodo_verify_downloads"
+  "py": "pytacheck.archives.zenodo._zenodo_verify_downloads"
+  "args":
+    "files":
+      "$expr":
+        "r": "data.frame(path = rep(\"analysis.R\", 4), size = 166, downloaded = c(\"TRUE\", \"FALSE\"\
+          , \"T\", \"true\"))"
+        "py": "pd.DataFrame({\"path\": [\"analysis.R\"] * 4, \"size\": [166.0] * 4, \"downloaded\": pd.array([\"\
+          TRUE\", \"FALSE\", \"T\", \"true\"], dtype=\"string\")})"
+    "download_to":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
+- "id": ".zenodo_verify_downloads.review.numeric_downloaded"
+  "r": ".zenodo_verify_downloads"
+  "py": "pytacheck.archives.zenodo._zenodo_verify_downloads"
+  "args":
+    "files":
+      "$expr":
+        "r": "data.frame(path = rep(\"analysis.R\", 4), size = 166, downloaded = c(1, 2, 0, NA))"
+        "py": "pd.DataFrame({\"path\": [\"analysis.R\"] * 4, \"size\": [166.0] * 4, \"downloaded\": [1,\
+          \ 2, 0, None]})"
+    "download_to":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
+- "id": ".zenodo_verify_downloads.review.no_downloaded_error"
+  "r": ".zenodo_verify_downloads"
+  "py": "pytacheck.archives.zenodo._zenodo_verify_downloads"
+  "args":
+    "files":
+      "$expr":
+        "r": "data.frame(path = rep(\"analysis.R\", 4), size = 166)"
+        "py": "pd.DataFrame({\"path\": [\"analysis.R\"] * 4, \"size\": [166.0] * 4})"
+    "download_to":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
 - "id": "zenodo_file_download.review.odd_files"
   "r": "identity"
   "py": "tests.archives_gz.parity_support.run"

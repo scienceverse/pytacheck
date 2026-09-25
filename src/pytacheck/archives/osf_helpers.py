@@ -10,6 +10,7 @@ listing: a field counts as present when *any* record in the listing has it.
 from __future__ import annotations
 
 import os
+import re
 import warnings
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
@@ -225,13 +226,15 @@ _CONTENT_TYPE = (
 
 
 def _resp_body_json(resp: httpx.Response) -> Any:
-    """``httr2::resp_body_json()``: the parsed body, refusing a non-JSON content type.
+    """``httr2::resp_body_json(resp)``: the body parsed as jsonlite parses it; raises on failure.
 
-    As in httr2, the media type must be ``application/json`` or carry a
-    ``+json`` suffix (``application/vnd.api+json``); anything else raises.
+    The media type must be ``application/json`` or carry a ``+json`` suffix
+    (``application/vnd.api+json``); anything else raises. The body is read as
+    ``resp_body_string(resp, "UTF-8")`` does, whatever charset the response
+    names: up to the first NUL byte, and bytes that are not valid UTF-8 give
+    ``NA``, which jsonlite refuses. The text is then parsed by
+    :func:`_from_json`.
     """
-    import json
-
     from pytacheck._r import regexec
 
     header = resp.headers.get("content-type")
@@ -245,7 +248,130 @@ def _resp_body_json(resp: httpx.Response) -> Any:
             f'Unexpected content type "{shown}".\n'
             '* Expecting type "application/json" or suffix "json".'
         )
-    return json.loads(resp.content.decode(resp.encoding or "utf-8"))
+    content = resp.content
+    if not content:
+        raise ValueError("Can't retrieve empty body.")
+    try:
+        text = content.split(b"\x00", 1)[0].decode("utf-8")
+    except UnicodeDecodeError:  # R: iconv() gives NA, and fromJSON(NA) fails
+        raise ValueError("missing value where TRUE/FALSE needed") from None
+    return _from_json(text)
+
+
+# yajl (jsonlite 2.0.0) reads what json.loads() refuses or reads differently:
+# comments between tokens (an unterminated ``/*`` runs to the end), \v and \f
+# as whitespace, an escaped NUL (ends the string), a high surrogate escape
+# (combined with any following \u escape, else "?"). Strings are matched
+# first so that comment markers inside them are kept.
+_JSON_TOKENS = re.compile(r'"[^"\\]*(?:\\.[^"\\]*)*"|/\*.*?(?:\*/|\Z)|//[^\n]*|[\v\f]', re.S)
+_JSON_ESCAPE = re.compile(r"\\(?:u([0-9a-fA-F]{4})|.)", re.S)
+_JSON_SPECIAL = re.compile(r"\\u(?:[dD][89abAB]|0000)")
+_INT_MAX = 2147483647
+
+
+def _from_json(text: str) -> Any:
+    """``jsonlite::fromJSON(text, simplifyVector = FALSE)``; raises what jsonlite refuses.
+
+    As yajl does, a leading byte-order mark is dropped with a warning,
+    ``NaN`` and ``Infinity`` are refused, comments are skipped, integers
+    outside R's integer range become doubles and an escaped NUL ends its
+    string. jsonlite keeps both values of a repeated key, of which ``$``
+    finds the first: the first is the one kept here.
+    """
+    if text.startswith("\ufeff"):
+        warnings.warn("JSON string contains (illegal) UTF8 byte-order-mark!", stacklevel=3)
+        text = text[1:]
+    if _JSON_SPECIAL.search(text) is None:
+        try:  # plain JSON: no comments, yajl-only whitespace or odd escapes
+            return _json_loads(text)
+        except (ValueError, RecursionError):
+            pass
+    nul = False
+
+    def token(m: re.Match[str]) -> str:
+        nonlocal nul
+        tok = m.group(0)
+        if tok[0] != '"':
+            return " "
+        if "\\u" not in tok:
+            return tok
+        body, has_nul = _yajl_escapes(tok[1:-1])
+        nul = nul or has_nul
+        return f'"{body}"'
+
+    value = _json_loads(_JSON_TOKENS.sub(token, text))
+    return _cut_nul(value) if nul else value
+
+
+def _json_loads(text: str) -> Any:
+    import json
+
+    def constant(name: str) -> Any:
+        raise ValueError(f"lexical error: invalid char in json text ({name})")
+
+    def parse_int(s: str) -> int | float:
+        v = int(s)
+        return v if -_INT_MAX <= v <= _INT_MAX else float(s)
+
+    def first_wins(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        out: dict[str, Any] = {}
+        for k, v in pairs:
+            if k not in out:
+                out[k] = v
+        return out
+
+    return json.loads(
+        text, parse_constant=constant, parse_int=parse_int, object_pairs_hook=first_wins
+    )
+
+
+def _yajl_escapes(body: str) -> tuple[str, bool]:
+    """A string token's ``\\u`` escapes rewritten as yajl decodes them.
+
+    Returns the body (still JSON-escaped) and whether it holds a NUL.
+    """
+    out: list[str] = []
+    nul = False
+    pos = 0
+    skip_to = -1
+    for m in _JSON_ESCAPE.finditer(body):
+        if m.start() < skip_to or m.group(1) is None:
+            continue
+        cp = int(m.group(1), 16)
+        out.append(body[pos : m.start()])
+        end = m.end()
+        if cp & 0xFC00 == 0xD800:
+            nxt = re.match(r"\\u([0-9a-fA-F]{4})", body[end:])
+            if nxt is None:
+                out.append("?")
+            else:  # yajl combines it with any \u escape, low surrogate or not
+                low = int(nxt.group(1), 16)
+                cp = ((cp & 0x3F) << 10) | ((((cp >> 6) & 0xF) + 1) << 16) | (low & 0x3FF)
+                end += nxt.end()
+                cp -= 0x10000
+                out.append(f"\\u{0xD800 + (cp >> 10):04x}\\u{0xDC00 + (cp & 0x3FF):04x}")
+        else:
+            nul = nul or cp == 0
+            out.append(m.group(0))
+        pos = skip_to = end
+    out.append(body[pos:])
+    return "".join(out), nul
+
+
+def _cut_nul(x: Any) -> Any:
+    """Strings of parsed JSON ended at their first NUL, as R's strings are."""
+    if isinstance(x, str):
+        return x.split("\x00", 1)[0]
+    if isinstance(x, list):
+        return [_cut_nul(v) for v in x]
+    if isinstance(x, dict):
+        out: dict[str, Any] = {}
+        for k, v in x.items():
+            key = k.split("\x00", 1)[0]
+            if key not in out:
+                out[key] = _cut_nul(v)
+        return out
+    return x
 
 
 def _data_of(body: Any) -> Any:
@@ -896,12 +1022,14 @@ def _osf_verify_downloads(
         matches = [e != e or s == e for e, s in zip(expected, size_on_disk, strict=True)]
         ok = [o and (not c or m) for o, c, m in zip(ok, check, matches, strict=True)]
 
-    prev = ret["downloaded"].tolist() if "downloaded" in ret.columns else [False] * n
+    from pytacheck.archives.dataverse import _is_true
+
+    if "downloaded" not in ret.columns:
+        # R: `ret$downloaded <- ok & ret$downloaded %in% TRUE` is a length-0 value
+        raise ValueError(f"replacement has 0 rows, data has {n}")
+    prev = ret["downloaded"].tolist()
     ret["downloaded"] = pd.Series(
-        [
-            o and (p is True or (not is_na(p) and bool(p) is True and isinstance(p, bool | int)))
-            for o, p in zip(ok, prev, strict=True)
-        ],
+        [o and _is_true(p) for o, p in zip(ok, prev, strict=True)],
         dtype="boolean",
         index=ret.index,
     )

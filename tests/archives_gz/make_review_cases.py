@@ -201,6 +201,38 @@ for cid, zid in [
     case(f".zenodo_info.review.{cid}", ".zenodo_info", f"{ZE}._zenodo_info",
          {"zenodo_id": zid}, mock=MK)  # fmt: skip
 
+# bodies jsonlite reads differently from json.loads() (make_review_mocks.ZENODO_JSON_QUIRKS)
+for cid, zid in [
+    ("json_comments", "5559201"),
+    ("json_repeated_key", "5559202"),
+    ("json_nul_escape", "5559203"),
+    ("json_bom", "5559204"),
+    ("json_declared_latin1", "5559205"),
+    ("json_nan", "5559206"),
+    ("json_invalid_utf8", "5559207"),
+    ("json_nul_byte_bigint", "5559208"),
+    ("json_vnd_suffix", "5559209"),
+    ("json_empty_body", "5559210"),
+]:
+    case(f".zenodo_info.review.{cid}", ".zenodo_info", f"{ZE}._zenodo_info",
+         {"zenodo_id": zid}, mock=MK)  # fmt: skip
+
+# several IDs (never passed by zenodo_info()): the first record's fields are
+# recycled over the IDs; an unreadable first record or no ID is R's error
+for cid, r_ids, py_ids in [
+    ("vector", 'c("5559001", "5559007")', '["5559001", "5559007"]'),
+    (
+        "vector_urls",
+        'c("5559007", "5559001", "https://zenodo.org/records/5559002")',
+        '["5559007", "5559001", "https://zenodo.org/records/5559002"]',
+    ),
+    ("vector_unfound_error", 'c("5559004", "5559001")', '["5559004", "5559001"]'),
+    ("vector_parse_error", 'c("5559006", "5559001")', '["5559006", "5559001"]'),
+    ("vector_empty_error", "character(0)", "[]"),
+]:
+    case(f".zenodo_info.review.{cid}", ".zenodo_info", f"{ZE}._zenodo_info",
+         {"zenodo_id": {"$expr": {"r": r_ids, "py": py_ids}}}, mock=MK)  # fmt: skip
+
 zi = f"{imp(ZE)}.zenodo_info"
 wrapped(
     "zenodo_info.review.mixed",
@@ -236,6 +268,33 @@ wrapped(
 # ---------------------------------------------------------------------------
 # Zenodo downloads (mocked)
 # ---------------------------------------------------------------------------
+# `files$downloaded %in% TRUE` on a character or numeric column: only "TRUE" and
+# 1 match; with no `downloaded` column R's assignment fails
+CODE_FILES = {"$file": "upstream/metacheck/tests/testthat/fixtures/code_files"}
+for cid, dl_r, dl_py in [
+    (
+        "character_downloaded",
+        ', downloaded = c("TRUE", "FALSE", "T", "true")',
+        ', "downloaded": pd.array(["TRUE", "FALSE", "T", "true"], dtype="string")',
+    ),
+    ("numeric_downloaded", ", downloaded = c(1, 2, 0, NA)", ', "downloaded": [1, 2, 0, None]'),
+    ("no_downloaded_error", "", ""),
+]:
+    case(
+        f".zenodo_verify_downloads.review.{cid}",
+        ".zenodo_verify_downloads",
+        f"{ZE}._zenodo_verify_downloads",
+        {
+            "files": {
+                "$expr": {
+                    "r": f'data.frame(path = rep("analysis.R", 4), size = 166{dl_r})',
+                    "py": f'pd.DataFrame({{"path": ["analysis.R"] * 4, "size": [166.0] * 4{dl_py}}})',
+                }
+            },
+            "download_to": CODE_FILES,
+        },
+    )
+
 R_TMP = "{ d <- tempfile(); dir.create(d); d }"
 zfd = f"{imp(ZE)}.zenodo_file_download"
 wt = f"{imp('tests.archives_gz.parity_support')}.with_tmpdir"

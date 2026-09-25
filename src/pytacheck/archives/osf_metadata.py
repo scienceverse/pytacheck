@@ -368,7 +368,7 @@ def _osf_write_readme(
 #   ("vec", type, values)  atomic vector (inline; a length-1 vector is unboxed)
 #   ("list", items)        unnamed list (one item per line)
 #   ("obj", {key: node})   named list
-#   ("df", rows)           data frame, one object per row, NA fields omitted
+#   ("df", rows)           data frame, one object per row (see _jl_df_rows)
 #   ("matrix", rows)       matrix, one inline array per row
 #   ("null",)              NULL
 
@@ -381,7 +381,10 @@ def _is_scalar_value(v: Any) -> bool:
 
 
 def _jl_vec(values: list[Any]) -> _JNode:
-    """The atomic vector jsonlite simplifies a JSON array of scalars to."""
+    """``jsonlite:::list_to_vec()``: ``unlist()`` of JSON scalars (``null`` is ``NA``).
+
+    The common type is the highest of logical < integer < double < character.
+    """
     kinds = {type(v) for v in values if v is not None}
     if not kinds or kinds == {bool}:
         return ("vec", "lgl", values)
@@ -393,15 +396,23 @@ def _jl_vec(values: list[Any]) -> _JNode:
 
 
 def _jl_chr(v: Any) -> str:
+    """``as.character()`` of a JSON scalar (a double as R prints it, 15 digits)."""
+    from pytacheck._r import as_character
+
     if isinstance(v, bool):
         return "TRUE" if v else "FALSE"
-    if isinstance(v, float) and v.is_integer():
-        return str(int(v))
+    if isinstance(v, float):
+        return as_character(v) or "NA"
     return str(v)
 
 
 def _jl_simplify(x: Any) -> _JNode:
-    """A parsed JSON value as ``jsonlite::fromJSON(simplifyVector = TRUE)`` holds it."""
+    """A parsed JSON value as ``jsonlite::fromJSON(simplifyVector = TRUE)`` holds it.
+
+    Port of ``jsonlite:::simplify()``: an array of objects (and ``null``)
+    becomes a data frame, an array of scalars an atomic vector, an array of
+    equal-length scalar arrays a matrix; anything else stays a list.
+    """
     if x is None:
         return _NULL
     if isinstance(x, dict):
@@ -409,10 +420,10 @@ def _jl_simplify(x: Any) -> _JNode:
     if isinstance(x, list):
         if not x:
             return ("list", [])
+        if _jl_is_recordlist(x):
+            return ("df", _jl_df_rows(*_jl_records(x)))
         if all(_is_scalar_value(v) for v in x):
             return _jl_vec(x)
-        if all(v is None or isinstance(v, dict) for v in x):
-            return ("df", [_jl_row(v or {}) for v in x])
         if all(isinstance(v, list) and v and all(_is_scalar_value(e) for e in v) for v in x) and (
             len({len(v) for v in x}) == 1
         ):
@@ -421,9 +432,57 @@ def _jl_simplify(x: Any) -> _JNode:
     return _jl_vec([x])
 
 
-def _jl_row(rec: dict[str, Any]) -> _JNode:
-    """One data-frame row: missing (NA/NULL) fields are left out."""
-    return ("obj", {k: _jl_simplify(v) for k, v in rec.items() if v is not None})
+def _jl_is_recordlist(x: list[Any]) -> bool:
+    """``jsonlite:::is.recordlist()``: objects and ``null`` only, at least one object."""
+    return all(v is None or isinstance(v, dict) for v in x) and any(isinstance(v, dict) for v in x)
+
+
+def _jl_records(records: list[Any]) -> tuple[int, dict[str, _JNode]]:
+    """``jsonlite:::simplifyDataFrame()``: the columns of an array of objects.
+
+    Columns are named in order of first appearance; each is simplified as a
+    whole (``simplifyMatrix = FALSE``), so scalars share one type across rows,
+    objects make a nested data frame and anything else a list column.
+    """
+    names: dict[str, None] = {}
+    for rec in records:
+        for k in rec or {}:
+            names.setdefault(k, None)
+    cols: dict[str, _JNode] = {}
+    for k in names:
+        values = [None if rec is None else rec.get(k) for rec in records]
+        if _jl_is_recordlist(values):
+            cols[k] = ("dfcols", *_jl_records(values))
+        elif all(_is_scalar_value(v) for v in values):
+            cols[k] = _jl_vec(values)
+        else:
+            cols[k] = ("list", [_jl_simplify(v) for v in values])
+    return len(records), cols
+
+
+def _jl_df_rows(n: int, cols: dict[str, _JNode]) -> list[_JNode]:
+    """A data frame written by rows (``dataframe = "rows"``).
+
+    ``NA`` cells of atomic columns are left out, a nested data frame gives
+    the nested row (``{}`` when all of it is ``NA``) and a list column its
+    element (``NULL`` as ``null``).
+    """
+    nested = {k: _jl_df_rows(c[1], c[2]) for k, c in cols.items() if c[0] == "dfcols"}
+    rows: list[_JNode] = []
+    for i in range(n):
+        fields: dict[str, _JNode] = {}
+        for k, col in cols.items():
+            if col[0] == "vec":
+                v = col[2][i]
+                if v is None or (isinstance(v, float) and math.isnan(v)):
+                    continue
+                fields[k] = ("vec", col[1], [v])
+            elif col[0] == "dfcols":
+                fields[k] = nested[k][i]
+            else:
+                fields[k] = col[1][i]
+        rows.append(("obj", fields))
+    return rows
 
 
 def _jl_scalar(v: Any, kind: str) -> str:
@@ -438,10 +497,53 @@ def _jl_scalar(v: Any, kind: str) -> str:
     x = float(v)
     if math.isinf(x):
         return '"Inf"' if x > 0 else '"-Inf"'
-    if x.is_integer() and abs(x) < 1e15:
-        return str(int(x))
-    out = f"{x:.4f}".rstrip("0").rstrip(".")  # jsonlite's default digits = 4
-    return "-0" if out == "-0" else out
+    return _num_to_char(x)
+
+
+def _num_to_char(x: float, digits: int = 4) -> str:
+    """jsonlite's ``num_to_char()`` (C) for a finite double, ``digits`` decimals.
+
+    Between 1e-5 and 2^31 - 1 (exclusive) it is ``modp_dtoa2()``: fixed
+    decimals, trailing zeros dropped; otherwise ``sprintf("%.*g")`` with the
+    decimals turned into significant digits (at most 17).
+    """
+    ax = abs(x)
+    if 1e-5 < ax < 2147483647:
+        return _modp_dtoa2(x, digits)
+    mag = math.log10(ax) if ax > 0 else -math.inf
+    decimals = math.ceil(min(17, max(1, mag) + digits))
+    return f"{x:.{decimals}g}"
+
+
+def _modp_dtoa2(value: float, prec: int) -> str:
+    """``modp_dtoa2()`` (stringencoders) for ``|value| < 2^31 - 1``, ``0 <= prec <= 9``."""
+    neg = value < 0
+    if neg:
+        value = -value
+    p10 = 10**prec
+    whole = int(value)
+    tmp = (value - whole) * p10
+    frac = int(tmp)
+    diff = tmp - frac
+    if diff > 0.5 or (diff == 0.5 and ((prec > 0 and frac & 1) or (prec == 0 and whole & 1))):
+        frac += 1
+        if frac >= p10:  # rollover, e.g. 0.99 with prec 1 is 1.0
+            frac = 0
+            whole += 1
+    if prec == 0:
+        diff = value - whole
+        if diff > 0.5 or (diff == 0.5 and whole & 1):
+            whole += 1
+        out = str(whole)
+    elif frac:
+        count = prec
+        while frac % 10 == 0:
+            count -= 1
+            frac //= 10
+        out = f"{whole}.{str(frac).rjust(count, '0')}"
+    else:
+        out = str(whole)
+    return "-" + out if neg else out
 
 
 def _jl_write(node: _JNode, level: int = 0) -> str:

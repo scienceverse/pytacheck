@@ -564,3 +564,57 @@
         "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { figshare_file_download(\"700009\", download_to = d) })"
         "py": "lambda m: m.tmp(lambda d: m.figshare.figshare_file_download(\"700009\", download_to=d))"
   "mock_dir": "tests/archives_d1/mocks"
+- "id": ".dryad_verify_downloads.review.character_downloaded"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { writeLines(\"x,y\", file.path(d, \"a.csv\")); files <- data.frame(id = c(\"1\", \"2\", \"3\", \"4\"), key = \"a.csv\", path = \"a.csv\", size = 4, checksum = NA_character_, checksum_type = NA_character_, downloaded = c(\"TRUE\", \"FALSE\", \"T\", \"true\")); metacheck:::.dryad_verify_downloads(files, d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dryad._dryad_verify_downloads((m.write_files(d, {\"a.csv\": \"x,y\"}), pd.DataFrame({\"id\": pd.array([\"1\", \"2\", \"3\", \"4\"], dtype=\"string\"), \"key\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"path\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"size\": [4.0] * 4, \"checksum\": pd.array([None] * 4, dtype=\"string\"), \"checksum_type\": pd.array([None] * 4, dtype=\"string\"), \"downloaded\": pd.array([\"TRUE\", \"FALSE\", \"T\", \"true\"], dtype=\"string\")}))[1], d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": ".dryad_verify_downloads.review.numeric_downloaded"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { writeLines(\"x,y\", file.path(d, \"a.csv\")); files <- data.frame(id = c(\"1\", \"2\", \"3\", \"4\"), key = \"a.csv\", path = \"a.csv\", size = 4, checksum = NA_character_, checksum_type = NA_character_, downloaded = c(1, 2, 0, NA)); metacheck:::.dryad_verify_downloads(files, d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dryad._dryad_verify_downloads((m.write_files(d, {\"a.csv\": \"x,y\"}), pd.DataFrame({\"id\": pd.array([\"1\", \"2\", \"3\", \"4\"], dtype=\"string\"), \"key\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"path\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"size\": [4.0] * 4, \"checksum\": pd.array([None] * 4, dtype=\"string\"), \"checksum_type\": pd.array([None] * 4, dtype=\"string\"), \"downloaded\": [1.0, 2.0, 0.0, float(\"nan\")]}))[1], d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": ".figshare_verify_downloads.review.character_downloaded"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { writeLines(\"x,y\", file.path(d, \"a.csv\")); files <- data.frame(id = c(\"1\", \"2\", \"3\", \"4\"), key = \"a.csv\", path = \"a.csv\", size = 4, checksum = NA_character_, checksum_type = NA_character_, downloaded = c(\"TRUE\", \"FALSE\", \"T\", \"true\")); metacheck:::.figshare_verify_downloads(files, d) })"
+        "py": "lambda m: m.tmp(lambda d: m.figshare._figshare_verify_downloads((m.write_files(d, {\"a.csv\": \"x,y\"}), pd.DataFrame({\"id\": pd.array([\"1\", \"2\", \"3\", \"4\"], dtype=\"string\"), \"key\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"path\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"size\": [4.0] * 4, \"checksum\": pd.array([None] * 4, dtype=\"string\"), \"checksum_type\": pd.array([None] * 4, dtype=\"string\"), \"downloaded\": pd.array([\"TRUE\", \"FALSE\", \"T\", \"true\"], dtype=\"string\")}))[1], d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": ".figshare_verify_downloads.review.numeric_downloaded"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { writeLines(\"x,y\", file.path(d, \"a.csv\")); files <- data.frame(id = c(\"1\", \"2\", \"3\", \"4\"), key = \"a.csv\", path = \"a.csv\", size = 4, checksum = NA_character_, checksum_type = NA_character_, downloaded = c(1, 2, 0, NA)); metacheck:::.figshare_verify_downloads(files, d) })"
+        "py": "lambda m: m.tmp(lambda d: m.figshare._figshare_verify_downloads((m.write_files(d, {\"a.csv\": \"x,y\"}), pd.DataFrame({\"id\": pd.array([\"1\", \"2\", \"3\", \"4\"], dtype=\"string\"), \"key\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"path\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"size\": [4.0] * 4, \"checksum\": pd.array([None] * 4, dtype=\"string\"), \"checksum_type\": pd.array([None] * 4, dtype=\"string\"), \"downloaded\": [1.0, 2.0, 0.0, float(\"nan\")]}))[1], d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": ".dataverse_verify_downloads.review.character_downloaded"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { writeLines(\"x,y\", file.path(d, \"a.csv\")); files <- data.frame(id = c(\"1\", \"2\", \"3\", \"4\"), key = \"a.csv\", path = \"a.csv\", size = 4, checksum = NA_character_, checksum_type = NA_character_, downloaded = c(\"TRUE\", \"FALSE\", \"T\", \"true\")); metacheck:::.dataverse_verify_downloads(files, d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dataverse._dataverse_verify_downloads((m.write_files(d, {\"a.csv\": \"x,y\"}), pd.DataFrame({\"id\": pd.array([\"1\", \"2\", \"3\", \"4\"], dtype=\"string\"), \"key\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"path\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"size\": [4.0] * 4, \"checksum\": pd.array([None] * 4, dtype=\"string\"), \"checksum_type\": pd.array([None] * 4, dtype=\"string\"), \"downloaded\": pd.array([\"TRUE\", \"FALSE\", \"T\", \"true\"], dtype=\"string\")}))[1], d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": ".dataverse_verify_downloads.review.numeric_downloaded"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { writeLines(\"x,y\", file.path(d, \"a.csv\")); files <- data.frame(id = c(\"1\", \"2\", \"3\", \"4\"), key = \"a.csv\", path = \"a.csv\", size = 4, checksum = NA_character_, checksum_type = NA_character_, downloaded = c(1, 2, 0, NA)); metacheck:::.dataverse_verify_downloads(files, d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dataverse._dataverse_verify_downloads((m.write_files(d, {\"a.csv\": \"x,y\"}), pd.DataFrame({\"id\": pd.array([\"1\", \"2\", \"3\", \"4\"], dtype=\"string\"), \"key\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"path\": pd.array([\"a.csv\"] * 4, dtype=\"string\"), \"size\": [4.0] * 4, \"checksum\": pd.array([None] * 4, dtype=\"string\"), \"checksum_type\": pd.array([None] * 4, dtype=\"string\"), \"downloaded\": [1.0, 2.0, 0.0, float(\"nan\")]}))[1], d))"
+  "mock_dir": "tests/archives_d1/mocks"

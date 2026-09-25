@@ -215,3 +215,52 @@
       "$expr":
         "r": "local({ tabs <- list(list(analysis = 'q \"uoted\", comma\\nnewline', data = data.frame(t = '1.5', p = 'NA'), table_index = 1L), list(analysis = 'é', data = data.frame(lab = 'x y', d = '2, 560'), table_index = 2L)); root <- tempfile('sow'); items <- list(list(file = 'a/b.c.jasp', json = metacheck::stat_output_json(tabs, paper_id = 12, source_file = 'b.c.jasp'), long = metacheck::stat_results_long(tabs, paper_id = 12, source_file = 'b.c.jasp')), list(file = '.hidden', json = metacheck::stat_output_json(tabs, source_file = '.hidden'), long = metacheck::stat_results_long(tabs, paper_id = 13, source_file = '.hidden'))); out <- metacheck::stat_output_write(items, root); fs <- sort(list.files(out, all.files = TRUE, no.. = TRUE)); c(list(fs), lapply(fs, function(f) readLines(file.path(out, f)))) })"
         "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).write_tricky()"
+# ---------------------------------------------------------------------------
+# source_file = NULL ("result" ids) vs NA (the default: "NA_" ids, U138).
+# Python: None is NULL, pd.NA is NA.
+# ---------------------------------------------------------------------------
+- "id": "stat_output_json.source_null"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args":
+    "tables": &nullna_tabs
+      "$expr":
+        "r": "list(list(analysis = 'A', data = data.frame(lab = 'x', t = '1.5', p = '0.04'), table_index = 1L), list(analysis = 'B', data = data.frame(t = '2.5'), line = 3L))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).null_na_tables()"
+    "source_file": {"$null": true}
+- "id": "stat_output_json.source_na"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args":
+    "tables": *nullna_tabs
+    "source_file": {"$expr": {"r": "NA_character_", "py": "pd.NA"}}
+- "id": "stat_results_long.source_null"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args": {"tables": *nullna_tabs, "source_file": {"$null": true}}
+- "id": "stat_results_long.source_null_empty"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args": {"tables": {"$list": []}, "source_file": {"$null": true}}
+- "id": "stat_results_long.source_na"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables": *nullna_tabs
+    "source_file": {"$expr": {"r": "NA_character_", "py": "pd.NA"}}
+- "id": "stat_ids.source_null"
+  "r": "base::identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "list(metacheck:::.stat_result_ids(list(list(table_index = 1L), list(line = 3L)), NULL), metacheck:::.stat_test_id(list(table_index = 1L), NULL, 'result_t1', 'x'), metacheck:::.stat_result_ids(list(list(table_index = 1L))), metacheck:::.stat_test_id(list(), NA, 'na_t1_r1', 'y'))"
+        "py": "(lambda so: [so._stat_result_ids([{'table_index': 1}, {'line': 3}], None), so._stat_test_id({'table_index': 1}, None, 'result_t1', 'x'), so._stat_result_ids([{'table_index': 1}]), so._stat_test_id({}, pd.NA, 'na_t1_r1', 'y')])(__import__('pytacheck.statout.stat_output', fromlist=['_']))"
+- "id": "stat_output_write.file_null_na"
+  "r": "base::identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ tabs <- list(list(analysis = 'A', data = data.frame(lab = 'x', t = '1.5', p = '0.04'), table_index = 1L), list(analysis = 'B', data = data.frame(t = '2.5'), line = 3L)); root <- tempfile('sow'); items <- list(list(file = NA_character_, json = metacheck::stat_output_json(tabs, source_file = NA)), list(file = NULL, json = metacheck::stat_output_json(tabs, source_file = NULL))); out <- metacheck::stat_output_write(items, root); fs <- sort(list.files(out)); c(list(fs), lapply(fs, function(f) readLines(file.path(out, f)))) })"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).write_null_na()"

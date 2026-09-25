@@ -10,8 +10,9 @@ Haven-style labels: R attaches ``labels``/``label`` attributes to each column.
 Here they follow the convention of :mod:`pytacheck.datacheck` (which reads a
 ``.jasp``/``.omv`` as a data file): ``df.attrs["col_attrs"][column]`` holds
 
-* ``"labels"``: R's named vector ``c(label = code)`` as ``{label: code}``
-  (codes are floats, in R's order; for a repeated label the first entry wins);
+* ``"labels"``: R's named vector ``c(label = code)`` as a list of
+  ``(label, code)`` pairs (codes are floats, in R's order; a repeated label or
+  code keeps every entry, as the named vector does);
 * ``"label"``: the variable label. As in R, where ``attr(x, "label")``
   partially matches ``"labels"``, a value-labelled column without a variable
   label of its own gets its value labels here too (an upstream quirk).
@@ -94,13 +95,13 @@ def _r_chr(x: Any) -> str | None:
     return as_character(x)
 
 
-def _labels_from_list(lst: Any) -> dict[str | None, float]:
+def _labels_from_list(lst: Any) -> list[tuple[str | None, float]]:
     """Shared body of ``.jasp_binary_labels()`` / ``.omv_labels()``.
 
-    R's ``setNames(codes[keep], labs[keep])`` as ``{label: code}``.
+    R's ``setNames(codes[keep], labs[keep])`` as ``(label, code)`` pairs.
     """
     if not lst:
-        return {}
+        return []
     codes = []
     labs = []
     for entry in lst:
@@ -113,19 +114,18 @@ def _labels_from_list(lst: Any) -> dict[str | None, float]:
             raise ValueError("values must be length 1")
         codes.append(_as_numeric(_r_chr(entry[0])))
         labs.append(_r_chr(entry[1]))
-    out: dict[str | None, float] = {}
-    for code, lab in zip(codes, labs, strict=True):
-        if code is None or math.isnan(code) or lab == "":
-            continue
-        out.setdefault(lab, code)
-    return out
+    return [
+        (lab, code)
+        for code, lab in zip(codes, labs, strict=True)
+        if not (code is None or math.isnan(code) or lab == "")
+    ]
 
 
-def _jasp_binary_labels(field: Any, xdat: Any) -> dict[str | None, float]:
+def _jasp_binary_labels(field: Any, xdat: Any) -> list[tuple[str | None, float]]:
     """Port of R/jasp.R::.jasp_binary_labels().
 
     Value labels of one binary-format field (its own ``labels``, else
-    ``xdata.json[name]$labels``) as ``{label: code}``.
+    ``xdata.json[name]$labels``) as ``(label, code)`` pairs.
     """
     lst = _dollar(field, "labels")
     if not lst:
@@ -153,7 +153,7 @@ def _check_field_names(names: list[Any]) -> None:
             raise ValueError("values must be type 'character'")
 
 
-def _column_attrs(labels: dict[Any, float] | None, label: Any) -> dict[str, Any]:
+def _column_attrs(labels: list[tuple[Any, float]] | None, label: Any) -> dict[str, Any]:
     """The ``labels``/``label`` attributes R ends up attaching to one column.
 
     R re-attaches ``attr(cols[[j]], "label")``, and ``attr()`` partially
@@ -166,7 +166,7 @@ def _column_attrs(labels: dict[Any, float] | None, label: Any) -> dict[str, Any]
     if label is not None:
         out["label"] = label
     elif labels:
-        out["label"] = dict(labels)
+        out["label"] = list(labels)
     return out
 
 
@@ -484,19 +484,19 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
         phys = [r[1] for r in info]
         decl = {r[1]: r[2] for r in info}
 
-        def labels_for(cid: Any) -> dict[str | None, float]:
+        def labels_for(cid: Any) -> list[tuple[str | None, float]]:
             rows = con.execute(
                 f"SELECT value, label FROM Labels WHERE columnId = {int(cid)} ORDER BY ordering"  # noqa: S608
             ).fetchall()
-            out: dict[str | None, float] = {}
+            out: list[tuple[str | None, float]] = []
             for value, lab in rows:
                 # R: keep <- !is.na(value) & nzchar(label); nzchar(NA) is TRUE, and
                 # as.numeric() of a non-numeric value is a kept NA code
                 if value is None or lab == "":
                     continue
                 code = _as_numeric(value)
-                out.setdefault(
-                    None if lab is None else _r_chr(lab), math.nan if code is None else code
+                out.append(
+                    (None if lab is None else _r_chr(lab), math.nan if code is None else code)
                 )
             return out
 

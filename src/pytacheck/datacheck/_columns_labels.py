@@ -210,8 +210,8 @@ def _porter() -> Any:
 def _stem_words(s: str | None) -> str:
     """Port of ``.stem_words()``: Porter-stem each word (SnowballC semantics).
 
-    Falls back to R's crude trailing-"s" stripper when ``snowballstemmer`` is
-    unavailable (as R does without SnowballC).
+    Falls back to R's crude trailing-"s" stripper when ``snowballstemmer`` (the
+    ``data`` extra) is unavailable, as R does without SnowballC.
     """
     words = [s] if s is None else [w for w in s.split(" ") if w != ""]
     if not words:

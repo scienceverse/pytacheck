@@ -167,18 +167,25 @@ def _tables_list(tables: Any) -> list[Any]:
     return _r_values(tables)
 
 
-def _stat_result_ids(
-    tables: Sequence[Mapping[str, Any]], source_file: str | None = None
-) -> list[str]:
+def _source_prefix(source_file: Any) -> str:
+    """``.stat_sanitize_id(source_file %||% "result")`` as ``paste()`` shows it.
+
+    ``None`` is R's ``NULL`` (the ``"result"`` fallback); ``pd.NA`` -- R's
+    default ``NA_character_`` -- is not replaced by ``%||%``, so ids start
+    ``"NA_"`` (UPSTREAM_ISSUES U138).
+    """
+    return _paste_chr(_stat_sanitize_id("result" if source_file is None else source_file))
+
+
+def _stat_result_ids(tables: Sequence[Mapping[str, Any]], source_file: Any = pd.NA) -> list[str]:
     """One base (per-table) result id per table.
 
     Port of ``R/stat-output.R::.stat_result_ids()``:
     ``<source>_l<line>_<line_seq>``, ``<source>_t<table_index>``,
     ``<source>_<analysis>`` or ``<source>_result``; repeats get ``_1, _2``.
+    *source_file* ``None`` is R's ``NULL``, ``pd.NA`` (the default) its ``NA``.
     """
-    # R's default source_file is NA_character_ (``None`` here), which the
-    # ``%||% "result"`` fallback does not replace: ids then start "NA_".
-    src = _paste_chr(_stat_sanitize_id(source_file))
+    src = _source_prefix(source_file)
     locators = []
     for tb in tables:
         has_line, line = _tb_field(tb, "line")
@@ -198,7 +205,7 @@ def _stat_result_ids(
 
 
 def _stat_test_id(
-    tb: Mapping[str, Any], source_file: str | None, base_id: str, row_label: str = ""
+    tb: Mapping[str, Any], source_file: Any, base_id: str, row_label: str = ""
 ) -> str | None:
     """The test-level grouping key of one result row.
 
@@ -217,8 +224,7 @@ def _stat_test_id(
         anchor = f"l{_paste_chr(line)}_{_paste_chr(seq if has_seq else 1)}"
     else:
         anchor = sub("_r[0-9]+$", "", base_id)
-    src = _paste_chr(_stat_sanitize_id(source_file))
-    return _stat_sanitize_id(f"{src}_{anchor}_{_paste_chr(row_label)}")
+    return _stat_sanitize_id(f"{_source_prefix(source_file)}_{anchor}_{_paste_chr(row_label)}")
 
 
 # ---------------------------------------------------------------------------
@@ -355,7 +361,7 @@ def _frame_column(values: list[Any]) -> pd.Series:
 def stat_results_long(
     tables: Sequence[Mapping[str, Any]] | None,
     paper_id: Any = None,
-    source_file: str | None = None,
+    source_file: Any = pd.NA,
 ) -> pd.DataFrame:
     """Flatten extracted result tables into one long data frame.
 
@@ -364,7 +370,9 @@ def stat_results_long(
     ``paper_id``, ``source_file``, ``test_id``, ``result_id``, ``analysis``,
     ``table_title``, ``row_label``, ``statistic``, ``stato_label``,
     ``stato_iri``, ``value`` and ``model_ref``. Empty frame (same columns)
-    when there is nothing to flatten.
+    when there is nothing to flatten. *source_file* defaults to ``pd.NA``
+    (R's ``NA_character_``); ``None`` is R's ``NULL``, which ``data.frame()``
+    refuses as soon as there is a row. *paper_id* ``None`` is ``NA``.
     """
     rows: dict[str, list[Any]] = {c: [] for c in _LONG_COLUMNS}
     if tables:
@@ -372,6 +380,9 @@ def stat_results_long(
         base_ids = _stat_result_ids(tables, source_file)
         for ti, tb in enumerate(tables):
             _long_rows(tb, base_ids[ti], paper_id, source_file, rows)
+    if source_file is None and rows["test_id"]:
+        # data.frame(paper_id = paper_id, source_file = NULL, ...) in R
+        raise ValueError("arguments imply differing number of rows: 1, 0")
     return pd.DataFrame({c: _frame_column(v) for c, v in rows.items()})
 
 
@@ -379,7 +390,7 @@ def _long_rows(
     tb: Mapping[str, Any],
     base_id: str,
     paper_id: Any,
-    source_file: str | None,
+    source_file: Any,
     rows: dict[str, list[Any]],
 ) -> None:
     df = _tb_field(tb, "data")[1]
@@ -423,7 +434,7 @@ def _long_rows(
         test_id: Any, result_id: Any, row_label: str, statistic: Any, typ: Any, value: Any
     ) -> None:
         rows["paper_id"].append(paper_id)
-        rows["source_file"].append(source_file)
+        rows["source_file"].append(None if _is_na(source_file) else source_file)
         rows["test_id"].append(test_id)
         rows["result_id"].append(result_id)
         rows["analysis"].append(analysis)
@@ -501,8 +512,11 @@ def _long_rows(
 # ---------------------------------------------------------------------------
 
 
-def _source_format(source_file: str | None) -> str:
-    sf = "" if source_file is None else source_file
+def _source_format(source_file: Any) -> str:
+    # grepl(pattern, source_file %||% ""): FALSE for NA, "" for NULL
+    if _is_na(source_file):
+        return "unknown"
+    sf = source_file
     for pat, fmt in (
         ("\\.omv$", "jamovi"),
         ("\\.jasp$", "JASP"),
@@ -511,7 +525,7 @@ def _source_format(source_file: str | None) -> str:
         ("\\.out$", "Mplus"),
         ("\\.[rR]$", "R"),
     ):
-        if source_file is not None and grepl(pat, sf, ignore_case=True):
+        if grepl(pat, sf, ignore_case=True):
             return fmt
     return "unknown"
 
@@ -519,7 +533,7 @@ def _source_format(source_file: str | None) -> str:
 def stat_output_json(
     tables: Sequence[Mapping[str, Any]] | None,
     paper_id: Any = "metacheck",
-    source_file: str | None = None,
+    source_file: Any = pd.NA,
 ) -> dict[str, Any] | None:
     """Serialise result tables as a structured statistical-output document.
 
@@ -527,7 +541,10 @@ def stat_output_json(
     ``schema``, ``schema_version``, ``paper_id``, ``source_file``,
     ``source_format`` and ``analyses`` (each ``{"analysis", "results"}``, a
     result being ``{"result_id", "test_id", "row_label", "values"}``), or
-    ``None`` when no table yields a value.
+    ``None`` when no table yields a value. *source_file* ``pd.NA`` (the
+    default, R's ``NA_character_``) gives ``NA_`` ids and ``None`` (R's
+    ``NULL``) ``result_`` ids; the document holds ``None`` for both (JSON
+    ``null``).
     """
     if not tables:
         return None
@@ -597,7 +614,7 @@ def stat_output_json(
         "schema": "metacheck-statistical-output",
         "schema_version": "1.0",
         "paper_id": paper_id,
-        "source_file": source_file,
+        "source_file": None if _is_na(source_file) else source_file,
         "source_format": source_format,
         "analyses": analyses,
     }
@@ -861,8 +878,12 @@ def stat_output_write(
         _write_csv(combined, out_dir / "results_long.csv")
 
     for s in jsons:
-        file = _r_dollar(s, "file")
-        base = os.path.basename("result" if file is None else str(file))
+        file = _r_dollar(s, "file")  # None: NULL -> "result"; NA -> "NA"
+        base = (
+            "NA"
+            if _is_na(file) and file is not None
+            else os.path.basename("result" if file is None else str(file))
+        )
         fn = sub("[.][^.]+$", "", base)
         json_path = out_dir / f"{fn}.statistical_output.json"
         json_path.write_text(_to_json_pretty(_r_dollar(s, "json")) + "\n", encoding="utf-8")

@@ -4310,3 +4310,121 @@
       "$expr":
         "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/problem+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"application/problem+json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.review.json_comments"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": /* c */ {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A // kept\", \"category\": \"project\"}}} // end)--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content=b'{\"data\": /* c */ {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A // kept\", \"category\": \"project\"}}} // end', headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.review.json_repeated_key"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"first\", \"title\": \"second\", \"public\": true}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content=b'{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"first\", \"title\": \"second\", \"public\": true}}}', headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.review.json_declared_latin1"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json; charset=ISO-8859-1\"), body = charToRaw(enc2utf8(\"{\\\"data\\\": {\\\"id\\\": \\\"n1\\\", \\\"type\\\": \\\"nodes\\\", \\\"attributes\\\": {\\\"title\\\": \\\"Caf\\u00e9\\\"}}}\"))), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"Caf\\u00e9\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json; charset=ISO-8859-1\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.review.json_nul_escape"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"before\\u0000after\", \"description\": \"x\\ud800y\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content=rb'{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"before\\u0000after\", \"description\": \"x\\ud800y\"}}}', headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.review.json_nan_error"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\", \"x\": NaN}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content=b'{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\", \"x\": NaN}}}', headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+- "id": ".osf_verify_downloads.review.character_downloaded"
+  "r": ".osf_verify_downloads"
+  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "args":
+    "ret":
+      "$expr":
+        "r": "data.frame(path = \"analysis.R\", size = 166, downloaded = c(\"TRUE\", \"FALSE\", \"T\", \"true\"))"
+        "py": "pd.DataFrame({\"path\": [\"analysis.R\"] * 4, \"size\": [166.0] * 4, \"downloaded\": pd.array([\"TRUE\", \"FALSE\", \"T\", \"true\"], dtype=\"string\")})"
+    "download_to":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
+- "id": ".osf_verify_downloads.review.numeric_downloaded"
+  "r": ".osf_verify_downloads"
+  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "args":
+    "ret":
+      "$expr":
+        "r": "data.frame(path = \"analysis.R\", size = 166, downloaded = c(1, 2, 0, NA))"
+        "py": "pd.DataFrame({\"path\": [\"analysis.R\"] * 4, \"size\": [166.0] * 4, \"downloaded\": [1.0, 2.0, 0.0, float(\"nan\")]})"
+    "download_to":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
+- "id": ".osf_verify_downloads.review.no_downloaded_error"
+  "r": ".osf_verify_downloads"
+  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "args":
+    "ret":
+      "$expr":
+        "r": "data.frame(path = \"analysis.R\", size = 166)"
+        "py": "pd.DataFrame({\"path\": [\"analysis.R\"], \"size\": [166.0]})"
+    "download_to":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
+- "id": "osf_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "osf_links(paperlist())"
+        "py": "lambda: __import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_links(__import__(\"pytacheck\").PaperList([]))"
+- "id": "osf_links.review.subset_empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "osf_links(paperlist(test_paper(\"see osf.io/abcde\"))[0])"
+        "py": "lambda: __import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_links(__import__(\"pytacheck\").PaperList([]))"
+- "id": "aspredicted_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "aspredicted_links(paperlist())"
+        "py": "lambda: __import__(\"pytacheck.archives.aspredicted\", fromlist=[\"_\"]).aspredicted_links(__import__(\"pytacheck\").PaperList([]))"
+- "id": "aspredicted_links.review.no_urls"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "aspredicted_links(paperlist(test_paper(\"no links\"), test_paper(\"none either\")))"
+        "py": "lambda: __import__(\"pytacheck.archives.aspredicted\", fromlist=[\"_\"]).aspredicted_links(__import__(\"pytacheck\").PaperList([__import__(\"pytacheck\").test_paper(\"no links\"), __import__(\"pytacheck\").test_paper(\"none either\")]))"
+- "id": ".osf_metadata_download.mixd1.json"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ { d <- tempfile(); dir.create(d); metacheck:::.osf_metadata_download(\"mixd1\", d); x <- readLines(file.path(d, \"_osf_metadata\", \"metadata.json\")); x[!grepl(\"\\\"retrieved\\\"\", x)] } }) })()"
+        "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: (__import__(\"pytacheck.archives.osf_metadata\", fromlist=[\"_\"])._osf_metadata_download(\"mixd1\", d), [l for l in __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).read_lines(d + \"/_osf_metadata\", \"metadata.json\") if '\"retrieved\"' not in l])[1])"
+- "id": ".osf_metadata_download.mixd2.json"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ { d <- tempfile(); dir.create(d); metacheck:::.osf_metadata_download(\"mixd2\", d); x <- readLines(file.path(d, \"_osf_metadata\", \"metadata.json\")); x[!grepl(\"\\\"retrieved\\\"\", x)] } }) })()"
+        "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: (__import__(\"pytacheck.archives.osf_metadata\", fromlist=[\"_\"])._osf_metadata_download(\"mixd2\", d), [l for l in __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).read_lines(d + \"/_osf_metadata\", \"metadata.json\") if '\"retrieved\"' not in l])[1])"

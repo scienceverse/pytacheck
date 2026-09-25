@@ -219,16 +219,20 @@ def _deparse_chr_vector(values: Sequence[Any]) -> str:
     return parts[0] if len(parts) == 1 else "c(" + ", ".join(parts) + ")"
 
 
-def _df_dollar(df: pd.DataFrame, name: str) -> Any:
-    """``df$name`` on a data frame (exact, else unique partial match), as a list."""
+def _df_dollar_name(df: pd.DataFrame, name: str) -> str | None:
+    """The column ``df$name`` finds (exact, else unique partial match), or ``None``."""
     cols = [str(c) for c in df.columns]
     if name in cols:
-        col = name
-    else:
-        hits = [c for c in cols if c.startswith(name)]
-        if len(hits) != 1:
-            return None
-        col = hits[0]
+        return name
+    hits = [c for c in cols if c.startswith(name)]
+    return hits[0] if len(hits) == 1 else None
+
+
+def _df_dollar(df: pd.DataFrame, name: str) -> Any:
+    """``df$name`` on a data frame (exact, else unique partial match), as a list."""
+    col = _df_dollar_name(df, name)
+    if col is None:
+        return None
     return [
         None if (not isinstance(v, list | tuple | Mapping) and is_na(v)) else v
         for v in df[col].tolist()
@@ -708,6 +712,29 @@ def _query_url(ref: Any, rows: int, email: str) -> str:
     return f"{base}&query.bibliographic={_encode_query(ref)}"
 
 
+def _offline_df_refs(src: dict[str, pd.Series], n: int) -> pd.DataFrame:
+    """R: ``data.frame(bib_text = <list of 1-row data frames>, DOI = NA, error = "offline")``.
+
+    The 1-row data frames a data-frame *ref* is split into become the columns
+    of a single row, ``bib_text.title``, ``bib_text.author``,
+    ``bib_text.container``, then ``bib_text.title.1``... (``make.unique()``)
+    for the next reference, followed by ``DOI`` and ``error``.
+    """
+    import pandas as pd
+
+    if n == 0:
+        raise ValueError("arguments imply differing number of rows: 0, 1")
+    out: dict[str, pd.Series] = {}
+    for i in range(n):
+        for k, col in src.items():
+            out[f"bib_text.{k}" if i == 0 else f"bib_text.{k}.{i}"] = col.iloc[[i]].reset_index(
+                drop=True
+            )
+    out["DOI"] = pd.Series([pd.NA], dtype="boolean")
+    out["error"] = pd.Series(["offline"], dtype="string")
+    return pd.DataFrame(out)
+
+
 def crossref_query(
     ref: Any,
     min_score: float = 50,
@@ -735,6 +762,7 @@ def crossref_query(
         return pd.DataFrame()
 
     refs: list[Any]
+    src: dict[str, pd.Series] | None = None
     if isinstance(ref, pd.DataFrame):
         if ref.shape[1] == 0:
             return pd.DataFrame()
@@ -758,6 +786,15 @@ def crossref_query(
         if "title" not in cols:
             return pd.DataFrame()
         refs = [{k: v[i] for k, v in cols.items()} for i in range(len(ref))]
+        names = {
+            "title": ["title"],
+            "author": ["authors", "author"],
+            "container": ["container", "journal", "booktitle"],
+        }
+        src = {}
+        for k in cols:
+            found = next(c for c in (_df_dollar_name(ref, n) for n in names[k]) if c is not None)
+            src[k] = ref[found].reset_index(drop=True)
     else:
         refs = as_vector(ref)
         if len(refs) == 0:
@@ -765,6 +802,8 @@ def crossref_query(
 
     texts = [_ref_text(r) if isinstance(r, Mapping) else r for r in refs]
     if not _utils.online("api.crossref.org"):
+        if src is not None:
+            return _offline_df_refs(src, len(refs))
         return records_frame([{"bib_text": t, "DOI": None, "error": "offline"} for t in texts])
 
     email = default_email()

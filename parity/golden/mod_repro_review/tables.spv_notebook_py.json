@@ -1,0 +1,117 @@
+{
+  "id": "tables.spv_notebook_py",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode light-binary table: spv binary: needed 32 bytes at offset 300, only 1 available",
+    "spv: could not decode light-binary table: spv binary: unsupported light-table version 2"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Reported",
+          "Found",
+          "Confidence",
+          "Plausible",
+          "Matched values",
+          "Not matched",
+          "Source file",
+          "Analysis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t=3.41 df=48 p=0.001"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "full"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t=3.41, df=48, p=0.001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "notebook_python.ipynb"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cell 3 [2]"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

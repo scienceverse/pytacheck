@@ -11,7 +11,14 @@
 # parity runner's working directory is the repository root.
 
 rc_specs <- function() {
-  jsonlite::fromJSON("tests/mod_repro/fixtures/scenarios.json", simplifyVector = FALSE)
+  out <- jsonlite::fromJSON("tests/mod_repro/fixtures/scenarios.json", simplifyVector = FALSE)
+  # the extra scenarios of the review cases (tests/mod_repro/make_review_cases.py)
+  review <- "tests/mod_repro/fixtures/review_scenarios.json"
+  if (file.exists(review)) {
+    extra <- jsonlite::fromJSON(review, simplifyVector = FALSE)$scenarios
+    out$scenarios[names(extra)] <- extra
+  }
+  out
 }
 
 rc_psychsci <- c(

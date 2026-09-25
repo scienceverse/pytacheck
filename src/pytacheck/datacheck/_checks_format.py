@@ -570,9 +570,10 @@ _BH_SNIFF_EXTS = ("csv", "tsv", "dat", "iqdat", "txt")
 
 
 def _file_ext(path: str) -> str:
-    """``tools::file_ext(path)``."""
-    m = regexec(r"\.([[:alnum:]]+)$", path)
-    return m[1] if len(m) == 2 else ""
+    """``tools::file_ext(path)`` (``""`` for a path that is not valid UTF-8)."""
+    from pytacheck.datacheck._strings import file_ext1
+
+    return file_ext1(path)
 
 
 def _bh_is_trial_level_file(path: Any) -> bool:

@@ -80,7 +80,7 @@ def _summary_empty(pid: str | None, em: Mapping[str, Any] | None) -> pd.DataFram
 
 def _tail_cap(txt: Any, state: dict[str, bool]) -> list[str]:
     """The last :data:`_MAX_LINES` lines of one output stream (R ``tail_cap()``)."""
-    if txt is None or (isinstance(txt, float) and txt != txt):
+    if h._na(txt):
         # nzchar(NA) is TRUE: strsplit(NA) gives one NA line
         return ["NA"]
     if txt == "":
@@ -107,6 +107,12 @@ def _order_names(order_tbl: pd.DataFrame) -> list[str]:
     return [str(names[i]) for i in idx]
 
 
+def _na_str(x: Any) -> str:
+    """``sprintf("%s", x)`` of one string (``"NA"`` for a missing value)."""
+    v = h._chr(x)
+    return "NA" if v is None else v
+
+
 def _match_first(x: Sequence[Any], table: Sequence[Any]) -> list[int | None]:
     """R ``match(x, table)`` (0-based, ``None`` for no match)."""
     first: dict[Any, int] = {}
@@ -117,6 +123,24 @@ def _match_first(x: Sequence[Any], table: Sequence[Any]) -> list[int | None]:
 
 def _pick(values: Sequence[Any], idx: Sequence[int | None]) -> list[Any]:
     return [None if i is None else values[i] for i in idx]
+
+
+_SANDBOXES = ("process", "docker")
+
+
+def _match_sandbox(sandbox: Any) -> str:
+    """``match.arg(sandbox)``: exact or unique partial match (``"proc"`` is ``"process"``)."""
+    from pytacheck.utils import match_arg
+
+    if isinstance(sandbox, list | tuple):
+        if list(sandbox) == list(_SANDBOXES):
+            return _SANDBOXES[0]
+        if len(sandbox) != 1:
+            raise ValueError("'arg' must be of length 1")
+        sandbox = sandbox[0]
+    if sandbox is not None and not isinstance(sandbox, str):
+        raise ValueError("'arg' must be NULL or a character vector")
+    return match_arg(sandbox, list(_SANDBOXES))
 
 
 @module(
@@ -258,10 +282,7 @@ def reproducibility_check(
     Docker containers (``sandbox="docker"``); a paper list with
     ``workers > 1`` under Docker runs its papers concurrently.
     """
-    if isinstance(sandbox, list | tuple):
-        sandbox = sandbox[0] if sandbox else ""
-    if sandbox not in ("process", "docker"):
-        raise ValueError("'arg' should be one of “process”, “docker”")
+    sandbox = _match_sandbox(sandbox)
 
     from pytacheck.papers.model import is_paper_list
 
@@ -490,9 +511,12 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
             "We found no R code files to assess for reproducibility." + note, empty_tl, extra
         )
     langs = h._chr_col(code_tbl, "language")
-    names_all = h._chr_col(code_tbl, "file_name")
-    renv = grepl(r"(^|/)renv/activate\.R$", names_all, ignore_case=True) if names_all else []
-    keep = [i for i, lang in enumerate(langs) if lang == "R" and not renv[i]]
+    if "file_name" in code_tbl.columns:
+        renv = grepl(r"(^|/)renv/activate\.R$", h._chr_col(code_tbl, "file_name"), ignore_case=True)
+        keep = [i for i, lang in enumerate(langs) if lang == "R" and not renv[i]]
+    else:
+        # r_files[!grepl(pattern, NULL), ] is r_files[logical(0), ]: no rows
+        keep = []
     r_files = code_tbl.iloc[keep].reset_index(drop=True)
     if len(r_files) == 0:
         return empty(
@@ -612,10 +636,11 @@ def _assess_r(
     resolve = _resolver(r_files, structure_df)
 
     # 1b. Byte-identical duplicates across repo mirrors --------------------------
-    hashes: list[str | None] = []
-    for i in range(len(r_files)):
-        txt = _read_code(resolve(i))
-        hashes.append(None if not txt else "\n".join(txt))
+    # R reads each file once to hash it and again for raw_text_list; a row's
+    # path does not depend on the other rows, so the first read is kept and
+    # reused (a URL-resolved file is downloaded once instead of twice).
+    read_texts: list[list[str] | None] = [_read_code(resolve(i)) for i in range(len(r_files))]
+    hashes: list[str | None] = [None if not txt else "\n".join(txt) for txt in read_texts]
     seen: set[str] = set()
     dup: list[bool] = []
     for hv in hashes:
@@ -649,6 +674,7 @@ def _assess_r(
         r_files = r_files.iloc[keep_rows].reset_index(drop=True)
         resolve = _resolver(r_files, structure_df)
         fnames = h._chr_col(r_files, "file_name")
+        read_texts = [read_texts[i] for i in keep_rows]
     n_code = len(r_files)
     names = [str(f) for f in fnames]
 
@@ -658,7 +684,7 @@ def _assess_r(
     is_rmd = grepl(r"\.(rmd|qmd)$", fnames, ignore_case=True)
     for i in range(n_code):
         path = resolve(i)
-        raw = (_read_code(path) or []) if path is not None else []
+        raw = read_texts[i] or []
         raw_texts.append(raw)
         if path is None:
             code_texts.append([])
@@ -741,7 +767,7 @@ def _assess_r(
 
     # 5. Run order ----------------------------------------------------------------
     order_tbl = repro_run_order(io)
-    cycle = [str(x) for x in (order_tbl.attrs.get("cycle") or [])]
+    cycle = [str(x) for x in h._as_list(order_tbl.attrs.get("cycle"))]
     ambiguous_order = h._is_true(order_tbl.attrs.get("ambiguous"))
     fuzzy_sources = order_tbl.attrs.get("fuzzy_sources")
     if not isinstance(fuzzy_sources, pd.DataFrame):
@@ -753,7 +779,7 @@ def _assess_r(
         dict.fromkeys(
             h._chr(w).lower() if h._chr(w) is not None else None  # type: ignore[union-attr]
             for ws in io_writes
-            for w in (ws or [])
+            for w in h._as_list(ws)
         )
     )
     unres_lower = list(dict.fromkeys(None if r is None else r.lower() for r in unresolved_refs))
@@ -799,7 +825,7 @@ def _assess_r(
     io_names = h._chr_col(io, "file_name")
     first_writes: dict[str | None, list[Any]] = {}
     for n, ws in zip(io_names, io_writes, strict=True):
-        first_writes.setdefault(n, list(ws or []))
+        first_writes.setdefault(n, h._as_list(ws))
     produced_before: list[list[str | None]] = []
     for i in range(n_code):
         ord_i = file_order[i]
@@ -932,8 +958,8 @@ def _assess_r(
 
     m_io = _match_first(names, io_names)
     reads_col = h._col(io, "reads")
-    reads_of = [[] if j is None or not reads_col else list(reads_col[j] or []) for j in m_io]
-    writes_of = [[] if j is None or not io_writes else list(io_writes[j] or []) for j in m_io]
+    reads_of = [[] if j is None or not reads_col else h._as_list(reads_col[j]) for j in m_io]
+    writes_of = [[] if j is None or not io_writes else h._as_list(io_writes[j]) for j in m_io]
 
     table = pd.DataFrame(
         {
@@ -1013,7 +1039,7 @@ def _assess_r(
     n_fuzzy = len(fuzzy_sources)
     if n_fuzzy > 0:
         pairs = "; ".join(
-            f"`{h._chr(t) or 'NA'}` -> `{h._chr(f) or 'NA'}`"
+            f"`{_na_str(t)}` -> `{_na_str(f)}`"
             for t, f in zip(
                 fuzzy_sources["to"].tolist(), fuzzy_sources["from"].tolist(), strict=True
             )
@@ -1304,11 +1330,16 @@ def _execute(
     if sandbox == "docker":
         from pytacheck.repro.docker import _repro_docker_image_for
 
+        # version_pin$r_versions %||% character(0) (a list from code_check; a
+        # string or an array when read back from a saved build)
         pin = version_pin if isinstance(version_pin, Mapping) else {}
-        declared = pin.get("r_versions") or []
-        if isinstance(declared, str):
-            declared = [declared]
-        declared = list(declared)
+        raw_declared = pin.get("r_versions")
+        if raw_declared is None:
+            declared: list[Any] = []
+        elif isinstance(raw_declared, str):
+            declared = [raw_declared]
+        else:
+            declared = list(raw_declared)
         use_declared = h._is_true(a["docker_use_declared_version"])
         if not use_declared and len(declared) > 0:
             warnings.warn(
@@ -1398,7 +1429,7 @@ def _execute(
         is_fn_missing = grepl(_FN_MISSING_PAT, [errors[i] for i in undef_idx], perl=True)
         defs = repro_defined_vars(code_text_list)
         def_names = h._chr_col(defs, "file_name")
-        def_sets = [list(d or []) for d in h._col(defs, "defines")]
+        def_sets = [h._as_list(d) for d in h._col(defs, "defines")]
 
         def def_of(v: str | None) -> list[str | None]:
             return [n for n, d in zip(def_names, def_sets, strict=True) if v in d]
@@ -1448,7 +1479,11 @@ def _execute(
     for i in range(len(run_results)):
         so = h._chr(run_results["stdout"].iloc[i])
         fn = h._chr(run_results["file_name"].iloc[i])
-        exec_lines = list(run_results["script_lines"].iloc[i] or [])
+        exec_lines = (
+            h._as_list(run_results["script_lines"].iloc[i])
+            if "script_lines" in run_results.columns
+            else []
+        )
         caps = run_results["captures"].iloc[i] if "captures" in run_results.columns else None
         code_lines = exec_lines if exec_lines else None
         try:
@@ -1660,7 +1695,7 @@ def _execution_report(
         output_blocks.append(
             collapse_section(
                 "\n".join(body),
-                title=f"Output — {names[i]} ({oc[i]})",
+                title=f"Output — {_na_str(names[i])} ({_na_str(oc[i])})",
             )
         )
     truncation_note = (

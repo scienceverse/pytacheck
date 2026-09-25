@@ -498,6 +498,79 @@ def zenodo_upload_more(root: Path) -> None:
     )
 
 
+def raw_response(url: str, body: bytes, ctype: str = "application/json") -> str:
+    """A deparsed 200 ``httr2_response`` whose body is given byte for byte."""
+    raw = ", ".join(f"0x{b:02x}" for b in body)
+    return (
+        f'structure(list(method = "GET", url = "{url}", status_code = 200L, '
+        f'headers = structure(list(`content-type` = "{ctype}"), class = "httr2_headers"), '
+        f"body = as.raw(c({raw})), cache = new.env(parent = emptyenv())), "
+        'class = "httr2_response")\n'
+    )
+
+
+# Zenodo records whose bodies jsonlite (yajl) and json.loads() read differently
+ZENODO_JSON_QUIRKS: dict[str, tuple[bytes, str]] = {
+    # comments and a vertical tab between tokens; comment markers in strings kept
+    "5559201": (
+        b'{"id": 5559201, /* a comment */ "metadata": {"title": "T /* kept */ // kept",\x0b'
+        b' "description": "D"}, // trailing\n "doi": "10.5281/zenodo.5559201"}',
+        "application/json",
+    ),
+    # repeated keys: `$` finds the first value
+    "5559202": (
+        b'{"id": 5559202, "metadata": {"title": "first", "title": "second"},'
+        b' "doi": "10.5281/zenodo.first", "doi": "10.5281/zenodo.second"}',
+        "application/json",
+    ),
+    # an escaped NUL ends the string; a lone high surrogate becomes "?"
+    "5559203": (
+        b'{"id": 5559203, "metadata": {"title": "before\\u0000after",'
+        b' "description": "x\\ud800y"}}',
+        "application/json",
+    ),
+    # a byte-order mark is dropped (with a warning)
+    "5559204": (
+        b'\xef\xbb\xbf{"id": 5559204, "metadata": {"title": "Caf\xc3\xa9"}}',
+        "application/json",
+    ),
+    # the body is read as UTF-8 whatever charset the response names
+    "5559205": (
+        b'{"id": 5559205, "metadata": {"title": "Caf\xc3\xa9 \xe2\x82\xac"}}',
+        "application/json; charset=ISO-8859-1",
+    ),
+    # NaN is not JSON to yajl: a parse error
+    "5559206": (b'{"id": 5559206, "stats": {"views": NaN}}', "application/json"),
+    # bytes that are not UTF-8: NA text, a parse error
+    "5559207": (b'{"id": 5559207, "metadata": {"title": "Caf\xe9"}}', "application/json"),
+    # the body ends at the first NUL byte; integers past 2^31 are doubles
+    "5559208": (
+        b'{"id": 5559208, "stats": {"downloads": 3000000000, "views": -2147483648,'
+        b' "unique_downloads": 2147483647}}\x00trailing garbage',
+        "application/json",
+    ),
+    # a +json media type is JSON too
+    "5559209": (
+        b'{"id": 5559209, "metadata": {"title": "vnd"}}',
+        "application/vnd.api+json; charset=utf-8",
+    ),
+    # an empty body cannot be read
+    "5559210": (b"", "application/json"),
+}
+
+
+def zenodo_json(root: Path) -> None:
+    for rec, (body, ctype) in ZENODO_JSON_QUIRKS.items():
+        write(
+            root,
+            f"zenodo.org/api/records/{rec}.R",
+            raw_response(f"https://zenodo.org/api/records/{rec}", body, ctype),
+        )
+    # .zenodo_info(character(0)) asks for the record listing (paste0() drops
+    # the empty ID)
+    write(root, "zenodo.org/api/records.json", jdump({"hits": {"hits": [], "total": 0}}))
+
+
 def main() -> None:
     if MOCKS.exists():
         shutil.rmtree(MOCKS)
@@ -506,6 +579,7 @@ def main() -> None:
     gitlab(MOCKS)
     gitlab_more(MOCKS)
     zenodo(MOCKS)
+    zenodo_json(MOCKS)
     zenodo_upload_more(MOCKS)
 
 

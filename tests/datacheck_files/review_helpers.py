@@ -108,3 +108,69 @@ def manifest_scenario(scenario: str) -> Any:
             )
             return [p.replace(tmp, "<tmp>") for p in paths]
     raise ValueError(scenario)
+
+
+def data_group_cache_key() -> str | None:
+    """The LLM cache key of the params ``data_group_llm()`` sends to ``llm()``.
+
+    The R side mocks ``llm()`` and keys ``do.call(ellmer::params, c(params,
+    temperature = 0, max_tokens = 4096))`` -- the params ``llm()`` itself would
+    key -- so an ``int`` seed (a double in R) where R has ``8675309L`` shows up
+    as a different MD5 (the canonical comparison treats 1L and 1 as equal).
+    """
+    from pytacheck.llm.cache import _llm_cache_key
+    from pytacheck.llm.providers import params as ellmer_params
+
+    key: list[str] = []
+
+    def fake_llm(*_a: Any, params: dict[str, Any], **_k: Any) -> Any:
+        p = ellmer_params(**{**params, "temperature": 0, "max_tokens": 4096})
+        key.append(_llm_cache_key("t", "s", None, "m", p))
+        raise RuntimeError("no llm")
+
+    saved = F._llm
+    F._llm = fake_llm
+    try:
+        files = pd.DataFrame({"file_name": ["first_raw.csv", "second_raw.csv"], "data_type": "data"})
+        F.data_group_llm(files, model="m")
+    finally:
+        F._llm = saved
+    return key[0] if key else None
+
+
+def _unescape(s: str | None) -> str | None:
+    r"""A name written with ``\xff`` escapes, as R's parser reads ``"b\xff.txt"``."""
+    import codecs
+
+    if s is None:
+        return None
+    raw = codecs.escape_decode(s.encode("utf-8"))[0]
+    return raw.decode("utf-8", "surrogateescape")  # type: ignore[union-attr]
+
+
+def classify_or_error(
+    file_name: list[str | None], file_path: list[str | None] | None = None, fn: str = "classify"
+) -> Any:
+    """``data_classify_files()`` / ``.data_doc_role()`` of escaped names, or the error message."""
+    names = [_unescape(v) for v in file_name]
+    paths = None if file_path is None else [_unescape(v) for v in file_path]
+    try:
+        if fn == "doc_role":
+            return F._data_doc_role(names)
+        return F.data_classify_files(names, paths)
+    except ValueError as e:
+        return str(e)
+
+
+def read_head_invalid_name() -> Any:
+    """``data_read_head()`` of a CSV whose file name is not valid UTF-8."""
+    import os
+    import warnings
+
+    with tempfile.TemporaryDirectory() as tmp:
+        p = os.path.join(os.fsencode(tmp), b"b\xff.csv")
+        with open(p, "w", encoding="utf-8") as fh:
+            fh.write("a,b\n1,2\n")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            return F.data_read_head(os.fsdecode(p))

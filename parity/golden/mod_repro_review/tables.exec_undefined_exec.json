@@ -1,0 +1,123 @@
+{
+  "id": "tables.exec_undefined_exec",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "undef_definer.R",
+              "undef_user.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "undef_definer.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "dependency"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Outcome",
+          "Detail",
+          "Time (s)"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "undef_definer.R",
+              "undef_user.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok",
+              "errored"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "undefined_variable"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Missing variable",
+          "Defined in"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "undef_user.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "helper_value"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "undef_definer.R"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
