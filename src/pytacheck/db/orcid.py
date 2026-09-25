@@ -80,15 +80,13 @@ def check_orcid(orcid: Any) -> str | bool:
             warnings.warn(f"The ORCiD {orcid} is not valid.", stacklevel=3)
         return False
 
+    # a missing ORCiD, or an X before the check digit, is not valid (metacheck
+    # fails on `if (NA ...)` for both; U14)
     if is_na(orcid):
-        # nchar(NA_character_) is NA: `if (NA != 16)` fails in R
-        raise ValueError("missing value where TRUE/FALSE needed")
-    base = str(gsub("[^0-9X]", "", as_character(orcid)))
-    if len(base) != 16:
         return invalid()
-    if not base[:15].isdigit():
-        # as.integer("X") is NA, so the checksum is NA and `if (NA == ...)` fails
-        raise ValueError("missing value where TRUE/FALSE needed")
+    base = str(gsub("[^0-9X]", "", as_character(orcid)))
+    if len(base) != 16 or not base[:15].isdigit():
+        return invalid()
     total = 0
     for ch in base[:15]:
         total = (total + int(ch)) * 2

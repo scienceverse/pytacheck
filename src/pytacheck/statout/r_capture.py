@@ -809,7 +809,10 @@ def _r_captures_to_tables(
     lines = [_as_int(x["line"]) for x in out]
     for i, x in enumerate(out):
         same = [j for j, ln in enumerate(lines) if ln is not None and ln == lines[i]]
-        x["line_seq"] = same.index(i) + 1 if i in same else None
+        # a capture without a source line is the first (and only) of its
+        # "line", as in _r_merge_captures(); R's match() against the empty
+        # set gives NA (UPSTREAM_ISSUES U140)
+        x["line_seq"] = same.index(i) + 1 if i in same else 1
     return out
 
 

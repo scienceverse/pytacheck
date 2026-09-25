@@ -289,6 +289,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.7717/peerj.4375\", NA))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_lookup', ['10.7717/peerj.4375', None])"
 - "id": "doi_lookup.replay.not_found"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "a DOI the service does not know gets its own NA row; R's return() inside tryCatch() makes the whole lookup NULL"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -341,6 +342,7 @@
     "ignore":
     - "authors"
 - "id": "datacite_doi.replay.not_found"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "a DOI the service does not know gets its own NA row; R's return() inside tryCatch() makes the whole lookup NULL"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -513,6 +515,7 @@
         "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"abstract\\\": \\\"<jats:p>Abs</jats:p>\\\", \\\"score\\\": 12.5, \\\"page\\\": \\\"1-10\\\", \\\"volume\\\": \\\"3\\\"}\")"
         "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"abstract\": \"<jats:p>Abs</jats:p>\", \"score\": 12.5, \"page\": \"1-10\", \"volume\": \"3\"}')"
 - "id": "crossref_parse_item.synthetic.editor"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "editors are a table in one editor cell like the authors (R spreads them over editor.given/editor.family columns, repeated per editor)"}
   "r": "metacheck:::.crossref_parse_item"
   "py": "pytacheck.db.crossref._crossref_parse_item"
   "args":
@@ -526,6 +529,7 @@
       - "title"
       - "editor"
 - "id": "crossref_parse_item.synthetic.null_field"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a JSON null in a selected field is NA (R's data.frame() fails: differing number of rows: 1, 0)"}
   "r": "metacheck:::.crossref_parse_item"
   "py": "pytacheck.db.crossref._crossref_parse_item"
   "args":
@@ -755,6 +759,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"Levi DM, Klein SA, Aitsebaomo AP, Mon-Williams M, Tresilian JR, Strang NC, Kochhar P, Wann JP (1985. 1998).\\n“Improving vision: Neural compensation for optical defocus.” _Proceedings of the Royal Society B:\\nBiological Sciences_, *25*, 71-77. doi:10.1016/0042-6989(85)90207\\n<https://doi.org/10.1016/0042-6989(85)90207>.\")); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', 'Levi DM, Klein SA, Aitsebaomo AP, Mon-Williams M, Tresilian JR, Strang NC, Kochhar P, Wann JP (1985. 1998).\\n“Improving vision: Neural compensation for optical defocus.” _Proceedings of the Royal Society B:\\nBiological Sciences_, *25*, 71-77. doi:10.1016/0042-6989(85)90207\\n<https://doi.org/10.1016/0042-6989(85)90207>.')"
 - "id": "crossref_query.replay.data_frame"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a table reference's fields are joined with '; ' (R joins them with a literal backslash-n)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -763,6 +768,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(authors = \"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M.\", title = \"The benefits of preregistration and Registered Reports\", container = \"Evidence-Based Toxicology\", year = 2024), select = c(\"score\", \"title\"))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'authors': ['Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M.'], 'title': ['The benefits of preregistration and Registered Reports'], 'container': ['Evidence-Based Toxicology'], 'year': [2024]}), select=['score', 'title'])"
 - "id": "crossref_query.replay.psychsci_bib"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a table reference's fields are joined with '; ' (R joins them with a literal backslash-n)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -865,6 +871,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.9999/not.recorded\", \"10.1177/0956797614520714\"))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.9999/not.recorded', '10.1177/0956797614520714'])"
 - "id": "crossref_query.replay.unrecorded"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a missing reference is not searched (R queries Crossref for \"NA\")"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -873,6 +880,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(c(\"An unrecorded reference text\", NA))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', ['An unrecorded reference text', None])"
 - "id": "crossref_query.replay.paper"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a table reference's fields are joined with '; ' (R joins them with a literal backslash-n)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -904,6 +912,7 @@
     "doi":
     - null
 - "id": "openalex_doi.replay.fake"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "openalex_doi() returns one entry per DOI; R's return() inside tryCatch() returns only the unknown DOI's error"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -976,6 +985,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Sample Size Justification\")); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_query', 'Sample Size Justification')"
 - "id": "openalex_query.replay.no_source_loose"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "candidates are ordered by relevance_score as numbers (R sorts the text, so 389.95 came before 3145.65)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1032,6 +1042,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.1038/s41598-025-24662-9\", NA))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', ['10.1038/s41598-025-24662-9', None])"
 - "id": "pubpeer_comments.replay.empty"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "no DOIs give an empty table without a request (R's request fails and it returns NULL)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1040,6 +1051,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c())); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', [])"
 - "id": "openalex_doi.replay.unrecorded"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "openalex_doi() returns one entry per DOI; R's return() inside tryCatch() returns only the unknown DOI's error"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1056,6 +1068,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/a\", \"10.9999/b\", \"10.9999/c\"))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', ['10.9999/a', '10.9999/b', '10.9999/c'])"
 - "id": "retractionwatch.summary"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1064,6 +1077,7 @@
         "r": "local({x <- as.data.frame(retractionwatch()); list(nrow = nrow(x), names = names(x), nchar = unname(sapply(x, function(v) sum(nchar(v), na.rm = TRUE))), na = unname(sapply(x, function(v) sum(is.na(v)))), head = head(x, 25), middle = x[seq(2, nrow(x), by = 997), ], tail = tail(x, 25))})"
         "py": "(lambda x: {'nrow': len(x), 'names': list(x.columns), 'nchar': [int(x[c].str.len().sum()) for c in x.columns], 'na': [int(x[c].isna().sum()) for c in x.columns], 'head': x.head(25), 'middle': x.iloc[1::997], 'tail': x.tail(25)})(__import__('pytacheck.db.retractionwatch', fromlist=['x']).retractionwatch())"
 - "id": "rw.summary"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1096,6 +1110,7 @@
         "r": "readRDS(system.file(\"databases/miscite.Rds\", package = \"metacheck\"))"
         "py": "__import__('pytacheck.db.databases', fromlist=['x']).miscite()"
 - "id": "retractionwatch.join.demo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1112,6 +1127,7 @@
         "r": "dplyr::inner_join(paper_table(demopaper(), \"bib\", c(\"bib_id\", \"doi\")), FLoRA(), by = c(doi = \"doi_o\"))"
         "py": "pc.paper_table(pc.demopaper(), 'bib', ['bib_id', 'doi']).merge(__import__('pytacheck.db.replications', fromlist=['x']).FLoRA().rename(columns={'doi_o': 'doi'}), on='doi', how='inner')"
 - "id": "retractionwatch.join.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1144,6 +1160,7 @@
         "r": "local({f <- FLoRA(); f[f$doi_o %in% c(\"10.1037/0003-066x.54.6.408\", \"10.1002/acp.1376\", \"10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y\"), ]})"
         "py": "(lambda f: f[f['doi_o'].isin(['10.1037/0003-066x.54.6.408', '10.1002/acp.1376', '10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y'])])(__import__('pytacheck.db.replications', fromlist=['x']).FLoRA())"
 - "id": "rw_update.data_step"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1195,6 +1212,7 @@
   "args":
     "orcid": "0000-0002-0247-239x"
 - "id": "check_orcid.x_inside"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "a missing ORCiD or one with X before the check digit is not valid (FALSE); R fails on if (NA)"}
   "r": "check_orcid"
   "py": "pytacheck.db.orcid.check_orcid"
   "args":
@@ -1205,6 +1223,7 @@
   "args":
     "orcid": ""
 - "id": "check_orcid.na"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "a missing ORCiD or one with X before the check digit is not valid (FALSE); R fails on if (NA)"}
   "r": "check_orcid"
   "py": "pytacheck.db.orcid.check_orcid"
   "args":

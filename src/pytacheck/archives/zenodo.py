@@ -488,8 +488,10 @@ def zenodo_file_download(
 
     Files go into ``<download_to>/<zenodo_id>`` (``_1``, ``_2``... when that
     exists). Files over *max_file_size* MB are skipped, and the largest are
-    dropped until the total is under *max_download_size* MB (``None`` or
-    ``inf`` for no limit). When every file survives, Zenodo's whole-record
+    left out until the total is under *max_download_size* MB (``None`` or
+    ``inf`` for no limit); they stay in the table with ``downloaded =
+    False`` (when all are, no folder is made and ``folder`` is missing).
+    When every file survives, Zenodo's whole-record
     archive is tried first. With *unzip_types* (categories as
     :func:`~pytacheck.datacheck.files.data_classify_files` names them), only
     matching members are read out of the record's ``.zip`` files instead of
@@ -499,7 +501,7 @@ def zenodo_file_download(
 
     Returns a table of ``folder``, ``zenodo_id``, ``id``, ``key``, ``path``,
     ``size``, ``size_on_disk``, ``checksum``, ``checksum_ok``, ``self``,
-    ``downloaded`` and ``extracted``, or ``None`` when nothing was downloaded.
+    ``downloaded`` and ``extracted``, or ``None`` when the record lists no files.
     Several IDs are downloaded one after another and row-bound.
     """
     from pytacheck.archives import _spinner, _tick
@@ -619,9 +621,9 @@ def _zenodo_download_one(
             max_file = max(present, key=lambda i: (size_list[i], -i))
             omitting(max_file)
 
+    target = ""  # no folder is made when every file is omitted
     if all(omitted):
         _tick(pb, "- All files omitted due to size constraints")
-        target = None
     else:
         # --- target directory (never overwrite; an existing <dir> gives
         # <dir>_1, <dir>_2...: metacheck strips a trailing _<digits> from the
@@ -647,7 +649,7 @@ def _zenodo_download_one(
     paths: list[str | None] = [None] * n
     with tempfile.TemporaryDirectory() as temppath:
         # --- the whole-record archive, when no file was filtered out ---
-        used_bulk = target is None  # every file was omitted: nothing to fetch
+        used_bulk = target == ""  # every file was omitted: nothing to fetch
         if n == len(files_list) and not any(unzippable) and not any(omitted):
             zip_url = f"https://zenodo.org/api/records/{zid}/files-archive"
             zip_path = os.path.join(temppath, "archive.zip")
@@ -721,7 +723,7 @@ def _zenodo_download_one(
     )
 
     # --- check what actually reached the disk ----
-    if target is not None:
+    if target != "":
         files = _zenodo_verify_downloads(files, target)
     else:
         files = files.assign(
@@ -742,7 +744,7 @@ def _zenodo_download_one(
             stacklevel=3,
         )
 
-    folder = None if target is None else _r_basename(target)
+    folder = None if target == "" else _r_basename(target)
     files["folder"] = pd.Series([folder] * len(files), dtype="string")
     files["zenodo_id"] = pd.Series([str(zid)] * len(files), dtype="string")
     return files[

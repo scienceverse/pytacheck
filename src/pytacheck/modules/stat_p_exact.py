@@ -20,6 +20,52 @@ _APA_REF = (
 
 # remove false positive "*p < .05"
 _STAR_PATTERN = r"\*\s*[pP]\s*<\s*0?\.0+[15]"
+_STAR_P = r"^[pP]\s*<\s*0?\.0+[15]"
+# comparators of an exact value ("==" is a typo of "=", not imprecise, U127)
+_EXACT = ("=", "==")
+# comparators that report a value of zero ("p < .000" is zero too, U127)
+_ZERO_COMPS = ("=", "==", "<", "<=", "=<", "≤")
+
+
+def _zero_literal(text: Any, comp: Any) -> bool:
+    """Whether the number after the comparator is written as zero (".000", "0.0 x 10^-3").
+
+    A value that only underflows to 0 ("p < 1.0 x 10^-400") is not reported as zero.
+    """
+    if not isinstance(text, str) or not isinstance(comp, str) or comp not in text:
+        return False
+    rest = text.split(comp, 1)[1].lstrip()
+    mantissa = ""
+    for ch in rest:
+        if not (ch.isdigit() or ch == "."):
+            break
+        mantissa += ch
+    return any(ch.isdigit() for ch in mantissa) and not any(ch in "123456789" for ch in mantissa)
+
+
+def _starred(p: pd.DataFrame) -> np.ndarray:
+    """Which p-values are a table note's "* p < .05" (a star right before them).
+
+    metacheck tests the star pattern on the whole sentence, so one "* p < .05"
+    note hid every imprecise p-value of that sentence (U127). Each match is
+    found in its sentence in order (matches of a sentence do not overlap).
+    """
+    from pytacheck._r.regex import grepl
+
+    out = np.zeros(len(p), dtype=bool)
+    cursor: dict[tuple[Any, ...], int] = {}
+    cols = [p[c].tolist() for c in ("paper_id", "text_id", "text", "expanded")]
+    for i, (pid, tid, txt, exp) in enumerate(zip(*cols, strict=True)):
+        if not isinstance(txt, str) or not isinstance(exp, str):
+            continue
+        key = (pid, tid, exp)
+        start = exp.find(txt, cursor.get(key, 0))
+        if start < 0:  # not found as is: metacheck's test of the whole sentence
+            out[i] = bool(grepl(_STAR_PATTERN, exp))
+            continue
+        cursor[key] = start + len(txt)
+        out[i] = bool(grepl(r"\*\s*$", exp[:start])) and bool(grepl(_STAR_P, txt))
+    return out
 
 _REPORT_TEXT = (
     "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, "
@@ -82,7 +128,6 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
 )
 def stat_p_exact(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/stat_p_exact.R::stat_p_exact()``."""
-    from pytacheck._r.regex import grepl
     from pytacheck.text.expand import expand_text
     from pytacheck.text.extract import extract_p_values
 
@@ -99,17 +144,26 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     # Flag imprecise p-values. R's three-valued logic never leaves an NA here:
     # an NA p_value is caught by is.na(), an NA p_comp by !%in%.
     is_lt = comp.eq("<").fillna(False).to_numpy(dtype=bool)
+    is_zero = ~value_na & (value.to_numpy() == 0)
     imprecise = is_lt & (value.to_numpy() > 0.001)
-    imprecise = imprecise | ~comp.isin(["=", "<"]).to_numpy(dtype=bool)
+    imprecise = imprecise | ~comp.isin([*_EXACT, "<"]).to_numpy(dtype=bool)
     imprecise = imprecise | value_na
 
-    # remove false positive "*p < .05"
-    stars = np.asarray(grepl(_STAR_PATTERN, p["expanded"].tolist()), dtype=bool)
-    imprecise = imprecise & ~stars
+    # remove false positive "*p < .05" (table notes)
+    imprecise = imprecise & ~_starred(p)
 
-    # Flag p-values reported as exactly zero (e.g., p = .000, p = 0.00)
-    is_eq = comp.eq("=").astype("boolean").array
-    zero = is_eq & pd.array(~value_na & (value.to_numpy() == 0), dtype="boolean")
+    # Flag p-values reported as zero (e.g., p = .000, p = 0.00, p < .000), which
+    # are not also imprecise. metacheck checks only "=" and the numeric value,
+    # so "p == .000" and "p < .000" were missed and "p = 1.0e-400" (which
+    # underflows) was flagged (U127).
+    in_zero = comp.isin(_ZERO_COMPS).fillna(False).to_numpy(dtype=bool)
+    written_zero = np.array(
+        [_zero_literal(t, c) for t, c in zip(p["text"].tolist(), comp.tolist(), strict=True)],
+        dtype=bool,
+    )
+    is_zero = in_zero & is_zero & written_zero
+    zero = pd.array(is_zero, dtype="boolean")
+    imprecise = imprecise & ~is_zero
 
     p = p.copy()
     p["imprecise"] = pd.Series(imprecise, index=p.index, dtype="boolean")
@@ -118,12 +172,19 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     imp_rows = imprecise
     zero_rows = np.asarray(p["zero"].fillna(False), dtype=bool)
 
+    # one report row per p-value text and sentence: the match text can keep
+    # trailing whitespace, so metacheck's unique() listed the same p-value twice (U127)
     cols = ["text", "expanded"]
-    report_table = p.loc[imp_rows, cols].drop_duplicates().reset_index(drop=True)
-    report_table.columns = ["P-Value", "Text"]
 
-    zero_table = p.loc[zero_rows, cols].drop_duplicates().reset_index(drop=True)
-    zero_table.columns = ["P-Value", "Text"]
+    def listed(rows: np.ndarray) -> pd.DataFrame:
+        sub = p.loc[rows, cols]
+        dup = sub.assign(text=sub["text"].str.strip()).duplicated().to_numpy(dtype=bool)
+        out = sub.loc[~dup].reset_index(drop=True)
+        out.columns = ["P-Value", "Text"]
+        return out
+
+    report_table = listed(imp_rows)
+    zero_table = listed(zero_rows)
 
     # summary_table ----
     imprecise_summary = count(p.loc[imp_rows], "paper_id", name="n_imprecise")

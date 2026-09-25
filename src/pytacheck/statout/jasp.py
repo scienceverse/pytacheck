@@ -13,9 +13,10 @@ Here they follow the convention of :mod:`pytacheck.datacheck` (which reads a
 * ``"labels"``: R's named vector ``c(label = code)`` as a list of
   ``(label, code)`` pairs (codes are floats, in R's order; a repeated label or
   code keeps every entry, as the named vector does);
-* ``"label"``: the variable label. As in R, where ``attr(x, "label")``
-  partially matches ``"labels"``, a value-labelled column without a variable
-  label of its own gets its value labels here too (an upstream quirk).
+* ``"label"``: the variable label, when the column has one. (In R,
+  ``attr(x, "label")`` partially matches ``"labels"``, so a value-labelled
+  column without a variable label of its own got its value labels as its
+  variable label; UPSTREAM_ISSUES U145.)
 
 Columns with neither attribute have no entry.
 
@@ -37,7 +38,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from pytacheck._r import grepl, regextract_all, sub
-from pytacheck.statout.spv import _as_numeric, _raw_to_char, _unzip, _write_lines
+from pytacheck.statout.spv import _as_numeric, _unzip, _write_lines
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -163,19 +164,18 @@ def _check_field_names(names: list[Any]) -> None:
 
 
 def _column_attrs(labels: list[tuple[Any, float]] | None, label: Any) -> dict[str, Any]:
-    """The ``labels``/``label`` attributes R ends up attaching to one column.
+    """The ``labels`` (value labels) and ``label`` (variable label) of one column.
 
-    R re-attaches ``attr(cols[[j]], "label")``, and ``attr()`` partially
-    matches ``"labels"``: a value-labelled column without its own variable
-    label therefore gets ``label`` = its value-label vector (upstream quirk).
+    Only a label the column has is set: R re-attaches ``attr(cols[[j]],
+    "label")``, which partially matches ``"labels"``, so a value-labelled
+    column without a variable label got its value labels as its variable
+    label (UPSTREAM_ISSUES U145).
     """
     out: dict[str, Any] = {}
     if labels:
         out["labels"] = labels
     if label is not None:
         out["label"] = label
-    elif labels:
-        out["label"] = list(labels)
     return out
 
 
@@ -184,27 +184,19 @@ def _frame_from_columns(
 ) -> pd.DataFrame:
     """``setNames(as.data.frame(cols), names)`` and the re-attached attributes.
 
-    Columns of unequal length follow ``data.frame()``: a shorter column is
-    recycled only when its length divides the longest one and it carries no
-    attributes (``is.vector()``); otherwise R stops with "arguments imply
-    differing number of rows". Attributes go to ``df.attrs["col_attrs"]``.
+    A column shorter than the others (a truncated data file) is padded with
+    missing values. R's ``data.frame()`` recycles it when its length divides
+    the longest one and it has no attributes, repeating values the file does
+    not hold, and otherwise stops ("arguments imply differing number of
+    rows"; UPSTREAM_ISSUES U145). Attributes go to ``df.attrs["col_attrs"]``.
     """
-    import numpy as np
     import pandas as pd
 
     attrs = col_attrs if col_attrs is not None else [{} for _ in cols]
     lengths = [len(c) for c in cols]
     if lengths and len(set(lengths)) > 1:
         n = max(lengths)
-        if any(k < n and (k == 0 or n % k or a) for k, a in zip(lengths, attrs, strict=True)):
-            raise ValueError(
-                "arguments imply differing number of rows: "
-                + ", ".join(str(k) for k in dict.fromkeys(lengths))
-            )
-        cols = [
-            c if len(c) == n else pd.array(np.resize(np.asarray(c, dtype=object), n), dtype=c.dtype)
-            for c in cols
-        ]
+        cols = [c if len(c) == n else _pad(c, n) for c in cols]
     df = pd.DataFrame(dict(enumerate(cols))) if cols else pd.DataFrame()
     df.columns = list(names)
     from pytacheck.datacheck._colattrs import ColAttrs
@@ -214,6 +206,19 @@ def _frame_from_columns(
     if kept.any():
         df.attrs["col_attrs"] = kept
     return df
+
+
+def _pad(c: Any, n: int) -> Any:
+    """Column *c* padded with missing values to length *n* (same dtype where it can)."""
+    import numpy as np
+    import pandas as pd
+
+    dtype = getattr(c, "dtype", None)
+    if isinstance(dtype, np.dtype) and dtype.kind == "f":
+        return np.concatenate([np.asarray(c, dtype=dtype), np.full(n - len(c), np.nan)])
+    if isinstance(dtype, np.dtype):
+        dtype = {"i": "Int64", "u": "Int64", "b": "boolean"}.get(dtype.kind, object)
+    return pd.array([*list(c), *([None] * (n - len(c)))], dtype=dtype)
 
 
 def _read_int32s(fh: Any, n: int) -> list[int | None]:
@@ -513,10 +518,9 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
         names: list[Any] = []
         col_attrs: list[dict[str, Any]] = []
         for cid, name, ctype, _ in cmeta:
-            if ctype is None:
-                # is_scale <- tolower(NA) == "scale" is NA; `if (!is_scale)` stops
-                raise ValueError("missing value where TRUE/FALSE needed")
-            is_scale = _r_chr(ctype).lower() == "scale"  # type: ignore[union-attr]
+            # a column without a type is read like a nominal one (the binary
+            # format's default); R stops: is_scale is NA (UPSTREAM_ISSUES U145)
+            is_scale = ctype is not None and _r_chr(ctype).lower() == "scale"  # type: ignore[union-attr]
             dblc = f"Column_{int(cid)}_DBL"
             intc = f"Column_{int(cid)}_INT"
             phys_col = dblc if is_scale and dblc in phys else intc if intc in phys else dblc
@@ -650,29 +654,15 @@ def export_jasp_html(
 
 
 def _url_decode(url: str) -> str:
-    """R ``utils::URLdecode()`` (``%XX`` escapes only; ``+`` is kept).
+    """Decode ``%XX`` escapes (``+`` is kept, as in R's ``utils::URLdecode()``).
 
-    As in R, an escape whose two characters are missing or do not form a byte
-    decodes to a NUL byte (R's ``as.raw()`` of an out-of-range value); trailing
-    NULs are dropped by ``rawToChar()`` and an embedded one is an error.
+    A malformed escape (``%zz``, a trailing ``%``) is kept as written. R turns
+    it into a NUL byte, and an embedded NUL fails the whole
+    ``export_*_html()`` (UPSTREAM_ISSUES U148).
     """
-    b = url.encode("utf-8", errors="surrogateescape")
-    out = bytearray()
-    i = 0
-    while i < len(b):
-        if b[i] != 0x25:
-            out.append(b[i])
-            i += 1
-            continue
-        y = [b[i + k] if i + k < len(b) else None for k in (1, 2)]
-        val = None
-        if None not in y:
-            y = [c - 32 if c > 96 else c for c in y]  # type: ignore[operator]
-            y = [c - 7 if c > 57 else c for c in y]  # type: ignore[operator]
-            val = (y[0] - 48) * 16 + (y[1] - 48)  # type: ignore[operator]
-        out.append(val if val is not None and 0 <= val <= 255 else 0)
-        i += 3
-    return _raw_to_char(bytes(out), errors="surrogateescape")
+    from urllib.parse import unquote
+
+    return unquote(url, errors="surrogateescape")
 
 
 def _file_ext(x: str) -> str:
@@ -685,8 +675,9 @@ def _html_inline_images(html: str, root: str) -> str:
     """Port of R/jasp.R::.html_inline_images() (also R/omv.R).
 
     Inlines each distinct ``src="....png|jpg|jpeg|gif"`` that resolves to a file
-    under ``root`` as a base64 ``data:`` URI. As in R, only the first
-    occurrence of each distinct ``src`` is replaced.
+    under ``root`` as a base64 ``data:`` URI, wherever it occurs (R's
+    ``sub(fixed = TRUE)`` replaces only the first occurrence, so a plot shown
+    twice kept a broken link the second time; UPSTREAM_ISSUES U148).
     """
     srcs = regextract_all(r'src="([^"]+\.(png|jpe?g|gif))"', html, ignore_case=True)
     for src in dict.fromkeys(srcs):
@@ -701,5 +692,5 @@ def _html_inline_images(html: str, root: str) -> str:
         data_uri = f"data:{mime};base64," + base64.b64encode(Path(img_path).read_bytes()).decode(
             "ascii"
         )
-        html = html.replace(src, f'src="{data_uri}"', 1)
+        html = html.replace(src, f'src="{data_uri}"')
     return html

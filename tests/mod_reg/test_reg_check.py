@@ -290,16 +290,14 @@ def test_each_prereg_is_compared_with_its_own_paper() -> None:
 
 def test_odd_judgements() -> None:
     mo = run_reg(papers=[{"url": ["https://osf.io/5xysn"], "id": "p_odd"}], fake="odd")
-    # an NA judgement is left out of the counts and reported as such (R: every
-    # count is NA -- "flagged NA potential deviationNA" -- and na_replace
-    # turns it into 0, U120)
+    # an NA judgement is left out of the counts (R: every count is NA --
+    # "flagged NA potential deviationNA" -- and na_replace turns it into 0, U120)
     assert mo.summary_table["regcheck_deviations"].tolist() == [1]
     assert mo.summary_table["regcheck_consistent"].tolist() == [0]
     assert mo.summary_table["regcheck_unclear"].tolist() == [1]
     assert mo.summary_text == (
         "RegCheck compared the paper with 1 preregistration on 4 dimensions, and flagged "
-        "1 potential deviation (1 dimension not specified in the preregistration). "
-        "RegCheck gave no judgement for 1 dimension."
+        "1 potential deviation (1 dimension not specified in the preregistration)."
     )
     judgement = next(b for b in mo.report if isinstance(b, ReportTable)).data
     assert judgement["judgement"].tolist()[:1] == ["deviation"]

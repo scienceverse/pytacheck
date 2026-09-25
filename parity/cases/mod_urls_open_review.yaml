@@ -163,7 +163,6 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "open_practices.review.materials_only"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper":
@@ -300,7 +299,6 @@
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
 - "id": "open_practices.review.single_0956797615569889"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper":

@@ -279,10 +279,75 @@ def test_paper_order_follows_paper_list(fixtures_dir) -> None:
     assert out.summary_table["paper_id"].tolist() == ids
 
 
-def test_nan_eta_errors_like_r() -> None:
-    # 0/0 implied eta: R's `if (any(NA))` fails
-    with pytest.raises(ModuleError, match="missing value where TRUE/FALSE needed"):
-        _run("F(0, 0) = 1.00, ηp² = 0.50.")
+def test_nan_eta_is_indeterminate() -> None:
+    # U126: 0/0 implied eta; metacheck's `if (any(NA))` stops the module
+    out = _run("F(0, 0) = 1.00, ηp² = 0.50.")
+    assert out.table["eta_coherence"].tolist() == ["indeterminate"]
+    assert out.table["eta_coherence_note"].tolist() == [
+        "The implied effect size is undefined for these degrees of freedom."
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "coherence", "note"),
+    [
+        # U126: "partial η2" is a partial eta-squared (metacheck: "Eta-squared reported")
+        (
+            "F(1, 20) = 5.00, p = .04, partial η2 = .20.",
+            "match_under_assumptions",
+            "Match under partial eta-squared formula from F and dfs.",
+        ),
+        # U126: d, r, beta next to an F-test are not eta-squared
+        (
+            "F(1, 20) = 5.00, p = .04, d = 0.9.",
+            "indeterminate",
+            "Effect size reported but not verifiable from F and degrees of freedom alone.",
+        ),
+        (
+            "F(1, 20) = 5.00, p = .04, Cohen's d = 0.9.",
+            "indeterminate",
+            "Effect size reported but not verifiable from F and degrees of freedom alone.",
+        ),
+        # U126: a bound is checked as a bound (implied .0002 < .001)
+        (
+            "F(1, 491) = 0.10, ηp² < .001.",
+            "match_under_assumptions",
+            "Match under partial eta-squared formula from F and dfs.",
+        ),
+        # U125: the note on both eta-squared and partial eta-squared is kept
+        (
+            "F(1, 20) = 5.00, η2 = .15; ηp2 = .20.",
+            "match_under_assumptions",
+            "Match under partial eta-squared formula from F and dfs. Both eta-squared and "
+            "partial eta-squared reported; coherence evaluated only for partial eta-squared.",
+        ),
+    ],
+)
+def test_eta_classification(text: str, coherence: str, note: str) -> None:
+    out = _run(text)
+    assert out.table["eta_coherence"].tolist() == [coherence]
+    assert out.table["eta_coherence_note"].tolist() == [note]
+
+
+@pytest.mark.parametrize(
+    ("text", "coherence"),
+    [
+        # U126: metacheck checks "d > 0.4" as d = 0.4 (no match); the implied dz is .45
+        ("t(40) = 2.9, p = .006, d > 0.4.", "match_under_assumptions"),
+        ("t(40) = 2.9, p = .006, d < 0.2.", "no_match"),
+        ("t(40) = 2.9, p = .006, d < -0.4.", "match_under_assumptions"),
+    ],
+)
+def test_d_bounds(text: str, coherence: str) -> None:
+    assert _run(text).table["d_coherence"].tolist() == [coherence]
+
+
+def test_stat_check_paper_list_summary_has_ids() -> None:
+    # U124: metacheck's data.frame(paper_id = paperlist$paper_id) has no columns
+    from pytacheck.modules.stat_check import _paper_ids
+
+    papers = pc.PaperList([pc.test_paper(["No stats."]), pc.test_paper(["None either."])])
+    assert _paper_ids(papers)["paper_id"].tolist() == [p.paper_id for p in papers]
 
 
 def test_does_not_mutate_input() -> None:
@@ -319,16 +384,22 @@ def test_parsers() -> None:
     assert ses._parse_t_stats("t(23) = 2.73") == [("t(23) = 2.73", 2.73, 23.0)]
     assert ses._parse_t_stats("t(23) < 2.73") == []
     assert ses._parse_f_stats("F(1, 20) = -4.1") == [("F(1, 20) = -4.1", -4.1, 1.0, 20.0)]
-    assert ses._parse_d_stats("Cohen’s  d = .5; dz = 1e-1; g = 2") == [
-        ("cohen’s d", 0.5, "Cohen’s  d = .5"),
-        ("dz", 0.1, "dz = 1e-1"),
+    assert ses._parse_d_stats("Cohen’s  d = .5; dz = 1e-1; g = 2; d > 0.4") == [
+        ("cohen’s d", 0.5, "Cohen’s  d = .5", "="),
+        ("dz", 0.1, "dz = 1e-1", "="),
+        ("d", 0.4, "d > 0.4", ">"),
     ]
-    assert ses._parse_eta_stats("ηp² = .17; η2 = .1; f = .3; ω² = 0; BF10 = 3; xyz") == [
-        ("partial_eta_squared", 0.17, "ηp² = .17"),
-        ("eta_squared", 0.1, "η2 = .1"),
-        ("cohens_f", 0.3, "f = .3"),
-        ("non_checkable", 0.0, "ω² = 0"),
-        ("non_checkable", 3.0, "BF10 = 3"),
+    assert ses._parse_eta_stats("ηp² = .17; η2 = .1; f = .3; ω² = 0; BF10 = 3; xyz; d = 1") == [
+        ("partial_eta_squared", 0.17, "ηp² = .17", "="),
+        ("eta_squared", 0.1, "η2 = .1", "="),
+        ("cohens_f", 0.3, "f = .3", "="),
+        ("non_checkable", 0.0, "ω² = 0", "="),
+        ("non_checkable", 3.0, "BF10 = 3", "="),
+        ("non_checkable", 1.0, "d = 1", "="),  # U126: metacheck says eta_squared
+    ]
+    # U126: "partial η2" in the sentence
+    assert ses._parse_eta_stats("η2 = .2", "F(1, 20) = 5, partial η2 = .2.") == [
+        ("partial_eta_squared", 0.2, "η2 = .2", "=")
     ]
 
 

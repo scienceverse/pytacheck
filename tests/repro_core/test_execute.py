@@ -304,7 +304,17 @@ def test_install_deps_main_library_skip(rscript: str, tmp_path: Path) -> None:
     deps = pd.DataFrame({"package": ["stats"], "source": ["cran"], "ref": [None]})
     out = repro_install_deps(deps, tmp_path / "lib", cran_to_main_lib=True)
     assert out["installed"].tolist() == [True]
-    assert out.columns.tolist() == ["package", "source", "installed", "message", "via_archive"]
+    # the category column is there (NA) even when nothing was installed (R's
+    # early "already installed" row has none, U135)
+    assert out.columns.tolist() == [
+        "package",
+        "source",
+        "installed",
+        "message",
+        "via_archive",
+        "category",
+    ]
+    assert out["category"].isna().all()
 
 
 def test_install_deps_archive_retry(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

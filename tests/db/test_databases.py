@@ -155,7 +155,8 @@ def test_rw_update() -> None:
     assert re.search(r"retractionwatch\.json\.gz$", str(path))
     assert path.exists()
     rw = retractionwatch.retractionwatch()
-    assert rw["doi"].tolist() == ["10.1234/abc", "10.1016/j.jml.2012.11.001", "", " 10.7777/space "]
+    # U15: no blank DOI (it would match every reference without one); spaces trimmed
+    assert rw["doi"].tolist() == ["10.1234/abc", "10.1016/j.jml.2012.11.001", "10.7777/space"]
     assert rw["retractionwatch"].tolist()[:2] == [
         "Retraction;Correction",
         "Expression of concern;Retraction",

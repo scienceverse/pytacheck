@@ -34,7 +34,7 @@ import numpy as np
 import pandas as pd
 
 from pytacheck._r.base import trimws
-from pytacheck._r.regex import grepl, gsub, regexec, regextract, sub
+from pytacheck._r.regex import grepl, gsub, regextract, sub
 from pytacheck.datacheck._columns_codebook import (
     _extract_json_codebook,
     _extract_markdown_codebook,
@@ -979,7 +979,9 @@ def _as_int_str(s: str) -> int | None:
     return int(v)
 
 
-def _expand_ranges(cb: pd.DataFrame, keep_names: set[str] | frozenset[str] = frozenset()) -> pd.DataFrame:
+def _expand_ranges(
+    cb: pd.DataFrame, keep_names: set[str] | frozenset[str] = frozenset()
+) -> pd.DataFrame:
     """Expand range notation ("V1-V10") into one codebook row per variable.
 
     A range whose own normalised name is in *keep_names* (a data column is

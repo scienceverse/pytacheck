@@ -137,6 +137,12 @@ def _norm_value_str(s: str) -> tuple[float | None, int, str]:
             break
     dm = regextract(r"\.[0-9]+", s)
     dec = len(dm) - 1 if dm is not None else 0
+    # the decimals of the number, not of its mantissa: 1.5e-05 is written to
+    # 6 decimals (R counts 1, so its tolerance of 0.05 matched any output
+    # value that rounds to 0.0; UPSTREAM_ISSUES U143)
+    em = regextract(r"[eE][+-]?[0-9]+$", s)
+    if em is not None:
+        dec = max(0, dec - int(em[1:]))
     if s.startswith("-."):
         s2 = "-0." + s[2:]
     elif s.startswith("."):
@@ -399,8 +405,7 @@ def _recompose_eq(eq: Any) -> list[dict[str, Any]]:
     if eq is None:
         return []
     if not isinstance(eq, pd.DataFrame):
-        # R: nrow() of a non-data-frame is NULL, and `FALSE || logical(0)` is NA
-        raise ValueError("missing value where TRUE/FALSE needed")
+        raise TypeError("the eq table must be a data frame")
     n = len(eq)
     if n == 0:
         return []
@@ -499,14 +504,10 @@ class _Sites:
     """The candidate output SITES (R's ``by_site`` list), with match indexes.
 
     ``rows[s]`` are row positions (into the kept output rows) of site ``s``;
-    ``val``/``fam``/``sf``/``an``/``rl`` are the kept rows' columns.
-
-    ``null_sites`` are the sites R reads back as ``NULL`` (``by_site[[s]]``
-    of a site NAMED ``NA`` -- an NA test_id next to a jamovi residuals row --
-    or named ``""`` -- an empty test_id): they never match, and ``val_in()``
-    on them errors for every non-censored component (``round(NULL)``).
-    ``empty_sites`` (named ``""``) additionally make ``used_sites[[""]]``
-    error in the evidence regrouping's site search.
+    ``val``/``fam``/``sf``/``an``/``rl`` are the kept rows' columns. A site
+    named ``""`` is a site like any other, and a value that cannot be compared
+    (``Inf``) simply does not match; in R such sites and values make
+    ``val_in()`` error and the whole call fail (UPSTREAM_ISSUES U142).
     """
 
     def __init__(
@@ -518,20 +519,15 @@ class _Sites:
         sf: list[Any],
         an: list[Any],
         rl: list[Any],
-        null_sites: Iterable[int] = (),
-        empty_sites: Iterable[int] = (),
     ) -> None:
         self.names = names
-        self.null_sites = sorted(set(null_sites))
-        self.empty_sites = frozenset(empty_sites)
-        self.rows = [[] if s in self.null_sites else r for s, r in enumerate(rows)]
+        self.rows = rows
         self.val = val
         self.fam = fam
         self.sf = sf
         self.an = an
         self.rl = rl
         self._cache: dict[tuple[Any, ...], np.ndarray] = {}
-        self._err_cache: dict[tuple[Any, ...], np.ndarray | None] = {}
         self._flat: dict[str | None, tuple[list[float], np.ndarray]] = {}
         self._rounded: dict[tuple[str | None, int], np.ndarray] = {}
         self._has: dict[str, np.ndarray] = {}
@@ -587,16 +583,6 @@ class _Sites:
             out[site[hit]] = True
         return out
 
-    def _nan(self, fam: str | None, dec: int, value: float) -> np.ndarray:
-        """Sites where ``abs(round(cell, dec) - value)`` is NaN (Inf - Inf)."""
-        rv, site = self._rounded_of(fam, dec)
-        out = np.zeros(len(self.names), dtype=bool)
-        if len(rv):
-            with np.errstate(invalid="ignore"):
-                bad = np.isnan(rv - value)
-            out[site[bad]] = True
-        return out
-
     def _bounds(self, fam: str | None) -> tuple[np.ndarray, np.ndarray]:
         got = self._minmax.get(fam)
         if got is None:
@@ -634,80 +620,18 @@ class _Sites:
         self._cache[key] = got
         return got
 
-    def errors(self, comp: Mapping[str, Any]) -> np.ndarray | None:
-        """Per site, the error R's ``val_in(by_site[[s]], comp)`` raises (0: none).
-
-        ``_ERR_NA``: no match and an ``Inf - Inf`` NaN comparison
-        (``if (NA)``); ``_ERR_NULL``: a non-censored component against a
-        NULL site. ``None`` when no site errors (the common case).
-        """
-        key = self._key(comp)
-        if key in self._err_cache:
-            return self._err_cache[key]
-        fam, value, dec, censored = key
-        err: np.ndarray | None = None
-        if censored == "":
-            if math.isinf(value):
-                nan = self._nan(fam, dec, value)
-                fallback = _FALLBACK_FAMILY.get(fam) if fam is not None else None
-                if fallback is not None:
-                    nan = nan | (~self.has_family(fam) & self._nan(fallback, dec, value))
-                nan &= ~self.match(comp)
-                if nan.any():
-                    err = np.where(nan, _ERR_NA, 0).astype(np.int8)
-            if self.null_sites:
-                if err is None:
-                    err = np.zeros(len(self.names), dtype=np.int8)
-                err[self.null_sites] = _ERR_NULL
-        self._err_cache[key] = err
-        return err
-
-    def raise_at(self, comp: Mapping[str, Any], s: int) -> None:
-        """Raise R's error if ``val_in(by_site[[s]], comp)`` errors."""
-        err = self.errors(comp)
-        if err is not None and err[s]:
-            raise RuntimeError(_ERRORS[int(err[s])])
-
     def best_site_for(
         self, comp: Mapping[str, Any], used: set[int], exclude_used: bool = True
     ) -> int | None:
-        """The first site (in ``by_site`` order), not already used, that matches.
-
-        R's ``best_site_for(comp, exclude_used)``: the loop stops at the first
-        match, so a site that errors is only reached before it.
-        """
-        hits = self.match(comp)
-        err = self.errors(comp)
-        if err is None and not (exclude_used and self.empty_sites):
-            for s in np.flatnonzero(hits).tolist():
-                if not (exclude_used and s in used):
-                    return int(s)
-            return None
-        for s in range(len(self.names)):
-            if exclude_used and s in self.empty_sites:
-                raise RuntimeError(_ERR_EMPTY_NAME)
-            if exclude_used and s in used:
-                continue
-            if err is not None and err[s]:
-                raise RuntimeError(_ERRORS[int(err[s])])
-            if hits[s]:
-                return s
+        """The first site (in ``by_site`` order), not already used, that matches."""
+        for s in np.flatnonzero(self.match(comp)).tolist():
+            if not (exclude_used and s in used):
+                return int(s)
         return None
 
     def count(self, comps: Sequence[Mapping[str, Any]]) -> tuple[list[np.ndarray], np.ndarray]:
-        """Per component match vectors, and the per-site count of matches.
-
-        Raises R's error when any ``val_in()`` of the scoring loop (every
-        site, every component) errors -- the first one in R's site-major
-        order.
-        """
+        """Per component match vectors, and the per-site count of matches."""
         matches = [self.match(c) for c in comps]
-        errs = [self.errors(c) for c in comps]
-        if any(e is not None and e.any() for e in errs):
-            first = min(int(np.flatnonzero(e)[0]) for e in errs if e is not None and e.any())
-            for e in errs:
-                if e is not None and e[first]:
-                    raise RuntimeError(_ERRORS[int(e[first])])
         counts = np.zeros(len(self.names), dtype=np.int64)
         for m in matches:
             counts += m
@@ -715,13 +639,6 @@ class _Sites:
 
 
 _FALLBACK_FAMILY = {"beta": "b", "d": "b", "df1": "df", "df2": "df"}
-_ERR_NA = 1
-_ERR_NULL = 2
-_ERR_EMPTY_NAME = "attempt to use zero-length variable name"
-_ERRORS = {
-    _ERR_NA: "missing value where TRUE/FALSE needed",
-    _ERR_NULL: "non-numeric argument to mathematical function",
-}
 
 
 def _val_in(sites: _Sites, s: int, comp: Mapping[str, Any]) -> bool:
@@ -732,9 +649,8 @@ def _val_in(sites: _Sites, s: int, comp: Mapping[str, Any]) -> bool:
     to the reported decimals, equals it -- with a same-site fallback to the
     generic ``b`` family for ``beta``/``d`` and to ``df`` for ``df1``/``df2``
     when the site has no cell of the reported family. An untyped component
-    matches any value. Raises R's error where ``val_in()`` errors.
+    matches any value.
     """
-    sites.raise_at(comp, s)
     return bool(sites.match(comp)[s])
 
 
@@ -781,11 +697,6 @@ def _sites_share_variable(rl_a: Any, rl_b: Any) -> bool | None:
 # ---------------------------------------------------------------------------
 
 
-def _comp_identity(c: Mapping[str, Any]) -> tuple[Any, ...]:
-    """What R's ``match(list, list)`` compares (the deparsed element)."""
-    return tuple((k, _scalar(v)) for k, v in c.items())
-
-
 def _regroup_by_evidence(
     tests: list[dict[str, Any]],
     by_site: _Sites,
@@ -804,7 +715,9 @@ def _regroup_by_evidence(
     group whose site shares no ``row_label`` token with its own.
 
     Tests without anchor tags (the ``.recompose_eq()`` path, table tests)
-    are left untouched and appended at the end, as in R.
+    are left untouched and appended at the end, as in R, and so are tests
+    without a ``text_id`` (no sentence to pool them with): R's ``split()``
+    drops those, losing the tests (UPSTREAM_ISSUES U142).
     """
     if not tests:
         return tests
@@ -815,13 +728,16 @@ def _regroup_by_evidence(
         comps = t.get("components") or []
         return len(comps) > 0 and all(c.get("is_anchor") is not None for c in comps)
 
-    has_tags = [tagged(t) for t in tests]
+    def sentence_of(t: Mapping[str, Any]) -> str | None:
+        return None if _is_null_id(t.get("text_id")) else _chr(t.get("text_id"))
+
+    has_tags = [tagged(t) and sentence_of(t) is not None for t in tests]
     if not any(has_tags):
         return tests
     taggable = [t for t, h in zip(tests, has_tags, strict=True) if h]
     untouched = [t for t, h in zip(tests, has_tags, strict=True) if not h]
 
-    tids = [None if _is_null_id(t.get("text_id")) else _chr(t.get("text_id")) for t in taggable]
+    tids = [sentence_of(t) for t in taggable]
     used_sites: set[int] = set()
 
     def best_site_for(comp: Mapping[str, Any], exclude_used: bool = False) -> int | None:
@@ -841,11 +757,10 @@ def _regroup_by_evidence(
         orig_test: list[int] = []
         for ti, t in enumerate(grp):
             orig_test.extend([ti] * len(t["components"]))
-        # match(g, pool): the FIRST pool element equal to each component
-        first_of: dict[tuple[Any, ...], int] = {}
-        pool_match: list[int] = []
-        for j, c in enumerate(pool):
-            pool_match.append(first_of.setdefault(_comp_identity(c), j))
+        # each component is itself: R's match(g, pool) compares the deparsed
+        # components, so a duplicated extract_tests() row collapsed onto the
+        # first (UPSTREAM_ISSUES U143)
+        pool_match = list(range(len(pool)))
 
         claimed = [False] * len(pool)
         new_groups: list[list[int]] = []
@@ -868,9 +783,8 @@ def _regroup_by_evidence(
                     pj = math.inf if pj is None else pj
                     pa = -math.inf if pa is None else pa
                     gap = abs(pj - pa)
-                    if math.isnan(gap):  # an NA position: if (NA > x) errors
-                        raise RuntimeError("missing value where TRUE/FALSE needed")
-                    if gap > text_proximity:
+                    # an unknown (NA) position is not near (R: if (NA > x) errors)
+                    if math.isnan(gap) or gap > text_proximity:
                         candidate.append(False)
                         continue
                 candidate.append(val_in(by_site, site, c))
@@ -1036,7 +950,6 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
     k_an = [an[i] for i in keep]
     k_rl = [rl[i] for i in keep]
 
-    na_site = False
     tid = _col_values(out_long, "test_id")
     if tid is not None:
         tid_keep = [_chr(tid[i]) for i in keep]
@@ -1071,7 +984,6 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
             resid_pos = [j for j, r in enumerate(is_resid) if r]
             resid_prefix = [tid_keep[j][: -len("_residuals")] for j in resid_pos]  # type: ignore[index]
             name_pos = {nm: i for i, nm in reversed(list(enumerate(names)))}
-            has_na_tid = any(t is None for t in tid_keep)
             rows_of: dict[str, list[int]] = {}
             for j, t in enumerate(tid_keep):
                 if t is not None:
@@ -1082,9 +994,10 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
             for j, p in zip(resid_pos, resid_prefix, strict=True):
                 resid_by_pfx.setdefault(p, []).append(j)  # type: ignore[arg-type]
             for pfx, resid_rows in resid_by_pfx.items():
+                # a row without a test_id is no sibling (R: startsWith(NA, ...)
+                # adds an NA site, whose by_site[[NA]] fails the whole call;
+                # UPSTREAM_ISSUES U142)
                 start = pfx + "_"
-                if has_na_tid:
-                    na_site = True  # startsWith(NA, ...) is NA: an NA sibling
                 # unique(tid_keep[sib_rows]): first-appearance order
                 for sib_tid in (t for t in sib_ids if t.startswith(start)):
                     site_rows = rows_of[sib_tid] + resid_rows
@@ -1095,14 +1008,7 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
                         name_pos[sib_tid] = len(names) - 1  # type: ignore[index]
                     else:
                         rows[pos] = site_rows
-    # by_site[[""]] and by_site[[NA]] are NULL in R (see _Sites)
-    empty = [i for i, nm in enumerate(names) if nm == ""]
-    null = list(empty)
-    if na_site:
-        names.append("\x00NA")
-        rows.append([])
-        null.append(len(names) - 1)
-    return _Sites(names, rows, k_val, k_fam, k_sf, k_an, k_rl, null, empty)
+    return _Sites(names, rows, k_val, k_fam, k_sf, k_an, k_rl)
 
 
 def match_reported_output(
@@ -1150,8 +1056,15 @@ def match_reported_output(
         ``n_missing``, ``pct_found``) is in ``df.attrs["summary"]`` (R's
         ``attr(x, "summary")``).
     """
-    from pytacheck.papers import Paper
+    from pytacheck.papers import Paper, PaperList
 
+    if isinstance(paper, PaperList):
+        # R fails in .recompose_eq() ("missing value where TRUE/FALSE
+        # needed"); the result rows carry no paper id (UPSTREAM_ISSUES U142)
+        raise TypeError(
+            "match_reported_output() takes one paper (or an extract_tests() or eq "
+            "table): call it for each paper of a paper list"
+        )
     tests: list[dict[str, Any]] | None = None
     if isinstance(paper, pd.DataFrame) and {"test_no", "components"} <= set(paper.columns):
         tests = _tests_from_extract(paper)
@@ -1197,14 +1110,13 @@ def match_reported_output(
     if len(sites) > 0:
         tests = _regroup_by_evidence(tests, sites, _val_in)
 
-    if not tests:
-        # every test was dropped by the regrouping (NA text_id): R's
-        # bind_rows(list()) is a 0x0 tibble and sum(!out$found) is !NULL
-        raise TypeError("invalid argument type")
     rows: dict[str, list[Any]] = {k: [] for k in _RESULT_COLUMNS}
     for tst in tests:
+        # a test without a text_id (an extract_tests() table without the
+        # column) has an NA text_id; R's data.frame(text_id = NULL, ...) fails
+        # the whole call (UPSTREAM_ISSUES U142)
         if _is_null_id(tst.get("text_id")):
-            raise ValueError("arguments imply differing number of rows: 0, 1")
+            tst = {**tst, "text_id": None}
         comps = tst["components"]
         nc = len(comps)
         plausible = tst.get("plausible_split")

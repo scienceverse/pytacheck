@@ -769,9 +769,7 @@ def _chr_first(v: Any) -> str | None:
     return None if e is None else as_character(e)
 
 
-def _bibr12_info(
-    metadata: Any, source: Any, schema_version: str, extraction: Any
-) -> pd.DataFrame:
+def _bibr12_info(metadata: Any, source: Any, schema_version: str, extraction: Any) -> pd.DataFrame:
     """Port of ``R/import-bibr12.R::.bibr12_info()``: the one-row ``info`` table of a 12.x paper.
 
     *extraction* is the export's extraction block (R reads ``$producer`` of

@@ -422,12 +422,13 @@ def test_bibr12_paper_list_with_local_folder() -> None:
     st = mo.summary_table
     assert st["paper_id"].tolist() == papers.names
     # the local folder is attributed to the first paper of the list
-    assert st["repo_n"].tolist() == [2, 0, 0]
+    assert st["repo_n"].tolist() == [2, 1, 0]
     assert st["files_n"].tolist() == [7, 0, 0]
-    # "osf.io/abcd" is not a valid OSF id: its row has no osf_type, so the
-    # module drops it with the other non-node rows (no error, no repository)
-    assert len(mo["gated_repos"]) == 0
-    assert "https://osf.io/abcd" not in set(mo.table["repo_url"])
+    # "osf.io/abcd" is not a valid OSF id: its repository is kept and flagged
+    # (R drops it silently beside the valid OSF link, U122)
+    gated = mo["gated_repos"]
+    assert gated["repo_url"].tolist() == ["https://osf.io/abcd"]
+    assert gated["repo_error"].tolist() == ["invalid or inaccessible OSF link"]
 
 
 def test_green_tidy_folder() -> None:
@@ -525,9 +526,71 @@ def test_zip_peek_replaces_the_archive_row() -> None:
     assert "stimuli.zip" in no_peek.table["file_name"].tolist()
 
 
-def test_nameless_file_fails_like_r() -> None:
-    with pytest.raises(pc.ModuleError, match="missing value where TRUE/FALSE needed"):
-        run(tp(["https://zenodo.org/records/5559002"], "p_nameless"))
+def test_nameless_file_is_listed_without_a_naming_check() -> None:
+    # a listed file without a name has no name to check (R's
+    # check_file_naming() fails and the module errors, U122)
+    mo = run(tp(["https://zenodo.org/records/5559002"], "p_nameless"))
+    assert mo.table["file_name"].isna().tolist() == [False, True]
+    assert mo.summary_table["files_unknown"].tolist() == [1]
+    assert mo.summary_table["naming_issues"].tolist() == [0]
+
+
+def test_invalid_osf_link_is_flagged() -> None:
+    # U122: an OSF link OSF does not know is kept and flagged, alone or beside
+    # a valid one (R: a dplyr "'match' requires vector arguments" error, or
+    # dropped silently)
+    for urls, n in (
+        (["https://osf.io/abc"], 1),
+        (["https://osf.io/abc", "https://osf.io/629bx"], 2),
+    ):
+        mo = run(tp(urls, "p_bad"))
+        assert mo.summary_table["repo_n"].tolist() == [n]
+        gated = mo["gated_repos"]
+        assert gated["repo_url"].tolist() == ["https://osf.io/abc"]
+        assert gated["repo_error"].tolist() == ["invalid or inaccessible OSF link"]
+
+
+def test_failed_registration_source_keeps_the_registration() -> None:
+    # U122: following a registration to its source project fails (the source
+    # lookup is not recorded): the registration is reported with the files
+    # listed for it and the error, not "no repositories found"
+    mo = run(tp(["https://osf.io/jqkg7"], "p_reg"))
+    assert mo.traffic_light == "yellow"
+    assert set(mo.table["repo_url"]) == {"https://osf.io/jqkg7"}
+    assert mo.summary_table["files_n"].tolist() == [11]
+    assert mo["gated_repos"]["repo_url"].tolist() == ["https://osf.io/jqkg7"]
+
+
+def test_private_osf_file_rows_are_excluded_per_row() -> None:
+    # U123: a file marked private (public FALSE) is left out wherever it sits
+    # in the listing (R's !isFALSE(public) tests the whole column at once)
+    from pytacheck.modules._repo_check import _osf_files
+
+    info = pd.DataFrame(
+        {
+            "kind": ["file", "file", "folder", "file"],
+            "public": [True, False, None, None],
+            "name": ["a", "private", "dir", "b"],
+        }
+    )
+    assert _osf_files(info)["name"].tolist() == ["a", "b"]
+    assert len(_osf_files(pd.DataFrame({"kind": ["file"], "public": [False]}))) == 0
+
+
+def test_local_archives_are_counted(tmp_path: Path) -> None:
+    # U123: a local file file_category() cannot place takes its type from the
+    # extension, as an online file does: a local .tar.gz/.zip is an archive
+    for name in ("results.tar.gz", "bundle.zip", "notes.txt", "analysis.R"):
+        (tmp_path / name).write_text("x\n", encoding="utf-8")
+    mo = pc.module_run(pc.test_paper(), "repo_check", local_path=str(tmp_path))
+    types = dict(zip(mo.table["file_name"], mo.table["file_type"], strict=True))
+    assert types == {
+        "analysis.R": "code",
+        "bundle.zip": "archive",
+        "notes.txt": "text",
+        "results.tar.gz": "archive",
+    }
+    assert mo.summary_table["files_zip"].tolist() == [2]
 
 
 def test_does_not_mutate_paper() -> None:

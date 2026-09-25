@@ -309,9 +309,15 @@ class Model:
 
 
 def _timeout_default() -> float:
+    """The request timeout: the ``ellmer_timeout_s`` option, else :func:`llm_timeout`.
+
+    ellmer waits 300 s whatever ``llm_timeout()`` says (U20).
+    """
+    from pytacheck.llm.core import llm_timeout
     from pytacheck.utils import get_option
 
-    return float(get_option("ellmer_timeout_s", 5 * 60))
+    value = get_option("ellmer_timeout_s")
+    return float(value) if value is not None else float(llm_timeout())
 
 
 class _Recorder:

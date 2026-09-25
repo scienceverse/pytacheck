@@ -149,7 +149,8 @@ def cases() -> list[dict[str, Any]]:
             "cbc_prev_list(['task', 'scales_mixed', 'conflict'])",
         )
     )
-    # codebook_max_calls = 0: stage 1 stops after the first file with groups
+    # codebook_max_calls = 0: R's stage 1 stops after the first file with groups
+    # (U92; pytacheck lists every file's groups)
     out.append(
         module_case(
             "codebook_check.max_calls_zero",

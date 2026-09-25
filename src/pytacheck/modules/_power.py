@@ -35,7 +35,7 @@ _STRUCTURED_PROMPT = (
 )
 
 _PREFACE = (
-    "Identify and classify power analyses from excerpts of scientific manuscripts. Use null when "
+    "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when "
     "information is missing, do not invent values. Only use 'other' if a value not in the "
     "enumerated options can be identified. There may be no power analysis in the text, or more "
     "than one. If the paragraph only references a power analysis implied to be presented "

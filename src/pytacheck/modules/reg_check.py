@@ -375,7 +375,6 @@ def reg_check(
         raise ValueError(f"arguments imply differing number of rows: {len(paper_col)}, {len(j)}")
     n_dev = _count(j, "yes")
     n_unclear = _count(j, "missing")
-    n_no_judgement = sum(v is None for v in j)
     n_prereg_compared = len(dict.fromkeys(prereg_col))
 
     # summarise(.by = "paper_id"): groups in first-appearance order
@@ -406,12 +405,6 @@ def reg_check(
         f"({n_unclear} dimension{plural(n_unclear)} not specified in the "
         "preregistration)."
     )
-    if n_no_judgement > 0:
-        # say so rather than count them as nothing (UPSTREAM_ISSUES U120)
-        summary_text += (
-            f" RegCheck gave no judgement for {n_no_judgement} "
-            f"dimension{plural(n_no_judgement)}."
-        )
 
     # report ----
     report_intro = f"{summary_text} {_DISCLAIMER}"

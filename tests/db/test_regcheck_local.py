@@ -153,6 +153,22 @@ def test_start_local_docker(monkeypatch: pytest.MonkeyPatch) -> None:
     rl.regcheck_start_local(model="llama3.2")
     assert started["cmd"] == ["/usr/bin/docker", "compose", "up", "--build", "--force-recreate"]
     rl.regcheck_stop_local()
+    # U14: metacheck ignores `port` with Docker; an override file publishes it
+    rl.regcheck_start_local(model="llama3.2", port=8123)
+    assert started["cmd"] == [
+        "/usr/bin/docker",
+        "compose",
+        "-f",
+        "docker-compose.yml",
+        "-f",
+        "docker-compose.port.yml",
+        "up",
+        "--build",
+        "--force-recreate",
+    ]
+    override = rl._regcheck_app_dir() / "docker-compose.port.yml"
+    assert '- "8123:8000"' in override.read_text(encoding="utf-8")
+    rl.regcheck_stop_local()
 
 
 def test_start_local_errors(monkeypatch: pytest.MonkeyPatch) -> None:

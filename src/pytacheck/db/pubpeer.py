@@ -43,13 +43,26 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
 
     Returns one row per DOI (in input order) with ``doi``,
     ``total_comments`` (0 when PubPeer has none), ``url`` and ``users``, or
-    ``None`` when the request fails (e.g. no DOIs).
+    ``None`` when the request fails.
+
+    Differs from metacheck (U14): no DOIs give an empty table, and feedback
+    without an ``id`` or a DOI PubPeer reports twice no longer fail the call
+    (the first feedback for a DOI is used).
     """
     import pandas as pd
 
     from pytacheck import http
 
     values = as_vector(doi)
+    if not values:
+        return pd.DataFrame(
+            {
+                "doi": pd.array([], dtype="string"),
+                "total_comments": pd.array([], dtype="float64"),
+                "url": pd.array([], dtype="string"),
+                "users": pd.array([], dtype="string"),
+            }
+        )
     lower = [None if is_na(v) else str(as_character(v)).lower() for v in values]
     body = _request_body([d for d in lower if d is not None])
 
@@ -70,11 +83,10 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
     if isinstance(feedbacks, dict):
         feedbacks = list(feedbacks.values())
     pp_fb = [_feedback_record(fb) for fb in feedbacks]
-    pp_fb = [r for r in pp_fb if r]
+    # feedback without an id cannot be matched to a DOI
+    pp_fb = [r for r in pp_fb if r and r.get("doi") is not None]
 
     if not pp_fb:
-        if not values:
-            raise ValueError("arguments imply differing number of rows: 0, 1")
         return pd.DataFrame(
             {
                 "doi": pd.array(lower, dtype="string"),
@@ -86,27 +98,30 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
 
     # data.frame(doi = tolower(doi)) |> left_join(pp_fb, by = "doi")
     fb_frame = records_frame(pp_fb)
-    if "doi" not in fb_frame.columns:
-        raise ValueError("Join columns in `y` must be present in the data.")
     fb_cols = [c for c in fb_frame.columns if c != "doi"]
     fb_values = {c: fb_frame[c].tolist() for c in fb_cols}
-    by_doi: dict[Any, list[int]] = {}
-    for i, d in enumerate(fb_frame["doi"].tolist() if "doi" in fb_frame.columns else []):
-        by_doi.setdefault(None if is_na(d) else d, []).append(i)
+    first: dict[Any, int] = {}
+    for i, d in enumerate(fb_frame["doi"].tolist()):
+        first.setdefault(None if is_na(d) else str(d).lower(), i)
     rows: list[dict[str, Any]] = []
     for d in lower:
-        hits = by_doi.get(d, [])
-        if not hits:
-            rows.append({"doi": d})
-        rows.extend({"doi": d, **{c: fb_values[c][i] for c in fb_cols}} for i in hits)
-    if len(rows) != len(values):
-        raise ValueError(f"replacement has {len(values)} rows, data has {len(rows)}")
+        i = first.get(d) if d is not None else None
+        rows.append(
+            {"doi": d} if i is None else {"doi": d, **{c: fb_values[c][i] for c in fb_cols}}
+        )
     for row, original in zip(rows, values, strict=True):
         row["doi"] = None if is_na(original) else original
         for c in fb_cols:
             if c in row and is_na(row[c]):
                 row[c] = None
     out = records_frame(rows, columns=["doi", *fb_cols])
+    for col in ("total_comments", "url", "users"):  # the columns of a result
+        if col not in out.columns:
+            out[col] = pd.array(
+                [None] * len(out), dtype="float64" if col == "total_comments" else "string"
+            )
+    std = ["doi", "total_comments", "url", "users"]
+    out = out.loc[:, std + [c for c in out.columns if c not in std]]
     if "total_comments" in out.columns:
         tc = out["total_comments"]
         if tc.isna().any():

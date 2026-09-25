@@ -65,6 +65,7 @@
         "r": "c(NA, \"http://osf.io\", \"https://osf.io/\", \"osf.io\", \"https://www.osf.io/\", \"pngda\")"
         "py": "[None, \"http://osf.io\", \"https://osf.io/\", \"osf.io\", \"https://www.osf.io/\", \"pngda\"]"
 - "id": "osf_check_id.edge_urls"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a route name after the project ID (osf.io/j3gcx/files/) is not an ID, and a URL naming two osf.io IDs gives the first"}
   "r": "osf_check_id"
   "py": "pytacheck.archives.osf.osf_check_id"
   "args":

@@ -47,8 +47,9 @@ def test_defaults(apis) -> None:
     assert pd.isna(pp["url"].iat[1])
     assert pp["total_comments"].iat[1] == 0
 
-    # empty doi
-    assert pubpeer_comments([]) is None
+    # empty doi: an empty table, no request (U14: R's request fails, NULL)
+    empty = pubpeer_comments([])
+    assert list(empty.columns) == ["doi", "total_comments", "url", "users"] and len(empty) == 0
 
 
 def test_case_insensitive_join_keeps_input_case() -> None:

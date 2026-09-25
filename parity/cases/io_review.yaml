@@ -3,22 +3,26 @@
 # .grobid_to_bibr(): branches found by the differential review --------------------
 # `contents[[i]] <- NULL` drops element i; a length-1 list is recycled by the tibble
 - "id": ".grobid_to_bibr.tables_empty_second"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the second table has no contents (R's contents[[2]] <- NULL recycles the first table's contents into both)"}
   "r": ".grobid_to_bibr"
   "py": "pytacheck.io.grobid._grobid_to_bibr"
   "args":
     "xml_path": {"$file": "tests/io/fixtures/tables_empty_second.tei.xml"}
 - "id": ".grobid_to_bibr.tables_empty_first"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the number before the tag ending a reference keeps its space ('Ref one. 2020.', R: 'Ref one.2020.'); the table without rows has no contents in both"}
   "r": ".grobid_to_bibr"
   "py": "pytacheck.io.grobid._grobid_to_bibr"
   "args":
     "xml_path": {"$file": "tests/io/fixtures/tables_empty_first.tei.xml"}
 - "id": ".grobid_to_bibr.tables_three_one_empty"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a table without rows has no contents (R fails the paper: 'Can't recycle input of size 2 to size 3')"}
   "r": ".grobid_to_bibr"
   "py": "pytacheck.io.grobid._grobid_to_bibr"
   "args":
     "xml_path": {"$file": "tests/io/fixtures/tables_three_one_empty.tei.xml"}
 # no text rows + references: sapply() over zero headers gives list(), bind_rows() fails
 - "id": ".grobid_to_bibr.refs_no_text"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "references without text rows convert (R: 'Can't combine ..1$header <list> and ..2$header <character>')"}
   "r": ".grobid_to_bibr"
   "py": "pytacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -56,12 +60,14 @@
 # They read tests/io/fixtures/dir_case, a copy of the XML fixtures kept apart so
 # that adding a fixture to tests/io/fixtures does not change these goldens.
 - "id": "grobid_to_bibr.dir.null_save"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the directory's TEI files metacheck fails on (no text but references, tables without rows) are converted too; numbers before a tag keep their space (U16)"}
   "r": "grobid_to_bibr"
   "py": "pytacheck.io.grobid.grobid_to_bibr"
   "args":
     "xml_path": {"$file": "tests/io/fixtures/dir_case"}
     "save_path": {"$null": true}
 - "id": "grobid_to_bibr.dir.save_path"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the directory's TEI files metacheck fails on (no text but references, tables without rows) are converted and saved too"}
   "r": "basename"
   "py": "tests.io._parity_helpers.basename"
   "args":
@@ -188,12 +194,14 @@
   "args":
     "repo": "scienceverse/nords"
 - "id": "papers_available.nords"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U18", "reason": "a repository without .rds assets has no corpora: an empty table (R: 'arguments imply differing number of rows: 0, 1')"}
   "r": "papers_available"
   "py": "pytacheck.io.corpus.papers_available"
   "mock_dir": "tests/io/fixtures/apis_papers_nords"
   "args":
     "repo": "scienceverse/nords"
 - "id": "papers_available.no_releases"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U18", "reason": "a repository without releases has no corpora: an empty table (R: 'arguments imply differing number of rows: 0, 1')"}
   "r": "papers_available"
   "py": "pytacheck.io.corpus.papers_available"
   "mock_dir": "apis_papers_empty"
@@ -271,6 +279,7 @@
     "file_path": {"$file": "tests/io/fixtures/dotonly"}
     "api_url": "unused"
 - "id": "convert.xml_dir"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the directory's TEI files metacheck fails on (no text but references, tables without rows) are converted too; numbers before a tag keep their space (U16)"}
   "r": "convert"
   "py": "pytacheck.io.convert.convert"
   "args":
@@ -315,7 +324,7 @@
   "r": "identity"
   "py": "tests.io._parity_helpers.basename"
   "mock_dir": "tests/io/fixtures/apis_bibr_local"
-  "known_divergence": "metacheck's convert() passes the argument names instead of their values to convert_bibr() (do.call(convert_bibr, valid_args)), so method = 'bibr' always fails ('second argument must be a list'); pytacheck passes the values and converts the file"
+  "known_divergence": {"kind": "deliberate", "ref": "D2", "reason": "metacheck's convert() passes the argument names instead of their values to convert_bibr() (do.call(convert_bibr, valid_args)), so method = 'bibr' always fails ('second argument must be a list'); pytacheck passes the values and converts the file"}
   "args":
     "x": {"$expr": {"r": "tryCatch(basename(metacheck::convert(file.path(getwd(), 'upstream/metacheck/inst/demos/to_err_is_human.docx'), file.path(tempdir(), 'pc_io_review_bibr'), method = 'bibr', api_url = 'http://localhost:8000')), error = function(e) conditionMessage(e))", "py": "None"}}
   "py_args":

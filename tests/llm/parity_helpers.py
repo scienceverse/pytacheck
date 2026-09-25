@@ -169,17 +169,19 @@ def ollama_reply(body: Any, fn: Callable[[], Any]) -> Any:
 
 def ollama_no_content(fn: Callable[[], Any], empty: tuple[str, ...] = ("B", "C")) -> Any:
     """``fn()`` with ``.llm_ollama_native()`` replying without ``message.content``
-    (``character(0)``) for the texts in *empty* and ``"ok"`` otherwise.
+    for the texts in *empty* and ``"ok"`` otherwise.
 
     R: ``testthat::with_mocked_bindings(..., .llm_ollama_native = function(text, ...)
     if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')``.
+    metacheck's function returns ``character(0)`` for such a reply; pytacheck's
+    raises (U19), which ``llm()`` records as that text's error.
     """
     from unittest import mock
 
-    from pytacheck.llm._rds import RVec
-
     def stub(text: str | None, *args: Any, **kwargs: Any) -> Any:
-        return RVec("chr", []) if text in empty else "ok"
+        if text in empty:
+            raise RuntimeError("The Ollama reply has no message content.")
+        return "ok"
 
     with mock.patch.object(K, "_llm_ollama_native", stub):
         return fn()

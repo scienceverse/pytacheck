@@ -314,7 +314,7 @@ def test_report_qmd_without_paper():
     # U128: metacheck's default `paper = list()` always errors
     op = module_run(pc.test_paper(["x"]), "marginal")
     qmd = report_qmd(op)
-    assert qmd.startswith("---\ntitle: MetaCheck Report\nsubtitle: \"\"\n")
+    assert qmd.startswith('---\ntitle: MetaCheck Report\nsubtitle: ""\n')
     assert "DOI:" not in qmd
     assert "## Summary" in qmd
 

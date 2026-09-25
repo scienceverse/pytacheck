@@ -1568,8 +1568,10 @@ def dataverse_file_download(
     are downloaded whole unless *unzip_types* names file categories (as
     ``data_classify_files()`` does) to extract from them instead. *host* and
     *doi* may be vectors (recycled). Returns the file table (``None`` when
-    there is nothing to download); files that did not arrive intact have
-    ``downloaded = False`` and are warned about.
+    the dataset lists no files); files left out by the size limits have
+    ``downloaded = False`` (when all are, no folder is made and ``folder`` is
+    missing), and files that did not arrive intact have ``downloaded =
+    False`` and are warned about.
     """
     from pytacheck.archives import _spinner, _tick
 

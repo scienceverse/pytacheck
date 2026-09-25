@@ -32,9 +32,8 @@ def _error_cases() -> list[tuple[str, str]]:
             if not case.golden_path.exists():
                 continue
             golden = json.loads(case.golden_path.read_text(encoding="utf-8"))
-            # module_run's error handler re-fails on paper_id(NULL) in R, so R
-            # reports the bare message where pytacheck prefixes the module name
-            if not golden["ok"] and not case.id.startswith("psychds_check.paper_none"):
+            # errors pytacheck fixes (known divergences) are not reproduced
+            if not golden["ok"] and not case.spec.get("known_divergence"):
                 out.append((area, case.id))
     return out
 
@@ -70,29 +69,42 @@ def test_tree_na_or_empty_path_fails_like_r(paths: list[str | None]) -> None:
         psychds_tree_html(nodes)
 
 
-def test_na_file_name_is_harmless_with_a_file_path() -> None:
+def test_na_file_name_falls_back_to_the_file_path() -> None:
+    # U113: R targets "analysis/NA"
     out = ps.run_chain("na_name_code_path", file="review_chains.json")
     assert out.table["target_path"].tolist() == [
-        "analysis/NA",
+        "analysis/y.R",
         "analysis/b.R",
-        "documentation/NA",
+        "documentation/notes.txt",
     ]
+    assert out.table["file_name"].tolist() == ["y.R", "b.R", "notes.txt"]
     assert out.table["status"].tolist() == ["move", "present", "move"]
 
 
 @pytest.mark.parametrize(
-    ("name", "message"),
+    "name",
     [
-        ("na_name_code_nopath", "missing value where TRUE/FALSE needed"),
-        ("na_name_data_path", "subscript out of bounds"),
-        ("no_name_readme", "argument is of length zero"),
-        ("no_name_na_type_first", "missing value where TRUE/FALSE needed"),
-        ("no_name_no_path", "a character vector argument expected"),
+        "na_name_code_nopath",
+        "na_name_data_path",
+        "na_name_readme_na_path",
+        "no_name_readme",
+        "no_name_license_second",
+        "no_name_na_type_first",
+        "no_name_no_path",
+        "no_name_no_path_no_type",
     ],
 )
-def test_missing_names_fail_in_r_order(name: str, message: str) -> None:
-    with pytest.raises(Exception, match=message):
-        ps.run_chain(name, file="review_chains.json")
+def test_missing_names_do_not_stop_the_module(name: str) -> None:
+    # U113: R stops with "missing value where TRUE/FALSE needed", "subscript
+    # out of bounds", "argument is of length zero", ...; a file with neither
+    # name nor path is listed as excluded and left out of the tree
+    out = ps.run_chain(name, file="review_chains.json")
+    tbl = out.table
+    unnamed = tbl["file_name"].isna() & tbl["current_path"].isna()
+    assert (tbl.loc[unnamed, "status"] == "excluded").all()
+    assert tbl.loc[unnamed, "target_path"].isna().all()
+    assert tbl.loc[~unnamed, "target_path"].notna().all()
+    assert out.traffic_light in ("green", "yellow", "red")
 
 
 # R 4.5 (ICU) order(tolower(x)) of these names, from the reference Rscript

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -168,7 +169,42 @@ def test_redirect_writes_shapes() -> None:
         ]
     )
     assert out["redirected_name"].tolist() == ["a.csv", "f.csv", "write_3.csv"]
-    assert out["replacement"].iloc[0] == 'write.csv(d,"{{REPRO_OUTPUT}}a.csv", row.names = FALSE)'
+    # a named target keeps its name (R makes it positional, U134)
+    assert out["replacement"].iloc[0] == (
+        'write.csv(d, file = "{{REPRO_OUTPUT}}a.csv", row.names = FALSE)'
+    )
+    assert out["replacement"].iloc[1] == 'write.csv(d,"{{REPRO_OUTPUT}}f.csv")'
+
+
+def test_redirect_writes_keeps_file_argument_named() -> None:
+    # U134: save(a, b, "path") would save the string as a third object;
+    # the redirected call keeps file = (R drops the name)
+    out = core._repro_redirect_writes(
+        ['save(a, b, file = "ab.RData")', 'ggsave(filename="f.png", p)']
+    )
+    assert out["replacement"].tolist() == [
+        'save(a, b, file = "{{REPRO_OUTPUT}}ab.RData")',
+        'ggsave(filename="{{REPRO_OUTPUT}}f.png", p)',
+    ]
+
+
+def test_format_call_refs_file_string_after_first_argument() -> None:
+    # U133: the arguments after the file string are found wherever it stands,
+    # so paste(dir, "data.csv", sep = "/") is a format call (its whole call is
+    # rewritten); R skips from the start of the arguments and misses it
+    out = core._repro_format_call_refs(
+        [
+            'a <- paste(dir, "data.csv", sep = "/")',
+            'b <- sprintf("%s/data.csv", d)',
+            'c <- paste0(wd, "/x.csv")',
+            'd <- paste0("Loaded ", n, " rows from data.csv")',
+        ]
+    )
+    assert out["call_text"].tolist() == [
+        'paste(dir, "data.csv", sep = "/")',
+        'sprintf("%s/data.csv", d)',
+    ]
+    assert out["fmt"].tolist() == ["data.csv", "%s/data.csv"]
 
 
 # repro_rewrite_paths() --------------------------------------------------------------
@@ -440,10 +476,51 @@ def test_missing_inputs_withheld() -> None:
     assert "200 MB" in out["detail"].iloc[0]
 
 
-def test_missing_inputs_withheld_without_size_column_errors_like_r() -> None:
+def test_missing_inputs_withheld_without_size_column() -> None:
+    # U135: without a file_size column the size is left out (R stops with
+    # "argument is of length zero")
     skipped = pd.DataFrame({"file_name": ["big.csv"]})
-    with pytest.raises(ValueError, match="argument is of length zero"):
-        repro_missing_inputs("big.csv", plan=None, structure_df=None, skipped=skipped)
+    out = repro_missing_inputs("big.csv", plan=None, structure_df=None, skipped=skipped)
+    assert out["status"].tolist() == ["withheld_size"]
+    assert out["detail"].tolist() == [
+        "referenced file is in the repository but was not downloaded: over the size cap"
+    ]
+
+
+def test_classify_error_typographic_quotes() -> None:
+    # U132: in a UTF-8 locale R quotes with sQuote(): "‘pkg’"
+    for msg in (
+        "Error in library(notapkg) : there is no package called ‘notapkg’",
+        "Error in library(notapkg) : there is no package called 'notapkg'",
+    ):
+        assert core._classify_error(["notapkg"], [msg]) == (None, True)
+    assert core._classify_error(["other"], ["there is no package called ‘notapkg’"]) == (
+        None,
+        False,
+    )
+    assert core._classify_error([], ["Error: object ‘x’ not found"]) == ("x", False)
+
+
+def test_archive_listing_line_without_date() -> None:
+    # U135: a tarball line without a date sorts last instead of failing the
+    # install (R calls as.POSIXct() outside its tryCatch())
+    assert core._parse_archive_date("no date here") == -math.inf
+    assert core._parse_archive_date("2020-01-02 03:04") > 0
+
+
+def test_run_order_derives_io_from_code_text() -> None:
+    # U135: as metacheck documents, missing reads/writes/sources come from a
+    # code_text column (its code treats them as empty)
+    files = pd.DataFrame({"file_name": ["1_analysis.R", "0_prep.R", "z.R"]})
+    files["code_text"] = [
+        ['d <- read.csv("clean.csv")'],
+        ['x <- read.csv("raw.csv")', 'write.csv(x, "clean.csv")'],
+        ['source("1_analysis.R")'],
+    ]
+    out = core.repro_run_order(files)
+    assert out["file_name"].tolist() == ["1_analysis.R", "0_prep.R", "z.R"]
+    assert out["order"].tolist() == [2, 1, 3]
+    assert out["depends_on"].tolist() == ["0_prep.R", "", "1_analysis.R"]
 
 
 def test_missing_inputs_not_downloaded() -> None:

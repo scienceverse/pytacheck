@@ -106,7 +106,9 @@ def test_zip_to_cache_without_a_file_path_column_matches_file_names(tmp_path: Pa
     data = _zip_bytes({"a.csv": b"1\n", "b.R": b"x\n"})
     with respx.mock(assert_all_called=False) as router:
         router.get(url).mock(return_value=httpx.Response(200, content=data))
-        out = _download_zip_to_cache(_files(tmp_path, ["a.csv", "b.R"], with_path=False), [0, 1], url)
+        out = _download_zip_to_cache(
+            _files(tmp_path, ["a.csv", "b.R"], with_path=False), [0, 1], url
+        )
     assert out["file_location"].tolist() == out[".cache_path"].tolist()
     # nothing to match on at all: no download
     bare = _files(tmp_path, ["a.csv"], with_path=False).drop(columns="file_name")
@@ -187,9 +189,11 @@ def test_stale_file_location_is_still_fetched(
         Path(dest).write_text("x\n")
         return None
 
-    monkeypatch.setattr(dlm, "_download_many_parallel", lambda urls, dests, *a, **k: [
-        one(u, d) for u, d in zip(urls, dests, strict=True)
-    ])
+    monkeypatch.setattr(
+        dlm,
+        "_download_many_parallel",
+        lambda urls, dests, *a, **k: [one(u, d) for u, d in zip(urls, dests, strict=True)],
+    )
     files = pd.DataFrame(
         {
             "repo_url": ["https://zenodo.org/records/123"],

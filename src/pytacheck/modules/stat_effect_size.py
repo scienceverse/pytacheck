@@ -40,7 +40,7 @@ _T_PATTERN = r"\bt\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
 _D_PATTERN = (
     r"(?i)\b"
     r"(cohen(?:'|’)?s\s+d\s*z|cohen(?:'|’)?s\s+d|d\s*z|d|ds)"
-    r"\b\s*[=≈<>≤≥]{1,3}\s*" + _NUM
+    r"\b\s*([=≈<>≤≥]{1,3})\s*" + _NUM
 )
 
 # parse_f_stats(): perl = TRUE
@@ -48,7 +48,10 @@ _F_PATTERN = r"\bF\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)
 
 # parse_eta_stats(): perl = TRUE
 _ETA_SPLIT = r"\s*;\s*"
-_ETA_PATTERN = r"(?i)^\s*" r"([^=≈<>≤≥;]+?)" r"\s*[=≈<>≤≥]{1,3}\s*" + _NUM + r"\s*$"
+_ETA_PATTERN = r"(?i)^\s*" r"([^=≈<>≤≥;]+?)" r"\s*([=≈<>≤≥]{1,3})\s*" + _NUM + r"\s*$"
+
+# An effect size reported as an inequality ("d > 0.4", "ηp2 < .001") is a bound:
+# metacheck checks it as if it were "=" (U126); see _fits()
 
 # label_lhs(): TRE (perl = FALSE)
 _F_DF_PATTERN = r"^\(\s*[0-9]+\s*,\s*[0-9]+\s*\)$"
@@ -80,6 +83,7 @@ _GUIDANCE = [
 ]
 
 _NO_TESTS = "No t-tests or F-tests were detected."
+
 
 _D_COLUMNS = (
     "d_reported",
@@ -402,6 +406,31 @@ def _any(values: Iterable[bool | None]) -> bool | None:
     return None if na else False
 
 
+def _fits(reported: float, comp: str, lo: float, hi: float, tol: float) -> bool | None:
+    """Whether a reported effect size agrees with the implied values ``lo``..``hi``.
+
+    Sizes are compared as absolute values. "=" (and "≈") agrees within *tol*;
+    a reported bound agrees when some implied value is on its side ("d > 0.4"
+    with an implied 0.55, "ηp2 < .001" with an implied .0002). metacheck
+    compares every reported value as if it were "=" (U126). A negative bound
+    flips its direction ("d < -0.4" is |d| > 0.4).
+    """
+    if math.isnan(reported) or math.isnan(lo) or math.isnan(hi):
+        return None
+    upper = any(c in comp for c in "<≤≪")
+    lower = any(c in comp for c in ">≥≫")
+    if reported < 0 and upper != lower:
+        upper, lower = lower, upper
+    value = abs(reported)
+    if upper and not lower:
+        return lo <= value + tol
+    if lower and not upper:
+        return hi >= value - tol
+    if lo == hi:  # R: abs(a - implied) <= tol
+        return abs(value - lo) <= tol
+    return lo - tol <= value <= hi + tol  # R: a >= min - tol & a <= max + tol
+
+
 def _cond(x: bool | None) -> bool:
     """R ``if (x)``: an ``NA`` condition is an error."""
     if x is None:
@@ -434,6 +463,7 @@ class _DStat(NamedTuple):
     label: str
     d_value: float
     d_text: str
+    comp: str = "="
 
 
 class _FStat(NamedTuple):
@@ -447,6 +477,7 @@ class _EtaStat(NamedTuple):
     label: str
     eta_value: float
     eta_text: str
+    comp: str = "="
 
 
 def _hits(pattern: str, text: str | None) -> list[list[str]]:
@@ -482,7 +513,7 @@ def _parse_d_stats(es_text: str | None) -> list[_DStat]:
     out = []
     for g in _hits(_D_PATTERN, es_text):
         label = gsub(r"\s+", " ", _tolower(trimws(g[1])))
-        out.append(_DStat(label, _num(g[2]), g[0]))
+        out.append(_DStat(label, _num(g[3]), g[0], g[2]))
     return out
 
 
@@ -501,19 +532,41 @@ def _eta_label(raw_label: str) -> str:
 
     if has("^ξ|^bf"):
         return "non_checkable"
-    if has("^f2?$") or has("cohen"):
+    if has("^f2?$") or has("cohen.{0,3}f"):
+        # metacheck's `has("cohen")` also took "Cohen's d" for Cohen's f (U126)
         return "cohens_f"
     if has("ω") or has("omega"):
         # Omega squared (partial or not) depends on the total sample size N which
         # cannot yet be recovered.
         return "non_checkable"
-    if (has("η") or has("eta")) and (has("partial") or has("p")):
-        return "partial_eta_squared"
-    return "eta_squared"
+    if has("η") or has("eta"):
+        return "partial_eta_squared" if has("partial") or has("p") else "eta_squared"
+    # d, g, r, R2, beta, ... next to an F-test: not an eta-squared (metacheck
+    # labels them "eta_squared" and says "Eta-squared reported", U126)
+    return "non_checkable"
 
 
-def _parse_eta_stats(es_text: str | None) -> list[_EtaStat]:
-    """Port of ``stat_effect_size.R::parse_eta_stats()``: labelled eta-family values."""
+def _after_partial(sentence: str | None, lhs: str) -> bool:
+    """Whether *lhs* follows the word "partial" in *sentence* ("partial η2 = .12")."""
+    if not isinstance(sentence, str) or not lhs:
+        return False
+    low, target = sentence.lower(), lhs.lower()
+    start = low.find("partial")
+    while start >= 0:
+        rest = low[start + len("partial") :].lstrip(" -\u00a0")
+        if rest.startswith(target):
+            return True
+        start = low.find("partial", start + 1)
+    return False
+
+
+def _parse_eta_stats(es_text: str | None, sentence: str | None = None) -> list[_EtaStat]:
+    """Port of ``stat_effect_size.R::parse_eta_stats()``: labelled eta-family values.
+
+    ``extract_eq()`` gives "η2" as the name in "partial η2 = .12"; with the
+    *sentence*, such a value is a partial eta-squared (metacheck reads it as
+    eta-squared, U126).
+    """
     from pytacheck._r.base import trimws
     from pytacheck._r.regex import gsub, regexec, strsplit
 
@@ -525,10 +578,14 @@ def _parse_eta_stats(es_text: str | None) -> list[_EtaStat]:
         g = regexec(_ETA_PATTERN, x, perl=True)
         if len(g) == 0:
             continue
-        raw_label = _tolower(trimws(g[1]))
+        lhs = trimws(g[1])
+        raw_label = _tolower(lhs)
         raw_label = gsub(r"\s+", "", raw_label)
         raw_label = gsub("²", "2", raw_label)
-        out.append(_EtaStat(_eta_label(raw_label), _num(g[2]), x))
+        label = _eta_label(raw_label)
+        if label == "eta_squared" and _after_partial(sentence, lhs):
+            label = "partial_eta_squared"
+        out.append(_EtaStat(label, _num(g[3]), x, g[2]))
     return out
 
 
@@ -649,13 +706,14 @@ def _classify_d_coherence(
     out["d_reported"] = _chr(d_stats[0].d_value)
     out["d_reported_text"] = d_stats[0].d_text
 
-    paired_match = _any(_le(abs(a - d_paired_dz), tol) for a in abs_d)
-    equal_match = _any(_le(abs(a - d_equal), tol) for a in abs_d)
+    paired_match = _any(_fits(d.d_value, d.comp, d_paired_dz, d_paired_dz, tol) for d in d_stats)
+    equal_match = _any(_fits(d.d_value, d.comp, d_equal, d_equal, tol) for d in d_stats)
     unequal_match: bool | None = False
     in_range: list[bool | None] = []
     if use_unequal:
-        lo, hi = d_unequal_min - tol, d_unequal_max + tol
-        in_range = [None if math.isnan(a) else (lo <= a <= hi) for a in abs_d]
+        in_range = [
+            _fits(d.d_value, d.comp, d_unequal_min, d_unequal_max, tol) for d in d_stats
+        ]
         unequal_match = _any(in_range)
 
     if _cond(paired_match):
@@ -707,7 +765,11 @@ def _classify_d_coherence(
 
 
 def _classify_f_coherence(
-    test: str | None, test_text: str | None, es_text: str | None, tol: float = _TOL
+    test: str | None,
+    test_text: str | None,
+    es_text: str | None,
+    tol: float = _TOL,
+    sentence: str | None = None,
 ) -> dict[str, str | None]:
     """Port of ``stat_effect_size.R::classify_f_coherence()``.
 
@@ -746,7 +808,7 @@ def _classify_f_coherence(
     omega_implied = _fdiv(df1 * (abs(f_value) - 1), df1 * abs(f_value) + df2 + 1)
     out["omega_implied_partial"] = _chr(omega_implied)
 
-    eta_stats = _parse_eta_stats(es_text)
+    eta_stats = _parse_eta_stats(es_text, sentence)
     if len(eta_stats) == 0:
         out["eta_coherence"] = "indeterminate"
         out["eta_coherence_assumption"] = "none"
@@ -791,11 +853,23 @@ def _classify_f_coherence(
         return out
 
     labels = {e.label for e in eta_stats}
-    if "partial_eta_squared" in labels and "eta_squared" in labels:
+    # metacheck sets this note and then always overwrites it (U125): it is
+    # added to the note of the partial eta-squared check below
+    both_note = (
+        " Both eta-squared and partial eta-squared reported; "
+        "coherence evaluated only for partial eta-squared."
+        if "partial_eta_squared" in labels and "eta_squared" in labels
+        else ""
+    )
+
+    # F(0, 0): the implied effect size is 0/0 (metacheck stops on `if (NA)`, U126)
+    if math.isnan(eta_implied):
+        out["eta_coherence"] = "indeterminate"
+        out["eta_coherence_assumption"] = "none"
         out["eta_coherence_note"] = (
-            "Both eta-squared and partial eta-squared reported; "
-            "coherence evaluated only for partial eta-squared."
+            "The implied effect size is undefined for these degrees of freedom."
         )
+        return out
 
     no_match_note = (
         f"Tolerance = {_chr(tol)}. A no-match can occur when fewer than 2 decimal places "
@@ -804,15 +878,20 @@ def _classify_f_coherence(
 
     # Check partial eta squared coherence
     if len(eta_partial) > 0:
-        if _cond(_any(_le(abs(abs(e.eta_value) - eta_implied), tol) for e in eta_partial)):
+        fits = (_fits(e.eta_value, e.comp, eta_implied, eta_implied, tol) for e in eta_partial)
+        if _cond(_any(fits)):
             out["eta_coherence"] = "match_under_assumptions"
             out["eta_coherence_assumption"] = "partial_eta_squared"
-            out["eta_coherence_note"] = "Match under partial eta-squared formula from F and dfs."
+            out["eta_coherence_note"] = (
+                "Match under partial eta-squared formula from F and dfs." + both_note
+            )
         else:
             out["eta_coherence"] = "no_match"
             out["eta_coherence_assumption"] = "partial_eta_squared"
             out["eta_coherence_note"] = (
-                "No match under partial eta-squared formula from F and dfs. " + no_match_note
+                "No match under partial eta-squared formula from F and dfs. "
+                + no_match_note
+                + both_note
             )
 
     # Check partial omega squared coherence
@@ -1094,12 +1173,10 @@ def stat_effect_size(paper: Any) -> dict[str, Any]:
     tests = table["test"].tolist()
     test_texts = [None if _is_na(x) else x for x in table["test_text"].tolist()]
     es_list = [None if _is_na(x) else x for x in table["es"].tolist()]
-    coherence = [
-        _classify_d_coherence(t, tt, e) for t, tt, e in zip(tests, test_texts, es_list, strict=True)
-    ]
-    f_coherence = [
-        _classify_f_coherence(t, tt, e) for t, tt, e in zip(tests, test_texts, es_list, strict=True)
-    ]
+    sentences = [None if _is_na(x) else x for x in table["text"].tolist()]
+    rows = list(zip(tests, test_texts, es_list, sentences, strict=True))
+    coherence = [_classify_d_coherence(t, tt, e) for t, tt, e, _ in rows]
+    f_coherence = [_classify_f_coherence(t, tt, e, sentence=x) for t, tt, e, x in rows]
     table = pd.concat(
         [table, _string_frame(coherence, _D_COLUMNS), _string_frame(f_coherence, _F_COLUMNS)],
         axis=1,

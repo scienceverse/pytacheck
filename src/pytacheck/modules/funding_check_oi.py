@@ -37,9 +37,10 @@ PATTERN_STUDY = (
     "thank",
     "acknowledge",
 )
-# if more than 1 per ID, favour those in specific sections (metacheck's section
-# types spell it "acknowledgment", so only "funding" can match)
-LIKELY_SECTION = ("funding", "annex", "acknowledgement")
+# if more than 1 per ID, favour those in specific sections. metacheck lists only
+# "acknowledgement", but its section type is "acknowledgment" (bibr, bibr 12.0
+# Grobid conversion), so acknowledgment sections were never favoured (U105)
+LIKELY_SECTION = ("funding", "annex", "acknowledgement", "acknowledgment")
 
 
 @module(

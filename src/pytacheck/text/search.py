@@ -96,6 +96,29 @@ def _paste_groups(df: pd.DataFrame, by: list[str], sep: str) -> pd.DataFrame:
     return out
 
 
+def _section_headers(kept: pd.DataFrame, result: pd.DataFrame, groups: list[str]) -> pd.Series:
+    """The header of each section in *result*: its paragraphs' header when they share one.
+
+    metacheck groups ``return = "section"`` by ``section_type``, ``section_id``
+    and ``paper_id`` only, so the header column came back ``NA`` although each
+    section of a paper has one header (U80).
+    """
+
+    def key(row: tuple[Any, ...]) -> tuple[Any, ...]:
+        return tuple(None if pd.isna(k) else k for k in row)
+
+    seen: dict[tuple[Any, ...], set[Any]] = {}
+    for row, header in zip(
+        kept.loc[:, groups].itertuples(index=False, name=None), kept["header"].tolist(), strict=True
+    ):
+        seen.setdefault(key(row), set()).add(None if pd.isna(header) else header)
+    headers = []
+    for row in result.loc[:, groups].itertuples(index=False, name=None):
+        found = seen.get(key(row), set())
+        headers.append(next(iter(found)) if len(found) == 1 else None)
+    return pd.Series(headers, index=result.index, dtype=kept["header"].dtype)
+
+
 def _semi_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> pd.DataFrame:
     """``dplyr::semi_join()`` (NA keys match NA keys), keeping x's row order."""
 
@@ -223,6 +246,8 @@ def text_search(
         groups = _GROUPS[return_]
         kept = _semi_join(ft_p, ft_match, groups)
         result = _paste_groups(kept, groups, _PARAGRAPH_MARKER)
+        if return_ == "section" and len(result) > 0:
+            result["header"] = _section_headers(kept, result, groups)
 
     if return_ != "match":
         if len(result) > 0:

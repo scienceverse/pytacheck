@@ -1028,6 +1028,153 @@
     "file_name": [],
     "data_type": []
    }
+  },
+  "psychsci_two_papers": {
+   "paper": "psychsci",
+   "structure": {
+    "file_name": [
+     "analysis.R",
+     "study-a_data.csv",
+     "dataset_description.json",
+     "README.md",
+     "CHANGES",
+     "raw.csv",
+     "dataset_description.json",
+     "run.py"
+    ],
+    "file_path": [
+     "analysis/analysis.R",
+     "data/study-a_data.csv",
+     "dataset_description.json",
+     "README.md",
+     "CHANGES",
+     "data/raw.csv",
+     "dataset_description.json",
+     "code/run.py"
+    ],
+    "data_type": [
+     "code",
+     "data",
+     "code",
+     "documentation",
+     "documentation",
+     "data",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     "readme",
+     "supplemental",
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     null,
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ],
+    "paper_id": [
+     "0956797613520608",
+     "0956797613520608",
+     "0956797613520608",
+     "0956797613520608",
+     "0956797613520608",
+     "to_err_is_human",
+     "to_err_is_human",
+     "to_err_is_human"
+    ]
+   },
+   "columns": 2
+  },
+  "compliant_raw": {
+   "paper": "test",
+   "structure": {
+    "file_name": [
+     "study-1_task-stroop_data.tsv",
+     "eeg.npy",
+     "dataset_description.json",
+     "README.md",
+     "LICENSE",
+     "CHANGES",
+     "ro-crate-metadata.json",
+     "analysis.R"
+    ],
+    "file_path": [
+     "data/study-1_task-stroop_data.tsv",
+     "data/eeg.npy",
+     "dataset_description.json",
+     "README.md",
+     "LICENSE",
+     "CHANGES",
+     "ro-crate-metadata.json",
+     "analysis/analysis.R"
+    ],
+    "data_type": [
+     "data",
+     "data",
+     "code",
+     "documentation",
+     "unknown",
+     "unknown",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     "readme",
+     "license",
+     null,
+     "readme",
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     null,
+     null,
+     "ex1",
+     null,
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 3,
+   "labels": [
+    "labelled",
+    "labelled",
+    "labelled"
+   ]
   }
  },
  "trees": {

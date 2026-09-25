@@ -63,6 +63,25 @@ def test_search(client: TestClient, demo_json: bytes) -> None:
     assert missing.json() == {"error": "Query parameter 'pattern' is required"}
 
 
+def test_search_section(client: TestClient, demo_json: bytes) -> None:
+    # U2: metacheck forwards `section` to text_search(), which fails ("unused argument")
+    def search(**data: str) -> list[dict]:
+        r = client.post("/paper/search", files=upload(demo_json), data=data)
+        assert r.status_code == 200
+        return r.json()
+
+    everywhere = search(pattern="significant")
+    assert {row["section_type"] for row in everywhere} == {"abstract", "method"}
+    method = search(pattern="significant", section="method")
+    assert method == [row for row in everywhere if row["section_type"] == "method"]
+    both = search(pattern="significant", section="abstract, method", **{"return": "paragraph"})
+    assert [row["section_type"] for row in both] == ["abstract", "method", "method"]
+    assert search(pattern="significant", section="results") == []
+    # the references are searched when asked for
+    refs = search(pattern="Psych", section="references")
+    assert refs and {row["section_type"] for row in refs} == {"references"}
+
+
 def test_module_and_check(client: TestClient, demo_json: bytes) -> None:
     r = client.post("/paper/module", files=upload(demo_json), data={"name": "marginal"})
     assert r.status_code == 200

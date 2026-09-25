@@ -41,14 +41,18 @@ def _element(value: dict[str, Any], name: str) -> Any:
 
 
 def _module_cases() -> list[tuple[str, str]]:
-    """``(area, case id)`` of every module-output golden of both case files."""
+    """``(area, case id)`` of every module-output golden of both case files.
+
+    Cases marked as a known divergence (pytacheck fixes the R behaviour the
+    golden records, parity/divergences/data.yaml) are left out.
+    """
     from parity.cases import load_cases
 
     out = []
     for area in AREAS:
         for case in load_cases(area):
             path = case.golden_path
-            if not path.exists():
+            if not path.exists() or case.spec.get("known_divergence"):
                 continue
             golden = json.loads(path.read_text(encoding="utf-8"))
             if golden["ok"] and golden["value"].get("t") == "module_output":
@@ -159,13 +163,16 @@ def test_plan_table_targets() -> None:
     assert row.loc["Data Raw.xlsx", "target_path"] == "data/study-DataRaw_data.csv"
     assert row.loc["Data Raw.xlsx", "original_target"] == "data/Data Raw.xlsx"
     assert bool(row.loc["survey.sav", "convert"])
-    # raw data keeps its own name; R flags it as a move even though it is in place
+    # raw data keeps its own name and is in place (U112: R compared against the
+    # _data.csv target and suggested "Move data/eeg.npy -> data/eeg.npy")
     assert row.loc["eeg.npy", "target_path"] == "data/eeg.npy"
     assert row.loc["eeg.npy", "current_path"] == "data/eeg.npy"
-    assert row.loc["eeg.npy", "status"] == "move"
+    assert row.loc["eeg.npy", "status"] == "present"
     # an empty keyword slug falls back to file<i>
     assert row.loc["___.csv", "target_path"] == "data/study-file5_data.csv"
-    assert "**Move** `data/eeg.npy` → `data/eeg.npy`." in out.report[-3]
+    assert "`data/eeg.npy` → `data/eeg.npy`" not in "\n".join(
+        b for b in out.report if isinstance(b, str)
+    )
     assert out.summary_text.startswith("\n-  2 of 3 required Psych-DS items present; 1 missing.")
 
 
@@ -176,7 +183,9 @@ def test_multi_study_layout() -> None:
     assert targets["study1/README.txt"] == "study-ex1/README.txt"
     assert targets["study2/s2.xlsx"] == "study-ex2/data/study-s2_data.csv"
     assert targets["LICENSE"] == "LICENSE"
-    assert targets["ro-crate-metadata.json"] == "analysis/ro-crate-metadata.json"
+    # U112: collection-level metadata stays at the root (R: analysis/ for a
+    # "code"-typed .json, README.json for a readme-role one)
+    assert targets["ro-crate-metadata.json"] == "ro-crate-metadata.json"
     assert out.table["referenced_by"].tolist()[5] == ["ex2", "pilot1"]
     assert "across 3 study groups" in out.report[0]
     tree = next(b for b in out.report if isinstance(b, str) and b.startswith("<pre"))
@@ -196,7 +205,8 @@ def test_group_no_evidence_note_depends_on_llm_use() -> None:
     assert pc.llm_use() is False  # restored
 
 
-def test_paper_list_summary_uses_first_paper() -> None:
+def test_paper_list_summary_is_per_paper() -> None:
+    # without paper ids in the file table the counts belong to the first paper
     out = ps.run_chain("psychsci")
     st = out.summary_table
     assert st["paper_id"].tolist() == [
@@ -206,7 +216,12 @@ def test_paper_list_summary_uses_first_paper() -> None:
         "to_err_is_human",
     ]
     assert st["required_met"].tolist() == [3, 0, 0, 0]
-    assert st["misplaced_n"].tolist() == [3, 0, 0, 0]
+    assert st["misplaced_n"].tolist() == [2, 0, 0, 0]
+    # U113: files of two papers are counted per paper (R: one pooled row)
+    st = ps.run_chain("psychsci_two_papers").summary_table.set_index("paper_id")
+    assert st.loc["0956797613520608"].tolist() == [3, 0, 2, 1, 0]
+    assert st.loc["to_err_is_human"].tolist() == [2, 1, 0, 3, 2]
+    assert st.loc["0956797614522816"].tolist() == [0, 0, 0, 0, 0]
 
 
 def test_pid_falls_back_to_table_paper_ids() -> None:
@@ -215,8 +230,8 @@ def test_pid_falls_back_to_table_paper_ids() -> None:
     assert mod._pid(empty, None, s) == "X"
     assert mod._pid(empty, None, None) is None
     assert mod._pid(pc.demopaper(), s) == "to_err_is_human"
-    with pytest.raises(TypeError, match="paper must be a paper or paperlist object"):
-        mod._pid(None, s)
+    # U78: paper = None (local files only) uses the tables' ids (R: paper_id(NULL) stops)
+    assert mod._pid(None, s) == "X"
 
 
 def test_does_not_modify_its_inputs() -> None:
@@ -245,18 +260,46 @@ def test_empty_structure_returns_na() -> None:
     }
 
 
-def test_errors_like_r() -> None:
-    with pytest.raises(Exception, match="missing value where TRUE/FALSE needed"):
-        ps.run_chain("na_type")
-    with pytest.raises(Exception, match="differing number of rows: 0, 2"):
-        ps.run_chain("no_type_col")
-    with pytest.raises(Exception, match="differing number of rows: 0, 2"):
-        ps.run_chain("no_name_col")
-    with pytest.raises(Exception, match="argument is of length zero"):
-        ps.run_chain("no_name_col_data")
-    # documented as "NULL to check local files only", but .pid() needs a paper
-    with pytest.raises(Exception, match="paper must be a paper or paperlist object"):
-        ps.run_chain("paper_none")
+def test_incomplete_file_tables_do_not_stop_the_module() -> None:
+    # U113: R stops on an NA data type, a missing data_type/file_name column
+    na_type = ps.run_chain("na_type").table.set_index("file_name")
+    assert na_type.loc["a.R", "target_path"] == "unknown/a.R"
+    no_type = ps.run_chain("no_type_col").table
+    assert no_type["target_path"].str.startswith("unknown/").all()
+    no_name = ps.run_chain("no_name_col_data").table
+    assert no_name["file_name"].tolist() == ["x.csv"]
+    assert no_name["target_path"].tolist() == ["data/study-x_data.csv"]
+    # U78: paper = None, documented as "check local files only"
+    out = ps.run_chain("paper_none")
+    assert out.summary_table["paper_id"].notna().all()
+    assert out.traffic_light == "green"
+
+
+def test_compliant_names_and_root_files_stay_in_place() -> None:
+    # U112: a valid Psych-DS data file name (.csv or .tsv) is kept, raw data in
+    # data/ is in place, LICENSE/CHANGES (classed "unknown") and
+    # ro-crate-metadata.json belong at the root
+    out = ps.run_chain("compliant_raw")
+    assert out.table["status"].tolist() == ["present"] * 8
+    assert out.table["convert"].tolist() == [False] * 8
+    assert out.summary_table["misplaced_n"].tolist() == [0]
+    assert out.traffic_light == "green"
+    # a name that only looks like one is still renamed
+    tgt = mod._assess(
+        pd.DataFrame(
+            {
+                "file_name": ["Study-1_data.csv", "study-1_data.xlsx", "study-1.csv"],
+                "data_type": ["data"] * 3,
+            }
+        ),
+        None,
+        None,
+    )["target_path"]
+    assert tgt == [
+        "data/study-Study1data_data.csv",
+        "data/study-study1data_data.csv",
+        "data/study-study1_data.csv",
+    ]
 
 
 # -- the unchained path: psychds_check runs data_check itself ---------------------------
@@ -421,14 +464,17 @@ def test_tree_empty_inputs() -> None:
 
 REPO_EXPECTED = {
     # from metacheck: module_run(test_paper(), "psychds_check", local_path = ..., local_only = TRUE)
+    # except "compliant" (U112): metacheck moves 3 files of this compliant layout
+    # (misplaced_n 3: "unknown/CHANGES", "data/study-studyadata_data.csv",
+    # "analysis/dataset_description.json"); every file is in place
     "compliant": (
         "green",
-        [3, 0, 2, 1, 3],
+        [3, 0, 2, 1, 0],
         [
             "analysis/analysis.R",
-            "unknown/CHANGES",
-            "data/study-studyadata_data.csv",
-            "analysis/dataset_description.json",
+            "CHANGES",
+            "data/study-a_data.csv",
+            "dataset_description.json",
             "README.md",
         ],
         True,

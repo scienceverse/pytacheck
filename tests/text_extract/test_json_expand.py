@@ -132,8 +132,9 @@ def test_json_expand_errors() -> None:
         json_expand(pd.DataFrame({"id": [1, 2, 3], "answer": ['{"a":1}', '{"b":2}', "[1,[2]]"]}))
     with pytest.raises(ValueError, match="must not be duplicated"):
         json_expand(pd.DataFrame({"id": [1], "answer": ['{"a":"x","a":"y"}']}))
-    with pytest.raises(ValueError, match="Join columns"):
-        json_expand(pd.DataFrame({"id": [], "answer": []}))
+    # U151: a table without rows is returned as it is (R: "Join columns ...")
+    empty = json_expand(pd.DataFrame({"id": [], "answer": []}))
+    assert list(empty.columns) == ["id", "answer"] and len(empty) == 0
     with pytest.raises(ValueError, match="suffix"):
         json_expand(["{}"], suffix=("a",))
 
@@ -334,17 +335,20 @@ def test_json_expand_mongo_dates() -> None:
     assert _vals(out["d"]) == [None, None, "1970-01-02", "1970-01-01 00:00:01.5", None]
 
 
-def test_row_names_of_nested_objects_with_na() -> None:
-    # U9 (R 4.5.3 / jsonlite): rn[is.na(rn)] <- ... through a logical matrix
-    # labels a one-field nested object by column; an NA below its first row
-    # stops the element ("attempt to select less than one element")
+def test_row_key_is_an_ordinary_column() -> None:
+    # U9/U151: jsonlite makes a "_row" key the row names: the column vanished,
+    # NA labels were mangled through a logical matrix, rows were recycled or
+    # truncated, or the element failed to parse
     answers = [
         '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": "q"}}, "x": 2}]',
-        '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": null}}, "x": 2}]',
-        '[{"_row": {"a": {"b": null}, "c": null}, "x": 1}, {"_row": {"a": {"b": "u"}, "c": "v"}, "x": 2}]',
-        '[{"_row": {"a": {"b": 1, "e": null}}, "x": 1}, {"_row": {"a": {"b": 2, "e": 3}}, "x": 2}]',
+        '[{"_row": "r1", "x": 1}, {"_row": "r1", "x": 2}]',
+        '[{"_row": null, "x": 1}, {"_row": "r2", "x": 2}]',
+        '{"_row": "r3", "x": 4, ".temp_id.": 9}',
     ]
     out = json_expand(pd.DataFrame({"id": [1, 2, 3, 4], "answer": answers}))
-    assert _vals(out["id"]) == [1, 1, 2, 3, 3, 4]
-    assert _vals(out["x"]) == [1, 2, None, 1, 2, None]
-    assert _vals(out["error"]) == [None, None, "parsing error", None, None, "parsing error"]
+    assert list(out.columns) == ["id", "answer", "_row", "x", ".temp_id."]
+    assert _vals(out["id"]) == [1, 1, 2, 2, 3, 3, 4]
+    assert _vals(out["x"]) == [1, 2, 1, 2, 1, 2, 4]
+    assert _vals(out["_row"])[2:] == ["r1", "r1", None, "r2", "r3"]
+    # a ".temp_id." key is data, not metacheck's internal join key
+    assert _vals(out[".temp_id."]) == [None] * 6 + [9]

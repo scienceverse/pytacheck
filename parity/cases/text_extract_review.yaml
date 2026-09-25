@@ -321,6 +321,7 @@
         - '{"a": {"$date": true}, "b": {"$date": "2020-01-01T00:00:00Z", "x": 1}}'
 # U9: a `_row` of nested objects with NA cells (jsonlite's rn[is.na(rn)] <- ...)
 - "id": "json_expand.review.row_names_nested_na"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U9", "reason": "a \"_row\" key holding nested objects is an ordinary column (jsonlite's row-name NA replacement mangled it and changed the row count)"}
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"
   "args":

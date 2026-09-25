@@ -900,7 +900,9 @@ def test_stack_stats_matches_bind_rows() -> None:
     assert list(_stack_stats(odd).columns) == list(bind_rows(odd).columns)
 
 
-def test_zip_peek_reasons_stay_with_their_rows(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_zip_peek_reasons_stay_with_their_rows(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     # U99: expanding an archive drops its row and appends its contents; the
     # zip-peek reasons must follow (R keeps the old positions, so the manifest
     # could give the reason to another file)
@@ -910,7 +912,8 @@ def test_zip_peek_reasons_stay_with_their_rows(monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.setattr(
         zp, "zip_decision", lambda url, skip_types=None: {"worth": False, "reason": "no data"}
     )
-    tar = REPOS / "archives" / "results.tar.gz"
+    tar = tmp_path / "results.tar.gz"  # expanded next to itself: keep it out of the fixtures
+    shutil.copy(REPOS / "archives" / "results.tar.gz", tar)
     files = pd.DataFrame(
         {
             "file_name": ["results.tar.gz", "stimuli.zip"],

@@ -9,7 +9,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
-import pytest
 
 from pytacheck.datacheck.columns import (
     _decode_value_labels,

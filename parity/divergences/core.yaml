@@ -1,0 +1,57 @@
+# Cases in generated case files of the core lane (llm, llm_review) that differ
+# from R on purpose. Format (see parity/cases.py): "<area>/<id>": {kind, ref,
+# reason}; kind is one of parity.cases.DIVERGENCE_KINDS, ref the
+# docs/UPSTREAM_ISSUES.md entry.
+"llm/llm.groq.data_frame":
+  kind: r_bug_fixed
+  ref: U19
+  reason: an NA text is not sent to the LLM (R sends the string "NA" and stores the model's answer about it)
+"llm_review/llm.input.na_only":
+  kind: r_bug_fixed
+  ref: U19
+  reason: an NA text is not sent to the LLM (R sends the string "NA" and stores the model's answer about it)
+"llm/llm.groq.sanitised_key": &sanitised
+  kind: r_bug_fixed
+  ref: U19
+  reason: answers are joined back by text position, so a text .llm_sanitise_text() changed keeps its answer (R joins on the sanitised text and gets NA)
+"llm_review/llm.input.sanitised_duplicates": *sanitised
+"llm/llm.groq.numeric_text": &numeric
+  kind: r_bug_fixed
+  ref: U19
+  reason: numeric texts are answered (R makes every call and then fails joining a double column with the character answers)
+"llm_review/msg.llm.groq.numeric_text": *numeric
+"llm_review/llm.input.logical":
+  kind: r_bug_fixed
+  ref: U19
+  reason: logical texts are sent and joined back (R makes every call and then fails joining a logical column with the character answers)
+"llm/llm.groq.mixed_error": &mixed
+  kind: r_bug_fixed
+  ref: U19
+  reason: when some texts fail, the others keep their answers and the failures are warned about (R's bind_rows() cannot combine ellmer_output with NA and loses every answer)
+"llm_review/msg.llm.groq.mixed_error": *mixed
+"llm_review/llm.input.mixed_order_1": *mixed
+"llm_review/llm.input.mixed_order_2": *mixed
+"llm_review/llm.input.mixed_order_3": *mixed
+"llm_review/reply.groq_plain": *mixed
+"llm_review/reply.gemini_plain": *mixed
+"llm_review/llm.input.duplicate_errors_no_warning": &warn
+  kind: r_bug_fixed
+  ref: U19
+  reason: failed rows are warned about whatever their number (R's isTRUE(answer_df$error) warns only for a single-row result)
+"llm_review/msg.llm.groq.error400_rows": *warn
+"llm_review/llm.input.text_col_answer":
+  kind: r_bug_fixed
+  ref: U19
+  reason: with text_col = "answer" the texts and the answers are both kept (answer.x, answer.y); R overwrites the answers with the texts
+"llm_review/ollama_native.reply.no_message": &nocontent
+  kind: r_bug_fixed
+  ref: U19
+  reason: an Ollama reply without message.content is an error for that text (R returns character(0), so llm() gets NA or fails joining the answers of several texts)
+"llm_review/ollama_native.reply.no_content": *nocontent
+"llm_review/llm.ollama.no_content.mixed": *nocontent
+"llm_review/llm.ollama.no_content.mixed_first": *nocontent
+"llm_review/llm.ollama.no_content.single": *nocontent
+"llm_review/llm.ollama.no_content.repeated": *nocontent
+"llm_review/llm.ollama.no_content.all_empty": *nocontent
+"llm_review/llm.ollama.no_content.two_of_four": *nocontent
+"llm_review/llm.ollama.no_content.frame": *nocontent

@@ -454,10 +454,32 @@ def test_llm_error_row_and_systemic_notice(
     assert "LLM appears unavailable this run" in capsys.readouterr().err
 
 
-def test_llm_mixed_success_and_error_fails_like_r(llm_on: Path) -> None:
-    """R's bind_rows() cannot combine an ellmer_output answer with a failed row."""
-    with replay(MOCKS), pytest.raises(TypeError, match="Can't combine"):
-        L.llm(["hello", "unauthorized"], "Sys", model="groq/test-model")
+def test_llm_mixed_success_and_error_keeps_the_answers(llm_on: Path) -> None:
+    """U19: R's bind_rows() cannot combine an ellmer_output answer with a failed
+    row, so one failed text lost every answer."""
+    with (
+        replay(MOCKS),
+        pytest.warns(UserWarning, match=r"errors in the following rows: 2 \n"),
+    ):
+        out = L.llm(["hello", "unauthorized", "hello"], "Sys", model="groq/test-model")
+    assert out["answer"].tolist()[0] == out["answer"].tolist()[2]
+    assert isinstance(out["answer"].iloc[0], str) and out["answer"].iloc[0]
+    assert pd.isna(out["answer"].iloc[1])
+    assert out["error"].fillna(False).tolist() == [False, True, False]
+
+
+def test_llm_rows_whose_text_is_sanitised_or_missing(llm_on: Path) -> None:
+    """U19: answers were joined back on the sanitised text (NA for a text with a
+    control character), numeric text failed the join, NA was sent as "NA"."""
+    with replay(MOCKS):
+        out = L.llm(["hel\x01lo", "hello", None], "Is this a number? Answer TRUE or FALSE",
+                    model="groq/test-model")  # fmt: skip
+        num = L.llm([12, 12.0], "Is this a number? Answer TRUE or FALSE",
+                    model="groq/test-model")  # fmt: skip
+    assert out["answer"].tolist()[:2] == ["FALSE", "FALSE"]
+    assert pd.isna(out["answer"].iloc[2])
+    assert "error" not in out.columns
+    assert num["answer"].tolist() == ["TRUE", "TRUE"]
 
 
 def test_llm_structured_recorded(llm_on: Path) -> None:

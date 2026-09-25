@@ -40,6 +40,7 @@
           - "Line p =\n.03 and p\n< .04."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.unicode_star"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "The unstarred p-value before a '(* p < .05)' note is flagged; metacheck's whole-sentence star test hid it."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -72,6 +73,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ------------------------------------------------------------------ comparators
 - "id": "stat_p_exact.comparators"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p == .03' is exact, not imprecise; 'p == .000', 'p =< 0' and 'p < 0.0' are reported as zero."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -94,6 +96,7 @@
           - "Tiny p < 1.0 x 10^-400 here."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_nonsig.comparators"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p == .03' is significant (metacheck counts '==' as non-significant)."}
   "module": "stat_p_nonsig"
   "args":
     "paper":
@@ -113,6 +116,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ----------------------------------------------------------------- star notes
 - "id": "stat_p_exact.star_variants"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "The unstarred 'p < .05' before a '*p < .01' note is flagged; only the starred p-value is a table note."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -361,6 +365,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml')), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml']), 'stat_p_exact')"}}
 - "id": "report_tables.stat_p_exact.synthetic"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p < .01' after a '* p < .05' note is listed, and 'p < .05' twice in one sentence is listed once."}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":

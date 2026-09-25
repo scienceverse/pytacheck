@@ -187,6 +187,20 @@
       "$expr":
         "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('paper_none_empty')})"
         "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('paper_none_empty')"
+- "id": "psychds_check.psychsci_two_papers"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('psychsci_two_papers')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('psychsci_two_papers')"
+- "id": "psychds_check.compliant_raw"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('compliant_raw')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('compliant_raw')"
 - "id": "psychds_check.yellow_six.llm_use_true"
   "r": "base::identity"
   "py": "tests.mod_psychds.parity_support.identity"

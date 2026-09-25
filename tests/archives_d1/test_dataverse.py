@@ -417,7 +417,11 @@ def test_dataverse_parse_matches_each_url_on_its_own() -> None:
             "https://dataverse.nl/x",
         ]
     )
-    assert parsed["host"].tolist() == ["dataverse.cirad.fr", "dataverse.harvard.edu", "dataverse.nl"]
+    assert parsed["host"].tolist() == [
+        "dataverse.cirad.fr",
+        "dataverse.harvard.edu",
+        "dataverse.nl",
+    ]
     assert parsed["doi"].fillna("NA").tolist() == ["10.18167/DVN1/T0DMFJ", "10.7910/DVN/X", "NA"]
 
 
@@ -512,12 +516,14 @@ def test_dataverse_parse_invalid_utf8_escape_is_no_doi() -> None:
     assert out["doi"].tolist() == ["10.7910/DVN/X–"]
 
 
-def test_links_on_an_empty_paper_list_keep_rs_columns() -> None:
+def test_links_on_an_empty_paper_list() -> None:
+    # the columns of a non-empty table, in the same order (text_search() of an
+    # empty paper list is a typed empty text table, U79)
     out = dataverse_links(pc.PaperList([]))
     assert out.columns.tolist() == [
+        "href",
         "text_id",
         "paper_id",
-        "href",
         "dataverse_url",
         "dataverse_host",
         "dataverse_doi",

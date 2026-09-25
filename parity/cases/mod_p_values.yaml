@@ -56,6 +56,7 @@
     "paper": {"$test_paper": {"text": ["The p = .0123"]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.green_several"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p == .000' is flagged as reported as zero (metacheck checks only '=')."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -114,6 +115,7 @@
           - "Zero p-value example (p = .000)"
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.stars"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "A '* p < .05' note hides only the starred p-value, not every imprecise p-value of its sentence."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -126,6 +128,7 @@
           - "A real imprecise value, P < .05."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.duplicates"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "The same p-value twice in one sentence is listed once ('p < .05' and 'p < .05 ' were two rows)."}
   "module": "stat_p_exact"
   "args":
     "paper":

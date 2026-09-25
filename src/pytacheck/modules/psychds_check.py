@@ -9,13 +9,14 @@ It only *checks*; nothing on disk is changed.
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
 import numpy as np
 import pandas as pd
 
-from pytacheck._r import grepl, gsub, is_na, plural, r_sort_key, regextract, sub
+from pytacheck._r import gsub, is_na, plural, r_sort_key, regextract, sub
 from pytacheck.module import module
 from pytacheck.report import scroll_table
 
@@ -180,29 +181,6 @@ def _tolower(x: str | None) -> str | None:
     return "".join("i" if c == "\u0130" else low if len(low := c.lower()) == 1 else c for c in x)
 
 
-def _r_and(*values: bool | None) -> bool | None:
-    """R's three-valued ``&`` of scalars (``None`` is ``NA``)."""
-    if any(v is False for v in values):
-        return False
-    if any(v is None for v in values):
-        return None
-    return True
-
-
-def _neq(a: str | None, b: str | None) -> bool | None:
-    """R ``a != b`` for two strings (``NA`` when either is missing)."""
-    if a is None or b is None:
-        return None
-    return a != b
-
-
-def _ifelse(test: bool | None, yes: Any, no: Any) -> Any:
-    """R ``ifelse()`` of one element (a missing test gives ``NA``)."""
-    if test is None:
-        return None
-    return yes if test else no
-
-
 # -- the target tree ---------------------------------------------------------------
 
 
@@ -293,10 +271,14 @@ def psychds_tree_html(nodes: pd.DataFrame | None) -> str:
 
 
 def _pid(paper: Any, *dfs: pd.DataFrame | None) -> str | None:
-    """R ``.pid()``: the paper's (first) ID, else the first ``paper_id`` of *dfs*."""
+    """R ``.pid()``: the paper's (first) ID, else the first ``paper_id`` of *dfs*.
+
+    ``paper = None`` (local files only) takes the ID from *dfs* (R's
+    ``paper_id(NULL)`` stops the module).
+    """
     from pytacheck.papers.tables import paper_id
 
-    ids: list[Any] = list(paper_id(paper))
+    ids: list[Any] = list(paper_id(paper)) if paper is not None else []
     for df in dfs:
         if len(ids) > 0:
             break
@@ -305,18 +287,38 @@ def _pid(paper: Any, *dfs: pd.DataFrame | None) -> str | None:
     return None if len(ids) == 0 else _chr(ids[0])
 
 
-def _summary(pid: str | None, counts: Sequence[int]) -> pd.DataFrame:
-    names = (
-        "required_met",
-        "required_missing",
-        "recommended_met",
-        "recommended_missing",
-        "misplaced_n",
-    )
-    data: dict[str, Any] = {"paper_id": pd.array([pid], dtype="string")}
-    for name, n in zip(names, counts, strict=True):
-        data[name] = pd.array([n], dtype="Int64")
+_COUNT_NAMES = (
+    "required_met",
+    "required_missing",
+    "recommended_met",
+    "recommended_missing",
+    "misplaced_n",
+)
+
+
+def _summary(rows: Sequence[tuple[str | None, Sequence[int]]]) -> pd.DataFrame:
+    """One summary row per ``(paper_id, counts)``."""
+    data: dict[str, Any] = {"paper_id": pd.array([r[0] for r in rows], dtype="string")}
+    for k, name in enumerate(_COUNT_NAMES):
+        data[name] = pd.array([r[1][k] for r in rows], dtype="Int64")
     return pd.DataFrame(data)
+
+
+def _subset(df: Any, pid: str) -> Any:
+    """The rows of *df* that belong to paper *pid* (``df`` itself without a ``paper_id``)."""
+    if not isinstance(df, pd.DataFrame) or "paper_id" not in df.columns:
+        return df
+    keep = [_chr(v) == pid for v in df["paper_id"].tolist()]
+    return df.loc[keep].reset_index(drop=True)
+
+
+# Psych-DS's own validator rule for a data file name (schema_model "Datafile"):
+# keyword-value pairs, then "_data.csv" / "_data.tsv"
+_PSYCHDS_DATAFILE = re.compile(r"^[a-z]+-[a-zA-Z0-9]+(_[a-z]+-[a-zA-Z0-9]+)*_data\.(csv|tsv)$")
+# documentation types whose readme/licence/CHANGES files go to the root (a bare
+# LICENSE or CHANGES is "unknown" in data_check); dataset_description.json and
+# ro-crate-metadata.json go there by name whatever their type ("code" for .json)
+_ROOT_DOC_TYPES = ("documentation", "unknown")
 
 
 def _data_check_outputs(
@@ -371,20 +373,20 @@ def _data_check_outputs(
         Psych-DS 1.5 expects, at minimum, a root `dataset_description.json` metadata
         file, a `data/` directory, and at least one `*_data.csv` file; it recommends
         a `README`, a `CHANGES` file, and conventional subdirectories (`analysis/`,
-        `materials/`, `documentation/`, `documentation/codebooks/`). This module
+        `materials/`, `documentation/`). This module
         compares those
         expectations against the repository's actual files, using the classification
         and columns from `data_check` and the variable documentation from
         `codebook_check`.
 
         Each repository file is mapped to its Psych-DS destination by type: data →
-        `data/`, code → `analysis/`, materials → `materials/`, documentation →
-        `documentation/` (or `documentation/codebooks/` for `documentation` rows
-        whose fine-grained `doc_role` is `"codebook"`), unknown → `unknown/` (a
+        `data/` (a file already named like `study-1_data.csv` keeps its name, others
+        become `study-<name>_data.csv`), code → `analysis/`, materials → `materials/`,
+        documentation (codebooks included) → `documentation/`, unknown → `unknown/` (a
         visible junk drawer for files `data_check` could not place at all — rename
         the file to include a data/code/materials/output/documentation keyword to
-        get it classified), the root readme (`doc_role == "readme"`) → root
-        `README`. The module then
+        get it classified). The readme (`doc_role == "readme"`), licence,
+        `CHANGES` and `dataset_description.json` go to the dataset root. The module then
         renders the target tree, marking files that are **present**, **missing**
         (required but absent — shown in red), or **misplaced** (present but at the
         wrong path — shown at the target location annotated with their current
@@ -449,160 +451,40 @@ def psychds_check(
     if structure_df is None or len(structure_df) == 0:
         return {
             "table": pd.DataFrame(),
-            "summary_table": _summary(_pid(paper, structure_df, columns_df), [0, 0, 0, 0, 0]),
+            "summary_table": _summary([(_pid(paper, structure_df, columns_df), [0] * 5)]),
             "na_replace": dict(_NA_REPLACE),
             "traffic_light": "na",
             "summary_text": _EMPTY_TEXT,
         }
 
-    n_files = len(structure_df)
-    # `structure_df$file_name` / `$data_type` are NULL when the column is absent
-    file_name = _col(structure_df, "file_name")
-    data_type = _col(structure_df, "data_type")
-
-    # 2. Do study groups exist? ------------------------------------------------
-    groups = _col(structure_df, "group") or [None] * n_files
-    doc_role = _col(structure_df, "doc_role") or [None] * n_files
-    study_groups = list(dict.fromkeys(g for g in groups if g is not None))
-    have_groups = len(study_groups) > 0
-    multi_study = len(study_groups) > 1
-
-    # 3. Map each file to its Psych-DS target path -----------------------------
-    names = None if file_name is None else [_basename(_backslash_to_slash(f)) for f in file_name]
-    # whole-column regex work, looked up per row by target_of()
-    stems = [] if names is None else _keyword_slug(_file_path_sans_ext(names))
-    name_ext = [] if names is None else _file_ext(names)
-
-    def target_of(i: int) -> str:
-        # `structure_df$data_type[i] %||% "unknown"`: only an absent column is "unknown"
-        dt = "unknown" if data_type is None else data_type[i]
-        role = doc_role[i]
-        grp = groups[i]
-        prefix = f"study-{grp}/" if multi_study and grp is not None else ""
-        if dt is None:
-            raise ValueError("missing value where TRUE/FALSE needed")
-        is_named = dt == "data" or (dt == "documentation" and role in ("readme", "license"))
-        if names is None:
-            # no file_name column: `name` is character(0), so `if (!nzchar(stem))`
-            # and `if (nzchar(ext))` fail; paste0() drops the empty name
-            if is_named:
-                raise ValueError("argument is of length zero")
-            return f"{prefix}{_TYPE_TO_SUBDIR.get(dt, 'documentation')}/"
-        if dt == "data":
-            stem = stems[i]
-            if stem == "":
-                stem = f"file{i + 1}"
-            return f"{prefix}data/study-{_paste(stem)}_data.csv"
-        if is_named:
-            ext = name_ext[i]
-            base = "README" if role == "readme" else "LICENSE"
-            # nzchar(NA) is TRUE: a missing extension gives "README.NA"
-            return prefix + (f"{base}.{_paste(ext)}" if ext is None or ext != "" else base)
-        sub_dir = _TYPE_TO_SUBDIR.get(dt, "documentation")
-        return f"{prefix}{sub_dir}/{_paste(names[i])}"
-
-    target_path: list[str | None] = [target_of(i) for i in range(n_files)]
-    file_path = _col(structure_df, "file_path")
-    if file_name is None:
-        # R carries on with zero-length vectors until a later step fails
-        if file_path is None:
-            # current_path is logical(0): basename(logical(0))
-            raise TypeError("a character vector argument expected")
-        if any(p is None for p in file_path):
-            # ifelse(is.na(current_path), NULL, current_path)
-            raise ValueError("replacement has length zero")
-        # target_path becomes logical(0): data.frame(path = logical(0), status = <n>)
-        raise ValueError(f"arguments imply differing number of rows: 0, {n_files}")
-    if data_type is None:
-        # is_data is logical(0), so ifelse(is_raw_data, ...) empties target_path
-        raise ValueError(f"arguments imply differing number of rows: 0, {n_files}")
-    is_data = [dt is not None and dt == "data" for dt in data_type]
-    raw_current = file_path if file_path is not None else file_name
-    current_path = [
-        f if c is None else c
-        for c, f in zip((_backslash_to_slash(p) for p in raw_current), file_name, strict=True)
-    ]
-    # target_of() always returns a path; kept defensively as in R
-    is_excluded = [t is None for t in target_path]
-    misplaced = [
-        _r_and(not ex, _neq(c, t))
-        for ex, c, t in zip(is_excluded, current_path, target_path, strict=True)
-    ]
-
-    # tabular data not already in CSV is converted (original kept alongside);
-    # raw (non-tabular) data keeps its own name and extension
-    from pytacheck.datacheck.files import data_format
-
-    src_ext = [_tolower(e) for e in _file_ext(file_name)]
-    src_format = data_format(src_ext)
-    needs_convert = [
-        _r_and(d, _neq(e, "csv"), fmt == "tabular")
-        for d, e, fmt in zip(is_data, src_ext, src_format, strict=True)
-    ]
-    is_raw_data = [
-        _r_and(d, e is None or e != "", _neq(e, "csv"), None if nc is None else not nc)
-        for d, e, nc in zip(is_data, src_ext, needs_convert, strict=True)
-    ]
-
-    real_names = names or []
-
-    def same_dir_real_name(tp: str | None, i: int) -> str:
-        # the same directory as the _data.csv target, but the file's own basename
-        return f"{_dirname(_paste(tp))}/{_paste(real_names[i])}"
-
-    original_target = [
-        same_dir_real_name(target_path[i], i) if needs_convert[i] is True else None
-        for i in range(n_files)
-    ]
-    raw_target = [
-        same_dir_real_name(target_path[i], i) if is_raw_data[i] is True else None
-        for i in range(n_files)
-    ]
-    target_path = [
-        _ifelse(raw, rt, tp)
-        for raw, rt, tp in zip(is_raw_data, raw_target, target_path, strict=True)
-    ]
-
-    # 4. Required / recommended compliance items -------------------------------
-    file_names_lc = [_tolower(_basename(c)) for c in current_path]
-    has_dataset_desc = any(f == "dataset_description.json" for f in file_names_lc)
-    has_data_files = any(is_data)
-    has_readme = any(r is not None and r == "readme" for r in doc_role)
-    has_changes = any(grepl(r"^changes(\.|$)", file_names_lc))
-
-    n_columns = len(columns_df) if columns_df is not None else 0
-    describable = n_columns > 0
-    if isinstance(labels_df, pd.DataFrame) and "label_status" in labels_df.columns:
-        n_documented = sum(
-            _chr(s) in ("labelled", "llm") for s in labels_df["label_status"].tolist()
-        )
-    else:
-        n_documented = 0
-
-    req_met = [has_dataset_desc, has_data_files, describable]
-    rec_met = [has_readme, has_changes, n_documented > 0]
-    n_req_missing = sum(not m for m in req_met)
-    n_rec_missing = sum(not m for m in rec_met)
-    n_misplaced = sum(1 for m in misplaced if m)
-
-    # 5. Traffic light ----------------------------------------------------------
-    if has_dataset_desc and n_req_missing == 0:
-        tl = "green"  # already compliant
-    elif has_data_files and describable:
-        tl = "yellow"  # convertible
-    else:
-        tl = "red"  # not convertible yet
+    a = _assess(structure_df, columns_df, labels_df)
+    n_files = a["n_files"]
+    req_met, rec_met = a["req_met"], a["rec_met"]
+    n_req_missing, n_rec_missing, n_misplaced = (
+        a["n_req_missing"], a["n_rec_missing"], a["n_misplaced"]
+    )  # fmt: skip
+    has_dataset_desc, describable = a["has_dataset_desc"], a["describable"]
+    n_columns, n_documented = a["n_columns"], a["n_documented"]
+    study_groups, multi_study = a["study_groups"], a["multi_study"]
+    target_path, current_path, misplaced = a["target_path"], a["current_path"], a["misplaced"]
+    is_excluded = a["is_excluded"]
 
     # 6. Build the required-vs-present tree ------------------------------------
-    node_path: list[str | None] = list(target_path)
-    node_status: list[str | None] = [_ifelse(m, "move", "present") for m in misplaced]
-    node_note: list[str | None] = [
-        _ifelse(m, f"move from {_paste(c)}", "")
-        for m, c in zip(misplaced, current_path, strict=True)
-    ]
+    node_path: list[str | None] = []
+    node_status: list[str | None] = []
+    node_note: list[str | None] = []
+    for ex, tp, m, c in zip(is_excluded, target_path, misplaced, current_path, strict=True):
+        if ex:  # a file with no name has no place in the tree
+            continue
+        node_path.append(tp)
+        node_status.append("move" if m else "present")
+        node_note.append(f"move from {_paste(c)}" if m else "")
 
     def scaffold(prefix: str = "", is_dataset: bool = True) -> list[tuple[str, bool]]:
-        rows = [(f"{prefix}README", not has_readme), (f"{prefix}CHANGES", not has_changes)]
+        rows = [
+            (f"{prefix}README", not a["has_readme"]),
+            (f"{prefix}CHANGES", not a["has_changes"]),
+        ]
         if is_dataset:
             rows.insert(0, (f"{prefix}dataset_description.json", not has_dataset_desc))
         return rows
@@ -633,10 +515,6 @@ def psychds_check(
         for (item, detail), met in zip(_REQUIRED, req_met, strict=True)
         if not met
     ]
-    if any(m is None for m in misplaced):
-        # an NA current path (no file name and no file path) makes
-        # sum(misplaced) NA, and `if (n_misplaced > 0)` fails
-        raise ValueError("missing value where TRUE/FALSE needed")
     if n_misplaced > 0:
         mv = [i for i, m in enumerate(misplaced) if m]
         suggestions += [
@@ -677,7 +555,7 @@ def psychds_check(
 
     groups_text = (
         f" across {len(study_groups):d} study group{plural(len(study_groups))}"
-        if have_groups
+        if study_groups
         else ""
     )
     report: list[Any] = [
@@ -718,13 +596,26 @@ def psychds_check(
     report += _CALL_TO_ACTION
 
     # 9. Summary table + return ----------------------------------------------------
-    summary_table = _summary(
-        _pid(paper, structure_df, columns_df),
-        [sum(req_met), n_req_missing, sum(rec_met), n_rec_missing, n_misplaced],
+    # one row per paper, each assessed on its own files (R reports the pooled
+    # counts once, for the first paper only)
+    pids = (
+        list(dict.fromkeys(v for v in (_chr(x) for x in structure_df["paper_id"]) if v))
+        if "paper_id" in structure_df.columns
+        else []
     )
+    if len(pids) > 1:
+        rows = []
+        for pid in pids:
+            sub = _assess(
+                _subset(structure_df, pid), _subset(columns_df, pid), _subset(labels_df, pid)
+            )
+            rows.append((pid, sub["counts"]))
+        summary_table = _summary(rows)
+    else:
+        summary_table = _summary([(_pid(paper, structure_df, columns_df), a["counts"])])
 
     status = [
-        "excluded" if ex else _ifelse(m, "move", "present")
+        "excluded" if ex else ("move" if m else "present")
         for ex, m in zip(is_excluded, misplaced, strict=True)
     ]
     if "referenced_by" in structure_df.columns:
@@ -736,14 +627,14 @@ def psychds_check(
         referenced_by = [None] * n_files
     plan_table = pd.DataFrame(
         {
-            "file_name": pd.array(file_name, dtype="string"),
-            "data_type": pd.array(data_type, dtype="string"),
-            "group": pd.array(groups, dtype="string"),
+            "file_name": pd.array(a["file_name"], dtype="string"),
+            "data_type": pd.array(a["data_type"], dtype="string"),
+            "group": pd.array(a["groups"], dtype="string"),
             "current_path": pd.array(current_path, dtype="string"),
             "target_path": pd.array(target_path, dtype="string"),
             "status": pd.array(status, dtype="string"),
-            "convert": pd.array(needs_convert, dtype="boolean"),
-            "original_target": pd.array(original_target, dtype="string"),
+            "convert": pd.array(a["needs_convert"], dtype="boolean"),
+            "original_target": pd.array(a["original_target"], dtype="string"),
             "referenced_by": pd.Series(referenced_by, dtype=object),
         }
     )
@@ -752,7 +643,154 @@ def psychds_check(
         "table": plan_table,
         "summary_table": summary_table,
         "na_replace": dict(_NA_REPLACE),
-        "traffic_light": tl,
+        "traffic_light": a["traffic_light"],
         "report": report,
         "summary_text": summary_text,
+    }
+
+
+def _assess(structure_df: pd.DataFrame, columns_df: Any, labels_df: Any) -> dict[str, Any]:
+    """Target paths, compliance items and counts of one set of repository files."""
+    from pytacheck.datacheck.files import data_format
+
+    n_files = len(structure_df)
+    raw_name = _col(structure_df, "file_name") or [None] * n_files
+    raw_path = _col(structure_df, "file_path") or [None] * n_files
+    data_type = _col(structure_df, "data_type") or [None] * n_files
+    groups = _col(structure_df, "group") or [None] * n_files
+    doc_role = _col(structure_df, "doc_role") or [None] * n_files
+    study_groups = list(dict.fromkeys(g for g in groups if g is not None))
+    multi_study = len(study_groups) > 1
+
+    # 2. Each file's name and current location ---------------------------------
+    # the name falls back to the path's basename; a file with neither cannot be
+    # placed (R fails on a missing name or data type)
+    current_path = [
+        _backslash_to_slash(p) if p is not None else _backslash_to_slash(f)
+        for p, f in zip(raw_path, raw_name, strict=True)
+    ]
+    names = [
+        _basename(_backslash_to_slash(f)) if f is not None else _basename(c)
+        for f, c in zip(raw_name, current_path, strict=True)
+    ]
+    file_name = [f if f is not None else nm for f, nm in zip(raw_name, names, strict=True)]
+    dtypes = [dt if dt is not None else "unknown" for dt in data_type]
+    stems = _keyword_slug(_file_path_sans_ext(names))
+    name_ext = _file_ext(names)
+
+    # 3. Map each file to its Psych-DS target path -------------------------------
+    def target_of(i: int) -> str | None:
+        name = names[i]
+        if name is None:
+            return None
+        dt, role, grp = dtypes[i], doc_role[i], groups[i]
+        prefix = f"study-{grp}/" if multi_study and grp is not None else ""
+        low = _tolower(name) or ""
+        ext = name_ext[i] or ""
+        if low == "dataset_description.json":
+            return f"{prefix}dataset_description.json"
+        if low == "ro-crate-metadata.json":
+            return name  # collection-level metadata: the root, under its own name
+        if dt == "data":
+            if _PSYCHDS_DATAFILE.match(name):
+                return f"{prefix}data/{name}"  # already a valid Psych-DS data file name
+            stem = stems[i] or f"file{i + 1}"
+            return f"{prefix}data/study-{stem}_data.csv"
+        if dt in _ROOT_DOC_TYPES:
+            if role == "readme" or role == "license":
+                base = "README" if role == "readme" else "LICENSE"
+                return prefix + (f"{base}.{ext}" if ext else base)
+            if re.match(r"^changes(\.|$)", low):
+                return prefix + name  # a CHANGES log sits at the root, under its own name
+        return f"{prefix}{_TYPE_TO_SUBDIR.get(dt, 'documentation')}/{name}"
+
+    target_path: list[str | None] = [target_of(i) for i in range(n_files)]
+    is_data = [dt == "data" for dt in dtypes]
+
+    # tabular data not already in CSV is converted (original kept alongside);
+    # raw (non-tabular) data keeps its own name and extension; a file already
+    # named as a Psych-DS data file (.csv or .tsv) stays as it is
+    src_ext = [_tolower(e) or "" for e in name_ext]
+    src_format = data_format(src_ext)
+    compliant = [n is not None and bool(_PSYCHDS_DATAFILE.match(n)) for n in names]
+    needs_convert = [
+        d and e != "csv" and fmt == "tabular" and not ok
+        for d, e, fmt, ok in zip(is_data, src_ext, src_format, compliant, strict=True)
+    ]
+    is_raw_data = [
+        d and e != "" and e != "csv" and not nc and not ok
+        for d, e, nc, ok in zip(is_data, src_ext, needs_convert, compliant, strict=True)
+    ]
+
+    def same_dir_real_name(i: int) -> str:
+        # the same directory as the _data.csv target, but the file's own basename
+        return f"{_dirname(_paste(target_path[i]))}/{_paste(names[i])}"
+
+    original_target = [same_dir_real_name(i) if needs_convert[i] else None for i in range(n_files)]
+    for i in range(n_files):
+        if is_raw_data[i]:
+            target_path[i] = same_dir_real_name(i)
+    # misplaced against the final target (R compares before a raw file's target
+    # is set, so raw data already in place was "moved" onto itself)
+    is_excluded = [t is None for t in target_path]
+    misplaced = [
+        not ex and c != t for ex, c, t in zip(is_excluded, current_path, target_path, strict=True)
+    ]
+
+    # 4. Required / recommended compliance items ---------------------------------
+    file_names_lc = [_tolower(n) for n in names]
+    has_dataset_desc = any(f == "dataset_description.json" for f in file_names_lc)
+    has_data_files = any(is_data)
+    has_readme = any(r == "readme" for r in doc_role)
+    has_changes = any(f is not None and re.match(r"^changes(\.|$)", f) for f in file_names_lc)
+
+    n_columns = len(columns_df) if isinstance(columns_df, pd.DataFrame) else 0
+    describable = n_columns > 0
+    if isinstance(labels_df, pd.DataFrame) and "label_status" in labels_df.columns:
+        n_documented = sum(
+            _chr(s) in ("labelled", "llm") for s in labels_df["label_status"].tolist()
+        )
+    else:
+        n_documented = 0
+
+    req_met = [has_dataset_desc, has_data_files, describable]
+    rec_met = [has_readme, has_changes, n_documented > 0]
+    n_req_missing = sum(not m for m in req_met)
+    n_rec_missing = sum(not m for m in rec_met)
+    n_misplaced = sum(1 for m in misplaced if m)
+
+    # 5. Traffic light ----------------------------------------------------------
+    if has_dataset_desc and n_req_missing == 0:
+        tl = "green"  # already compliant
+    elif has_data_files and describable:
+        tl = "yellow"  # convertible
+    else:
+        tl = "red"  # not convertible yet
+
+    return {
+        "n_files": n_files,
+        "file_name": file_name,
+        "data_type": data_type,
+        "groups": groups,
+        "study_groups": study_groups,
+        "multi_study": multi_study,
+        "current_path": current_path,
+        "target_path": target_path,
+        "is_excluded": is_excluded,
+        "misplaced": misplaced,
+        "needs_convert": needs_convert,
+        "original_target": original_target,
+        "has_dataset_desc": has_dataset_desc,
+        "has_readme": has_readme,
+        "has_changes": has_changes,
+        "describable": describable,
+        "n_columns": n_columns,
+        "n_documented": n_documented,
+        "req_met": req_met,
+        "rec_met": rec_met,
+        "n_req_missing": n_req_missing,
+        "n_rec_missing": n_rec_missing,
+        "n_misplaced": n_misplaced,
+        "counts": [sum(req_met), n_req_missing, sum(rec_met), n_rec_missing, n_misplaced],
+        "traffic_light": tl,
     }
