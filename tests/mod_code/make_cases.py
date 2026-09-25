@@ -55,7 +55,23 @@ MODULE_CASES: list[tuple[str, str, dict[str, Any]]] = [
     ("windows", "windows", {}),
     ("na_repo", "na_repo", {}),
     ("urls", "urls", {}),
+    # downloads (file:// URLs): temporary download paths are not compared
+    ("download", "download", {}),
+    ("download_no_download", "download", {"download": False}),
+    ("download_file_cap", "download_mixed", {"max_files_per_repo": 2}),
+    ("download_budget", "download_mixed", {"max_download_size": 0.0001}),
 ]
+
+# volatile columns of the download cases: temporary paths, and read errors
+# that name the working directory
+_DOWNLOAD_IGNORE = {
+    "ignore": [
+        "table.file_url",
+        "table.file_location",
+        "table.error",
+        "version_pin.file_location",
+    ]
+}
 
 # scenarios whose report tables are compared as data
 TABLE_CASES: list[tuple[str, str, dict[str, Any]]] = [
@@ -108,6 +124,8 @@ def module_case(suffix: str, scenario: str, args: dict[str, Any]) -> dict[str, A
             **args,
         },
     }
+    if scenario.startswith("download"):
+        case["compare"] = _DOWNLOAD_IGNORE
     return case
 
 

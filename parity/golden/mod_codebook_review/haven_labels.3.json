@@ -1,0 +1,72 @@
+{
+  "id": "haven_labels.3",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "l"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Agree?"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "stata_int_na.dta"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "g1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"No\",\"2\":\"Yes\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -224,3 +224,14 @@ def rv_scales_to_osd() -> dict[str, Any]:
 def rv_run_osd_attrs(mo: Any) -> list[dict[str, Any]]:
     """A module run's ``scales_osd`` attributes."""
     return rv_osd_attrs(mo["scales_osd"])
+
+
+def rv_haven_labels(f: str) -> Any:
+    """The module's embedded-label harvest of one labelled data file (read labels-only)."""
+    import os
+
+    from pytacheck.datacheck.columns import _extract_haven_labels
+    from pytacheck.modules.codebook_check import _haven_labels_frame
+
+    ext = f.rsplit(".", 1)[1].lower()
+    return _extract_haven_labels(_haven_labels_frame(f, ext), os.path.basename(f), group="g1")

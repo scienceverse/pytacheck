@@ -152,3 +152,13 @@ rv_scales_to_osd <- function() {
 
 # A module run's scales_osd attributes.
 rv_run_osd_attrs <- function(mo) rv_osd_attrs(mo$scales_osd)
+
+# The module's embedded-label harvest of one labelled data file (read labels-only).
+rv_haven_labels <- function(f) {
+  ext <- tolower(tools::file_ext(f))
+  df <- switch(ext,
+    sav      = as.data.frame(haven::read_sav(f, n_max = 0L)),
+    dta      = as.data.frame(haven::read_dta(f, n_max = 0L)),
+    sas7bdat = as.data.frame(haven::read_sas(f, n_max = 0L)))
+  metacheck:::.extract_haven_labels(df, basename(f), group = "g1")
+}

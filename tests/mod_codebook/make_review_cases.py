@@ -35,6 +35,17 @@ SCENARIOS = [
     "rv_maxitem",
     "rv_onlycb",
 ]
+# labelled data files whose embedded labels the module harvests
+HAVEN_FILES = [
+    "tests/datacheck_files/data/labelled.dta",
+    "tests/datacheck_files/data/review/zero_rows.dta",
+    "tests/datacheck_files/data/review/all_na_dates.sav",
+    "tests/datacheck_files/data/review/stata_int_na.dta",
+    "tests/datacheck_files/data/review/zero_rows.sav",
+    "tests/datacheck_files/data/iris.sas7bdat",
+    "tests/datacheck_files/data/labelled.sav",
+    "tests/datacheck_columns/fixtures/review/dup_labels.sav",
+]
 # paper lists: empty-data summaries per paper, and two papers sharing a data file name
 PAPER_LISTS = {
     "pl_empty": ["empty", "empty"],
@@ -247,6 +258,10 @@ def helper_cases() -> list[dict[str, Any]]:
         )
     )
     h.append(case("scales_to_osd.mixed", "rv_scales_to_osd()", "RH.rv_scales_to_osd()"))
+    for i, f in enumerate(HAVEN_FILES):
+        h.append(
+            case(f"haven_labels.{i}", f"rv_haven_labels('{f}')", f"RH.rv_haven_labels('{f}')")
+        )
     names = [
         "Q8timing_First.Click",
         "demo1time_First.Click",

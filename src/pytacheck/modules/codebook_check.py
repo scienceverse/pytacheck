@@ -517,17 +517,25 @@ def _codebook_check(
         l_col = _vals(labels_df, "column_name") or []
         l_vl = _vals(labels_df, "value_labels") or []
         l_mv = _vals(labels_df, "missing_values")
+        # name -> first position (R's df[[cn]]), per preview, built once
+        pos_of: dict[Any, dict[str, int]] = {}
         for i in range(len(labels_df)):
             f, cn = l_file[i], l_col[i]
             if f is None or cn is None or previews.get(f) is None:
                 continue
             df_i = previews[f]
-            if cn not in set(cb._names(df_i)):
+            if f not in pos_of:
+                first: dict[str, int] = {}
+                for j, nm in enumerate(cb._names(df_i)):
+                    first.setdefault(nm, j)
+                pos_of[f] = first
+            j = pos_of[f].get(cn)
+            if j is None:
                 continue
             valid = _codes_as_numeric(_decode_value_labels(l_vl[i]))
             if len(valid) < 2:
                 continue
-            x = cb._num_via_chr(cb._column(df_i, cn))
+            x = cb._num_via_chr(df_i.iloc[:, j])
             if all(v is None or math.isnan(v) for v in x):
                 continue
             declared = _codes_as_numeric(
@@ -944,7 +952,7 @@ def _harvest_labels(
     """Embedded variable / value labels of labelled data files (haven, JASP, jamovi)."""
     import pandas as pd
 
-    from pytacheck.datacheck._columns_codebook import _haven_frame, _import_data
+    from pytacheck.datacheck._columns_codebook import _import_data
 
     try:
         import pyreadstat  # noqa: F401
@@ -959,7 +967,7 @@ def _harvest_labels(
         ext = _file_ext(p).lower()
         try:
             if ext in _HAVEN_EXTS:
-                df = _haven_frame(p, ext) if have_haven else None
+                df = _haven_labels_frame(p, ext) if have_haven else None
             elif ext in ("jasp", "omv"):
                 df = _import_data(p, ext)
             else:
@@ -977,6 +985,36 @@ def _harvest_labels(
             res["paper_id"] = pd.Series([s_pid[i]] * len(res), index=res.index, dtype="string")
         out.append(res)
     return out
+
+
+def _haven_labels_frame(path: str, ext: str) -> Any:
+    """``as.data.frame(haven::read_sav/read_dta/read_sas(path, n_max = 0L))``.
+
+    Labels only, as the R module reads them: a zero-row frame whose column
+    attributes carry the variable and value labels (the value labels as
+    ``(label, code)`` pairs in file order, as
+    :func:`pytacheck.datacheck._columns_codebook._haven_frame` keeps them).
+    """
+    import pyreadstat
+
+    from pytacheck.datacheck._files_readers import read_stat_file, vec_as_names_unique
+
+    df = read_stat_file(path, ext, 0)
+    reader = {"sav": pyreadstat.read_sav, "dta": pyreadstat.read_dta,
+              "sas7bdat": pyreadstat.read_sas7bdat}[ext]  # fmt: skip
+    _, meta = reader(path, metadataonly=True)
+    raw_names = list(meta.column_names)
+    col_attrs = df.attrs.get("col_attrs") or {}
+    value_labels = meta.variable_value_labels or {}
+    for raw, name in zip(raw_names, vec_as_names_unique(raw_names), strict=True):
+        labels = value_labels.get(raw)
+        attrs = col_attrs.get(name)
+        if labels and attrs and "labels" in attrs:
+            is_string = any(isinstance(c, str) for c in labels)
+            attrs["labels"] = [
+                (str(lab), str(code) if is_string else float(code)) for code, lab in labels.items()
+            ]
+    return df
 
 
 def _backfill_scale_groups(scale_groups: Any, labels_df: Any, cb: Any) -> Any:
