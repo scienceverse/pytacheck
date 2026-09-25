@@ -9,9 +9,11 @@ file references, version pins) are :mod:`pytacheck.codecheck.core`.
 
 from __future__ import annotations
 
+import contextlib
 import math
 import os
 from collections.abc import Mapping, Sequence
+from itertools import pairwise
 from typing import Any
 
 import pandas as pd
@@ -105,6 +107,14 @@ def _r_basename(x: str) -> str:
 def _base_names(x: Sequence[Any]) -> list[str | None]:
     """``gsub("\\\\", "/", x) |> basename()`` (``NA`` stays ``NA``)."""
     return [None if is_na(v) else _r_basename(str(v).replace("\\", "/")) for v in x]
+
+
+def location_series(values: list[Any], index: Any, like: pd.Series | None) -> pd.Series:
+    """A ``file_location`` column of *values*: ``string`` when *like* is, else ``object``."""
+    dtype: Any = object
+    if like is not None and isinstance(like.dtype, pd.StringDtype):
+        dtype = like.dtype
+    return pd.Series(values, index=index, dtype=dtype)
 
 
 def _paste_collapse(values: Sequence[Any], sep: str) -> str:
@@ -293,9 +303,7 @@ def analyse_files(
             library_lines = [int(v) for v in code_library_lines(file_nc, lang)["line"].tolist()]
             row["library_lines"] = len(library_lines)
             if len(library_lines) > 1:
-                row["library_max_between"] = max(
-                    b - a for a, b in zip(library_lines, library_lines[1:], strict=False)
-                )
+                row["library_max_between"] = max(b - a for a, b in pairwise(library_lines))
             else:
                 row["library_max_between"] = None
 
@@ -386,9 +394,7 @@ def summary_table(
     from pytacheck.codecheck.core import _code_version_pin_check, code_packages
 
     if "paper_id" not in code_files.columns:
-        raise KeyError(
-            "Can't select columns that don't exist.\n✖ Column `paper_id` doesn't exist."
-        )
+        raise KeyError("Can't select columns that don't exist.\n✖ Column `paper_id` doesn't exist.")
     pid_values = code_files["paper_id"].tolist()
     groups: dict[Any, list[int]] = {}
     keys: list[Any] = []
@@ -511,7 +517,7 @@ def version_pin_report(version_pin: Mapping[str, Any]) -> tuple[str, str, pd.Dat
             None,
         )
     mechanisms = list(version_pin.get("mechanisms") or [])
-    found_txt = ", ".join("NA" if m not in _MECH_LABELS else _MECH_LABELS[m] for m in mechanisms)
+    found_txt = ", ".join(_MECH_LABELS.get(m, "NA") for m in mechanisms)
     r_versions = [str(v) for v in version_pin.get("r_versions") or []]
     rv_txt = (
         f" Declared R version{plural(len(r_versions))}: {', '.join(r_versions)}."
@@ -616,7 +622,10 @@ def merge_manifests(
             code["packages"] = list(pkgs)
         if failed_i is not None and len(failed_i) > 0:
             code["files_failed"] = [
-                {k: _failed_cell(failed_i, k, i) for k in ("file_name", "repo_url", "file_url", "error")}
+                {
+                    k: _failed_cell(failed_i, k, i)
+                    for k in ("file_name", "repo_url", "file_url", "error")
+                }
                 for i in range(len(failed_i))
             ]
         code["ddi_mapping"] = {
@@ -625,10 +634,9 @@ def merge_manifests(
                 "fileDscr/notes (code files whose download failed after retries)"
             ),
         }
-        try:
+        # R: tryCatch(manifest_merge(...), error = function(e) NULL)
+        with contextlib.suppress(Exception):
             manifest_merge(path, {"code": code})
-        except Exception:
-            pass
 
 
 def _failed_cell(df: pd.DataFrame, name: str, i: int) -> Any:
