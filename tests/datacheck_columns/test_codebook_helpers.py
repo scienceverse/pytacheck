@@ -258,6 +258,37 @@ def test_match_column_labels_items_defined_on_their_own_rows_keep_their_labels(r
     assert res["label"].tolist() == ["I am talkative", "I am reserved", "Big Five items"]
 
 
+@pytest.mark.parametrize("rng", ["Q1-Q3", "Q1-3"])
+def test_match_column_labels_item_row_of_another_group_keeps_the_range(rng: str) -> None:
+    # U58: only an item row of the range's own group (or an unscoped one)
+    # overrides the range; study 2's "Q1" does not take study 1's Q1 away
+    cols = pd.DataFrame(
+        {
+            "paper_id": "p",
+            "source_file": ["s1.csv"] * 3 + ["s2.csv"],
+            "column_name": ["Q1", "Q2", "Q3", "Q1"],
+            "group": ["ex1"] * 3 + ["ex2"],
+        }
+    )
+    cbk = pd.DataFrame(
+        {
+            "codebook_variable": [rng, "Q1"],
+            "label": ["PANAS items", "Participant age"],
+            "codebook_source": ["cb1", "cb2"],
+            "group": ["ex1", "ex2"],
+            "paper_id": "p",
+        }
+    )
+    res = match_column_labels(cols, cbk)
+    assert res["label_status"].tolist() == ["labelled"] * 4
+    assert res["label"].tolist() == ["PANAS items"] * 3 + ["Participant age"]
+    # an unscoped item row overrides a group-scoped range in every group
+    cbk["group"] = ["ex1", None]
+    res = match_column_labels(cols, cbk)
+    expected = ["Participant age", "PANAS items", "PANAS items", "Participant age"]
+    assert res["label"].tolist() == expected
+
+
 def test_match_column_labels_na_group() -> None:
     """U58: a column without a group takes unscoped definitions only; with
     only group-scoped ones it is ambiguous (R labelled it NA / "x | NA")."""

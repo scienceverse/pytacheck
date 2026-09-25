@@ -145,7 +145,6 @@
       "$expr":
         "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(rv_prev_null('empty'), 'codebook_check')})"
         "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_prev_null('empty'), 'codebook_check')"
-  "known_divergence": "R bug: with paper = NULL (documented as allowed) and a zero-row data_check structure, empty_summary() calls .pid(), whose paper_id(NULL) stops with 'paper must be a paper or paperlist object.'; pytacheck returns the intended 'na' result (paper_id NA) instead of failing the module."
 - "id": "codebook_check.null_paper.rv_onlycb"
   "r": "base::identity"
   "py": "tests.mod_codebook.helpers.identity"

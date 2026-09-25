@@ -986,19 +986,24 @@ def _expand_ranges(
 
     A range whose own normalised name is in *keep_names* (a data column is
     literally called e.g. ``T1-T2``) is a variable, not a range, and is kept.
-    A variable the codebook also defines on a row of its own keeps that
-    definition: the range does not add a second one for it (which would make
-    the item's own label and the range's group label a conflict).
+    A variable the codebook also defines on a row of its own (in the same
+    paper, and unscoped or in the range's own group) keeps that definition:
+    the range does not add a second one for it (which would make the item's
+    own label and the range's group label a conflict). An item row of another
+    study group does not stop the range from defining the item for its own.
     """
     var = _chr_vec(cb["codebook_variable"]) if "codebook_variable" in cb.columns else []
     pids = _chr_vec(cb["paper_id"]) if "paper_id" in cb.columns else [None] * len(var)
+    grps = _chr_vec(cb["group"]) if "group" in cb.columns else [None] * len(var)
     ranges: dict[int, re.Match[str]] = {}
     for i, v in enumerate(var):
         m = None if v is None else _RANGE_RE.match(v)
         if m is not None and normalize_varname([v])[0] not in keep_names:
             ranges[i] = m
     norm = normalize_varname(var) if var else []
-    explicit = {(pids[i], nv) for i, nv in enumerate(norm) if i not in ranges and nv is not None}
+    explicit = {
+        (pids[i], grps[i], nv) for i, nv in enumerate(norm) if i not in ranges and nv is not None
+    }
     expanded: list[pd.DataFrame] = []
     for i, m in ranges.items():
         prefix, start, end = m.group(1), _as_int_str(m.group(2)), _as_int_str(m.group(3))
@@ -1008,7 +1013,7 @@ def _expand_ranges(
         new = [
             nm
             for nm, nv in zip(new, normalize_varname(new), strict=True)
-            if (pids[i], nv) not in explicit
+            if (pids[i], grps[i], nv) not in explicit and (pids[i], None, nv) not in explicit
         ]
         if not new:
             continue

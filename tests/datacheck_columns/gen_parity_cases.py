@@ -1164,6 +1164,24 @@ mcl(
         group=[None] * 3,
     ),
 )
+# ... but an item row of ANOTHER study group does not take the item from the
+# range: each group keeps its own definition (as in R)
+mcl(
+    "range_items_other_group",
+    cols(
+        paper_id=["p"] * 4,
+        source_file=["s1.csv"] * 3 + ["s2.csv"],
+        column_name=["Q1", "Q2", "Q3", "Q1"],
+        group=["ex1"] * 3 + ["ex2"],
+    ),
+    cols(
+        codebook_variable=["Q1-3", "Q1"],
+        label=["PANAS items", "Participant age"],
+        codebook_source=["cb1", "cb2"],
+        group=["ex1", "ex2"],
+        paper_id=["p", "p"],
+    ),
+)
 mcl(
     "ranges_none_valid",
     cols(paper_id=["p"], source_file=["d.csv"], column_name=["item5"]),

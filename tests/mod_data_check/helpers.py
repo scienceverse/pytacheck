@@ -371,10 +371,14 @@ def dc_run_tables(name: str, **kwargs: Any) -> list[pd.DataFrame]:
 
 
 def dc_dv_report(name: str, **kwargs: Any) -> dict[str, Any]:
-    """Parity: the prose and table data of the ``dv_report`` of an ``empty()`` return."""
+    """Parity: the prose and table data of the spreadsheet report of a run with
+    no readable table (R: the ``dv_report`` of its ``empty()`` return;
+    pytacheck ends the module's own report with it, U98)."""
     from pytacheck.report import ReportTable
 
-    rep = dc_run(name, **kwargs).get("dv_report") or []
+    rep = list(dc_run(name, **kwargs).report or [])
+    start = next((i for i, b in enumerate(rep) if b == "#### Spreadsheet Formatting"), len(rep))
+    rep = rep[start:]
     return {
         "text": [b for b in rep if isinstance(b, str)],
         "tables": [b.data.reset_index(drop=True) for b in rep if isinstance(b, ReportTable)],

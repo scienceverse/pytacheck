@@ -3249,6 +3249,49 @@
         - !!null "null"
         - !!null "null"
         - !!null "null"
+- "id": "match_column_labels.range_items_other_group"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        - "p"
+        - "p"
+        - "p"
+        "source_file":
+        - "s1.csv"
+        - "s1.csv"
+        - "s1.csv"
+        - "s2.csv"
+        "column_name":
+        - "Q1"
+        - "Q2"
+        - "Q3"
+        - "Q1"
+        "group":
+        - "ex1"
+        - "ex1"
+        - "ex1"
+        - "ex2"
+    "codebook_vars_df":
+      "$df":
+        "codebook_variable":
+        - "Q1-3"
+        - "Q1"
+        "label":
+        - "PANAS items"
+        - "Participant age"
+        "codebook_source":
+        - "cb1"
+        - "cb2"
+        "group":
+        - "ex1"
+        - "ex2"
+        "paper_id":
+        - "p"
+        - "p"
 - "id": "match_column_labels.ranges_none_valid"
   "r": "match_column_labels"
   "py": "pytacheck.datacheck.columns.match_column_labels"
