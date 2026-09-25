@@ -46,10 +46,13 @@ def test_numbers() -> None:
     out = _from_json('{"a": 3000000000, "b": 2147483647, "c": -2147483648, "d": 1E400}')
     assert out == {"a": 3e9, "b": 2147483647, "c": -2147483648.0, "d": float("inf")}
     assert isinstance(out["a"], float) and isinstance(out["b"], int)
-    with pytest.raises(ValueError, match="invalid char"):
+    # the first line of yajl's lexical error (R adds the text around it)
+    with pytest.raises(ValueError, match=r"^lexical error: invalid char in json text\.$"):
         _from_json('{"a": NaN}')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"^lexical error: invalid char in json text\.$"):
         _from_json('{"a": Infinity}')
+    with pytest.raises(ValueError, match=r"^lexical error: malformed number, a digit is required"):
+        _from_json('{"a": -Infinity}')
 
 
 def test_byte_order_mark_warns() -> None:

@@ -117,21 +117,17 @@ def _default_model_from_env() -> str | None:
 
 
 def _init_options() -> None:
-    """metacheck's ``.onLoad()`` LLM defaults (R/zzz.R), applied when this module loads.
+    """metacheck's ``.onLoad()`` default model (R/zzz.R), applied when this module loads.
 
-    ``metacheck.llm_max_calls = 30L`` and ``metacheck.llm.use = FALSE`` become
-    option-store defaults (:data:`pytacheck.utils._DEFAULTS`), so a
-    ``local_options()`` block entered before this module was imported cannot
-    delete them on exit. The default model (the first provider whose API key
-    is set) is set as an option unless one is already set, as ``.onLoad()``
-    does, so ``llm_model(None)`` can still unset it.
+    ``metacheck.llm_max_calls = 30L`` and ``metacheck.llm.use = FALSE`` are
+    option-store defaults from the start (:data:`pytacheck.utils._DEFAULTS`).
+    The default model (the first provider whose API key is set) is set as an
+    option unless one is already set, as ``.onLoad()`` does, so
+    ``llm_model(None)`` can still unset it.
     """
     from pytacheck import utils
-    from pytacheck.llm._rds import RInt
 
     with _init_lock:
-        utils._DEFAULTS.setdefault("metacheck.llm_max_calls", RInt(30))
-        utils._DEFAULTS.setdefault("metacheck.llm.use", False)
         model = _default_model_from_env()
         if model is not None and utils.get_option("metacheck.llm.model", _MISSING) is _MISSING:
             utils.options({"metacheck.llm.model": model})
@@ -1188,9 +1184,15 @@ def _llm_ollama_native(
     options: Mapping[str, Any] | None = None,
     base_url: str | None = None,
     timeout: float | None = None,
-) -> str:
-    """Port of ``.llm_ollama_native()``: Ollama's ``/api/chat`` (honours ``think = FALSE``)."""
-    from pytacheck._r import trimws
+) -> Any:
+    """Port of ``.llm_ollama_native()``: Ollama's ``/api/chat`` (honours ``think = FALSE``).
+
+    Returns the trimmed reply, or ``character(0)`` (an empty chr ``RVec``) when
+    the reply has no ``message.content``, as R's ``trimws(NULL)`` does; ``llm()``
+    then fails joining the answers of several texts, as metacheck does.
+    """
+    from pytacheck._r import as_character, trimws
+    from pytacheck.llm._rds import RVec
     from pytacheck.llm.providers import _r_vec, perform, resp_body_json
 
     if base_url is None:
@@ -1212,7 +1214,9 @@ def _llm_ollama_native(
     }
     resp = perform("POST", base_url + "/api/chat", body=body, timeout=timeout, max_tries=1)
     content = (resp_body_json(resp).get("message") or {}).get("content")
-    return trimws(content) if isinstance(content, str) else ""  # type: ignore[no-any-return]
+    if content is None:
+        return RVec("chr", [])  # trimws(NULL)
+    return trimws(content if isinstance(content, str) else as_character(content))
 
 
 def _ollama_up(base_url: str) -> bool:
@@ -1559,7 +1563,15 @@ def llm(
     else:
         _check_answer_classes(responses)
         response_df = _bind_rows_r([_as_data_frame(r) for r in responses])
-        response_df[text_col] = pd.Series(unique_text, dtype="string")
+        # response_df[text_col] <- unique_text (a tibble: only size 1 recycles)
+        n_rows, n_text = len(response_df), len(unique_text)
+        if n_rows != n_text and n_text != 1:
+            raise ValueError(_tibble_assign_size_error("unique_text", n_rows, n_text))
+        response_df[text_col] = pd.Series(
+            list(unique_text) if n_rows == n_text else list(unique_text[:1]) * n_rows,
+            dtype="string",
+            index=response_df.index,
+        )
         answer_df = _left_join(text_df, response_df, text_col)
 
     answer_df.attrs["class"] = ["metacheck_llm", "data.frame"]
@@ -1587,6 +1599,23 @@ def llm(
             m = answer_df["error_msg"].iloc[0]
             warnings.warn(f"There were errors in the following rows: 1 \n  *  {m}", stacklevel=2)
     return answer_df
+
+
+def _tibble_assign_size_error(value: str, nrow: int, size: int) -> str:
+    """tibble's ``[<-`` error for a column of the wrong size (``x[col] <- value``)."""
+    hint = (
+        "Row updates require a list value. Do you need `list()` or `as.list()`?"
+        if nrow == 1
+        else "Only vectors of size 1 are recycled."
+    )
+    return (
+        f"Assigned data `{value}` must be compatible with existing data.\n"
+        f"\u2716 Existing data has {nrow} row{'' if nrow == 1 else 's'}.\n"
+        f"\u2716 Assigned data has {size} row{'' if size == 1 else 's'}.\n"
+        f"\u2139 {hint}\n"
+        "Caused by error in `vectbl_recycle_rhs_rows()`:\n"
+        f"! Can't recycle input of size {size} to size {nrow}."
+    )
 
 
 def _llm_workers() -> int:

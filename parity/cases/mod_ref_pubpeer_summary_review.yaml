@@ -175,6 +175,62 @@
       "$expr":
         "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rv_rep_no_type()"
         "py": "(lambda H: H.rv_rep_no_type())(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.ret_bib_id_chr"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rv_ret_bib_id(\"chr\")"
+        "py": "(lambda H: H.rv_ret_bib_id('chr'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.ret_bib_id_na_chr"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rv_ret_bib_id(\"na_chr\")"
+        "py": "(lambda H: H.rv_ret_bib_id('na_chr'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.ret_bib_id_dbl"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rv_ret_bib_id(\"dbl\")"
+        "py": "(lambda H: H.rv_ret_bib_id('dbl'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.ret_bib_id_lgl"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rv_ret_bib_id(\"lgl\")"
+        "py": "(lambda H: H.rv_ret_bib_id('lgl'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.ret_bib_id_na_lgl"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rv_ret_bib_id(\"na_lgl\")"
+        "py": "(lambda H: H.rv_ret_bib_id('na_lgl'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.acc_dup_name_author_mismatch"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rename_table_col(chain(demopaper(), \"ref_accuracy\"), \"year_mismatch\", \"author_mismatch\")"
+        "py": "(lambda H: H.rename_table_col(H.chain(pc.demopaper(), ['ref_accuracy']), 'year_mismatch', 'author_mismatch'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.ret_dup_name_retractionwatch"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rename_table_col(chain(demopaper(), \"ref_retraction\"), \"doi\", \"retractionwatch\")"
+        "py": "(lambda H: H.rename_table_col(H.chain(pc.demopaper(), ['ref_retraction']), 'doi', 'retractionwatch'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.ret_dup_name_bib_id"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rename_table_col(chain(demopaper(), \"ref_retraction\"), \"doi\", \"bib_id\")"
+        "py": "(lambda H: H.rename_table_col(H.chain(pc.demopaper(), ['ref_retraction']), 'doi', 'bib_id'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
 - "id": "ref_summary.acc_dup"
   "module": "ref_summary"
   "args":

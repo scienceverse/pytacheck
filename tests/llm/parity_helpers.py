@@ -32,6 +32,8 @@ __all__ = [
     "T",
     "catch",
     "identity",
+    "ollama_no_content",
+    "ollama_reply",
     "resp",
     "scoped",
 ]
@@ -146,3 +148,38 @@ def cond(
     if wrap is not None:
         return LLMError(wrap, parent=e)
     return e
+
+
+def ollama_reply(body: Any, fn: Callable[[], Any]) -> Any:
+    """``fn()`` with every Ollama ``/api/chat`` request answered by *body*.
+
+    R: ``httr2::with_mocked_responses(function(req) httr2::response_json(body = body), ...)``.
+    An R value such as ``character(0)`` comes back in its Python form (``[]``).
+    """
+    import httpx
+    import respx
+
+    from pytacheck.llm._rds import RVec, to_python
+
+    with respx.mock(assert_all_called=False) as router:
+        router.post(url__regex=r"/api/chat$").mock(return_value=httpx.Response(200, json=body))
+        value = fn()
+    return to_python(value) if isinstance(value, RVec) else value
+
+
+def ollama_no_content(fn: Callable[[], Any], empty: tuple[str, ...] = ("B", "C")) -> Any:
+    """``fn()`` with ``.llm_ollama_native()`` replying without ``message.content``
+    (``character(0)``) for the texts in *empty* and ``"ok"`` otherwise.
+
+    R: ``testthat::with_mocked_bindings(..., .llm_ollama_native = function(text, ...)
+    if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')``.
+    """
+    from unittest import mock
+
+    from pytacheck.llm._rds import RVec
+
+    def stub(text: str | None, *args: Any, **kwargs: Any) -> Any:
+        return RVec("chr", []) if text in empty else "ok"
+
+    with mock.patch.object(K, "_llm_ollama_native", stub):
+        return fn()

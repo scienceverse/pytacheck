@@ -712,7 +712,7 @@ def test_bibr12_paper_matches_the_legacy_paper(scenario: str) -> None:
     from pytacheck.io.bibr12 import read_bibr12
 
     p12 = read_bibr12(BIBR12_PREPRINT)
-    legacy = pc.read(LEGACY_PREPRINT)
+    legacy = pc.read(LEGACY_PREPRINT, schema_version=None)  # the older Grobid conversion
 
     a = _comparable(module_run(cbc_prev(scenario, paper=p12, pid="p1"), "codebook_check"))
     b = _comparable(module_run(cbc_prev(scenario, paper=legacy, pid="p1"), "codebook_check"))

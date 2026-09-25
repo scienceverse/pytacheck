@@ -407,7 +407,9 @@ def data_col_facets(
     from pytacheck.datacheck.columns import _classed_values, data_col_type
 
     values = _classed_values(values, col_class)
-    prim = data_col_type(col_name, values)
+    # the class is passed on: a Series still carries its frame's attrs, where a
+    # column sharing its name with another would find that one's class
+    prim = data_col_type(col_name, values, col_class=col_class)
     ct = prim.get("col_type")
     if ct is not None and ct != ct:
         ct = None

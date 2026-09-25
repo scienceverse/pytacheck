@@ -87,6 +87,25 @@ rp_report_repository <- function(folder, modules, args = list()) {
        file = rp_mask(gsub("tests/report/modules/([a-z_]+)\\.[Rr]", "\\1", txt)))
 }
 
+# report_repository() on a repository folder of the checkout (repo-relative
+# path), with its default modules unless `modules` is given.
+rp_report_repository_dir <- function(path, modules = NULL, args = list()) {
+  f <- tempfile(fileext = ".qmd")
+  on.exit(unlink(f))
+  res <- if (is.null(modules)) {
+    suppressWarnings(report_repository(path, output_file = f, output_format = "qmd", args = args))
+  } else {
+    suppressWarnings(report_repository(path, output_file = f, output_format = "qmd",
+                                       modules = modules, args = args))
+  }
+  txt <- paste(readLines(f), collapse = "\n")
+  out <- rp_norm_output(res)
+  for (i in seq_along(out)) {
+    if (!is.null(out[[i]]$summary_table)) out[[i]]$summary_table$paper_id <- "test_paper"
+  }
+  list(output = out, file = rp_mask(txt))
+}
+
 rp_validate <- function(gt, module) {
   metacheck::validate(gt, rp_mod(module))
 }

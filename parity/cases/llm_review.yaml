@@ -1255,3 +1255,106 @@
         "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.llm_ollama_native('A', 'Is this a vowel? Answer only \\'TRUE\\' or \\'FALSE\\'.', model = 'notamodel'), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', \"Is this a vowel? Answer only 'TRUE' or 'FALSE'.\", model='notamodel'))"
   "mock_dir": "apis"
+- "id": "cache_key.param_order_case"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.llm_cache_key('hi', 's', NULL, 'm', list(top_p = 1, Seed = 2L, seed = 3L, max_tokens = 4L, temperature = 0.5, B = 'x', `_a` = 1, a.b = 2, a_b = 3, ab = 4))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).C._llm_cache_key('hi', 's', None, 'm', {'top_p': 1.0, 'Seed': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(2), 'seed': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(3), 'max_tokens': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(4), 'temperature': 0.5, 'B': 'x', '_a': 1.0, 'a.b': 2.0, 'a_b': 3.0, 'ab': 4.0})"
+- "id": "ollama_native.reply.no_message"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(httr2::with_mocked_responses(function(req) httr2::response_json(body = list(model = 'm', done = TRUE)), metacheck:::.llm_ollama_native('A', 'sys', 'm')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'model': 'm', 'done': True}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm')))"
+- "id": "ollama_native.reply.no_content"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(httr2::with_mocked_responses(function(req) httr2::response_json(body = list(message = list(role = 'assistant'))), metacheck:::.llm_ollama_native('A', 'sys', 'm')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'message': {'role': 'assistant'}}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm')))"
+- "id": "ollama_native.reply.number"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(httr2::with_mocked_responses(function(req) httr2::response_json(body = list(message = list(role = 'assistant', content = 5))), metacheck:::.llm_ollama_native('A', 'sys', 'm')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'message': {'role': 'assistant', 'content': 5}}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm')))"
+- "id": "ollama_native.reply.padded"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(httr2::with_mocked_responses(function(req) httr2::response_json(body = list(message = list(role = 'assistant', content = '  hi \\n'))), metacheck:::.llm_ollama_native('A', 'sys', 'm')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'message': {'role': 'assistant', 'content': '  hi \\n'}}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm')))"
+- "id": "llm.ollama.no_content.mixed"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('A', 'B'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['A', 'B'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.mixed_first"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('B', 'A'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['B', 'A'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.single"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm('B', 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('B', 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.repeated"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('B', 'B'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['B', 'B'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.all_empty"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('B', 'C'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['B', 'C'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.two_of_four"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('A', 'B', 'C', 'D'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['A', 'B', 'C', 'D'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.frame"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(data.frame(text = c('B', 'A'), id = 1:2), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'text': ['B', 'A'], 'id': __import__('pandas').array([1, 2], dtype='Int64')}), 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
+  "mock_dir": "apis"

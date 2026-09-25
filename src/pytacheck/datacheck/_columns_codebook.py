@@ -807,16 +807,18 @@ def _format_other(v: Any) -> str:
 
 
 def _format_column(col: pd.Series) -> list[str | None]:
-    """``format()`` of a non-character column inside ``as.matrix()``.
+    """A non-character column as ``as.matrix()`` of a mixed data frame shows it.
 
-    ``as.matrix.data.frame()`` formats the whole column (so an ``NA`` still
-    counts as ``"NA"`` for the common width) and then puts the ``NA`` back.
+    ``as.matrix.data.frame()`` turns a logical column into ``as.character()``
+    (no padding) and ``format()``s any other one as a whole (so an ``NA``
+    still counts as ``"NA"`` for the common width) before putting the ``NA``
+    back.
     """
     vals = col.tolist()
     miss = [_na(v) for v in vals]
     if pd.api.types.is_bool_dtype(col.dtype):
-        txt = ["NA" if m else ("TRUE" if v else "FALSE") for v, m in zip(vals, miss, strict=True)]
-    elif pd.api.types.is_integer_dtype(col.dtype):
+        return [None if m else ("TRUE" if v else "FALSE") for v, m in zip(vals, miss, strict=True)]
+    if pd.api.types.is_integer_dtype(col.dtype):
         txt = ["NA" if m else str(int(v)) for v, m in zip(vals, miss, strict=True)]
     else:
         txt = _format_real(vals)

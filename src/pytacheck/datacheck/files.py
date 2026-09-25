@@ -23,9 +23,10 @@ bit64 ``integer64`` -> ``Int64``. Known limits of these types: a ``Date``
 holds whole days, so a fractional R ``Date`` (an SPSS date carrying a time of
 day) is floored and a date outside years 1-9999 becomes ``None``; an ODS
 date-time outside pandas' ``Timestamp`` range (years 1677-2262) becomes
-``NaT``. The visible effect is mostly that out-of-range values count as
-missing (``as.character()`` of a fractional ``Date`` shows the floored day
-in R too). Per-column R attributes that matter
+``NaT``. So out-of-range values count as missing here, and fractional dates
+on the same day count as one distinct value (R's ``unique()`` tells them
+apart, although its ``as.character()`` shows the floored day too). Per-column
+R attributes that matter
 downstream (haven's ``label``, ``labels``, ``na_values``, ``na_range``,
 ``format.*``, ``display_width``, plus ``class``, ``tzone`` and ``units``) are
 kept in ``df.attrs["col_attrs"][column]`` exactly as R's ``attributes()``
@@ -33,7 +34,9 @@ would show them after reading -- so e.g. ``head()`` on an ``.rds`` frame
 drops the ``label`` of an unclassed column, as in R. ``labels`` is a list of
 ``(label text, code)`` pairs (R's named vector ``c(label = code)``, repeated
 label texts included); pyreadstat reports SPSS/Stata value labels as
-``{code: label}``, so a label set that repeats a code keeps only one of them.
+``{code: label}``, so a label set that repeats a code keeps only one of them
+(haven writes such sets itself: string value labels in a ``.dta`` all get
+code 0).
 The per-column Latin-1 repair counts of ``.utf8_repair_df()`` are in
 ``df.attrs["utf8_repaired"]``.
 """
@@ -1941,6 +1944,10 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                     df.isetitem(j, col.cat.rename_categories([_latin1_fix(c) for c in cats]).array)
                     repaired[name] = sum(bad)
             elif isinstance(col.dtype, pd.StringDtype) or col.dtype == object:
+                if isinstance(col.dtype, pd.StringDtype) and not _has_invalid_utf8(
+                    "".join(col.dropna().tolist())  # a lone surrogate stays one when joined
+                ):
+                    continue
                 vals = col.tolist()
                 bad = [isinstance(v, str) and _has_invalid_utf8(v) for v in vals]
                 if any(bad):
@@ -1995,9 +2002,7 @@ def _raw_rows(raw: pd.DataFrame) -> list[list[str | None]]:
     cols = [rvec(raw.iloc[:, j]) for j in range(raw.shape[1])]
     kinds = [c.kind for c in cols]
     levels = [c.levels for c in cols]
-    return [
-        row_as_character([c.values[i] for c in cols], kinds, levels) for i in range(len(raw))
-    ]
+    return [row_as_character([c.values[i] for c in cols], kinds, levels) for i in range(len(raw))]
 
 
 def data_read_head(

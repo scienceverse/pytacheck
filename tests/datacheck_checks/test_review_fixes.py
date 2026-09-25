@@ -227,3 +227,26 @@ def test_counting_helpers() -> None:
 def test_as_numeric_prescreen_is_exact() -> None:
     for s in ["Infinity", "-inf", "NaN", "+.5", " 1 ", "0x1A", "N/A", "Na", "abc", "\xa01"]:
         assert (as_numeric_str(s) is None) == (s in ("N/A", "Na", "abc", "\xa01"))
+
+
+# -- a column's R class by position (F30 / F32) ------------------------------------------------
+
+
+def test_facets_use_the_given_class_for_a_repeated_column_name(tmp_path: Path) -> None:
+    """``d,d`` read by fread: an IDate column and an integer column sharing a name.
+
+    The Series still carries its frame's ``col_attrs``, where the name finds the
+    first column's class; the class passed by position must win all the way down
+    to ``data_col_type()`` (R: the second ``d`` is numeric).
+    """
+    from pytacheck.datacheck._colattrs import col_attrs_at
+    from pytacheck.datacheck.files import data_read_head
+
+    p = tmp_path / "dup.csv"
+    p.write_text("d,d\n" + "".join(f"2020-01-{i:02d},{i}\n" for i in range(1, 25)))
+    df = data_read_head(str(p), n_rows=float("inf"))
+    facets = [
+        C.data_col_facets("d", df.iloc[:, j], col_class=col_attrs_at(df, j).get("class", []))
+        for j in range(2)
+    ]
+    assert [f["representation"] for f in facets] == ["datetime", "numeric"]

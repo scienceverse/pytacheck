@@ -12,6 +12,7 @@ in :mod:`pytacheck.config`.
 from __future__ import annotations
 
 import contextlib
+import contextvars
 import os
 import socket
 import threading
@@ -20,6 +21,7 @@ from collections.abc import Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from pytacheck._r import as_character, gsub, is_na, strsplit, sub, trimws
+from pytacheck.llm._rds import RInt  # stdlib-only: keeps the import light
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -40,8 +42,12 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 #: metacheck's ``.onLoad()`` defaults (R/zzz.R), plus the defaults the R code
-#: passes to ``getOption()`` where it matters for every caller.
+#: passes to ``getOption()`` where it matters for every caller. The default
+#: ``metacheck.llm.model`` depends on the API keys set and is an option set by
+#: :mod:`pytacheck.llm.core` when it loads, as ``.onLoad()`` sets it.
 _DEFAULTS: dict[str, Any] = {
+    "metacheck.llm_max_calls": RInt(30),
+    "metacheck.llm.use": False,
     "metacheck.osf.delay": 0,
     "metacheck.osf.api": "https://api.osf.io/v2",
     "metacheck.osf.api.calls": 0,
@@ -460,6 +466,27 @@ def _nullable_dtype(dtype: Any) -> Any:
 # owned by the report port)
 # ---------------------------------------------------------------------------
 
+#: Set inside :func:`suppress_messages` (a context variable, so a block that
+#: silences messages in one thread or task does not silence another).
+_SUPPRESS_MESSAGES: contextvars.ContextVar[bool] = contextvars.ContextVar(
+    "pytacheck_suppress_messages", default=False
+)
+
+
+@contextlib.contextmanager
+def suppress_messages() -> Iterator[None]:
+    """R's ``suppressMessages()`` for :func:`message`: silence messages in the block.
+
+    Only messages are silenced (warnings and progress bars are not, as in R),
+    and only in the current thread or task, unlike switching ``verbose()``
+    off, which is global.
+    """
+    token = _SUPPRESS_MESSAGES.set(True)
+    try:
+        yield
+    finally:
+        _SUPPRESS_MESSAGES.reset(token)
+
 
 def message(*args: Any, domain: Any = None, appendLF: bool = True) -> None:  # noqa: ARG001
     """Port of metacheck's ``message()``: print a message unless ``verbose()`` is off.
@@ -467,13 +494,14 @@ def message(*args: Any, domain: Any = None, appendLF: bool = True) -> None:  # n
     Like R's ``message()`` the parts are pasted together without separators
     and written to stderr; on a terminal the text is green, so it reads as
     information rather than a warning. ``domain`` is accepted for R
-    compatibility (no translation).
+    compatibility (no translation). Nothing is printed inside
+    :func:`suppress_messages`.
     """
     import sys
 
     from pytacheck.config import verbose
 
-    if not verbose():
+    if _SUPPRESS_MESSAGES.get() or not verbose():
         return
 
     def part(a: Any) -> str:

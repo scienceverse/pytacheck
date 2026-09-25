@@ -228,6 +228,17 @@ def test_duplicate_paper_ids(demo: pc.Paper) -> None:
         run(pc.PaperList([demo, demo]))
 
 
+def test_empty_paper_list_errors_like_r() -> None:
+    # U79: R's summarise() fails on `text[data]` (the searches have no text column)
+    msg = (
+        "Running the module 'open_practices' produced errors: "
+        "In argument: `data_statements = list(unique(text[data]))`."
+    )
+    with pytest.raises(ModuleError) as err:
+        run(pc.PaperList([]))
+    assert str(err.value) == msg
+
+
 def test_does_not_mutate_paper(demo: pc.Paper) -> None:
     before = demo.text.copy()
     run(demo)

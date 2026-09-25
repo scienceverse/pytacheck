@@ -19,7 +19,7 @@ __all__ = ["SOURCE_EXTENSIONS", "read"]
 SOURCE_EXTENSIONS = (".pdf", ".docx", ".doc", ".html", ".htm", ".xhtml", ".epub", ".nxml")
 
 
-def _read_xml(path: Path, schema_version: str | None = "12.0") -> Paper:
+def _read_xml(path: str, schema_version: str | None = "12.0") -> Paper:
     # R: read() calls .grobid_to_bibr(fp) (grobid_to_bibr() would save JSON)
     from pytacheck.io.grobid import _grobid_to_bibr
 
@@ -27,19 +27,22 @@ def _read_xml(path: Path, schema_version: str | None = "12.0") -> Paper:
 
 
 def _read_one(
-    path: Path, include_images: bool, bibr_options: dict[str, Any], schema_version: str | None
+    path: str, include_images: bool, bibr_options: dict[str, Any], schema_version: str | None
 ) -> Paper:
+    # *path* is used as given (R keeps "./p.xml" or "dir//p.xml" as the XML
+    # paper's file_name), so it is not normalised through pathlib here.
     # R: grepl("\\.json$", fp, ignore.case = TRUE), then "\\.xml$"
-    name = path.name.lower()
+    base = os.path.basename(path)
+    name = base.lower()
     if name.endswith(".json"):
         return read_bibr(path, include_images)
     if name.endswith(".xml"):
         return _read_xml(path, schema_version)
-    if path.suffix.lower() in SOURCE_EXTENSIONS:
+    if os.path.splitext(name)[1] in SOURCE_EXTENSIONS:
         from pytacheck.io.bibr import chew
 
-        return chew(path, include_images=include_images, **bibr_options)
-    raise ValueError(f"Don't know how to read {path.name!r}")
+        return chew(Path(path), include_images=include_images, **bibr_options)
+    raise ValueError(f"Don't know how to read {base!r}")
 
 
 def read(
@@ -87,7 +90,9 @@ def read(
     if len(names) == 1 and os.path.isdir(os.path.expanduser(names[0])):
         names = list_files(names[0], r"\.(json|xml)$", recursive=recursive)
     if not names:
-        print("No JSON or XML files found.")
+        from pytacheck.utils import message
+
+        message("No JSON or XML files found.")  # metacheck's message(): stderr, verbose()
         return PaperList()
 
     # R: setdiff(file_path, gsub("\\.json$", ".xml", grep("\\.json$", file_path)))
@@ -98,14 +103,14 @@ def read(
     for name in names:
         if name not in xml_dupes:
             kept.setdefault(name)
-    paths = [Path(name) for name in kept]
+    paths = list(kept)  # as given: R stores an XML's path verbatim as its file_name
 
     papers: list[Paper] = []
     for p in paths:
         try:
             papers.append(_read_one(p, include_images, bibr_options, schema_version))
         except Exception as exc:  # R: tryCatch(error = ...) around every file
-            logger("read", {"file": str(p), "error": str(exc)})
+            logger("read", {"file": p, "error": str(exc)})
             if len(paths) == 1:
                 raise
     plist = PaperList(papers)

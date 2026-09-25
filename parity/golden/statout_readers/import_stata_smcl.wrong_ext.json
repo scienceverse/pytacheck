@@ -1,7 +1,7 @@
 {
   "id": "import_stata_smcl.wrong_ext",
   "ok": false,
-  "error": "Not a .smcl file: /home/user/pytacheck/tests/statout_readers/fixtures/text/twolevel.out",
+  "error": "Not a .smcl file: <repo>/tests/statout_readers/fixtures/text/twolevel.out",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

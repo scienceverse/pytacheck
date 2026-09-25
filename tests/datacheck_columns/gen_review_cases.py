@@ -563,6 +563,60 @@ case(
 for name in ["edge.qsf", "tag_list.qsf", "tag_empty.qsf", "latin1.qsf"]:
     case(f"parse_qsf.{name}", "parse_qsf", {"path": rev(name)})
 
+# ------------------------------------------- as.matrix() format of a column
+# parse_codebook()'s wide-format t() turns a mixed frame into a character
+# matrix: every non-character column goes through format() (one fixed or
+# scientific layout, common width) and gets its NAs back. Each vector is an
+# expression valid in both languages (no 17-digit literals: R's strtod is not
+# always correctly rounded); "NA" / "Inf" are spelt per language.
+_FMT_DBL = [
+    "1, 1.5, 0.25",
+    "2, 1e-10, 3",
+    "3, -7, NA",
+    "1e-99, 1",
+    "1e-100, 1",
+    "1e100, -1",
+    "9999999.6, 0.5",
+    "99999.99999, 1",
+    "123456.7, 1234567.8",
+    "1/3, 2/3, NA",
+    "0.1 + 0.2, 100",
+    "Inf, -Inf, NA, 1.5",
+    "NA, NA",
+    "0, -0.5, 1e5",
+    "1e15, 1",
+    "123456789012, 0.001",
+    "-1e-5, 1e5",
+    "0.00012345, 12345",
+    "-Inf, NA",
+    "1e5, 2e5, 3e5",
+]
+
+
+def _py_vec(v: str) -> str:
+    return v.replace("-Inf", "float('-inf')").replace("Inf", "float('inf')").replace("NA", "None")
+
+
+_R_FMT = "function(v) unname(as.matrix(data.frame(a = 'x', b = v))[, 2])"
+_PY_FMT = "__import__('pytacheck.datacheck._columns_codebook', fromlist=['_'])._format_column"
+cases.append(
+    {
+        "id": "as_matrix_format.battery",
+        "r": "base::identity",
+        "py": "copy.copy",
+        "args": {
+            "x": expr(
+                f"lapply(list({', '.join(f'c({v})' for v in _FMT_DBL)}, c(1L, -20L, NA), "
+                f"c(TRUE, FALSE, NA)), {_R_FMT})",
+                f"[{_PY_FMT}(s) for s in "
+                f"[{', '.join(f'pd.Series([{_py_vec(v)}], dtype=float)' for v in _FMT_DBL)}, "
+                "pd.Series([1, -20, None], dtype='Int64'), "
+                "pd.Series([True, False, None], dtype='boolean')]]",
+            )
+        },
+    }
+)
+
 # ------------------------------------------------------------ parse_codebook
 for name in [
     "nan_literal.json",
@@ -585,6 +639,12 @@ for name in [
     "latin1_table.md",
 ]:
     case(f"parse_codebook.{name}", "parse_codebook", {"path": rev(name)})
+# Stata extended missing values (.a, .b) as value-label codes: haven's tagged NA
+case(
+    "parse_codebook.tagged_na.dta",
+    "parse_codebook",
+    {"path": {"$file": "tests/datacheck_files/data/review/tagged_na.dta"}},
+)
 case(
     "parse_codebook.values_shapes.group",
     "parse_codebook",
@@ -851,6 +911,31 @@ mcl(
         group=["g1", "g2"],
     ),
 )
+# the .qsf question-tag pass calls startsWith(column_name, ...): a numeric or
+# all-NA (logical) column_name stops with "non-character object(s)", a
+# character NA with "missing value where TRUE/FALSE needed"
+_qsf_cb = cols(
+    codebook_variable=["Q1_1", "Q2"],
+    label=["Item 1", "Q two"],
+    codebook_source=["s.qsf", "s.qsf"],
+    group=[None, None],
+    question=["Rate", "Other"],
+    scale_group=["Q1", "Q2"],
+    parse_method=["qsf", "qsf"],
+)
+for cid, r_cn, py_cn in [
+    ("qsf_numeric_colname", "5", "pd.Series([5.0])"),
+    ("qsf_chr_na_colname", "NA_character_", "pd.Series([None], dtype='string')"),
+    ("qsf_na_after_match", "c('Q1_1', NA)", "pd.Series(['Q1_1', None], dtype='string')"),
+]:
+    mcl(
+        cid,
+        expr(
+            f"data.frame(paper_id = 'p', source_file = 'd.csv', column_name = {r_cn})",
+            f"pd.DataFrame({{'paper_id': 'p', 'source_file': 'd.csv', 'column_name': {py_cn}}})",
+        ),
+        _qsf_cb,
+    )
 
 
 def main() -> None:

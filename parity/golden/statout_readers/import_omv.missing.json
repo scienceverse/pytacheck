@@ -1,7 +1,7 @@
 {
   "id": "import_omv.missing",
   "ok": false,
-  "error": "File not found: /home/user/pytacheck/tests/statout_readers/fixtures/archives/none.omv",
+  "error": "File not found: <repo>/tests/statout_readers/fixtures/archives/none.omv",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

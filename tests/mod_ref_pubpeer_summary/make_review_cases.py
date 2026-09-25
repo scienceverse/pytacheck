@@ -82,6 +82,21 @@ CASES: list[tuple[str, str, str, str, str | None, dict[str, Any]]] = [
     ("ref_summary.ret_keys", "ref_summary", "rv_ret_keys()", "H.rv_ret_keys()", None, {}),
     ("ref_summary.rep_no_type", "ref_summary", "rv_rep_no_type()", "H.rv_rep_no_type()", None,
      {}),
+    *[
+        (f"ref_summary.ret_bib_id_{t}", "ref_summary", f'rv_ret_bib_id("{t}")',
+         f"H.rv_ret_bib_id('{t}')", None, {})
+        for t in ("chr", "na_chr", "dbl", "lgl", "na_lgl")
+    ],
+    *[
+        (f"ref_summary.{mod[4:7]}_dup_name_{to}", "ref_summary",
+         f'rename_table_col(chain(demopaper(), "{mod}"), "{frm}", "{to}")',
+         f"H.rename_table_col(H.chain(pc.demopaper(), ['{mod}']), '{frm}', '{to}')", None, {})
+        for mod, frm, to in (
+            ("ref_accuracy", "year_mismatch", "author_mismatch"),
+            ("ref_retraction", "doi", "retractionwatch"),
+            ("ref_retraction", "doi", "bib_id"),
+        )
+    ],
     ("ref_summary.acc_dup", "ref_summary", "rv_acc_dup()", "H.rv_acc_dup()", None, {}),
     ("ref_summary.acc_chr", "ref_summary", "rv_acc_chr()", "H.rv_acc_chr()", None, {}),
     ("ref_summary.acc_num", "ref_summary", "rv_acc_num()", "H.rv_acc_num()", None, {}),

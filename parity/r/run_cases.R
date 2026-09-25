@@ -66,6 +66,31 @@ upstream <- tryCatch({
   as.character(utils::packageDescription("metacheck")$Version)
 }, error = function(e) NA_character_)
 
+# Deterministic paper ids ----------------------------------------------------
+# paper() names a paper without an id by the md5 of Sys.time(), so every
+# test_paper() got a new id on every run and the goldens could never be
+# regenerated identically (docs/UPSTREAM_ISSUES.md U11). Here paper() numbers
+# them instead: the n-th id-less paper of a case is the first 14 hex digits of
+# md5("pytacheck-parity-<n>"). parity/cases.py numbers pytacheck's id-less
+# papers the same way, so the ids agree whenever both sides create their papers
+# in the same order (as test papers are).
+.pc_ids <- new.env()
+.pc_ids$n <- 0L
+.pc_next_id <- function() {
+  .pc_ids$n <- .pc_ids$n + 1L
+  substr(unname(tools::md5sum(bytes = charToRaw(sprintf("pytacheck-parity-%d", .pc_ids$n)))), 1, 14)
+}
+local({
+  ns <- asNamespace("metacheck")
+  orig <- get("paper", envir = ns)
+  wrapped <- function(id = NULL, ...) orig(if (is.null(id)) .pc_next_id() else id, ...)
+  for (env in list(ns, as.environment("package:metacheck"))) {
+    unlockBinding("paper", env)
+    assign("paper", wrapped, envir = env)
+    lockBinding("paper", env)
+  }
+})
+
 rpath <- function(p) {
   if (grepl("^/", p)) p else file.path(root, p)
 }
@@ -138,6 +163,7 @@ get_fn <- function(name) {
 
 run_case <- function(case) {
   set.seed(8675309)
+  .pc_ids$n <- 0L
   warnings <- character(0)
   evaluate <- function(expr_fn) {
     if (!is.null(case$mock_dir)) {
@@ -179,8 +205,66 @@ run_case <- function(case) {
 
 total <- 0
 failed <- 0
+# Goldens must not change from run to run or machine to machine. In every
+# string of a golden:
+# * the checkout directory is "<repo>" (parity/canonical.py writes the Python
+#   results the same way) and R's session temporary directory "<tempdir>";
+# * the random names tempfile() gives ("file1a2b3c4d5e") are "<tempfile>",
+#   wherever they appear (a paper converted from a temporary file is named
+#   after it);
+# * a date-time stamp from while the case ran (a conversion's completed_at, a
+#   listing's retrieved) is "<now>".
+.pc_tempfile_name <- "^[A-Za-z_.-]*[0-9a-f]{8,}$"
+.pc_stamp <- "[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:?[0-9]{2})?"
+
+portable_json <- function(json, started, finished) {
+  subs <- c(
+    "<repo>" = root,
+    "<tempdir>" = tempdir(),
+    "<tempdir>" = normalizePath(tempdir(), mustWork = FALSE)
+  )
+  for (i in seq_along(subs)) {
+    json <- gsub(subs[[i]], names(subs)[[i]], json, fixed = TRUE)
+  }
+  entries <- regmatches(json, gregexpr("<tempdir>/[^/\"'\\\\[:space:]]+", json))[[1]]
+  entries <- unique(sub("^<tempdir>/", "", entries))
+  for (name in entries) {
+    stem <- tools::file_path_sans_ext(name)
+    if (!grepl(.pc_tempfile_name, stem)) next
+    json <- gsub(stem, "<tempfile>", json, fixed = TRUE)
+  }
+  stamps <- unique(regmatches(json, gregexpr(.pc_stamp, json))[[1]])
+  for (stamp in stamps) {
+    utc <- grepl("Z$", stamp)
+    zone <- regmatches(stamp, regexpr("[+-][0-9]{2}:?[0-9]{2}$", stamp))
+    t <- as.POSIXct(substr(sub("T", " ", stamp), 1, 19), tz = "UTC")
+    if (length(zone)) {
+      z <- as.integer(gsub(":", "", zone))
+      t <- t - sign(z) * ((abs(z) %/% 100) * 3600 + (abs(z) %% 100) * 60)
+    } else if (!utc) {
+      t <- as.POSIXct(substr(sub("T", " ", stamp), 1, 19))  # local time
+    }
+    t <- as.numeric(t)
+    if (!is.na(t) && t >= floor(as.numeric(started)) - 1 && t <= as.numeric(finished) + 1) {
+      json <- gsub(stamp, "<now>", json, fixed = TRUE)
+    }
+  }
+  json
+}
+
+# yaml reads a quoted, explicitly tagged float (!!float ".inf") as NA with a
+# warning; read it as the float it names, as Python's YAML reader does.
+yaml_float <- function(x) {
+  switch(tolower(x),
+    ".inf" = , "+.inf" = Inf,
+    "-.inf" = -Inf,
+    ".nan" = NaN,
+    as.numeric(gsub("_", "", x, fixed = TRUE))
+  )
+}
+
 for (f in files) {
-  spec <- yaml::read_yaml(f)
+  spec <- yaml::read_yaml(f, handlers = list(float = yaml_float))
   area <- spec$area
   outdir <- file.path(root, "parity", "golden", area)
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
@@ -188,10 +272,12 @@ for (f in files) {
     if (!is.null(only) && !(case$id %in% only)) next
     if (isTRUE(case$skip_r)) next
     total <- total + 1
+    started <- Sys.time()
     res <- run_case(case)
+    finished <- Sys.time()
     if (!isTRUE(res$ok)) failed <- failed + 1
-    json <- pc_to_json(res, pretty = TRUE)
-    writeLines(enc2utf8(as.character(json)), file.path(outdir, paste0(case$id, ".json")),
+    json <- portable_json(as.character(pc_to_json(res, pretty = TRUE)), started, finished)
+    writeLines(enc2utf8(json), file.path(outdir, paste0(case$id, ".json")),
                useBytes = TRUE)
     cat(sprintf("[%s] %s/%s%s\n", if (res$ok) "ok" else "ERR", area, case$id,
                 if (res$ok) "" else paste0(": ", res$error)))

@@ -728,6 +728,68 @@ expr_case(
     mock_dir="apis",
 )
 
+# ---- .llm_cache_key(): params in order() (ICU collation), not code-point order ----------
+expr_case(
+    "cache_key.param_order_case",
+    "metacheck:::.llm_cache_key('hi', 's', NULL, 'm', list(top_p = 1, Seed = 2L, seed = 3L, "
+    "max_tokens = 4L, temperature = 0.5, B = 'x', `_a` = 1, a.b = 2, a_b = 3, ab = 4))",
+    f"{H}.C._llm_cache_key('hi', 's', None, 'm', {{'top_p': 1.0, 'Seed': {H}.RInt(2), "
+    f"'seed': {H}.RInt(3), 'max_tokens': {H}.RInt(4), 'temperature': 0.5, 'B': 'x', "
+    "'_a': 1.0, 'a.b': 2.0, 'a_b': 3.0, 'ab': 4.0})",
+    catch=False,
+)
+
+# ---- Ollama replies without message$content ------------------------------------------
+# .llm_ollama_native() returns trimws(NULL) = character(0); llm() then fails joining
+# the answers of several texts (tibble's size check) and gives NA for a single text
+for _id, _body_r, _body_py in [
+    ("no_message", "list(model = 'm', done = TRUE)", "{'model': 'm', 'done': True}"),
+    (
+        "no_content",
+        "list(message = list(role = 'assistant'))",
+        "{'message': {'role': 'assistant'}}",
+    ),
+    (
+        "number",
+        "list(message = list(role = 'assistant', content = 5))",
+        "{'message': {'role': 'assistant', 'content': 5}}",
+    ),
+    (
+        "padded",
+        "list(message = list(role = 'assistant', content = '  hi \\n'))",
+        "{'message': {'role': 'assistant', 'content': '  hi \\n'}}",
+    ),
+]:
+    expr_case(
+        f"ollama_native.reply.{_id}",
+        "httr2::with_mocked_responses(function(req) httr2::response_json(body = "
+        f"{_body_r}), metacheck:::.llm_ollama_native('A', 'sys', 'm'))",
+        f"{H}.ollama_reply({_body_py}, lambda: {H}.K._llm_ollama_native('A', 'sys', 'm'))",
+    )
+_STUB_R = "function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok'"
+for _id, _x_r, _x_py in [
+    ("mixed", "c('A', 'B')", "['A', 'B']"),
+    ("mixed_first", "c('B', 'A')", "['B', 'A']"),
+    ("single", "'B'", "'B'"),
+    ("repeated", "c('B', 'B')", "['B', 'B']"),
+    ("all_empty", "c('B', 'C')", "['B', 'C']"),
+    ("two_of_four", "c('A', 'B', 'C', 'D')", "['A', 'B', 'C', 'D']"),
+    (
+        "frame",
+        "data.frame(text = c('B', 'A'), id = 1:2)",
+        f"{PD}.DataFrame({{'text': ['B', 'A'], 'id': {PD}.array([1, 2], dtype='Int64')}})",
+    ),
+]:
+    opt_case(
+        f"llm.ollama.no_content.{_id}",
+        "testthat::with_mocked_bindings(llm(" + _x_r + ", 'sys', model = 'ollama/smollm:135m'), "
+        f".llm_ollama_native = {_STUB_R}, .package = 'metacheck')",
+        f"{H}.ollama_no_content(lambda: {H}.L.llm({_x_py}, 'sys', model='ollama/smollm:135m'))",
+        ON_R,
+        ON_PY,
+        mock_dir="apis",
+    )
+
 with open(sys.argv[1], "w", encoding="utf-8") as fh:
     fh.write("# Adversarial-review parity cases for the llm area (see\n")
     fh.write("# tests/llm/fixtures/make_review_cases.py, which generates this file).\n")

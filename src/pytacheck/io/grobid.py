@@ -1367,8 +1367,10 @@ def convert_grobid(
 
     Sends each PDF to a Grobid server (by default the GDPR-compliant server
     of Eindhoven University of Technology) and saves the TEI XML. With
-    ``save_path=None`` the XML is read and a paper object returned. Several
-    files (or a directory) give a list of XML paths, ``None`` for failures.
+    ``save_path=None`` the XML is read and a paper object returned (its
+    source is the PDF: file name, SHA-256 and ``paper_id``; metacheck reads a
+    randomly named temporary file). Several files (or a directory) give a list
+    of XML paths, ``None`` for failures.
     """
     paths: list[str] = (
         [os.fspath(file_path)]
@@ -1459,10 +1461,12 @@ def convert_grobid(
     content = resp.content
 
     if save_path is None:
-        fd, tmp = tempfile.mkstemp(suffix=".xml")
-        os.close(fd)
-        save_file = tmp
-    elif Path(save_path).is_dir():
+        # R saves tempfile(fileext = ".xml") and read()s it. Here the TEI is
+        # "<tmpdir>/<pdf name>.tei.xml" next to a link to the PDF, so the bibr
+        # 12.0 conversion (read()'s default) records the PDF as the source
+        # (file_name, sha256, paper_id) rather than a random temporary TEI.
+        return _read_grobid_reply(pdf, content)
+    if Path(save_path).is_dir():
         base = sub(r"\.pdf", "", pdf.name, ignore_case=True) + ".xml"
         save_file = os.path.join(os.fspath(save_path), base)
     else:
@@ -1471,12 +1475,29 @@ def convert_grobid(
         save_file = sub(r"\.xml", "", sp, ignore_case=True) + ".xml"
 
     Path(save_file).write_bytes(content)
-
-    if save_path is None:
-        from pytacheck.io.read import read
-
-        try:
-            return read(save_file)
-        finally:
-            Path(save_file).unlink(missing_ok=True)
     return save_file
+
+
+def _read_grobid_reply(pdf: Path, content: bytes) -> Any:
+    """``read()`` of a Grobid TEI reply for *pdf* (``convert_grobid(save_path = NULL)``).
+
+    The TEI is saved as ``<pdf name>.tei.xml`` in a temporary folder, with a
+    symbolic link to (or a copy of) the PDF next to it, as Grobid's own
+    clients save it; the folder is removed afterwards.
+    """
+    import shutil
+
+    from pytacheck.io.read import read
+
+    tmpdir = tempfile.mkdtemp(prefix="pytacheck-grobid-")
+    try:
+        link = os.path.join(tmpdir, pdf.name)
+        try:
+            os.symlink(os.path.abspath(pdf), link)
+        except OSError:  # no symbolic links (Windows without the privilege)
+            shutil.copyfile(pdf, link)
+        save_file = os.path.join(tmpdir, pdf.name + ".tei.xml")
+        Path(save_file).write_bytes(content)
+        return read(save_file)
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)

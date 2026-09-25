@@ -55,9 +55,8 @@ def r_type(s: pd.Series, attrs: dict[str, Any]) -> list[str]:
 def _typed(df: pd.DataFrame | None) -> dict[str, Any] | None:
     if df is None:
         return None
-    from pytacheck.datacheck._files_rdata import _complex_as_character
-
     from pytacheck.datacheck._colattrs import col_attrs_at
+    from pytacheck.datacheck._files_rdata import _complex_as_character
 
     types = [r_type(df.iloc[:, j], col_attrs_at(df, j)) for j in range(df.shape[1])]
     data = df.copy()
@@ -132,7 +131,9 @@ def data_group_cache_key() -> str | None:
     saved = F._llm
     F._llm = fake_llm
     try:
-        files = pd.DataFrame({"file_name": ["first_raw.csv", "second_raw.csv"], "data_type": "data"})
+        files = pd.DataFrame(
+            {"file_name": ["first_raw.csv", "second_raw.csv"], "data_type": "data"}
+        )
         F.data_group_llm(files, model="m")
     finally:
         F._llm = saved

@@ -1,7 +1,7 @@
 {
   "id": "import_jasp.wrong_ext",
   "ok": false,
-  "error": "Not a .jasp file: /home/user/pytacheck/tests/statout_readers/fixtures/spv/modern.spv",
+  "error": "Not a .jasp file: <repo>/tests/statout_readers/fixtures/spv/modern.spv",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

@@ -108,7 +108,7 @@ HEAD_FILES = [
     "rt_mb_error.csv", "rt_dup_rownames.txt", "rt_rownames.txt", "rt_wrap.csv",
     "rt_nul_quote_header.csv", "rt_fallback_latin1.csv", "rt_nul_value.csv", "rt_cr_cr.csv", "rt_nrows.csv",
     "stata_int_na.dta", "zero_rows.sav", "zero_rows.dta", "all_na_dates.sav", "list_cells.rds",
-    "dup_names.csv",
+    "dup_names.csv", "tagged_na.dta",
 ]  # fmt: skip
 for name in HEAD_FILES:
     typed_head(name)
@@ -117,7 +117,9 @@ for name in ("tab_in_quotes.tsv", "rt_nrows.csv", "rt_wrap.csv", "stata_int_na.d
     typed_head(name, 5)
 for name in ("stata_int_na.dta", "all_na_dates.sav", "zero_rows.sav", "int64.csv",
              # repeated value-label texts (F04) and duplicated column names (F32)
-             "dup_labels.sav", "dup_labels.dta", "dup_labels.rds", "dup_names.rds"):  # fmt: skip
+             "dup_labels.sav", "dup_labels.dta", "dup_labels.rds", "dup_names.rds",
+             # Stata extended missing values as label codes, numeric codes on a string
+             "tagged_na.dta"):  # fmt: skip
     add(
         f"review.read_head_attrs.{name}",
         r="identity",

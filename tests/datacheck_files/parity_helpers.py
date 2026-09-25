@@ -37,15 +37,16 @@ class _NamedList:
         }
 
 
-def _r_attributes(df: pd.DataFrame) -> dict[str, Any]:
+def _r_attributes(df: pd.DataFrame) -> _NamedList:
     """Per-column R attributes (minus levels/names) as R's ``attributes()`` shows them.
 
-    ``labels`` (``(label, code)`` pairs) is compared as the R side's
-    ``as.list(labels)``, repeated label texts included.
+    The R side's ``lapply(d, ...)`` is a list named by the columns, a repeated
+    column name included. ``labels`` (``(label, code)`` pairs) is compared as
+    the R side's ``as.list(labels)``, repeated label texts included.
     """
     from pytacheck.datacheck._colattrs import col_attrs_at
 
-    out: dict[str, Any] = {}
+    out: list[tuple[Any, Any]] = []
     for j, name in enumerate(df.columns):
         s = df.iloc[:, j]
         attrs = dict(col_attrs_at(df, j))
@@ -62,8 +63,8 @@ def _r_attributes(df: pd.DataFrame) -> dict[str, Any]:
                 isinstance(v, dt.date) and not isinstance(v, dt.datetime) for v in s.tolist()
             ):
                 attrs["class"] = "Date"
-        out[str(name)] = {k: attrs[k] for k in sorted(attrs)} if attrs else None
-    return out
+        out.append((str(name), {k: attrs[k] for k in sorted(attrs)} if attrs else None))
+    return _NamedList(out)
 
 
 def read_head_attrs(path: str, n_rows: float | None = None) -> dict[str, Any]:

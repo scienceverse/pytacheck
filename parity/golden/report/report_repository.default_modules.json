@@ -1,0 +1,2118 @@
+{
+  "id": "report_repository.default_modules",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "output",
+      "file"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "repo_check",
+          "code_check",
+          "data_check",
+          "codebook_check"
+        ],
+        "v": [
+          {
+            "t": "module_output",
+            "names": [
+              "module",
+              "title",
+              "section",
+              "table",
+              "report",
+              "traffic_light",
+              "summary_text",
+              "gated_repos",
+              "naming_issues",
+              "repo_metadata",
+              "roster_check",
+              "group_no_evidence",
+              "na_replace"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "repo_check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Repository Check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "results"
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "repo_name",
+                  "repo_url",
+                  "file_name",
+                  "file_url",
+                  "file_location",
+                  "file_size",
+                  "file_type",
+                  "file_path",
+                  "data_type",
+                  "doc_role",
+                  "group",
+                  "paper_id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "my_study",
+                      "my_study",
+                      "my_study"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study",
+                      "<repo>/tests/report/fixtures/repository/my_study",
+                      "<repo>/tests/report/fixtures/repository/my_study"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "analysis.R",
+                      "data.csv",
+                      "README.md"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study/analysis.R",
+                      "<repo>/tests/report/fixtures/repository/my_study/data.csv",
+                      "<repo>/tests/report/fixtures/repository/my_study/README.md"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      117,
+                      47,
+                      93
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "code",
+                      "data",
+                      "readme"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "analysis.R",
+                      "data.csv",
+                      "README.md"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "code",
+                      "data",
+                      "documentation"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      "readme"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ex1",
+                      "ex1",
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "#### Repositories",
+                  "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='<repo>/tests/report/fixtures/repository/my_study' target='_blank'><repo>/tests/report/fixtures/repository/my_study<\/a>\", \n    Platform = \"local\", \"All Files\" = 3L, \"Data Files\" = 1L, \n    \"Code Files\" = 1L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+                  "#### Files",
+                  "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<repo>/tests/report/fixtures/repository/my_study\", \n\"<repo>/tests/report/fixtures/repository/my_study\", \n\"<repo>/tests/report/fixtures/repository/my_study\"\n), File = c(\"analysis.R\", \"data.csv\", \"README.md\"), Size = c(\"117 B\", \n\"47 B\", \"93 B\"), Type = c(\"code\", \"data\", \"readme\")), row.names = c(NA, \n-3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+                  "README files were found in all repositories.",
+                  "#### File Classification",
+                  "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"analysis.R\", Group = \"ex1\", Path = \"analysis.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"data.csv\", Group = \"ex1\", Path = \"data.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "green"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "\n-  We found 3 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs."
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "repo_url",
+                  "repo_type",
+                  "repo_error"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "file_name",
+                  "rule",
+                  "severity",
+                  "detail"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "repo_url",
+                  "doi",
+                  "license",
+                  "paper_id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "roster",
+                  "found",
+                  "missing",
+                  "extra",
+                  "agrees"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ex1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ex1"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "t": "module_output",
+            "names": [
+              "module",
+              "title",
+              "section",
+              "table",
+              "report",
+              "traffic_light",
+              "summary_text",
+              "na_replace",
+              "version_pin"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "code_check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Code Check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "results"
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "repo_name",
+                  "repo_url",
+                  "file_name",
+                  "file_url",
+                  "file_location",
+                  "file_size",
+                  "file_type",
+                  "file_path",
+                  "data_type",
+                  "doc_role",
+                  "group",
+                  "paper_id",
+                  "language",
+                  "checked",
+                  "parse_error",
+                  "parse_error_msg",
+                  "code_abs_path",
+                  "absolute_paths",
+                  "code_setwd",
+                  "setwd_calls",
+                  "code_install_packages",
+                  "install_packages_calls",
+                  "library_lines",
+                  "library_max_between",
+                  "packages_n",
+                  "packages",
+                  "comment_lines",
+                  "code_lines",
+                  "percentage_comment",
+                  "has_docstring",
+                  "loaded_files_missing",
+                  "loaded_files_missing_names"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "my_study"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "analysis.R"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study/analysis.R"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      117
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "code"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "analysis.R"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "code"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ex1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "6c4258abe0fec3"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "R"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "dplyr"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      4
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
+                  "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = NA_character_, \"% Comments\" = \"0%\", \n    \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \"Code Between Libraries\" = NA_integer_), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+                  "#### Code Comments",
+                  "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code).",
+                  "#### Missing Files",
+                  "All files loaded in the code were present in the repository.",
+                  "",
+                  "#### Absolute Paths",
+                  "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
+                  "",
+                  "#### Working Directory (setwd)",
+                  "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
+                  "",
+                  "#### Package Installation (install.packages)",
+                  "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+                  "",
+                  "#### Libraries / Imports",
+                  "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
+                  "#### Packages / Dependencies",
+                  "The code files load 1 distinct package/library: dplyr. These are the names found in the source (no version information is available from static analysis).",
+                  "#### Reproducible Environment",
+                  "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
+                  "",
+                  "#### Parsable code",
+                  "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "yellow"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "\n-  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code file.\n-  1 code file had no comments.\n-  All files loaded in the code were present in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  The code loaded 1 distinct package.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  No parsing issues of R-type files were found."
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ],
+                "names": [
+                  "code_n"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "pinned",
+                  "mechanisms",
+                  "r_versions",
+                  "renv_files",
+                  "renv_packages",
+                  "sessioninfo_files",
+                  "file_location"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "df",
+                    "nrow": 0,
+                    "names": [
+                      "file_name",
+                      "package",
+                      "version",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": []
+                      },
+                      {
+                        "t": "chr",
+                        "v": []
+                      },
+                      {
+                        "t": "chr",
+                        "v": []
+                      },
+                      {
+                        "t": "chr",
+                        "v": []
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study/README.md"
+                    ],
+                    "names": [
+                      "README.md"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "module_output",
+            "names": [
+              "module",
+              "title",
+              "section",
+              "table",
+              "report",
+              "traffic_light",
+              "summary_text",
+              "findings",
+              "careless",
+              "demographics",
+              "qualtrics",
+              "structure",
+              "previews",
+              "gated_repos",
+              "manifest_path",
+              "group_no_evidence",
+              "na_replace"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data_check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Data Check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "results"
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "paper_id",
+                  "repo_url",
+                  "source_file",
+                  "group",
+                  "column_name",
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note",
+                  "is_qualtrics",
+                  "qualtrics_display_order",
+                  "sample_values",
+                  "utf8_repaired",
+                  "n",
+                  "n_missing",
+                  "n_unique",
+                  "mean",
+                  "sd",
+                  "se",
+                  "median",
+                  "min",
+                  "max",
+                  "range",
+                  "p25",
+                  "p75",
+                  "iqr",
+                  "skewness",
+                  "kurtosis"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study",
+                      "<repo>/tests/report/fixtures/repository/my_study",
+                      "<repo>/tests/report/fixtures/repository/my_study"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv",
+                      "data.csv",
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ex1",
+                      "ex1",
+                      "ex1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "id",
+                      "age",
+                      "score"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text",
+                      "numeric",
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nominal",
+                      "ratio",
+                      "ratio"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "id",
+                      "age",
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "identifier",
+                      "measure",
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      "years",
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok",
+                      "ok",
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false,
+                      false,
+                      false
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false,
+                      false,
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1 | 2 | 3 | 4",
+                      "20 | 31 | 45",
+                      "3.5 | 4.1 | 2.2 | 3.9"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0,
+                      0,
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      4,
+                      3,
+                      4
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0,
+                      1,
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      4,
+                      3,
+                      4
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      32,
+                      3.425
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      12.5299640861417,
+                      0.853912563829966
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      7.23417813807024,
+                      0.426956281914983
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      31,
+                      3.7
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      20,
+                      2.2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      45,
+                      4.1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      25,
+                      1.9
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      25.5,
+                      3.175
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      38,
+                      3.95
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      12.5,
+                      0.775
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      0.0793003528515599,
+                      -0.57140343414098
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null,
+                      null,
+                      -1.819596
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+                  "#### Data Tree",
+                  "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+                  "**Repository: <repo>/tests/report/fixtures/repository/my_study**",
+                  "```\n├── analysis.R  💻 code   ex1\n├── data.csv    📊 data   ex1\n└── README.md   📄 readme\n```",
+                  "#### Data Files",
+                  "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:4, age = c(20L, 31L, NA, 45L), score = c(3.5, \n4.1, 2.2, 3.9)), row.names = c(NA, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+                  "#### Descriptives Overview\n\nWe found 1 column with at least one missing value.",
+                  "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\", \"score\"), Representation = c(\"numeric\", \n\"text\", \"numeric\"), Level = c(\"ratio\", \"nominal\", \"ratio\"), Concept = c(\"age\", \n\"id\", \"\"), Role = c(\"measure\", \"identifier\", \"measure\"), Unit = c(\"years\", \n\"\", \"\"), Rows = c(4L, 4L, 4L), \"% Missing\" = c(25, 0, 0), \"N Unique\" = c(3L, \n4L, 4L), Mean = c(32, NA, 3.425), SD = c(12.53, NA, 0.854), Min = c(20, \nNA, 2.2), Max = c(45, NA, 4.1)), row.names = c(\"age\", \"id\", \"score\"\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+                  "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+                  "We examined 3 columns across 1 data file.",
+                  "#### Careless Responding",
+                  "No file could be screened for careless responding.",
+                  "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "green"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "\n-  We classified 3 files: 1 data, 1 code, 1 documentation.\n-  We found 1 tabular data file and extracted 3 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n-  The study-group step did not get an answer for 2 files (the model request failed); they were grouped by the fallback rules instead. We ran automated data-quality checks on 3 columns and found no issues. We detected demographic column for Age."
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "source_file",
+                  "column",
+                  "label",
+                  "check",
+                  "detail"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "respondent",
+                  "source_file",
+                  "n_blocks_flagged",
+                  "scales",
+                  "reasons",
+                  "max_longstring",
+                  "irv",
+                  "short_scale_only",
+                  "threshold"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  },
+                  {
+                    "t": "lgl",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "source_file",
+                  "column",
+                  "demographic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "age"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "age"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [],
+                "v": []
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "repo_name",
+                  "repo_url",
+                  "file_name",
+                  "file_url",
+                  "file_location",
+                  "file_size",
+                  "file_type",
+                  "file_path",
+                  "data_type",
+                  "doc_role",
+                  "group",
+                  "paper_id",
+                  "data_format",
+                  "referenced_by",
+                  "tabular_usable",
+                  "non_tabular_reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "my_study",
+                      "my_study",
+                      "my_study"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study",
+                      "<repo>/tests/report/fixtures/repository/my_study",
+                      "<repo>/tests/report/fixtures/repository/my_study"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "analysis.R",
+                      "data.csv",
+                      "README.md"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<repo>/tests/report/fixtures/repository/my_study/analysis.R",
+                      "<repo>/tests/report/fixtures/repository/my_study/data.csv",
+                      "<repo>/tests/report/fixtures/repository/my_study/README.md"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      117,
+                      47,
+                      93
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "code",
+                      "data",
+                      "readme"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "analysis.R",
+                      "data.csv",
+                      "README.md"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "code",
+                      "data",
+                      "documentation"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      "readme"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ex1",
+                      "ex1",
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      "tabular",
+                      null
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "null"
+                      },
+                      {
+                        "t": "null"
+                      },
+                      {
+                        "t": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true,
+                      true,
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "data.csv"
+                ],
+                "v": [
+                  {
+                    "t": "df",
+                    "nrow": 4,
+                    "names": [
+                      "id",
+                      "age",
+                      "score"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          1,
+                          2,
+                          3,
+                          4
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          20,
+                          31,
+                          null,
+                          45
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          3.5,
+                          4.1,
+                          2.2,
+                          3.9
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "repo_url",
+                  "repo_type",
+                  "repo_error"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "names": [
+                  "data_file_n",
+                  "column_n",
+                  "empty_col_n",
+                  "flagged_n",
+                  "spreadsheet_file_n",
+                  "spreadsheet_flagged_file_n"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "module_output",
+            "names": [
+              "module",
+              "title",
+              "section",
+              "table",
+              "report",
+              "traffic_light",
+              "summary_text",
+              "summary_table",
+              "codebook_vars",
+              "scale_violations",
+              "scales_osd",
+              "na_replace"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "codebook_check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Codebook Check"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "results"
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "paper_id",
+                  "source_file",
+                  "column_name",
+                  "group",
+                  "label",
+                  "codebook_variable",
+                  "label_source",
+                  "label_status",
+                  "label_method",
+                  "value_labels",
+                  "missing_values",
+                  "question",
+                  "coding_instructions",
+                  "scale_group",
+                  "scale",
+                  "scale_confidence",
+                  "scale_source"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3",
+                      "6c4258abe0fec3"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv",
+                      "data.csv",
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "id",
+                      "age",
+                      "score"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ex1",
+                      "ex1",
+                      "ex1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "unlabelled",
+                      "unlabelled",
+                      "unlabelled"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
+                  "We examined 1 codebook/README/label source and 3 data columns across 1 file.",
+                  "No codebook or README documentation was found, so no data columns could be matched to variable definitions.",
+                  "#### Scales",
+                  "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "red"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "We found no codebook or README documentation for the 3 extracted data columns."
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "paper_id",
+                  "repo_n",
+                  "files_n",
+                  "files_data",
+                  "files_code",
+                  "files_readme",
+                  "files_zip",
+                  "files_unknown",
+                  "naming_issues",
+                  "roster_mismatch",
+                  "code_n",
+                  "code_checked",
+                  "code_abs_path",
+                  "code_setwd",
+                  "code_install_packages",
+                  "code_missing_files",
+                  "code_min_comments",
+                  "code_parse_errors",
+                  "code_packages_n",
+                  "code_version_pinned",
+                  "data_file_n",
+                  "column_n",
+                  "empty_col_n",
+                  "col_numeric",
+                  "col_text",
+                  "flagged_n",
+                  "spreadsheet_file_n",
+                  "spreadsheet_flagged_file_n",
+                  "column_n.codebook_check",
+                  "matched_n",
+                  "unmatched_n",
+                  "clean_n",
+                  "conflicted_n",
+                  "codebook_var_n",
+                  "unused_var_n",
+                  "scale_blocks_n",
+                  "scale_named_n",
+                  "scale_unnamed_n",
+                  "task_files_n",
+                  "task_named_n",
+                  "task_paper_only_n"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "test_paper"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "codebook_variable",
+                  "label",
+                  "codebook_source",
+                  "group",
+                  "value_labels",
+                  "missing_values",
+                  "question",
+                  "coding_instructions",
+                  "parse_method",
+                  "paper_id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "source_file",
+                  "column",
+                  "documented",
+                  "n_values",
+                  "values",
+                  "kinds"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "int",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "names": [
+                  "column_n",
+                  "matched_n",
+                  "unmatched_n",
+                  "clean_n",
+                  "conflicted_n",
+                  "codebook_var_n",
+                  "unused_var_n",
+                  "scale_blocks_n",
+                  "scale_named_n",
+                  "scale_unnamed_n",
+                  "task_files_n",
+                  "task_named_n",
+                  "task_paper_only_n"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "---\ntitle: MetaCheck Report\nsubtitle: \"my_study\"\nmetacheck:\n  version: <masked>\n  report-created: <masked>\nformat:\n  html:\n    theme: \n      light: flatly\n      dark: darkly\n    respect-user-color-scheme: true\n    toc: true\n    toc-title: >\n      <ul class=\"emoji-key\">\n        <li class=\"red\">⚠️ possible problems detected;<\/li> \n        <li class=\"yellow\">🔍 something to check;<\/li> \n        <li class=\"green\">✅️ no problems detected;<\/li>  \n        <li class=\"info\">ℹ️ informational only;<\/li>  \n        <li class=\"na\">⬜ not applicable;<\/li>  \n        <li class=\"fail\">☠️ check failed<\/li>\n      <ul>\n      <hr/>\n      **Table of Contents**\n    toc-location: right\n    toc-expand: 3\n    page-layout: full\n    title-block-banner: \"#15342A\"    #\"#327118\"\n    title-block-banner-color: \"white\"\n    link-external-newwindow: true\n    embed-resources: true\n    format-links: false\n    smooth-scroll: true\nexecute: \n  echo: false\n  error: true\n---\n\n<style>\n  #TOC * { border-left: none; }\n  #TOC > ul { border-left: 1px solid #15342A; }\n  #TOC > ul > li > ul > li { text-indent: -1.2em; margin-left: 1.2em; }\n  main h2, main h3 { margin-left: -20px; }\n  main h2 { font-size: 150%; font-face: italics; }\n  main h3 { font-size: 125%; }\n  main h4 { font-size: 110%; }\n  .emoji-key li { margin-bottom: 0.5em; }\n  section::before { content: '' !important; }\n  th { background-color: #555; color: white; }\n  table.dataTable, .dataTables_scrollBody { margin: 0.5em 0; }\n  #info { position: absolute; top: 2.5em; right: 2.5em; color: white; }\n  #info a { color: white !important; }\n  .quarto-dark tr.even { background-color: #333; }\n  .quarto-dark tr.odd { background-color: #222; }\n  .quarto-dark div.datatables { color: white; }\n  .quarto-dark table.dataTable { border: 1px solid #555; }\n  table strong { color: red; }\n  .quarto-dark table strong { color: yellow; }\n  summary { color: #333; }\n  .quarto-dark summary { color: #CCC; }\n  .validation { display: block; \n                border: 2px solid #15342A; \n                border-radius: 1em; \n                padding: 0.5em 1em 0; \n                margin-bottom: 0.5em;\n                background-color: #15342A33;}\n<\/style>\n\n::: {#info}\n[MetaCheck](http://www.scienceverse.org/metacheck) version {{< meta metacheck.version >}}  \nReport Created: {{< meta metacheck.report-created >}}  \n <!-- doi, if exists -->\n:::\n\n[Metacheck](https://www.scienceverse.org/metacheck/) is a tool that screens scientific manuscripts and aims to identify potential issues for improvement. Our goal is to guide researchers towards best practices, especially with respect to practices that researchers easily forget, or might not have learned about yet. Metacheck is developed to help researchers correctly and completely report statistical results, will point to possibly relevant information about citations, and provides feedback about data and code sharing.\n\nMetacheck combines existing and new checks in a module-based tool. It is open source, and anyone can contribute modules. It mainly relies on text search or retrieving information from external sources through API’s or web-scraping, but the power modules can optionally use large language models. The use of LLM's is always optional and opt-in. The development of Metacheck is guided by our [values statement](https://www.scienceverse.org/metacheck/#our-values).\n\n::: {.validation}\nIn light with our values, our modules are validated on sets of open-access papers. In each validated module, there will be a sentence explaining the prevalence of false positives (incorrect detection/classification) and false negatives (incorrect omission). For example, if a hypothetical module detects the inappropriate practice of \"woozling\", the sentence might read:\n\n> In a sample of 250 papers from the *Journal of X*, there were 350 instances of woozling. This module correctly detected 340 of them, and incorrectly identified 7. Therefore 3% of true instances are missed, and 2% of detections are false positives.\n\nThere is an inherent tradeoff between false positives and false negatives. Many of our modules are designed like \"smoke detectors\", where they are more likely to detect a practice that needs attention, but also more likely to incorrectly flag something. Therefore, you need to check the output of each module, keeping the validated error rates in mind.\n:::\n\nMetacheck is under continuous development. It can be surprisingly difficult to automatically retrieve information from papers, and there is a large amount of edge-cases where our tool might not yet work accurately. By using our tool, and providing us with feedback about what we can't get right yet, you will help to improve the tool for all other users. Issues can be submitted [on Github](https://github.com/scienceverse/metacheck/issues), and suggestions for improvement or feedback can be sent to [metacheck@scienceverse.org](mailto:metacheck@scienceverse.org).\n\n\n## Summary\n\n- ✅️ [Repository Check](#repository-check){.green}: \n    -  We found 3 files in 1 repository.\n    -  We found 1 README file and 0 repositories without READMEs.  \n- 🔍 [Code Check](#code-check){.yellow}: \n    -  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code file.\n    -  1 code file had no comments.\n    -  All files loaded in the code were present in the repository.\n    -  No absolute file paths were found.\n    -  No setwd() calls were found.\n    -  No install.packages() calls were found.\n    -  All libraries/imports were loaded in one block.\n    -  The code loaded 1 distinct package.\n    -  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n    -  No parsing issues of R-type files were found.  \n- ✅️ [Data Check](#data-check){.green}: \n    -  We classified 3 files: 1 data, 1 code, 1 documentation.\n    -  We found 1 tabular data file and extracted 3 columns from 1 of them.\n    -  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n    -  The study-group step did not get an answer for 2 files (the model request failed); they were grouped by the fallback rules instead. We ran automated data-quality checks on 3 columns and found no issues. We detected demographic column for Age.  \n- ⚠️ [Codebook Check](#codebook-check){.red}: We found no codebook or README documentation for the 3 extracted data columns.  \n\n\n\n## Results Modules\n\n### ✅️ Repository Check {#repository-check .green}\n\n-  We found 3 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n\n<details><summary>View detailed feedback<\/summary><div>\n\n#### Repositories\n\n<R-CHUNK>\n\n#### Files\n\n<R-CHUNK>\n\nREADME files were found in all repositories.\n\n#### File Classification\n\n::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n<R-CHUNK>\n\n**data** (1 file)\n\n<R-CHUNK>\n\n**documentation** (1 file)\n\n<R-CHUNK>\n\n:::\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nThis module retrieves information from repositories.\n\nThe Repository Check module lists files on the OSF, GitHub, ResearchBox, DSpace (PsychArchives and other legacy- and DSpace 7-based installations), Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, and DataONE (Arctic Data Center, KNB, and other member nodes) based on links in the manuscript.\n\nWhen a linked OSF page is a registration, its `registered_from` project (the\none it was registered from, which the manuscript itself may never link\ndirectly) is also checked: if that project is public its files are listed\nunder its own URL, and if it is closed or otherwise inaccessible the report\nflags it explicitly, since some registrations only describe their content\nrather than mirroring it.\n\nIf you want to extend the package to be able to download files from additional data repositories reach out to the Metacheck development team.\n\nThis module was developed by Daniel Lakens and Lisa DeBruine\n\n:::\n\n### 🔍 Code Check {#code-check .yellow}\n\n-  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code file.\n-  1 code file had no comments.\n-  All files loaded in the code were present in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  The code loaded 1 distinct package.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  No parsing issues of R-type files were found.\n\n<details><summary>View detailed feedback<\/summary><div>\n\nBelow, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.\n\n<R-CHUNK>\n\n#### Code Comments\n\nBest programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code).\n\n#### Missing Files\n\nAll files loaded in the code were present in the repository.\n\n#### Absolute Paths\n\nBest programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.\n\n#### Working Directory (setwd)\n\nBest programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.\n\n#### Package Installation (install.packages)\n\nBest programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.\n\n#### Libraries / Imports\n\nBest programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.\n\n#### Packages / Dependencies\n\nThe code files load 1 distinct package/library: dplyr. These are the names found in the source (no version information is available from static analysis).\n\n#### Reproducible Environment\n\nNo `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).\n\n#### Parsable code\n\nAll R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nThis module retrieves information from repositories checked by repo_check about code files (R, SAS, SPSS, Stata).\n\nThe Code Check module checks R, Rmd, Qmd, SAS, SPSS, and Stata files, using regular expressions to check the code. The regular expression search will detect the number of comments, the lines at which libraries/imports are loaded, attempts to detect absolute paths to files, and lists files that are loaded, and checks if these files are in the repository. The module will return suggestions to improve the code if there are no comments, if libraries/imports are loaded in lines further than 4 lines apart, if files that are loaded are not in the repository, and if absolute file paths are found.\n\nThe regular expressions can miss information in code files, or falsely detect parts of the code as a fixed file path. Libraries/imports might be loaded in one block, even if there are more than 3 intermittent lines. The package was validated internally on papers published in Psychological Science. There might be valid reasons why some loaded files can’t be shared, but the module can’t evaluate these reasons, and always gives a warning.\n\nThe module also checks whether the repository pins the R/package versions the analysis actually depended on: an `renv.lock` file (parsed for the R version and every locked package + its version/source), a `sessionInfo()`/`sessioninfo::session_info()` text dump (matched by filename — `sessionInfo.txt`/`session_info.txt` and similar, or embedded in a README), or a `groundhog::groundhog.library()`/`checkpoint::checkpoint()` date-pin call in the code (a bare `library(groundhog)`/`library(checkpoint)` does not count — the pinning call itself must be present). When none of these is found, the report flags it as a reproducibility gap: package versions may drift between when the analysis was run and any later reproduction attempt.\n\nIf you want to extend the package to perform additional checks on code files, or make the checks work on other types of code files, reach out to the Metacheck development team.\n\nThis module was developed by Daniel Lakens and Raphael Merz\n\n:::\n\n### ✅️ Data Check {#data-check .green}\n\n-  We classified 3 files: 1 data, 1 code, 1 documentation.\n-  We found 1 tabular data file and extracted 3 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n-  The study-group step did not get an answer for 2 files (the model request failed); they were grouped by the fallback rules instead. We ran automated data-quality checks on 3 columns and found no issues. We detected demographic column for Age.\n\n<details><summary>View detailed feedback<\/summary><div>\n\nThis module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.\n\n#### Data Tree\n\nWhere the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.\n\n**Repository: <repo>/tests/report/fixtures/repository/my_study**\n\n```\n├── analysis.R  💻 code   ex1\n├── data.csv    📊 data   ex1\n└── README.md   📄 readme\n```\n\n#### Data Files\n\n::: {.panel-tabset}\n\n## data.csv\n\n<R-CHUNK>\n\n:::\n\n#### Descriptives Overview\n\nWe found 1 column with at least one missing value.\n\n::: {.panel-tabset}\n\n## data.csv\n\n<R-CHUNK>\n\n:::\n\nThis module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.\n\nWe examined 3 columns across 1 data file.\n\n#### Careless Responding\n\nNo file could be screened for careless responding.\n\n**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding.\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nThis module classifies the files in a repository into semantic types\n(data, codebook, code, software, output, supplemental, readme, asset,\nother) and, for tabular data files, extracts each column's type and summary\nstatistics.\n\nThe Data Check module consumes the file list produced by `repo_check` (or\nany files added via `local_path`). Each file is classified with rule-based\nheuristics layered over metacheck's `file_category()` and `file_types`: file\nnames matching README / codebook patterns win first, then an extension\ncrosswalk, then format-locked extension overrides. For every file classified\nas tabular `data` that is available locally, the module reads the file head,\ndescribes each column with `data_col_facets()` and computes summary statistics\nfor numeric columns. Following DDI, a column is described by orthogonal facets\nrather than a single type: `representation` (numeric/text/datetime/code — how\nit is stored), `measurement_level` (Stevens: nominal/ordinal/interval/ratio),\n`concept` (what it measures: reaction_time/age/gender/likert/id/…), `role`\n(identifier/measure/condition/timestamp), `unit`, and a `quality` state\n(ok/empty/constant). Concepts are detected by name+value rules (the demographic\nconcepts via `data_check_demographic()`); when `llm_use(TRUE)` the model fills\nconcepts and measurement levels the rules left blank. Qualtrics\nsurvey exports are recognised (`data_check_is_qualtrics()`): their extra\nheader rows are stripped so columns type correctly, and the reserved\nresponse-metadata columns (StartDate, Duration, Finished, ...) are tagged.\n\nThe module defaults to **rules-only** when `llm_use(FALSE)`: columns the\nrules cannot resolve (ambiguous 3–20-unique integers, ambiguous character\ncolumns) fall back to `continuous` / `text` respectively. When\n`llm_use(TRUE)`, ambiguous columns and unresolved file types (`other`) are\nsent to `llm()` for optional refinement, and every file is assigned a study\ngroup (`ex1`, `pilot2`, `shared`, ...) so that multi-study repositories can\nbe recognised (used by `psychds_check`). Without an LLM the study `group` is\nleft `NA` (unknown).\n\nColumn extraction requires files to be readable from disk. Files fetched by\n`repo_check` from OSF/GitHub/etc. without a local copy (`file_location` is\n`NA`) are classified but not column-extracted; pass `local_path` to point at\na downloaded copy of the repository.\n\nThis module was developed by Daniel Lakens\n\n:::\n\n::: {.validation}\nValidation: This module has not been validated. All checks in the data_check module have unknown error rates. Carefully evaluate the output of this module. You can help improve this module by reporting an issue on GitHub.\n:::\n\n### ⚠️ Codebook Check {#codebook-check .red}\n\nWe found no codebook or README documentation for the 3 extracted data columns.\n\n<details><summary>View detailed feedback<\/summary><div>\n\nThis module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.\n\nWe examined 1 codebook/README/label source and 3 data columns across 1 file.\n\nNo codebook or README documentation was found, so no data columns could be matched to variable definitions.\n\n#### Scales\n\nScale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale.\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nThis module checks whether the data columns in a repository are documented in\na codebook or README. It locates codebook/readme files, extracts the variable\ndefinitions they contain, matches those definitions against the data columns\nextracted by `data_check`, and reports documentation coverage: how many data\ncolumns are documented, and which documented variables are never used.\n\nThe Codebook Check module consumes the columns and file classification\nproduced by `data_check` (and, transitively, `repo_check`). Files classified\nas `codebook` or `readme` are parsed with `parse_codebook()`, which reads\nstructured tables (CSV/TSV/Excel with a variable-name column and a label\ncolumn), embedded labels in haven files (SPSS/Stata/SAS), and plain text from\nrich-text formats (docx/pdf/rtf/odt). Embedded haven labels from data files\nare also harvested directly.\n\nEach data column is then matched against the parsed variable definitions with\n`match_column_labels()`, using normalised-name matching with experiment-group\nscoping, haven-label priority, and rule-based label-equivalence merging.\n\nBeyond the variable label, the module harvests the DDI-style per-variable\nproperties a source supplies: the **value labels / code list** (the\n1=\"Strongly disagree\"…5=\"Strongly agree\" mapping — from SPSS/Stata value\nlabels and from a codebook \"values\"/\"coding\" column), the **missing-value\nscheme** (which codes denote missingness, from haven declared missings and\nlabels that read as \"refused\"/\"n/a\"), and **question text** and\ncolumns when present. These are carried onto the matched\ndata columns and exported into the Psych-DS `variableMeasured` (as a\nschema.org code list plus namespaced `metacheck:` fields).\n\nThe module defaults to **rules-only** when `llm_use(FALSE)`. When\n`llm_use(TRUE)`, three optional LLM tiers run: parsing unstructured codebook\ntext that the rules could not handle, fuzzy-matching still-unlabelled columns\nto still-unmatched codebook variables, and merging conflicting label\ndefinitions into a single canonical label.\n\nThis module was developed by Daniel Lakens\n\n:::\n\n\n\n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

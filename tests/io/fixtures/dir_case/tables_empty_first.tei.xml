@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+<teiHeader><fileDesc><titleStmt><title level="a" type="main">Review fixture</title></titleStmt><sourceDesc><biblStruct><analytic></analytic></biblStruct></sourceDesc></fileDesc>
+<encodingDesc><appInfo><application version="0.8.1" ident="GROBID"><desc>GROBID</desc></application></appInfo></encodingDesc>
+<profileDesc><abstract><div xmlns="http://www.tei-c.org/ns/1.0"><p>An abstract sentence. Another one.</p></div></abstract></profileDesc></teiHeader>
+<text xml:lang="en"><body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>See Table <ref type="table" target="#tab_0">1</ref> and Table <ref type="table" target="#tab_1">2</ref>.</p></div>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><figDesc>First table.</figDesc><table/></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><figDesc>Second table.</figDesc><table><row><cell>Group</cell><cell>SD</cell></row><row><cell>a</cell><cell>1.5</cell></row></table></figure>
+</body><back><div type="references"><listBibl><biblStruct xml:id="b0"><monogr><title level="j">J</title><imprint><date type="published" when="2020">2020</date></imprint></monogr><note type="raw_reference">Ref one. 2020.</note></biblStruct></listBibl></div></back></text></TEI>

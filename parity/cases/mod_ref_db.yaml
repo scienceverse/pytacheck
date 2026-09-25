@@ -237,6 +237,25 @@
         "r": "module_run"
         "py": "pytacheck.module.module_run"
         "args": {"paper": {"$paper": "demo"}, "module": "ref_retraction"}
+# a FLoRA table (mocked on both sides) with rows that have neither a replication DOI
+# nor a URL (link() gives NA: "Rep A1 NA"), an empty DOI, a URL only, a cited
+# replication and a doi.org-prefixed DOI
+- "id": "ref_replication.flora_mock"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); testthat::with_mocked_bindings(module_run(ref_paper(c(\"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/rep.c\")), \"ref_replication\"), FLoRA = function() data.frame(doi_o = c(\"10.1000/orig.a\", \"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/orig.c\"), apa_ref_o = c(\"Orig A\", \"Orig A\", \"Orig B\", \"Orig C\", \"Orig C\"), doi_r = c(NA_character_, \"\", NA_character_, \"10.1000/rep.c\", \"https://doi.org/10.1000/rep.c2\"), apa_ref_r = c(\"Rep A1. https://example.org/a1\", \"Rep A2.\", \"Rep B.\", \"Rep C.\", \"Rep C2.\"), url_r = c(NA_character_, NA_character_, \"https://example.org/repb\", NA_character_, NA_character_), outcome = c(\"failed\", NA_character_, \"success\", \"mixed\", \"success\"), outcome_quote = c(NA_character_, NA_character_, NA_character_, NA_character_, NA_character_), type = c(\"replication\", \"replication\", \"reproduction\", \"replication\", \"replication\")), .package = \"metacheck\")"
+        "py": "(lambda H, P: P.with_mocked({\"pytacheck.db.replications.FLoRA\": lambda: pd.DataFrame({\"doi_o\": [\"10.1000/orig.a\", \"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/orig.c\"], \"apa_ref_o\": [\"Orig A\", \"Orig A\", \"Orig B\", \"Orig C\", \"Orig C\"], \"doi_r\": [None, \"\", None, \"10.1000/rep.c\", \"https://doi.org/10.1000/rep.c2\"], \"apa_ref_r\": [\"Rep A1. https://example.org/a1\", \"Rep A2.\", \"Rep B.\", \"Rep C.\", \"Rep C2.\"], \"url_r\": [None, None, \"https://example.org/repb\", None, None], \"outcome\": [\"failed\", None, \"success\", \"mixed\", \"success\"], \"outcome_quote\": [None, None, None, None, None], \"type\": [\"replication\", \"replication\", \"reproduction\", \"replication\", \"replication\"]}, dtype=\"string\")}, lambda: pc.module_run(H.ref_paper([\"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/rep.c\"]), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]), __import__(\"parity.pyhelpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.flora_mock.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); testthat::with_mocked_bindings(report_tbl(module_run(ref_paper(c(\"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/rep.c\")), \"ref_replication\", show_outcomes = TRUE)), FLoRA = function() data.frame(doi_o = c(\"10.1000/orig.a\", \"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/orig.c\"), apa_ref_o = c(\"Orig A\", \"Orig A\", \"Orig B\", \"Orig C\", \"Orig C\"), doi_r = c(NA_character_, \"\", NA_character_, \"10.1000/rep.c\", \"https://doi.org/10.1000/rep.c2\"), apa_ref_r = c(\"Rep A1. https://example.org/a1\", \"Rep A2.\", \"Rep B.\", \"Rep C.\", \"Rep C2.\"), url_r = c(NA_character_, NA_character_, \"https://example.org/repb\", NA_character_, NA_character_), outcome = c(\"failed\", NA_character_, \"success\", \"mixed\", \"success\"), outcome_quote = c(NA_character_, NA_character_, NA_character_, NA_character_, NA_character_), type = c(\"replication\", \"replication\", \"reproduction\", \"replication\", \"replication\")), .package = \"metacheck\")"
+        "py": "(lambda H, P: P.with_mocked({\"pytacheck.db.replications.FLoRA\": lambda: pd.DataFrame({\"doi_o\": [\"10.1000/orig.a\", \"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/orig.c\"], \"apa_ref_o\": [\"Orig A\", \"Orig A\", \"Orig B\", \"Orig C\", \"Orig C\"], \"doi_r\": [None, \"\", None, \"10.1000/rep.c\", \"https://doi.org/10.1000/rep.c2\"], \"apa_ref_r\": [\"Rep A1. https://example.org/a1\", \"Rep A2.\", \"Rep B.\", \"Rep C.\", \"Rep C2.\"], \"url_r\": [None, None, \"https://example.org/repb\", None, None], \"outcome\": [\"failed\", None, \"success\", \"mixed\", \"success\"], \"outcome_quote\": [None, None, None, None, None], \"type\": [\"replication\", \"replication\", \"reproduction\", \"replication\", \"replication\"]}, dtype=\"string\")}, lambda: H.report_tbl(pc.module_run(H.ref_paper([\"10.1000/orig.a\", \"10.1000/orig.b\", \"10.1000/orig.c\", \"10.1000/rep.c\"]), \"ref_replication\", show_outcomes=True))))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]), __import__(\"parity.pyhelpers\", fromlist=[\"x\"]))"
 - "id": "ref_miscitation.demo"
   "module": "ref_miscitation"
   "args": {"paper": {"$paper": "demo"}}

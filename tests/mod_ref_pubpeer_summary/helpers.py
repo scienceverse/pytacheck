@@ -274,6 +274,36 @@ def rv_ret_keys() -> Any:
     return drop_table_cols(chain(pc.demopaper(), ["ref_retraction"]), ["retractionwatch"])
 
 
+def rv_ret_bib_id(type_: str) -> Any:
+    """ref_retraction's table with a ``bib_id`` of another type (see ``helpers.R``)."""
+    import pytacheck as pc
+
+    out = chain(pc.demopaper(), ["ref_retraction"])
+    table = out.table.copy()
+    b = table["bib_id"]
+    n = len(b)
+    if type_ == "chr":
+        table["bib_id"] = pd.array([None if pd.isna(v) else str(v) for v in b], dtype="string")
+    elif type_ == "na_chr":
+        table["bib_id"] = pd.array([None] * n, dtype="string")
+    elif type_ == "dbl":
+        table["bib_id"] = b.astype("Float64").astype("float64")
+    elif type_ == "lgl":
+        table["bib_id"] = b.astype("boolean")
+    elif type_ == "na_lgl":
+        table["bib_id"] = pd.array([None] * n, dtype="boolean")
+    else:
+        raise ValueError(type_)
+    out.table = table
+    return out
+
+
+def rename_table_col(out: Any, from_: str, to: str) -> Any:
+    """Rename a column of a module output's table (R: ``names(out$table)[...] <- to``)."""
+    out.table = out.table.rename(columns={from_: to})
+    return out
+
+
 def rv_acc_dup() -> Any:
     """Duplicated ref_accuracy rows (same group, and a new no_match group)."""
     import pytacheck as pc

@@ -1059,6 +1059,19 @@ def _haven_numbers(values: Sequence[Any]) -> list[float]:
     return out
 
 
+def _haven_label_code(code: Any, vendor: str) -> float | str:
+    """One value-label code as haven reads it.
+
+    The label set's type decides, not the column's: a Stata label set is
+    numeric even on a string column. pyreadstat reports a Stata extended
+    missing value (``.a``-``.z``) by its letter, which haven reads as a tagged
+    ``NA``.
+    """
+    if isinstance(code, str):
+        return math.nan if vendor == "stata" else code
+    return float(code)
+
+
 def _haven_dates(days: list[float]) -> pd.Series:
     epoch = dt.date(1970, 1, 1)
     out: list[dt.date | None] = []
@@ -1157,7 +1170,7 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
             # may share a label text ("Missing"). pyreadstat's {code: label} has
             # already merged repeated codes (a documented limitation).
             attrs["labels"] = [
-                (str(lab), str(code) if is_string else float(code)) for code, lab in labels.items()
+                (str(lab), _haven_label_code(code, vendor)) for code, lab in labels.items()
             ]
         per.append(attrs)
     out = pd.DataFrame(series, index=range(nrow))

@@ -391,6 +391,11 @@
   "py": "tests.report.parity_helpers.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_report_repository('my_study', c('rp_repo', 'rp_chained'), list(rp_repo = list(note = '!'), rp_chained = list(extra = ' x')))}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_repository('my_study', ['rp_repo', 'rp_chained'], {'rp_repo': {'note': '!'}, 'rp_chained': {'extra': ' x'}})"}}
+- "id": "report_repository.default_modules"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_report_repository_dir('tests/report/fixtures/repository/my_study')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_repository_dir('tests/report/fixtures/repository/my_study')"}}
 - "id": "report_repository.error.missing_folder"
   "r": "report_repository"
   "py": "pytacheck.report.report.report_repository"

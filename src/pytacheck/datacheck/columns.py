@@ -1243,6 +1243,12 @@ def match_column_labels(
         ord_ = sorted(range(len(qsf_tags)), key=lambda t: -len(qsf_tags[t]))
         cb_q = carry["question"] or [None] * ncb
         cb_vl = carry["value_labels"]
+        # startsWith() refuses a column_name that is not character (an all-NA
+        # column is logical in R)
+        from pytacheck.datacheck._checks_rvec import rvec
+        from pytacheck.datacheck._columns_labels import _col
+
+        cn_chr = colname is not None and rvec(_col(columns_df, "column_name")).kind == "character"
         for i in [k for k in range(n) if status_out[k] == "unlabelled"]:
             if colname is None:
                 # R: if (grepl(re, NULL)) -- a zero-length condition
@@ -1250,6 +1256,8 @@ def match_column_labels(
             cn = _chr(colname[i])
             if grepl(_QSF_PARADATA_RE, cn, perl=True, ignore_case=True):
                 continue
+            if not cn_chr:
+                raise ValueError("non-character object(s)")
             if cn is None:
                 raise ValueError("missing value where TRUE/FALSE needed")
             hit = next(

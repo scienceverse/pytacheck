@@ -1,7 +1,7 @@
 {
   "id": "import_mplus_output.wrong_ext",
   "ok": false,
-  "error": "Not a .out file: /home/user/pytacheck/tests/statout_readers/fixtures/text/analysis.smcl",
+  "error": "Not a .out file: <repo>/tests/statout_readers/fixtures/text/analysis.smcl",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

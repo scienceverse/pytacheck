@@ -136,9 +136,12 @@ def test_ref_pubpeer_single_reference() -> None:
 
 @pytest.mark.usefixtures("mock_pubpeer")
 def test_ref_pubpeer_request_failed() -> None:
-    # pubpeer_comments() returns NULL and dplyr::inner_join(bib, NULL) fails
-    with pytest.raises(ModuleError, match="ref_pubpeer"):
+    # pubpeer_comments() returns NULL and dplyr::inner_join(bib, NULL) fails (U23)
+    with pytest.raises(ModuleError) as err:
         module_run(H.pp_fail(), "ref_pubpeer")
+    assert str(err.value) == (
+        "Running the module 'ref_pubpeer' produced errors: `x` and `y` must share the same src."
+    )
 
 
 @pytest.mark.usefixtures("apis")

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+<teiHeader><fileDesc><titleStmt><title level="a" type="main">Tokens</title></titleStmt></fileDesc>
+<profileDesc><abstract><div xmlns="http://www.tei-c.org/ns/1.0"><p>First <ref type="foot" target="#foot_1">1</ref> paragraph. Second sentence.</p></div></abstract></profileDesc></teiHeader>
+<text><body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Intro</head><p>Again <ref type="foot" target="#foot_1">1</ref> with a literal {{ref1-1}} token and <ref>2</ref> more.</p><p>Twice <ref type="bibr" target="#b0">(A, 2000)</ref> and <ref type="bibr" target="#b0">(A, 2000)</ref> in one {{ref2-1}} sentence.</p><p>Literal {{ref9-9}} only.</p></div>
+</body></text></TEI>

@@ -31,8 +31,9 @@ def _commented(pp: pd.DataFrame | None) -> pd.DataFrame:
     ``NA`` DOI can never join a reference with a DOI, so they are dropped.
     """
     if pp is None:
-        # R: NULL[...] is NULL, and inner_join(bib, NULL) fails
-        raise TypeError("`y` must be a data frame, not NULL.")
+        # R: NULL[...] is NULL, and inner_join(bib, NULL) fails in dplyr's
+        # auto_copy() (U23)
+        raise TypeError("`x` and `y` must share the same src.")
     if "total_comments" not in pp.columns or "users" not in pp.columns:
         return pp.iloc[0:0]  # R: `NULL > 0` is logical(0), which selects no rows
     tc = pd.to_numeric(pp["total_comments"], errors="coerce")

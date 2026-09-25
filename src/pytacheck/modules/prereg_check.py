@@ -106,6 +106,7 @@ def prereg_check(paper: Any) -> dict[str, Any]:
     from pytacheck.archives.aspredicted import aspredicted_info, aspredicted_links
     from pytacheck.archives.osf import osf_check_id, osf_get_all_pages, osf_links, osf_type
     from pytacheck.modules import _prereg
+    from pytacheck.utils import suppress_messages
 
     # table ----
     links_ap = aspredicted_links(paper)
@@ -120,7 +121,8 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         }
 
     ## AsPredicted preregs ----
-    table_ap = aspredicted_info(links_ap["href"].tolist())
+    with suppress_messages():  # R: suppressMessages(aspredicted_info(...))
+        table_ap = aspredicted_info(links_ap["href"].tolist())
     ap_schema_table = _prereg.ap_schema(table_ap)
 
     ## OSF prereg ----

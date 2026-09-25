@@ -50,3 +50,22 @@ def github_readme_probe(repo: str) -> str:
     resp = http.request("GET", f"https://api.github.com/repos/{repo}/readme")
     assert resp is not None
     return base64.b64decode(resp.json()["content"]).decode("utf-8")
+
+
+def with_mocked(bindings: dict[str, Any], thunk: Any) -> Any:
+    """``testthat::with_mocked_bindings()``: run ``thunk()`` with the objects named
+    by dotted paths in *bindings* (``{"pytacheck.db.replications.FLoRA": fn}``)
+    replaced, and restore them afterwards."""
+    import importlib
+
+    saved = []
+    try:
+        for dotted, value in bindings.items():
+            module_name, _, attr = dotted.rpartition(".")
+            module = importlib.import_module(module_name)
+            saved.append((module, attr, getattr(module, attr)))
+            setattr(module, attr, value)
+        return thunk()
+    finally:
+        for module, attr, old in reversed(saved):
+            setattr(module, attr, old)

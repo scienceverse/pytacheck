@@ -351,6 +351,26 @@
         "text": ["t(23) = 3.77, p = .001", "No stats", "F(1, 2) = 3, p = .5, r = .2"]
         "paper_id": ["a", "a", "a"]
         "text_id": [1, 2, 3]
+- "id": "extract_tests.psychsci"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper": *psychsci
+- "id": "extract_tests.psychsci.0956797613520608"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"}
+- "id": "extract_tests.psychsci.0956797614522816"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"}
+- "id": "extract_tests.psychsci.0956797614527830"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"}
 - "id": "norm_stat_name.eta"
   "r": "metacheck:::.norm_stat_name"
   "py": "pytacheck.text.extract_tests._norm_stat_name"
@@ -482,6 +502,20 @@
         - '{"number": 3, "letter": "", "bool": null}'
         - "oh no, the LLM misunderstood"
         - '{"number": 5, "letter": ["E", "F"], "bool": false}'
+# a complex column (encoded as R's as.character() of each value)
+- "id": "json_expand.complex"
+  "r": "json_expand"
+  "py": "pytacheck.text.json_expand.json_expand"
+  "args":
+    "table":
+      "$df":
+        "id": [1, 2, 3, 4, 5]
+        "answer":
+        - '{"z": "1+2i", "r": "00"}'
+        - '{"z": "-0.5-3i", "r": "ff"}'
+        - '{"z": "NA", "r": "1e"}'
+        - '{"z": "1e-3+0.1i", "r": "0a"}'
+        - '{"z": "0.33333333333333331+1e20i", "r": "7f"}'
 - "id": "json_expand.vector"
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"

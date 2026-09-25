@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader><fileDesc><titleStmt><title>Page without to</title></titleStmt></fileDesc></teiHeader>
+	<text><body><div><head>Intro</head><p>Text.</p></div></body>
+	<back><div type="references"><listBibl>
+		<biblStruct xml:id="b0"><analytic><title level="a">T</title></analytic><monogr><title level="j">J</title><imprint><biblScope unit="page" from="5"/><date type="published" when="2001">2001</date></imprint></monogr><note type="raw_reference">T. J, 5.</note></biblStruct>
+	</listBibl></div></back></text>
+</TEI>
