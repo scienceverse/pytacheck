@@ -44,3 +44,20 @@ See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented
   de-duplicates definitions per paper and matches acronyms literally;
   psychds_check keeps valid Psych-DS names and root files in place, gives each
   paper of a list its own summary row and accepts `paper = NULL`.
+- code_check, repo_check, reg_check, the reproducibility checks and the
+  statistical-output readers (U66-U68, U78, U86-U89, U120-U123, U132-U148,
+  U153): `.qmd`/`.ipynb` languages are read from the local copy; empty code
+  files are analysed; files are de-duplicated per file, not per name; local
+  archives count as archives; `code_check(paper = NULL)` runs on a local
+  folder; SPSS template cells, SMCL hex characters and HTML `<meta charset>`
+  are honoured; `match_reported_output()` keeps scientific-notation precision.
+- Core (U2, U4-U10, U12-U15, U19, U20, U77, U79, U80, U128-U131, U149-U151):
+  the API's `/paper/search` `section` filter works; `stats()` keeps checkable
+  results next to unparseable ones, rejects invalid arguments and reads the Q
+  subtype correctly; `extract_eq()`/`extract_tests()` treat each paper of a
+  list separately; DOI, Crossref, OpenAlex and PubPeer lookups return one row
+  per input and DataCite titles are read correctly; RetractionWatch rows
+  without a DOI no longer match every reference; `llm()` keeps the answers of
+  sanitised and partly failing texts; `text_search(return = "section")` keeps
+  section headers; reports keep the headings, callouts and authors metacheck
+  dropped.

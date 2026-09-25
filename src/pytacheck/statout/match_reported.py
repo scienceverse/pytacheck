@@ -612,7 +612,9 @@ class _Sites:
             lo, hi = self._bounds(fam)
             got = lo < value if censored == "<" else hi > value
         else:
-            tol = 0.5 / (10.0**dec)
+            # 10.0**dec overflows beyond 1e308 (a reported "p = 1e-310" has
+            # 310 decimals, U143); the tolerance is then a subnormal or 0
+            tol = 0.5 / (10.0**dec) if dec <= 308 else 0.5 * 10.0**-dec
             got = self._exact(fam, dec, value, tol)
             fallback = _FALLBACK_FAMILY.get(fam) if fam is not None else None
             if fallback is not None:

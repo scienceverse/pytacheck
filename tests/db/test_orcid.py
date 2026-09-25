@@ -93,7 +93,7 @@ def test_check_orcid() -> None:
     with pytest.warns(UserWarning):
         assert check_orcid("0000-0002") is False
     # U14: R fails on if (NA) for a missing ORCiD and an X before the check digit
-    with pytest.warns(UserWarning, match="is not valid"):
+    with pytest.warns(UserWarning, match="The ORCiD NA is not valid"):
         assert check_orcid(None) is False
     with pytest.warns(UserWarning, match="is not valid"):
         assert check_orcid("0000-000X-0247-2394") is False

@@ -1100,6 +1100,39 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
     assert counts and all(c == {"https://osf.io/x": 5} for c in counts)
     assert mo.summary_text.count("Repository holds") == 1
 
+    # rows an expansion adds (an archive's code members) are not counted as
+    # files of the listing: the catch-up quotes the pre-pass count
+    import pytacheck.codecheck.core as cc
+
+    def fake_expand(all_files: pd.DataFrame, skip_on_api_limit: bool = False) -> pd.DataFrame:
+        member = all_files.iloc[[0]].copy()
+        member["file_name"] = "member.R"
+        member["file_url"] = None
+        member["archive_url"] = "https://osf.io/x/bundle.zip"
+        member["archive_member"] = "member.R"
+        member["language"] = "R"
+        return pd.concat([all_files, member], ignore_index=True)
+
+    monkeypatch.setattr(cc, "_code_expand_zip", fake_expand)
+    counts.clear()
+    zipped = _remote_listing(
+        [
+            {
+                "paper_id": "p1",
+                "file_name": n,
+                "repo_url": "https://osf.io/x",
+                "file_url": f"https://osf.io/x/{n}",
+                "file_location": None,
+            }
+            for n in [*names, "bundle.zip"]
+        ]
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        mo = module_run(fake_repo_check(zipped), "code_check")
+    assert len(counts) == 2 and all(c == {"https://osf.io/x": 6} for c in counts)
+    assert mo.summary_text.count("Repository holds") == 1
+
 
 def test_per_paper_pin_check_uses_the_module_download_options(
     monkeypatch: pytest.MonkeyPatch,

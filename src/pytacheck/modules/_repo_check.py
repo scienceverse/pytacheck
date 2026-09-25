@@ -742,8 +742,11 @@ def list_osf(
         # project) comes back with the error, holding the files already listed
         # for it: R's handler finds nothing left to flag, and the paper
         # reported "no repositories found" (UPSTREAM_ISSUES U122)
+        # (only registrations: a link removed as no storage location at all,
+        # such as a user page, stays removed)
         present = set(vals(repos.df["repo_url"]))
-        lost = [u for u in unique(osf_urls) if u not in present]
+        registrations = {reg for reg, _ in reg_pairs}
+        lost = [u for u in unique(osf_urls) if u not in present and u in registrations]
         if lost:
             repos.add(repo_rows(osf_paper_id, lost, "osf", msg))
             back: dict[str, Any] = {}

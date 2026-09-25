@@ -130,6 +130,11 @@
 "mod_repo_check_review/repo_check.local.edat_many": *u123
 "mod_repo_check_review/repo_check.local.unicode": *u123
 "mod_repo_check_review/repo_check.local.unicode.tables": *u123
+# data_check's structure is repo_check's local listing (this lane's U123 fix)
+"mod_data_check/data_check.local.basic":
+  kind: r_bug_fixed
+  ref: U123
+  reason: a local file file_category() cannot place takes its extension's type (stimulus.png is image) in repo_check's listing, which data_check's structure keeps; R leaves it NA
 
 # --- reproducibility check (R/reproducibility_check*.R, its module) ----------
 "repro_core/repro_run_scripts.nopkg_failed_dep": &u132
@@ -138,6 +143,10 @@
   reason: R's "there is no package called ‘pkg’" (typographic quotes in UTF-8) is recognised, so a script failing on an unavailable dependency is dependency_unavailable, not errored
 "mod_repro/reproducibility_check.exec_docker": *u132
 "mod_repro_review/tables.exec_docker_exec": *u132
+"repro_core/repro_rewrite_paths.paste_sep_call":
+  kind: r_bug_fixed
+  ref: U133
+  reason: paste(wd, "x.csv", sep = "/") is a runtime-built path whose whole call is rewritten; R skips from the start of the arguments, so only the literal is rewritten and the script reads raw/<target>
 "repro_core/repro_redirect_writes.named_arg": &u134
   kind: r_bug_fixed
   ref: U134

@@ -201,6 +201,9 @@ def code_check(
         return df
 
     set_language(all_files)
+    # each repository's whole listing, counted before the archive/output
+    # expansions add rows: the size caps' messages quote it
+    listing_counts = _repo_file_counts(all_files)
 
     # one download pass for everything the steps below might need
     predl_gated: list[pd.DataFrame | None] = []
@@ -285,7 +288,7 @@ def code_check(
                 # the repository's whole listing, as in the pre-pass: R
                 # counts only its code files, so a refused repository was
                 # reported twice with different counts (UPSTREAM_ISSUES U88)
-                repo_file_counts=_repo_file_counts(all_files),
+                repo_file_counts=listing_counts,
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
             )

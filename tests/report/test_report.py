@@ -310,6 +310,26 @@ def test_module_report_undefined_traffic_light(tmp_path):
     assert "character(0)" not in qmd
 
 
+_TWO_PART = """
+from pytacheck.module import module
+
+
+@module(title="Two Part Module", description="d", keywords=["general"])
+def rp_two_part(paper):
+    return {"traffic_light": "green", "summary_text": ["First part.", "Second part."]}
+"""
+
+
+def test_report_qmd_summary_text_with_several_parts(tmp_path):
+    # U7 (D24): R >= 4.3 fails the whole report ('length = 2' in coercion to
+    # 'logical(1)') when a module's summary_text has several elements
+    path = tmp_path / "rp_two_part.py"
+    path.write_text(_TWO_PART, encoding="utf-8")
+    paper = pc.test_paper(["x"])
+    qmd = report_qmd(module_run(paper, str(path)), paper)
+    assert "- ✅️ [Two Part Module](#two-part-module){.green}: First part. Second part.  " in qmd
+
+
 def test_report_qmd_without_paper():
     # U128: metacheck's default `paper = list()` always errors
     op = module_run(pc.test_paper(["x"]), "marginal")

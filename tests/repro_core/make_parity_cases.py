@@ -356,6 +356,15 @@ rp(
         }
     },
 )
+# the file string is not the first argument, with arguments after it: a
+# runtime-built path whose whole call is rewritten (UPSTREAM_ISSUES U133;
+# metacheck rewrites only the literal, giving "raw/<target>")
+rp(
+    "paste_sep_call",
+    chr_('wd <- "raw"', 'd <- read.csv(paste(wd, "demographics.csv", sep = "/"))'),
+    "ex1/analysis.R",
+    PLAN_1,
+)
 rp(
     "na_and_empty_targets",
     chr_('a <- read.csv("x.csv")', 'b <- read.csv("y.csv")'),

@@ -31,7 +31,6 @@ __all__ = [
     "online",
     "paste_unlist",
     "r_dollar",
-    "r_list_set",
     "records_frame",
     "resp_body_json",
     "resp_content_type",
@@ -215,21 +214,6 @@ def as_vector(x: Any) -> list[Any]:
     if isinstance(x, Mapping):
         return list(x.values())
     return list(x)
-
-
-def r_list_set(lst: list[Any], i: int, value: Any) -> None:
-    """``lst[[i]] <- value`` with R semantics (``i`` is 1-based).
-
-    Assigning ``NULL`` deletes the element (shifting later ones), or does
-    nothing beyond the end; assigning past the end pads with ``NULL``.
-    """
-    if value is None:
-        if i <= len(lst):
-            del lst[i - 1]
-        return
-    while len(lst) < i:
-        lst.append(None)
-    lst[i - 1] = value
 
 
 # ---------------------------------------------------------------------------

@@ -1042,7 +1042,13 @@ def repro_run_order(
     derived: pd.DataFrame | None = None
     if "code_text" in files.columns and not {"reads", "writes", "sources"} <= set(files.columns):
         texts = files["code_text"].tolist()
-        parts = [repro_file_io({f"row{i}": texts[i]}) for i in range(n)]
+        # a file without code text (NA, not read) has no reads/writes/sources
+        parts = [
+            _frame({"file_name": ("string", [])})
+            if _is_na(texts[i])
+            else repro_file_io({f"row{i}": texts[i]})
+            for i in range(n)
+        ]
         derived = pd.DataFrame(
             {
                 col: [p[col].iloc[0] if col in p.columns and len(p) else [] for p in parts]
