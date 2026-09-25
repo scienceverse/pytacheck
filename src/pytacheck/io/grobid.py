@@ -1205,26 +1205,13 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
 def _list_files(path: PathLikeStr, pattern: str, recursive: bool = False) -> list[str]:
     """``list.files(path, pattern, full.names = TRUE, ignore.case = TRUE)`` (sorted).
 
-    As with ``all.files = FALSE``, names starting with a dot are skipped (and
-    hidden directories are not searched). Without *recursive*, directories
-    whose name matches are listed too, as in R.
+    See :func:`pytacheck.io._files.list_files`: names starting with a dot are
+    skipped (and hidden directories are not searched); without *recursive*,
+    directories whose name matches are listed too, as in R.
     """
+    from pytacheck.io._files import list_files
 
-    def walk(d: Path) -> list[Path]:
-        out: list[Path] = []
-        for p in d.iterdir():
-            if p.name.startswith("."):
-                continue
-            if recursive and p.is_dir():
-                out.extend(walk(p))
-            elif grepl(pattern, p.name, ignore_case=True):
-                out.append(p)
-        return out
-
-    root = os.fspath(path)  # full.names pastes the directory as given
-    base = Path(root)
-    rel = sorted(p.relative_to(base).as_posix() for p in walk(base))
-    return [f"{root}/{r}" for r in rel]
+    return list_files(path, pattern, recursive=recursive, ignore_case=True)
 
 
 def grobid_to_bibr(

@@ -26,3 +26,56 @@ def unname(obj: Any, force: bool = False) -> Any:
 def names(x: Any) -> Any:
     """R's ``names()`` of a named vector (a dict)."""
     return None if x is None else [str(k) for k in x]
+
+
+
+_EMPTY_TEI = "tests/io/fixtures/empty_body.tei.xml"
+_PROBE_JSON = "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"
+
+
+def _copies(files: dict[str, list[str]]) -> str:
+    """A temporary directory holding copies of repository files under new names."""
+    import shutil
+    import tempfile
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    d = Path(tempfile.mkdtemp(prefix="pc_io_read_"))
+    for src, names in files.items():
+        for name in names:
+            (d / name).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(root / src, d / name)
+    return str(d)
+
+
+def read_dir() -> str:
+    """A directory for ``read()``'s ``list.files()`` scan (the ``read.dir.*`` cases).
+
+    Hidden files and directories, an upper-case extension, a subdirectory and
+    a file named like it, and names whose C and ICU sort orders differ.
+    """
+    names = ["good.xml", ".hidden.xml", "UP.XML", "Z.xml", "sub/c.xml", ".hid/h.xml", "sub.xml"]
+    return _copies({_EMPTY_TEI: names})
+
+
+def read_list() -> list[str]:
+    """Paths for ``read()``: a repeated path, an XML twin of a ``.JSON`` and of a ``.json``."""
+    d = _copies({_EMPTY_TEI: ["Z.xml", "p.xml", "q.xml"], _PROBE_JSON: ["p.JSON", "q.json"]})
+    return [f"{d}/{n}" for n in ["Z.xml", "p.JSON", "p.xml", "q.json", "q.xml", "Z.xml"]]
+
+
+def identity(x: Any) -> Any:
+    """R's ``identity()``: the case computes its value in ``$expr``."""
+    return x
+
+
+def read_basenames(file_path: Any, recursive: bool = False) -> Any:
+    """``read(file_path, recursive)`` with each paper's ``info$file_name`` basename'd."""
+    import pytacheck as pc
+
+    papers = pc.read(file_path, recursive=recursive, schema_version=None)
+    for p in papers:
+        info = p.info.copy()
+        info["file_name"] = info["file_name"].map(basename).astype(info["file_name"].dtype)
+        p.info = info
+    return papers

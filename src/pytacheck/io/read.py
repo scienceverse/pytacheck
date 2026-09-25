@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Sequence
 from os import PathLike
 from pathlib import Path
 from typing import Any
 
+from pytacheck.io._files import list_files
 from pytacheck.log import logger
 from pytacheck.papers.io import read_bibr
 from pytacheck.papers.model import Paper, PaperList
@@ -27,12 +29,13 @@ def _read_xml(path: Path, schema_version: str | None = "12.0") -> Paper:
 def _read_one(
     path: Path, include_images: bool, bibr_options: dict[str, Any], schema_version: str | None
 ) -> Paper:
-    suffix = path.suffix.lower()
-    if suffix == ".json":
+    # R: grepl("\\.json$", fp, ignore.case = TRUE), then "\\.xml$"
+    name = path.name.lower()
+    if name.endswith(".json"):
         return read_bibr(path, include_images)
-    if suffix == ".xml":
+    if name.endswith(".xml"):
         return _read_xml(path, schema_version)
-    if suffix in SOURCE_EXTENSIONS:
+    if path.suffix.lower() in SOURCE_EXTENSIONS:
         from pytacheck.io.bibr import chew
 
         return chew(path, include_images=include_images, **bibr_options)
@@ -50,9 +53,12 @@ def read(
     """Read paper(s) from bibr JSON or Grobid XML files, or a directory of them.
 
     Like ``metacheck::read()``: a directory is scanned for ``.json``/``.xml``
-    files (a ``.xml`` is skipped when a ``.json`` of the same name exists),
-    unreadable files are logged and skipped, and a single paper is returned
-    unwrapped. A JSON file with a root ``schema_version`` is a bibr export:
+    files as ``list.files()`` does (lower-case extensions only, hidden files
+    and directories skipped, full paths in R's sort order), a ``.xml`` is
+    skipped when a ``.json`` of the same name is read and repeated paths are
+    read once. Unreadable files are logged and skipped (a deliberate
+    difference: metacheck then fails altogether), and a single paper is
+    returned unwrapped. A JSON file with a root ``schema_version`` is a bibr export:
     schema 12.x is read natively (:mod:`pytacheck.io.bibr12`), any other
     version (bibr 11.x included) is refused; files without one (bibr v10.x and
     older) are read exactly as metacheck reads them. Source documents (PDF,
@@ -70,31 +76,35 @@ def read(
         not isinstance(schema_version, str) or schema_version != "12.0"
     ):
         raise ValueError('schema_version must be None or "12.0"')
-    if isinstance(file_path, str | PathLike):
-        paths = [Path(file_path)]
-    else:
-        paths = [Path(p) for p in file_path]
+    from pytacheck._r.regex import grep, gsub
 
-    if len(paths) == 1 and paths[0].is_dir():
-        root = paths[0]
-        pattern = "**/*" if recursive else "*"
-        paths = sorted(
-            p for p in root.glob(pattern) if p.is_file() and p.suffix.lower() in (".json", ".xml")
-        )
-    if not paths:
+    if isinstance(file_path, str | PathLike):
+        names = [os.fspath(file_path)]
+    else:
+        names = [os.fspath(p) for p in file_path]
+
+    # R: list.files(dir, "\\.(json|xml)$", recursive = recursive, full.names = TRUE)
+    if len(names) == 1 and os.path.isdir(os.path.expanduser(names[0])):
+        names = list_files(names[0], r"\.(json|xml)$", recursive=recursive)
+    if not names:
         print("No JSON or XML files found.")
         return PaperList()
 
-    json_stems = {p.with_suffix("") for p in paths if p.suffix.lower() == ".json"}
-    paths = [
-        p for p in paths if not (p.suffix.lower() == ".xml" and p.with_suffix("") in json_stems)
-    ]
+    # R: setdiff(file_path, gsub("\\.json$", ".xml", grep("\\.json$", file_path)))
+    # drops the XML twin of a JSON file (names compared exactly, case-sensitive)
+    # and repeated names
+    xml_dupes = set(gsub(r"\.json$", ".xml", grep(r"\.json$", names, value=True)))
+    kept: dict[str, None] = {}
+    for name in names:
+        if name not in xml_dupes:
+            kept.setdefault(name)
+    paths = [Path(name) for name in kept]
 
     papers: list[Paper] = []
     for p in paths:
         try:
             papers.append(_read_one(p, include_images, bibr_options, schema_version))
-        except (OSError, ValueError, NotImplementedError) as exc:
+        except Exception as exc:  # R: tryCatch(error = ...) around every file
             logger("read", {"file": str(p), "error": str(exc)})
             if len(paths) == 1:
                 raise

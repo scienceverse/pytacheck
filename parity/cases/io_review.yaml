@@ -337,3 +337,22 @@
   "py": "pytacheck.io.corpus._read_rds"
   "args":
     "file": {"$file": "tests/io/fixtures/matrices.rds"}
+# read(): list.files(dir, "\\.(json|xml)$", recursive, full.names = TRUE) skips hidden
+# files and directories and upper-case extensions and sorts full paths as sort() does;
+# setdiff() drops the exact XML twin of a lower-case .json and repeated paths.
+# info$file_name holds the (temporary) path of a TEI file: compared by basename
+- "id": "read.dir.listing"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); dir.create(file.path(d, 'sub')); dir.create(file.path(d, '.hid')); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('good.xml', '.hidden.xml', 'UP.XML', 'Z.xml', 'sub/c.xml', '.hid/h.xml', 'sub.xml'))); p <- read(d); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_basenames(__import__('tests.io._parity_helpers', fromlist=['x']).read_dir())"}}
+- "id": "read.dir.recursive"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); dir.create(file.path(d, 'sub')); dir.create(file.path(d, '.hid')); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('good.xml', '.hidden.xml', 'UP.XML', 'Z.xml', 'sub/c.xml', '.hid/h.xml', 'sub.xml'))); p <- read(d, recursive = TRUE); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_basenames(__import__('tests.io._parity_helpers', fromlist=['x']).read_dir(), recursive=True)"}}
+- "id": "read.list.twins_and_repeats"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('Z.xml', 'p.xml', 'q.xml'))); file.copy('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json', file.path(d, c('p.JSON', 'q.json'))); p <- read(file.path(d, c('Z.xml', 'p.JSON', 'p.xml', 'q.json', 'q.xml', 'Z.xml'))); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_basenames(__import__('tests.io._parity_helpers', fromlist=['x']).read_list())"}}

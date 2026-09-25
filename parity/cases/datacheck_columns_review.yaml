@@ -1633,6 +1633,12 @@
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/numeric_vars.csv"
+- "id": "parse_codebook.wide_numeric.csv"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/wide_numeric.csv"
 - "id": "parse_codebook.title_semicolon.csv"
   "r": "parse_codebook"
   "py": "pytacheck.datacheck.columns.parse_codebook"
