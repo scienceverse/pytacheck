@@ -24,10 +24,14 @@ from parity.compare import Options, compare, error_matches, normalize_error, sum
 
 CASES = load_cases()
 ROOT = Path(__file__).resolve().parent.parent
+#: `pytest -m "parity and tier1"` runs the cases on the realistic corpus
+_TIER_MARKS = {1: pytest.mark.tier1, 2: pytest.mark.tier2}
 
 
 @pytest.mark.parity
-@pytest.mark.parametrize("case", CASES, ids=[c.key for c in CASES])
+@pytest.mark.parametrize(
+    "case", [pytest.param(c, marks=_TIER_MARKS[c.tier], id=c.key) for c in CASES]
+)
 def test_parity(case) -> None:
     status, problems, _ = check_case(case)
     if status == "missing":
@@ -57,18 +61,33 @@ def test_xfail_reasons_are_text() -> None:
 
 
 def test_divergence_registry_names_cases() -> None:
-    keys = {c.key for c in CASES}
-    registry = pcases.load_divergences()
-    assert set(registry) <= keys, sorted(set(registry) - keys)
-    for key in registry:
-        assert next(c for c in CASES if c.key == key).spec.get("known_divergence")
+    by_key = {c.key: c for c in CASES}
+    registry = pcases.read_divergences()
+    stale = sorted(key for key in registry.exact if key not in by_key)
+    assert stale == [], "parity/divergences entries that name no case"
+    for key, mark in registry.exact.items():
+        assert by_key[key].spec["known_divergence"] == mark.div
+    for rx, mark in (e for entries in registry.globs.values() for e in entries):
+        assert any(rx.match(key) for key in by_key), f"{mark.file}: {mark.key} matches no case"
 
 
-def test_divergence_kinds_are_known() -> None:
-    kinds = set(pcases.DIVERGENCE_KINDS) | {"unclassified"}
-    for case in CASES:
-        kind = pcases.divergence_kind(case.spec)
-        assert kind is None or kind in kinds, (case.key, kind)
+def test_every_mark_is_classified() -> None:
+    marked = [c for c in CASES if c.spec.get("known_divergence") is not None]
+    assert marked
+    refs = pcases.upstream_refs()
+    for case in marked:
+        assert pcases.check_mark(case.spec["known_divergence"], case.tier, refs) == [], case.key
+
+
+def test_tiers_split_the_cases() -> None:
+    tiers = {c.tier for c in CASES}
+    assert tiers == {1, 2}
+    realistic = [c for c in CASES if c.tier == 1]
+    # review and regex-emulation areas are synthetic unless a case says otherwise
+    assert not [c.key for c in realistic if c.area.endswith("_review") and "tier" not in c.spec]
+    assert {"mod_marginal/marginal.demo", "text/text_search.demo.significant"} <= {
+        c.key for c in realistic
+    }
 
 
 def _reference_r() -> str:
@@ -615,3 +634,262 @@ def test_malformed_marks_are_refused(tmp_path, monkeypatch) -> None:
     )
     with pytest.raises(ValueError, match="xfail belongs to a mark with r_text"):
         pcases.load_divergences()
+
+
+# marks: kinds, refs and tiers ----------------------------------------------------------
+
+_REFS = {"U1": "fixed", "U2": "kept", "U3": None, "D1": None}
+
+
+@pytest.mark.parametrize(
+    ("mark", "tier", "problem"),
+    [
+        ({"kind": "r_bug_fixed", "ref": "U1", "reason": "x"}, 1, None),
+        ({"kind": "r_bug_fixed", "ref": "U3", "reason": "x"}, 1, None),  # no status column
+        ({"kind": "better_logic", "ref": "D1", "reason": "x"}, 1, None),
+        ({"kind": "deliberate", "ref": "D1", "reason": "x"}, 1, None),
+        ({"kind": "r_nondeterministic", "reason": "x"}, 1, None),
+        ({"kind": "c_quirk", "reason": "x"}, 2, None),
+        ({"kind": "c_quirk", "ref": "D1", "reason": "x"}, 2, None),
+        ({"kind": "type_detail", "ref": "U1", "reason": "x"}, 2, None),
+        ("R does it differently", 2, "a mark is a mapping"),
+        ({"kind": "unclassified", "reason": "x"}, 2, "is not one of"),
+        ({"kind": "r_bug_fixed", "reason": "x"}, 2, "needs a ref to a U-entry"),
+        ({"kind": "r_bug_fixed", "ref": "D1", "reason": "x"}, 2, "needs a U-entry, not D1"),
+        ({"kind": "better_logic", "ref": "U1", "reason": "x"}, 2, "needs a D-entry, not U1"),
+        ({"kind": "deliberate", "reason": "x"}, 2, "needs a ref to a D-entry"),
+        ({"kind": "r_bug_fixed", "ref": "U99", "reason": "x"}, 2, "U99 is not an entry"),
+        ({"kind": "r_bug_fixed", "ref": "U1, U3", "reason": "x"}, 2, "is not U<n> or D<n>"),
+        ({"kind": "r_bug_fixed", "ref": "U2", "reason": "x"}, 2, "whose status is 'kept'"),
+        ({"kind": "c_quirk", "reason": " "}, 2, "needs a reason"),
+        ({"kind": "type_detail"}, 2, "needs a reason"),
+        ({"kind": "c_quirk", "reason": "x"}, 1, "tier-1 (realistic) case cannot be marked c_quirk"),
+        ({"kind": "type_detail", "reason": "x"}, 1, "cannot be marked type_detail"),
+        ({"kind": "c_quirk", "reason": "x", "note": "y"}, 2, "unknown keys ['note']"),
+        ({"kind": "r_bug_fixed", "ref": "U1", "reason": "x", "xfail": True}, 2, "xfail belongs"),
+    ],
+)
+def test_check_mark(mark, tier: int, problem: str | None) -> None:
+    problems = pcases.check_mark(mark, tier, _REFS)
+    if problem is None:
+        assert problems == []
+    else:
+        assert any(problem in p for p in problems), problems
+
+
+def test_upstream_refs_reads_ids_and_status(tmp_path) -> None:
+    doc = tmp_path / "UPSTREAM_ISSUES.md"
+    doc.write_text(
+        "# Upstream issues\n\n| # | behaviour | why |\n|---|---|---|\n| D1 | a \\| b | c |\n\n"
+        "| # | status | where | issue |\n|---|---|---|---|\n"
+        "| U1 | **Fixed** | `f()` | x |\n| U2 | kept | g | y |\n| U10 | partly fixed | h | z |\n"
+        "Some text mentioning | U3 | in a paragraph.\n"
+    )
+    assert pcases.upstream_refs(doc) == {
+        "D1": None,
+        "U1": "fixed",
+        "U2": "kept",
+        "U10": "partly fixed",
+    }
+    real = pcases.upstream_refs()
+    assert {"U1", "U79", "D1", "D28"} <= set(real)
+
+
+# tiers ------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("pattern", "path", "hit"),
+    [
+        ("a/b/**", "a/b", True),
+        ("a/b/**", "a/b/c/d.txt", True),
+        ("a/b/**", "a/bc", False),
+        ("a/*/fixtures/**", "a/x/fixtures/f.csv", True),
+        ("a/*/fixtures/**", "a/x/y/fixtures/f.csv", False),
+        ("**/review/**", "tests/x/fixtures/review/f.csv", True),
+        ("**/review/**", "review/f.csv", True),
+        ("**/review/**", "tests/x/fixtures/reviewed.csv", False),
+        ("**/review_*/**", "tests/repos/review_types/data/a.csv", True),
+        ("x/to_err.*", "x/to_err.xml", True),
+        ("x/to_err.*", "x/to_err/y.xml", False),
+        ("x/a?c", "x/abc", True),
+    ],
+)
+def test_corpus_globs(pattern: str, path: str, hit: bool) -> None:
+    import re
+
+    assert bool(re.fullmatch(pcases._path_glob(pattern), path)) is hit
+
+
+@pytest.fixture
+def corpus(tmp_path):
+    toml = tmp_path / "corpus.toml"
+    toml.write_text(
+        "[corpus]\n"
+        'papers = ["upstream/metacheck/inst/demos/to_err_is_human.*", "up/papers/**"]\n'
+        'files = ["tests/*/fixtures/**"]\n'
+        'mocks = ["upstream/metacheck/tests/testthat/apis*/**"]\n'
+        'exclude = ["**/review/**", "**/*fuzz*/**"]\n'
+        "[[override]]\ntier = 2\n"
+        'reason = "synthetic mocks"\ncases = ["area/mocked.*"]\n'
+    )
+    return pcases.load_corpus(toml)
+
+
+@pytest.mark.parametrize(
+    ("area", "spec", "tier"),
+    [
+        ("text", {"args": {"paper": {"$paper": "demo"}}}, 1),
+        ("text", {"args": {"paper": {"$paper": "up/papers/a.xml"}, "pattern": "x"}}, 1),
+        ("text", {"args": {"paper": {"$read": ["up/papers/a.xml", "up/papers/b.xml"]}}}, 1),
+        ("text", {"args": {"path": "tests/codecheck/fixtures/a.R"}}, 1),
+        ("text", {"args": {"path": {"$file": "tests/codecheck/fixtures/review/a.R"}}}, 2),
+        ("text", {"args": {"path": "tests/db/data/doi_fuzz.json"}}, 2),
+        ("text", {"args": {"paper": {"$paper": "demo"}, "x": "tests/other/data.csv"}}, 2),
+        ("text_review", {"args": {"paper": {"$paper": "demo"}}}, 2),
+        ("rcompat_regex", {"args": {"x": "tests/a/fixtures/b.txt"}}, 2),
+        ("text", {"args": {"pattern": "x"}}, 2),  # no input at all
+        ("text", {"args": {"paper": {"$test_paper": {"text": ["a"]}}}}, 2),
+        ("text", {"args": {"paper": {"$paper": "demo"}, "p": {"$chr": ["a", "b"]}}}, 2),
+        ("text", {"args": {"x": {"$df": {"a": [1]}}, "p": {"$paper": "demo"}}}, 2),
+        ("text", {"args": {"x": {"$expr": {"r": "demopaper()", "py": "pc.demopaper()"}}}}, 1),
+        # helper scripts are not inputs; an $expr naming no corpus path is synthetic
+        ("text", {"args": {"x": {"$expr": {"r": "source('tests/mod_x/helpers.R'); f(1)"}}}}, 2),
+        (
+            "text",
+            {"args": {"x": {"$expr": {"r": "source('tests/mod_x/h.R'); f('tests/y/fixtures/a')"}}}},
+            1,
+        ),
+        (
+            "text",
+            {"args": {"x": {"$call": {"r": "read", "args": {"f": {"$paper": "demo"}}}}}},
+            1,
+        ),
+        ("text", {"mock_dir": "apis", "args": {"paper": {"$paper": "demo"}}}, 1),
+        ("text", {"mock_dir": "tests/llm/mocks", "args": {"paper": {"$paper": "demo"}}}, 2),
+        (
+            "text",
+            {
+                "args": {
+                    "x": {
+                        "$expr": {
+                            "r": 'with_mock_dir("upstream/metacheck/tests/'
+                            'testthat/apis", f(tp("https://osf.io/x")))'
+                        }
+                    }
+                }
+            },
+            1,
+        ),
+        # explicit tiers
+        ("area", {"id": "mocked.x", "args": {"paper": {"$paper": "demo"}}}, 2),
+        ("text_review", {"id": "y", "args": {}, "tier": {"level": 1, "reason": "real"}}, 1),
+    ],
+)
+def test_classify_tier(corpus, area: str, spec: dict, tier: int) -> None:
+    assert pcases.classify_tier(area, {"id": "c", **spec}, corpus) == tier
+
+
+def test_explicit_tiers_need_a_reason(corpus) -> None:
+    for bad in (1, {"level": 1}, {"level": 3, "reason": "x"}, {"level": 1, "reason": ""}):
+        with pytest.raises(ValueError, match="tier is"):
+            pcases.classify_tier("text", {"id": "c", "tier": bad}, corpus)
+    # a file's tier applies to its cases without their own, below corpus.toml overrides
+    assert pcases.classify_tier("text", {"id": "c"}, corpus, file_tier=1) == 1
+    assert pcases.classify_tier("area", {"id": "mocked.x"}, corpus, file_tier=1) == 2
+
+
+# loading: marks from parity/divergences, globs, one mark per case ------------------------
+
+
+@pytest.fixture
+def harness_dirs(tmp_path, monkeypatch, corpus):
+    """Empty case and divergences directories, and the test corpus."""
+    cases, divs = tmp_path / "cases", tmp_path / "divergences"
+    cases.mkdir()
+    divs.mkdir()
+    monkeypatch.setattr(pcases, "CASES_DIR", cases)
+    monkeypatch.setattr(pcases, "DIVERGENCES_DIR", divs)
+    monkeypatch.setattr(pcases, "load_corpus", lambda: corpus)
+    monkeypatch.setattr(pcases, "upstream_refs", lambda: _REFS)
+    (cases / "gen.yaml").write_text(
+        "area: gen\ncases:\n"
+        "  - {id: real.a, py: copy.copy, args: {x: {$paper: demo}}}\n"
+        "  - {id: edge.a, py: copy.copy, args: {x: {$chr: [a]}}}\n"
+        "  - {id: edge.b, py: copy.copy, args: {x: {$chr: [b]}}}\n"
+    )
+    return cases, divs
+
+
+def _marks(cases: list[Case]) -> dict:
+    return {c.key: (c.tier, c.spec.get("known_divergence")) for c in cases}
+
+
+def test_glob_marks_apply_to_tier_2_cases(harness_dirs) -> None:
+    _, divs = harness_dirs
+    (divs / "lane.yaml").write_text('"gen/edge.*": {kind: c_quirk, reason: fuzzed input}\n')
+    got = _marks(load_cases())
+    quirk = {"kind": "c_quirk", "reason": "fuzzed input"}
+    assert got == {"gen/real.a": (1, None), "gen/edge.a": (2, quirk), "gen/edge.b": (2, quirk)}
+    assert [c.key for c in load_cases(tier=1)] == ["gen/real.a"]
+    # a glob may not reach a tier-1 case, even with a kind tier 1 allows
+    (divs / "lane.yaml").write_text('"gen/*": {kind: r_bug_fixed, ref: U1, reason: fixed}\n')
+    with pytest.raises(ValueError, match=r"matches the tier-1 case gen/real\.a"):
+        load_cases()
+
+
+def test_tier_1_cases_take_realistic_kinds_only(harness_dirs) -> None:
+    _, divs = harness_dirs
+    (divs / "lane.yaml").write_text('"gen/real.a": {kind: type_detail, reason: int vs dbl}\n')
+    with pytest.raises(ValueError, match="cannot be marked type_detail"):
+        load_cases()
+    (divs / "lane.yaml").write_text('"gen/real.a": {kind: r_bug_fixed, ref: U1, reason: x}\n')
+    assert _marks(load_cases())["gen/real.a"][1]["ref"] == "U1"
+
+
+def test_a_case_is_marked_once(harness_dirs) -> None:
+    cases_dir, divs = harness_dirs
+    (divs / "a.yaml").write_text('"gen/edge.a": {kind: c_quirk, reason: x}\n')
+    (divs / "b.yaml").write_text('"gen/edge.*": {kind: c_quirk, reason: y}\n')
+    with pytest.raises(ValueError, match=r"gen/edge\.a is marked more than once"):
+        load_cases()
+    (divs / "b.yaml").write_text('"gen/edge.a": {kind: c_quirk, reason: y}\n')
+    with pytest.raises(ValueError, match=r"already marked in a\.yaml"):
+        load_cases()
+    (divs / "b.yaml").unlink()
+    (cases_dir / "gen.yaml").write_text(
+        "area: gen\ncases:\n  - id: edge.a\n    py: copy.copy\n    args: {x: {$chr: [a]}}\n"
+        "    known_divergence: {kind: c_quirk, reason: inline}\n"
+    )
+    with pytest.raises(ValueError, match=r"marked both in its case file and in a\.yaml"):
+        load_cases()
+
+
+def test_all_invalid_marks_are_reported_together(harness_dirs) -> None:
+    cases_dir, divs = harness_dirs
+    (divs / "lane.yaml").write_text(
+        '"gen/edge.a": {kind: r_bug_fixed, reason: x}\n"gen/edge.b": R bug\n'
+    )
+    (cases_dir / "hand.yaml").write_text(
+        "area: hand\ntier: {level: 1, reason: real inputs built by hand}\ncases:\n"
+        "  - id: c\n    py: copy.copy\n    args: {x: 1}\n"
+        "    known_divergence: {kind: c_quirk, reason: inline}\n"
+    )
+    with pytest.raises(ValueError) as exc:
+        load_cases()
+    text = str(exc.value)
+    assert "gen/edge.a: r_bug_fixed needs a ref" in text
+    assert "gen/edge.b: a mark is a mapping" in text
+    assert "hand/c: a tier-1 (realistic) case cannot be marked c_quirk" in text
+
+
+def test_yaml_loader_is_libyaml_with_the_same_values() -> None:
+    import yaml
+
+    assert pcases.YAML_LOADER is getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+    for f in [
+        ROOT / "parity" / "divergences" / "prose.yaml",
+        ROOT / "parity" / "cases" / "core.yaml",
+    ]:
+        text = f.read_text(encoding="utf-8")
+        assert yaml.load(text, Loader=pcases.YAML_LOADER) == yaml.safe_load(text)

@@ -127,6 +127,10 @@
   kind: r_bug_fixed
   ref: U105
   reason: sentences in "acknowledgment" sections are favoured as well as "acknowledgement" ones, so "The authors declare no funding." is kept
+"mod_funding_review/negate_absence_1.match_limit":
+  kind: c_quirk
+  ref: D17
+  reason: "PCRE2 resource limit in R: on this 640-character sentence grepl(perl = TRUE) stops with 'match limit exceeded' (a warning) and returns FALSE; the regex engine has no such limit and finds the match. Only reached by pathologically repetitive text (no metacheck fixture sentence reaches the limit with any funding pattern)."
 
 # ref_pubpeer, ref_summary --------------------------------------------------------
 "mod_ref_pubpeer_summary/ref_pubpeer.request_failed":

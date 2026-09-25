@@ -1,0 +1,91 @@
+# The realistic corpus (docs/PORTING.md, section 1): real papers, repositories,
+# data and code files, and recorded API responses. pytacheck must agree with
+# metacheck on these within the margins of the accuracy contract.
+#
+# A parity case is tier 1 (realistic) when its area is not *_review or rcompat*,
+# it reads at least one input listed here and nothing outside it, and it builds
+# no synthetic input ($test_paper, $df, $chr/$int/$dbl/$lgl/$list, or an $expr
+# that names no corpus path). Every other case is tier 2 (synthetic edge cases).
+# `parity.cases.classify_tier` applies the rule; [[override]] below and a
+# `tier: {level, reason}` on a hand-written case file or case overrides it.
+#
+# Globs are repository-relative: `*` matches within one path segment, `**`
+# matches any number of segments (`dir/**` also matches `dir` itself).
+
+[corpus]
+papers = [
+    "upstream/metacheck/tests/testthat/fixtures/formats/**",
+    "upstream/metacheck/tests/testthat/fixtures/problems/**",
+    "upstream/metacheck/tests/testthat/fixtures/debruine/**",
+    "upstream/metacheck/tests/testthat/fixtures/psychsci/**",
+    "upstream/metacheck/tests/testthat/fixtures/bibr12/**",
+    "upstream/metacheck/tests/testthat/fixtures/demo/**",
+    # the demo paper: demopaper(), `$paper: demo`
+    "upstream/metacheck/inst/demos/to_err_is_human.*",
+]
+files = [
+    # repositories, data and code files
+    "tests/mod_data_check/fixtures/repos/**",
+    "tests/datacheck_files/data/**",
+    "upstream/metacheck/tests/testthat/fixtures/code_files/**",
+    "upstream/metacheck/tests/testthat/fixtures/notebooks/**",
+    "upstream/metacheck/tests/testthat/fixtures/repro/**",
+    "upstream/metacheck/tests/testthat/fixtures/parse-errors/**",
+    "upstream/metacheck/tests/testthat/fixtures/study_1_script.do",
+    # the fixtures of every tests/ package (minus the exclusions below)
+    "tests/*/fixtures/**",
+]
+# recorded metacheck API responses (`mock_dir: apis`, httptest2 mock dirs)
+mocks = [
+    "upstream/metacheck/tests/testthat/apis*/**",
+]
+# review and fuzz inputs are synthetic wherever they live, and so are the
+# fixtures built to be malformed or to exercise edge cases
+exclude = [
+    "**/review/**",
+    "**/review_*/**",
+    "**/*_review/**",
+    "**/*fuzz*/**",
+    "**/malformed/**",
+    "**/edge_*/**",
+    "**/*_edges.*",
+    "**/fake_*",
+    # one short script per encoding and line-ending oddity
+    "tests/codecheck/fixtures/encodings/**",
+]
+
+# Explicit tiers: an override sets the tier of the cases whose key "<area>/<id>"
+# matches one of its `cases` globs (`*` matches anything), and says why. A case
+# matches one override at most.
+
+[[override]]
+tier = 1
+reason = """data_check on a fixture repository of tests/mod_data_check/fixtures/repos, \
+run as is: the scenario helpers read the repository, so the rule sees only an $expr"""
+cases = [
+    "mod_data_check/data_check.basic",
+    "mod_data_check/data_check.flags_red",
+    "mod_data_check/data_check.yellow",
+    "mod_data_check/data_check.nodata",
+    "mod_data_check/data_check.qualtrics",
+    "mod_data_check/data_check.qualtrics_careless",
+    "mod_data_check/data_check.careless*",
+    "mod_data_check/data_check.spreadsheets",
+    "mod_data_check/data_check.archives*",
+    "mod_data_check/data_check.rdata",
+    "mod_data_check/data_check.trial",
+    "mod_data_check/data_check.manifest",
+    "mod_data_check/data_check.txt",
+    "mod_data_check/data_check.groups",
+    "mod_data_check/data_check.encoding",
+    "mod_data_check/data_check.nontabular",
+    "mod_data_check/data_check.schema",
+    "mod_data_check/data_check.psychsci",
+    "mod_data_check/data_check.local.*",
+    "mod_data_check/data_check_tables.basic",
+    "mod_data_check/data_check_tables.flags",
+    "mod_data_check/data_check_tables.qualtrics",
+    "mod_data_check/data_check_tables.careless_two",
+    "mod_data_check/data_check_tables.spreadsheets",
+    "mod_data_check/data_check_tables.groups",
+]

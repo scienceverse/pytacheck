@@ -566,7 +566,6 @@
     "fn": "pytacheck.statout.stata.import_stata_smcl"
     "path":
       "$file": "tests/statout_readers/fixtures/review/latin1.smcl"
-  "known_divergence": "latin1 bytes: R's regex functions reject the invalid UTF-8 strings readLines() returns (\"input string N is invalid UTF-8\"), so metacheck cannot read a latin1 log at all; pytacheck decodes it with replacement characters instead of failing"
 - "id": "smcl_render_line.more"
   "r": "identity"
   "py": "copy.copy"
@@ -721,4 +720,3 @@
     "fn": "pytacheck.statout.mplus.import_mplus_output"
     "path":
       "$file": "tests/statout_readers/fixtures/review/latin1.out"
-  "known_divergence": "latin1 bytes: R's regex functions reject the invalid UTF-8 strings readLines() returns (\"input string N is invalid UTF-8\"), so metacheck cannot read a latin1 log at all; pytacheck decodes it with replacement characters instead of failing"

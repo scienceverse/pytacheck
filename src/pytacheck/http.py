@@ -12,7 +12,8 @@ clients share:
   wait for the stated reset instead of rediscovering the limit;
 * :func:`skip_on_api_limit`: give up immediately on a rate limit instead of
   waiting (metacheck's ``metacheck.skip_on_api_limit`` option);
-* optional token-bucket throttling per host (:class:`Throttle`).
+* optional token-bucket throttling per host (:class:`Throttle`);
+* :func:`resp_json`: a JSON body, parsed with :func:`pytacheck._json.loads`.
 
 Set ``PYTACHECK_NO_SLEEP=1`` to disable courtesy delays and backoff sleeps
 (the test suite does).
@@ -44,6 +45,7 @@ __all__ = [
     "close_client",
     "host_reset_at",
     "request",
+    "resp_json",
     "skip_on_api_limit",
     "sleep",
 ]
@@ -232,6 +234,39 @@ def request(
             return resp
         sleep(wait if wait is not None else _backoff(attempt))
     return resp
+
+
+def _is_json_type(media_type: str) -> bool:
+    """``application/json`` or a ``+json`` suffix (``application/vnd.api+json``), in any case."""
+    kind, _, subtype = media_type.lower().partition("/")
+    return bool(kind) and ((kind, subtype) == ("application", "json") or subtype.endswith("+json"))
+
+
+def resp_json(resp: httpx.Response, *, check_type: bool = True) -> Any:
+    """The JSON body of a response (httr2's ``resp_body_json()``).
+
+    With *check_type*, the media type must be ``application/json`` or end in
+    ``+json`` (compared case-insensitively, as media types are). The body is
+    read as UTF-8 by :func:`pytacheck._json.loads`. Raises ``ValueError`` for
+    another media type, an empty body or invalid JSON.
+    """
+    from pytacheck._json import loads
+
+    if check_type:
+        media_type = resp.headers.get("content-type", "").split(";", 1)[0].strip()
+        if not _is_json_type(media_type):
+            got = f"content type {media_type!r}" if media_type else "no content type"
+            raise ValueError(f"Expected a JSON response{_from(resp)}, got {got}.")
+    if not resp.content:
+        raise ValueError(f"The response{_from(resp)} has an empty body.")
+    return loads(resp.content)
+
+
+def _from(resp: httpx.Response) -> str:
+    try:
+        return f" from {resp.request.url}"
+    except RuntimeError:  # a response built without a request
+        return ""
 
 
 def batch_query(

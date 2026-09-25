@@ -488,7 +488,10 @@
       "$expr":
         "r": "paperlist(list())"
         "py": "pc.PaperList([])"
-  "known_divergence": "R bug: on an empty paper list text_search() adds the missing paper_id column as logical NA, so count() gives a logical paper_id and module_run()'s left_join() with the character paper_id of summary_table fails (Can't join x$paper_id with y$paper_id due to incompatible types). pytacheck returns the empty result instead of crashing."
+  "known_divergence":
+    "kind": "r_bug_fixed"
+    "ref": "U79"
+    "reason": "R bug: on an empty paper list text_search() adds the missing paper_id column as logical NA, so count() gives a logical paper_id and module_run()'s left_join() with the character paper_id of summary_table fails (Can't join x$paper_id with y$paper_id due to incompatible types). pytacheck returns the empty result instead of crashing (D21)."
 - "id": "open_practices.review.demo_copy"
   "module": "open_practices"
   "args":

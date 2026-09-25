@@ -38,11 +38,23 @@ When R raises an error, Python must raise too; the messages are not compared
 contains|exact}`` (see ``parity.compare.error_matches``).
 
 A case that differs from R on purpose sets ``known_divergence`` (an expected
-failure, ``xfail``). The reason is a string or a mapping ``{kind, ref,
-reason}``; ``kind`` is one of ``DIVERGENCE_KINDS`` and ``ref`` names the
-docs/UPSTREAM_ISSUES.md entry (``U13``, ``D6``). Cases in generated case files
-are marked from ``parity/divergences/*.yaml`` (``{"<area>/<id>": {kind, ref,
-reason}}``, one file per topic), which ``load_cases`` applies.
+failure, ``xfail``), a mapping ``{kind, ref, reason}``: ``kind`` is one of
+``DIVERGENCE_KINDS`` and ``ref`` names the docs/UPSTREAM_ISSUES.md entry
+(``U13``, ``D6``). Cases in generated case files are marked from
+``parity/divergences/*.yaml`` (``{"<area>/<id>": {kind, ref, reason}}``, one
+file per lane), which ``load_cases`` applies. ``load_cases`` validates every
+mark (``check_mark``): ``r_bug_fixed`` needs a U-entry, ``better_logic`` and
+``deliberate`` a D-entry, every ``ref`` must exist in docs/UPSTREAM_ISSUES.md,
+every mark needs a reason, a tier-1 case may only carry the kinds in
+``TIER1_KINDS``, and a case is marked in one place only. A key with ``*`` (which
+matches any run of characters, e.g. ``"rcompat_regex/pcre.mid_char.*"``) marks
+every case it matches, all of which must be tier 2.
+
+Every case has a ``tier`` (``classify_tier``): 1 for a case on the realistic
+corpus of ``parity/corpus.toml`` (real papers, repositories, data and code
+files, recorded API responses), 2 for synthetic edge cases. ``tier: {level: 1
+| 2, reason: ...}`` on a case or at the top of a hand-written case file, or an
+``[[override]]`` in parity/corpus.toml, sets it explicitly.
 
 A mark whose difference is text that pytacheck corrects (a typo, a plural, a
 full stop in report prose) says how with ``r_text``, a list of substitutions
@@ -95,17 +107,20 @@ from __future__ import annotations
 
 import contextlib
 import functools
+import gc
 import hashlib
 import importlib
 import inspect
 import keyword
 import os
+import re
 import shlex
 import shutil
 import subprocess
 import time
-from collections.abc import Iterator
-from dataclasses import dataclass
+import tomllib
+from collections.abc import Iterable, Iterator
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -116,6 +131,15 @@ from parity.compare import TextSub, parse_r_text
 ROOT = Path(__file__).resolve().parent.parent
 CASES_DIR = ROOT / "parity" / "cases"
 GOLDEN_DIR = ROOT / "parity" / "golden"
+CORPUS_FILE = ROOT / "parity" / "corpus.toml"
+UPSTREAM_ISSUES = ROOT / "docs" / "UPSTREAM_ISSUES.md"
+
+#: libyaml's parser: the same values as yaml.SafeLoader, about 8x faster
+YAML_LOADER: Any = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+
+
+def load_yaml(path: Path) -> Any:
+    return yaml.load(path.read_text(encoding="utf-8"), Loader=YAML_LOADER)
 
 
 @dataclass
@@ -124,6 +148,8 @@ class Case:
     id: str
     spec: dict[str, Any]
     file: Path
+    #: 1 = realistic corpus input, 2 = synthetic edge case (see ``classify_tier``)
+    tier: int = 2
 
     @property
     def golden_path(self) -> Path:
@@ -140,7 +166,7 @@ def iter_case_files(area: str | None = None) -> Iterator[Path]:
             yield f
 
 
-#: why a case may differ from R (docs/PORTING.md, "Fidelity")
+#: why a case may differ from R (docs/PORTING.md, section 1)
 DIVERGENCE_KINDS = {
     "r_bug_fixed": "metacheck (or R) gets it wrong; pytacheck fixes it",
     "better_logic": "pytacheck does it differently on purpose, and better",
@@ -149,16 +175,22 @@ DIVERGENCE_KINDS = {
     "deliberate": "a documented deliberate difference (a D-entry)",
     "r_nondeterministic": "R's own result is undefined or changes from run to run",
 }
+#: the kinds a tier-1 (realistic) case may carry: a difference that reaches
+#: users on real inputs is never a quirk or a type detail
+TIER1_KINDS = frozenset({"r_bug_fixed", "better_logic", "deliberate", "r_nondeterministic"})
+#: kinds that need a docs/UPSTREAM_ISSUES.md entry of this series
+REF_SERIES = {"r_bug_fixed": "U", "better_logic": "D", "deliberate": "D"}
+#: U-entry statuses an ``r_bug_fixed`` mark may cite (when the table has a status column)
+FIXED_STATUSES = ("fixed", "partly fixed")
+MARK_KEYS = frozenset({"kind", "ref", "reason", "r_text", "xfail"})
 
 DIVERGENCES_DIR = ROOT / "parity" / "divergences"
 
 
 def divergence_kind(spec: dict[str, Any]) -> str | None:
-    """The ``kind`` of a case's ``known_divergence`` (``unclassified`` for a bare reason)."""
+    """The ``kind`` of a case's ``known_divergence``, or ``None``."""
     div = spec.get("known_divergence")
-    if not div:
-        return None
-    return str(div.get("kind", "unclassified")) if isinstance(div, dict) else "unclassified"
+    return str(div.get("kind")) if isinstance(div, dict) else None
 
 
 def r_text(spec: dict[str, Any]) -> list[TextSub]:
@@ -178,57 +210,472 @@ def expected_to_fail(spec: dict[str, Any]) -> bool:
     return not r_text(spec) or div.get("xfail") is True
 
 
-def _check_mark(where: str, div: Any) -> None:
-    """Raise ``ValueError`` for a malformed ``r_text``/``xfail`` of a mark."""
+# -- docs/UPSTREAM_ISSUES.md ----------------------------------------------------------
+
+_REF = re.compile(r"[UD][1-9]\d*")
+
+
+@functools.cache
+def upstream_refs(path: Path = UPSTREAM_ISSUES) -> dict[str, str | None]:
+    """The entries of docs/UPSTREAM_ISSUES.md: ``U<n>``/``D<n>`` -> status.
+
+    The status is the lower-cased cell of a ``status`` column, or ``None`` for
+    a table without one.
+    """
+    refs: dict[str, str | None] = {}
+    status_col: int | None = None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in re.split(r"(?<!\\)\|", line.strip())[1:-1]]
+        if not cells:
+            continue
+        if cells[0] == "#":  # a table header
+            lower = [c.lower() for c in cells]
+            status_col = lower.index("status") if "status" in lower else None
+        elif _REF.fullmatch(cells[0]):
+            status = None
+            if status_col is not None and status_col < len(cells):
+                status = cells[status_col].strip("* ").lower()
+            refs[cells[0]] = status
+    return refs
+
+
+# -- marks ------------------------------------------------------------------------------
+
+
+def check_mark(
+    div: Any, tier: int | None = None, refs: dict[str, str | None] | None = None
+) -> list[str]:
+    """What is wrong with a ``known_divergence`` (empty when it is valid).
+
+    *tier* is the case's tier (``None`` skips the tier rule, ``tier_problem``),
+    *refs* ``upstream_refs()``.
+    """
+    if not isinstance(div, dict):
+        return [
+            f"a mark is a mapping {{kind, ref, reason}}, not {type(div).__name__} {str(div)[:60]!r}"
+        ]
+    problems = []
+    unknown = sorted(set(div) - MARK_KEYS)
+    if unknown:
+        problems.append(f"unknown keys {unknown} (a mark has {sorted(MARK_KEYS)})")
+    kind = div.get("kind")
+    if kind not in DIVERGENCE_KINDS:
+        problems.append(f"kind {kind!r} is not one of {sorted(DIVERGENCE_KINDS)}")
+    if not isinstance(div.get("reason"), str) or not div["reason"].strip():
+        problems.append("a mark needs a reason")
+    ref = div.get("ref")
+    series = REF_SERIES.get(kind) if isinstance(kind, str) else None
+    if ref is None:
+        if series:
+            problems.append(f"{kind} needs a ref to a {series}-entry of docs/UPSTREAM_ISSUES.md")
+    elif not isinstance(ref, str) or not _REF.fullmatch(ref):
+        problems.append(f"ref {ref!r} is not U<n> or D<n>")
+    else:
+        if series and not ref.startswith(series):
+            problems.append(f"{kind} needs a {series}-entry, not {ref}")
+        refs = upstream_refs() if refs is None else refs
+        if ref not in refs:
+            problems.append(f"{ref} is not an entry of docs/UPSTREAM_ISSUES.md")
+        elif kind == "r_bug_fixed" and not (refs[ref] or "fixed").startswith(FIXED_STATUSES):
+            problems.append(f"r_bug_fixed cites {ref}, whose status is {refs[ref]!r}")
+    if tier is not None:
+        problems += tier_problem(div, tier)
     try:
         subs = parse_r_text(div)
     except ValueError as exc:
-        raise ValueError(f"{where}: {exc}") from None
-    if isinstance(div, dict) and "xfail" in div:
+        problems.append(str(exc))
+        subs = []
+    if "xfail" in div:
         if not subs:
-            raise ValueError(f"{where}: xfail belongs to a mark with r_text")
-        if not isinstance(div["xfail"], bool):
-            raise ValueError(f"{where}: xfail must be true or false")
+            problems.append("xfail belongs to a mark with r_text")
+        elif not isinstance(div["xfail"], bool):
+            problems.append("xfail must be true or false")
+    return problems
 
 
-def load_divergences() -> dict[str, dict[str, Any]]:
-    """``parity/divergences/*.yaml`` merged: case key -> ``{kind, ref, reason[, r_text, xfail]}``."""
-    out: dict[str, dict[str, Any]] = {}
-    for f in sorted(DIVERGENCES_DIR.glob("*.yaml")):
-        data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+def tier_problem(div: Any, tier: int) -> list[str]:
+    """Why a case of *tier* cannot carry the mark *div* (empty when it can)."""
+    kind = div.get("kind") if isinstance(div, dict) else None
+    if tier == 1 and kind in DIVERGENCE_KINDS and kind not in TIER1_KINDS:
+        return [
+            f"a tier-1 (realistic) case cannot be marked {kind}: a difference that reaches "
+            f"users on real inputs is one of {sorted(TIER1_KINDS)}"
+        ]
+    return []
+
+
+def is_glob_key(key: str) -> bool:
+    """A divergences key with ``*`` marks every case it matches (tier-2 cases only)."""
+    return "*" in key
+
+
+def _key_glob(key: str) -> re.Pattern[str]:
+    return re.compile(".*".join(map(re.escape, key.split("*"))) + r"\Z", re.DOTALL)
+
+
+@dataclass(frozen=True)
+class Mark:
+    """A ``parity/divergences`` entry: where it is, its key and its mark."""
+
+    file: str
+    key: str
+    div: dict[str, Any]
+
+
+@dataclass
+class Divergences:
+    """``parity/divergences/*.yaml``: exact case keys and glob keys."""
+
+    exact: dict[str, Mark] = field(default_factory=dict)
+    #: area (or ``None`` for a glob whose area has ``*``) -> [(pattern, mark)]
+    globs: dict[str | None, list[tuple[re.Pattern[str], Mark]]] = field(default_factory=dict)
+
+    def marks(self) -> Iterator[Mark]:
+        yield from self.exact.values()
+        for entries in self.globs.values():
+            for _, mark in entries:
+                yield mark
+
+    def matching(self, area: str, key: str) -> list[Mark]:
+        found = [self.exact[key]] if key in self.exact else []
+        for group in (area, None):
+            found += [mark for rx, mark in self.globs.get(group, ()) if rx.match(key)]
+        return found
+
+
+def read_divergences(directory: Path | None = None, errors: list[str] | None = None) -> Divergences:
+    """Load ``parity/divergences/*.yaml``.
+
+    A malformed mark raises ``ValueError``, or is added to *errors* when given.
+    """
+    out = Divergences()
+    seen: dict[str, str] = {}
+    raise_now = errors is None
+    errors = [] if errors is None else errors
+    refs = upstream_refs()
+    for f in sorted((directory or DIVERGENCES_DIR).glob("*.yaml")):
+        data = load_yaml(f) or {}
+        if not isinstance(data, dict):
+            errors.append(f"{f.name}: a divergences file maps case keys to marks")
+            continue
         for key, div in data.items():
-            if not isinstance(div, dict) or div.get("kind") not in DIVERGENCE_KINDS:
-                raise ValueError(f"{f.name}: {key}: kind must be one of {sorted(DIVERGENCE_KINDS)}")
-            if not div.get("reason"):
-                raise ValueError(f"{f.name}: {key}: a divergence needs a reason")
-            if key in out:
-                raise ValueError(f"{f.name}: {key} is already marked in another file")
-            _check_mark(f"{f.name}: {key}", div)
-            out[key] = div
+            key = str(key)
+            where = f"{f.name}: {key}"
+            if key in seen:
+                errors.append(f"{where} is already marked in {seen[key]}")
+                continue
+            seen[key] = f.name
+            errors += [f"{where}: {p}" for p in check_mark(div, refs=refs)]
+            mark = Mark(f.name, key, div)
+            if is_glob_key(key):
+                area = key.split("/", 1)[0]
+                group = None if "*" in area or "/" not in key else area
+                out.globs.setdefault(group, []).append((_key_glob(key), mark))
+            else:
+                out.exact[key] = mark
+    if raise_now:
+        _raise(errors)
     return out
 
 
-def load_cases(area: str | None = None) -> list[Case]:
+def load_divergences() -> dict[str, dict[str, Any]]:
+    """``parity/divergences/*.yaml`` merged: key (a case key, or a glob) -> mark."""
+    return {mark.key: mark.div for mark in read_divergences().marks()}
+
+
+def _raise(errors: list[str], limit: int = 40) -> None:
+    if errors:
+        more = f"\n... and {len(errors) - limit} more" if len(errors) > limit else ""
+        raise ValueError("invalid parity marks:\n" + "\n".join(errors[:limit]) + more)
+
+
+# -- tiers --------------------------------------------------------------------------------
+
+
+def _path_glob(pattern: str) -> str:
+    """A regular expression for a repository-relative glob (see parity/corpus.toml)."""
+    out: list[str] = []
+    i, n = 0, len(pattern)
+    while i < n:
+        if pattern.startswith("**", i):
+            if not ((i == 0 or pattern[i - 1] == "/") and (i + 2 == n or pattern[i + 2] == "/")):
+                raise ValueError(f"{pattern}: ** must be a whole path segment")
+            if i + 2 == n:  # a trailing /**: the directory itself or anything below it
+                if out and out[-1] == "/":
+                    out[-1] = "(?:/.*)?"
+                else:
+                    out.append(".*")
+                i += 2
+            else:  # **/: any number of leading directories
+                out.append("(?:.*/)?")
+                i += 3
+        elif pattern[i] == "*":
+            out.append("[^/]*")
+            i += 1
+        elif pattern[i] == "?":
+            out.append("[^/]")
+            i += 1
+        else:
+            out.append(re.escape(pattern[i]))
+            i += 1
+    return "".join(out)
+
+
+def _any_glob(patterns: Iterable[str]) -> re.Pattern[str]:
+    alternatives = [f"(?:{_path_glob(p)})" for p in patterns]
+    return re.compile("|".join(alternatives) + r"\Z" if alternatives else r"(?!)", re.DOTALL)
+
+
+@dataclass(frozen=True)
+class TierOverride:
+    """An ``[[override]]`` of parity/corpus.toml: the cases it sets to *tier*."""
+
+    cases: tuple[str, ...]
+    tier: int
+    reason: str
+    pattern: re.Pattern[str]
+
+
+@dataclass
+class Corpus:
+    """parity/corpus.toml: the realistic inputs, and explicit tiers."""
+
+    include: re.Pattern[str]
+    exclude: re.Pattern[str]
+    overrides: tuple[TierOverride, ...] = ()
+    _memo: dict[str, bool] = field(default_factory=dict, repr=False, compare=False)
+
+    def __contains__(self, path: object) -> bool:
+        if not isinstance(path, str):
+            return False
+        known = self._memo.get(path)
+        if known is None:
+            p = _normpath(path)
+            known = self._memo[path] = bool(self.include.match(p)) and not self.exclude.match(p)
+        return known
+
+    def override(self, key: str) -> TierOverride | None:
+        found = [o for o in self.overrides if o.pattern.match(key)]
+        if len(found) > 1:
+            raise ValueError(f"parity/corpus.toml: {key} matches several [[override]] entries")
+        return found[0] if found else None
+
+
+@functools.cache
+def load_corpus(path: Path = CORPUS_FILE) -> Corpus:
+    data = tomllib.loads(path.read_text(encoding="utf-8"))
+    corpus = data.get("corpus", {})
+    include = [g for part in ("papers", "files", "mocks") for g in corpus.get(part, [])]
+    overrides = []
+    for i, o in enumerate(data.get("override", []), 1):
+        where = f"{path.name}: override {i}"
+        cases = o.get("cases")
+        if not isinstance(cases, list) or not cases or not all(isinstance(c, str) for c in cases):
+            raise ValueError(f"{where}: `cases` is a list of case-key globs")
+        if o.get("tier") not in (1, 2):
+            raise ValueError(f"{where}: `tier` is 1 or 2")
+        if not isinstance(o.get("reason"), str) or not o["reason"].strip():
+            raise ValueError(f"{where}: an explicit tier needs a reason")
+        pattern = re.compile("|".join(f"(?:{_key_glob(c).pattern})" for c in cases), re.DOTALL)
+        overrides.append(TierOverride(tuple(cases), o["tier"], o["reason"], pattern))
+    return Corpus(_any_glob(include), _any_glob(corpus.get("exclude", [])), tuple(overrides))
+
+
+def _normpath(path: str) -> str:
+    path = path.replace("\\", "/")
+    while path.startswith("./"):
+        path = path[2:]
+    return re.sub(r"/+", "/", path).rstrip("/")
+
+
+#: the demo paper (``$paper: demo``, ``demopaper()``)
+DEMO_PAPER = "upstream/metacheck/inst/demos/to_err_is_human.xml"
+#: metacheck's test directory: relative ``mock_dir`` names live there
+_UPSTREAM_TESTS = "upstream/metacheck/tests/testthat/"
+_REPO_PATH = re.compile(r"(?:upstream|tests|parity)/")
+_CODE_PATH = re.compile(r"""["']((?:upstream|tests|parity)/[^"'\s]*)["']""")
+_CODE_DEMO = re.compile(r"\bdemopaper\(")
+#: helper code a case sources or imports (not an input): a script at the top of
+#: a tests/ package or of parity/
+_HELPER = re.compile(r"(?:tests/[^/]+|parity(?:/r)?)/[^/]+\.(?:R|py)\Z")
+#: argument constructors that build a synthetic input
+SYNTHETIC_CONSTRUCTORS = frozenset({"$test_paper", "$df", "$chr", "$int", "$dbl", "$lgl", "$list"})
+
+
+@dataclass
+class CaseInputs:
+    """What a case reads: repository paths, and the synthetic constructors it uses."""
+
+    paths: list[str] = field(default_factory=list)
+    synthetic: list[str] = field(default_factory=list)
+
+
+def case_inputs(spec: dict[str, Any], corpus: Corpus | None = None) -> CaseInputs:
+    """The inputs of a case: the paths its arguments and ``$expr`` code name
+    (helper scripts aside) and its synthetic constructors; an ``$expr`` that
+    names no corpus path counts as synthetic."""
+    corpus = corpus or load_corpus()
+    found = CaseInputs()
+    _collect(spec.get("args"), found, corpus)
+    _collect(spec.get("py_args"), found, corpus)
+    mock = spec.get("mock_dir")
+    if mock:
+        mock = str(mock)
+        found.paths.append(mock if _REPO_PATH.match(mock) else _UPSTREAM_TESTS + mock)
+    return found
+
+
+def _collect(x: Any, found: CaseInputs, corpus: Corpus) -> None:
+    if isinstance(x, dict):
+        if len(x) == 1:
+            key, val = next(iter(x.items()))
+            if isinstance(key, str) and key.startswith("$"):
+                _collect_constructor(key, val, found, corpus)
+                return
+        for v in x.values():
+            _collect(v, found, corpus)
+    elif isinstance(x, list):
+        for v in x:
+            _collect(v, found, corpus)
+    elif isinstance(x, str) and _REPO_PATH.match(x):
+        found.paths.append(x)
+
+
+def _collect_constructor(key: str, val: Any, found: CaseInputs, corpus: Corpus) -> None:
+    if key == "$paper":
+        found.paths.append(DEMO_PAPER if val == "demo" else str(val))
+    elif key in ("$read", "$file"):
+        found.paths += [str(v) for v in (val if isinstance(val, list) else [val])]
+    elif key == "$expr":
+        val = val or {}
+        code = f"{val.get('r') or ''}\n{val.get('py') or ''}"
+        paths = [p for p in _CODE_PATH.findall(code) if not _HELPER.search(p)]
+        if _CODE_DEMO.search(code):
+            paths.append(DEMO_PAPER)
+        if not any(p in corpus for p in paths):
+            found.synthetic.append("$expr")
+        found.paths += paths
+    elif key == "$call":
+        val = val or {}
+        _collect(val.get("args"), found, corpus)
+        _collect(val.get("py_args"), found, corpus)
+    elif key in SYNTHETIC_CONSTRUCTORS:
+        found.synthetic.append(key)
+
+
+def rule_tier(area: str, spec: dict[str, Any], corpus: Corpus | None = None) -> int:
+    """The tier parity/corpus.toml's rule gives a case (explicit tiers aside).
+
+    Tier 1 when the area is not ``*_review`` or ``rcompat*``, the case reads at
+    least one corpus input and nothing outside the corpus, and it builds no
+    synthetic input; tier 2 otherwise.
+    """
+    if area.endswith("_review") or area.startswith("rcompat"):
+        return 2
+    corpus = corpus or load_corpus()
+    inputs = case_inputs(spec, corpus)
+    if inputs.synthetic or not inputs.paths:
+        return 2
+    return 1 if all(p in corpus for p in inputs.paths) else 2
+
+
+def explicit_tier(where: str, value: Any) -> int:
+    """A ``tier: {level, reason}`` of a case file or case."""
+    if (
+        not isinstance(value, dict)
+        or set(value) != {"level", "reason"}
+        or value["level"] not in (1, 2)
+        or not isinstance(value["reason"], str)
+        or not value["reason"].strip()
+    ):
+        raise ValueError(f"{where}: tier is {{level: 1 | 2, reason: <why>}}, not {value!r}")
+    return int(value["level"])
+
+
+def classify_tier(
+    area: str,
+    spec: dict[str, Any],
+    corpus: Corpus | None = None,
+    file_tier: int | None = None,
+) -> int:
+    """A case's tier: its own ``tier``, else a parity/corpus.toml ``[[override]]``,
+    else its file's ``tier``, else ``rule_tier``."""
+    if "tier" in spec:
+        return explicit_tier(f"{area}/{spec.get('id')}", spec["tier"])
+    corpus = corpus or load_corpus()
+    override = corpus.override(f"{area}/{spec.get('id')}")
+    if override is not None:
+        return override.tier
+    if file_tier is not None:
+        return file_tier
+    return rule_tier(area, spec, corpus)
+
+
+# -- loading ------------------------------------------------------------------------------
+
+
+def load_cases(area: str | None = None, tier: int | None = None) -> list[Case]:
+    """The parity cases (of one *area*, of one *tier*), marks applied and validated."""
+    # the case files build some 200,000 objects, none of them garbage: the
+    # collector's passes over them would add a fifth to the time
+    enabled = gc.isenabled()
+    gc.disable()
+    try:
+        return _load_cases(area, tier)
+    finally:
+        if enabled:
+            gc.enable()
+
+
+def _load_cases(area: str | None, tier: int | None) -> list[Case]:
     cases: list[Case] = []
     seen: set[str] = set()
-    divergences = load_divergences()
+    errors: list[str] = []
+    divergences = read_divergences(errors=errors)
+    corpus = load_corpus()
+    refs = upstream_refs()
     for f in iter_case_files(area):
-        data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        data = load_yaml(f) or {}
         a = data.get("area", f.stem)
+        file_tier = explicit_tier(f.name, data["tier"]) if "tier" in data else None
         for spec in data.get("cases", []) or []:
             case = Case(area=a, id=str(spec["id"]), spec=spec, file=f)
             if case.key in seen:
                 raise ValueError(f"duplicate parity case id {case.key}")
             seen.add(case.key)
-            if case.key in divergences:
-                if spec.get("known_divergence"):
-                    raise ValueError(
-                        f"{case.key} is marked both in {f.name} and in parity/divergences"
+            case.tier = classify_tier(a, spec, corpus, file_tier)
+            marks = divergences.matching(a, case.key)
+            where = f"{f.name}: {case.key}"
+            if spec.get("known_divergence") is not None:
+                if marks:
+                    errors.append(
+                        f"{where} is marked both in its case file and in "
+                        + ", ".join(f"{m.file} ({m.key})" for m in marks)
                     )
-                spec["known_divergence"] = divergences[case.key]
-            else:
-                _check_mark(f"{f.name}: {case.key}", spec.get("known_divergence"))
-            cases.append(case)
+                    continue
+                errors += [
+                    f"{where}: {p}" for p in check_mark(spec["known_divergence"], case.tier, refs)
+                ]
+            elif marks:
+                if len(marks) > 1:
+                    errors.append(
+                        f"{case.key} is marked more than once: "
+                        + ", ".join(f"{m.file} ({m.key})" for m in marks)
+                    )
+                    continue
+                mark = marks[0]
+                if is_glob_key(mark.key) and case.tier == 1:
+                    errors.append(
+                        f"{mark.file}: {mark.key} matches the tier-1 case {case.key}: "
+                        "mark realistic cases one by one"
+                    )
+                errors += [f"{where}: {p}" for p in tier_problem(mark.div, case.tier)]
+                spec["known_divergence"] = mark.div
+            if tier is None or case.tier == tier:
+                cases.append(case)
+    _raise(errors)
     return cases
 
 

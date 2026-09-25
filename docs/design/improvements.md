@@ -1,11 +1,16 @@
 # Improvements over metacheck
 
-pytacheck stays faithful to metacheck's outputs. Where metacheck leaves a
-large, cheap win on the table, we take it, but only if a run that metacheck
-would complete still produces identical outputs. The candidates came from a
-scout pass over both code bases (2026-09-24).
+pytacheck's outputs follow metacheck's under the accuracy contract
+([PORTING.md](../PORTING.md#1-the-accuracy-contract)). This page lists
+improvements around the checks themselves: where metacheck leaves a large,
+cheap win on the table, we take it, as long as a run that metacheck would
+complete still reports the same results (traffic lights, tables, summary and
+report text). Changes that do alter results are metacheck bug fixes (U-entries)
+or deliberate differences (D-entries) in
+[UPSTREAM_ISSUES.md](../UPSTREAM_ISSUES.md). The candidates came from a scout
+pass over both code bases (2026-09-24).
 
-| # | Improvement | Faithful | Status |
+| # | Improvement | Same results | Status |
 |---|---|---|---|
 | 1 | **Run-scoped memoisation.** Implicit dependency re-runs (`data_check` → `repo_check`, `codebook_check` → `data_check`, `reproducibility_check`'s `run_missing()`) happen once per report or API request, instead of re-listing and re-downloading repositories and hitting API quotas. | yes | in module system v2 (`run_session()`) |
 | 2 | **REST API off the event loop.** Blocking work runs in a thread pool behind a concurrency cap (`PYTACHECK_API_MAX_CHECKS`), so a slow `/check` no longer stalls `/health` or other requests. | yes | in module system v2 |

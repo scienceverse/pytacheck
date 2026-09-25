@@ -1,0 +1,6 @@
+# Cases in the regex lane's generated case files (rcompat_regex, rcompat_*) that
+# differ from R on purpose. Format (see parity/cases.py): "<area>/<id>": {kind,
+# ref, reason}; a key with * marks every (tier-2) case it matches.
+"rcompat_regex/pcre.mid_char.all.5":
+  kind: c_quirk
+  reason: "PCRE2's search from inside a UTF-8 character is undefined (R passes PCRE2_NO_UTF_CHECK); whether R's JIT tries a pattern starting with a class such as \\W there is not emulated"

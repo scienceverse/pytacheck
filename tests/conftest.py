@@ -24,6 +24,14 @@ UPSTREAM = ROOT / "upstream" / "metacheck"
 FIXTURES = UPSTREAM / "tests" / "testthat" / "fixtures"
 
 
+def pytest_configure(config: pytest.Config) -> None:
+    # the parity cases' tiers (parity/corpus.toml): `pytest -m "parity and tier1"`
+    config.addinivalue_line(
+        "markers", "tier1: parity cases on the realistic corpus (parity/corpus.toml)"
+    )
+    config.addinivalue_line("markers", "tier2: parity cases on synthetic edge-case inputs")
+
+
 @pytest.fixture(scope="session")
 def upstream_dir() -> Path:
     """The pinned metacheck checkout (git submodule)."""

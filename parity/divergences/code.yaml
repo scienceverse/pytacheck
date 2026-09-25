@@ -277,6 +277,11 @@
   reason: a section header that is the last line or followed by another header has no lines; R's (h + 1):end counts down to NA and the header
 "statout_readers/mplus_sections.adjacent": *u147
 "statout_readers/mplus_output_tables.model_modification_indices": *u147
+"statout_readers_review/import_stata_smcl.latin1": &d25_latin1
+  kind: better_logic
+  ref: D25
+  reason: 'latin1 bytes: R''s regex functions reject the invalid UTF-8 strings readLines() returns ("input string N is invalid UTF-8"), so metacheck cannot read a latin1 log at all; pytacheck decodes it with replacement characters instead of failing'
+"statout_readers_review/import_mplus_output.latin1": *d25_latin1
 
 # --- match_reported_output() (R/match-reported.R, R/match-table.R) -----------
 "statout_match/norm_value.batch": &u143_dec

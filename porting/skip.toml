@@ -1,11 +1,14 @@
 # metacheck functionality that pytacheck does not port, by design.
 #
-# pytacheck ports metacheck faithfully (docs/PORTING.md), but not the parts that
-# only make sense inside an R session, or that pytacheck replaces with its own
-# design: bibr export schema v12.0 as the paper schema (older v10.x files still
-# read exactly as metacheck reads them), bibr in-process, the Grobid TEI
+# pytacheck ports metacheck's modules, core functionality and outputs under the
+# accuracy contract (docs/PORTING.md, section 1), but not the parts that only
+# make sense inside an R session, or that pytacheck replaces with its own
+# design: bibr export schema v12.0 as the paper schema (older v10.x files are
+# still read as metacheck reads them), bibr in-process, the Grobid TEI
 # adapter, module system v2 (packs, presets, store), the `pytacheck` CLI and the
-# FastAPI server (pytacheck.api, the port of inst/plumber).
+# FastAPI server (pytacheck.api, the port of inst/plumber). R internals that
+# pytacheck does not emulate (error texts, C-library quirks, R type details) are
+# not listed here: they are policy, not skipped symbols.
 #
 # [skip]        R symbol -> why it is never ported. `scripts/port_status.py`
 #               leaves these out of the coverage it measures; the upstream-sync

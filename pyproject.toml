@@ -37,6 +37,9 @@ dependencies = [
     # classes and \m/\M word anchors are needed to reproduce R's TRE engine.
     "regex>=2024.9.11",
     "orjson>=3.10",
+    # spreadsheet cells (.xlsx, .xls, .ods) through calamine, a small Rust
+    # library that pandas also uses as a read_excel engine
+    "python-calamine>=0.8",
     "httpx[http2]>=0.28.1",
     "h2>=4.4.1",
     "lxml>=5.3",
@@ -68,7 +71,9 @@ api = [
     "uvicorn[standard]>=0.30",
     "python-multipart>=0.0.31",
 ]
-all = ["pytacheck[bibr,data,api]"]
+# Character-set detection for files that are not UTF-8 (chardet, 0BSD since 7.0).
+charset = ["chardet>=7"]
+all = ["pytacheck[bibr,data,api,charset]"]
 
 [project.urls]
 Homepage = "https://github.com/thesanogoeffect/pytacheck"

@@ -522,6 +522,11 @@
   kind: type_detail
   ref: U79
   reason: "empty paper list: the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently); pytacheck's zenodo_links() indexed the missing href column of the empty url table"
+# D7 (security: links that leave the extraction folder)
+"repo_download_review/expand.abslink.tar.gz":
+  kind: deliberate
+  ref: D7
+  reason: "GNU tar (R's untar) extracts a symlink to an absolute path; pytacheck refuses links that leave the extraction folder (tarfile's data filter), so abs_link.csv is not listed"
 # U69, cases of the data_check module whose archives hold a .gz file
 "mod_data_check/data_check.archives":
   kind: r_bug_fixed

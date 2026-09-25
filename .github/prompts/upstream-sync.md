@@ -7,10 +7,16 @@ Read, in this order:
    which pytacheck files correspond to each changed R file, and which parity goldens
    changed when regenerated with the new metacheck (those are behaviour changes you must
    port).
-2. `docs/PORTING.md` and `docs/PARITY.md` — binding rules.
+2. `docs/PORTING.md` and `docs/PARITY.md` — binding rules, above all the accuracy
+   contract (`docs/PORTING.md`, section 1).
 
 Then port the upstream changes:
-- Update the mapped Python files so their behaviour matches the new R code exactly.
+- Update the mapped Python files so that pytacheck does what the new R code does: the
+  same checks, decisions and reported results (traffic lights, tables, summary and
+  report text, extracted values) on realistic inputs, and the same public API. Write
+  idiomatic Python with the shared helpers (`pytacheck._values`, `pytacheck._json`,
+  `pytacheck.http`); do not emulate R internals (error texts, C-library quirks on
+  malformed input, R type details).
   New R functions go to the location given by `porting/symbols.json` (regenerate it with
   `uv run python scripts/porting_symbols.py` after adding entries to `porting/map/*.toml`).
   New modules go to `src/pytacheck/modules/<name>.py`.
@@ -28,8 +34,21 @@ Done means all of these pass:
     uv run pytest -n auto -m "not network and not r"
     uv run ruff check . && uv run ruff format --check .
 
-If something cannot be ported faithfully, reproduce R's behaviour as closely as possible,
-mark the affected parity cases with `known_divergence: "<precise reason>"`, and explain it
-in `.upstream-sync/notes.md` (it becomes part of the pull request description). Do not
-weaken or delete existing parity cases to make them pass. Do not run git commands; the
-workflow commits your changes.
+Every difference from R's goldens is marked, never hidden:
+- If the new R code is clearly wrong (a crash on valid input, a mis-parse, a wrong count,
+  a false positive or negative, silent truncation), do the right thing instead: add a
+  U-entry to `docs/UPSTREAM_ISSUES.md` and mark the affected cases
+  `known_divergence: {kind: r_bug_fixed, ref: U<n>, reason: ...}`. A fix that only
+  corrects wording (a typo, a plural) adds `r_text` substitutions to the mark, so the case
+  is still compared with R. Keep a bug only with a written reason why fixing it would make
+  results worse.
+- Other differences use the other kinds of `docs/PORTING.md` section 1, with a reason (a
+  D-entry for `better_logic` and `deliberate`; `c_quirk` and `type_detail` only on
+  synthetic cases, never on realistic ones).
+- A marked case that now matches R means upstream fixed the bug: remove its mark and say so.
+- Nothing may be invented: no references, statistics, links or LLM-derived claims that are
+  not grounded in the paper or its materials.
+
+Explain every new or removed mark in `.upstream-sync/notes.md` (it becomes part of the pull
+request description). Do not weaken or delete existing parity cases to make them pass. Do
+not run git commands; the workflow commits your changes.

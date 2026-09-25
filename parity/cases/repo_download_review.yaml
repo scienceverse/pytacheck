@@ -613,8 +613,6 @@
     "args":
       "fn": *id002
       "fixture": "review/abslink.tar.gz"
-  "known_divergence": "GNU tar (R's untar) extracts a symlink to an absolute path; pytacheck refuses links\
-    \ that leave the extraction folder (tarfile's data filter), so abs_link.csv is not listed"
 - "id": "download.archive_members"
   "r": "do.call"
   "py": "tests.repo_download._parity_helpers.do_call"
