@@ -100,3 +100,19 @@ def test_file_download_edge_cases(mock_api: object) -> None:
     assert pd.isna(both["dspace7_url"].iloc[-1])
     # U43: several URLs that all fail give None (metacheck's join errors)
     assert dspace7_file_download(["https://example.org/a", "https://example.org/b"]) is None
+
+
+def test_file_lists_name_the_items_not_found(mock_api: object) -> None:
+    # U43: repo_check() reports the items that could not be found; an item
+    # without files was found
+    from pytacheck.archives.dspace7 import _dspace7_file_lists
+
+    no_files = "https://scholarworks.umass.edu/items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    assert _dspace7_file_lists(no_files) == (None, [])
+    assert _dspace7_file_lists("https://example.org/x") == (None, ["https://example.org/x"])
+    assert _dspace7_file_lists(None) == (None, [])
+    files, unfound = _dspace7_file_lists([GT_URL, no_files, "https://example.org/x", None])
+    assert unfound == ["https://example.org/x"]
+    assert files is not None and files["name"].tolist()[0] == "data.CSV"
+    urls = ["https://example.org/a", "https://example.org/b"]
+    assert _dspace7_file_lists(urls) == (None, urls)

@@ -58,6 +58,9 @@ def zenodo_links(paper: Any) -> pd.DataFrame:
     from pytacheck.text.search import text_search
 
     urls = paper_table(paper, "url")
+    if "href" not in urls.columns:
+        # an empty paper list has a url table without columns (R: `href` is NULL)
+        urls = pd.DataFrame({"href": pd.Series([], dtype="string")})
     keep = grepl(r"zenodo\.org|10\.5281/zenodo", urls["href"].tolist(), ignore_case=True)
     found_href = urls.loc[pd.Series([bool(k) for k in keep], index=urls.index, dtype=bool)]
 

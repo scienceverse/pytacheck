@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import os
 import sys
+import warnings
+from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -65,3 +68,66 @@ def _isolated_state(
 def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
     """Courtesy delays and retry backoff are pointless against mocks."""
     monkeypatch.setenv("PYTACHECK_NO_SLEEP", "1")
+
+
+# -- hygiene: tests write to tmp_path, never into the checkout's root ---------------
+#
+# A function that saves files takes metacheck's default ``save_path = "."``
+# (``paper_write()``, ``grobid_to_bibr()``, ``convert()``, the CLI's ``read``),
+# and pytest runs in the checkout, so a test that forgets the path leaves a
+# paper JSON in the repository root. Any new entry there fails the run; the
+# warning names the test it appeared in.
+
+# what pytest and the linters themselves keep in the root
+_ROOT_TOOL_ENTRIES = frozenset(
+    {".pytest_cache", ".hypothesis", ".ruff_cache", ".mypy_cache", ".benchmarks", ".coverage"}
+)
+
+
+def _root_entries() -> frozenset[str]:
+    return frozenset(p.name for p in ROOT.iterdir()) - _ROOT_TOOL_ENTRIES
+
+
+def _is_xdist_worker(config: pytest.Config) -> bool:
+    return hasattr(config, "workerinput")
+
+
+_ROOT_BEFORE = pytest.StashKey[frozenset[str]]()
+_ROOT_NEW = pytest.StashKey[list[str]]()
+
+
+def pytest_sessionstart(session: pytest.Session) -> None:
+    session.config.stash[_ROOT_BEFORE] = _root_entries()
+
+
+@pytest.fixture(autouse=True)
+def _no_files_in_the_root() -> Iterator[None]:
+    before = _root_entries()
+    yield
+    new = sorted(_root_entries() - before)
+    if new:
+        warnings.warn(
+            f"{', '.join(new)} appeared in the repository root during this test: "
+            "write to tmp_path instead",
+            stacklevel=1,
+        )
+
+
+def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
+    if _is_xdist_worker(session.config) or _ROOT_BEFORE not in session.config.stash:
+        return
+    new = sorted(_root_entries() - session.config.stash[_ROOT_BEFORE])
+    if new:
+        session.config.stash[_ROOT_NEW] = new
+        session.exitstatus = pytest.ExitCode.TESTS_FAILED
+
+
+def pytest_terminal_summary(terminalreporter: Any, exitstatus: int, config: pytest.Config) -> None:
+    new = config.stash.get(_ROOT_NEW, None)
+    if new:
+        terminalreporter.write_sep(
+            "=",
+            f"tests left {', '.join(new)} in the repository root {ROOT} (see the warnings "
+            "for the test; write to tmp_path instead)",
+            red=True,
+        )

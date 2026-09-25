@@ -417,3 +417,37 @@ def test_help_text_without_metacheck_typos() -> None:
     details = pc.module_info("ref_accuracy").details
     assert "or mistakes in citations. You will need to check the original source." in details
     assert "will need check" not in details
+
+
+# -- empty paper lists (U79) --------------------------------------------------------
+
+
+def test_ref_table_of_an_empty_paperlist() -> None:
+    # metacheck's inner_join() stops: the empty tables have no paper_id or text_id
+    from pytacheck.papers.tables import ref_table
+
+    refs = ref_table(pc.PaperList([]))
+    assert len(refs) == 0
+    assert refs.columns.tolist() == ["paper_id", "bib_id", "doi", "text"]
+    # the same types as the references of a paper without references
+    assert refs.dtypes.tolist() == ref_table(pc.paper()).dtypes.tolist()
+
+
+def test_ref_consistency_empty_paperlist() -> None:
+    mo = pc.module_run(pc.PaperList([]), "ref_consistency")
+    assert mo.traffic_light == "na"
+    assert mo.summary_table.columns.tolist() == [
+        "paper_id",
+        "n_bib",
+        "n_xrefs",
+        "n_missing",
+        "n_extra",
+    ]
+    assert len(mo.summary_table) == 0
+    assert len(mo.table) == 0
+
+
+@pytest.mark.parametrize("name", ["ref_accuracy", "ref_consistency"])
+def test_empty_paper(name: str) -> None:
+    mo = pc.module_run(pc.paper(), name)
+    assert mo.traffic_light == "na"

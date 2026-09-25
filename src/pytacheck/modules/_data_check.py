@@ -1292,8 +1292,10 @@ def dv_spreadsheet_findings(structure_df: pd.DataFrame | None) -> dict[str, Any]
                         "source_file": fname,
                         "label": s["name"],
                         "check": "Colour coding",
-                        "detail": f"{n:d} cell{plural(n)} use fill colour to encode "
-                        "information; colour is lost on CSV export.",
+                        # R: "%d cell%s use", "%d merged range%s ... break" and "%d column%s
+                        # %s empty or have" whatever the count (UPSTREAM_ISSUES U82)
+                        "detail": f"{n:d} cell{plural(n)} use{'s' if n == 1 else ''} fill "
+                        "colour to encode information; colour is lost on CSV export.",
                     }
                 )
             if s["merges"]:
@@ -1304,7 +1306,8 @@ def dv_spreadsheet_findings(structure_df: pd.DataFrame | None) -> dict[str, Any]
                         "label": s["name"],
                         "check": "Merged cells",
                         "detail": f"{n:d} merged range{plural(n)} "
-                        f"({', '.join(s['merges'][:5])}) break the rectangular grid.",
+                        f"({', '.join(s['merges'][:5])}) break{'s' if n == 1 else ''} the "
+                        "rectangular grid.",
                     }
                 )
             if s["empty_rows"] > 0:
@@ -1325,7 +1328,7 @@ def dv_spreadsheet_findings(structure_df: pd.DataFrame | None) -> dict[str, Any]
                         "label": s["name"],
                         "check": "Empty or unnamed columns",
                         "detail": f"{n:d} column{plural(n)} {'is' if n == 1 else 'are'} "
-                        "empty or have a blank header.",
+                        f"empty or {'has' if n == 1 else 'have'} a blank header.",
                     }
                 )
     return {"findings": _findings_frame(findings), "n_files": len(xl_rows)}

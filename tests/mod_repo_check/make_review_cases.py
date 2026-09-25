@@ -368,7 +368,24 @@ def module_cases() -> list[dict[str, Any]]:
             },
             "compare": {"ignore": [*LOCAL_IGNORE, *PID_IGNORE, "naming_issues.paper_id"]},
         },
+        *(
+            # an empty paper and an empty paper list (UPSTREAM_ISSUES U79): R stops
+            {
+                "id": f"repo_check.module.{suffix}",
+                "note": f"module_run() of {r}",
+                "module": "repo_check",
+                "args": {"paper": {"$expr": {"r": r, "py": py}}},
+            }
+            for suffix, r, py in EMPTY_INPUTS
+        ),
     ]
+
+
+#: (id suffix, R, Python) of an empty paper and an empty paper list
+EMPTY_INPUTS = (
+    ("empty_paper", "paper()", "pc.paper()"),
+    ("empty_paperlist", "paperlist()", "pc.PaperList([])"),
+)
 
 
 def main() -> None:

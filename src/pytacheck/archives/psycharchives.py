@@ -587,6 +587,18 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
     is ``None``, R's ``NA``). A sequence of URLs gives one table, aligned with
     the input. With *cache*, listings are reused from the on-disk cache.
     """
+    return _psycharchives_file_lists(pa_url, pb, cache)[0]
+
+
+def _psycharchives_file_lists(
+    pa_url: Any, pb: Any = None, cache: bool = False
+) -> tuple[Any, list[str]]:
+    """:func:`psycharchives_file_download` and the URLs it could not list.
+
+    The second value names the URLs whose item could not be found (not a
+    handle, or the host does not know it), which repo_check() reports as
+    inaccessible; an item without public files was found.
+    """
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
     from pytacheck.archives.dataverse import _paste
@@ -596,11 +608,13 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
     with _spinner(pb) as bar:
         if len(urls) > 1:
             unique_pa = [u for u in dict.fromkeys(urls) if u is not None]
-            file_lists = [psycharchives_file_download(u, pb=bar, cache=cache) for u in unique_pa]
+            results = [_psycharchives_file_lists(u, pb=bar, cache=cache) for u in unique_pa]
+            file_lists = [df for df, _ in results]
+            unfound = [u for _, failed in results for u in failed]
             info = bind_rows(file_lists)
             orig = pd.DataFrame({"pa_url": pd.Series(urls, dtype="string")})
             if "pa_url" not in info.columns:
-                return None  # every URL failed (metacheck's join errors here: U43)
+                return None, unfound  # every URL failed (metacheck's join errors here: U43)
             df = left_join(orig, info, by="pa_url")
             # R: unlist(lapply(file_lists, attr, "rights")) -- NULL (no attribute) if none
             for name in ("rights", "doi"):
@@ -610,7 +624,7 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
                         merged.update(fl.attrs.get(name) or {})
                 if merged:
                     df.attrs[name] = merged
-            return df
+            return df, unfound
 
         if not urls:
             raise IndexError("subscript out of bounds")
@@ -623,7 +637,7 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
             lambda: _psycharchives_info(url, pb=bar),
         )
         if "error" in info.columns:
-            return None
+            return None, [] if url is None else [url]
 
         def attr(col: str) -> dict[str, Any]:
             v = info[col].iloc[0] if col in info.columns and len(info) else None
@@ -635,7 +649,7 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
             empty = pd.DataFrame({k: pd.Series([], dtype=t) for k, t in _EMPTY_FILES.items()})
             empty.attrs["rights"] = rights
             empty.attrs["doi"] = doi
-            return empty
+            return empty, []
 
         n = len(file_list)
         df = pd.DataFrame(
@@ -651,4 +665,4 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
         df = _add_ext_type(df)
         df.attrs["rights"] = rights
         df.attrs["doi"] = doi
-        return df
+        return df, []

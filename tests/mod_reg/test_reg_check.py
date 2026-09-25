@@ -164,7 +164,7 @@ def test_prereg_row_text_skips_na_and_empty_fields() -> None:
     assert prereg_row_text(row) == ""
 
 
-def test_all_comparisons_failing_returns_an_error_light(capsys: pytest.CaptureFixture) -> None:
+def test_all_comparisons_failing_returns_a_fail_light(capsys: pytest.CaptureFixture) -> None:
     paper = pc.test_paper(url=[f"https://osf.io/{GUID}"])
     with recorded("error"), verbose_on():
         capsys.readouterr()
@@ -173,7 +173,8 @@ def test_all_comparisons_failing_returns_an_error_light(capsys: pytest.CaptureFi
     assert "RegCheck comparison failed" in err
     assert f"RegCheck comparison failed for preregistration {GUID}: RegCheck server" in err
 
-    assert mo.traffic_light == "error"
+    # the check could not run; metacheck's "error" is not a traffic light (U30)
+    assert mo.traffic_light == "fail"
     assert "RegCheck comparison failed" in mo.summary_text
     assert mo.summary_table["regcheck_deviations"].isna().all()
     # no na_replace: a failed check is unknown, not zero
@@ -333,11 +334,15 @@ def test_chained_prereg_without_table_runs_prereg_check_again() -> None:
     assert mo.traffic_light == "na"
 
 
-def test_empty_paperlist_errors() -> None:
-    # R: "Running the module 'reg_check' produced errors: Running the module
-    # 'prereg_check' produced errors: arguments imply differing number of rows: 0, 1"
-    with pytest.raises(pc.ModuleError, match="Running the module 'prereg_check' produced errors"):
-        pc.module_run(pc.PaperList([]), "reg_check")
+def test_empty_paperlist_has_an_empty_result() -> None:
+    # U79: R stops ("Running the module 'reg_check' produced errors: Running the
+    # module 'prereg_check' produced errors: arguments imply differing number of
+    # rows: 0, 1")
+    mo = pc.module_run(pc.PaperList([]), "reg_check")
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "No preregistrations were found to compare with the paper."
+    assert mo.summary_table.columns.tolist() == ["paper_id", "regcheck_deviations"]
+    assert len(mo.summary_table) == 0
 
 
 def test_tables_via_run_reg() -> None:
@@ -469,7 +474,7 @@ def test_data_frame_recycles_and_checks_lengths() -> None:
 
 def test_http_errors_become_the_error_summary() -> None:
     mo = run_reg(**_OER, pre=["prereg_check"], fake="http:http404")
-    assert mo.traffic_light == "error"
+    assert mo.traffic_light == "fail"
     assert mo.summary_text == (
         "We found 1 preregistration, but the RegCheck comparison failed: HTTP 404 Not Found.."
     )

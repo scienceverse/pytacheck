@@ -40,6 +40,22 @@
     - "table.paper_id"
     - "summary_table.paper_id"
     - "naming_issues.paper_id"
+- "id": "repo_check.module.empty_paper"
+  "note": "module_run() of paper()"
+  "module": "repo_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paper()"
+        "py": "pc.paper()"
+- "id": "repo_check.module.empty_paperlist"
+  "note": "module_run() of paperlist()"
+  "module": "repo_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist()"
+        "py": "pc.PaperList([])"
 - "id": "repo_check.local.sizes"
   "note": "file sizes at SI unit boundaries and R round() halves"
   "r": "identity"

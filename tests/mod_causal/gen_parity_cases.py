@@ -8,7 +8,8 @@ Two kinds of cases:
 * plain ``module`` cases on papers whose title is blank/NULL and that have no
   abstract section, so ``causal_relations()`` gets no sentences and never
   touches the network (the randomization branches, empty papers, paper
-  lists, the NA-title error);
+  lists, the NA-title error; pytacheck classifies the titles of a paper list,
+  so a paper list's titles are blank too);
 * ``fake.*`` cases, where ``causal_relations()`` is replaced on both sides by
   the same deterministic fake (R: ``testthat::with_mocked_bindings()``;
   Python: ``tests.mod_causal.parity_support.run_fake_causal``), exercising
@@ -189,17 +190,20 @@ module_case("random_one", untitled(RANDOM_ONE, title="   ", id="one"))
 module_case("random_several", untitled(RANDOM_SEVERAL, id="several"))
 module_case("no_random_word", untitled(["No matching words.", "Just plain text."], id="plain"))
 module_case("title_na", untitled(["Participants were randomly assigned."], title=None, id="na"))
+# paper lists without an abstract section: blank titles, so pytacheck, which
+# classifies the titles of a paper list (U84), needs no classifier either (the
+# fake.paperlist_no_abstract/_none cases keep test_paper()'s "Test Paper")
 module_case(
-    "paperlist_no_abstract",
+    "paperlist_no_abstract_untitled",
     plist(
-        test_paper(RANDOM_ONE, "pl_one"),
-        test_paper(RANDOM_NONE, "pl_none"),
-        test_paper(RANDOM_SEVERAL, "pl_several"),
+        untitled(RANDOM_ONE, id="pl_one"),
+        untitled(RANDOM_NONE, id="pl_none"),
+        untitled(RANDOM_SEVERAL, id="pl_several"),
     ),
 )
 module_case(
-    "paperlist_none",
-    plist(test_paper(RANDOM_NONE, "pl_a"), test_paper(["Nothing random."], "pl_b")),
+    "paperlist_none_untitled",
+    plist(untitled(RANDOM_NONE, id="pl_a"), untitled(["Nothing random."], id="pl_b")),
 )
 
 # ------------------------------------------------ fake causal_relations()
@@ -277,11 +281,23 @@ fake_case(
         mk(["We measured more things."], ["We randomly assigned people."], id="q2"),
     ),
 )
-# paperlist_no_abstract with the classifier faked: pytacheck classifies the
-# titles of a paper list (U84), and "Test Paper" is not causal
+# paper lists of test_paper()s with the classifier faked: pytacheck classifies
+# the titles of a paper list (U84), and "Test Paper" is not causal
 fake_case(
     "paperlist_random",
     plist(test_paper(RANDOM_ONE, "pl_one"), test_paper(RANDOM_NONE, "pl_none")),
+)
+fake_case(
+    "paperlist_no_abstract",
+    plist(
+        test_paper(RANDOM_ONE, "pl_one"),
+        test_paper(RANDOM_NONE, "pl_none"),
+        test_paper(RANDOM_SEVERAL, "pl_several"),
+    ),
+)
+fake_case(
+    "paperlist_none",
+    plist(test_paper(RANDOM_NONE, "pl_a"), test_paper(["Nothing random."], "pl_b")),
 )
 
 

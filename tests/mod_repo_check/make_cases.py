@@ -623,6 +623,40 @@ CASES += [
     ),
 ]
 
+# --- DSpace items their host does not know (UPSTREAM_ISSUES U43) -------------------------
+# Nothing is recorded for them, so every REST lookup fails on both sides (httptest2
+# errors, the Python replay answers 404).
+PA_HANDLE = "https://www.psycharchives.org/handle/20.500.12034/"
+CASES += [
+    (
+        cid,
+        note,
+        one(urls, "p_" + cid.replace(".", "_")),
+        {"ignore": ["table.file_location"]},
+    )
+    for cid, note, urls in (
+        ("dspace.unfound", "a PsychArchives item that does not exist", [PA_HANDLE + "99991"]),
+        (
+            "dspace.unfound_two",
+            "two PsychArchives items that do not exist",
+            [PA_HANDLE + "99991", PA_HANDLE + "99992"],
+        ),
+        (
+            "dspace.found_and_unfound",
+            "a PsychArchives item and one that does not exist",
+            [PA_HANDLE + "17526", PA_HANDLE + "99991"],
+        ),
+        (
+            "dspace7.unfound",
+            "a DSpace 7 item that does not exist",
+            [
+                "https://repository.gatech.edu/entities/publication/"
+                "00000000-0000-4000-8000-000000000000"
+            ],
+        ),
+    )
+]
+
 
 def case(cid: str, note: str, spec: dict[str, Any], ignore: Any) -> dict[str, Any]:
     fn = "run_repo"

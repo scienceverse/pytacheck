@@ -128,10 +128,19 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
     (``readRDS(system.file("databases/miscite.Rds", package = "metacheck"))``,
     :func:`pytacheck.db.miscite`).
     """
-    from pytacheck.papers.tables import paper_table
+    from pytacheck.modules.ref_summary import _join_doi
+    from pytacheck.papers.tables import as_paper_list, empty_paper_table, paper_table
+
+    def table_of(name: str, cols: list[str] | None = None) -> pd.DataFrame:
+        # an empty paper list has tables without columns, which no join accepts
+        # (metacheck stops on the missing doi column, U79): use empty typed ones
+        if len(as_paper_list(paper)) == 0:
+            empty = empty_paper_table(name)
+            return empty if cols is None else empty.loc[:, cols]
+        return paper_table(paper, name, cols)
 
     # consolidate bib tables and filter to relevant DOI
-    bibs = paper_table(paper, "bib", ["paper_id", "bib_id", "doi"])
+    bibs = table_of("bib", ["paper_id", "bib_id", "doi"])
     if db is None:
         db = _miscite_db()
     elif not isinstance(db, pd.DataFrame):
@@ -157,18 +166,18 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
             raise TypeError("Can't join `x$doi` with `y$doi` due to incompatible types.")
         db = db.assign(doi=doi.astype("string"))
     # a missing or empty DOI is no DOI: metacheck's inner_join() matches an NA
-    # DOI in the database to every reference without a DOI (U117)
+    # DOI in the database to every reference without a DOI (U117); DOIs match
+    # whatever their case (U157)
     has_doi = (bibs["doi"].notna() & (bibs["doi"].astype("string") != "")).fillna(False)
     bibs = (
-        bibs.loc[has_doi.to_numpy(dtype=bool)]
-        .merge(db, on="doi", how="inner", sort=False, suffixes=(".x", ".y"))
+        _join_doi(bibs.loc[has_doi.to_numpy(dtype=bool)], db)
         .drop_duplicates()
         .reset_index(drop=True)
     )
 
     # consolidate xrefs, filter, and expand
-    text = paper_table(paper, "text")
-    xref = paper_table(paper, "xref")
+    text = table_of("text")
+    xref = table_of("xref")
     # bibr 12.x papers cite a reference with a "bib" xref whose target_id is
     # the bib_id (their xref_id is the row's own key)
     _bibr12_ids: list[Any] = []

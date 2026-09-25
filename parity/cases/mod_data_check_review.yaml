@@ -274,3 +274,17 @@
           \ ['r'] * 6, 'file_name': ['a\\u00adb.csv', '\\u65e5\\u672c.csv', 'x\\U0001F7F0.txt', 'tab\\\
           there.R', 'e\\u0301.csv', '\\U0001F600.png'], 'data_type': ['data', 'data', 'unknown', 'code',\
           \ 'data', 'materials'], 'group': ['ex1', 'ex2', None, 'ex1', 'ex1', None]}))"
+- "id": "data_check.empty_paper"
+  "module": "data_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paper()"
+        "py": "pc.paper()"
+- "id": "data_check.empty_paperlist"
+  "module": "data_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist()"
+        "py": "pc.PaperList([])"

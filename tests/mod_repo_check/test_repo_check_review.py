@@ -243,3 +243,84 @@ def test_peeked_zip_members_are_listed_but_not_readmes() -> None:
     assert not any(p.endswith("/") for p in inner["file_path"])
     assert mo.summary_table["files_readme"].tolist() == [0]
     assert "We found 0 README files and 1 repository without READMEs." in mo.summary_text
+
+
+# --- file types, unfound DSpace items and empty input ----------------------------------
+
+
+def test_join_file_types_gives_one_row_per_file() -> None:
+    # U46: an extension listed twice in file_types (json: code, data; html: code,
+    # web) takes its first type; R's join repeats the file once per type
+    from pytacheck.fileinfo.types import ext_rows
+
+    files = pd.DataFrame(
+        {"file_name": ["a.json", "b.HTML", "c.csv", "noext", None], "file_path": list("abcde")},
+        index=[5, 6, 7, 8, 9],
+    )
+    out = rc.join_file_types(files)
+    assert out["file_path"].tolist() == list("abcde")
+    rows = ext_rows()
+    assert len(rows["json"]) > 1 and len(rows["html"]) > 1
+    assert out["file_type"].tolist()[:3] == [rows["json"][0][1], rows["html"][0][1], "data"]
+    assert out["file_type"].isna().tolist()[3:] == [True, True]
+    assert list(files.index) == [5, 6, 7, 8, 9]  # the input is not changed
+    empty = rc.join_file_types(files.iloc[0:0])
+    assert len(empty) == 0 and str(empty["file_type"].dtype) == "string"
+
+
+PA_HANDLE = "https://www.psycharchives.org/handle/20.500.12034/"
+
+
+def test_unfound_dspace_items_are_flagged() -> None:
+    # U43: R leaves an item that could not be found unflagged (it vanishes beside
+    # other repositories' files), or stores its join error when all of several fail
+    urls = [PA_HANDLE + "17526", PA_HANDLE + "99991"]
+    with in_root(), mocked():
+        mo = pc.module_run(tp(urls, "p_pa"), "repo_check")
+    gated = dict(zip(mo.gated_repos["repo_url"], mo.gated_repos["repo_error"], strict=True))
+    assert gated == {urls[0]: "restricted access", urls[1]: "invalid or inaccessible DSpace item"}
+    assert mo.summary_table["repo_n"].tolist() == [2]
+    assert mo.traffic_light == "yellow"
+
+
+def test_unfound_dspace7_items_are_flagged_but_empty_ones_are_not(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import pytacheck.archives.dspace7 as ds7
+
+    monkeypatch.setattr(ds7, "_dspace7_file_lists", lambda urls, pb=None: (None, [urls[1]]))
+    repos = rc.Repos(rc.repo_rows("p", ["https://x/a", "https://x/b"], "dspace7", rc.NA_SCALAR))
+    files = rc.list_dspace7(repos, ["https://x/a", "https://x/b"], None)
+    assert len(files) == 0
+    # only the item that was not found (an item without files was found)
+    assert pd.isna(repos.df["repo_error"].iloc[0])
+    assert repos.df["repo_error"].iloc[1] == "invalid or inaccessible DSpace item"
+
+
+MODULES_ON_REPO_CHECK = [
+    "repo_check",
+    "code_check",
+    "data_check",
+    "codebook_check",
+    "psychds_check",
+    "reproducibility_check",
+]
+
+
+@pytest.mark.parametrize("module", MODULES_ON_REPO_CHECK)
+@pytest.mark.parametrize("empty", [pc.paper, lambda: pc.PaperList([])], ids=["paper", "list"])
+def test_empty_input_gives_the_empty_result(module: str, empty: Any) -> None:
+    # U79: R's repo_check stops on paper() ("subscript out of bounds") and on an
+    # empty paper list (its link tables have no href), and so does every module
+    # that runs it
+    paper = empty()
+    mo = pc.module_run(paper, module)
+    assert mo.traffic_light == "na"
+    ids = [] if isinstance(paper, pc.PaperList) else [paper.paper_id]
+    assert mo.summary_table["paper_id"].tolist() == ids
+
+
+def test_repo_check_of_an_empty_paper_counts_no_repositories() -> None:
+    mo = pc.module_run(pc.paper(), "repo_check")
+    assert mo.summary_table["repo_n"].tolist() == [0]
+    assert mo.summary_text.startswith("We found no links to repositories")

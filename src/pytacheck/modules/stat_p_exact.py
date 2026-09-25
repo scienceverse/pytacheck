@@ -120,7 +120,7 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
         <validation>In a sample of 225 papers containing 405 instances of non-exact p-values, the module correctly detected 269 cases (true positives) and incorrectly identified 78 (false positives). It missed 136 instances of imprecisely reported p-values (false negatives) and correctly identified 4557 cases of precisely reported p-values (true negative). Additionally, 78% of positive detections were correct (positive predictive value).</validation>
     """,
     keywords=["results"],
-    # one R @author line naming both authors (module_report() keeps only the first)
+    # one R @author line naming both authors (metacheck's module_report() kept only the first; U6)
     author=[
         "Lisa DeBruine (\\email{lisa.debruine@glasgow.ac.uk}) and "
         "Daniel Lakens (\\email{D.Lakens@tue.nl})"

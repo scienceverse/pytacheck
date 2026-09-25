@@ -493,3 +493,71 @@ def test_bib_without_text_id_errors_like_r(name: str, upstream_dir) -> None:
     assert "text_id" not in paper["bib"].columns
     with pytest.raises(pc.ModuleError, match="Join columns in `x` must be present"):
         module_run(paper, name)
+
+
+# -- DOIs match whatever their case (U157) ------------------------------------------
+
+
+def test_ref_retraction_matches_doi_case_insensitively() -> None:
+    # RetractionWatch lists the retracted Wakefield et al. (1998) Lancet paper as
+    # 10.1016/S0140-6736(97)11096-0; references carry lower-case DOIs
+    out = module_run(ref_paper(["10.1016/s0140-6736(97)11096-0"]), "ref_retraction")
+    assert out.traffic_light == "info"
+    assert out.table["doi"].tolist() == ["10.1016/s0140-6736(97)11096-0"]  # the paper's own DOI
+    assert out.table["retractionwatch"].tolist() == ["Correction;Retraction"]
+    assert out.summary_table["retractionwatch"].tolist() == [1]
+
+
+@pytest.mark.parametrize("doi", ["10.1212/WNL.57.3.445", "10.1212/wnl.57.3.445"])
+def test_ref_retraction_joins_notices_of_case_variants(doi: str) -> None:
+    # RetractionWatch has 10.1212/wnl.57.3.445 (Retraction) and 10.1212/WNL.57.3.445
+    # (Expression of concern) as separate rows: a citation of the DOI gets both
+    # notices, joined as RetractionWatch joins those of one DOI, and is one article
+    out = module_run(ref_paper([doi, "10.1000/x"]), "ref_retraction")
+    assert out.table["bib_id"].tolist() == [0]
+    assert out.table["doi"].tolist() == [doi]
+    assert out.table["retractionwatch"].tolist() == ["Retraction;Expression of concern"]
+    assert out.table.columns.tolist() == ["paper_id", "bib_id", "doi", "text", "retractionwatch"]
+    assert out.summary_text == "You cited 1 article in the RetractionWatch database."
+
+
+def test_ref_replication_matches_doi_case_insensitively() -> None:
+    from pytacheck.db.replications import FLoRA
+
+    lower = FLoRA()["doi_o"].dropna().iloc[0]
+    upper = lower.upper()
+    out_lower = module_run(ref_paper([lower]), "ref_replication")
+    out_upper = module_run(ref_paper([upper]), "ref_replication")
+    assert out_upper.traffic_light == out_lower.traffic_light == "info"
+    assert len(out_upper.table) == len(out_lower.table) > 0
+    assert set(out_upper.table["doi"]) == {upper}
+    assert out_upper.summary_text == out_lower.summary_text
+
+
+def test_ref_replication_already_cited_ignores_case() -> None:
+    from pytacheck.db.replications import FLoRA
+
+    flora = FLoRA()
+    row = flora.loc[flora["doi_r"].notna() & (flora["doi_r"] != "")].iloc[0]
+    others = flora.loc[flora["doi_o"] == row["doi_o"], "doi_r"].dropna().str.lower()
+    out = module_run(ref_paper([row["doi_o"], row["doi_r"].upper()]), "ref_replication")
+    shown = set() if out.table is None else set(out.table["replication_doi"].str.lower())
+    assert row["doi_r"].lower() not in shown
+    assert shown <= set(others)
+
+
+def test_ref_miscitation_matches_doi_case_insensitively() -> None:
+    db = pd.DataFrame({"doi": ["10.1000/ABC"], "reftext": ["Ref"], "warning": ["Careful"]})
+    out = module_run(ref_paper(["10.1000/abc"], cites=[0]), "ref_miscitation", db=db)
+    assert out.traffic_light == "yellow"
+    assert out.table["doi"].tolist() == ["10.1000/abc"]
+
+
+# -- empty paper lists (U79) --------------------------------------------------------
+
+
+@pytest.mark.parametrize("name", REF_MODULES)
+def test_empty_paperlist(name: str) -> None:
+    out = module_run(pc.PaperList([]), name)
+    assert out.summary_table.columns.tolist()[0] == "paper_id"
+    assert len(out.summary_table) == 0

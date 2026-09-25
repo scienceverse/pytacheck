@@ -167,12 +167,12 @@ def _paper_ids(paper: Any) -> list[str]:
 
 
 def _summary(paper: Any, value: float) -> pd.DataFrame:
-    """``data.frame(paper_id = paper_id(paper), regcheck_deviations = value)``."""
+    """``data.frame(paper_id = paper_id(paper), regcheck_deviations = value)``.
+
+    An empty paper list gives a table without rows (metacheck's
+    ``data.frame()`` stops, U79).
+    """
     ids = _paper_ids(paper)
-    if not ids:
-        # an empty paper list: paper_id() is NULL, and data.frame() does not
-        # recycle the length-one column to zero rows
-        raise ValueError("arguments imply differing number of rows: 0, 1")
     return pd.DataFrame(
         {
             "paper_id": pd.Series(ids, dtype="string"),
@@ -263,7 +263,8 @@ def reg_check(
     judgements (deviation / consistent / unclear) for manual checking. A
     chained ``prereg_check`` output is reused; otherwise ``prereg_check`` is
     run first. Failed comparisons are skipped; if all fail the light is
-    ``"error"``.
+    ``"fail"`` (the check could not run; metacheck returns ``"error"``, which
+    is not a traffic light, U30).
     """
     from pytacheck.module import get_prev_outputs, module_run
     from pytacheck.papers.model import PaperList
@@ -346,11 +347,13 @@ def reg_check(
 
     ## all comparisons failed ----
     if not rc_list:
-        # no na_replace here: a failed check is unknown (NA), not zero
+        # no na_replace here: a failed check is unknown (NA), not zero. The
+        # check could not run: "fail", as report() gives a module that fails;
+        # metacheck's "error" is not a traffic light (U30)
         n = len(prereg_info)
         err = f": {rc_error}" if rc_error is not None else ""
         return {
-            "traffic_light": "error",
+            "traffic_light": "fail",
             "summary_text": (
                 f"We found {n} preregistration{plural(n)}, but the RegCheck comparison failed{err}."
             ),

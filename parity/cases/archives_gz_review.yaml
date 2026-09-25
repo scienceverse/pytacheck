@@ -42,6 +42,36 @@
   "compare":
     "ignore":
     - "paper_id"
+- "id": "github_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_gz.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(github_links(paperlist(test_paper(\"a\"))[0]), online = function(...)\
+          \ TRUE, .package = \"metacheck\")"
+        "py": "lambda: __import__(\"pytacheck.archives.github\", fromlist=[\"_\"]).github_links(__import__(\"\
+          pytacheck\").PaperList([]))"
+- "id": "gitlab_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_gz.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(gitlab_links(paperlist(test_paper(\"a\"))[0]), online = function(...)\
+          \ TRUE, .package = \"metacheck\")"
+        "py": "lambda: __import__(\"pytacheck.archives.gitlab\", fromlist=[\"_\"]).gitlab_links(__import__(\"\
+          pytacheck\").PaperList([]))"
+- "id": "zenodo_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_gz.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(zenodo_links(paperlist(test_paper(\"a\"))[0]), online = function(...)\
+          \ TRUE, .package = \"metacheck\")"
+        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_links(__import__(\"\
+          pytacheck\").PaperList([]))"
 - "id": "zenodo_links.review.tricky"
   "r": "zenodo_links"
   "py": "pytacheck.archives.zenodo.zenodo_links"

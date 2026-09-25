@@ -1714,8 +1714,8 @@ def _validate(
         dv_text += (
             f" {n_q:d} file{plural(n_q)} {'is' if n_q == 1 else 'are'} a Qualtrics survey export"
             + (
-                f" ({n_drop:d} row{plural(n_drop)} look like previews/unfinished responses to "
-                "review)"
+                f" ({n_drop:d} row{plural(n_drop)} look{'s' if n_drop == 1 else ''} like "
+                "previews/unfinished responses to review)"
                 if n_drop > 0
                 else ""
             )
@@ -2110,8 +2110,10 @@ def _careless(
     note = None
     if n_files > 0 and not avail:
         note = (
-            f"{n_files:d} file{plural(n_files)} contain survey data with an identifier, but "
-            "careless-response checks were skipped because the `careless` package is not "
+            # R: "%d file%s contain" (UPSTREAM_ISSUES U82)
+            f"{n_files:d} file{plural(n_files)} contain{'s' if n_files == 1 else ''} survey data "
+            "with an identifier, but careless-response checks were skipped because the "
+            "`careless` package is not "
             'installed. Install it with `install.packages("careless")` to screen for '
             "straightlining and other careless responding."
         )
@@ -2151,8 +2153,10 @@ def _careless(
         )
         report = [
             "#### Careless Responding",
-            f"{n_car:d} distinct respondent{plural(n_car)} were flagged for **straightlining**: "
-            "giving the same answer for at least 80% of the items in a multi-item scale of "
+            # R: "%d distinct respondent%s were" and "**%d were flagged" (UPSTREAM_ISSUES U82)
+            f"{n_car:d} distinct respondent{plural(n_car)} {'was' if n_car == 1 else 'were'} "
+            "flagged for **straightlining**: giving the same answer for at least 80% of the "
+            "items in a multi-item scale of "
             f"{h.DV_CARELESS_MIN_ITEMS:d} items or more. One respondent can be flagged in several "
             "scales; the table below is **one row per person**, and the *Longest run* column "
             "gives the run that triggered the strongest flag, so you can check it against the "
@@ -2160,7 +2164,8 @@ def _careless(
         ]
         if n_short > 0:
             report.append(
-                f"Of these, **{n_short:d} were flagged *only* by short-scale straightlining** (a "
+                f"Of these, **{n_short:d} {'was' if n_short == 1 else 'were'} flagged *only* by "
+                "short-scale straightlining** (a "
                 f"run of identical answers on a scale of {h.DV_SHORT_SCALE_MAX:d} items or "
                 "fewer). On a short, one-directional scale, answering consistently is often "
                 "normal, coherent responding rather than carelessness — treat these as weak "

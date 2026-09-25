@@ -167,6 +167,7 @@ def ref_replication(paper: Any, show_outcomes: bool = False) -> dict[str, Any]:
     study's DOI, dropping replications whose DOI is already cited.
     """
     from pytacheck.db.replications import FLoRA
+    from pytacheck.modules.ref_summary import _join_doi
 
     # create table ----
     bib = _refs_with_doi(paper)
@@ -175,21 +176,23 @@ def ref_replication(paper: Any, show_outcomes: bool = False) -> dict[str, Any]:
     if len(bib) == 0:
         return dict(_NO_REFS)
 
-    ## join to flora table
-    flora = FLoRA()
-    flora = flora.loc[flora["doi_o"].isin(bib["doi"]).to_numpy(dtype=bool), list(_FLORA_COLS)]
-    flora = flora.rename(columns=_FLORA_COLS)
-    table = bib.merge(flora, on="doi", how="inner", sort=False)
+    ## join to flora table, ignoring the case of DOIs (U157)
+    flora = FLoRA().loc[:, list(_FLORA_COLS)].rename(columns=_FLORA_COLS)
+    table = _join_doi(bib, flora)
 
     ## remove rows that are already cited (by DOI) by the same paper: metacheck
     ## compares with the DOIs of every paper of a list (bib$doi), so one paper
     ## citing a replication hid it for the others (U116)
     rep_doi = table["replication_doi"]
     has_rep_doi = (rep_doi.notna() & (rep_doi != "")).fillna(False)
-    cited = set(zip(bib["paper_id"].tolist(), bib["doi"].tolist(), strict=True))
+    cited = set(
+        zip(bib["paper_id"].tolist(), bib["doi"].astype("string").str.lower().tolist(), strict=True)
+    )
     in_paper = [
         (pid, d) in cited
-        for pid, d in zip(table["paper_id"].tolist(), rep_doi.tolist(), strict=True)
+        for pid, d in zip(
+            table["paper_id"].tolist(), rep_doi.astype("string").str.lower().tolist(), strict=True
+        )
     ]
     already_cited = has_rep_doi & pd.Series(in_paper, index=table.index, dtype=bool)
     table = table.loc[~already_cited.to_numpy(dtype=bool)].reset_index(drop=True)
@@ -216,7 +219,7 @@ def ref_replication(paper: Any, show_outcomes: bool = False) -> dict[str, Any]:
         types = table["replication_type"]
         n_replications = int((types == "replication").fillna(False).sum())
         n_reproductions = int((types == "reproduction").fillna(False).sum())
-        n_originals = int(table["doi"].nunique(dropna=False))
+        n_originals = int(table["doi"].astype("string").str.lower().nunique(dropna=False))
 
         if n_reproductions == 0:
             summary_text = (

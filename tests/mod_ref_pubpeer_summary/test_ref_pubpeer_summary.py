@@ -472,3 +472,15 @@ def test_ref_pubpeer_case_list_c_locale(mock_pubpeer: None) -> None:
     assert out.table["doi"].tolist() == ["10.9999/pp.many", "10.9999/pp.one", "10.9999/pp.dup"]
     assert out.summary_table["paper_id"].tolist() == ["b", "A", "a"]
     assert out.summary_table["pubpeer_comments"].tolist() == [3.0, 12.0, 0.0]
+
+
+# -- empty paper lists (U79) --------------------------------------------------------
+
+
+@pytest.mark.parametrize("name", ["ref_pubpeer", "ref_summary"])
+def test_empty_paperlist(name: str) -> None:
+    # metacheck's ref_table() stops ("Join columns in `x` must be present in the data.")
+    out = module_run(pc.PaperList([]), name)
+    assert out.traffic_light == "na"
+    assert out.summary_table.columns.tolist() == ["paper_id"]
+    assert len(out.summary_table) == 0

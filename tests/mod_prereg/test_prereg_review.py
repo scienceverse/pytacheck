@@ -94,14 +94,19 @@ def test_report_keeps_the_empty_block_of_a_missing_sample_size_table() -> None:
     assert mo.report[3] == ""  # where the sample size table would be
 
 
-def test_no_paper_ids_errors_as_r_data_frame() -> None:
+def test_empty_paperlist_has_an_empty_summary() -> None:
+    # U79: R's data.frame(paper_id = NULL, preregistration = 0) stops
+    # ("arguments imply differing number of rows: 0, 1")
     import pytacheck as pc
     from pytacheck.modules.prereg_check import _no_prereg_summary
 
-    with pytest.raises(ValueError, match="differing number of rows: 0, 1"):
-        _no_prereg_summary(pc.PaperList([]))
-    with pytest.raises(Exception):  # noqa: B017 (R errors too; the message differs)
-        run_prereg(paperlist=True)
+    summary = _no_prereg_summary(pc.PaperList([]))
+    assert summary.columns.tolist() == ["paper_id", "preregistration"]
+    assert len(summary) == 0
+    mo = pc.module_run(pc.PaperList([]), "prereg_check")
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "No preregistration links were found."
+    assert len(mo.summary_table) == 0
 
 
 def test_deparse_str_uses_r_escapes() -> None:

@@ -57,6 +57,22 @@
   ref: U89
   reason: every R file is scanned for groundhog/checkpoint pins; R keeps one text per file name (and per NA paper id)
 "mod_code_review/code_check.na_pid_pin": *u89
+"mod_code/code_check.parse_errors": &u82_cc
+  kind: r_bug_fixed
+  ref: U82
+  reason: "one file with libraries at several places is \"In 1 code file\"; R's sprintf() always says \"code files\""
+"mod_code/code_check.psychsci": *u82_cc
+"mod_code/code_check.mixed": *u82_cc
+"mod_code/code_check.paperlist": *u82_cc
+"mod_code_review/code_check.gaps": *u82_cc
+"mod_code_review/code_check.na_pid": *u82_cc
+"mod_code_review/local_path.parse_errors": *u82_cc
+"mod_code_review/local_path.mixed_local_only": *u82_cc
+"mod_code_review/code_check.empty_paper": &u79_cc
+  kind: r_bug_fixed
+  ref: U79
+  reason: an empty paper or paper list gives the "na" result (no code files); R's repo_check stops ("subscript out of bounds" from paper_id(paper)[[1]], or the link tables' missing href)
+"mod_code_review/code_check.empty_paperlist": *u79_cc
 
 # --- reg_check module (inst/modules/reg_check.R) ----------------------------
 "mod_reg/reg_check.odd_judgements":
@@ -130,6 +146,24 @@
 "mod_repo_check_review/repo_check.local.edat_many": *u123
 "mod_repo_check_review/repo_check.local.unicode": *u123
 "mod_repo_check_review/repo_check.local.unicode.tables": *u123
+"mod_repo_check/repo_check.dspace.unfound": &u43_one
+  kind: r_bug_fixed
+  ref: U43
+  reason: a DSpace item its host does not know is flagged "invalid or inaccessible DSpace item" (gated_repos); R's download function returns NULL and the repository is left unflagged
+"mod_repo_check/repo_check.dspace7.unfound": *u43_one
+"mod_repo_check/repo_check.dspace.unfound_two":
+  kind: r_bug_fixed
+  ref: U43
+  reason: DSpace items their host does not know are flagged "invalid or inaccessible DSpace item"; R stores the join error of its all-NULL listing ("Join columns in `y` must be present in the data.")
+"mod_repo_check/repo_check.dspace.found_and_unfound":
+  kind: r_bug_fixed
+  ref: U43
+  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); R leaves it unflagged and drops it with the repositories without files
+"mod_repo_check_review/repo_check.module.empty_paper": &u79_rc
+  kind: r_bug_fixed
+  ref: U79
+  reason: an empty paper or paper list gives the "no repositories" result; R stops ("subscript out of bounds" from paper_id(paper)[[1]], or the link tables' missing href)
+"mod_repo_check_review/repo_check.module.empty_paperlist": *u79_rc
 # data_check's structure is repo_check's local listing (this lane's U123 fix)
 "mod_data_check/data_check.local.basic":
   kind: r_bug_fixed

@@ -329,6 +329,17 @@ def _host_links(paper: Any, host: str, host_regex: str) -> pd.DataFrame:
     strip_text = text_search(paper, r".*[^\.$]", return_="match", perl=True)
 
     found = text_search(paper_table(paper, "url"), host_regex, perl=True)
+    if "href" not in found.columns:
+        # an empty paper list has a url table without columns: its links are the
+        # usual (empty) columns; R's result has no href (UPSTREAM_ISSUES U79),
+        # so repo_check() and the modules that call it stop
+        found = pd.DataFrame(
+            {
+                "href": pd.Series([], dtype="string"),
+                "text_id": pd.Series([], dtype="Int64"),
+                "paper_id": pd.Series([], dtype="string"),
+            }
+        )
     found = found[["href", "text_id", "paper_id"]]
 
     # repos referenced only by owner/repo near the host name (+-10 words)

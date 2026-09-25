@@ -44,6 +44,25 @@ docs/UPSTREAM_ISSUES.md entry (``U13``, ``D6``). Cases in generated case files
 are marked from ``parity/divergences/*.yaml`` (``{"<area>/<id>": {kind, ref,
 reason}}``, one file per topic), which ``load_cases`` applies.
 
+A mark whose difference is text that pytacheck corrects (a typo, a plural, a
+full stop in report prose) says how with ``r_text``, a list of substitutions
+applied in order to every string value of R's golden (and R's error message)
+before the comparison::
+
+    known_divergence:
+      kind: r_bug_fixed
+      ref: U83
+      reason: "the caveat says 'likely' (metacheck: 'likley')"
+      r_text: [["likley", "likely"], ["sizes$", "sizes.", regex]]
+
+``[old, new]`` replaces literal text, ``[old, new, regex]`` is Python's
+``re.sub(old, new, s)``. Such a case is no expected failure: it passes when R's
+rewritten result equals Python's and fails on any other difference, and a
+substitution that changes nothing in R's golden fails it (a stale mark). A case
+that also differs for other reasons adds ``xfail: true``; it stays an expected
+failure and ``r_text`` only removes the text corrections from its reported
+differences.
+
 ``needs_r: true`` marks a case whose Python side runs R. Such cases, and any
 case whose Python side starts ``Rscript``/``R`` (the harness watches for it),
 run only with the reference R (``PYTACHECK_RSCRIPT`` naming an R >= 4.5) and
@@ -89,6 +108,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+from parity.compare import TextSub, parse_r_text
 
 ROOT = Path(__file__).resolve().parent.parent
 CASES_DIR = ROOT / "parity" / "cases"
@@ -138,8 +159,38 @@ def divergence_kind(spec: dict[str, Any]) -> str | None:
     return str(div.get("kind", "unclassified")) if isinstance(div, dict) else "unclassified"
 
 
+def r_text(spec: dict[str, Any]) -> list[TextSub]:
+    """The ``r_text`` substitutions of a case's ``known_divergence`` (see above)."""
+    return parse_r_text(spec.get("known_divergence"))
+
+
+def expected_to_fail(spec: dict[str, Any]) -> bool:
+    """Whether a difference from R is an expected failure (``xfail``) for this case.
+
+    Every ``known_divergence`` is, except one that ``r_text`` describes
+    completely (no ``xfail: true``): its case must match R's rewritten golden.
+    """
+    div = spec.get("known_divergence")
+    if not div:
+        return False
+    return not r_text(spec) or div.get("xfail") is True
+
+
+def _check_mark(where: str, div: Any) -> None:
+    """Raise ``ValueError`` for a malformed ``r_text``/``xfail`` of a mark."""
+    try:
+        subs = parse_r_text(div)
+    except ValueError as exc:
+        raise ValueError(f"{where}: {exc}") from None
+    if isinstance(div, dict) and "xfail" in div:
+        if not subs:
+            raise ValueError(f"{where}: xfail belongs to a mark with r_text")
+        if not isinstance(div["xfail"], bool):
+            raise ValueError(f"{where}: xfail must be true or false")
+
+
 def load_divergences() -> dict[str, dict[str, Any]]:
-    """``parity/divergences/*.yaml`` merged: case key -> ``{kind, ref, reason}``."""
+    """``parity/divergences/*.yaml`` merged: case key -> ``{kind, ref, reason[, r_text, xfail]}``."""
     out: dict[str, dict[str, Any]] = {}
     for f in sorted(DIVERGENCES_DIR.glob("*.yaml")):
         data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
@@ -150,6 +201,7 @@ def load_divergences() -> dict[str, dict[str, Any]]:
                 raise ValueError(f"{f.name}: {key}: a divergence needs a reason")
             if key in out:
                 raise ValueError(f"{f.name}: {key} is already marked in another file")
+            _check_mark(f"{f.name}: {key}", div)
             out[key] = div
     return out
 
@@ -167,7 +219,13 @@ def load_cases(area: str | None = None) -> list[Case]:
                 raise ValueError(f"duplicate parity case id {case.key}")
             seen.add(case.key)
             if case.key in divergences:
-                spec.setdefault("known_divergence", divergences[case.key])
+                if spec.get("known_divergence"):
+                    raise ValueError(
+                        f"{case.key} is marked both in {f.name} and in parity/divergences"
+                    )
+                spec["known_divergence"] = divergences[case.key]
+            else:
+                _check_mark(f"{f.name}: {case.key}", spec.get("known_divergence"))
             cases.append(case)
     return cases
 

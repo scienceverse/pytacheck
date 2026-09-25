@@ -720,6 +720,19 @@ def review_cases() -> list[dict[str, Any]]:
             "'data', 'unknown', 'code', 'data', 'materials'], 'group': ['ex1', 'ex2', None, "
             "'ex1', 'ex1', None]}))",
         ),
+        # module_run() of an empty paper and an empty paper list (UPSTREAM_ISSUES
+        # U79: R stops in repo_check)
+        *(
+            {
+                "id": f"data_check.{suffix}",
+                "module": "data_check",
+                "args": {"paper": {"$expr": {"r": r, "py": py}}},
+            }
+            for suffix, r, py in (
+                ("empty_paper", "paper()", "pc.paper()"),
+                ("empty_paperlist", "paperlist()", "pc.PaperList([])"),
+            )
+        ),
     ]
 
 
