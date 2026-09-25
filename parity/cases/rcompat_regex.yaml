@@ -8972,8 +8972,6 @@
       - "Kb"
       - "aΣ"
     "perl": !!bool "true"
-  "known_divergence": "PCRE2's search from inside a UTF-8 character is undefined (R passes PCRE2_NO_UTF_CHECK);\
-    \ whether R's JIT tries a pattern starting with a class such as \\W there is not emulated"
 - "id": "pcre.mid_char.all.6"
   "r": "pc_regextract_all"
   "py": "parity.pyhelpers.regextract_all"

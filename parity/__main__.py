@@ -11,6 +11,7 @@ Examples::
     python -m parity generate --area text          # needs R + metacheck
     python -m parity check --area text -v
     python -m parity check --only text_search.demo.significant
+    python -m parity check --tier 1                # the realistic corpus only
 
 ``generate`` uses the ``Rscript`` on PATH unless ``PYTACHECK_RSCRIPT`` or
 ``--rscript`` points elsewhere, and always runs R under ``C.UTF-8`` / UTC
@@ -183,7 +184,7 @@ def _root_entries() -> set[str]:
 
 def cmd_check(ns: argparse.Namespace) -> int:
     root_before = _root_entries()
-    cases = load_cases(ns.area)
+    cases = load_cases(ns.area, tier=ns.tier)
     if ns.only:
         cases = [c for c in cases if c.id in ns.only or c.key in ns.only]
     if ns.k:
@@ -238,9 +239,9 @@ def cmd_check(ns: argparse.Namespace) -> int:
 
 
 def cmd_list(ns: argparse.Namespace) -> int:
-    for case in load_cases(ns.area):
+    for case in load_cases(ns.area, tier=ns.tier):
         mark = "golden" if case.golden_path.exists() else "MISSING"
-        print(f"{case.key:70} {mark}")
+        print(f"{case.key:70} tier{case.tier} {mark}")
     return 0
 
 
@@ -271,6 +272,9 @@ def _hermetic_env() -> None:
         os.environ["PYTACHECK_CACHE_DIR"] = _CACHE_DIR.name
 
 
+_TIER_HELP = "only tier-1 (realistic corpus, parity/corpus.toml) or tier-2 (synthetic) cases"
+
+
 def main(argv: list[str] | None = None) -> int:
     _hermetic_env()
     parser = argparse.ArgumentParser(
@@ -290,9 +294,11 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("-k", help="substring filter on area/id")
     c.add_argument("-v", "--verbose", action="store_true")
     c.add_argument("--allow-missing", action="store_true")
+    c.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)
     c.set_defaults(func=cmd_check)
     ls = sub.add_parser("list", help="list cases")
     ls.add_argument("--area")
+    ls.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)
     ls.set_defaults(func=cmd_list)
     ns = parser.parse_args(argv)
     return int(ns.func(ns))

@@ -6,11 +6,14 @@ pytacheck is a fast, Python-native port of ScienceVerse's
 [metacheck](https://github.com/scienceverse/metacheck) R package, designed to work
 hand in hand with [bibr](https://bibr.org). It follows metacheck's `dev` branch (for now
 `dev` plus pull request [#423](https://github.com/scienceverse/metacheck/pull/423), which
-adds bibr export schema 12.0), and every function and module is **verified against the
-original R implementation** by a parity test suite that runs the real R package.
+adds bibr export schema 12.0), and every function and module is **checked against the
+original R implementation** by a parity test suite that runs the real R package. The
+goal is results at least as accurate as metacheck's, with metacheck's bugs fixed
+rather than copied, and nothing invented ([the accuracy contract](docs/PORTING.md#1-the-accuracy-contract)).
 
 > **Status: alpha.** The port is in progress; see [the porting status](docs/STATUS.md).
-> Results should match metacheck exactly. Where they don't, that is a bug: please
+> A difference from metacheck that is not documented as a fix or a deliberate change
+> in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md) is a bug: please
 > [open an issue](https://github.com/thesanogoeffect/pytacheck/issues).
 
 ## Install
@@ -18,7 +21,7 @@ original R implementation** by a parity test suite that runs the real R package.
 ```bash
 pip install pytacheck                 # core: bibr JSON / Grobid XML input
 pip install "pytacheck[bibr]"         # + extract PDF/DOCX/HTML with bibr, in-process
-pip install "pytacheck[all]"          # + bibr, data-file readers, REST API
+pip install "pytacheck[all]"          # + bibr, data-file readers, REST API, charset detection
 ```
 
 Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/thesanogoeffect/pytacheck run paper.json -m all_p_values`.
@@ -53,8 +56,8 @@ pytacheck report paper.json -o report.html
 once pull request #423 is merged, and pytacheck already does:
 
 * `pc.read()` reads a bibr 12.x export (a JSON file with a root `schema_version`).
-  Files without one (bibr v10.x and older, metacheck's demo and fixture papers) read
-  exactly as metacheck reads them. Other versions, bibr 11.x included, are refused
+  Files without one (bibr v10.x and older, metacheck's demo and fixture papers) are
+  read as metacheck reads them. Other versions, bibr 11.x included, are refused
   with metacheck's error.
 * Grobid TEI is converted to 12.x: `pc.read("paper.tei.xml")`,
   `pc.grobid_to_bibr(...)`, `convert()` and the CLI all do this. Pass
@@ -101,20 +104,25 @@ See [docs/MODULES.md](docs/MODULES.md) for the user and author guides.
 
 ## How it relates to metacheck
 
-* **Same results.** Module tables, summary tables, traffic lights and report texts
-  match metacheck's. The parity harness ([docs/PARITY.md](docs/PARITY.md)) runs
-  metacheck in R on the same inputs and compares every value; the committed goldens
-  are regenerated from R in CI, so they cannot drift.
+* **Results as accurate as metacheck's, or better.** Modules check and report what
+  metacheck's do: traffic lights, summary tables, report texts and numbers agree with
+  metacheck on real papers, repositories and data. Where metacheck is clearly wrong
+  (a crash on valid input, a wrong count, a false positive), pytacheck does the right
+  thing and records the bug in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md) so it
+  can be reported upstream. The parity harness ([docs/PARITY.md](docs/PARITY.md)) runs
+  metacheck in R on the same inputs and compares every value, every difference is
+  marked with its reason, and the committed goldens are regenerated from R in CI, so
+  they cannot drift.
 * **Same paper model.** Papers use bibr export schema 12.0, which metacheck reads
   natively from pull request #423 on, so bibr output is read directly (and in process,
-  when bibr is installed). Older papers read exactly as metacheck reads them.
+  when bibr is installed). Older papers are read as metacheck reads them.
 * **Auto-updated.** A scheduled workflow watches metacheck's `dev` branch (and, until
   it is merged, pull request #423). When the tracked head moves, the goldens are
   regenerated in R and an AI agent ports the change. The change is only merged once
   parity is green again ([docs/PORTING.md](docs/PORTING.md)).
-* **Faster.** R-compatible regex semantics are reproduced with the `regex` engine,
-  paper tables are built lazily, and corpus-wide tables are assembled without
-  per-paper overhead.
+* **Faster.** pytacheck prefers mature compiled libraries (pandas, orjson, lxml, the
+  `regex` engine) to re-implementing R's internals, builds paper tables lazily, and
+  assembles corpus-wide tables without per-paper overhead.
 
 Development continues in metacheck; pytacheck tracks it. Please report issues with
 the checks themselves (validity, false positives) upstream.

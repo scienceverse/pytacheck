@@ -298,7 +298,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); f <- tempfile(fileext = '.qmd'); on.exit(unlink(f)); list(rv_error(report(demopaper(), 'notamodule', f, 'qmd')), rv_error(report(1, 'marginal', f, 'qmd')), rv_error(report(demopaper(), 'marginal', 'not/a/path/file.html', 'qmd')), rv_error(report_repository(c('a', 'b'))), rv_error(report_repository('no/such/folder/here')))}", "py": "(lambda h, r, rr, f: [h.rv_error(lambda: r(pc.demopaper(), 'notamodule', f, 'qmd')), h.rv_error(lambda: r(1, 'marginal', f, 'qmd')), h.rv_error(lambda: r(pc.demopaper(), 'marginal', 'not/a/path/file.html', 'qmd')), h.rv_error(lambda: rr(['a', 'b'])), h.rv_error(lambda: rr('no/such/folder/here'))])(__import__('tests.report.review_helpers', fromlist=['x']), __import__('pytacheck.report.report', fromlist=['x']).report, __import__('pytacheck.report.report', fromlist=['x']).report_repository, __import__('tempfile').mktemp(suffix='.qmd'))"}}
 - "id": "errors.report_format_message"
-  "known_divergence": "pytacheck's report() also writes Markdown ('md'), so its message lists three formats: \"The output_format must be either 'html', 'qmd' or 'md'.\""
+  "known_divergence": {"kind": "deliberate", "ref": "D5", "reason": "pytacheck's report() also writes Markdown ('md'), so its message lists three formats: \"The output_format must be either 'html', 'qmd' or 'md'.\""}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":

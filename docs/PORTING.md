@@ -24,42 +24,76 @@ reference and are not ported. Once the pull request is merged into `dev`, the wo
 goes back to `dev` and drops `pull_request` and `base_commit` from the pin
 (`scripts/upstream_sync.py`; `prepare --drop-pr` stops following it by hand).
 
-## 1. Golden rules
+## 1. The accuracy contract
 
-1. **Match metacheck on real inputs; improve on it where that is clearly better.**
-   What must agree with metacheck (within numeric tolerance) is what users read and
-   rely on, for real papers, repositories, data and code: module traffic lights,
-   summary tables, report text and numbers, extracted statistics, references and
-   links, and the public API (function names, arguments, column names). Beyond that:
-   * **Fix metacheck's bugs, don't reproduce them.** When metacheck is clearly wrong
-     (a crash on valid input, a mis-parse, a wrong count, a false positive or
-     negative), do the right thing, mark the affected parity cases
-     `known_divergence: {kind: r_bug_fixed, ref: U<n>, reason: ...}` and record the bug
-     in `docs/UPSTREAM_ISSUES.md` so it can be reported upstream.
-   * **Stay generally faithful in what users see.** Modules, core functionality and
-     outputs follow metacheck: what a module checks, how it decides, and what it
-     reports. Change them only to fix a clear bug. Be opinionated in the internals
-     instead: idiomatic, well-structured Python, mature libraries, robustness,
-     speed. A different user-facing design is the exception, for when it is clearly
-     better (`kind: better_logic`, recorded as a D-entry).
-   * **Don't emulate R internals.** R's error and warning texts, quirks of R's C
-     libraries on malformed or synthetic input (data.table's `fread()`, yajl/jsonlite,
-     TRE regex corner cases, readr/vroom) and R type details that do not reach users
-     (integer vs double, factor vs character, tibble vs data.frame) are not
-     reproduced. Prefer mature libraries and idiomatic Python.
-   * **Accuracy first.** No change may make results less accurate, and nothing may be
-     invented: no references, statistics, links or LLM-derived claims that are not
-     grounded in the paper or its materials. When in doubt, compare with R on real
-     papers and data.
+pytacheck is checked against the real metacheck in R on every change. It is not a bug-for-bug copy of it. It must be at least as accurate as metacheck on real research outputs, and smaller, faster and easier to maintain.
 
-   Divergence kinds and how cases record them are listed in `parity/cases.py`
-   (`DIVERGENCE_KINDS`); generated case files are marked from
-   `parity/divergences/*.yaml`.
-2. **Every ported function/module gets parity cases** (`parity/cases/<area>.yaml`) and
-   its goldens are generated from R (`python -m parity generate --area <area>`) — never
-   written by hand. Every module needs ≥ 3 cases: the demo paper, the psychsci fixtures
-   (a paper list), and synthetic `test_paper` edge cases (no hits, several hits,
-   tricky text). Cover every branch that changes the traffic light.
+**What must agree with metacheck, within margins, on realistic inputs.** Realistic inputs are real papers, repositories, data files and code files: the corpus in `parity/corpus.toml`.
+- What each module checks, how it decides and what it reports: traffic lights, summary tables, summary text, and report text and numbers.
+- Extracted statistics, p-values, references, URLs and other extracted tables.
+- The public API: exported function and module names, arguments and defaults, returned column names and their order. People port their scripts from metacheck.
+
+"Within margins" means:
+- Traffic lights and counts are exact.
+- Numbers agree to a relative 1e-9, after R's rounding and formatting, which `pytacheck._r` keeps.
+- Text agrees after whitespace normalisation.
+- Any other difference is documented as described below.
+
+`python -m parity accuracy --gate` measures this, and the upstream sync must pass it.
+
+**Fix metacheck's bugs, don't reproduce them.** Sometimes metacheck is clearly wrong: it crashes on valid input, mis-parses something, gives a wrong count, reports a false positive or negative, or truncates data silently. Then do the right thing, record the bug as a U-entry in `docs/UPSTREAM_ISSUES.md`, and mark the affected cases `r_bug_fixed`. A bug may be kept (reproduced) only with a written reason why fixing it would make results worse.
+
+**Faithful outputs, opinionated internals.** Change what users see only to fix a clear bug, or where a different design is clearly better (`better_logic`, recorded as a D-entry). Inside, write idiomatic Python:
+- clear module boundaries and typed results;
+- pandas idioms;
+- the shared helpers in `pytacheck._values`, `pytacheck._json` and `pytacheck.http` instead of private copies in each file;
+- no helper layers that exist only to mimic R.
+
+**Don't emulate R internals.** Document these, never reproduce them:
+- R's error, warning and message texts. Python raises its own clear exceptions, and parity only checks that both sides fail.
+- Quirks of R's C libraries on malformed, adversarial or synthetic input. Examples: data.table fread quote rules, type bumps and silent truncation; readxl, readODS, readr and vroom; yajl/jsonlite escapes and NULs; TRE and PCRE corner cases; glibc and ICU character tables and charset confidences; knitr's evaluation of chunk options; long-double number parsing.
+- R type details users never see: integer vs double, factor vs character, tibble vs data.frame, row names, list-column shapes, int32 overflow.
+
+**The R conventions that do reach users stay:**
+- R's number formatting and rounding (`format_num`, `as_character`, `r_round`, `signif`);
+- R's string collation for user-visible listings (`r_sort_key`);
+- metacheck's regular expressions, with R's replacement syntax;
+- R's .rds/.RData format for users' files.
+
+**Prefer mature compiled libraries** to pure-Python ports of R's C code: pandas' C parser, orjson, python-calamine, zipfile, the `regex` module, pyreadstat, lxml. Adding a well-maintained dependency to delete thousands of lines is a good trade. Keep the core install lean: heavy or niche libraries go in extras. On realistic inputs, results must not depend on which extras are installed, unless that is documented.
+
+**Accuracy first.** No change may make realistic results less accurate, and nothing may be invented: no references, statistics, links or LLM-derived claims that are not grounded in the paper or its materials. When in doubt, run the accuracy report.
+
+**Record every difference** that a parity case or the accuracy report sees, as `known_divergence: {kind, ref, reason}` in `parity/divergences/<lane>.yaml` (or inline in a hand-written case file):
+
+| kind | use for | needs |
+|---|---|---|
+| `r_bug_fixed` | a metacheck/R bug that pytacheck fixes | ref U<n> |
+| `better_logic` | pytacheck decides differently on purpose, and better | ref D<n> |
+| `deliberate` | a design decision (defaults, security, scope) | ref D<n> |
+| `c_quirk` | an R C-library quirk on malformed or synthetic input | reason; tier 2 only |
+| `type_detail` | an R type or attribute detail users never see | reason; tier 2 only |
+| `r_nondeterministic` | R's own result is undefined or unstable | reason |
+
+A difference that only corrects wording (a typo, a plural, a missing full stop) adds `r_text` substitutions to its mark: they turn R's text into pytacheck's before the comparison, so the case stays a plain pass and is still compared with R for everything else ([PARITY.md](PARITY.md)).
+
+Tier-1 (realistic) cases may not be marked `c_quirk` or `type_detail`: a difference that reaches users on real inputs is not a quirk. Tier-2 (synthetic) cases may be marked in bulk with glob keys. Every mark is pinned by the divergence lock, so a marked case still fails when either side's output changes.
+
+### Golden rules
+
+1. **Follow the accuracy contract above.** At least as accurate as metacheck on real
+   inputs, nothing invented, metacheck's bugs fixed and recorded, every difference
+   marked, and idiomatic Python inside.
+2. **Every ported function and module gets parity cases**
+   (`parity/cases/<area>.yaml`), generated from R
+   (`python -m parity generate --area <area>`) and never written by hand:
+   * Tier-1 cases on the realistic corpus: the demo paper, the psychsci paper list and
+     a Grobid TEI paper; real repositories, data and code files for the file checks.
+   * Tier-2 edge cases for every branch that changes the traffic light.
+
+   Tier-2 cases check that Python behaves sensibly (no crash where a sensible result
+   exists), not that it copies R's internals. Do not write new cases whose only
+   purpose is to force exact emulation of an R internal.
 3. **Port the testthat tests** that cover your code to pytest under `tests/<area>/`.
 4. **No network in tests.** Mock HTTP with `respx`; metacheck's recorded API responses
    (`upstream/metacheck/tests/testthat/apis*`, httptest2 format) can be replayed. Tests
@@ -111,7 +145,7 @@ the R name where it is a valid Python identifier.
 ### Not ported by design
 
 Some of metacheck has no place in a Python package whose paper schema is bibr
-export schema v12.0 (older v10.x files still read exactly as metacheck reads them),
+export schema v12.0 (older v10.x files are still read as metacheck reads them),
 which runs bibr in-process, keeps the Grobid adapter, has module system v2 and ships
 its own CLI and API. [`porting/skip.toml`](../porting/skip.toml) lists it, with a
 reason for each entry:
@@ -133,13 +167,20 @@ always ported.
 
 ## 3. Translating R to Python
 
-### Regular expressions — always via `pytacheck._r`
+### Regular expressions
 
-Never call `re`, `regex` or pandas `.str.contains/.extract/.replace/.match/.split`
-with a pattern. Use the R-faithful helpers, which emulate TRE (`perl = FALSE`, the
-default: POSIX leftmost-longest, Unicode `\w`, literal backslashes inside `[...]`, `.`
-matching newlines, `$` only at the very end) and PCRE (`perl = TRUE`: ASCII `\w \d \s
-\b`):
+Patterns copied from metacheck keep R's syntax and go through the `pytacheck._r`
+helpers (`grepl`, `sub`, `gsub`, `regextract`, `regextract_all`, `regexec`,
+`strsplit`, `compile_r`). These translate them onto the `regex` module:
+
+* TRE patterns: POSIX classes, `\<` and `\>`, a literal backslash inside brackets,
+  `.` matching newline, `$` at the very end.
+* `perl = TRUE`: ASCII `\w \d \s \b`, and inline flags scoped to their group.
+
+The helpers keep R's replacement syntax and R's gsub/strsplit empty-match rules.
+TRE/PCRE behaviour on malformed patterns, and glibc/ICU character-class edge cases,
+are not reproduced. Patterns written for pytacheck itself may use `re` or `regex`
+directly.
 
 | R | Python |
 |---|---|
@@ -175,6 +216,21 @@ for missing). **R `round()` is not Python `round()`**: they disagree on ~3% of d
 `plural(n)` is `_r.plural`.
 
 ### Missing values and types
+
+Use `pytacheck._values` (`is_missing`, `is_true`, `as_float`, `as_int`, `as_str`,
+`field`) and `pytacheck._json.loads`. Do not add new private `_is_na`, `_chr`,
+`_dollar` or `as_numeric` copies:
+
+| R | Python |
+|---|---|
+| `is.na(x)` of one value | `is_missing(x)`: `None`, `pd.NA`, NaN, NaT |
+| `isTRUE(x)` | `is_true(x)` |
+| `as.numeric(x)` / `as.integer(x)` / `as.character(x)` of one value | `as_float(x)` / `as_int(x)` / `as_str(x)` (`None` is `NA`) |
+| `x$a$b`, `x[["a"]][[1]]` on parsed JSON | `field(x, "a", "b")`, `field(x, "a", 0)` (exact names; `None` when absent) |
+| `jsonlite::fromJSON(txt, simplifyVector = FALSE)` | `pytacheck._json.loads(txt)` |
+| `httr2::resp_body_json(resp)` | `pytacheck.http.resp_json(resp)` |
+
+For whole columns:
 
 Tables use pandas nullable dtypes, mirroring R vectors: `string` (character),
 `Int64` (integer), `float64` (double; `NaN` is `NA`), `boolean` (logical), `object`
@@ -222,7 +278,7 @@ Keep R argument names with `.` → `_` (`ignore.case` → `ignore_case`) and a t
 `stop(msg)` → raise an appropriate exception (`ValueError`, `TypeError`,
 `RuntimeError`, `FileNotFoundError`...) with a clear message of its own; R's wording
 is not reproduced and parity only checks that both sides fail. Where R fails on
-valid input because of a bug, return the right result instead (see rule 1). `warning()` → `warnings.warn()`.
+valid input because of a bug, return the right result instead (see section 1). `warning()` → `warnings.warn()`.
 `message()` progress chatter → nothing, or `rich` output gated on
 `pytacheck.config.verbose()`. `logger()` → `pytacheck.log.logger()`.
 
@@ -253,7 +309,8 @@ def marginal(paper, ...):                  # same name as the file; R's argument
   module_report() print them.
 * Return the same list elements, in the same order, as the R module.
 * `report` is a string or a list of blocks: markdown strings, `scroll_table(df, ...)`,
-  `collapse_section([...])`. Prose must match R exactly (it is compared).
+  `collapse_section([...])`. Prose follows R's wording and is compared with it; a
+  corrected typo or plural is a U-entry whose marks carry `r_text` (section 1).
 * `format_ref(bibentry)` in R: run R once to get the HTML (`cat(format_ref(x))`) and
   store it as a string constant, as `marginal.py` does.
 * `keywords` must stay exactly R's (one section keyword per upstream module). Declare
@@ -270,8 +327,9 @@ All network access goes through `pytacheck.http` (port of `.batch_query()` and t
 httr2 retry policy): `http.request(method, url, ...)` returns the response (error
 statuses are returned, not raised) or `None` after connection failures;
 `http.batch_query(urls, ...)` fetches many URLs politely; `http.skip_on_api_limit()`
-reproduces the `skip_on_api_limit` option; `http.Throttle` is `req_throttle()`.
-Never create your own `httpx.Client`.
+reproduces the `skip_on_api_limit` option; `http.Throttle` is `req_throttle()`;
+`http.resp_json(resp)` parses a JSON body (the content type is checked
+case-insensitively). Never create your own `httpx.Client`.
 
 Tests replay metacheck's recorded responses exactly (httptest2 file naming is
 reproduced, including R's `digest()` hashes):
@@ -301,15 +359,56 @@ pytacheck must be substantially faster than metacheck on large corpora:
 * HTTP: reuse one `httpx.Client` with HTTP/2 and connection pooling; respect rate
   limits; cache responses on disk as metacheck does.
 
-## 6. Working rules for parallel porting agents
+## 6. Working rules for parallel lanes and agents
 
-* Only create/edit files in your assigned area (source package, `tests/<area>/`,
-  `parity/cases/<area>*.yaml`, `parity/golden/<area>*/`, `porting/map/<area>.toml`).
+Work is split into lanes that run in parallel: porting areas, and the right-sizing
+lanes listed at the end of this section. File ownership is disjoint:
+
+* Only create or edit files in your lane's area (source package, `tests/<area>/`,
+  `parity/cases/<area>*.yaml`, `parity/golden/<area>*/`, `porting/map/<area>.toml`,
+  and your lane's `parity/divergences/<lane>.yaml`).
+* Shared files belong to the harness lane: `pyproject.toml`, `uv.lock`,
+  `pytacheck/__init__.py`, `src/pytacheck/http.py`, `_json.py`, `_values.py`, the
+  docs, the parity core (`parity/*.py`, `parity/r/`) and CI. Other lanes only
+  receive minimal bug fixes there and say so in their report; list new dependencies
+  and exports in the report instead of editing them. Do not `pip install`.
 * Foundation files (`src/pytacheck/_r/`, `papers/`, `module.py`, `text/search.py`,
-  `text/expand.py`, `report/blocks.py`, `parity/*.py`, `parity/r/`) may only receive
-  minimal bug fixes; say so in your report.
-* Do not edit `pyproject.toml`, `pytacheck/__init__.py` or `uv.lock`; list new
-  dependencies and exports in your report instead. Do not `pip install`.
+  `text/expand.py`, `report/blocks.py`) likewise only receive minimal bug fixes unless
+  they are your lane's.
 * Do not commit; the orchestrator commits.
 * Use the R reference at `$PYTACHECK_RSCRIPT` to explore R behaviour
   (`LANG=C.UTF-8 $PYTACHECK_RSCRIPT -e 'library(metacheck); ...'`).
+
+Cross-lane rules:
+
+* **Never delete a function another lane imports.** Point it at the shared primitive
+  (`pytacheck._values`, `pytacheck._json`, `pytacheck.http`) or leave it; the closing
+  step removes it once nothing imports it. Kept for now: `llm._rds.RInt` (imported by
+  `datacheck/files.py`), `text.json_expand.as_numeric` (`db/crossref.py`,
+  `text/extract.py`), `stats._rmath.as_numeric` (`archives/download.py`,
+  `archives/zip_peek.py`), `datacheck.files._r_as_numeric` (`archives/dryad.py`,
+  `archives/dataverse.py`), `datacheck._strip_llm_wrapper` (`modules/_power.py`,
+  `modules/_codebook.py`) and the `datacheck._files_rdata` API (`io/corpus.py`,
+  `repro/tables.py`).
+* **Consolidate private helpers in your own files.** Replace a file's private
+  `_is_na`/`_chr`/`_dollar`/`as_numeric` copies with `pytacheck._values` when you
+  touch it, and check the area's parity after each file. R-worded error messages are
+  reworded when their site is touched, not in a blanket pass.
+* **Marks.** A lane marks its divergences in its own `parity/divergences/<lane>.yaml`;
+  a case is marked in exactly one file. Lock files are per area
+  (`parity/lock/<area>.json`, one line per case). A lane that changes a case already
+  marked by another lane re-locks it and may edit only that mark's `reason` line.
+* **IDs.** Lanes append D- and U-rows to `docs/UPSTREAM_ISSUES.md` only within their
+  reserved section and ID range.
+* **Order.** The regex lane merges first, because it shifts regex behaviour in every
+  area; the others rebase on it and re-lock their areas.
+
+| lane | scope | divergences file | reserved IDs |
+|---|---|---|---|
+| 1 | harness, policy, shared primitives | `core.yaml`, `deliberate.yaml`, `prose.yaml` | — |
+| 2 | regex engine and the R foundation (`_r`) | `regex.yaml` | D29-D32, U159-U162 |
+| 3 | data files and data modules | `data.yaml` | D33-D38, U163-U170 |
+| 4 | code checks and reproducibility | `code.yaml` | D39-D43, U171-U176 |
+| 5 | text modules, statistics and paper tables | `text.yaml` | D44-D48, U177-U183 |
+| 6 | LLM client | `llm.yaml` | D49-D52, U184-U187 |
+| 7 | archives, databases, paper I/O, stat outputs, report and repository modules | `archives.yaml`, `io.yaml` | D53-D58, U188-U194 |
