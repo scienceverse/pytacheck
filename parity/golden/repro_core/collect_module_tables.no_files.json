@@ -1,0 +1,16 @@
+{
+  "id": "collect_module_tables.no_files",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "No *.rds files found in /home/user/pytacheck/tests/repro_core/fixtures/scripts. Did the run call capture_module_tables()?"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [],
+    "v": []
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

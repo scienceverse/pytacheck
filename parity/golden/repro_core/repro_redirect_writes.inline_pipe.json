@@ -1,0 +1,48 @@
+{
+  "id": "repro_redirect_writes.inline_pipe",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "call_text",
+      "replacement",
+      "redirected_name",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(paste0(\"dir/\", Sys.Date(), \".csv\"), row.names = FALSE)",
+          "ggsave(filename = file.path(\"figs\", \"fig1.png\"), plot = p)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(\"{{REPRO_OUTPUT}}write_1.csv\", row.names = FALSE)",
+          "ggsave(\"{{REPRO_OUTPUT}}write_2.png\", plot = p)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "write_1.csv",
+          "write_2.png"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -120,3 +120,20 @@ cc_report_tables <- function(name, ...) {
     tb
   })
 }
+
+# Machine-independent paths in a code_check output: the repository root becomes
+# <ROOT> and the per-session download directory <DL> (download cases).
+cc_norm <- function(mo) {
+  root <- normalizePath(".")
+  norm <- function(x) {
+    x <- gsub(root, "<ROOT>", x, fixed = TRUE)
+    sub("^.*/metacheck-repo-files/", "<DL>/", x)
+  }
+  for (cl in intersect(c("file_url", "file_location", "error"), names(mo$table))) {
+    mo$table[[cl]] <- norm(mo$table[[cl]])
+  }
+  fl <- mo$version_pin$file_location
+  if (length(fl) > 0) mo$version_pin$file_location <- stats::setNames(norm(unname(fl)), names(fl))
+  mo$report <- norm(mo$report)
+  mo
+}

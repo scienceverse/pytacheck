@@ -5,6 +5,11 @@
 # (tests/mod_codebook/fixtures/make_fixtures.R -> fixtures/repos/, fixtures/dc/;
 # rebuilt by tests/mod_codebook/cbc_helpers.R and helpers.py); LLM tiers are
 # parity-tested with a deterministic llm() mock (fixtures/llm_mock.json).
+# Review cases: parity/cases/mod_codebook_review.yaml (written by
+# tests/mod_codebook/make_review_cases.py; fixtures from
+# tests/mod_codebook/fixtures/make_review_fixtures.R -> fixtures/dc_review/,
+# adversarial LLM answers in fixtures/llm_review.json), goldens
+# parity/golden/mod_codebook_review/.
 [files]
 "inst/modules/codebook_check.R" = ["src/pytacheck/modules/codebook_check.py", "src/pytacheck/modules/_codebook.py"]
 

@@ -716,12 +716,9 @@ def _codebook_check(
                 "Status": _col_or_na(labels_df, "label_status"),
             }
         )
+        col_keys = [_sort_na_last(c) for c in label_tbl["Column"].tolist()]
         order = sorted(
-            range(len(label_tbl)),
-            key=lambda i: (
-                _sort_na_last(doc_state[i]),
-                _sort_na_last(label_tbl["Column"].iloc[i]),
-            ),
+            range(len(label_tbl)), key=lambda i: (_sort_na_last(doc_state[i]), col_keys[i])
         )
         label_tbl = label_tbl.iloc[order].reset_index(drop=True)
         report.append("#### Column Documentation")

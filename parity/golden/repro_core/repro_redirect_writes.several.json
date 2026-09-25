@@ -1,0 +1,64 @@
+{
+  "id": "repro_redirect_writes.several",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "call_text",
+      "replacement",
+      "redirected_name",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "save(a, b, file = \"ab.RData\")",
+          "save.image('ws.RData')",
+          "write_csv(res, \"C:\\\\out\\\\res.csv\")",
+          "write_xlsx(list(a = d), \"t.xlsx\")",
+          "fwrite(dt, \"big.csv.gz\")",
+          "fwrite(dt, sprintf(\"%s.tsv\", nm))"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "save(a, b,\"{{REPRO_OUTPUT}}ab.RData\")",
+          "save.image(\"{{REPRO_OUTPUT}}ws.RData\")",
+          "write_csv(res,\"{{REPRO_OUTPUT}}res.csv\")",
+          "write_xlsx(list(a = d),\"{{REPRO_OUTPUT}}t.xlsx\")",
+          "fwrite(dt,\"{{REPRO_OUTPUT}}big.csv.gz\")",
+          "fwrite(dt,\"{{REPRO_OUTPUT}}write_6.tsv\")"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ab.RData",
+          "ws.RData",
+          "res.csv",
+          "t.xlsx",
+          "big.csv.gz",
+          "write_6.tsv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

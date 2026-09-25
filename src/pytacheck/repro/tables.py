@@ -17,7 +17,9 @@ through pytacheck's R unserializer, so results move between the two.
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
+import importlib
 import json
 import math
 import os
@@ -134,6 +136,17 @@ def _encode(x: Any) -> Any:
         return {"$set": [_encode(v) for v in x]}
     if isinstance(x, list):
         return [_encode(v) for v in x]
+    if dataclasses.is_dataclass(x) and not isinstance(x, type):
+        cls = type(x)
+        if cls.__module__.startswith("pytacheck."):
+            return {
+                "$dataclass": {
+                    "type": f"{cls.__module__}:{cls.__qualname__}",
+                    "fields": {
+                        f.name: _encode(getattr(x, f.name)) for f in dataclasses.fields(x) if f.init
+                    },
+                }
+            }
     warnings.warn(
         f"capture_module_tables(): a {type(x).__name__} cannot be saved; its repr is kept",
         stacklevel=3,
@@ -141,15 +154,13 @@ def _encode(x: Any) -> Any:
     return {"$repr": repr(x), "$type": type(x).__name__}
 
 
-def _decode_series(spec: Mapping[str, Any], n: int | None = None) -> pd.Series:
+def _decode_series(spec: Mapping[str, Any]) -> pd.Series:
     dtype = spec.get("dtype", "object")
     raw = spec.get("data", [])
     if dtype == "category":
         cats = [_decode(c) for c in spec.get("categories", [])]
         values = [_decode(v) for v in raw]
-        return pd.Series(
-            pd.Categorical(values, categories=cats, ordered=bool(spec.get("ordered")))
-        )
+        return pd.Series(pd.Categorical(values, categories=cats, ordered=bool(spec.get("ordered"))))
     if dtype.startswith("datetime64"):
         return pd.Series(pd.to_datetime(raw)).astype(dtype)
     values = [_decode(v) for v in raw]
@@ -218,9 +229,27 @@ def _decode(x: Any) -> Any:
             if attrs:
                 df.attrs.update(_decode(attrs))
             return df
+        if key == "$dataclass":
+            return _decode_dataclass(val)
         if key == "$repr":
             return x["$repr"]
     return {k: _decode(v) for k, v in x.items()}
+
+
+def _decode_dataclass(spec: Mapping[str, Any]) -> Any:
+    """A pytacheck dataclass (e.g. a report table block); its fields if it cannot be rebuilt."""
+    fields = {k: _decode(v) for k, v in (spec.get("fields") or {}).items()}
+    module_name, _, qualname = str(spec.get("type", "")).partition(":")
+    if module_name.startswith("pytacheck."):
+        try:
+            obj: Any = importlib.import_module(module_name)
+            for part in qualname.split("."):
+                obj = getattr(obj, part)
+            if isinstance(obj, type) and dataclasses.is_dataclass(obj):
+                return obj(**fields)
+        except Exception:  # noqa: S110 - fall back to the plain fields
+            pass
+    return fields
 
 
 # ---------------------------------------------------------------------------
@@ -284,7 +313,11 @@ def _frame_from_r(df: Any) -> pd.DataFrame:
     names = (names + [""] * len(cols))[: len(cols)]
     series: list[pd.Series] = []
     for col in cols:
-        if isinstance(col, rd.RObject) and col.type == rd.VECSXP and "data.frame" not in col.classes:
+        if (
+            isinstance(col, rd.RObject)
+            and col.type == rd.VECSXP
+            and "data.frame" not in col.classes
+        ):
             s = pd.Series([None] * n, dtype=object)
             for i, v in enumerate((col.value or [])[:n]):
                 s.iat[i] = _from_r(v, unbox=False)
@@ -346,7 +379,7 @@ def _elements(mo: Any) -> list[tuple[str, Any]]:
     from pytacheck.module import ModuleOutput
 
     if isinstance(mo, ModuleOutput):
-        return [(k, mo.get(k)) for k in mo.keys()]
+        return [(k, mo.get(k)) for k in mo.keys()]  # noqa: SIM118 - not a dict
     if isinstance(mo, Mapping):
         return [(str(k), v) for k, v in mo.items()]
     return []
@@ -482,7 +515,9 @@ def collect_module_tables(
             continue
         if "paper_id" not in el.columns and j.get("paper_id") is not None:
             el = el.copy()
-            el["paper_id"] = pd.Series([str(j["paper_id"])] * len(el), dtype="string", index=el.index)
+            el["paper_id"] = pd.Series(
+                [str(j["paper_id"])] * len(el), dtype="string", index=el.index
+            )
         parts.append(el.reset_index(drop=True))
     if not parts:
         warnings.warn(
@@ -496,9 +531,7 @@ def collect_module_tables(
     return out.loc[:, front + [c for c in out.columns if c not in front]]
 
 
-def _load_module_tables(
-    results_dir: str | os.PathLike[str], paper_id: str, paper: Any
-) -> Any:
+def _load_module_tables(results_dir: str | os.PathLike[str], paper_id: str, paper: Any) -> Any:
     """Load a paper's saved module outputs back into a module-output chain.
 
     Port of ``R/module.R::.load_module_tables()``. Reads
@@ -542,6 +575,4 @@ def _load_module_tables(
             extras=mo,
         )
     last = list(prev_outputs.values())[-1]
-    return replace(
-        last, prev_outputs=dict(prev_outputs), summary_table=saved.get("summary_table")
-    )
+    return replace(last, prev_outputs=dict(prev_outputs), summary_table=saved.get("summary_table"))

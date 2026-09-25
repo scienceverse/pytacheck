@@ -1,0 +1,93 @@
+{
+  "id": "repro_rewrite_paths.calls_mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "ref",
+      "basename",
+      "matched",
+      "target",
+      "ambiguous",
+      "n_candidates",
+      "is_call"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/demographics.csv",
+          "scores.csv",
+          "data\\\\Demographics.CSV",
+          "sprintf(\"%s/unknown.csv\", other)",
+          "file.path(\"%s/scores.csv\", wd)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demographics.csv",
+          "scores.csv",
+          "demographics.csv",
+          "unknown.csv",
+          "scores.csv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          false,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "study-ex2/data/study-demographics_data.csv",
+          "data/scores_data.csv",
+          "study-ex2/data/study-demographics_data.csv",
+          null,
+          "data/scores_data.csv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          1,
+          2,
+          0,
+          1
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

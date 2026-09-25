@@ -1,0 +1,84 @@
+{
+  "id": "repro_dependencies.pooled_files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "package",
+      "source",
+      "ref",
+      "base"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "abc",
+          "Abc",
+          "dplyr",
+          "edgeR",
+          "ggplot2",
+          "grid",
+          "lattice",
+          "Matrix",
+          "pkgname",
+          "remotes",
+          "zzz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cran",
+          "cran",
+          "cran",
+          "bioc",
+          "github",
+          "base",
+          "base",
+          "base",
+          "url",
+          "cran",
+          "cran"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "tidyverse/ggplot2@main",
+          null,
+          null,
+          null,
+          "https://x.org/pkgname_2.1.tar.gz",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          false,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

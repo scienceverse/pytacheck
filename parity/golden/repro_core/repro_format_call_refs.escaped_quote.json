@@ -1,0 +1,44 @@
+{
+  "id": "repro_format_call_refs.escaped_quote",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "call_text",
+      "fmt",
+      "resolved",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sprintf(\"a\\\"b%s.csv\", p)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a\\\"b%s.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a\\\"bq.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "repro_dependencies.two_github_refs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "package",
+      "source",
+      "ref",
+      "base"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "remotes",
+          "foo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cran",
+          "url"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "http://x.org/src/foo_1.2.tar.gz"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

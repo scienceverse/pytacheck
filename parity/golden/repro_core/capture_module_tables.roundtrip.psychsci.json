@@ -1,0 +1,534 @@
+{
+  "id": "capture_module_tables.roundtrip.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "collect_all",
+      "collect_sum",
+      "loaded",
+      "prev",
+      "marginal"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p < .001",
+              "p < .001",
+              "p < .001",
+              "p = .016",
+              "p < .001",
+              "p < .001"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              99,
+              100,
+              101,
+              102,
+              105,
+              105
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8,
+              8,
+              8,
+              8,
+              8,
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "For hit rates (see Fig. <ref type=\"figure\" target=\"#fig_2\">3<\/ref>), a 3 (complexity level: simple, intermediate, complex) × 2 (TMS site: hand, lip) × 2 (video type: hand action, mouth action) analysis of variance (ANOVA) revealed a main effect of complexity level, F(2, 38) = 16.58, p &lt; .001, ηp² = .47; as complexity level increased, hit rates decreased.",
+              "A main effect of video type also occurred, F(1, 19) = 33.56, p &lt; .001, ηp² = .64; specifically, hit rates were lower for mouth actions than for hand actions.",
+              "There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p &lt; .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.",
+              null,
+              "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p &lt; .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p &lt; .001, ηp² = .73.",
+              "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p &lt; .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p &lt; .001, ηp² = .73."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<",
+              "<",
+              "<",
+              "=",
+              "<",
+              "<"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.001,
+              0.001,
+              0.001,
+              0.016,
+              0.001,
+              0.001
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "marginal",
+          "p_values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "module_output",
+        "names": [
+          "table",
+          "report",
+          "traffic_light",
+          "summary_text",
+          "summary_table",
+          "na_replace",
+          "module",
+          "title",
+          "section"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted",
+              "paper_id",
+              "header",
+              "section_type",
+              "p_comp",
+              "p_value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p < .001",
+                  "p < .001",
+                  "p < .001",
+                  "p = .016",
+                  "p < .001",
+                  "p < .001"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  99,
+                  100,
+                  101,
+                  102,
+                  105,
+                  105
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  8,
+                  8,
+                  8,
+                  8,
+                  8,
+                  8
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "For hit rates (see Fig. <ref type=\"figure\" target=\"#fig_2\">3<\/ref>), a 3 (complexity level: simple, intermediate, complex) × 2 (TMS site: hand, lip) × 2 (video type: hand action, mouth action) analysis of variance (ANOVA) revealed a main effect of complexity level, F(2, 38) = 16.58, p &lt; .001, ηp² = .47; as complexity level increased, hit rates decreased.",
+                  "A main effect of video type also occurred, F(1, 19) = 33.56, p &lt; .001, ηp² = .64; specifically, hit rates were lower for mouth actions than for hand actions.",
+                  "There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p &lt; .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.",
+                  null,
+                  "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p &lt; .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p &lt; .001, ηp² = .73.",
+                  "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p &lt; .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p &lt; .001, ηp² = .73."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797613520608"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Results",
+                  "Results",
+                  "Results",
+                  "Results",
+                  "Results",
+                  "Results"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<",
+                  "<",
+                  "<",
+                  "=",
+                  "<",
+                  "<"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.001,
+                  0.001,
+                  0.001,
+                  0.016,
+                  0.001,
+                  0.001
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p < .001\", \"p < .001\", \"p < .001\", \"p = .016\", \n\"p < .001\", \"p < .001\"), Sentence = c(\"For hit rates (see Fig. 3), a 3 (complexity level: simple, intermediate, complex) × 2 (TMS site: hand, lip) × 2 (video type: hand action, mouth action) analysis of variance (ANOVA) revealed a main effect of complexity level, F(2, 38) = 16.58, p < .001, ηp² = .47; as complexity level increased, hit rates decreased.\", \n\"A main effect of video type also occurred, F(1, 19) = 33.56, p < .001, ηp² = .64; specifically, hit rates were lower for mouth actions than for hand actions.\", \n\"There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p < .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.\", \n\"More important, there was a significant interaction between TMS site and video type, F(1, 19) = 6.98, p = .016, ηp² = .27.\", \n\"For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73.\", \n\"For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73.\"\n)), row.names = c(NA, -6L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
+              "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "info"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We found 6 p-values"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "paper_id",
+              "marginal",
+              "p_values"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0956797613520608"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  6
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "all_p_values"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "all_p_values"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "general"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "marginal",
+          "all_p_values"
+        ]
+      },
+      {
+        "t": "module_output",
+        "names": [
+          "table",
+          "report",
+          "traffic_light",
+          "summary_text",
+          "na_replace",
+          "module",
+          "title",
+          "section"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted",
+              "paper_id",
+              "header",
+              "section_type"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No effects were described with terms related to 'marginally significant'."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "green"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "You described 0 effects with terms related to 'marginally significant'."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "marginal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "marginal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "general"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

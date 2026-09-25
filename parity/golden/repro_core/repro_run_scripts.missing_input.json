@@ -1,0 +1,110 @@
+{
+  "id": "repro_run_scripts.missing_input",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "file_name",
+      "outcome",
+      "error",
+      "error_type",
+      "undefined_var",
+      "stdout",
+      "stderr",
+      "script_lines",
+      "captures"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "missing_input.R",
+          "setwd_fail.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "errored",
+          "errored"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "! in callr subprocess.\nCaused by error in `file(file, \"rt\")`:\n! cannot open the connection",
+          "! in callr subprocess.\nCaused by error in `setwd(\"/nonexistent/author/dir\")`:\n! cannot change working directory"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "runtime",
+          "runtime"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "> dat <- read.csv(\"not_in_repo.csv\")",
+          "> setwd(\"/nonexistent/author/dir\")"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Error in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'not_in_repo.csv': No such file or directory",
+          "Error in setwd(\"/nonexistent/author/dir\") : \n  cannot change working directory"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "dat <- read.csv(\"not_in_repo.csv\")",
+              "summary(dat)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "setwd(\"/nonexistent/author/dir\")",
+              "x <- 1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

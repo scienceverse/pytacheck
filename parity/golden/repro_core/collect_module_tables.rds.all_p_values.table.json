@@ -1,0 +1,181 @@
+{
+  "id": "collect_module_tables.rds.all_p_values.table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "paper_id",
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "header",
+      "section_type",
+      "p_comp",
+      "p_value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p < .001",
+          "p < .001",
+          "p < .001",
+          "p = .016",
+          "p < .001",
+          "p < .001",
+          "p = 0.005",
+          "p =0.152",
+          "p > .05"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          99,
+          100,
+          101,
+          102,
+          105,
+          105,
+          15,
+          16,
+          17
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "For hit rates (see Fig. <ref type=\"figure\" target=\"#fig_2\">3<\/ref>), a 3 (complexity level: simple, intermediate, complex) × 2 (TMS site: hand, lip) × 2 (video type: hand action, mouth action) analysis of variance (ANOVA) revealed a main effect of complexity level, F(2, 38) = 16.58, p &lt; .001, ηp² = .47; as complexity level increased, hit rates decreased.",
+          "A main effect of video type also occurred, F(1, 19) = 33.56, p &lt; .001, ηp² = .64; specifically, hit rates were lower for mouth actions than for hand actions.",
+          "There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p &lt; .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.",
+          null,
+          "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p &lt; .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p &lt; .001, ηp² = .73.",
+          "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p &lt; .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p &lt; .001, ηp² = .73.",
+          null,
+          null,
+          "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_0\">2<\/ref>)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Results",
+          "Results",
+          "Results",
+          "Results",
+          "Results",
+          "Results",
+          "Procedure",
+          "Procedure",
+          "Procedure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results",
+          "results",
+          "results",
+          "results",
+          "results",
+          "results",
+          "method",
+          "method",
+          "method"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<",
+          "<",
+          "<",
+          "=",
+          "<",
+          "<",
+          "=",
+          "=",
+          ">"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.001,
+          0.001,
+          0.001,
+          0.016,
+          0.001,
+          0.001,
+          0.005,
+          0.152,
+          0.05
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

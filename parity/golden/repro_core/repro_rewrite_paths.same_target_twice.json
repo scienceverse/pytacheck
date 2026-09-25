@@ -1,0 +1,65 @@
+{
+  "id": "repro_rewrite_paths.same_target_twice",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "ref",
+      "basename",
+      "matched",
+      "target",
+      "ambiguous",
+      "n_candidates",
+      "is_call"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "demographics.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demographics.csv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "study-ex1/data/study-demographics_data.csv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -89,6 +89,22 @@ def module_cases() -> list[dict[str, Any]]:
         out.append(
             case(f"codebook_check.tables.{s}", f"cbc_run_tables('{s}')", f"H.cbc_run_tables('{s}')")
         )
+    # paper = NULL (local files only)
+    for s in ["empty", "rv_onlycb", "green"]:
+        c = case(
+            f"codebook_check.null_paper.{s}",
+            f"module_run(rv_prev_null('{s}'), 'codebook_check')",
+            f"__import__('pytacheck.module', fromlist=['_']).module_run("
+            f"RH.rv_prev_null('{s}'), 'codebook_check')",
+        )
+        if s == "empty":
+            c["known_divergence"] = (
+                "R bug: with paper = NULL (documented as allowed) and a zero-row data_check "
+                "structure, empty_summary() calls .pid(), whose paper_id(NULL) stops with "
+                "'paper must be a paper or paperlist object.'; pytacheck returns the intended "
+                "'na' result (paper_id NA) instead of failing the module."
+            )
+        out.append(c)
     for name, scen in PAPER_LISTS.items():
         vec_r = ", ".join(f"'{x}'" for x in scen)
         out.append(
@@ -106,12 +122,96 @@ def module_cases() -> list[dict[str, Any]]:
             "H.cbc_llm_run(None, 'scales', prev=H.cbc_prev_list(['rulesonly', 'scales_mixed']))",
         )
     )
+    for n in [1, 2]:
+        out.append(
+            case(
+                f"codebook_check.llm.pl_scales.max_calls_{n}",
+                "cbc_llm_run(NULL, 'scales', prev = cbc_prev_list(c('rulesonly', 'scales_mixed')), "
+                f"codebook_max_calls = {n}L)",
+                "H.cbc_llm_run(None, 'scales', prev=H.cbc_prev_list(['rulesonly', 'scales_mixed']), "
+                f"codebook_max_calls={n})",
+            )
+        )
+        out.append(
+            case(
+                f"codebook_check.llm.loop.max_calls_{n}",
+                f"cbc_llm_run('loop', 'selfgen', codebook_max_calls = {n}L)",
+                f"H.cbc_llm_run('loop', 'selfgen', codebook_max_calls={n})",
+            )
+        )
     for spec in ["rv_parse_ctx", "rv_parse_noctx"]:
         out.append(
             case(
                 f"codebook_check.llm.readme_text.{spec}",
                 f"cbc_llm_run('readme_text', '{spec}')",
                 f"H.cbc_llm_run('readme_text', '{spec}')",
+            )
+        )
+    # LLM tiers under fixed, adversarial answers (fixtures/llm_review.json)
+    for spec in ["odd", "odd_na"]:
+        for s in [
+            "rv_maxitem",
+            "rv_dupscale",
+            "conflict",
+            "fuzzy",
+            "readme_text",
+            "panas_high",
+            "scales_mixed",
+        ]:
+            out.append(
+                case(
+                    f"codebook_check.llm_{spec}.{s}",
+                    f"rv_llm_run('{s}', '{spec}')",
+                    f"RH.rv_llm_run('{s}', '{spec}')",
+                )
+            )
+    bibr12 = "'upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'"
+    psy = [
+        f"'upstream/metacheck/tests/testthat/fixtures/psychsci/{x}.json'"
+        for x in ("0956797613520608", "0956797614522816", "0956797614527830")
+    ]
+    psy_r = f"read(c({', '.join(psy)}))"
+    psy_py = f"__import__('pytacheck').read([{', '.join(psy)}])"
+    real = [
+        (
+            "odd.bibr12",
+            "odd",
+            f"cbc_prev('scales_mixed', paper = read({bibr12}))",
+            f"H.cbc_prev('scales_mixed', paper=__import__('pytacheck').read({bibr12}))",
+        ),
+        (
+            "odd.demo",
+            "odd",
+            "cbc_prev('scales_mixed', paper = demopaper())",
+            "H.cbc_prev('scales_mixed', paper=__import__('pytacheck').demopaper())",
+        ),
+        (
+            "odd.psychsci",
+            "odd",
+            f"cbc_prev_papers({psy_r}, c('task', 'rv_maxitem', 'scales_mixed'))",
+            f"H.cbc_prev_papers({psy_py}, ['task', 'rv_maxitem', 'scales_mixed'])",
+        ),
+        (
+            "odd_selfgen.psychsci",
+            "odd_selfgen",
+            f"cbc_prev_papers({psy_r}, c('loop', 'rv_dupscale', 'rv_qblock'))",
+            f"H.cbc_prev_papers({psy_py}, ['loop', 'rv_dupscale', 'rv_qblock'])",
+        ),
+    ]
+    for cid, spec, prev_r, prev_py in real:
+        out.append(
+            case(
+                f"codebook_check.llm_{cid}",
+                f"rv_llm_run(NULL, '{spec}', prev = {prev_r})",
+                f"RH.rv_llm_run(None, '{spec}', prev={prev_py})",
+            )
+        )
+    for s in ["loop", "rv_qblock"]:
+        out.append(
+            case(
+                f"codebook_check.llm_odd_selfgen.{s}",
+                f"rv_llm_run('{s}', 'odd_selfgen')",
+                f"RH.rv_llm_run('{s}', 'odd_selfgen')",
             )
         )
     for s in ["rv_dupscale", "rv_maxitem", "orphan", "loop", "scales_mixed", "panas_high"]:

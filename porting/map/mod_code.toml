@@ -1,0 +1,16 @@
+# R source -> Python location for the code_check module (see docs/PORTING.md).
+# Parity: parity/cases/mod_code.yaml (written by tests/mod_code/make_cases.py),
+# goldens parity/golden/mod_code/. The module cases chain code_check onto a
+# synthetic repo_check (or data_check) output describing local fixture
+# repositories (tests/mod_code/scenarios.json; built by tests/mod_code/cc_helpers.R
+# and helpers.py), as metacheck's own tests do; `report_tables.*` cases compare
+# the data of the report's table blocks. The code scanners themselves are
+# R/code_check.R (porting/map/codecheck.toml).
+[files]
+"inst/modules/code_check.R" = ["src/pytacheck/modules/code_check.py", "src/pytacheck/modules/_code_check.py"]
+
+[functions]
+"module:code_check" = "pytacheck.modules.code_check:code_check"
+# closures inside code_check()
+"pkg_union" = "pytacheck.codecheck.core:code_packages"
+"has_col" = "pytacheck.modules._code_check:summary_table"

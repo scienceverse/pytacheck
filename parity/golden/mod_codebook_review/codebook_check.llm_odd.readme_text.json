@@ -1,0 +1,491 @@
+{
+  "id": "codebook_check.llm_odd.readme_text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "codebook_vars",
+      "scale_violations",
+      "scales_osd",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "codebook_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Codebook Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "source_file",
+          "column_name",
+          "group",
+          "label",
+          "codebook_variable",
+          "label_source",
+          "label_status",
+          "label_method",
+          "value_labels",
+          "missing_values",
+          "question",
+          "coding_instructions",
+          "scale_group",
+          "scale",
+          "scale_confidence",
+          "scale_source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "mood",
+              "sleep_hours",
+              "grp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Positive affect",
+              "NA",
+              "Condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "mood",
+              "sleep_hours",
+              "grp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "README.md",
+              "README.md",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "labelled",
+              "ambiguous_experiment",
+              "labelled"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "rules",
+              null,
+              "rules"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
+          "We examined 1 codebook/README/label source and 4 data columns across 1 file.",
+          "#### Column Documentation",
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"sleep_hours\", \"id\", \"grp\", \"mood\"), \n    Documented = c(\"conflict\", \"no\", \"yes\", \"yes\"), Label = c(\"NA\", \n    NA, \"Condition\", \"Positive affect\"), \"Codebook Variable\" = c(\"sleep_hours\", \n    NA, \"grp\", \"mood\"), Source = c(\"README.md\", NA, \"README.md\", \n    \"README.md\"), Status = c(\"ambiguous_experiment\", \"unlabelled\", \n    \"labelled\", \"labelled\")), row.names = c(NA, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "#### Conflicting or Ambiguous Definitions\n\n1 matched column has more than one codebook definition, or a definition scoped to a different experiment. These are matched to a codebook but need manual resolution before the label can be trusted.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Column = \"sleep_hours\", \"Conflicting Labels\" = \"NA\", \n    Sources = \"README.md\", Issue = \"ambiguous_experiment\"), row.names = 3L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "LLM model 'mock/rv' reviewed ambiguous cases (parsed 1 file, matched 0 columns, merged 0 labels)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  3 of 4 data columns (75%) are documented in a codebook; 1 is not.\n-  1 matched column has a conflicting or ambiguous label that needs resolution."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "codebook_variable",
+          "label",
+          "codebook_source",
+          "group",
+          "parse_method",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mood",
+              "sleep_hours",
+              "grp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Positive affect",
+              null,
+              "Condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "README.md",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex3",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "llm",
+              "llm",
+              "llm"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "documented",
+          "n_values",
+          "values",
+          "kinds"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

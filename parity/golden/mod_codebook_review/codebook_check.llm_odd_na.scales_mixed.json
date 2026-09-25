@@ -1,0 +1,2602 @@
+{
+  "id": "codebook_check.llm_odd_na.scales_mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "codebook_vars",
+      "scale_violations",
+      "scales_osd",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "codebook_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Codebook Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 35,
+        "names": [
+          "paper_id",
+          "source_file",
+          "column_name",
+          "group",
+          "label",
+          "codebook_variable",
+          "label_source",
+          "label_status",
+          "label_method",
+          "value_labels",
+          "missing_values",
+          "question",
+          "coding_instructions",
+          "scale_group",
+          "scale",
+          "scale_confidence",
+          "scale_source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "AQ01",
+              "AQ02",
+              "AQ03",
+              "AQ04",
+              "AQ05",
+              "AQ06",
+              "AQ07",
+              "AQ08",
+              "AQ09",
+              "AQ10",
+              "AQ11",
+              "AQ12",
+              "AQ_SUM",
+              "swls_1",
+              "swls_2",
+              "swls_3",
+              "swls_4",
+              "swls_5",
+              "pss_1",
+              "pss_2",
+              "pss_3",
+              "pss_4",
+              "pss_5",
+              "pss_6",
+              "pss_7",
+              "pss_8",
+              "pss_9",
+              "pss_10",
+              "bfi_1",
+              "bfi_2",
+              "bfi_3",
+              "bfi_4",
+              "bfi_5",
+              "bfi_6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Satisfaction With Life Scale",
+              "Satisfaction With Life Scale",
+              "Satisfaction With Life Scale",
+              "Satisfaction With Life Scale",
+              "Satisfaction With Life Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              "Perceived Stress Scale",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "high",
+              "high",
+              "high",
+              "high",
+              "high",
+              "high",
+              "high",
+              "high",
+              "high",
+              "high",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              "matched",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
+          "We examined 0 codebook/README/label sources and 35 data columns across 1 file.",
+          "No codebook or README documentation was found, so no data columns could be matched to variable definitions.",
+          "#### Scales",
+          "We detected 4 column groups (by shared abbreviation) that look like scales; 2 were matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"survey.csv\", \"survey.csv\", \"survey.csv\", \n\"survey.csv\"), Abbrev = c(\"AQ\", \"SWLS\", \"PSS\", \"BFI\"), Columns = c(12L, \n5L, 10L, 6L), \"Max item\" = c(\"12\", \"5\", \"10\", \"6\"), Scale = c(\"— not matched to a named scale —\", \n\"Satisfaction With Life Scale\", \"Perceived Stress Scale\", \"— not matched to a named scale —\"\n), Confidence = c(\"\", \"medium\", \"high\", \"\"), Source = c(\"\", \"matched\", \n\"matched\", \"\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
+          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\").",
+          "LLM model 'mock/rv' reviewed ambiguous cases (parsed 0 files, matched 0 columns, merged 0 labels)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no codebook or README documentation for the 35 extracted data columns."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              35
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              35
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "codebook_variable",
+          "label",
+          "codebook_source",
+          "group",
+          "value_labels",
+          "missing_values",
+          "question",
+          "coding_instructions",
+          "parse_method",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "documented",
+          "n_values",
+          "values",
+          "kinds"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          ""
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "aq"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "AQ"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          4
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          4
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "observed"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ01"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ01"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ02"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ02"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ03"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ03"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ04"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ04"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ05"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ05"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ06"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ06"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ07"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ07"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ08"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ08"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ09"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ09"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ10"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ10"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ11"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ11"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ12"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ12"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "unnamed_block"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "A coherent block of same-prefix rating columns detected in the data, but NOT named: neither a known instrument nor a construct metacheck could infer from the available text. Recorded for its structure (items + response scale) only."
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "survey.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          12
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          12
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Satisfaction With Life Scale"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "satisfaction_with_life_scale"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "SWLS"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          7
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          7
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "observed"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "swls_5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "dictionary"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "medium"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "survey.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Perceived Stress Scale"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "perceived_stress_scale"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "PSS"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "observed"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_6"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_6"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_7"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_7"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_8"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_8"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_9"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_9"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_10"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "pss_10"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "dictionary"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "high"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "survey.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          10
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          10
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          ""
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "bfi"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "BFI"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "observed"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_6"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "bfi_6"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "unnamed_block"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "A coherent block of same-prefix rating columns detected in the data, but NOT named: neither a known instrument nor a construct metacheck could infer from the available text. Recorded for its structure (items + response scale) only."
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "survey.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          6
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          6
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

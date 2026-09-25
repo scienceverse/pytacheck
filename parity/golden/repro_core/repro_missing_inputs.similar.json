@@ -1,0 +1,68 @@
+{
+  "id": "repro_missing_inputs.similar",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "basename",
+      "status",
+      "detail",
+      "similar_to"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "scores_v1.csv",
+          "x.csv",
+          "abcd.csv",
+          "survey.csv",
+          "demographics.csv",
+          "notes.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "absent",
+          "absent",
+          "absent",
+          "absent",
+          "in_repo_not_downloaded",
+          "absent",
+          "absent"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "referenced file is not present in the repository, but a similarly-named file exists: data.xlsx",
+          "referenced file is not present in the repository, but a similarly-named file exists: scores_v2.csv",
+          "referenced file is not present in the repository, but a similarly-named file exists: y.csv",
+          "referenced file is not present in the repository, but a similarly-named file exists: abce.csv",
+          "referenced file is listed in the repository but was not downloaded",
+          "referenced file is not present in the repository, but a similarly-named file exists: demographix.csv",
+          "referenced file is not present in the repository, but a similarly-named file exists: notes2.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.xlsx",
+          "scores_v2.csv",
+          "y.csv",
+          "abce.csv",
+          null,
+          "demographix.csv",
+          "notes2.txt"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

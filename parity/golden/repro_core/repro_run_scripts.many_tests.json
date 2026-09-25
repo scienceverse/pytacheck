@@ -1,0 +1,395 @@
+{
+  "id": "repro_run_scripts.many_tests",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "file_name",
+      "outcome",
+      "error",
+      "error_type",
+      "undefined_var",
+      "stdout",
+      "stderr",
+      "script_lines",
+      "captures"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "many_tests.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ran_ok"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "> x <- c(a = 1, b = 2)\n> x\na b \n1 2 \n> invisible(5)\n> print(\"visible\")\n[1] \"visible\"\n> summary(c(1, 2, 3, 4))\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   1.00    1.75    2.50    2.50    3.25    4.00 \n> t.test(c(1, 2, 3, 4, 5), mu = 1)\n\n\tOne Sample t-test\n\ndata:  c(1, 2, 3, 4, 5)\nt = 2.8284, df = 4, p-value = 0.04742\nalternative hypothesis: true mean is not equal to 1\n95 percent confidence interval:\n 1.036757 4.963243\nsample estimates:\nmean of x \n        3 \n\n> chisq.test(matrix(c(10, 20, 30, 40), 2))\n\n\tPearson's Chi-squared test with Yates' continuity correction\n\ndata:  matrix(c(10, 20, 30, 40), 2)\nX-squared = 0.44643, df = 1, p-value = 0.504\n\n> cor.test(c(1, 2, 3, 4, 5), c(2, 1, 4, 3, 5))\n\n\tPearson's product-moment correlation\n\ndata:  c(1, 2, 3, 4, 5) and c(2, 1, 4, 3, 5)\nt = 2.3094, df = 3, p-value = 0.1041\nalternative hypothesis: true correlation is not equal to 0\n95 percent confidence interval:\n -0.2796400  0.9861962\nsample estimates:\ncor \n0.8 \n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x <- c(a = 1, b = 2)",
+              "x",
+              "invisible(5)",
+              "print(\"visible\")",
+              "summary(c(1, 2, 3, 4))",
+              "t.test(c(1, 2, 3, 4, 5), mu = 1)",
+              "chisq.test(matrix(c(10, 20, 30, 40), 2))",
+              "cor.test(c(1, 2, 3, 4, 5), c(2, 1, 4, 3, 5))"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "analysis",
+                  "method",
+                  "rows",
+                  "line",
+                  "call_text"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "One Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "One Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "c(1, 2, 3, 4, 5)"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "t",
+                              "df",
+                              "p",
+                              "mean of x",
+                              "conf.low",
+                              "conf.high"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  2.82842712474619
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  4
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.0474206555843196
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  3
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  1.03675683852244
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  4.96324316147756
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      6
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t.test(c(1, 2, 3, 4, 5), mu = 1)"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "analysis",
+                  "method",
+                  "rows",
+                  "line",
+                  "call_text"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Pearson's Chi-squared test with Yates' continuity correction"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Pearson's Chi-squared test with Yates' continuity correction"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "matrix(c(10, 20, 30, 40), 2)"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "X-squared",
+                              "df",
+                              "p"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.446428571428571
+                                ]
+                              },
+                              {
+                                "t": "int",
+                                "v": [
+                                  1
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.504035866452505
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "chisq.test(matrix(c(10, 20, 30, 40), 2))"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "analysis",
+                  "method",
+                  "rows",
+                  "line",
+                  "call_text"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Pearson's product-moment correlation"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Pearson's product-moment correlation"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "c(1, 2, 3, 4, 5) and c(2, 1, 4, 3, 5)"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "t",
+                              "df",
+                              "p",
+                              "cor",
+                              "conf.low",
+                              "conf.high"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  2.3094010767585
+                                ]
+                              },
+                              {
+                                "t": "int",
+                                "v": [
+                                  3
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.104088038661828
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.8
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  -0.279640041969355
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.986196193301271
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "cor.test(c(1, 2, 3, 4, 5), c(2, 1, 4, 3, 5))"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
