@@ -665,6 +665,7 @@ def test_install_report_and_dependency_unavailable(
 
     monkeypatch.setattr(core, "repro_install_deps", fake_install)
     monkeypatch.setattr(core, "repro_run_scripts", fake_run)
+    monkeypatch.setattr(core, "_rscript", lambda: "Rscript")  # both R steps are faked
     code_tbl = code_tbl_row(paper, "deps.R", str(area_fixtures / "scripts" / "deps.R"))
     mo = module_run(
         chain(paper, code_tbl, data_structure(paper, repro_fixture), PLAN),

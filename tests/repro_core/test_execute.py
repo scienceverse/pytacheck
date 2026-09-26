@@ -221,7 +221,8 @@ def test_run_scripts_undefined_variable(rscript: str, repro_fixtures: Path, tmp_
     assert out["undefined_var"].tolist() == ["some_var_no_script_defines"]
 
 
-def test_run_scripts_skip(tmp_path: Path) -> None:
+def test_run_scripts_skip(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(core, "_rscript", lambda: "Rscript")  # no script runs
     (tmp_path / "skip_me.R").write_text("x <- 1\n")
     out = repro_run_scripts(
         _run_tbl(tmp_path, ["skip_me.R"]), order=["skip_me.R"], skip=["skip_me.R"]
@@ -229,7 +230,8 @@ def test_run_scripts_skip(tmp_path: Path) -> None:
     assert out["outcome"].tolist() == ["skipped_missing_inputs"]
 
 
-def test_run_scripts_not_parsed(tmp_path: Path) -> None:
+def test_run_scripts_not_parsed(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(core, "_rscript", lambda: "Rscript")  # no script runs
     (tmp_path / "bad.R").write_text("x <- 1\n")
     out = repro_run_scripts(_run_tbl(tmp_path, ["bad.R"]), order=["bad.R"], parses={"bad.R": False})
     assert out["outcome"].tolist() == ["not_parsed"]

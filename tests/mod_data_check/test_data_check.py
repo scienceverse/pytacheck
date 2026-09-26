@@ -683,7 +683,9 @@ def test_distribution_figure(monkeypatch: pytest.MonkeyPatch) -> None:
     txt = report_text(mo)
     assert "#### Distributions" in txt
     assert '<img src="data:image/png;base64,' in txt
-    assert "Set `max_facets = 2` to plot them all." in txt
+    # id, age and score are numeric with at least 4 distinct values (R: plot_specs)
+    assert "Showing the first 1 of 3 numeric columns" in txt
+    assert "Set `max_facets = 3` to plot them all." in txt
 
 
 def test_distribution_figure_render_failure(monkeypatch: pytest.MonkeyPatch) -> None:
