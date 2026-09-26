@@ -1,15 +1,16 @@
 # Pytacheck architecture: an indexed-document core, and the rewrite onto it
 
-**Status.** Revision 2 (2026-09-26), after the spike and its review.
+**Status.** Revision 2 (2026-09-26), after the spike and its review; the baselines were re-measured after CORE-0 landed (§5.4).
 - It replaces the paused right-sizing lanes 3-7. Every de-emulation goal and every acceptance item of those lanes has a home in §3.3.
 - It absorbs `perf/batch/BATCH_DESIGN.md`; §2.8 lists only what changes.
 - Lane 2 (`_r/regex.py`, the R-dialect pattern compiler) stays the only pattern compiler.
-- Nothing in `/home/user/pytacheck` was edited.
+- Nothing in `/home/user/pytacheck` was edited, apart from CORE-0 (§4.3), which has now landed.
 
 **Evidence markers.** `scratchpad/` means `/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad`.
 - **(M)**: measured before the spike (sources in Appendix A).
 - **(S)**: measured by the spike: `arch/spike/results.json`, `arch/spike/out/*`, and the tree `arch/wt-spike` (commit bcf5429 on base fd5e6f3), at a load average of 1.1-2.6 on 4 cores.
 - **(R)**: measured by the spike's reviewer (`arch/review_*.py`, reproductions quoted in Appendix B).
+- **(C)**: measured after CORE-0, at commit 23704aec (accuracy fingerprint a312423fa7, the same as before CORE-0). The files are in a later session's scratchpad, `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/perf/` (Appendix A).
 - **(E)**: an estimate, always given with its basis.
 - The spike report (`arch/SPIKE_REPORT.md`, planned as `arch/spike/REPORT.md`) was never written. Every spike figure here comes from `results.json` and the tree.
 - Absolute times are ±10-20% on this shared VM. Ratios measured within one run are reliable.
@@ -21,6 +22,8 @@
 ### Why pytacheck is slow
 
 Module work runs only 2.3x faster than R **(M)**, because pytacheck replays R's pipeline step by step in pandas. For the 20 offline text modules, one paper costs **1,165 ms (M)**: 304 `text_search` calls (266 of them self-recursion, one per pattern), 290 rebuilds of the text ⋈ section table, 74 `paper_table` calls, 56 `bind_rows` calls and 64 merges. Matching itself is 2-9% of that. The repository chain opens 23 files 96 times, parses one CSV 3 times and one workbook 5-6 times **(M)**.
+
+**After CORE-0 (C).** CORE-0's patches alone halved the accuracy run, from 34.7 s to 16.9 s (5 interleaved A/B runs each, 34.7-36.4 s against 16.9-17.6 s), with every output byte-identical. The rest of the profile is flat. pandas object construction is 54% of self time, from 21,000 `Series`, 4,000 `DataFrame`, 1,072 merges and 13,800 `.loc`/`.iloc` reads. `text_search` is still called 817 times, and it rebuilds the text ⋈ section table 428 times. Regex matching is ≈ 7%, and 1,354 patterns are compiled per run. That is the cost the core removes (§5.4).
 
 ### What the spike proved, and what it did not
 
@@ -51,7 +54,7 @@ A core package, `src/pytacheck/core/` (≈ 3,300 lines, ≈ 700 of them moved; �
 | | Today **(M)** | Spike **(S)** | After the rewrite **(E)** |
 |---|---|---|---|
 | 20 offline text modules, CPU per paper | 1,165 ms | 4 modules: 427 → 36 ms | **≈ 255 ms budget (≈ 4.5x)**; ≈ 215 ms if CORE 1e cuts the boundary floor to 3 ms. Basis: §5.1 |
-| Accuracy matrix, Python side (439 outputs) | 35.7 s; R 91.6 s | 21.4 s, with only the façade and 4 modules | ≈ 15-18 s after CORE; ≈ 10-12 s at the end |
+| Accuracy matrix, Python side (439 outputs) | 35.7 s; R 91.6 s. **16.9 s after CORE-0 (C)** | 21.4 s, with only the façade and 4 modules | ≈ 14-15 s after CORE (was ≈ 15-18 s, already reached by CORE-0); ≈ 10-12 s at the end |
 | 1,000 offline XML papers, 19 modules | ≈ 12.7 min | – | ≈ 6-7 min at `-j 1`; ≈ 2-2.5 min at `-j 4` on idle cores (scaling unmeasured) |
 | `src/pytacheck` | 125,200 lines | core subset 1,975 lines | ≈ 98,000 (−22%), most of it from the lane 3/4/6/7 de-emulations |
 | Work | – | – | ≈ 78 agent-days in 27 packages; critical path ≈ 25 days (29 with slack) |
@@ -603,7 +606,7 @@ Each package has one owner and **exclusive file ownership** while active (§4.5 
 
 | Step | Days | Content | Gates | Deletes |
 |---|---:|---|---|---|
-| **CORE-0** | 1 | Rebase onto HEAD; land P2-casefold-grepl, P2-bind-rows-fast, P3-codebook-fold-once + P2-codebook-lazy-compile, P4-RW/L7-4, P3-memo-built-tables | accuracy 439/439 byte-identical; G5 against SNAP; the speedups reproduced (35.0 → 30.0 s, **M**) | – |
+| **CORE-0** | 1 | Rebase onto HEAD; land P2-casefold-grepl, P2-bind-rows-fast, P3-codebook-fold-once + P2-codebook-lazy-compile, P4-RW/L7-4, P3-memo-built-tables | accuracy 439/439 byte-identical; G5 against SNAP; the speedups reproduced (35.0 → 30.0 s, **M**). **Done: 34.7 → 16.9 s (C)** | – |
 | **CORE-1a** | 1.5 | `detector()`, `required_literals()`, `detect_many()`; I2; **I3 fuzz**; `PYTACHECK_LITERALS=off` | regex replay (30k calls), rcompat 174, text areas; I2 and I3 0 violations | – |
 | **CORE-1b** | **5** (was 3) | `core/doc.py`, `patterns.py`, `hits.py` with groups, `paragraphs()`, `sections()` (from SPIKE-2); `_derived` slot, trusted scopes, opaque token; `.tolist()` backing; V7 dedup; thread-safe stages; `papers/ids.py` (F6); façades (`text_search` incl. multi-pattern vectors, `text_expand`, `extract_*`, `paper_id`, one-paper `paper_table`) on the Doc; `Doc.from_records` + lazy `eq` | text 65, text_extract(+review), core 22, bibr12, grobid12, io (each + review), then **full `--strict` parity**; diff suites 0 differences against SNAP; I1 0 mismatches; accuracy identical except the F6 and lane-5 U-entries; counters incl. materialised and mixed-chain rows; `read(xml)` target from SPIKE-2; threaded-stage test; G6 | `_text_frame`, the per-pattern recursion, `_search_table`, the slow `paper_table` path, `_fast_concat`, `_ETHICS_ANY`, `_may_mention_ethics`, `_LIVE_ANY`, `_REPO_ANY`, `_FIRST_STAGE_ANY` and their proof tests; `_paste_groups`, `_semi_join`, `_section_headers` **only if SPIKE-2 passed V5** |
 | **CORE-1c** | 2 | `core/facets.py`, `refs.py` (per-Doc joins), `fuzzy.py`; `ref_table` façade; DOI dictionaries; **`json_expand` de-emulation** (null → NA, U) | mod_ref_* areas, `ref_table` 14, stats(+review), text_extract(+review); `ref_table` snapshot (merge order, many-to-many); json_expand's 9 + 3 U/D cases | `ref_table`'s merges; `extract.py`'s private pipelines; the jsonlite model (≈ 900 lines) |
@@ -743,8 +746,8 @@ code_decodes_per_file = 1
 
 | Workload | Today **(M)** | Measured so far | After CORE **(E)** | After CLOSE **(E)** |
 |---|---|---|---|---|
-| Accuracy matrix, Python side | 35.7 s; R 91.6 s | **21.4 s (S)**, façade + 4 modules, without CORE-0's patches | ≈ 15-18 s: spike 21.4 − P2 ≈ 3-5 − shared papers ≈ 1-2 **(M)**, with overlaps | ≈ 10-12 s: paper modules 21 × ≈ 0.26 s; repository ≈ 2 s; reads ≈ 1.2 s; harness ≈ 0.9 s |
-| Four spiked modules, accuracy run | 12 s | **3 s (S)** | – | – |
+| Accuracy matrix, Python side | 35.7 s; R 91.6 s | **21.4 s (S)**, façade + 4 modules, without CORE-0's patches. **16.9 s (C)**, CORE-0 alone | ≈ 14-15 s: 16.9 − the four spiked modules in shared mode (2.8 → ≈ 0.7 s, the spike's 12 → 3 s ratio, **S**) − shared papers ≈ 0.5 **(E)**. The old ≈ 15-18 s was reached by CORE-0 | ≈ 10-12 s: paper modules 21 × ≈ 0.26 s; repository ≈ 2 s; reads ≈ 1.2 s; harness ≈ 0.9 s |
+| Four spiked modules, accuracy run | 12 s | **3 s (S)**; **2.8 s after CORE-0 (C)** | – | – |
 | Module work against R | 2.3x | – | ≈ 4x | ≈ 6-8x |
 | 1,000 offline XML papers | ≈ 12.7 min | – | ≈ 8 min | ≈ 6-7 min at `-j 1` (≈ 0.26 s chain + 0.1 s read per paper); ≈ 2-2.5 min at `-j 4` on idle cores |
 | Repository chain (40 outputs) | 9.3-10.2 s | 2.5 s **(M, P3)** | 2.5 s | ≈ 2 s; opens 96 → ≤ 23 |
@@ -764,6 +767,49 @@ Network- and LLM-bound workloads keep BATCH_DESIGN §4.1's gains (rolling window
 | `module.py` + duplicated runners | ≈ 1,300 | ≈ 700 | one executor |
 | New core | 0 | + ≈ 3,300 (≈ 700 moved) | 1,975 for the spiked subset **(S)** + groups, full run/facets/output, fuzzy, errors, testing, `from_records` − index |
 | **`src/pytacheck`** | **125,200** | **≈ 98,000 (−22%)** | ≈ 80% of the reduction comes from de-emulation (lanes 3/4/6/7), not from the module rewrite |
+
+### 5.4 Where the time goes after CORE-0 (C)
+
+Accuracy run, Python side: 16.9, 16.7 and 17.8 s in three runs; import 0.6 s. Time per module (all its calls, summed over the matrix):
+
+| Module | s | Module | s | Module | s |
+|---|---:|---|---:|---|---:|
+| codebook_check | 1.80 | funding_check | 0.65 | repo_check | 0.38 |
+| data_check | 1.34 | ethics_check | 0.63 | ref_accuracy | 0.37 |
+| code_check | 0.82 | stat_p_exact | 0.60 | coi_check_oi | 0.36 |
+| stat_effect_size | 0.82 | ref_retraction | 0.55 | coi_check | 0.30 |
+| stat_check | 0.79 | ref_miscitation | 0.50 | funding_check_oi | 0.26 |
+| ref_consistency | 0.78 | all_p_values | 0.50 | all_urls | 0.22 |
+| open_practices | 0.74 | stat_p_nonsig | 0.47 | ref_summary | 0.21 |
+| | | ref_replication | 0.41 | marginal | 0.17 |
+
+The modules sum to ≈ 14.6 s. Paper reads, the harness and the import take the rest.
+
+Under cProfile (36.1 s), self time splits as:
+
+| Bucket | Share |
+|---|---:|
+| pandas | 53.7% |
+| stdlib | 7.6% |
+| `isinstance` | 4.0% |
+| `pytacheck._r` | 3.2% |
+| regex (compile, search, sub) | 6.9% |
+| parity harness | 2.8% |
+| pytacheck modules | 2.5% |
+| numpy | 1.1% |
+
+The main cumulative costs are:
+- `text_search`: 817 calls, 16% of the run, 7% of it in `_join_sections`;
+- `merge`: 1,072 calls, 9%;
+- `.loc`/`.iloc` reads: 13,800 calls, 11%;
+- `Series.__init__`: 21,000 calls, 8%;
+- regex compiles: 1,354, 5%;
+- `read(xml)`: 7%, most of it in `_grobid_to_bibr`.
+
+Implications:
+- After CORE-0 no single hotspot is left. The remaining ≈ 1.5x (16.9 → 10-12 s) comes only from the core's structural changes: a Doc built once instead of per-call frames, facets, and dict outputs.
+- Compared with the plan, the rewrite's payoff on this matrix is now ≈ 1.5x, not ≈ 3x. The per-paper budget in §5.1 (≈ 4.5x on module CPU) is a separate measure. Its 1,165 ms baseline predates CORE-0, so it stays provisional until W1 re-measures it.
+- The hard counter `regex_compiles_warm = 0` is not met today: 1,354 compiles per run.
 
 ---
 
@@ -796,6 +842,7 @@ The plan assumes each recommendation until the user says otherwise.
 - (b) Stop after CORE + W1-W3 (paper modules); the repository cluster then gets only the lane 3/4 leaf de-emulations behind adapters.
 - (c) The whole plan without stop points.
 - *Context:* the re-based payoff is ≈ 4.5x on module CPU (not 6-7x) and −22% code (not −25%), at ≈ 78 agent-days.
+- *After CORE-0 (C):* on the accuracy matrix CORE-0 alone gave 2.1x (34.7 → 16.9 s). The rest of the plan adds ≈ 1.5x there (to 10-12 s), plus the code reduction and the de-emulations. This decision should be revisited with that in view (§5.4).
 
 **6. Repeated `paper_id`s in a paper list** (new; changes counts users read).
 - **(a) Resolve once at the list boundary: warn, and rename later repeats `id~2`, `id~3`, as `report(list)` already plans; every module then treats them as distinct papers.** Recommended.
@@ -868,6 +915,7 @@ All paths are under `scratchpad/`.
 | R vs Python, TS1-TS4, P2, P3, P4 | `arch/inputs/perf_partial.json`; `perf/patches/*.patch` |
 | D1/D2/D3 prototypes and judge re-measurements | `arch/minimal_proto/`, `arch/design_performance/`, `arch/domain_proto/`, `arch/judge1/`, `arch/judge_integrity/` |
 | Lanes 3-7: units, gates, divergences, acceptance | `rightsize_plan.json` → `lanes` |
+| After CORE-0 (C; the later session's scratchpad) | `perf/ab.txt` (5 interleaved A/B runs), `perf/head-{1,2,3}.json.summary.json` (per module), `perf/head.prof` (cProfile), `perf/acc_run.py`, `perf/ab.sh` |
 
 ## Appendix B: Review log
 
