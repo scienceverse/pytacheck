@@ -23,7 +23,7 @@ def _refs_with_doi(paper: Any) -> pd.DataFrame:
     return bib.loc[keep].reset_index(drop=True)
 
 
-def _rw_entries(rw: pd.DataFrame, dois: pd.Series) -> pd.DataFrame:
+def _rw_entries(dois: pd.Series) -> pd.DataFrame:
     """The RetractionWatch rows of *dois*, one per DOI whatever its case.
 
     RetractionWatch joins the notices of one DOI with ``;`` ("Retraction;Expression
@@ -32,10 +32,9 @@ def _rw_entries(rw: pd.DataFrame, dois: pd.Series) -> pd.DataFrame:
     their notices are joined the same way, so a citation gets both and counts as
     one article.
     """
-    key = rw["doi"].astype("string").str.lower()
-    wanted = set(dois.astype("string").str.lower().dropna().tolist())
-    keep = (key.notna() & key.isin(wanted)).to_numpy(dtype=bool)
-    hits = rw.loc[keep].assign(doi=key[keep].array)
+    from pytacheck.db.retractionwatch import rw_rows
+
+    hits = rw_rows(dois.tolist())
     if not hits["doi"].duplicated().any():
         return hits
 
@@ -94,7 +93,6 @@ def ref_retraction(paper: Any) -> dict[str, Any]:
     ``ref_table()``) to the RetractionWatch database on the DOI, ignoring
     its case.
     """
-    from pytacheck.db.retractionwatch import retractionwatch
     from pytacheck.modules.ref_summary import _join_doi
 
     # table ----
@@ -107,7 +105,7 @@ def ref_retraction(paper: Any) -> dict[str, Any]:
     ## join to rw table (dplyr::inner_join keeps bib's order), ignoring the case
     ## of DOIs: metacheck's exact join missed the RetractionWatch DOIs with
     ## capitals, about a fifth of them (U157)
-    table = _join_doi(bib, _rw_entries(retractionwatch(), bib["doi"]))
+    table = _join_doi(bib, _rw_entries(bib["doi"]))
 
     # traffic_light ----
     tl = "info" if len(table) else "na"

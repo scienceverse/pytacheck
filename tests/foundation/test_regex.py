@@ -93,6 +93,37 @@ def rx_grepl(pattern: str, texts: list[str], icase: bool, perl: bool) -> list[bo
     return rx.grepl(pattern, texts, ignore_case=icase, perl=perl)
 
 
+@pytest.mark.parametrize(
+    ("pattern", "icase", "perl", "fixed"),
+    [
+        (r"significan|signif", True, False, False),
+        (r"this study|nih", True, True, False),
+        (r"Study", False, False, False),  # literals looked for unfolded
+        (r"\d+", True, False, False),  # no literals
+        ("NıH", True, False, True),  # fixed: case is not ignored
+    ],
+)
+def test_detector_is_grepl_one_string_at_a_time(
+    pattern: str, icase: bool, perl: bool, fixed: bool
+) -> None:
+    texts = ["Marginally SIGNIFICANT", "ſignificant", "Thİs Study, NıH", "p = 0.04", "", None]
+    expected = rx.grepl(pattern, texts, icase, perl, fixed)
+    match = rx.detector(pattern, icase, perl, fixed)
+    assert [match(t) for t in texts] == expected
+    assert [match(t, None if t is None else rx.fold(t)) for t in texts] == expected
+    assert rx.detector(pattern, icase, perl, fixed) is match
+
+
+def test_detector_compiles_only_past_its_literals() -> None:
+    match = rx.Detector("signif{3,1}", True, False, False)  # invalid, with a literal
+    assert match.literals == ("signi",)
+    assert match("no such word") is False
+    with pytest.raises(rx.RegexError):
+        match("significant")
+    with pytest.raises(rx.RegexError):
+        rx.grepl("signif{3,1}", [])  # grepl rejects it whatever x is, as R does
+
+
 def test_gregexpr_and_gsub_empty_matches_follow_r() -> None:
     # R 4.5: gregexpr("x*", c("", "ab", "abx")) and the same with perl = TRUE
     assert rx.gregexpr_all("x*", ["", "ab", "abx"]) == [

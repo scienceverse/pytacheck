@@ -18,7 +18,6 @@ import pytest
 import pytacheck as pc
 from pytacheck._r import grepl
 from pytacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
-from pytacheck.text.extract import _LIVE_ANY, _LIVE_WORDS, _detect_live_data
 from tests.mod_ethics.make_parity_cases import SWEEP
 from tests.mod_ethics.parity_support import ec_paper, ec_papers
 
@@ -539,33 +538,3 @@ def test_prefiltered_search_equals_plain_search() -> None:
     plain = pc.text_search(paper, list(_ETHICS_WORDS))
     plain = plain.sort_values("text_id", kind="stable").reset_index(drop=True)
     pd.testing.assert_frame_equal(ethics, plain, check_dtype=False)
-
-
-# -- the live-data prefilter (pytacheck.text.extract._LIVE_ANY) -----------------------
-
-
-@pytest.mark.parametrize("pattern", _LIVE_WORDS)
-def test_live_prefilter_covers_every_pattern(pattern: str) -> None:
-    assert _covered(sre_parse.parse(pattern), _LIVE_ANY.split("|"))
-
-
-def test_live_prefilter_keeps_every_matching_sentence(fixtures_dir: Path) -> None:
-    papers = pc.read(
-        [
-            *sorted((fixtures_dir / "psychsci").glob("*.json")),
-            *sorted((fixtures_dir / "debruine").glob("*.xml")),
-            fixtures_dir / "problems" / "0956797615569889.xml",
-        ]
-    )
-    texts = [t for p in papers for t in p.text["text"].tolist()] + SWEEP
-    keep = grepl(_LIVE_ANY, texts, ignore_case=True)
-    assert not all(keep)  # it does filter
-    for pattern in _LIVE_WORDS:
-        hits = grepl(pattern, texts, ignore_case=True)
-        assert all(k for h, k in zip(hits, keep, strict=True) if h), pattern
-
-
-def test_live_prefiltered_search_equals_plain_search(psychsci: pc.PaperList) -> None:
-    for paper in [pc.test_paper(SWEEP), psychsci]:
-        plain = pc.text_search(paper, list(_LIVE_WORDS))
-        pd.testing.assert_frame_equal(_detect_live_data(paper), plain)

@@ -31,7 +31,7 @@ from pytacheck.papers.schema import empty_table, records_to_frame, required_tabl
 
 __all__ = ["Paper", "PaperList", "is_paper", "is_paper_list"]
 
-_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation"})
+_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy"})
 # Process-wide mutation counter: ``Paper._generation`` changes whenever a paper is
 # modified through its API, which invalidates ``run_session()`` memo entries.
 _GENERATION = itertools.count(1)
@@ -48,6 +48,17 @@ def _random_id() -> str:
     return hashlib.md5(stamp, usedforsecurity=False).hexdigest()[:14]
 
 
+class _Lazy:
+    """The ``run_session()`` memo token of a table read from JSON records, used in
+    place of the frame's identity: the same before and after the paper builds the
+    table, for as long as the paper holds the frame it built."""
+
+    __slots__ = ("built",)
+
+    def __init__(self) -> None:
+        self.built: pd.DataFrame | None = None
+
+
 class Paper:
     """A paper in the bibr schema (metacheck's ``scivrs_paper``).
 
@@ -61,7 +72,7 @@ class Paper:
         not given starts as an empty, fully-typed table.
     """
 
-    __slots__ = ("_columns", "_generation", "_raw", "_tables", "extra", "paper_id")
+    __slots__ = ("_columns", "_generation", "_lazy", "_raw", "_tables", "extra", "paper_id")
 
     paper_id: str | None
     extra: dict[str, Any]
@@ -72,6 +83,7 @@ class Paper:
         object.__setattr__(self, "_raw", {})
         object.__setattr__(self, "_columns", {})
         object.__setattr__(self, "_generation", next(_GENERATION))
+        object.__setattr__(self, "_lazy", {})  # a _Lazy per table read from JSON records
         store: dict[str, Any] = {}
         for name in required_tables():
             store[name] = tables.pop(name) if name in tables else None
@@ -86,6 +98,7 @@ class Paper:
         self._tables[name] = None
         self._raw[name] = records
         self._columns[name] = list(columns)
+        self._lazy[name] = _Lazy()
 
     def _touch(self) -> None:
         object.__setattr__(self, "_generation", next(_GENERATION))
@@ -101,6 +114,9 @@ class Paper:
         if value is None:
             if name in self._raw:
                 value = records_to_frame(name, self._raw.pop(name), self._columns.pop(name))
+                token = self._lazy.get(name)
+                if token is not None:
+                    token.built = value
             elif name in table_names():
                 value = empty_table(name)
             else:
@@ -131,6 +147,7 @@ class Paper:
             return
         self._raw.pop(name, None)
         self._columns.pop(name, None)
+        self._lazy.pop(name, None)
         self._tables[name] = value
 
     def __delitem__(self, name: str) -> None:
@@ -138,6 +155,7 @@ class Paper:
         self._tables.pop(name, None)
         self._raw.pop(name, None)
         self._columns.pop(name, None)
+        self._lazy.pop(name, None)
 
     def get(self, name: str, default: Any = None) -> Any:
         """The element *name*, or *default* when the paper has no such element."""
@@ -189,6 +207,7 @@ class Paper:
             if raw is not None:
                 new._raw[name] = list(raw[0]) if deep else raw[0]
                 new._columns[name] = list(raw[1])
+                new._lazy[name] = _Lazy()
                 tables[name] = None
             else:
                 value = self._tables[name]

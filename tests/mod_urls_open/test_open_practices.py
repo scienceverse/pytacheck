@@ -7,14 +7,11 @@ must never change the result of the R search chains.
 
 from __future__ import annotations
 
-import copy
-
 import pandas as pd
 import pytest
 
 import pytacheck as pc
 from pytacheck.module import SECTION_LEVELS, ModuleError
-from pytacheck.modules import open_practices as op
 
 MODULE = "open_practices"
 
@@ -299,56 +296,6 @@ def test_does_not_mutate_paper(demo: pc.Paper) -> None:
     before = demo.text.copy()
     run(demo)
     pd.testing.assert_frame_equal(demo.text, before)
-
-
-# the prefilter is a pure optimisation ---------------------------------------
-
-ADVERSARIAL = [
-    "Data   are available on the Open\nScience\tFramework.",
-    "Code is available on<~p~>request.",
-    "Data , , are available , , at https://osf.io/x.",
-    "Our R\ncode is available at\tgithub.",
-    "Materials were shared by\n  reasonable\trequest.",
-    "The study was not pre-registered, see https://osf.io/abc.",
-    "Non-preregistered analyses: the data are on OSF, see the archive.",
-    "All r code is on GITHUB, see the online archive.",
-    "Python software is archived at Zenodo; find it there.",
-    "Plots are available at http://kaggle.com.",
-    "Figures can be found in the repository.",
-    "Nothing to see here.",
-]
-
-
-def _naive(paper: object, monkeypatch: pytest.MonkeyPatch) -> pc.ModuleOutput:
-    with monkeypatch.context() as m:
-        m.setattr(op, "_search_frame", lambda p: p)
-        return run(paper)
-
-
-@pytest.mark.parametrize("which", ["demo", "psychsci", "adversarial", "corpus"])
-def test_prefilter_matches_plain_text_search(
-    which: str, demo: pc.Paper, psychsci: pc.PaperList, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    if which == "demo":
-        paper: object = demo
-    elif which == "psychsci":
-        paper = psychsci
-    elif which == "adversarial":
-        paper = pc.test_paper(ADVERSARIAL)
-    else:
-        papers = []
-        for i, p in enumerate([*psychsci, demo, pc.test_paper(ADVERSARIAL)]):
-            q = copy.deepcopy(p)
-            q.paper_id = f"p{i}"
-            papers.append(q)
-        paper = pc.PaperList(papers)
-    fast = run(paper)
-    slow = _naive(paper, monkeypatch)
-    pd.testing.assert_frame_equal(fast.table, slow.table)
-    pd.testing.assert_frame_equal(fast.summary_table, slow.summary_table)
-    assert fast.traffic_light == slow.traffic_light
-    assert fast.summary_text == slow.summary_text
-    assert fast.report == slow.report
 
 
 # review: paper order and chained summary tables -----------------------------

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import contextlib
 import os
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 import pandas as pd
@@ -246,21 +246,10 @@ def _repo_check(
         rc.flag_figshare_share_links(repos, fs_links)
 
     # get files ----
-    osf_urls = repos.urls("osf")
-    osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
-    osf_paper_id = osf_ids[0] if osf_ids else first_pid()
-
-    osf_meta = rc.meta_frame()
-    if osf_license is True and osf_urls:
-        osf_meta = _osf_license_meta(osf_urls)
-    osf_files = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache)
-
-    github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
-    gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
-    rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), bar)
-    pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
-    dspace7_files = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
-    listings = _api_listings(repos, cache, bar)
+    if len(repos.df) > 0:
+        file_parts, meta_parts = _online_listings(repos, osf_license, cache, bar, first_pid)
+    else:  # local_only, or no repository links: every platform's listing is empty
+        file_parts, meta_parts = [rc.placeholder()], [rc.meta_frame()]
 
     local_files_df = rc.placeholder()
     if local_path is not None:
@@ -296,41 +285,8 @@ def _repo_check(
         }
 
     # file numbers and types ----
-    all_files = bind_rows(
-        [
-            osf_files,
-            github_files,
-            gitlab_files,
-            rb_files,
-            pa_files,
-            dspace7_files,
-            listings["zenodo"][0],
-            listings["dataverse"][0],
-            listings["figshare"][0],
-            listings["dryad"][0],
-            listings["reshare"][0],
-            listings["researchdata4tu"][0],
-            listings["mendeley"][0],
-            listings["dataone"][0],
-            local_files_df,
-        ]
-    ).reset_index(drop=True)
-    repo_metadata = bind_rows(
-        [
-            osf_meta,
-            github_meta,
-            gitlab_meta,
-            pa_meta,
-            listings["zenodo"][1],
-            listings["dataverse"][1],
-            listings["figshare"][1],
-            listings["dryad"][1],
-            listings["reshare"][1],
-            listings["researchdata4tu"][1],
-            listings["mendeley"][1],
-            listings["dataone"][1],
-        ]
-    ).reset_index(drop=True)
+    all_files = bind_rows([*file_parts, local_files_df]).reset_index(drop=True)
+    repo_metadata = bind_rows(meta_parts).reset_index(drop=True)
 
     all_files, is_readme = _prepare_files(all_files, repos)
     if peek_zips is True and len(all_files) > 0:
@@ -391,6 +347,30 @@ def _repo_check(
 # ---------------------------------------------------------------------------
 # listing
 # ---------------------------------------------------------------------------
+
+
+def _online_listings(
+    repos: rc.Repos, osf_license: bool, cache: bool, bar: Any, first_pid: Callable[[], Any]
+) -> tuple[list[pd.DataFrame], list[pd.DataFrame]]:
+    """Every platform's file listing and metadata, in R's order (for ``bind_rows()``)."""
+    osf_urls = repos.urls("osf")
+    osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
+    osf_paper_id = osf_ids[0] if osf_ids else first_pid()
+
+    osf_meta = rc.meta_frame()
+    if osf_license is True and osf_urls:
+        osf_meta = _osf_license_meta(osf_urls)
+    osf_files = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache)
+
+    github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
+    gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
+    rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), bar)
+    pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
+    dspace7_files = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
+    listings = _api_listings(repos, cache, bar)
+    files = [osf_files, github_files, gitlab_files, rb_files, pa_files, dspace7_files]
+    meta = [osf_meta, github_meta, gitlab_meta, pa_meta]
+    return files + [f for f, _ in listings.values()], meta + [m for _, m in listings.values()]
 
 
 def _osf_license_meta(osf_urls: list[str]) -> pd.DataFrame:

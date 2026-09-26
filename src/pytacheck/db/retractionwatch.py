@@ -7,10 +7,16 @@ concern) from the RetractionWatch database, as distributed by Crossref.
 from __future__ import annotations
 
 import datetime as dt
+from collections.abc import Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, NamedTuple
 
-from pytacheck.db.databases import database_date, load_database, user_database_path, write_database
+from pytacheck.db.databases import (
+    _newest_database,
+    database_date,
+    user_database_path,
+    write_database,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -33,11 +39,48 @@ def retractionwatch() -> pd.DataFrame:
     Rows without a DOI (``""``) are left out: joined on ``doi`` they would
     match every reference without one (metacheck keeps them; U15).
     """
-    table = load_database(_NAME)
-    blank = (table["doi"].isna() | (table["doi"].str.strip() == "")).to_numpy(dtype=bool)
-    if blank.any():
-        table = table.loc[~blank].reset_index(drop=True)
-    return table
+    return _indexed().table.copy(deep=False)
+
+
+class _Index(NamedTuple):
+    source: pd.DataFrame  # the newest database frame
+    table: pd.DataFrame  # it without blank DOIs
+    dois: list[str]  # each row's DOI in lower case
+    rows: dict[str, list[int]]  # the rows of each lower-case DOI
+
+
+# made once per database file rather than once per call; replaced as a whole, so
+# a thread never sees the table of one file with the rows of another
+_INDEX: _Index | None = None
+
+
+def _indexed() -> _Index:
+    global _INDEX
+    source = _newest_database(_NAME)
+    index = _INDEX
+    if index is None or index.source is not source:
+        table = source
+        blank = (table["doi"].isna() | (table["doi"].str.strip() == "")).to_numpy(dtype=bool)
+        if blank.any():
+            table = table.loc[~blank].reset_index(drop=True)
+        dois = [str(d).lower() for d in table["doi"].tolist()]
+        rows: dict[str, list[int]] = {}
+        for i, doi in enumerate(dois):
+            rows.setdefault(doi, []).append(i)
+        index = _INDEX = _Index(source, table, dois, rows)
+    return index
+
+
+def rw_rows(dois: Iterable[Any]) -> pd.DataFrame:
+    """The RetractionWatch rows of *dois*, compared ignoring case, in database order,
+    with each ``doi`` in lower case (missing DOIs match nothing)."""
+    import pandas as pd
+
+    index = _indexed()
+    wanted = {d.lower() for d in dois if isinstance(d, str)}
+    hits = sorted(i for d in wanted for i in index.rows.get(d, ()))
+    out = index.table.take(hits).reset_index(drop=True)
+    return out.assign(doi=pd.Series([index.dois[i] for i in hits], dtype="string"))
 
 
 #: Alias of :func:`retractionwatch` (R ``rw``).

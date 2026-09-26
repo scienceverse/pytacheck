@@ -307,14 +307,15 @@ def _leading_literal(branch: str) -> str:
     return "".join(lit)
 
 
-_TURKISH_I = str.maketrans({"\u0130": "i", "\u0131": "i"})
-
-
 def casefold(s: str) -> str:
     """``s.casefold()``, with the dotted capital and the dotless small I as ``i``:
     ignoring case, the engine matches ``İ`` to ``i`` and ``ı`` to ``I``, which their
     case folding (``i`` + U+0307 and ``ı``) does not show."""
-    return s.translate(_TURKISH_I).casefold()
+    if "\u0130" in s:
+        s = s.replace("\u0130", "i")
+    if "\u0131" in s:
+        s = s.replace("\u0131", "i")
+    return s.casefold()
 
 
 @functools.lru_cache(maxsize=8192)
@@ -340,6 +341,61 @@ def _prefilter(pattern: str, ignore_case: bool) -> tuple[str, ...] | None:
     return tuple(dict.fromkeys(literals))
 
 
+def fold(s: str) -> str:
+    """*s* as the literal prefilter folds it when case is ignored."""
+    return s.casefold() if s.isascii() else casefold(s)
+
+
+class Detector:
+    """``grepl(pattern, s)`` for one string at a time (made by :func:`detector`).
+
+    Every match's text, folded (:func:`fold`) when case is ignored, contains one
+    of :attr:`literals` (``None``: none are known), so a string without any is
+    rejected before the regex runs, and the regex is compiled only when a
+    string gets past them. A caller testing many patterns on the same strings
+    folds each string once and passes it in.
+    """
+
+    __slots__ = ("_search", "fixed", "folds", "ignore_case", "literals", "pattern", "perl")
+
+    def __init__(self, pattern: str, ignore_case: bool, perl: bool, fixed: bool) -> None:
+        self.pattern = pattern
+        self.ignore_case = ignore_case
+        self.perl = perl
+        self.fixed = fixed
+        self.literals = None if fixed else _prefilter(pattern, ignore_case)
+        #: whether :attr:`literals` are looked for in the folded string
+        self.folds = ignore_case and self.literals is not None
+        self._search: Callable[[str], Any] | None = None
+
+    def compile(self) -> Callable[[str], Any]:
+        """The compiled pattern's ``search``; an invalid pattern raises :class:`RegexError`."""
+        if self._search is None:
+            args = (self.pattern, self.ignore_case, self.perl, self.fixed, False)
+            self._search = _compile(*args).search
+        return self._search
+
+    def __call__(self, s: str | None, folded: str | None = None) -> bool:
+        """Whether *s* contains a match (never ``None``); *folded* is ``fold(s)``, if known."""
+        if s is None:
+            return False
+        if self.fixed:
+            return self.pattern in s
+        if self.literals is not None:
+            hay = (fold(s) if folded is None else folded) if self.folds else s
+            if not any(lit in hay for lit in self.literals):
+                return False
+        return (self._search or self.compile())(s) is not None
+
+
+@functools.lru_cache(maxsize=8192)
+def detector(
+    pattern: str, ignore_case: bool = False, perl: bool = False, fixed: bool = False
+) -> Detector:
+    """The :class:`Detector` of *pattern*, made once per pattern and options."""
+    return Detector(pattern, ignore_case, perl, fixed)
+
+
 # ---------------------------------------------------------------------------
 # R functions
 # ---------------------------------------------------------------------------
@@ -349,21 +405,10 @@ def grepl(
     pattern: str, x: Any, ignore_case: bool = False, perl: bool = False, fixed: bool = False
 ) -> Any:
     """R ``grepl()``: does each element contain a match? ``NA`` gives ``False``."""
-    if fixed:
-        return _vectorize(x, lambda v: (s := _as_str(v)) is not None and pattern in s)
-    search = _compile(pattern, ignore_case, perl, False, False).search
-    literals = _prefilter(pattern, ignore_case)
-    if literals is None:
-        return _vectorize(x, lambda v: (s := _as_str(v)) is not None and search(s) is not None)
-
-    def match(v: Any) -> bool:
-        s = _as_str(v)
-        if s is None:
-            return False
-        folded = (s.casefold() if s.isascii() else casefold(s)) if ignore_case else s
-        return any(lit in folded for lit in literals) and search(s) is not None
-
-    return _vectorize(x, match)
+    match = detector(pattern, ignore_case, perl, fixed)
+    if not fixed:
+        match.compile()  # an invalid pattern fails whatever x is, as in R
+    return _vectorize(x, lambda v: match(_as_str(v)))
 
 
 def grep(

@@ -548,6 +548,18 @@ def _column_values(v: Any) -> list[Any]:
     return [None if _scalar_na(e) else e for e in v]
 
 
+_PLAIN = {"string": str, "integer": int, "number": float, "boolean": bool}
+
+
+def _plain_cells(v: list[Any], schema_type: str) -> bool:
+    """Every cell is ``None`` or a Python value of the column's type (an ``int`` in
+    R's integer range for an integer column), which the R coercion keeps as it is."""
+    t = _PLAIN[schema_type]
+    if t is int:
+        return all(e is None or (type(e) is int and -_INT_MAX <= e <= _INT_MAX) for e in v)
+    return all(e is None or type(e) is t for e in v)
+
+
 def _bibr12_columns(
     columns: Mapping[str, Any], cols: Mapping[str, str], n: int
 ) -> dict[str, list[Any]]:
@@ -564,6 +576,8 @@ def _bibr12_columns(
             schema_type = _SCALAR_SCHEMA[typ]
             if isinstance(v, pd.Series) and str(v.dtype) == str(SCHEMA_DTYPES[schema_type]):
                 vals: list[Any] = v.tolist()  # already the column's type
+            elif isinstance(v, list) and _plain_cells(v, schema_type):
+                vals = v  # what the converters make: values of the type, or None
             else:
                 if v is None:
                     vals = [None] * n

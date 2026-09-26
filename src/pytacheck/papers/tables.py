@@ -56,10 +56,14 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
     """
     papers = as_paper_list(paper)
 
-    fast = table in table_names() and all(
-        p._raw_records(table) is not None or table not in p for p in papers
+    fast = (
+        len(papers) > 1
+        and table in table_names()
+        and all(p._raw_records(table) is not None or table not in p for p in papers)
     )
-    if fast and any(p._raw_records(table) is not None for p in papers):
+    if len(papers) == 1:
+        merged = _one_table(papers[0], table)
+    elif fast and any(p._raw_records(table) is not None for p in papers):
         merged = _fast_concat(papers, table)
     else:
         frames = []
@@ -76,6 +80,17 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
         keep = [c for c in dict.fromkeys(wanted) if c in merged.columns]
         merged = merged.loc[:, keep]
     return merged.reset_index(drop=True)
+
+
+def _one_table(p: Paper, table: str) -> pd.DataFrame:
+    """*table* of one paper plus ``paper_id``: the paper's own (lazily built, then
+    kept) table as a copy-on-write view, not a new frame from its JSON records."""
+    x = p.get(table)
+    if not isinstance(x, pd.DataFrame):
+        return pd.DataFrame()
+    x = x.copy(deep=False)
+    x["paper_id"] = pd.Series([p.paper_id] * len(x), index=x.index, dtype="string")
+    return x
 
 
 def _fast_concat(papers: PaperList, table: str) -> pd.DataFrame:
@@ -111,7 +126,34 @@ def _fast_concat(papers: PaperList, table: str) -> pd.DataFrame:
 
 
 def paper_id(paper: Any) -> list[str]:
-    """IDs of the papers (``paper_id()``), taken from their ``info`` tables."""
+    """IDs of the papers (``paper_id()``), taken from their ``info`` tables.
+
+    ``paper_table(paper, "info", "paper_id")`` gives each paper's ID once per
+    row of its ``info`` table, so only the rows are counted (building the
+    table costs more than every module's use of it).
+    """
+    papers = as_paper_list(paper)
+    ids: list[str] = []
+    for p in papers:
+        rows = _info_rows(p)
+        if rows is None or not isinstance(p.paper_id, str):
+            return _paper_id_table(paper)
+        ids += [p.paper_id] * rows
+    return ids
+
+
+def _info_rows(p: Paper) -> int | None:
+    """Rows of *p*'s ``info`` table (0 without one), or ``None`` if they cannot be counted."""
+    raw = p._raw_records("info")
+    if raw is not None:
+        return len(raw[0]) if raw[1] else None
+    if "info" not in p:
+        return 0
+    info = p.get("info")
+    return len(info) if isinstance(info, pd.DataFrame) and len(info.columns) else None
+
+
+def _paper_id_table(paper: Any) -> list[str]:
     info = paper_table(paper, "info", ["paper_id"])
     if "paper_id" not in info.columns:
         return []

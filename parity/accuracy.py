@@ -52,7 +52,6 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import copy
 import fnmatch
 import gzip
 import io
@@ -296,12 +295,34 @@ def _isolated() -> Iterator[None]:
                     os.environ[k] = v
 
 
-def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
-    """Each output as ``{ok, value, error}`` (``problem``: it used the network or R).
+def _paper_state(paper: Any) -> tuple[Any, ...]:
+    """Changes made through the Paper API (a table set, replaced or deleted)."""
+    return (paper._generation, tuple((k, id(v)) for k, v in paper._tables.items()))
 
-    Papers are read once and each module gets its own copy. R's parser is
-    pytacheck's port (``PYTACHECK_R_PARSER=python``), so the results do not
-    depend on whether an R is installed.
+
+def _paper_content(paper: Any) -> bytes:
+    """*paper*'s tables and ``extra`` by value, so that an edit anywhere changes it:
+    a cell, a list inside a cell, a nested ``extra`` entry. (A copy of the paper
+    would not do: copied frames share the objects in their object columns.)"""
+    from parity.canonical import canonical
+
+    content = [canonical(paper), canonical(paper.extra)]
+    try:
+        return orjson.dumps(content)
+    except TypeError:  # a lone surrogate
+        return repr(content).encode()
+
+
+def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
+    """Each output as ``{ok, value, error}`` (``problem``: it used the network or R,
+    or changed its paper).
+
+    Papers are read once, their tables built once, and every module runs on
+    the same paper object, as ``report()`` runs them: modules must not change
+    their paper, so each output's paper is checked after it runs (changes
+    made through the Paper API) and at the end (any change to its content).
+    R's parser is pytacheck's port (``PYTACHECK_R_PARSER=python``), so the
+    results do not depend on whether an R is installed.
     """
     import pytacheck as pc
     from parity.canonical import canonical
@@ -309,22 +330,30 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
     from tests.httpmock import no_network
 
     papers: dict[str, Any] = {}
+    contents: dict[str, bytes] = {}  # each paper's content as read, compared at the end
+
+    def key_of(o: Output) -> str:
+        return o.input if o.kind == "paper" else "demo"
 
     def paper_for(o: Output) -> Any:
-        key = o.input if o.kind == "paper" else "demo"
+        key = key_of(o)
         if key not in papers:
             try:
-                papers[key] = pc.demopaper() if key == "demo" else pc.read(ROOT / key)
+                paper = pc.demopaper() if key == "demo" else pc.read(ROOT / key)
+                dict(paper.items())  # build every table now, not once per output
+                papers[key] = paper
+                contents[key] = _paper_content(paper)
             except Exception as exc:  # every module of this input fails, as in R
                 papers[key] = exc
         paper = papers[key]
         if isinstance(paper, Exception):
             raise paper
-        return copy.deepcopy(paper)
+        return paper
 
     results: dict[Output, dict[str, Any]] = {}
     with utc(), no_credentials(), metacheck_defaults():
         for o in outputs:
+            before = None
             attempts: list[str] = []
             r_attempts: list[str] = []
             res: dict[str, Any]
@@ -336,6 +365,7 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
                     no_network(attempts),
                 ):
                     paper = paper_for(o)
+                    before = _paper_state(paper)
                     args: dict[str, Any] = {}
                     if o.kind == "repository":
                         args = {"local_path": str(ROOT / o.input), "local_only": True}
@@ -348,7 +378,13 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
                 res["problem"] = f"used the network ({attempts[0]})"
             elif r_attempts:
                 res["problem"] = f"started R ({r_attempts[0]})"
+            elif before is not None and _paper_state(papers[key_of(o)]) != before:
+                res["problem"] = "changed its paper (modules must not modify their input)"
             results[o] = res
+    changed = {k for k, c in contents.items() if _paper_content(papers[k]) != c}
+    for o, res in results.items():
+        if key_of(o) in changed and not res.get("problem"):
+            res["problem"] = "a module changed this paper (modules must not modify their input)"
     return results
 
 

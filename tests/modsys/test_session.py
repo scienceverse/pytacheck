@@ -92,6 +92,24 @@ def test_paper_mutation_invalidates(paper) -> None:
     assert out.summary_table["paper_id"].tolist() == ["renamed"]
 
 
+def test_building_a_table_keeps_the_memo() -> None:
+    # a table read from JSON records is built on first use; that must not change
+    # the key, while a frame put in its place behind the API's back must
+    paper = pc.demopaper()
+    assert paper._raw_records("text") is not None
+    with run_session() as session:
+        module_run(paper, counted)
+        assert len(paper.text) > 1  # builds the table
+        module_run(paper, counted)
+        assert (session.hits, session.misses) == (1, 1)
+        paper._tables["text"] = paper.text.head(1)
+        module_run(paper, counted)
+        assert (session.hits, session.misses) == (1, 2)
+        paper._tables["text"] = None
+        module_run(paper, counted)
+    assert (session.hits, session.misses) == (1, 3) and len(CALLS) == 3
+
+
 def test_paperlists_are_memoised_by_members(paper) -> None:
     plist = pc.PaperList([paper, pc.test_paper("another")])
     with run_session() as session:

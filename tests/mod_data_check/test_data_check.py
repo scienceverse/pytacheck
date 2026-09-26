@@ -881,23 +881,19 @@ def test_repo_tree_rows_scales_linearly() -> None:
     assert rows["text"].tolist()[-1] == "└── flat999.txt"
 
 
-def test_stack_stats_matches_bind_rows() -> None:
+def test_stats_frame_matches_bind_rows() -> None:
     from pytacheck._r import bind_rows
-    from pytacheck.datacheck.columns import data_col_stats
-    from pytacheck.modules.data_check import _stack_stats
+    from pytacheck.datacheck.columns import _col_stats, _stats_frame, data_col_stats
 
     cols = [
         pd.Series([1.0, 2.0, None]),
         pd.Series(["a", "b", None], dtype="string"),
         pd.Series([], dtype="float64"),
+        pd.DataFrame({"a": [1, 2]}),
     ]
-    stats = [data_col_stats(c, c) for c in cols]
-    fast = _stack_stats(stats)
-    ref = bind_rows(stats).reset_index(drop=True)
+    fast = _stats_frame([_col_stats(c, c) for c in cols])
+    ref = bind_rows([data_col_stats(c, c) for c in cols]).reset_index(drop=True)
     pd.testing.assert_frame_equal(fast, ref)
-    # an unexpected shape falls back to bind_rows
-    odd = [stats[0], pd.DataFrame({"n": [1], "x": ["y"]})]
-    assert list(_stack_stats(odd).columns) == list(bind_rows(odd).columns)
 
 
 def test_zip_peek_reasons_stay_with_their_rows(

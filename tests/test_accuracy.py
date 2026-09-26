@@ -300,3 +300,65 @@ def test_run_cases_reads_a_paper_once_and_keeps_its_warnings(tmp_path: Path) -> 
     a, b = (json.loads((tmp_path / "out" / "once" / f"{i}.json").read_text()) for i in "ab")
     assert a["warnings"] and a["warnings"] == b["warnings"]
     assert a["value"] == b["value"]
+
+
+def _set_cell(p) -> None:
+    p.text.loc[0, "text"] = "edited"
+
+
+# how each stub module changes the paper it is given
+_EDITS = {
+    "reads": lambda p: p.text,
+    "list_cell": lambda p: p.info["keywords"].iat[0].append("b"),
+    "nested_extra": lambda p: p.extra["nested"]["a"].append(2),
+    "cell": _set_cell,
+    "api": lambda p: p.__setitem__("info", p.info.copy()),
+}
+
+
+def test_run_python_shares_each_paper_and_catches_changes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Every output of an input gets the same paper, read once; an output that
+    changes it through the API is flagged, and a change of its content anywhere
+    (a list inside a cell, a nested ``extra`` entry) flags every output of it."""
+    import pandas as pd
+
+    import pytacheck as pc
+    import pytacheck.module as mod
+
+    reads: list[str] = []
+    given: dict[str, set[int]] = {}
+
+    def read(path: Path) -> pc.Paper:
+        reads.append(Path(path).name)
+        p = pc.test_paper(["A sentence.", "Another one."])
+        info = p.info
+        p.info = info.assign(keywords=pd.Series([["a"]] * len(info), index=info.index))
+        p.extra["nested"] = {"a": [1]}
+        return p
+
+    def module_run(paper: pc.Paper, module: str, **_: object) -> dict:
+        given.setdefault(module, set()).add(id(paper))
+        _EDITS[module](paper)
+        return {"summary_text": module}
+
+    monkeypatch.setenv("PYTACHECK_CACHE_DIR", str(tmp_path))
+    monkeypatch.setattr(pc, "read", read)
+    monkeypatch.setattr(mod, "module_run", module_run)
+    outputs = [acc.Output(m, m, "paper") for m in _EDITS]
+    outputs.append(acc.Output("reads", "list_cell", "paper"))  # after list_cell changed it
+    results = acc.run_python(outputs)
+    assert all(r["ok"] for r in results.values())
+    problems = {(o.module, o.input): r.get("problem") for o, r in results.items()}
+    changed = "a module changed this paper (modules must not modify their input)"
+    assert problems == {
+        ("reads", "reads"): None,
+        ("list_cell", "list_cell"): changed,
+        ("nested_extra", "nested_extra"): changed,
+        ("cell", "cell"): changed,
+        ("api", "api"): "changed its paper (modules must not modify their input)",
+        ("reads", "list_cell"): changed,
+    }
+    assert sorted(reads) == sorted(_EDITS)  # each input read once
+    assert len(given["reads"]) == 2  # the reads of two inputs, two papers

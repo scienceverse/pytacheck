@@ -1098,7 +1098,7 @@ def _file_columns(
         _qualtrics_tag_cols,
         data_check_is_qualtrics,
     )
-    from pytacheck.datacheck.columns import data_col_stats
+    from pytacheck.datacheck.columns import _col_stats, _stats_frame
 
     names = [str(c) for c in df.columns]
     p = len(names)
@@ -1126,8 +1126,8 @@ def _file_columns(
             and h._is_true(c.get("is_numeric"))
         ):
             x_for_stats = df.iloc[:, j]
-        stats.append(data_col_stats(x_for_stats, df.iloc[:, j]))
-    stats_mat = _stack_stats(stats)
+        stats.append(_col_stats(x_for_stats, df.iloc[:, j]))
+    stats_mat = _stats_frame(stats)
 
     rep_counts = df.attrs.get("utf8_repaired") or {}
     utf8_fixed = [int(rep_counts[nm]) if nm in rep_counts else 0 for nm in names]
@@ -1152,30 +1152,6 @@ def _file_columns(
     data["sample_values"] = _str_series([_sample_values(df, j) for j in range(p)])
     data["utf8_repaired"] = pd.Series(utf8_fixed, dtype="Int64")
     return pd.concat([pd.DataFrame(data), stats_mat], axis=1)
-
-
-def _stack_stats(stats: list[pd.DataFrame]) -> pd.DataFrame:
-    """``do.call(rbind, <one-row data_col_stats() frames>)``.
-
-    ``data_col_stats()`` always returns the same columns and types, so the
-    rows are stacked column by column; anything else goes through
-    :func:`~pytacheck._r.bind_rows` (R's type coercion).
-    """
-    from pytacheck._r import bind_rows
-
-    if not stats:
-        return bind_rows(stats).reset_index(drop=True)
-    first = stats[0]
-    cols = list(first.columns)
-    if all(len(s) == 1 and list(s.columns) == cols for s in stats):
-        rows = [s.to_dict("records")[0] for s in stats]
-        try:
-            return pd.DataFrame(
-                {c: pd.Series([r[c] for r in rows], dtype=first[c].dtype) for c in cols}
-            )
-        except (TypeError, ValueError):
-            pass
-    return bind_rows(stats).reset_index(drop=True)
 
 
 def _extract(

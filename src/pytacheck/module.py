@@ -333,12 +333,22 @@ def _paper_state(paper: Paper) -> tuple[Any, Any, Any] | None:
     tables = getattr(paper, "_tables", None)
     if gen is None or not isinstance(tables, dict):
         return None
-    ids = tuple((name, id(value)) for name, value in tables.items() if value is not None)
+    # a table read from JSON records keeps its token while the paper holds the frame
+    # it built from them, so building it does not change the key; any other frame
+    # put in its place (even behind the API's back) has its own identity
+    lazy = getattr(paper, "_lazy", None) or {}
+    ids = []
+    for name, value in tables.items():
+        token = lazy.get(name)
+        if token is not None and value is token.built:
+            ids.append((name, id(token)))
+        elif value is not None:
+            ids.append((name, id(value)))
     try:
         extra = _freeze(paper.extra)
     except _Unfreezable:
         return None
-    return gen, ids, extra
+    return gen, tuple(ids), extra
 
 
 def _paper_key(paper: Any) -> tuple[Any, ...] | None:

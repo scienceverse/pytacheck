@@ -74,23 +74,6 @@ _PREREG_WORDS = ("pre-?regist", "aspredicted")
 #: ``setdiff(repo_words, on_request) |> paste(collapse = "|")``
 _IN_REPO = "|".join(w for w in _REPO_WORDS if w != _ON_REQUEST)
 
-# Row prefilters (a performance device, not in R). Every search chain below
-# starts with one of the first-stage word lists and requires a repository word,
-# so a row that matches neither can never reach the table. text_search() only
-# cleans whitespace (``\s+`` -> " ", " , " -> ", ", "<~p~>" -> blank line)
-# between stages, so a repository word in cleaned text is still matched in the
-# raw text when its literal spaces may be any whitespace run; rows holding the
-# paragraph marker are always kept. Filtering the table first therefore
-# changes no result, but saves running ~30 patterns over the whole corpus.
-_FIRST_STAGE_ANY = "|".join((*_DATA_WORDS, *_CODE_WORDS, *_MATERIALS_WORDS, *_PREREG_WORDS))
-_REPO_ANY = "|".join(
-    (
-        *(w.replace(" ", r"\s+") for w in _REPO_WORDS if w != _ON_REQUEST),
-        "request",  # every on_request match contains it (and it is a fast literal)
-        "<~p~>",
-    )
-)
-
 _FLAGS = ("data", "code", "materials", "prereg")
 
 _NO_DATA_REPORT = (
@@ -113,27 +96,13 @@ _ON_REQUEST_REPORT = (
 
 
 def _search_frame(paper: Any) -> Any:
-    """What the searches run on: the paper's sentence table, prefiltered.
-
-    ``text_search()`` on this table returns exactly what it returns on
-    *paper* for every search chain of the module (see ``_REPO_ANY``), but the
-    text and section tables are joined only once. Other inputs are passed
-    through unchanged.
-    """
+    """What the searches run on: the sentence table of a paper (:func:`_code_rows` needs a
+    table); other inputs are passed through."""
     if not isinstance(paper, Paper | PaperList):
         return paper
     from pytacheck.text.search import _text_frame
 
-    frame = _text_frame(paper)[0]
-    if "text" not in frame.columns or len(frame) == 0:
-        return frame
-    texts = frame["text"].tolist()
-    keep = pd.Series(grepl(_REPO_ANY, texts, ignore_case=True), index=frame.index, dtype=bool)
-    if "section_type" in frame.columns:
-        keep &= ~frame["section_type"].isin(["references"]).fillna(False).astype(bool)
-    frame = frame.loc[keep.to_numpy()]
-    first = grepl(_FIRST_STAGE_ANY, frame["text"].tolist(), ignore_case=True)
-    return frame.loc[first]
+    return _text_frame(paper)[0]
 
 
 def _code_rows(frame: Any) -> Any:

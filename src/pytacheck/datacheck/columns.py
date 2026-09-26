@@ -521,14 +521,23 @@ _STAT_COLS = ("mean", "sd", "se", "median", "min", "max", "range", "p25", "p75",
               "skewness", "kurtosis")  # fmt: skip
 
 
-def _stats_frame(n: Any, n_missing: Any, n_unique: Any, **stats: float) -> pd.DataFrame:
+def _stats_row(n: Any, n_missing: Any, n_unique: Any, **stats: float) -> dict[str, Any]:
+    """One ``data_col_stats()`` row: the counts, then every statistic (NaN when absent)."""
+    return {
+        "n": n,
+        "n_missing": n_missing,
+        "n_unique": n_unique,
+        **{k: stats.get(k, math.nan) for k in _STAT_COLS},
+    }
+
+
+def _stats_frame(rows: Sequence[dict[str, Any]]) -> pd.DataFrame:
+    """The ``data_col_stats()`` rows *rows* as one frame (``Int64`` counts, double statistics)."""
     data: dict[str, pd.Series] = {
-        "n": pd.Series([n], dtype="Int64"),
-        "n_missing": pd.Series([n_missing], dtype="Int64"),
-        "n_unique": pd.Series([n_unique], dtype="Int64"),
+        k: pd.Series([r[k] for r in rows], dtype="Int64") for k in ("n", "n_missing", "n_unique")
     }
     for k in _STAT_COLS:
-        data[k] = pd.Series([stats.get(k, math.nan)], dtype="float64")
+        data[k] = pd.Series([r[k] for r in rows], dtype="float64")
     return pd.DataFrame(data)
 
 
@@ -663,9 +672,14 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
     arithmetic follows R's (long-double accumulation, ``powl``), so the
     statistics agree with R to the last bit on the same platform.
     """
+    return _stats_frame([_col_stats(x_for_stats, x_raw)])
+
+
+def _col_stats(x_for_stats: Any, x_raw: Any) -> dict[str, Any]:
+    """:func:`data_col_stats` as a dict (one row); :func:`_stats_frame` stacks them."""
     if _is_non_atomic(x_raw):
         n_val = x_raw.shape[0] if isinstance(x_raw, np.ndarray) else len(x_raw)
-        return _stats_frame(n_val, 0, None)
+        return _stats_row(n_val, 0, None)
     raw_arr = _double_array(x_raw)
     if raw_arr is not None:
         raw_na = np.isnan(raw_arr)
@@ -677,7 +691,7 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
         n_raw, n_raw_na = len(raw), sum(nas)
         n_unique_val = _n_unique([v for v, m in zip(raw, nas, strict=True) if not m])
     if x_for_stats is None:
-        return _stats_frame(n_raw - n_raw_na, n_raw_na, n_unique_val)
+        return _stats_row(n_raw - n_raw_na, n_raw_na, n_unique_val)
     xs_arr = _double_array(x_for_stats)
     if xs_arr is not None:
         miss = np.isnan(xs_arr)
@@ -689,8 +703,8 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
         n_miss = sum(_na(v) for v in _values_list(x_for_stats))
     n = int(x.size)
     if n == 0:
-        return _stats_frame(0, n_miss, n_unique_val)
-    return _stats_frame(n, n_miss, n_unique_val, **_numeric_summary(x))
+        return _stats_row(0, n_miss, n_unique_val)
+    return _stats_row(n, n_miss, n_unique_val, **_numeric_summary(x))
 
 
 # -----------------------------------------------------------------------------

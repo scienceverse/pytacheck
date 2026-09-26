@@ -551,10 +551,26 @@ def _dict_patterns(dict_df: pd.DataFrame, with_acronym: bool = True) -> list[str
     ]
 
 
+@functools.lru_cache(maxsize=8)
+def _folded(hay: str) -> str:
+    """*hay* folded for grepl()'s literal prefilter, once per text."""
+    from pytacheck._r.regex import fold
+
+    return fold(hay)
+
+
 def _safe_grepl(pat: str, hay: str) -> bool:
-    """``isTRUE(tryCatch(grepl(pat, hay, perl = TRUE, ignore.case = TRUE), ...))``."""
+    """``isTRUE(tryCatch(grepl(pat, hay, perl = TRUE, ignore.case = TRUE), ...))``.
+
+    The dictionary scans test hundreds of patterns against one paper's text:
+    the text is folded once (:func:`_folded`), and a pattern is compiled only
+    when one of its literals is in it.
+    """
+    from pytacheck._r.regex import detector
+
     try:
-        return bool(grepl(pat, hay, ignore_case=True, perl=True))
+        match = detector(pat, ignore_case=True, perl=True)
+        return match(hay, _folded(hay) if match.folds else None)
     except Exception:
         return False
 
@@ -792,6 +808,18 @@ class _Wording:
         return out
 
 
+@functools.lru_cache(maxsize=4)
+def _acronym_index(acronyms: tuple[Any, ...]) -> dict[str, tuple[int, ...]]:
+    """The dictionary rows of each normalised acronym (the dictionaries are fixed:
+    built once, not per data file; shared, so the rows are tuples)."""
+    index: dict[str, list[int]] = {}
+    for i, a in enumerate(acronyms):
+        k = _norm_pref(a)
+        if k is not None:
+            index.setdefault(k, []).append(i)
+    return {k: tuple(v) for k, v in index.items()}
+
+
 def _identify_scales_rules(
     previews: Mapping[str, Any] | None, labels_df: pd.DataFrame | None, paper: Any
 ) -> pd.DataFrame:
@@ -814,19 +842,15 @@ def _identify_scales_rules(
         return _empty_scale_frame()
     names = _vals(d, "name") or []
     acronyms = _vals(d, "acronym") or [None] * len(names)
-    akey = [_norm_pref(a) for a in acronyms]
-    akey_index: dict[str, list[int]] = {}
-    for i, k in enumerate(akey):
-        if k is not None:
-            akey_index.setdefault(k, []).append(i)
+    akey_index = _acronym_index(tuple(acronyms))
     wording = _Wording(labels_df)
     pff = _PaperForFile(paper, labels_df)
 
-    def cand_for_prefix(pfx: Any) -> list[int]:
+    def cand_for_prefix(pfx: Any) -> Sequence[int]:
         p = _norm_pref(pfx)
         if p is None or p == "":
-            return []
-        return akey_index.get(p, [])
+            return ()
+        return akey_index.get(p, ())
 
     def wording_of(file: Any, cols: Sequence[Any]) -> str:
         idx = wording.rows(file, cols)
@@ -913,6 +937,18 @@ def _first_tok(nm: Any) -> str:
     return toks[0] if toks else ""
 
 
+@functools.lru_cache(maxsize=4)
+def _task_index(names: tuple[Any, ...], acronyms: tuple[Any, ...]) -> dict[str, tuple[int, ...]]:
+    """The dictionary rows whose normalised acronym or first name token is each key,
+    in row order (``which(akey == p | nkey == p)``; shared, so the rows are tuples)."""
+    index: dict[str, list[int]] = {}
+    for i, (n, a) in enumerate(zip(names, acronyms, strict=True)):
+        for k in dict.fromkeys((_norm_pref(a), _norm_pref(_first_tok(n)))):
+            if k is not None:
+                index.setdefault(k, []).append(i)
+    return {k: tuple(v) for k, v in index.items()}
+
+
 def _identify_tasks_rules(
     previews: Mapping[str, Any] | None, labels_df: pd.DataFrame | None, paper: Any
 ) -> pd.DataFrame:
@@ -936,8 +972,7 @@ def _identify_tasks_rules(
         return _empty_scale_frame()
     names = _vals(d, "name") or []
     acronyms = _vals(d, "acronym") or [None] * len(names)
-    akey = [_norm_pref(a) for a in acronyms]
-    nkey = [_norm_pref(_first_tok(n)) for n in names]
+    task_index = _task_index(tuple(names), tuple(acronyms))
     pff = _PaperForFile(paper, labels_df)
     name_pats: dict[int, str] = {}
 
@@ -970,7 +1005,7 @@ def _identify_tasks_rules(
             p = _norm_pref(pfx)
             if p is None or p == "" or len(p) < 3:
                 continue
-            cand = [i for i in range(len(names)) if akey[i] == p or nkey[i] == p]
+            cand = task_index.get(p, ())
             if not cand:
                 continue
             corr = [corroborates(i, file) for i in cand]

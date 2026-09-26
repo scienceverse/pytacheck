@@ -84,6 +84,44 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
 - Fixed: the literal prefilter in front of `grepl` could drop true matches of
   dotted or dotless i.
 
+### Performance
+
+The Python side of the accuracy run (439 outputs) takes 16.9 s instead of
+34.7 s, its modules 13.6 s instead of 30.6 s (the minimum of 5 interleaved
+runs each), with every output byte-identical (docs/design/PERF_REPORT.md).
+
+- `text_search()` builds one table per call (strings, case-folded strings,
+  row positions) and matches every pattern of a list against it, building a
+  data frame for the result rows only; it used to run a full search per
+  pattern. One paper's sentences get their section headers by a lookup
+  instead of a merge. ethics_check and open_practices run about 6x
+  faster, funding_check_oi 7.7x.
+- `paper_table()` of one paper returns the paper's own table as a
+  copy-on-write view, and `paper_id()` counts `info` rows instead of building
+  the table.
+- codebook_check folds a paper's text once for its dictionary scans and
+  compiles a dictionary pattern only when one of its literals is in the text;
+  the dictionaries' acronym indexes are built once.
+- RetractionWatch is cleaned and indexed by DOI once per database file, not
+  on every call.
+- `bind_rows()` skips its column alignment when every part already has the
+  output's columns and types; `casefold()` no longer uses `str.translate`
+  (about 5x faster on non-ASCII text).
+- data_check builds its column statistics as rows, one frame per file;
+  repo_check skips the 13 platform listings when a paper has no repository
+  links; bibr 12 column typing skips R's coercion for plain values.
+- `grepl()`, `text_search()` and the codebook scans share one matcher with
+  the literal prefilter (`pytacheck._r.regex.detector()`), replacing three
+  copies of it; the hand-written prefilters of open_practices and of the
+  live-data search are gone.
+- Fixed: inside `run_session()` (the CLI and the API), a paper building one
+  of its tables from its JSON records changed its memo key, so a later run of
+  the same module on it (a nested repo_check, say) was computed again.
+- The accuracy harness runs every module of an input on one shared paper,
+  as `report()` does, instead of a copy per output, and flags a module that
+  changes it: through the Paper API (per output), or anywhere in its content,
+  a list inside a cell or a nested `extra` entry included (at the end).
+
 ### Fixed: metacheck bugs pytacheck no longer reproduces
 
 See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented

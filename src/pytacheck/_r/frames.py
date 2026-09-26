@@ -36,12 +36,22 @@ def bind_rows(frames: Iterable[pd.DataFrame | None]) -> pd.DataFrame:
     parts = [f for f in frames if f is not None]
     if not parts:
         return pd.DataFrame()
+    schemas = [f.dtypes for f in parts]
     first: dict[Any, Any] = {}  # each column's first dtype, in first-seen order
-    for f in parts:
-        for c, dtype in f.dtypes.items():
+    for schema in schemas:
+        for c, dtype in schema.items():
             first.setdefault(c, dtype)
     columns = list(first)
     non_empty = [f for f in parts if len(f) > 0]
+    same = [
+        list(s) for f, s in zip(parts, schemas, strict=True) if len(f) and list(s.index) == columns
+    ]
+    if len(same) == len(non_empty) > 0 and all(s == same[0] for s in same):
+        # the same columns and types everywhere (a single frame, or the parts of
+        # one table): nothing to add, cast or reorder
+        if len(non_empty) == 1:
+            return non_empty[0].reset_index(drop=True)
+        return pd.concat(non_empty, ignore_index=True, sort=False)
     if not non_empty:
         out = parts[0].iloc[0:0].copy()
         for c in columns:

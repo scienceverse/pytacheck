@@ -106,11 +106,19 @@ def load_database(name: str) -> pd.DataFrame:
     user data directory wins only when its ``date`` is later than the
     bundled one's.
     """
+    return _newest_database(name).copy(deep=False)
+
+
+def _newest_database(name: str) -> pd.DataFrame:
+    """:func:`load_database` without the copy: the process-wide cached frame itself,
+    the same object until the newest copy changes (so it can key derived caches).
+    Private because a caller that wrote into it would change every later lookup."""
     internal = _bundled(name)
     ext = user_database_path(name)
     if ext.exists():
         try:
-            external = read_database(ext)
+            st = ext.stat()
+            external = _read_cached(str(ext.resolve()), st.st_mtime_ns, st.st_size)
         except (OSError, ValueError, KeyError):
             external = None
         if external is not None:
@@ -118,7 +126,7 @@ def load_database(name: str) -> pd.DataFrame:
             int_date = internal.attrs.get("date")
             if ext_date is not None and (int_date is None or ext_date > int_date):
                 return external
-    return internal.copy(deep=False)
+    return internal
 
 
 def database_date(name: str) -> dt.date | None:

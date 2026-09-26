@@ -167,7 +167,7 @@ def encode_frame(df: pd.DataFrame) -> dict[str, Any]:
         "t": "df",
         "nrow": len(df),
         "names": [str(c) for c in df.columns],
-        "v": [encode_column(df.iloc[:, i]) for i in range(df.shape[1])],
+        "v": [encode_column(col) for _, col in df.items()],
     }
 
 
