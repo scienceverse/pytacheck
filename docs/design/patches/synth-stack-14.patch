@@ -1,0 +1,1627 @@
+diff --git a/parity/accuracy.py b/parity/accuracy.py
+index f31572d..181336c 100644
+--- a/parity/accuracy.py
++++ b/parity/accuracy.py
+@@ -50,7 +50,6 @@ from __future__ import annotations
+ 
+ import argparse
+ import contextlib
+-import copy
+ import fnmatch
+ import gzip
+ import io
+@@ -288,12 +287,21 @@ def _isolated() -> Iterator[None]:
+                     os.environ[k] = v
+ 
+ 
+-def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
+-    """Each output as ``{ok, value, error}`` (``problem``: it used the network or R).
++def _paper_state(paper: Any) -> tuple[Any, ...]:
++    """Changes made through the Paper API (a table set, replaced or deleted)."""
++    return (paper._generation, tuple((k, id(v)) for k, v in paper._tables.items()))
++
+ 
+-    Papers are read once and each module gets its own copy. R's parser is
+-    pytacheck's port (``PYTACHECK_R_PARSER=python``), so the results do not
+-    depend on whether an R is installed.
++def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
++    """Each output as ``{ok, value, error}`` (``problem``: it used the network or R,
++    or changed its paper).
++
++    Papers are read once, their tables built once, and every module runs on
++    the same paper object, as ``report()`` runs them: modules must not change
++    their paper, so each output's paper is checked after it runs (changes
++    made through the Paper API) and at the end (any change to a table). R's
++    parser is pytacheck's port (``PYTACHECK_R_PARSER=python``), so the results
++    do not depend on whether an R is installed.
+     """
+     import pytacheck as pc
+     from parity.canonical import canonical
+@@ -301,22 +309,30 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
+     from tests.httpmock import no_network
+ 
+     papers: dict[str, Any] = {}
++    snapshots: dict[str, Any] = {}  # a deep copy of each paper as read, to compare at the end
++
++    def key_of(o: Output) -> str:
++        return o.input if o.kind == "paper" else "demo"
+ 
+     def paper_for(o: Output) -> Any:
+-        key = o.input if o.kind == "paper" else "demo"
++        key = key_of(o)
+         if key not in papers:
+             try:
+-                papers[key] = pc.demopaper() if key == "demo" else pc.read(ROOT / key)
++                paper = pc.demopaper() if key == "demo" else pc.read(ROOT / key)
++                dict(paper.items())  # build every table now, not once per output
++                papers[key] = paper
++                snapshots[key] = paper.copy(deep=True)
+             except Exception as exc:  # every module of this input fails, as in R
+                 papers[key] = exc
+         paper = papers[key]
+         if isinstance(paper, Exception):
+             raise paper
+-        return copy.deepcopy(paper)
++        return paper
+ 
+     results: dict[Output, dict[str, Any]] = {}
+     with utc(), metacheck_defaults():
+         for o in outputs:
++            before = None
+             attempts: list[str] = []
+             r_attempts: list[str] = []
+             res: dict[str, Any]
+@@ -328,6 +344,7 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
+                     no_network(attempts),
+                 ):
+                     paper = paper_for(o)
++                    before = _paper_state(paper)
+                     args: dict[str, Any] = {}
+                     if o.kind == "repository":
+                         args = {"local_path": str(ROOT / o.input), "local_only": True}
+@@ -340,7 +357,15 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
+                 res["problem"] = f"used the network ({attempts[0]})"
+             elif r_attempts:
+                 res["problem"] = f"started R ({r_attempts[0]})"
++            elif before is not None and _paper_state(papers[key_of(o)]) != before:
++                res["problem"] = "changed its paper (modules must not modify their input)"
+             results[o] = res
++    changed = {
++        k for k, p in snapshots.items() if not (papers[k] == p and papers[k].extra == p.extra)
++    }
++    for o, res in results.items():
++        if key_of(o) in changed and not res.get("problem"):
++            res["problem"] = "a module changed this paper (modules must not modify their input)"
+     return results
+ 
+ 
+diff --git a/parity/canonical.py b/parity/canonical.py
+index 261e1a0..b3ee7ef 100644
+--- a/parity/canonical.py
++++ b/parity/canonical.py
+@@ -167,7 +167,7 @@ def encode_frame(df: pd.DataFrame) -> dict[str, Any]:
+         "t": "df",
+         "nrow": len(df),
+         "names": [str(c) for c in df.columns],
+-        "v": [encode_column(df.iloc[:, i]) for i in range(df.shape[1])],
++        "v": [encode_column(col) for _, col in df.items()],
+     }
+ 
+ 
+diff --git a/src/pytacheck/_r/frames.py b/src/pytacheck/_r/frames.py
+index 2353fd9..3833ca2 100644
+--- a/src/pytacheck/_r/frames.py
++++ b/src/pytacheck/_r/frames.py
+@@ -36,12 +36,22 @@ def bind_rows(frames: Iterable[pd.DataFrame | None]) -> pd.DataFrame:
+     parts = [f for f in frames if f is not None]
+     if not parts:
+         return pd.DataFrame()
++    schemas = [f.dtypes for f in parts]
+     first: dict[Any, Any] = {}  # each column's first dtype, in first-seen order
+-    for f in parts:
+-        for c, dtype in f.dtypes.items():
++    for schema in schemas:
++        for c, dtype in schema.items():
+             first.setdefault(c, dtype)
+     columns = list(first)
+     non_empty = [f for f in parts if len(f) > 0]
++    same = [
++        list(s) for f, s in zip(parts, schemas, strict=True) if len(f) and list(s.index) == columns
++    ]
++    if len(same) == len(non_empty) > 0 and all(s == same[0] for s in same):
++        # the same columns and types everywhere (a single frame, or the parts of
++        # one table): nothing to add, cast or reorder
++        if len(non_empty) == 1:
++            return non_empty[0].reset_index(drop=True)
++        return pd.concat(non_empty, ignore_index=True, sort=False)
+     if not non_empty:
+         out = parts[0].iloc[0:0].copy()
+         for c in columns:
+diff --git a/src/pytacheck/_r/regex.py b/src/pytacheck/_r/regex.py
+index ef54d56..b12c8af 100644
+--- a/src/pytacheck/_r/regex.py
++++ b/src/pytacheck/_r/regex.py
+@@ -297,14 +297,15 @@ def _leading_literal(branch: str) -> str:
+     return "".join(lit)
+ 
+ 
+-_TURKISH_I = str.maketrans({"\u0130": "i", "\u0131": "i"})
+-
+-
+ def casefold(s: str) -> str:
+     """``s.casefold()``, with the dotted capital and the dotless small I as ``i``:
+     ignoring case, the engine matches ``İ`` to ``i`` and ``ı`` to ``I``, which their
+     case folding (``i`` + U+0307 and ``ı``) does not show."""
+-    return s.translate(_TURKISH_I).casefold()
++    if "\u0130" in s:
++        s = s.replace("\u0130", "i")
++    if "\u0131" in s:
++        s = s.replace("\u0131", "i")
++    return s.casefold()
+ 
+ 
+ @functools.lru_cache(maxsize=8192)
+diff --git a/src/pytacheck/datacheck/columns.py b/src/pytacheck/datacheck/columns.py
+index 625f1f6..accd758 100644
+--- a/src/pytacheck/datacheck/columns.py
++++ b/src/pytacheck/datacheck/columns.py
+@@ -521,14 +521,23 @@ _STAT_COLS = ("mean", "sd", "se", "median", "min", "max", "range", "p25", "p75",
+               "skewness", "kurtosis")  # fmt: skip
+ 
+ 
+-def _stats_frame(n: Any, n_missing: Any, n_unique: Any, **stats: float) -> pd.DataFrame:
++def _stats_row(n: Any, n_missing: Any, n_unique: Any, **stats: float) -> dict[str, Any]:
++    """One ``data_col_stats()`` row: the counts, then every statistic (NaN when absent)."""
++    return {
++        "n": n,
++        "n_missing": n_missing,
++        "n_unique": n_unique,
++        **{k: stats.get(k, math.nan) for k in _STAT_COLS},
++    }
++
++
++def _stats_frame(rows: Sequence[dict[str, Any]]) -> pd.DataFrame:
++    """The ``data_col_stats()`` rows *rows* as one frame (``Int64`` counts, double statistics)."""
+     data: dict[str, pd.Series] = {
+-        "n": pd.Series([n], dtype="Int64"),
+-        "n_missing": pd.Series([n_missing], dtype="Int64"),
+-        "n_unique": pd.Series([n_unique], dtype="Int64"),
++        k: pd.Series([r[k] for r in rows], dtype="Int64") for k in ("n", "n_missing", "n_unique")
+     }
+     for k in _STAT_COLS:
+-        data[k] = pd.Series([stats.get(k, math.nan)], dtype="float64")
++        data[k] = pd.Series([r[k] for r in rows], dtype="float64")
+     return pd.DataFrame(data)
+ 
+ 
+@@ -663,9 +672,14 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
+     arithmetic follows R's (long-double accumulation, ``powl``), so the
+     statistics agree with R to the last bit on the same platform.
+     """
++    return _stats_frame([_col_stats(x_for_stats, x_raw)])
++
++
++def _col_stats(x_for_stats: Any, x_raw: Any) -> dict[str, Any]:
++    """:func:`data_col_stats` as a dict (one row); :func:`_stats_frame` stacks them."""
+     if _is_non_atomic(x_raw):
+         n_val = x_raw.shape[0] if isinstance(x_raw, np.ndarray) else len(x_raw)
+-        return _stats_frame(n_val, 0, None)
++        return _stats_row(n_val, 0, None)
+     raw_arr = _double_array(x_raw)
+     if raw_arr is not None:
+         raw_na = np.isnan(raw_arr)
+@@ -677,7 +691,7 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
+         n_raw, n_raw_na = len(raw), sum(nas)
+         n_unique_val = _n_unique([v for v, m in zip(raw, nas, strict=True) if not m])
+     if x_for_stats is None:
+-        return _stats_frame(n_raw - n_raw_na, n_raw_na, n_unique_val)
++        return _stats_row(n_raw - n_raw_na, n_raw_na, n_unique_val)
+     xs_arr = _double_array(x_for_stats)
+     if xs_arr is not None:
+         miss = np.isnan(xs_arr)
+@@ -689,8 +703,8 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
+         n_miss = sum(_na(v) for v in _values_list(x_for_stats))
+     n = int(x.size)
+     if n == 0:
+-        return _stats_frame(0, n_miss, n_unique_val)
+-    return _stats_frame(n, n_miss, n_unique_val, **_numeric_summary(x))
++        return _stats_row(0, n_miss, n_unique_val)
++    return _stats_row(n, n_miss, n_unique_val, **_numeric_summary(x))
+ 
+ 
+ # -----------------------------------------------------------------------------
+diff --git a/src/pytacheck/db/databases.py b/src/pytacheck/db/databases.py
+index 83648ca..13f5627 100644
+--- a/src/pytacheck/db/databases.py
++++ b/src/pytacheck/db/databases.py
+@@ -34,6 +34,7 @@ __all__ = [
+     "database_date",
+     "load_database",
+     "miscite",
++    "newest_database",
+     "read_database",
+     "user_database_path",
+     "write_database",
+@@ -106,11 +107,18 @@ def load_database(name: str) -> pd.DataFrame:
+     user data directory wins only when its ``date`` is later than the
+     bundled one's.
+     """
++    return newest_database(name).copy(deep=False)
++
++
++def newest_database(name: str) -> pd.DataFrame:
++    """:func:`load_database` without the copy: the cached frame itself, the same
++    object until the newest copy changes (so it can key derived caches). Read only."""
+     internal = _bundled(name)
+     ext = user_database_path(name)
+     if ext.exists():
+         try:
+-            external = read_database(ext)
++            st = ext.stat()
++            external = _read_cached(str(ext.resolve()), st.st_mtime_ns, st.st_size)
+         except (OSError, ValueError, KeyError):
+             external = None
+         if external is not None:
+@@ -118,7 +126,7 @@ def load_database(name: str) -> pd.DataFrame:
+             int_date = internal.attrs.get("date")
+             if ext_date is not None and (int_date is None or ext_date > int_date):
+                 return external
+-    return internal.copy(deep=False)
++    return internal
+ 
+ 
+ def database_date(name: str) -> dt.date | None:
+diff --git a/src/pytacheck/db/retractionwatch.py b/src/pytacheck/db/retractionwatch.py
+index 9a4b35e..e112c71 100644
+--- a/src/pytacheck/db/retractionwatch.py
++++ b/src/pytacheck/db/retractionwatch.py
+@@ -7,10 +7,16 @@ concern) from the RetractionWatch database, as distributed by Crossref.
+ from __future__ import annotations
+ 
+ import datetime as dt
++from collections.abc import Iterable
+ from pathlib import Path
+-from typing import TYPE_CHECKING
++from typing import TYPE_CHECKING, Any
+ 
+-from pytacheck.db.databases import database_date, load_database, user_database_path, write_database
++from pytacheck.db.databases import (
++    database_date,
++    newest_database,
++    user_database_path,
++    write_database,
++)
+ 
+ if TYPE_CHECKING:
+     import pandas as pd
+@@ -33,11 +39,38 @@ def retractionwatch() -> pd.DataFrame:
+     Rows without a DOI (``""``) are left out: joined on ``doi`` they would
+     match every reference without one (metacheck keeps them; U15).
+     """
+-    table = load_database(_NAME)
+-    blank = (table["doi"].isna() | (table["doi"].str.strip() == "")).to_numpy(dtype=bool)
+-    if blank.any():
+-        table = table.loc[~blank].reset_index(drop=True)
+-    return table
++    return _indexed()[0].copy(deep=False)
++
++
++# (the newest database frame, it without blank DOIs, its rows by lower-case DOI),
++# made once per database file rather than once per call
++_INDEXED: list[Any] = [None, None, None]
++
++
++def _indexed() -> tuple[pd.DataFrame, dict[str, list[int]]]:
++    source = newest_database(_NAME)
++    if _INDEXED[0] is not source:
++        table = source
++        blank = (table["doi"].isna() | (table["doi"].str.strip() == "")).to_numpy(dtype=bool)
++        if blank.any():
++            table = table.loc[~blank].reset_index(drop=True)
++        rows: dict[str, list[int]] = {}
++        for i, doi in enumerate(table["doi"].tolist()):
++            rows.setdefault(doi.lower(), []).append(i)
++        _INDEXED[:] = [source, table, rows]
++    return _INDEXED[1], _INDEXED[2]
++
++
++def rw_rows(dois: Iterable[Any]) -> pd.DataFrame:
++    """The RetractionWatch rows of *dois*, compared ignoring case, in database order,
++    with each ``doi`` in lower case (missing DOIs match nothing)."""
++    import pandas as pd
++
++    table, rows = _indexed()
++    wanted = {d.lower() for d in dois if isinstance(d, str)}
++    hits = sorted(i for d in wanted for i in rows.get(d, ()))
++    out = table.take(hits).reset_index(drop=True)
++    return out.assign(doi=pd.array([table["doi"].iat[i].lower() for i in hits], dtype="string"))
+ 
+ 
+ #: Alias of :func:`retractionwatch` (R ``rw``).
+diff --git a/src/pytacheck/io/bibr12.py b/src/pytacheck/io/bibr12.py
+index 320ccc1..ff5411b 100644
+--- a/src/pytacheck/io/bibr12.py
++++ b/src/pytacheck/io/bibr12.py
+@@ -548,6 +548,18 @@ def _column_values(v: Any) -> list[Any]:
+     return [None if _scalar_na(e) else e for e in v]
+ 
+ 
++_PLAIN = {"string": str, "integer": int, "number": float, "boolean": bool}
++
++
++def _plain_cells(v: list[Any], schema_type: str) -> bool:
++    """Every cell is ``None`` or a Python value of the column's type (an ``int`` in
++    R's integer range for an integer column), which the R coercion keeps as it is."""
++    t = _PLAIN[schema_type]
++    if t is int:
++        return all(e is None or (type(e) is int and -_INT_MAX <= e <= _INT_MAX) for e in v)
++    return all(e is None or type(e) is t for e in v)
++
++
+ def _bibr12_columns(
+     columns: Mapping[str, Any], cols: Mapping[str, str], n: int
+ ) -> dict[str, list[Any]]:
+@@ -564,6 +576,8 @@ def _bibr12_columns(
+             schema_type = _SCALAR_SCHEMA[typ]
+             if isinstance(v, pd.Series) and str(v.dtype) == str(SCHEMA_DTYPES[schema_type]):
+                 vals: list[Any] = v.tolist()  # already the column's type
++            elif isinstance(v, list) and _plain_cells(v, schema_type):
++                vals = v  # what the converters make: values of the type, or None
+             else:
+                 if v is None:
+                     vals = [None] * n
+diff --git a/src/pytacheck/module.py b/src/pytacheck/module.py
+index 081aa1a..fda1c94 100644
+--- a/src/pytacheck/module.py
++++ b/src/pytacheck/module.py
+@@ -333,7 +333,13 @@ def _paper_state(paper: Paper) -> tuple[Any, Any, Any] | None:
+     tables = getattr(paper, "_tables", None)
+     if gen is None or not isinstance(tables, dict):
+         return None
+-    ids = tuple((name, id(value)) for name, value in tables.items() if value is not None)
++    # a table read from JSON records has the same identity before and after it is built
++    lazy = getattr(paper, "_lazy", None) or {}
++    ids = tuple(
++        (name, id(lazy[name]) if name in lazy else id(value))
++        for name, value in tables.items()
++        if value is not None or name in lazy
++    )
+     try:
+         extra = _freeze(paper.extra)
+     except _Unfreezable:
+diff --git a/src/pytacheck/modules/_codebook.py b/src/pytacheck/modules/_codebook.py
+index 6c57865..d1c5f03 100644
+--- a/src/pytacheck/modules/_codebook.py
++++ b/src/pytacheck/modules/_codebook.py
+@@ -551,10 +551,29 @@ def _dict_patterns(dict_df: pd.DataFrame, with_acronym: bool = True) -> list[str
+     ]
+ 
+ 
++@functools.lru_cache(maxsize=8)
++def _folded(hay: str) -> str:
++    """*hay* case-folded, as grepl()'s literal prefilter folds it (once per text)."""
++    from pytacheck._r.regex import casefold
++
++    return casefold(hay)
++
++
+ def _safe_grepl(pat: str, hay: str) -> bool:
+-    """``isTRUE(tryCatch(grepl(pat, hay, perl = TRUE, ignore.case = TRUE), ...))``."""
++    """``isTRUE(tryCatch(grepl(pat, hay, perl = TRUE, ignore.case = TRUE), ...))``.
++
++    The dictionary scans test hundreds of patterns against one paper's text:
++    the text is folded once (:func:`_folded`) for grepl()'s literal prefilter,
++    and the regex only runs when one of the pattern's literals is in it.
++    """
++    from pytacheck._r import compile_r
++    from pytacheck._r.regex import _prefilter
++
+     try:
+-        return bool(grepl(pat, hay, ignore_case=True, perl=True))
++        literals = _prefilter(pat, True)
++        if literals is not None and not any(lit in _folded(hay) for lit in literals):
++            return False
++        return compile_r(pat, ignore_case=True, perl=True, posix=False).search(hay) is not None
+     except Exception:
+         return False
+ 
+@@ -792,6 +811,18 @@ class _Wording:
+         return out
+ 
+ 
++@functools.lru_cache(maxsize=4)
++def _acronym_index(acronyms: tuple[Any, ...]) -> dict[str, list[int]]:
++    """The dictionary rows of each normalised acronym (the dictionaries are fixed:
++    built once, not per data file)."""
++    index: dict[str, list[int]] = {}
++    for i, a in enumerate(acronyms):
++        k = _norm_pref(a)
++        if k is not None:
++            index.setdefault(k, []).append(i)
++    return index
++
++
+ def _identify_scales_rules(
+     previews: Mapping[str, Any] | None, labels_df: pd.DataFrame | None, paper: Any
+ ) -> pd.DataFrame:
+@@ -814,11 +845,7 @@ def _identify_scales_rules(
+         return _empty_scale_frame()
+     names = _vals(d, "name") or []
+     acronyms = _vals(d, "acronym") or [None] * len(names)
+-    akey = [_norm_pref(a) for a in acronyms]
+-    akey_index: dict[str, list[int]] = {}
+-    for i, k in enumerate(akey):
+-        if k is not None:
+-            akey_index.setdefault(k, []).append(i)
++    akey_index = _acronym_index(tuple(acronyms))
+     wording = _Wording(labels_df)
+     pff = _PaperForFile(paper, labels_df)
+ 
+@@ -913,6 +940,18 @@ def _first_tok(nm: Any) -> str:
+     return toks[0] if toks else ""
+ 
+ 
++@functools.lru_cache(maxsize=4)
++def _task_index(names: tuple[Any, ...], acronyms: tuple[Any, ...]) -> dict[str, list[int]]:
++    """The dictionary rows whose normalised acronym or first name token is each key,
++    in row order (``which(akey == p | nkey == p)``)."""
++    index: dict[str, list[int]] = {}
++    for i, (n, a) in enumerate(zip(names, acronyms, strict=True)):
++        for k in dict.fromkeys((_norm_pref(a), _norm_pref(_first_tok(n)))):
++            if k is not None:
++                index.setdefault(k, []).append(i)
++    return index
++
++
+ def _identify_tasks_rules(
+     previews: Mapping[str, Any] | None, labels_df: pd.DataFrame | None, paper: Any
+ ) -> pd.DataFrame:
+@@ -936,8 +975,7 @@ def _identify_tasks_rules(
+         return _empty_scale_frame()
+     names = _vals(d, "name") or []
+     acronyms = _vals(d, "acronym") or [None] * len(names)
+-    akey = [_norm_pref(a) for a in acronyms]
+-    nkey = [_norm_pref(_first_tok(n)) for n in names]
++    task_index = _task_index(tuple(names), tuple(acronyms))
+     pff = _PaperForFile(paper, labels_df)
+     name_pats: dict[int, str] = {}
+ 
+@@ -970,7 +1008,7 @@ def _identify_tasks_rules(
+             p = _norm_pref(pfx)
+             if p is None or p == "" or len(p) < 3:
+                 continue
+-            cand = [i for i in range(len(names)) if akey[i] == p or nkey[i] == p]
++            cand = task_index.get(p, [])
+             if not cand:
+                 continue
+             corr = [corroborates(i, file) for i in cand]
+diff --git a/src/pytacheck/modules/data_check.py b/src/pytacheck/modules/data_check.py
+index 6f008ff..675d6fd 100644
+--- a/src/pytacheck/modules/data_check.py
++++ b/src/pytacheck/modules/data_check.py
+@@ -1098,7 +1098,7 @@ def _file_columns(
+         _qualtrics_tag_cols,
+         data_check_is_qualtrics,
+     )
+-    from pytacheck.datacheck.columns import data_col_stats
++    from pytacheck.datacheck.columns import _col_stats, _stats_frame
+ 
+     names = [str(c) for c in df.columns]
+     p = len(names)
+@@ -1126,8 +1126,8 @@ def _file_columns(
+             and h._is_true(c.get("is_numeric"))
+         ):
+             x_for_stats = df.iloc[:, j]
+-        stats.append(data_col_stats(x_for_stats, df.iloc[:, j]))
+-    stats_mat = _stack_stats(stats)
++        stats.append(_col_stats(x_for_stats, df.iloc[:, j]))
++    stats_mat = _stats_frame(stats)
+ 
+     rep_counts = df.attrs.get("utf8_repaired") or {}
+     utf8_fixed = [int(rep_counts[nm]) if nm in rep_counts else 0 for nm in names]
+@@ -1154,30 +1154,6 @@ def _file_columns(
+     return pd.concat([pd.DataFrame(data), stats_mat], axis=1)
+ 
+ 
+-def _stack_stats(stats: list[pd.DataFrame]) -> pd.DataFrame:
+-    """``do.call(rbind, <one-row data_col_stats() frames>)``.
+-
+-    ``data_col_stats()`` always returns the same columns and types, so the
+-    rows are stacked column by column; anything else goes through
+-    :func:`~pytacheck._r.bind_rows` (R's type coercion).
+-    """
+-    from pytacheck._r import bind_rows
+-
+-    if not stats:
+-        return bind_rows(stats).reset_index(drop=True)
+-    first = stats[0]
+-    cols = list(first.columns)
+-    if all(len(s) == 1 and list(s.columns) == cols for s in stats):
+-        rows = [s.to_dict("records")[0] for s in stats]
+-        try:
+-            return pd.DataFrame(
+-                {c: pd.Series([r[c] for r in rows], dtype=first[c].dtype) for c in cols}
+-            )
+-        except (TypeError, ValueError):
+-            pass
+-    return bind_rows(stats).reset_index(drop=True)
+-
+-
+ def _extract(
+     all_files: pd.DataFrame, paper: Any, model: Any, params: dict[str, Any], state: dict[str, Any]
+ ) -> dict[str, Any]:
+diff --git a/src/pytacheck/modules/open_practices.py b/src/pytacheck/modules/open_practices.py
+index 638f228..e128664 100644
+--- a/src/pytacheck/modules/open_practices.py
++++ b/src/pytacheck/modules/open_practices.py
+@@ -74,23 +74,6 @@ _PREREG_WORDS = ("pre-?regist", "aspredicted")
+ #: ``setdiff(repo_words, on_request) |> paste(collapse = "|")``
+ _IN_REPO = "|".join(w for w in _REPO_WORDS if w != _ON_REQUEST)
+ 
+-# Row prefilters (a performance device, not in R). Every search chain below
+-# starts with one of the first-stage word lists and requires a repository word,
+-# so a row that matches neither can never reach the table. text_search() only
+-# cleans whitespace (``\s+`` -> " ", " , " -> ", ", "<~p~>" -> blank line)
+-# between stages, so a repository word in cleaned text is still matched in the
+-# raw text when its literal spaces may be any whitespace run; rows holding the
+-# paragraph marker are always kept. Filtering the table first therefore
+-# changes no result, but saves running ~30 patterns over the whole corpus.
+-_FIRST_STAGE_ANY = "|".join((*_DATA_WORDS, *_CODE_WORDS, *_MATERIALS_WORDS, *_PREREG_WORDS))
+-_REPO_ANY = "|".join(
+-    (
+-        *(w.replace(" ", r"\s+") for w in _REPO_WORDS if w != _ON_REQUEST),
+-        "request",  # every on_request match contains it (and it is a fast literal)
+-        "<~p~>",
+-    )
+-)
+-
+ _FLAGS = ("data", "code", "materials", "prereg")
+ 
+ _NO_DATA_REPORT = (
+@@ -113,27 +96,13 @@ _ON_REQUEST_REPORT = (
+ 
+ 
+ def _search_frame(paper: Any) -> Any:
+-    """What the searches run on: the paper's sentence table, prefiltered.
+-
+-    ``text_search()`` on this table returns exactly what it returns on
+-    *paper* for every search chain of the module (see ``_REPO_ANY``), but the
+-    text and section tables are joined only once. Other inputs are passed
+-    through unchanged.
+-    """
++    """What the searches run on: the sentence table of a paper (:func:`_code_rows` needs a
++    table); other inputs are passed through."""
+     if not isinstance(paper, Paper | PaperList):
+         return paper
+     from pytacheck.text.search import _text_frame
+ 
+-    frame = _text_frame(paper)[0]
+-    if "text" not in frame.columns or len(frame) == 0:
+-        return frame
+-    texts = frame["text"].tolist()
+-    keep = pd.Series(grepl(_REPO_ANY, texts, ignore_case=True), index=frame.index, dtype=bool)
+-    if "section_type" in frame.columns:
+-        keep &= ~frame["section_type"].isin(["references"]).fillna(False).astype(bool)
+-    frame = frame.loc[keep.to_numpy()]
+-    first = grepl(_FIRST_STAGE_ANY, frame["text"].tolist(), ignore_case=True)
+-    return frame.loc[first]
++    return _text_frame(paper)[0]
+ 
+ 
+ def _code_rows(frame: Any) -> Any:
+diff --git a/src/pytacheck/modules/ref_retraction.py b/src/pytacheck/modules/ref_retraction.py
+index b854c78..c1b4779 100644
+--- a/src/pytacheck/modules/ref_retraction.py
++++ b/src/pytacheck/modules/ref_retraction.py
+@@ -23,7 +23,7 @@ def _refs_with_doi(paper: Any) -> pd.DataFrame:
+     return bib.loc[keep].reset_index(drop=True)
+ 
+ 
+-def _rw_entries(rw: pd.DataFrame, dois: pd.Series) -> pd.DataFrame:
++def _rw_entries(dois: pd.Series) -> pd.DataFrame:
+     """The RetractionWatch rows of *dois*, one per DOI whatever its case.
+ 
+     RetractionWatch joins the notices of one DOI with ``;`` ("Retraction;Expression
+@@ -32,10 +32,9 @@ def _rw_entries(rw: pd.DataFrame, dois: pd.Series) -> pd.DataFrame:
+     their notices are joined the same way, so a citation gets both and counts as
+     one article.
+     """
+-    key = rw["doi"].astype("string").str.lower()
+-    wanted = set(dois.astype("string").str.lower().dropna().tolist())
+-    keep = (key.notna() & key.isin(wanted)).to_numpy(dtype=bool)
+-    hits = rw.loc[keep].assign(doi=key[keep].array)
++    from pytacheck.db.retractionwatch import rw_rows
++
++    hits = rw_rows(dois.tolist())
+     if not hits["doi"].duplicated().any():
+         return hits
+ 
+@@ -94,7 +93,6 @@ def ref_retraction(paper: Any) -> dict[str, Any]:
+     ``ref_table()``) to the RetractionWatch database on the DOI, ignoring
+     its case.
+     """
+-    from pytacheck.db.retractionwatch import retractionwatch
+     from pytacheck.modules.ref_summary import _join_doi
+ 
+     # table ----
+@@ -107,7 +105,7 @@ def ref_retraction(paper: Any) -> dict[str, Any]:
+     ## join to rw table (dplyr::inner_join keeps bib's order), ignoring the case
+     ## of DOIs: metacheck's exact join missed the RetractionWatch DOIs with
+     ## capitals, about a fifth of them (U157)
+-    table = _join_doi(bib, _rw_entries(retractionwatch(), bib["doi"]))
++    table = _join_doi(bib, _rw_entries(bib["doi"]))
+ 
+     # traffic_light ----
+     tl = "info" if len(table) else "na"
+diff --git a/src/pytacheck/modules/repo_check.py b/src/pytacheck/modules/repo_check.py
+index 6f9aec1..fc0a705 100644
+--- a/src/pytacheck/modules/repo_check.py
++++ b/src/pytacheck/modules/repo_check.py
+@@ -15,7 +15,7 @@ from __future__ import annotations
+ 
+ import contextlib
+ import os
+-from collections.abc import Mapping, Sequence
++from collections.abc import Callable, Mapping, Sequence
+ from typing import Any
+ 
+ import pandas as pd
+@@ -246,21 +246,10 @@ def _repo_check(
+         rc.flag_figshare_share_links(repos, fs_links)
+ 
+     # get files ----
+-    osf_urls = repos.urls("osf")
+-    osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
+-    osf_paper_id = osf_ids[0] if osf_ids else first_pid()
+-
+-    osf_meta = rc.meta_frame()
+-    if osf_license is True and osf_urls:
+-        osf_meta = _osf_license_meta(osf_urls)
+-    osf_files = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache)
+-
+-    github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
+-    gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
+-    rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), bar)
+-    pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
+-    dspace7_files = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
+-    listings = _api_listings(repos, cache, bar)
++    if len(repos.df) > 0:
++        file_parts, meta_parts = _online_listings(repos, osf_license, cache, bar, first_pid)
++    else:  # local_only, or no repository links: every platform's listing is empty
++        file_parts, meta_parts = [rc.placeholder()], [rc.meta_frame()]
+ 
+     local_files_df = rc.placeholder()
+     if local_path is not None:
+@@ -296,41 +285,8 @@ def _repo_check(
+         }
+ 
+     # file numbers and types ----
+-    all_files = bind_rows(
+-        [
+-            osf_files,
+-            github_files,
+-            gitlab_files,
+-            rb_files,
+-            pa_files,
+-            dspace7_files,
+-            listings["zenodo"][0],
+-            listings["dataverse"][0],
+-            listings["figshare"][0],
+-            listings["dryad"][0],
+-            listings["reshare"][0],
+-            listings["researchdata4tu"][0],
+-            listings["mendeley"][0],
+-            listings["dataone"][0],
+-            local_files_df,
+-        ]
+-    ).reset_index(drop=True)
+-    repo_metadata = bind_rows(
+-        [
+-            osf_meta,
+-            github_meta,
+-            gitlab_meta,
+-            pa_meta,
+-            listings["zenodo"][1],
+-            listings["dataverse"][1],
+-            listings["figshare"][1],
+-            listings["dryad"][1],
+-            listings["reshare"][1],
+-            listings["researchdata4tu"][1],
+-            listings["mendeley"][1],
+-            listings["dataone"][1],
+-        ]
+-    ).reset_index(drop=True)
++    all_files = bind_rows([*file_parts, local_files_df]).reset_index(drop=True)
++    repo_metadata = bind_rows(meta_parts).reset_index(drop=True)
+ 
+     all_files, is_readme = _prepare_files(all_files, repos)
+     if peek_zips is True and len(all_files) > 0:
+@@ -393,6 +349,30 @@ def _repo_check(
+ # ---------------------------------------------------------------------------
+ 
+ 
++def _online_listings(
++    repos: rc.Repos, osf_license: bool, cache: bool, bar: Any, first_pid: Callable[[], Any]
++) -> tuple[list[pd.DataFrame], list[pd.DataFrame]]:
++    """Every platform's file listing and metadata, in R's order (for ``bind_rows()``)."""
++    osf_urls = repos.urls("osf")
++    osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
++    osf_paper_id = osf_ids[0] if osf_ids else first_pid()
++
++    osf_meta = rc.meta_frame()
++    if osf_license is True and osf_urls:
++        osf_meta = _osf_license_meta(osf_urls)
++    osf_files = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache)
++
++    github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
++    gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
++    rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), bar)
++    pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
++    dspace7_files = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
++    listings = _api_listings(repos, cache, bar)
++    files = [osf_files, github_files, gitlab_files, rb_files, pa_files, dspace7_files]
++    meta = [osf_meta, github_meta, gitlab_meta, pa_meta]
++    return files + [f for f, _ in listings.values()], meta + [m for _, m in listings.values()]
++
++
+ def _osf_license_meta(osf_urls: list[str]) -> pd.DataFrame:
+     """The ``osf_license = TRUE`` lookup: one ``?embed=license`` request per project."""
+     from pytacheck.archives.osf import osf_check_id
+diff --git a/src/pytacheck/papers/model.py b/src/pytacheck/papers/model.py
+index 545cb78..c6c7c59 100644
+--- a/src/pytacheck/papers/model.py
++++ b/src/pytacheck/papers/model.py
+@@ -31,7 +31,7 @@ from pytacheck.papers.schema import empty_table, records_to_frame, required_tabl
+ 
+ __all__ = ["Paper", "PaperList", "is_paper", "is_paper_list"]
+ 
+-_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation"})
++_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy"})
+ # Process-wide mutation counter: ``Paper._generation`` changes whenever a paper is
+ # modified through its API, which invalidates ``run_session()`` memo entries.
+ _GENERATION = itertools.count(1)
+@@ -61,7 +61,7 @@ class Paper:
+         not given starts as an empty, fully-typed table.
+     """
+ 
+-    __slots__ = ("_columns", "_generation", "_raw", "_tables", "extra", "paper_id")
++    __slots__ = ("_columns", "_generation", "_lazy", "_raw", "_tables", "extra", "paper_id")
+ 
+     paper_id: str | None
+     extra: dict[str, Any]
+@@ -72,6 +72,9 @@ class Paper:
+         object.__setattr__(self, "_raw", {})
+         object.__setattr__(self, "_columns", {})
+         object.__setattr__(self, "_generation", next(_GENERATION))
++        # a token per table read from JSON records, the same whether or not the
++        # table has been built yet (run_session() keys use it, not the frame's id)
++        object.__setattr__(self, "_lazy", {})
+         store: dict[str, Any] = {}
+         for name in required_tables():
+             store[name] = tables.pop(name) if name in tables else None
+@@ -86,6 +89,7 @@ class Paper:
+         self._tables[name] = None
+         self._raw[name] = records
+         self._columns[name] = list(columns)
++        self._lazy[name] = object()
+ 
+     def _touch(self) -> None:
+         object.__setattr__(self, "_generation", next(_GENERATION))
+@@ -131,6 +135,7 @@ class Paper:
+             return
+         self._raw.pop(name, None)
+         self._columns.pop(name, None)
++        self._lazy.pop(name, None)
+         self._tables[name] = value
+ 
+     def __delitem__(self, name: str) -> None:
+@@ -138,6 +143,7 @@ class Paper:
+         self._tables.pop(name, None)
+         self._raw.pop(name, None)
+         self._columns.pop(name, None)
++        self._lazy.pop(name, None)
+ 
+     def get(self, name: str, default: Any = None) -> Any:
+         """The element *name*, or *default* when the paper has no such element."""
+@@ -189,6 +195,7 @@ class Paper:
+             if raw is not None:
+                 new._raw[name] = list(raw[0]) if deep else raw[0]
+                 new._columns[name] = list(raw[1])
++                new._lazy[name] = object()
+                 tables[name] = None
+             else:
+                 value = self._tables[name]
+diff --git a/src/pytacheck/papers/tables.py b/src/pytacheck/papers/tables.py
+index 4afec0d..eb758b6 100644
+--- a/src/pytacheck/papers/tables.py
++++ b/src/pytacheck/papers/tables.py
+@@ -56,10 +56,14 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
+     """
+     papers = as_paper_list(paper)
+ 
+-    fast = table in table_names() and all(
+-        p._raw_records(table) is not None or table not in p for p in papers
++    fast = (
++        len(papers) > 1
++        and table in table_names()
++        and all(p._raw_records(table) is not None or table not in p for p in papers)
+     )
+-    if fast and any(p._raw_records(table) is not None for p in papers):
++    if len(papers) == 1:
++        merged = _one_table(papers[0], table)
++    elif fast and any(p._raw_records(table) is not None for p in papers):
+         merged = _fast_concat(papers, table)
+     else:
+         frames = []
+@@ -78,6 +82,17 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
+     return merged.reset_index(drop=True)
+ 
+ 
++def _one_table(p: Paper, table: str) -> pd.DataFrame:
++    """*table* of one paper plus ``paper_id``: the paper's own (lazily built, then
++    kept) table as a copy-on-write view, not a new frame from its JSON records."""
++    x = p.get(table)
++    if not isinstance(x, pd.DataFrame):
++        return pd.DataFrame()
++    x = x.copy(deep=False)
++    x["paper_id"] = pd.Series([p.paper_id] * len(x), index=x.index, dtype="string")
++    return x
++
++
+ def _fast_concat(papers: PaperList, table: str) -> pd.DataFrame:
+     """Build the concatenated table straight from each paper's JSON records."""
+     order: dict[str, None] = {}
+@@ -111,7 +126,34 @@ def _fast_concat(papers: PaperList, table: str) -> pd.DataFrame:
+ 
+ 
+ def paper_id(paper: Any) -> list[str]:
+-    """IDs of the papers (``paper_id()``), taken from their ``info`` tables."""
++    """IDs of the papers (``paper_id()``), taken from their ``info`` tables.
++
++    ``paper_table(paper, "info", "paper_id")`` gives each paper's ID once per
++    row of its ``info`` table, so only the rows are counted (building the
++    table costs more than every module's use of it).
++    """
++    papers = as_paper_list(paper)
++    ids: list[str] = []
++    for p in papers:
++        rows = _info_rows(p)
++        if rows is None or not isinstance(p.paper_id, str):
++            return _paper_id_table(paper)
++        ids += [p.paper_id] * rows
++    return ids
++
++
++def _info_rows(p: Paper) -> int | None:
++    """Rows of *p*'s ``info`` table (0 without one), or ``None`` if they cannot be counted."""
++    raw = p._raw_records("info")
++    if raw is not None:
++        return len(raw[0]) if raw[1] else None
++    if "info" not in p:
++        return 0
++    info = p.get("info")
++    return len(info) if isinstance(info, pd.DataFrame) and len(info.columns) else None
++
++
++def _paper_id_table(paper: Any) -> list[str]:
+     info = paper_table(paper, "info", ["paper_id"])
+     if "paper_id" not in info.columns:
+         return []
+diff --git a/src/pytacheck/text/extract.py b/src/pytacheck/text/extract.py
+index d7c1066..c84ec04 100644
+--- a/src/pytacheck/text/extract.py
++++ b/src/pytacheck/text/extract.py
+@@ -108,53 +108,6 @@ _LIVE_WORDS = (
+ )
+ 
+ 
+-#: Literals one of which every match of a :data:`_LIVE_WORDS` pattern contains
+-#: (case-insensitively), so sentences without any of them are dropped before
+-#: the 29 searches (tests/mod_ethics checks the coverage pattern by pattern).
+-_LIVE_ANY = "|".join(
+-    (
+-        "particip",
+-        "subject",
+-        "volunteer",
+-        "respondent",
+-        "recruited",
+-        "enrolled",
+-        "debriefed",
+-        "collected",
+-        "conducted",
+-        "randomi",
+-        "consent",
+-        "mturk",
+-        "mechanical",
+-        "prolific",
+-        "cloudresearch",
+-        "turkprime",
+-        "sona",
+-        "student",
+-        "criteri",
+-        "mice",
+-        "rat",
+-        "monkey",
+-        "pigeon",
+-        "zebrafish",
+-        "ferret",
+-        "rabbit",
+-        "hamster",
+-        "gerbil",
+-        "guinea",
+-        "macaque",
+-        "marmoset",
+-        "implanted",
+-        "surgically",
+-        "injected",
+-        "anesthetized",
+-        "anaesthetized",
+-        "sacrificed",
+-        "perfused",
+-    )
+-)
+-
+-
+ def _search_table(paper: Any, any_of: str | None = None, perl: bool = False) -> Any:
+     """The (uncleaned) table ``text_search()`` builds from *paper*.
+ 
+@@ -363,4 +316,4 @@ def _detect_live_data(paper: Any) -> pd.DataFrame:
+     recruitment platforms, student pools, inclusion/exclusion criteria and
+     animal data collection. Used by the ``ethics_check`` module.
+     """
+-    return text_search(_search_table(paper, _LIVE_ANY), list(_LIVE_WORDS))
++    return text_search(paper, list(_LIVE_WORDS))
+diff --git a/src/pytacheck/text/search.py b/src/pytacheck/text/search.py
+index 2583643..c374115 100644
+--- a/src/pytacheck/text/search.py
++++ b/src/pytacheck/text/search.py
+@@ -11,8 +11,19 @@ from typing import Any, Literal
+ import pandas as pd
+ 
+ from pytacheck._r.frames import bind_rows
+-from pytacheck._r.regex import RegexError, compile_r, grepl, gsub, regextract_all
++from pytacheck._r.regex import (
++    RegexError,
++    _as_str,
++    _compile,
++    _prefilter,
++    casefold,
++    compile_r,
++    gsub,
++    regextract_all,
++)
++from pytacheck._values import is_missing
+ from pytacheck.papers.model import Paper, PaperList, is_paper_list
++from pytacheck.papers.schema import records_to_frame
+ from pytacheck.papers.tables import paper_table
+ 
+ __all__ = ["search_text", "text_search"]
+@@ -36,20 +47,7 @@ def _text_frame(paper: Any) -> tuple[pd.DataFrame, bool]:
+     if isinstance(paper, Paper | PaperList) or (
+         is_paper_list(paper) and not isinstance(paper, str)
+     ):
+-        text = paper_table(paper, "text")
+-        if "text" not in text.columns and len(text) == 0:
+-            # an empty paper list (or a paper without text): the columns of a
+-            # text table, typed, so that searches of it chain like any other
+-            # (metacheck gives logical NA columns and drops `text`; U79)
+-            return _empty_text_frame(), False
+-        sections = paper_table(paper, "section")
+-        cols = ["section_id", "paper_id", "header", "section_type"]
+-        if all(c in sections.columns for c in cols) and len(text.columns) > 0:
+-            right = sections.loc[:, cols]
+-            if "section_id" in text.columns:
+-                right = right.astype({"section_id": text["section_id"].dtype}, errors="ignore")
+-            text = text.merge(right, on=["section_id", "paper_id"], how="left", sort=False)
+-        return text, False
++        return _join_sections(paper), False
+     if isinstance(paper, str):
+         return pd.DataFrame({"text": pd.Series([paper], dtype="string")}), True
+     if isinstance(paper, Sequence) and all(isinstance(s, str) for s in paper):
+@@ -59,6 +57,89 @@ def _text_frame(paper: Any) -> tuple[pd.DataFrame, bool]:
+     )
+ 
+ 
++def _join_sections(paper: Any) -> pd.DataFrame:
++    """``paper_table(paper, "text")`` with each sentence's section ``header`` and ``section_type``."""
++    fast = _join_one(paper) if isinstance(paper, Paper) else None
++    if fast is not None:
++        return fast
++    text = paper_table(paper, "text")
++    if "text" not in text.columns and len(text) == 0:
++        # an empty paper list (or a paper without text): the columns of a
++        # text table, typed, so that searches of it chain like any other
++        # (metacheck gives logical NA columns and drops `text`; U79)
++        return _empty_text_frame()
++    sections = paper_table(paper, "section")
++    cols = ["section_id", "paper_id", "header", "section_type"]
++    if all(c in sections.columns for c in cols) and len(text.columns) > 0:
++        right = sections.loc[:, cols]
++        if "section_id" in text.columns:
++            right = right.astype({"section_id": text["section_id"].dtype}, errors="ignore")
++        text = text.merge(right, on=["section_id", "paper_id"], how="left", sort=False)
++    return text
++
++
++def _one_table(paper: Paper, name: str, columns: list[str] | None = None) -> pd.DataFrame | None:
++    """``paper_table(paper, name, columns)`` of one paper, cheaply (``None``: not cheaply).
++
++    From its JSON records when it still has them (``paper_table()`` types each
++    column the same way from all of them), or from its table.
++    """
++    raw = paper._raw_records(name)
++    if raw is not None:
++        records, own = raw
++        if not records or (columns is not None and not set(columns) <= set(own)):
++            return None
++        wanted = [c for c in (own if columns is None else columns) if c != "paper_id"]
++        frame = records_to_frame(name, records, wanted)
++    else:
++        table = paper.get(name)
++        if not isinstance(table, pd.DataFrame) or len(table) == 0:
++            return None
++        own = list(table.columns)
++        if not table.columns.is_unique or (columns is not None and not set(columns) <= set(own)):
++            return None
++        wanted = [c for c in (own if columns is None else columns) if c != "paper_id"]
++        frame = table.loc[:, wanted].reset_index(drop=True)
++    at = own.index("paper_id") if "paper_id" in own and columns is None else len(wanted)
++    frame.insert(at, "paper_id", pd.array([paper.paper_id] * len(frame), dtype="string"))
++    return frame
++
++
++def _join_one(paper: Paper) -> pd.DataFrame | None:
++    """:func:`_join_sections` of one paper, with a lookup instead of the merge.
++
++    Every row has the paper's ID, so the merge key is ``section_id`` alone
++    (``NA`` finds ``NA``, as in the merge). ``None`` when the general path is
++    needed: no rows, a section ID that is not unique (the merge repeats rows),
++    columns the merge would rename, or key types it would convert.
++    """
++    if not isinstance(paper.paper_id, str):
++        return None
++    text = _one_table(paper, "text")
++    sections = _one_table(paper, "section", ["section_id", "header", "section_type"])
++    if (
++        text is None
++        or sections is None
++        or "section_id" not in text.columns
++        or "header" in text.columns
++        or "section_type" in text.columns
++        or not isinstance(text["section_id"].dtype, pd.Int64Dtype)
++        or not isinstance(sections["section_id"].dtype, pd.Int64Dtype)
++        or not all(
++            isinstance(sections[c].dtype, pd.StringDtype) for c in ("header", "section_type")
++        )
++    ):
++        return None
++    keys = [None if k is pd.NA else k for k in sections["section_id"].tolist()]
++    row_of = {k: j for j, k in enumerate(keys)}
++    if len(row_of) < len(keys):
++        return None
++    rows = [row_of.get(None if k is pd.NA else k, -1) for k in text["section_id"].tolist()]
++    for c in ("header", "section_type"):
++        text[c] = sections[c].array.take(rows, allow_fill=True)
++    return text
++
++
+ def _empty_text_frame() -> pd.DataFrame:
+     """A zero-row text table with the columns :func:`text_search` returns for papers."""
+     return pd.DataFrame(
+@@ -136,6 +217,209 @@ def _semi_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> pd.DataFrame:
+     return x.loc[mask].reset_index(drop=True)
+ 
+ 
++class _Table:
++    """What one :func:`text_search` call searches: its table, and the columns it scans as lists.
++
++    Built once per call, however many patterns are searched: every pattern is
++    matched against the same lists, and a DataFrame is built once, for the
++    result rows only (metacheck, and the old port, ran a full search per
++    pattern and row-bound the results).
++    """
++
++    __slots__ = (
++        "_cleaned",
++        "_folded",
++        "_ft",
++        "_paragraphs",
++        "_strings",
++        "frame",
++        "header",
++        "is_vector",
++        "missing",
++        "rows",
++        "text",
++    )
++
++    @classmethod
++    def of(cls, paper: Any, include_refs: bool) -> _Table:
++        """The table for *paper*."""
++        return cls(*_text_frame(paper), include_refs)
++
++    def __init__(self, frame: pd.DataFrame, is_vector: bool, include_refs: bool) -> None:
++        self.is_vector = is_vector
++        self.missing = [c for c in _REQUIRED if c not in frame.columns]
++        if self.missing:
++            frame = frame.copy(deep=False)
++            for m in self.missing:
++                frame[m] = pd.Series([pd.NA] * len(frame), index=frame.index, dtype=object)
++            if "text" in self.missing:
++                frame["text"] = frame.iloc[:, 0]
++        self.frame = frame
++        if include_refs:
++            self.rows: list[int] | None = None
++        else:
++            types = frame["section_type"].tolist()
++            refs = [i for i, t in enumerate(types) if isinstance(t, str) and t == "references"]
++            self.rows = None if not refs else sorted(set(range(len(frame))) - set(refs))
++        text = frame["text"].tolist()
++        header = frame["header"].tolist()
++        if self.rows is not None:
++            text = [text[i] for i in self.rows]
++            header = [header[i] for i in self.rows]
++        self.text = text
++        self.header = header
++        self._strings: dict[str, list[str | None]] = {}
++        self._cleaned: dict[int, Any] = {}
++        self._folded: dict[str, list[str | None]] = {}
++        self._ft: pd.DataFrame | None = None
++        self._paragraphs: pd.DataFrame | None = None
++
++    @property
++    def ft(self) -> pd.DataFrame:
++        """The searched rows (references dropped) as a frame, index reset."""
++        if self._ft is None:
++            self._ft = self.take(None)
++        return self._ft
++
++    def take(self, positions: list[int] | None) -> pd.DataFrame:
++        """Rows *positions* of the searched rows (all of them for ``None``), index reset."""
++        if positions is None:
++            positions = self.rows
++        elif self.rows is not None:
++            positions = [self.rows[i] for i in positions]
++        if positions is None:
++            return self.frame.reset_index(drop=True)
++        return self.frame.take(positions).reset_index(drop=True)
++
++    def matches(
++        self, pattern: str, ignore_case: bool, perl: bool, fixed: bool, exclude: bool, header: bool
++    ) -> list[int]:
++        """Positions of the searched rows whose text (or header) matches *pattern*."""
++        hits = self._scan("text", pattern, ignore_case, perl, fixed)
++        if header:
++            in_header = self._scan("header", pattern, ignore_case, perl, fixed)
++            hits = [a or b for a, b in zip(hits, in_header, strict=True)]
++        return [i for i, h in enumerate(hits) if h != exclude]
++
++    def _scan(
++        self, column: str, pattern: str, ignore_case: bool, perl: bool, fixed: bool
++    ) -> list[bool]:
++        """``grepl(pattern, column)``, with the column's strings and case folding made once."""
++        strings = self._strings.get(column)
++        if strings is None:
++            values = self.text if column == "text" else self.header
++            strings = self._strings[column] = [_as_str(v) for v in values]
++        if fixed:
++            return [s is not None and pattern in s for s in strings]
++        search = _compile(pattern, ignore_case, perl, False, False).search
++        literals = _prefilter(pattern, ignore_case)
++        if literals is None:
++            return [s is not None and search(s) is not None for s in strings]
++        folded = strings
++        if ignore_case:
++            folded = self._folded.get(column)  # type: ignore[assignment]
++            if folded is None:
++                folded = self._folded[column] = [
++                    None if s is None else s.casefold() if s.isascii() else casefold(s)
++                    for s in strings
++                ]
++        return [
++            s is not None and any(lit in f for lit in literals) and search(s) is not None
++            for s, f in zip(strings, folded, strict=True)
++        ]
++
++    def sentences(self, positions: list[int]) -> pd.DataFrame:
++        """The result of a sentence search that found *positions* (in result order)."""
++        if not positions:
++            return self.take([])
++        result = self.take(positions)
++        cleaned = self._cleaned
++        todo = [i for i in dict.fromkeys(positions) if i not in cleaned]
++        cleaned.update(zip(todo, _clean([self.text[i] for i in todo]), strict=True))
++        result["text"] = pd.Series([cleaned[i] for i in positions], dtype="string")
++        if self._distinct(positions):
++            return result  # distinct() has nothing to drop
++        return result.drop_duplicates().reset_index(drop=True)
++
++    def _distinct(self, positions: list[int]) -> bool:
++        """Whether the rows at *positions* have distinct, known ``(paper_id, text_id)``."""
++        rows = positions if self.rows is None else [self.rows[i] for i in positions]
++        pids = self.frame["paper_id"].tolist()
++        tids = self.frame["text_id"].tolist()
++        keys = set()
++        for i in rows:
++            pid, tid = pids[i], tids[i]
++            if is_missing(pid) or is_missing(tid):
++                return False
++            try:
++                keys.add((pid, tid))
++            except TypeError:  # an unhashable cell: let drop_duplicates() decide
++                return False
++        return len(keys) == len(rows)
++
++    def search(
++        self,
++        pattern: str,
++        return_: str,
++        ignore_case: bool,
++        fixed: bool,
++        perl: bool,
++        exclude: bool,
++        search_header: bool,
++    ) -> pd.DataFrame:
++        """One pattern's result table (before a dropped ``text`` column is removed)."""
++        found = self.matches(pattern, ignore_case, perl, fixed, exclude, search_header)
++        if return_ == "sentence":
++            return self.sentences(found)
++        if return_ == "match":
++            hits = regextract_all(pattern, [self.text[i] for i in found], ignore_case, perl, fixed)
++            result = self.take([i for i, h in zip(found, hits, strict=True) for _ in h])
++            result["text"] = pd.Series([h for each in hits for h in each], dtype="string")
++            return result
++        ft = self.ft
++        all_cols = list(ft.columns)
++        groups = _GROUPS[return_]
++        kept = _semi_join(self.paragraphs(), ft.iloc[found], groups)
++        result = _paste_groups(kept, groups, _PARAGRAPH_MARKER)
++        if len(result) == 0:
++            return ft.iloc[0:0].reset_index(drop=True)
++        if return_ == "section":
++            result["header"] = _section_headers(kept, result, groups)
++        result["text"] = pd.Series(_clean(result["text"].tolist()), dtype="string")
++        for col in all_cols:
++            if col not in result.columns:
++                result[col] = pd.Series([pd.NA] * len(result), index=result.index, dtype=object)
++        return result.loc[:, all_cols].drop_duplicates().reset_index(drop=True)
++
++    def paragraphs(self) -> pd.DataFrame:
++        """The searched rows' text pasted by paragraph (the same for every pattern)."""
++        if self._paragraphs is None:
++            self._paragraphs = _paste_groups(self.ft, _GROUPS["paragraph"], " ")
++        return self._paragraphs
++
++    def finish(self, result: pd.DataFrame) -> Any:
++        """*result* as text_search() returns it: without an added ``text``, or as strings."""
++        if "text" in self.missing:
++            result = result.drop(columns="text")
++        if self.is_vector:
++            return [None if pd.isna(t) else str(t) for t in result["text"].tolist()]
++        return result
++
++
++def _clean(texts: list[Any]) -> list[Any]:
++    """Whitespace runs as one space, " , " as ", " and paragraph markers as blank lines."""
++    cleaned = gsub(r"\s+", " ", texts)
++    cleaned = gsub(" , ", ", ", cleaned, fixed=True)
++    return gsub(_PARAGRAPH_MARKER, "\n\n", cleaned, fixed=True)
++
++
++def _check_pattern(pattern: str, ignore_case: bool, perl: bool, fixed: bool) -> None:
++    try:
++        compile_r(pattern, ignore_case, perl, fixed)
++    except RegexError as exc:
++        raise ValueError(f"Check the pattern argument in '{pattern}':\n{exc}") from exc
++
++
+ def text_search(
+     paper: Any,
+     pattern: str | Sequence[str] = ".*",
+@@ -163,112 +447,47 @@ def text_search(
+         raise ValueError(f"'arg' should be one of {', '.join(repr(r) for r in _RETURN_TYPES)}")
+     if fixed:
+         ignore_case = False
+-
+-    if not isinstance(pattern, str):
+-        patterns = list(pattern)
+-        if len(patterns) > 1:
+-            parts = [
+-                text_search(
+-                    paper,
+-                    p,
+-                    return_,
+-                    ignore_case,
+-                    fixed,
+-                    perl,
+-                    exclude,
+-                    search_header,
+-                    include_refs,
+-                )
+-                for p in patterns
+-            ]
+-            if isinstance(parts[0], list):
+-                return _combine_vectors(parts, exclude)
+-            if exclude and len(parts) > 2:
+-                # dplyr::intersect(x, y, ...) on data frames: the dots must be empty
+-                extra = "\n".join(
+-                    f"• ..{i} = <tibble[,{part.shape[1]}]>"
+-                    for i, part in enumerate(parts[2:], start=1)
+-                )
+-                raise ValueError(
+-                    f"`...` must be empty.\n✖ Problematic argument{'s' if len(parts) > 3 else ''}:"
+-                    f"\n{extra}\nℹ Did you forget to name an argument?"
+-                )
+-            if exclude:
+-                result = parts[0]
+-                for part in parts[1:]:
+-                    result = result.merge(part, how="inner")
+-                return result.drop_duplicates().reset_index(drop=True)
+-            return bind_rows(parts).drop_duplicates().reset_index(drop=True)
+-        pattern = patterns[0]
+-
+-    try:
+-        compile_r(pattern, ignore_case, perl, fixed)
+-    except RegexError as exc:
+-        raise ValueError(f"Check the pattern argument in '{pattern}':\n{exc}") from exc
+-
+-    text, is_vector = _text_frame(paper)
+-    missing = [c for c in _REQUIRED if c not in text.columns]
+-    for m in missing:
+-        text[m] = pd.Series([pd.NA] * len(text), index=text.index, dtype=object)
+-    if "text" in missing:
+-        text["text"] = text.iloc[:, 0]
+-
+-    if include_refs:
+-        ft = text
+-    else:
+-        ft = text.loc[~text["section_type"].isin(["references"]).fillna(False).astype(bool)]
+-    ft = ft.reset_index(drop=True)
+-
+-    match_rows = pd.Series(
+-        grepl(pattern, ft["text"].tolist(), ignore_case, perl, fixed), dtype=bool
+-    )
+-    if search_header:
+-        header_rows = pd.Series(
+-            grepl(pattern, ft["header"].tolist(), ignore_case, perl, fixed), dtype=bool
++    patterns = [pattern] if isinstance(pattern, str) else list(pattern)
++    # R checks each pattern before it builds the table to search for it
++    _check_pattern(patterns[0], ignore_case, perl, fixed)
++    table = _Table.of(paper, include_refs)
++    for p in patterns[1:]:
++        _check_pattern(p, ignore_case, perl, fixed)
++
++    if len(patterns) == 1:
++        found = table.search(patterns[0], return_, ignore_case, fixed, perl, exclude, search_header)
++        return table.finish(found)
++
++    if return_ == "sentence" and not exclude and not table.is_vector:
++        # bind_rows() of each pattern's rows, then distinct(): one pass over the rows
++        order: dict[int, None] = {}
++        for p in patterns:
++            order.update(
++                dict.fromkeys(table.matches(p, ignore_case, perl, fixed, False, search_header))
++            )
++        return table.finish(table.sentences(list(order)))
++
++    parts = [
++        table.finish(table.search(p, return_, ignore_case, fixed, perl, exclude, search_header))
++        for p in patterns
++    ]
++    if table.is_vector:
++        return _combine_vectors(parts, exclude)
++    if exclude and len(parts) > 2:
++        # dplyr::intersect(x, y, ...) on data frames: the dots must be empty
++        extra = "\n".join(
++            f"• ..{i} = <tibble[,{part.shape[1]}]>" for i, part in enumerate(parts[2:], start=1)
++        )
++        raise ValueError(
++            f"`...` must be empty.\n✖ Problematic argument{'s' if len(parts) > 3 else ''}:"
++            f"\n{extra}\nℹ Did you forget to name an argument?"
+         )
+-        match_rows = match_rows | header_rows
+     if exclude:
+-        match_rows = ~match_rows
+-    ft_match = ft.loc[match_rows.to_numpy()].reset_index(drop=True)
+-
+-    all_cols = list(ft.columns)
+-    if return_ == "sentence":
+-        result = ft_match
+-    elif return_ == "match":
+-        found = regextract_all(pattern, ft_match["text"].tolist(), ignore_case, perl, fixed)
+-        rows = [i for i, hits in enumerate(found) for _ in hits]
+-        result = ft_match.iloc[rows].reset_index(drop=True)
+-        result["text"] = pd.Series([h for hits in found for h in hits], dtype="string")
+-        result = result.loc[:, all_cols]
+-    else:
+-        pgroups = _GROUPS["paragraph"]
+-        ft_p = _paste_groups(ft, pgroups, " ")
+-        groups = _GROUPS[return_]
+-        kept = _semi_join(ft_p, ft_match, groups)
+-        result = _paste_groups(kept, groups, _PARAGRAPH_MARKER)
+-        if return_ == "section" and len(result) > 0:
+-            result["header"] = _section_headers(kept, result, groups)
+-
+-    if return_ != "match":
+-        if len(result) > 0:
+-            cleaned = gsub(r"\s+", " ", result["text"].tolist())
+-            cleaned = gsub(" , ", ", ", cleaned, fixed=True)
+-            cleaned = gsub(_PARAGRAPH_MARKER, "\n\n", cleaned, fixed=True)
+-            result = result.copy()
+-            result["text"] = pd.Series(cleaned, index=result.index, dtype="string")
+-            for col in all_cols:
+-                if col not in result.columns:
+-                    result[col] = pd.Series([pd.NA] * len(result), index=result.index, dtype=object)
+-            result = result.loc[:, all_cols]
+-            result = result.drop_duplicates().reset_index(drop=True)
+-        else:
+-            result = ft.iloc[0:0].reset_index(drop=True)
+-
+-    if "text" in missing:
+-        result = result.drop(columns="text")
+-    if is_vector:
+-        return [None if pd.isna(t) else str(t) for t in result["text"].tolist()]
+-    return result
++        result = parts[0]
++        for part in parts[1:]:
++            result = result.merge(part, how="inner")
++        return result.drop_duplicates().reset_index(drop=True)
++    return bind_rows(parts).drop_duplicates().reset_index(drop=True)
+ 
+ 
+ search_text = text_search
+diff --git a/tests/mod_data_check/test_data_check.py b/tests/mod_data_check/test_data_check.py
+index cd54ff4..9b9ad7c 100644
+--- a/tests/mod_data_check/test_data_check.py
++++ b/tests/mod_data_check/test_data_check.py
+@@ -881,23 +881,19 @@ def test_repo_tree_rows_scales_linearly() -> None:
+     assert rows["text"].tolist()[-1] == "└── flat999.txt"
+ 
+ 
+-def test_stack_stats_matches_bind_rows() -> None:
++def test_stats_frame_matches_bind_rows() -> None:
+     from pytacheck._r import bind_rows
+-    from pytacheck.datacheck.columns import data_col_stats
+-    from pytacheck.modules.data_check import _stack_stats
++    from pytacheck.datacheck.columns import _col_stats, _stats_frame, data_col_stats
+ 
+     cols = [
+         pd.Series([1.0, 2.0, None]),
+         pd.Series(["a", "b", None], dtype="string"),
+         pd.Series([], dtype="float64"),
++        pd.DataFrame({"a": [1, 2]}),
+     ]
+-    stats = [data_col_stats(c, c) for c in cols]
+-    fast = _stack_stats(stats)
+-    ref = bind_rows(stats).reset_index(drop=True)
++    fast = _stats_frame([_col_stats(c, c) for c in cols])
++    ref = bind_rows([data_col_stats(c, c) for c in cols]).reset_index(drop=True)
+     pd.testing.assert_frame_equal(fast, ref)
+-    # an unexpected shape falls back to bind_rows
+-    odd = [stats[0], pd.DataFrame({"n": [1], "x": ["y"]})]
+-    assert list(_stack_stats(odd).columns) == list(bind_rows(odd).columns)
+ 
+ 
+ def test_zip_peek_reasons_stay_with_their_rows(
+diff --git a/tests/mod_ethics/test_ethics_check.py b/tests/mod_ethics/test_ethics_check.py
+index 45de6f0..d803971 100644
+--- a/tests/mod_ethics/test_ethics_check.py
++++ b/tests/mod_ethics/test_ethics_check.py
+@@ -18,7 +18,6 @@ import pytest
+ import pytacheck as pc
+ from pytacheck._r import grepl
+ from pytacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
+-from pytacheck.text.extract import _LIVE_ANY, _LIVE_WORDS, _detect_live_data
+ from tests.mod_ethics.make_parity_cases import SWEEP
+ from tests.mod_ethics.parity_support import ec_paper, ec_papers
+ 
+@@ -539,33 +538,3 @@ def test_prefiltered_search_equals_plain_search() -> None:
+     plain = pc.text_search(paper, list(_ETHICS_WORDS))
+     plain = plain.sort_values("text_id", kind="stable").reset_index(drop=True)
+     pd.testing.assert_frame_equal(ethics, plain, check_dtype=False)
+-
+-
+-# -- the live-data prefilter (pytacheck.text.extract._LIVE_ANY) -----------------------
+-
+-
+-@pytest.mark.parametrize("pattern", _LIVE_WORDS)
+-def test_live_prefilter_covers_every_pattern(pattern: str) -> None:
+-    assert _covered(sre_parse.parse(pattern), _LIVE_ANY.split("|"))
+-
+-
+-def test_live_prefilter_keeps_every_matching_sentence(fixtures_dir: Path) -> None:
+-    papers = pc.read(
+-        [
+-            *sorted((fixtures_dir / "psychsci").glob("*.json")),
+-            *sorted((fixtures_dir / "debruine").glob("*.xml")),
+-            fixtures_dir / "problems" / "0956797615569889.xml",
+-        ]
+-    )
+-    texts = [t for p in papers for t in p.text["text"].tolist()] + SWEEP
+-    keep = grepl(_LIVE_ANY, texts, ignore_case=True)
+-    assert not all(keep)  # it does filter
+-    for pattern in _LIVE_WORDS:
+-        hits = grepl(pattern, texts, ignore_case=True)
+-        assert all(k for h, k in zip(hits, keep, strict=True) if h), pattern
+-
+-
+-def test_live_prefiltered_search_equals_plain_search(psychsci: pc.PaperList) -> None:
+-    for paper in [pc.test_paper(SWEEP), psychsci]:
+-        plain = pc.text_search(paper, list(_LIVE_WORDS))
+-        pd.testing.assert_frame_equal(_detect_live_data(paper), plain)
+diff --git a/tests/mod_urls_open/test_open_practices.py b/tests/mod_urls_open/test_open_practices.py
+index 139a883..7ad539b 100644
+--- a/tests/mod_urls_open/test_open_practices.py
++++ b/tests/mod_urls_open/test_open_practices.py
+@@ -7,14 +7,11 @@ must never change the result of the R search chains.
+ 
+ from __future__ import annotations
+ 
+-import copy
+-
+ import pandas as pd
+ import pytest
+ 
+ import pytacheck as pc
+ from pytacheck.module import SECTION_LEVELS, ModuleError
+-from pytacheck.modules import open_practices as op
+ 
+ MODULE = "open_practices"
+ 
+@@ -301,56 +298,6 @@ def test_does_not_mutate_paper(demo: pc.Paper) -> None:
+     pd.testing.assert_frame_equal(demo.text, before)
+ 
+ 
+-# the prefilter is a pure optimisation ---------------------------------------
+-
+-ADVERSARIAL = [
+-    "Data   are available on the Open\nScience\tFramework.",
+-    "Code is available on<~p~>request.",
+-    "Data , , are available , , at https://osf.io/x.",
+-    "Our R\ncode is available at\tgithub.",
+-    "Materials were shared by\n  reasonable\trequest.",
+-    "The study was not pre-registered, see https://osf.io/abc.",
+-    "Non-preregistered analyses: the data are on OSF, see the archive.",
+-    "All r code is on GITHUB, see the online archive.",
+-    "Python software is archived at Zenodo; find it there.",
+-    "Plots are available at http://kaggle.com.",
+-    "Figures can be found in the repository.",
+-    "Nothing to see here.",
+-]
+-
+-
+-def _naive(paper: object, monkeypatch: pytest.MonkeyPatch) -> pc.ModuleOutput:
+-    with monkeypatch.context() as m:
+-        m.setattr(op, "_search_frame", lambda p: p)
+-        return run(paper)
+-
+-
+-@pytest.mark.parametrize("which", ["demo", "psychsci", "adversarial", "corpus"])
+-def test_prefilter_matches_plain_text_search(
+-    which: str, demo: pc.Paper, psychsci: pc.PaperList, monkeypatch: pytest.MonkeyPatch
+-) -> None:
+-    if which == "demo":
+-        paper: object = demo
+-    elif which == "psychsci":
+-        paper = psychsci
+-    elif which == "adversarial":
+-        paper = pc.test_paper(ADVERSARIAL)
+-    else:
+-        papers = []
+-        for i, p in enumerate([*psychsci, demo, pc.test_paper(ADVERSARIAL)]):
+-            q = copy.deepcopy(p)
+-            q.paper_id = f"p{i}"
+-            papers.append(q)
+-        paper = pc.PaperList(papers)
+-    fast = run(paper)
+-    slow = _naive(paper, monkeypatch)
+-    pd.testing.assert_frame_equal(fast.table, slow.table)
+-    pd.testing.assert_frame_equal(fast.summary_table, slow.summary_table)
+-    assert fast.traffic_light == slow.traffic_light
+-    assert fast.summary_text == slow.summary_text
+-    assert fast.report == slow.report
+-
+-
+ # review: paper order and chained summary tables -----------------------------
+ 
+ 
