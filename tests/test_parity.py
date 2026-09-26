@@ -842,7 +842,7 @@ def corpus(tmp_path):
         ("text", {"args": {"path": "tests/db/data/doi_fuzz.json"}}, 2),
         ("text", {"args": {"paper": {"$paper": "demo"}, "x": "tests/other/data.csv"}}, 2),
         ("text_review", {"args": {"paper": {"$paper": "demo"}}}, 2),
-        ("rcompat_regex", {"args": {"x": "tests/a/fixtures/b.txt"}}, 2),
+        ("rcompat", {"args": {"x": "tests/a/fixtures/b.txt"}}, 2),
         ("text", {"args": {"pattern": "x"}}, 2),  # no input at all
         ("text", {"args": {"paper": {"$test_paper": {"text": ["a"]}}}}, 2),
         ("text", {"args": {"paper": {"$paper": "demo"}, "p": {"$chr": ["a", "b"]}}}, 2),
@@ -1271,7 +1271,9 @@ def test_run_cases_in_processes_matches_one_process(platform, monkeypatch) -> No
     by_key = {c.key: c for c in CASES}
     marked = [c for c in CASES if c.area == "text" and pcases.expected_to_fail(c.spec)][:3]
     picked = [by_key["text/text_search.demo.significant"], *marked]
-    picked += [c for c in CASES if c.area == "rcompat_regex"][:20]
+    regex_cases = [c for c in CASES if c.area == "rcompat"][:20]
+    assert regex_cases, "no rcompat cases: point the test at another small area"
+    picked += regex_cases
     one = parity_main.run_cases(picked, jobs=1)
     monkeypatch.setattr(parity_main.sys, "platform", platform)
     many = parity_main.run_cases(picked, jobs=3)

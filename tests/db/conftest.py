@@ -7,15 +7,24 @@ from pathlib import Path
 
 import pytest
 
+#: unset for every test here, and restored after it
+_REGCHECK_VARS = ("REGCHECK_BASE_URL", "REGCHECK_API_TOKEN", "REGCHECK_APP_DIR")
+
 
 @pytest.fixture(autouse=True)
 def _isolated_data_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """Refreshed databases and the RegCheck app go to a temporary data directory."""
+    """Refreshed databases and the RegCheck app go to a temporary data directory;
+    no test sees the RegCheck variables of the environment or of another test."""
     data = tmp_path / "data"
     monkeypatch.setenv("PYTACHECK_DATA_DIR", str(data))
-    monkeypatch.delenv("REGCHECK_BASE_URL", raising=False)
-    monkeypatch.delenv("REGCHECK_API_TOKEN", raising=False)
-    monkeypatch.delenv("REGCHECK_APP_DIR", raising=False)
+    for name in _REGCHECK_VARS:
+        # `regcheck_start_local()` sets REGCHECK_API_TOKEN itself (R's
+        # Sys.setenv()). delenv() of an unset variable records nothing to undo,
+        # so the token would outlive the test (and make a later hosted-client
+        # call reach the network instead of asking for a token); setenv() first
+        # records the variable, and the teardown then removes it again.
+        monkeypatch.setenv(name, "")
+        monkeypatch.delenv(name)
     return data
 
 

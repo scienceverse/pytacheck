@@ -166,10 +166,10 @@ def test_named_series_keeps_duplicate_names() -> None:
     assert res["apa_factor"].tolist() == [0.5, 1.0]
 
 
-# -- ignore.case = TRUE: PCRE2 and TRE case folding ---------------------------------
+# -- ignore.case = TRUE: Unicode simple case folding (D29) ---------------------------
 
 
-def test_case_insensitive_patterns_fold_like_r() -> None:
+def test_case_insensitive_patterns_fold_unicode_case() -> None:
     # PCRE2 matches "ßnſ" as "ns" (s ~ U+017F) but TRE's grepl() does not, so R
     # treats it as a p-value without a comparison sign and fails (U149);
     # pytacheck tests for "ns" with the engine that found it
@@ -177,16 +177,20 @@ def test_case_insensitive_patterns_fold_like_r() -> None:
     assert res["raw"].tolist() == ["t(28) = 2.20, p = .04"]
     assert res["apa_factor"].tolist() == [0.5]
     assert sc("p = .01 and ßnſ", AllPValues=True)["p_comp"].tolist() == ["=", "ns"]
-    # U+0130 is not a case variant of i for PCRE2 or TRE: "İns" is an "ns"
-    assert sc("t(28) = 2.20, p = .04 İnsan.")["apa_factor"].tolist() == [0.5]
-    assert sc("Test İz = 1.96, p = .05.")["test_type"].tolist() == ["Z"]
-    # the Kelvin sign is a case variant of k for PCRE2: not a [^a-z] character,
-    # so the result has no test name (R: "argument is of length zero"; U5)
+    # D29: U+0130 folds to i (not for R's PCRE2 or TRE), so "İnsan" is a word,
+    # not an "ns", and "İz" is not a z test
+    res = sc("t(28) = 2.20, p = .04 İnsan.")
+    assert res["raw"].tolist() == ["t(28) = 2.20, p = .04"]
+    assert res["apa_factor"].tolist() == [1.0]
+    assert sc("Test z = 1.96, p = .05.")["test_type"].tolist() == ["Z"]
+    assert sc("Test İz = 1.96, p = .05.") is None
+    # the Kelvin sign is a case variant of k: not a [^a-z] character, so the
+    # result has no test name (R: "argument is of length zero"; U5)
     assert sc("Test \u212az = 1.96, p = .05.") is None
-    # TRE (extract_1tail) does not fold s with U+017F
+    # D29: extract_1tail folds U+017F to s (R's TRE does not)
     res = sc("t(28) = 1.80, p = .04 (one-ſided)", OneTailedTxt=True)
-    assert res["one_tailed_in_txt"].tolist() == [False]
-    assert res["error"].tolist() == [True]
+    assert res["one_tailed_in_txt"].tolist() == [True]
+    assert res["error"].tolist() == [False]
 
 
 # -- stats(): R's matching of `...` -----------------------------------------------

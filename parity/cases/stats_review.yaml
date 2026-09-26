@@ -759,7 +759,7 @@
     "texts": "t(28) =K2.20, p = .04 and t(28) =ſ2.20, p = .04 and t(28) =İ2.20, p = .04"
     "messages": !!bool "false"
 - "id": "stats.review.icase"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the t-test of a sentence R drops because of an unrelated case-folding error in its p-values (ßnſ)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the t-test of a sentence R drops because of an unrelated case-folding error in its p-values (ßnſ); the other rows also differ by D29 (Unicode case folding): 'İnsan' is not an 'ns' p-value (apa_factor 1), 'Test İz = 1.96' is not a z test, and '(one-ſided)' counts as one-tailed"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
