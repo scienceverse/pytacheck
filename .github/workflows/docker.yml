@@ -6,12 +6,14 @@ name: Docker
 # Tags: edge (main), X.Y.Z and latest (release tags).
 #
 # Runs on the self-hosted fridge runner (label pytacheck-fridge-ci), a shared
-# service host: BuildKit is capped at 6 CPUs and 32 GB, and QEMU (for the
-# arm64 half of the pushed image; its binfmt handler is registered host-wide
-# until reboot) is only set up when an image is pushed. Fork PRs are refused by
-# the job `if`. The runner's Docker daemon persists between jobs, so the image
-# loaded for testing gets a per-run tag and is removed at the end, and the GHCR
-# login goes to a per-job Docker client config, not the shared ~/.docker.
+# service host. The runner has its own OS user and its own rootless Docker
+# daemon; everything that user runs, containers and BuildKit included, is
+# capped at 4 CPUs and 16 GB, and BuildKit asks for 4 CPUs and 12 GB of that.
+# The arm64 half of the pushed image runs under the host's QEMU binfmt handler
+# (a rootless daemon cannot register one). Fork PRs are refused by the job `if`.
+# The Docker daemon persists between jobs, so the image loaded for testing gets
+# a per-run tag and is removed at the end, and the GHCR login goes to a per-job
+# Docker client config instead of the runner user's ~/.docker.
 
 on:
   push:
@@ -57,9 +59,8 @@ jobs:
             with_bibr: "1"
             suffix: "-bibr"
     steps:
-      # The fleet's runners share one OS user: a GHCR login in ~/.docker would
-      # overwrite, and its logout delete, the login of another repository's
-      # concurrent image job (bibr-private also pushes to ghcr.io from fridge).
+      # ~/.docker persists between jobs: a GHCR login there would outlive this
+      # job and be visible to every later job on the runner.
       - name: Per-job Docker client config
         run: |
           install -d -m 0700 "$RUNNER_TEMP/docker-config"
@@ -67,15 +68,22 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
-      # arm64 emulation for the multi-platform push only (the PR build is native)
-      - if: github.event_name != 'pull_request'
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
+      # arm64 emulation for the multi-platform push only (the PR build is native).
+      # setup-qemu-action cannot register binfmt from a rootless daemon; the host
+      # provides the handler (qemu-user-static). Flag F keeps the interpreter
+      # usable inside the build's containers and user namespace.
+      - name: Check arm64 emulation
+        if: github.event_name != 'pull_request'
+        run: |
+          f=/proc/sys/fs/binfmt_misc/qemu-aarch64
+          if ! grep -qx enabled "$f" 2>/dev/null || ! grep -q '^flags:.*F' "$f"; then
+            echo "::error::no enabled qemu-aarch64 binfmt handler with flag F on this host (install qemu-user-static)"
+            exit 1
+          fi
       - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.0.0
         with:
-          # the fleet cap for image builds on the shared host (as bibr-private's)
-          driver-opts: memory=32g,cpu-quota=600000,cpu-period=100000
+          # inside the runner user's slice cap (4 CPUs, 16 GB)
+          driver-opts: memory=12g,cpu-quota=400000,cpu-period=100000
       - name: Tags
         id: tags
         run: |
@@ -86,7 +94,7 @@ jobs:
           else
             echo "tags=$image:edge${{ matrix.suffix }}" >> "$GITHUB_OUTPUT"
           fi
-          # unique per run: the host's Docker daemon is shared and persistent
+          # unique per run: the runner's Docker daemon persists between jobs
           echo "local=pytacheck-ci:${{ matrix.variant }}-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - name: Build (load for testing)
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.0.0

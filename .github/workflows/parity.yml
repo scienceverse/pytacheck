@@ -63,8 +63,7 @@ jobs:
           cache-environment: true
           # Binary and root under $RUNNER_TEMP, which the runner empties per job:
           # the default ~/micromamba-bin/micromamba survives the job, and the
-          # next run's download refuses an existing destination and fails. The
-          # runners also share one OS user, so ~/micromamba would be shared.
+          # next run's download refuses an existing destination and fails.
           micromamba-binary-path: ${{ runner.temp }}/micromamba-bin/micromamba
           micromamba-root-path: ${{ runner.temp }}/micromamba
           init-shell: none
