@@ -81,7 +81,9 @@ from parity.cases import (
     deterministic_ids,
     load_corpus,
     metacheck_defaults,
+    no_credentials,
     utc,
+    without_credentials,
 )
 from parity.compare import Comparator, Options, compare
 
@@ -228,7 +230,9 @@ def suggests_library(rscript: str) -> str:
 
 
 def _r_env(library: str) -> dict[str, str]:
-    env = {k: v for k, v in os.environ.items() if k.lower() != "no_proxy"}
+    env = {
+        k: v for k, v in without_credentials(dict(os.environ)).items() if k.lower() != "no_proxy"
+    }
     # in front of the libraries R already uses (metacheck may live in one of them)
     libs = os.pathsep.join(x for x in (library, env.get("R_LIBS")) if x)
     env.update(LANG="C.UTF-8", LC_ALL="C.UTF-8", TZ="UTC", R_LIBS=libs)
@@ -319,7 +323,7 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
         return copy.deepcopy(paper)
 
     results: dict[Output, dict[str, Any]] = {}
-    with utc(), metacheck_defaults():
+    with utc(), no_credentials(), metacheck_defaults():
         for o in outputs:
             attempts: list[str] = []
             r_attempts: list[str] = []

@@ -111,7 +111,9 @@ def _reference_r() -> str:
 
 
 def _run_r(code: str, **kw) -> str:
-    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    env = pcases.without_credentials(
+        {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    )
     out = subprocess.run(
         [_reference_r(), "--vanilla", "-e", code],
         capture_output=True,
@@ -328,7 +330,9 @@ def test_r_runner_catch(tmp_path: Path) -> None:
         "  - id: uncaught\n    r: identity\n"
         "    args: {x: {$expr: {r: \"stop('boom')\"}}}\n"
     )
-    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    env = pcases.without_credentials(
+        {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    )
     subprocess.run(
         [_reference_r(), str(ROOT / "parity" / "r" / "run_cases.R"), str(root), str(cases)],
         check=True,
@@ -460,7 +464,9 @@ def test_r_runner_ids_paths_and_yaml_floats(tmp_path: Path) -> None:
         "  - id: floats\n    r: c\n"
         '    args: {a: !!float ".inf", b: !!float "-.inf", c: .inf, d: !!float "1e-3", e: 1.5}\n'
     )
-    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    env = pcases.without_credentials(
+        {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    )
     subprocess.run(
         [_reference_r(), str(ROOT / "parity" / "r" / "run_cases.R"), str(root), str(cases)],
         check=True,
@@ -509,6 +515,25 @@ def test_cases_run_in_utc(monkeypatch) -> None:
     finally:
         monkeypatch.undo()
         time.tzset()
+
+
+def test_cases_run_without_the_callers_credentials(monkeypatch) -> None:
+    # a token in the developer's shell once made regcheck_compare skip its
+    # missing-token error and reach the network guard
+    monkeypatch.setenv("REGCHECK_API_TOKEN", "from-the-shell")
+    monkeypatch.setenv("GITHUB_PAT_GITHUB_COM", "x")
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    monkeypatch.setenv("PYTACHECK_EMAIL", "kept@example.org")
+    with pcases.no_credentials():
+        assert "REGCHECK_API_TOKEN" not in os.environ
+        assert "GITHUB_PAT_GITHUB_COM" not in os.environ
+        assert "OLLAMA_BASE_URL" not in os.environ
+        assert os.environ["PYTACHECK_EMAIL"] == "kept@example.org"
+        os.environ["OSF_PAT"] = "set by the case"
+    assert os.environ["REGCHECK_API_TOKEN"] == "from-the-shell"
+    assert "OSF_PAT" not in os.environ
+    env = pcases.without_credentials({"GROQ_API_KEY": "k", "LANG": "C.UTF-8"})
+    assert env == {"LANG": "C.UTF-8"}
 
 
 # F81: cases whose Python side runs R -----------------------------------------------
