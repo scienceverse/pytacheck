@@ -22,6 +22,14 @@ name: Upstream sync
 #      CI and Parity workflows are green (branch protection).
 #
 # Requires the repository secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN).
+#
+# `detect` runs on the self-hosted fridge runner (label pytacheck-fridge-ci;
+# this workflow has no pull_request trigger, so no fork-PR guard is needed).
+# `sync` stays on a GitHub-hosted runner on purpose: it installs and runs
+# metacheck code nobody here has reviewed yet (dev's or a pull request's head)
+# and hands a Bash-capable agent a write token and the API secrets for up to
+# four hours. That belongs on a throwaway VM, not on the always-on service
+# host, where it would also hold the repository's only runner that long.
 
 on:
   schedule:
@@ -45,7 +53,7 @@ concurrency:
 
 jobs:
   detect:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
     timeout-minutes: 10
     outputs:
       sync: ${{ steps.status.outputs.sync }}
@@ -88,6 +96,7 @@ jobs:
   sync:
     needs: detect
     if: needs.detect.outputs.sync == 'true' && needs.detect.outputs.open_pr == '0'
+    # GitHub-hosted on purpose (see the header)
     runs-on: ubuntu-latest
     timeout-minutes: 240
     permissions:

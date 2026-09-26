@@ -5,6 +5,13 @@ name: Parity (R reference)
 # `pytest` compares against can never drift from R. The same for the accuracy
 # report's R outputs (parity/accuracy/golden). Then runs the Python side and
 # the accuracy gate.
+#
+# Runs on the self-hosted fridge runner (label pytacheck-fridge-ci; Debian, not
+# Ubuntu). R still comes from the exact conda-forge lock, which does not depend
+# on the host distribution. The runner persists between jobs, so the R
+# environment is removed after the job (the next run restores the pristine one
+# from the cache), and the runner user's shell profile is left alone. Fork PRs
+# are refused by the job `if`.
 
 on:
   pull_request:
@@ -31,11 +38,17 @@ concurrency:
 jobs:
   regenerate:
     name: Regenerate goldens with R and compare
-    runs-on: ubuntu-latest
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
     timeout-minutes: 60
     defaults:
       run:
-        shell: bash -el {0}
+        # Every step in the activated R environment. Not a login shell
+        # (`bash -el`): Debian's /etc/profile resets PATH, dropping the tools
+        # setup-uv and setup-micromamba put on it.
+        shell: micromamba run -n r-reference bash -e {0}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
@@ -48,6 +61,8 @@ jobs:
           environment-file: parity/r/conda-linux-64.lock
           environment-name: r-reference
           cache-environment: true
+          init-shell: none
+          post-cleanup: environment
 
       - name: Install httptest2 and metacheck at the pinned commits, and careless
         env:
@@ -55,9 +70,9 @@ jobs:
           LANG: C.UTF-8
           LC_ALL: C.UTF-8
         run: |
-          git clone --quiet https://github.com/nealrichardson/httptest2.git /tmp/httptest2
-          git -C /tmp/httptest2 checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
-          R CMD INSTALL /tmp/httptest2
+          git clone --quiet https://github.com/nealrichardson/httptest2.git "$RUNNER_TEMP/httptest2"
+          git -C "$RUNNER_TEMP/httptest2" checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
+          R CMD INSTALL "$RUNNER_TEMP/httptest2"
           R CMD INSTALL --no-test-load upstream/metacheck
           # metacheck's suggested careless, in the library only the accuracy report loads
           Rscript parity/r/install-suggests.R

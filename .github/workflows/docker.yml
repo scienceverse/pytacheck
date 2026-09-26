@@ -4,6 +4,13 @@ name: Docker
 #   ghcr.io/<owner>/pytacheck:<tag>        core + data readers + REST API
 #   ghcr.io/<owner>/pytacheck:<tag>-bibr   + bibr (reads PDF/DOCX/HTML directly)
 # Tags: edge (main), X.Y.Z and latest (release tags).
+#
+# Runs on the self-hosted fridge runner (label pytacheck-fridge-ci), a shared
+# service host: BuildKit is capped at 6 CPUs and 32 GB, and QEMU (for the
+# arm64 half of the pushed image; its binfmt handler is registered host-wide
+# until reboot) is only set up when an image is pushed. Fork PRs are refused by
+# the job `if`. The runner's Docker daemon persists between jobs, so the image
+# loaded for testing is removed at the end.
 
 on:
   push:
@@ -30,7 +37,10 @@ env:
 jobs:
   image:
     name: Image (${{ matrix.variant }})
-    runs-on: ubuntu-latest
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
     timeout-minutes: 60
     permissions:
       contents: read
@@ -49,8 +59,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
-      - uses: docker/setup-qemu-action@v3
+      # arm64 emulation for the multi-platform push only (the PR build is native)
+      - if: github.event_name != 'pull_request'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
       - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.0.0
+        with:
+          # the fleet cap for image builds on the shared host (as bibr-private's)
+          driver-opts: memory=32g,cpu-quota=600000,cpu-period=100000
       - name: Tags
         id: tags
         run: |
@@ -103,3 +120,6 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.variant }}
           labels: |
             org.opencontainers.image.revision=${{ github.sha }}
+      - name: Remove the local test image
+        if: always() && steps.tags.outputs.local != ''
+        run: docker image rm "${{ steps.tags.outputs.local }}" || true
