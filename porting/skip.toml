@@ -66,6 +66,26 @@
 "statcheck::identify.statcheck" = "Interactive base-R graphics."
 "statcheck::statcheckReport" = "An rmarkdown report of statcheck results. pytacheck's report comes from the stat_check module."
 
+# inst/modules/funding_check.R -- rtransparent helpers the module defines but never calls
+".title_strict" = "rtransparent helper in inst/modules/funding_check.R used only by .where_methods_txt, which funding_check.R never calls."
+".first_capital" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+"obliterate_fullstop_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".obliterate_semicolon_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".obliterate_comma_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".obliterate_apostrophe_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".obliterate_hash_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".obliterate_punct_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".obliterate_line_break_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".obliterate_refs_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+"obliterate_conflict_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+"obliterate_disclosure_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+".where_methods_txt" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+"get_support_2" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls (its one call is commented out)."
+"get_fund_acknow_new" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+"negate_disclosure_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+"negate_disclosure_2" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+"negate_conflict_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
+
 [skip_files]
 "R/app.R" = "Shiny app launchers (see [skip])."
 "inst/app" = "Shiny apps: report_app.R, osf_app.R, shiny_app/, tabs/, www/ (including the app's usage telemetry)."

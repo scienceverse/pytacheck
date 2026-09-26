@@ -1271,12 +1271,6 @@
   "ported": true,
   "python": "pytacheck.datacheck.columns:_find_value_label_col"
  },
- ".first_capital": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_first_capital"
- },
  ".format_wait_duration": {
   "file": "R/repo-download.R",
   "line": 474,
@@ -2002,48 +1996,6 @@
   "line": 6358,
   "ported": true,
   "python": "pytacheck.datacheck.checks:_numeric_col_fraction"
- },
- ".obliterate_apostrophe_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_obliterate_apostrophe_1"
- },
- ".obliterate_comma_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_obliterate_comma_1"
- },
- ".obliterate_hash_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_obliterate_hash_1"
- },
- ".obliterate_line_break_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_obliterate_line_break_1"
- },
- ".obliterate_punct_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_obliterate_punct_1"
- },
- ".obliterate_refs_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_obliterate_refs_1"
- },
- ".obliterate_semicolon_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_obliterate_semicolon_1"
  },
  ".omv_analyses_summary": {
   "file": "R/omv.R",
@@ -4035,12 +3987,6 @@
   "ported": true,
   "python": "pytacheck.modules._funding:_title"
  },
- ".title_strict": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_title_strict"
- },
  ".tree_type_icon": {
   "file": "",
   "line": 0,
@@ -4094,12 +4040,6 @@
   "line": 0,
   "ported": true,
   "python": "pytacheck.modules._funding:_where_acknows_txt"
- },
- ".where_methods_txt": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:_where_methods_txt"
  },
  ".where_refs_txt": {
   "file": "",
@@ -5156,12 +5096,6 @@
   "ported": true,
   "python": "pytacheck.modules._funding:get_fund_acknow"
  },
- "get_fund_acknow_new": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:get_fund_acknow_new"
- },
  "get_grant_1": {
   "file": "",
   "line": 0,
@@ -5215,12 +5149,6 @@
   "line": 0,
   "ported": true,
   "python": "pytacheck.modules._funding:get_support_10"
- },
- "get_support_2": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:get_support_2"
  },
  "get_support_3": {
   "file": "",
@@ -5779,24 +5707,6 @@
   "ported": true,
   "python": "pytacheck.modules._funding:negate_absence_1"
  },
- "negate_conflict_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:negate_conflict_1"
- },
- "negate_disclosure_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:negate_disclosure_1"
- },
- "negate_disclosure_2": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:negate_disclosure_2"
- },
  "normalize_label": {
   "file": "R/data_check_helpers.R",
   "line": 2674,
@@ -5808,24 +5718,6 @@
   "line": 2642,
   "ported": true,
   "python": "pytacheck.datacheck.columns:normalize_varname"
- },
- "obliterate_conflict_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:obliterate_conflict_1"
- },
- "obliterate_disclosure_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:obliterate_disclosure_1"
- },
- "obliterate_fullstop_1": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "pytacheck.modules._funding:obliterate_fullstop_1"
  },
  "online": {
   "file": "R/svutils-utils.R",

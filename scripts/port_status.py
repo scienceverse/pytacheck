@@ -130,7 +130,11 @@ def main() -> None:
 
     done, missing = count("ported"), count("missing")
     intended = done + missing
-    skipped, dropping = count("skip"), count("drop")
+    dropping = count("drop")
+    # skip.toml spells the functions of metacheck's dependencies "pkg::name"; the rest
+    # are metacheck's own, including module helpers that symbols.json does not list
+    n_deps = sum("::" in name for name in skip)
+    skipped = len(skip) - n_deps
     modules = [(n, s) for f, v in by_file.items() if f.startswith("inst/modules") for n, s, _ in v]
     lines = [
         "# Porting status",
@@ -139,7 +143,7 @@ def main() -> None:
         "",
         f"- **R functions ported:** {done} / {intended} ({100 * done / max(intended, 1):.0f}%)"
         " of those pytacheck ports",
-        f"- **Not ported by design:** {skipped} R functions, and {len(skip) - skipped} "
+        f"- **Not ported by design:** {skipped} R functions, and {n_deps} "
         "dependency functions ([porting/skip.toml](../porting/skip.toml))",
         f"- **Ported but superseded (to remove):** {dropping} R functions ([drop] in"
         " porting/skip.toml)",

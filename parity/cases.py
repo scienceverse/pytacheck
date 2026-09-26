@@ -53,7 +53,7 @@ mark (``check_mark``): ``r_bug_fixed`` needs a U-entry, ``better_logic`` and
 ``deliberate`` a D-entry, every ``ref`` must exist in docs/UPSTREAM_ISSUES.md,
 every mark needs a reason, a tier-1 case may only carry the kinds in
 ``TIER1_KINDS``, and a case is marked in one place only. A key with ``*`` (which
-matches any run of characters, e.g. ``"rcompat_regex/pcre.mid_char.*"``) marks
+matches any run of characters, e.g. ``"rcompat/*.posix_punct.tre*"``) marks
 every case it matches, all of which must be tier 2.
 
 Every case has a ``tier`` (``classify_tier``): 1 for a case on the realistic

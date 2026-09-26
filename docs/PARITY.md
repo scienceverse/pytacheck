@@ -202,8 +202,9 @@ A hand-written case file marks its cases inline. A generated one is marked in
   kind: r_bug_fixed
   ref: U122
   reason: a Figshare listing without doi/license has NA metadata; R's data.frame() error overwrites the share link's informative error
-"rcompat_regex/pcre.mid_char.*":       # a glob key: tier-2 cases only
+"rcompat/*.posix_punct.tre*":          # a glob key: tier-2 cases only
   kind: c_quirk
+  ref: D29
   reason: ...
 ```
 

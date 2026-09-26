@@ -897,31 +897,40 @@ def test_power_empty_paper(llm_off: None) -> None:
     assert mo.summary_table["power_n"].tolist() == [0]
 
 
-# R: grepl(p, x, ignore.case = TRUE) (TRE) -- an ASCII letter matches only its ASCII
-# other case, never U+0130/U+0131 (i/I), U+212A (Kelvin sign) or U+017F (long s)
+# grepl(p, x, ignore.case = TRUE): an ASCII letter matches its ASCII other case, and
+# (D29: Unicode simple case folding) U+0130/U+0131 (İ ı), U+212A (Kelvin sign) and
+# U+017F (long s) match i, k and s too; R's TRE (towlower/towupper) does not fold them
 @pytest.mark.parametrize(
-    ("pattern", "text", "expected"),
+    ("pattern", "text"),
     [
-        ("i", "İ", False),
-        ("I", "ı", False),
-        ("k", "K", False),
-        ("s", "ſ", False),
-        ("[a-z]", "İ", False),
-        ("[a-z]", "K", False),
-        ("[A-Z]", "k", True),
-        ("[[:lower:]]", "A", True),
-        ("sensitivity", "SENSITIVITY", True),
-        ("sensitivity", "SENSİTİVİTY", False),
-        ("a[- ]?priori", "A PRİORİ", False),
-        ("post[- ]?hoc", "POſT HOC", False),
+        ("i", "İ"),
+        ("I", "ı"),
+        ("k", "K"),
+        ("s", "ſ"),
+        ("[a-z]", "İ"),
+        ("[a-z]", "K"),
+        ("[A-Z]", "k"),
+        ("[[:lower:]]", "A"),
+        ("sensitivity", "SENSITIVITY"),
+        ("sensitivity", "SENSİTİVİTY"),
+        ("a[- ]?priori", "A PRİORİ"),
+        ("post[- ]?hoc", "POſT HOC"),
     ],
 )
-def test_tre_ignore_case_is_ascii_for_ascii_letters(
-    pattern: str, text: str, expected: bool
-) -> None:
+def test_ignore_case_folds_unicode_case_variants(pattern: str, text: str) -> None:
     from pytacheck._r import grepl
 
-    assert grepl(pattern, [text], ignore_case=True) == [expected]
+    assert grepl(pattern, [text], ignore_case=True) == [True]
+    assert grepl(pattern, [text]) == [False]
+
+
+# D29 folds case *simply*: no one-to-many folds (ß ~ ss, ﬁ ~ fi), as in R's TRE and PCRE2
+@pytest.mark.parametrize(("pattern", "text"), [("ss", "ß"), ("ß", "SS"), ("fi", "ﬁ")])
+@pytest.mark.parametrize("perl", [False, True])
+def test_ignore_case_has_no_full_case_folding(pattern: str, text: str, perl: bool) -> None:
+    from pytacheck._r import grepl
+
+    assert grepl(pattern, [text], ignore_case=True, perl=perl) == [False]
 
 
 def test_tre_ignore_case_negated_bracket() -> None:
@@ -933,14 +942,17 @@ def test_tre_ignore_case_negated_bracket() -> None:
     assert gsub("[^]a-]+", "<\\0>", ["a]b-c]]--K"], ignore_case=True) == ["a]<0>-<0>]]--<0>"]
 
 
-def test_power_highlight_is_tre_case_insensitive(llm_off: None) -> None:
-    # parity case power.review.tricky.tables: R does not highlight "A PRİORİ"
+def test_power_highlight_is_case_insensitive(llm_off: None) -> None:
+    # D29: İ folds to i, so "A PRİORİ" is highlighted as "a priori" (R does not
+    # highlight it; parity case power.review.tricky.tables is marked c_quirk)
     paper = paragraphs(
         ["An A PRİORİ power analysis required 50 participants.", SIMPLE], [1, 2], "p1"
     )
     mo = module_run(paper, "power")
     texts = [b.data for b in mo.report if hasattr(b, "data")][1]["text"].tolist()
-    assert texts[0] == "An A PRİORİ <strong>power</strong> analysis required 50 participants."
+    assert texts[0] == (
+        "An <strong>A PRİORİ</strong> <strong>power</strong> analysis required 50 participants."
+    )
     assert texts[1].startswith("An <strong>a priori</strong> <strong>power</strong> analysis")
 
 
