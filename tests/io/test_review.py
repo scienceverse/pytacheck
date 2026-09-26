@@ -430,7 +430,8 @@ def test_list_files_sorts_full_paths_as_r(tmp_path: Path) -> None:
     # without recursive, a directory whose name matches is listed, as in R
     (tmp_path / "dir.json").mkdir()
     rel = [p[len(str(tmp_path)) + 1 :] for p in list_files(tmp_path, r"\.json$")]
-    assert rel == ["_x.json", "a.json", "b.json", "B.json", "dir.json"]
+    expected = ["_x.json", "a.json", "b.json", "B.json", "dir.json"]
+    assert rel == (expected if upper else [p for p in expected if p != "B.json"])
 
 
 def test_read_list_drops_exact_twins_and_repeats(tmp_path: Path) -> None:
