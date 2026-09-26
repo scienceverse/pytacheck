@@ -23,6 +23,7 @@ dimension, plus ``value``) with R's attributes in :attr:`pandas.DataFrame.attrs`
 from __future__ import annotations
 
 import base64
+import contextlib
 import itertools
 import math
 import os
@@ -135,12 +136,25 @@ def _read_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
 
 
 def _write_lines(lines: str | Sequence[str], path: str | os.PathLike[str]) -> None:
-    """R ``writeLines(x, path, useBytes = TRUE)``: every element + ``"\\n"``."""
+    """R ``writeLines(x, path, useBytes = TRUE)``: every element + ``"\\n"``.
+
+    Written to a temporary file beside *path* and moved into place, so a
+    process reading the file (the same log exported twice at once) never
+    sees it half written."""
+    import threading
+
     if isinstance(lines, str):
         lines = [lines]
-    with open(path, "wb") as fh:
-        for ln in lines:
-            fh.write(ln.encode("utf-8", errors="surrogateescape") + b"\n")
+    tmp = f"{os.fspath(path)}.{os.getpid()}-{threading.get_ident()}.part"
+    try:
+        with open(tmp, "wb") as fh:
+            for ln in lines:
+                fh.write(ln.encode("utf-8", errors="surrogateescape") + b"\n")
+        os.replace(tmp, path)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
 
 
 def _file_path_sans_ext(x: str) -> str:
