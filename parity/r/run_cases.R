@@ -55,6 +55,13 @@ source(file.path(root, "parity", "r", "canonical.R"))
 source(file.path(root, "parity", "r", "helpers.R"))
 options(warn = 1, scienceverse.verbose = FALSE)
 Sys.setenv(TZ = "UTC")
+# no API keys, tokens or service endpoints from the caller's shell (the goldens
+# are made without them; the same names as parity/cases.py _CREDENTIAL)
+Sys.unsetenv(grep(paste0(
+  "(_API_KEY|_API_TOKEN|_TOKEN|_PAT|_SECRET|_PASSWORD)$|_PAT_",
+  "|^(REGCHECK_BASE_URL|OLLAMA_BASE_URL|LMSTUDIO_BASE_URL|AZURE_OPENAI_ENDPOINT",
+  "|DATABRICKS_HOST|SNOWFLAKE_ACCOUNT|PORTKEY_VIRTUAL_KEY|NETRC)$"
+), names(Sys.getenv()), value = TRUE))
 # Same isolation as metacheck's tests/testthat/setup.R: throwaway caches, no
 # session OSF listing cache.
 .pc_cache <- file.path(tempdir(), "pytacheck-parity-cache")

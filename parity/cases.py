@@ -920,6 +920,36 @@ def utc() -> Iterator[None]:
         time.tzset()
 
 
+# -- credentials ----------------------------------------------------------------
+
+# API keys, tokens and service endpoints either side reads from the environment;
+# the goldens were made without them, so a developer's shell must not change a case
+_CREDENTIAL = re.compile(
+    r"(?:_API_KEY|_API_TOKEN|_TOKEN|_PAT|_SECRET|_PASSWORD)$|_PAT_"
+    r"|^(?:REGCHECK_BASE_URL|OLLAMA_BASE_URL|LMSTUDIO_BASE_URL|AZURE_OPENAI_ENDPOINT"
+    r"|DATABRICKS_HOST|SNOWFLAKE_ACCOUNT|PORTKEY_VIRTUAL_KEY|NETRC)$"
+)
+
+
+def without_credentials(env: dict[str, str]) -> dict[str, str]:
+    """*env* without API keys, tokens and service endpoints (for the R side's environment)."""
+    return {k: v for k, v in env.items() if not _CREDENTIAL.search(k)}
+
+
+@contextlib.contextmanager
+def no_credentials() -> Iterator[None]:
+    """Hide API keys, tokens and service endpoints from the Python side of a case."""
+    saved = {k: v for k, v in os.environ.items() if _CREDENTIAL.search(k)}
+    for k in saved:
+        del os.environ[k]
+    try:
+        yield
+    finally:
+        for k in [k for k in os.environ if _CREDENTIAL.search(k)]:
+            del os.environ[k]
+        os.environ.update(saved)
+
+
 # -- cases whose Python side runs R ---------------------------------------------
 
 _R_PROGRAMS = {"Rscript", "R", "Rscript.exe", "R.exe"}
@@ -1017,7 +1047,14 @@ def run_python(case: Case) -> Any:
     attempts: list[str] = []
     guard = _watch_for_r(attempts) if reference_r() is None else contextlib.nullcontext()
     try:
-        with utc(), deterministic_ids(), guard, _mock_dir(case.spec), metacheck_defaults():
+        with (
+            utc(),
+            no_credentials(),
+            deterministic_ids(),
+            guard,
+            _mock_dir(case.spec),
+            metacheck_defaults(),
+        ):
             result = _run_python(case)
     except BaseException:
         if attempts:

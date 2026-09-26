@@ -75,6 +75,7 @@ from parity.cases import (
     r_text,
     run_python,
     skip_reason,
+    without_credentials,
 )
 from parity.compare import (
     Options,
@@ -126,7 +127,7 @@ def cmd_generate(ns: argparse.Namespace) -> int:
         print("no case files matched")
         return 1
     rscript = _rscript(ns.rscript)
-    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
+    env = without_credentials({**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"})
     status = 0
     # one R session per case file: what a case leaves behind (a package it
     # loaded, an option it set) must not change the goldens of other areas, so

@@ -172,7 +172,7 @@ def test_named_series_keeps_duplicate_names() -> None:
 def test_case_insensitive_patterns_fold_unicode_case() -> None:
     # PCRE2 matches "ßnſ" as "ns" (s ~ U+017F) but TRE's grepl() does not, so R
     # treats it as a p-value without a comparison sign and fails (U149);
-    # pytacheck tests for "ns" with the engine that found it
+    # pytacheck folds ſ in both engines (D29), so "ns" is found consistently
     res = sc("t(28) = 2.20, p = .04 and ßnſ.")
     assert res["raw"].tolist() == ["t(28) = 2.20, p = .04"]
     assert res["apa_factor"].tolist() == [0.5]
