@@ -2103,7 +2103,8 @@ def _likert_values(x: Any) -> np.ndarray:
             [float(v) for v in _as_list(x) if v is not None and not isinstance(v, str)],
             dtype=float,
         )
-    return cast(np.ndarray, arr[np.isfinite(arr)])
+    finite: np.ndarray = arr[np.isfinite(arr)]
+    return finite
 
 
 def _detect_likert_scale(

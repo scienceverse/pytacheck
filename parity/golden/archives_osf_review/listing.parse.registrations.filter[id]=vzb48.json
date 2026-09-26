@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=4v3sg",
+  "id": "listing.parse.registrations.filter[id]=vzb48",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "4v3sg"
+          "vzb48"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Optimism 7575-559-59"
+          "Using RSA to compare the face 'trait space' with the group-level stereotype space across race and gender: A Replication"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/4v3sg/"
+          "https://api.osf.io/v2/registrations/vzb48/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/4v3sg/children/"
+          "https://api.osf.io/v2/registrations/vzb48/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/4v3sg/files/"
+          "https://api.osf.io/v2/registrations/vzb48/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "fmnzy"
+          "p5fny"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "4v3sg"
+          "vzb48"
         ]
       }
     ]

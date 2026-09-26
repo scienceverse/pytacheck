@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=5xysn",
+  "id": "listing.parse.registrations.filter[id]=g59u6",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "5xysn"
+          "g59u6"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Should Governments Invest More in Nudges?"
+          "Preregistered Replication: Little Between-Region and Between-Country Variance When Forming Impressions of Others"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/5xysn/"
+          "https://api.osf.io/v2/registrations/g59u6/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/5xysn/children/"
+          "https://api.osf.io/v2/registrations/g59u6/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/5xysn/files/"
+          "https://api.osf.io/v2/registrations/g59u6/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "n6xu5"
+          "gry69"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "5xysn"
+          "g59u6"
         ]
       }
     ]

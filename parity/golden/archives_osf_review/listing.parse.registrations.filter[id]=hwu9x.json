@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=trwb4",
+  "id": "listing.parse.registrations.filter[id]=hwu9x",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "trwb4"
+          "hwu9x"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Rationality in joint action: Maximizing co-efficiency in coordination"
+          "Optimism 7575-559-66"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/trwb4/"
+          "https://api.osf.io/v2/registrations/hwu9x/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/trwb4/children/"
+          "https://api.osf.io/v2/registrations/hwu9x/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/trwb4/files/"
+          "https://api.osf.io/v2/registrations/hwu9x/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "mfup6"
+          "g8zjm"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "trwb4"
+          "hwu9x"
         ]
       }
     ]

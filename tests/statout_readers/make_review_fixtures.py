@@ -681,7 +681,8 @@ SAMPLE STATISTICS
 def build_text() -> None:
     (OUT / "tricky.smcl").write_text(SMCL, encoding="utf-8")
     (OUT / "tricky.out").write_text(MPLUS, encoding="utf-8")
-    (OUT / "nul.smcl").write_bytes(
+    # nul_bytes, not nul: NUL is a reserved file name on Windows
+    (OUT / "nul_bytes.smcl").write_bytes(
         b"{smcl}\n{com}. summarize x\x00 junk\n{txt}    Variable {c |}  Obs\n"
         b"{hline 13}{c +}{hline 8}\n           x {c |}{res}   74\x00 9\n"
     )

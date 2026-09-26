@@ -1,5 +1,5 @@
 {
-  "id": "count_fields.\"a,b\",c",
+  "id": "count_fields.quoted_a,b,c",
   "ok": true,
   "error": null,
   "warnings": [],

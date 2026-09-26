@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=a6y7r",
+  "id": "listing.parse.registrations.filter[id]=trwb4",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "a6y7r"
+          "trwb4"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "WVS Dishonesty"
+          "Rationality in joint action: Maximizing co-efficiency in coordination"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/a6y7r/"
+          "https://api.osf.io/v2/registrations/trwb4/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/a6y7r/children/"
+          "https://api.osf.io/v2/registrations/trwb4/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/a6y7r/files/"
+          "https://api.osf.io/v2/registrations/trwb4/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "mr8hs"
+          "mfup6"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "a6y7r"
+          "trwb4"
         ]
       }
     ]

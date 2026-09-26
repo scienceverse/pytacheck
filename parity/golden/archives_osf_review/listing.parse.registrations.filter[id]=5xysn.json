@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=jez3g",
+  "id": "listing.parse.registrations.filter[id]=5xysn",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "jez3g"
+          "5xysn"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Does Honesty Require Time? A preregistered replication of SEB2012 Exp2"
+          "Should Governments Invest More in Nudges?"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/jez3g/"
+          "https://api.osf.io/v2/registrations/5xysn/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/jez3g/children/"
+          "https://api.osf.io/v2/registrations/5xysn/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/jez3g/files/"
+          "https://api.osf.io/v2/registrations/5xysn/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "fnh9u"
+          "n6xu5"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "jez3g"
+          "5xysn"
         ]
       }
     ]

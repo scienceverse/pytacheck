@@ -225,6 +225,13 @@ def expected_to_fail(spec: dict[str, Any]) -> bool:
 # -- docs/UPSTREAM_ISSUES.md ----------------------------------------------------------
 
 _REF = re.compile(r"[UD][1-9]\d*")
+_UNPORTABLE = re.compile(r'[<>:"/\\|?*\x00-\x1f]|[. ]\Z')
+_RESERVED = re.compile(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|\Z)", re.IGNORECASE)
+
+
+def _portable_id(case_id: str) -> bool:
+    """Whether *case_id* makes a golden file name every platform can check out."""
+    return not _UNPORTABLE.search(case_id) and not _RESERVED.match(case_id)
 
 
 @functools.cache
@@ -680,6 +687,12 @@ def _load_cases(area: str | None, tier: int | None) -> list[Case]:
             case = Case(area=a, id=str(spec["id"]), spec=spec, file=f)
             if case.key in seen:
                 raise ValueError(f"duplicate parity case id {case.key}")
+            if not _portable_id(case.id):
+                raise ValueError(
+                    f"parity case id {case.key} is not a portable file name (its golden is "
+                    '<id>.json): no <>:"/\\|?* or control characters, no trailing dot or '
+                    "space, and not a reserved Windows name (CON, NUL, COM1, ...)"
+                )
             seen.add(case.key)
             case.tier = classify_tier(a, spec, corpus, file_tier)
             marks = divergences.matching(a, case.key)

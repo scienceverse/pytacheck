@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=48ncu",
+  "id": "listing.parse.registrations.filter[id]=7qcxa",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "48ncu"
+          "7qcxa"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Papercheck Test"
+          "Ego depletion pre-registered study"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/48ncu/"
+          "https://api.osf.io/v2/registrations/7qcxa/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/48ncu/children/"
+          "https://api.osf.io/v2/registrations/7qcxa/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/48ncu/files/"
+          "https://api.osf.io/v2/registrations/7qcxa/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "pngda"
+          "udwy6"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "48ncu"
+          "7qcxa"
         ]
       }
     ]

@@ -96,7 +96,9 @@ def _build_app_archive(
             tar.addfile(info, io.BytesIO(data))
     import gzip
 
-    dest_path.write_bytes(gzip.compress(buf.getvalue(), compresslevel=9, mtime=0))
+    gz = bytearray(gzip.compress(buf.getvalue(), compresslevel=9, mtime=0))
+    gz[9] = 3  # header OS byte: Unix, whatever the platform or Python version writes
+    dest_path.write_bytes(bytes(gz))
     return dest_path
 
 

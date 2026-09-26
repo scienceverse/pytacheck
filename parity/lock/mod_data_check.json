@@ -8,7 +8,7 @@
 "data_check.download_oversize": {"r": "cc77db37984a6019", "py": "fccbb73ce7a59154", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
 "data_check.download_skip_data": {"r": "117314bce359b3e1", "py": "a20180499a1722b6", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
 "data_check.local.basic": {"r": "41008fbae8312b41", "py": "1679ab8dc1db62b6", "diff": ["structure.file_type[]"]},
-"data_check.local.spreadsheets": {"r": "bad82fa906fd1d0e", "py": "53f01a376786eb68", "diff": ["summary_text[]"]},
+"data_check.local.spreadsheets": {"r": "ad0b76f7c086e21f", "py": "7b6e31009ba0651e", "diff": ["summary_text[]"]},
 "data_check.nodata": {"r": "84c250281e39cb6c", "py": "651d291c08eb9aee", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table"]},
 "data_check.nolocal_download_false": {"r": "bcc288568d7bcee2", "py": "3b86c8fd8ff63513", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
 "data_check.nolocal_download_none": {"r": "bcc288568d7bcee2", "py": "3b86c8fd8ff63513", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
@@ -16,6 +16,6 @@
 "data_check.nontabular": {"r": "c6c07b58dd663fbb", "py": "5cd27dcaede9ac25", "diff": ["summary_text[]"]},
 "data_check.nourl": {"r": "ac5146cf65ca52a8", "py": "8f3a4f35cc1f51fd", "diff": ["<R error, Python value>"]},
 "data_check.rdata": {"r": "76b241ec7a186870", "py": "1f6351591a96064c", "diff": ["summary_text[]"]},
-"data_check.spreadsheets": {"r": "73c4397db2c1b377", "py": "6c2962cfb19ee759", "diff": ["summary_text[]"]},
+"data_check.spreadsheets": {"r": "ecbf794327faab3c", "py": "f9231b6e7ea381e9", "diff": ["summary_text[]"]},
 "data_check.txt_download_none": {"r": "d702decfffd6f36b", "py": "60e954b46f20eed5", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table"]}
 }

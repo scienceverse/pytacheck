@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=7qcxa",
+  "id": "listing.parse.registrations.filter[id]=yab8q",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "7qcxa"
+          "yab8q"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Ego depletion pre-registered study"
+          "One-shot task"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/7qcxa/"
+          "https://api.osf.io/v2/registrations/yab8q/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/7qcxa/children/"
+          "https://api.osf.io/v2/registrations/yab8q/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/7qcxa/files/"
+          "https://api.osf.io/v2/registrations/yab8q/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "udwy6"
+          "hdcqw"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "7qcxa"
+          "xpwe7"
         ]
       }
     ]

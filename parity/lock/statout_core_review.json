@@ -10,7 +10,7 @@
 "read_stat_tables.ipynb.mixed_types": {"r": "5bda77441b182d3c", "py": "c9c17cb6afb0a225", "diff": ["[].call_fn[]", "[].data"]},
 "stat_ids.source_null": {"r": "c4f8e0a8c2cb7630", "py": "8bbf82cff97a839a", "diff": ["[][]"]},
 "stat_output_json.named_list": {"r": "e97fd55e86a38b3e", "py": "77bd1b5d55a129d7", "diff": ["analyses[].results[].test_id[]"]},
-"stat_output_json.numeric_columns": {"r": "143417f61cb045a9", "py": "8661bad2708c0a5b", "diff": ["analyses[].results[].test_id[]"]},
+"stat_output_json.numeric_columns": {"r": "60640ba10d089034", "py": "954629a7f6ba209e", "diff": ["analyses[].results[].test_id[]"]},
 "stat_output_json.partial_fields": {"r": "8c9cdb3987d71e98", "py": "f3cd3bd7084879f4", "diff": ["analyses"]},
 "stat_output_json.source_na": {"r": "e22f628b138ff2f3", "py": "53ccb745a748aa06", "diff": ["analyses[].results[].result_id[]", "analyses[].results[].test_id[]"]},
 "stat_output_json.source_null": {"r": "d8b0a3be141735d7", "py": "53ccb745a748aa06", "diff": ["analyses[].results[].test_id[]"]},

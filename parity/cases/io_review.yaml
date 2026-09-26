@@ -336,11 +336,12 @@
   "py": "pytacheck.io.corpus._read_rds"
   "args":
     "file": {"$file": "tests/io/fixtures/psychsci_paperlist.rds"}
+# the fixture stores the absolute paths of the machine that saved it: compared by basename
 - "id": "readRDS.debruine_xml_paperlist_gzip_v2"
-  "r": "readRDS"
-  "py": "pytacheck.io.corpus._read_rds"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
   "args":
-    "file": {"$file": "tests/io/fixtures/debruine_xml_paperlist.rds"}
+    "x": {"$expr": {"r": "local({p <- readRDS('tests/io/fixtures/debruine_xml_paperlist.rds'); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_rds_basenames('tests/io/fixtures/debruine_xml_paperlist.rds')"}}
 - "id": "readRDS.matrices"
   "r": "readRDS"
   "py": "pytacheck.io.corpus._read_rds"

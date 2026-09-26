@@ -67,7 +67,7 @@
 "module.ref_summary.published": {"r": "e2588536845057f0", "py": "20327c838a54390a", "diff": ["table.text[]"]},
 "module.stat_check.0956797615569889": {"r": "2c7aa45d9af19263", "py": "fdb76d8d49e08b0f", "diff": ["table.text[]"]},
 "module.stat_check.demo": {"r": "aee066bd6c2602ed", "py": "b053c045e4f4b48d", "diff": ["table.raw[]", "table.text[]"]},
-"module.stat_check.preprint": {"r": "686fdba92f86bf73", "py": "d09b57e06054b13c", "diff": ["table.text[]"]},
+"module.stat_check.preprint": {"r": "ddb28904d8b60bac", "py": "b503dbf2f274a010", "diff": ["table.text[]"]},
 "module.stat_check.published": {"r": "332c8e778b345a11", "py": "51dc1b1d7d567b4a", "diff": ["table.text[]"]},
 "module.stat_effect_size.0956797615569889": {"r": "03a6a7901b6dd6b4", "py": "ddd3ff9703a74b0b", "diff": ["table.text[]"]},
 "module.stat_effect_size.demo": {"r": "becceeb59287f4ed", "py": "44735a679dc6c5b8", "diff": ["summary_text[]", "table.text[]"]},

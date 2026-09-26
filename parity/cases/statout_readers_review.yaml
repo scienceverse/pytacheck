@@ -495,7 +495,7 @@
   "py": "pytacheck.statout.stata.import_stata_smcl"
   "args":
     "path":
-      "$file": "tests/statout_readers/fixtures/review/nul.smcl"
+      "$file": "tests/statout_readers/fixtures/review/nul_bytes.smcl"
 - "id": "import_stata_smcl.tricky"
   "r": "import_stata_smcl"
   "py": "pytacheck.statout.stata.import_stata_smcl"

@@ -105,7 +105,9 @@ def manifest_scenario(scenario: str) -> Any:
             # probe finds no size
             with mock.patch.object(F, "_remote_size", return_value=None):
                 F._data_check_write_manifest(path, files, [True], None, "p1", "data", 100, 500)
-            return json.loads(Path(path).read_text(encoding="utf-8"))
+            doc = json.loads(Path(path).read_text(encoding="utf-8"))
+            # the time, and the Python version and platform of the run
+            return {**doc, "generated": "<volatile>", "provenance": "<volatile>"}
         if scenario == "dir_slash":
             files = pd.DataFrame({"repo_url": ["u"], "file_name": ["a.csv"]})
             paths = F._data_check_write_manifest(

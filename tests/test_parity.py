@@ -9,6 +9,7 @@ import os
 import shutil
 import struct
 import subprocess
+import tempfile
 import time
 import warnings
 from pathlib import Path
@@ -1149,7 +1150,6 @@ def test_lock_file_format(lock_dir) -> None:
 
 
 def test_digests_leave_out_what_differs_from_run_to_run(monkeypatch) -> None:
-    import tempfile
 
     digest = lockfile.digest
     # doubles to 10 significant digits: the comparison allows a relative 1e-9
@@ -1175,7 +1175,8 @@ def test_digests_leave_out_what_differs_from_run_to_run(monkeypatch) -> None:
     # a stamp from another time, and /tmp inside another path, are data
     old = "created 2020-01-01T00:00:00Z at file://localhost/opt/grobid/grobid-home/tmp/osf.io/x"
     assert lockfile.steady(old, run_a) == old
-    assert lockfile.steady("file:///tmp/x", run_a) == "file://<tmp>/x"
+    tmp = tempfile.gettempdir()  # /tmp here, /var/folders/... on macOS
+    assert lockfile.steady(f"file://{tmp}/x", run_a) == "file://<tmp>/x"
     # the run's data and cache directories, wherever they are
     monkeypatch.setenv("PYTACHECK_CACHE_DIR", "/home/me/cache")
     with lockfile.watch_run() as run:

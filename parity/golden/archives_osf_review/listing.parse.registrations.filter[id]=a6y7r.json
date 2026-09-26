@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=g59u6",
+  "id": "listing.parse.registrations.filter[id]=a6y7r",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "g59u6"
+          "a6y7r"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Preregistered Replication: Little Between-Region and Between-Country Variance When Forming Impressions of Others"
+          "WVS Dishonesty"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/g59u6/"
+          "https://api.osf.io/v2/registrations/a6y7r/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/g59u6/children/"
+          "https://api.osf.io/v2/registrations/a6y7r/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/g59u6/files/"
+          "https://api.osf.io/v2/registrations/a6y7r/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "gry69"
+          "mr8hs"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "g59u6"
+          "a6y7r"
         ]
       }
     ]

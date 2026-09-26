@@ -453,7 +453,7 @@
   "args":
     "line": "a,b,c"
     "sep": ","
-- "id": "count_fields.\"a,b\",c"
+- "id": "count_fields.quoted_a,b,c"
   "r": ".count_fields"
   "py": "pytacheck.datacheck.files._count_fields"
   "args":
@@ -465,7 +465,7 @@
   "args":
     "line": ""
     "sep": ","
-- "id": "count_fields.\"x\"y\"z\",1"
+- "id": "count_fields.escaped_quotes,1"
   "r": ".count_fields"
   "py": "pytacheck.datacheck.files._count_fields"
   "args":

@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=9bg3z",
+  "id": "listing.parse.registrations.filter[id]=dr42m",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "9bg3z"
+          "dr42m"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "RR4_Does Honesty Require Time? A preregistered direct replication of SEB2012 Exp2"
+          "Conception Risk and Racial Prejudice"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/9bg3z/"
+          "https://api.osf.io/v2/registrations/dr42m/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/9bg3z/children/"
+          "https://api.osf.io/v2/registrations/dr42m/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/9bg3z/files/"
+          "https://api.osf.io/v2/registrations/dr42m/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "xwzpc"
+          "g3sca"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "9bg3z"
+          "dr42m"
         ]
       }
     ]

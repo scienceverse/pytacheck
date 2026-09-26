@@ -2794,7 +2794,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/nodes/yt32c/files/osfstorage/\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/nodes/yt32c/files/osfstorage/\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=48ncu"
+- "id": "listing.parse.registrations.filter[id]=48ncu"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2803,7 +2803,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=48ncu\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=48ncu\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=4v3sg"
+- "id": "listing.parse.registrations.filter[id]=4v3sg"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2812,7 +2812,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=4v3sg\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=4v3sg\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=5xysn"
+- "id": "listing.parse.registrations.filter[id]=5xysn"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2821,7 +2821,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=5xysn\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=5xysn\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=7qcxa"
+- "id": "listing.parse.registrations.filter[id]=7qcxa"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2830,7 +2830,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=7qcxa\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=7qcxa\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=7v28u"
+- "id": "listing.parse.registrations.filter[id]=7v28u"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2839,7 +2839,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=7v28u\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=7v28u\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=9bg3z"
+- "id": "listing.parse.registrations.filter[id]=9bg3z"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2848,7 +2848,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=9bg3z\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=9bg3z\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=a6y7r"
+- "id": "listing.parse.registrations.filter[id]=a6y7r"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2857,7 +2857,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=a6y7r\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=a6y7r\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=bdvxs"
+- "id": "listing.parse.registrations.filter[id]=bdvxs"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2866,7 +2866,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=bdvxs\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=bdvxs\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=dr42m"
+- "id": "listing.parse.registrations.filter[id]=dr42m"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2875,7 +2875,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=dr42m\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=dr42m\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=g59u6"
+- "id": "listing.parse.registrations.filter[id]=g59u6"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2884,7 +2884,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=g59u6\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=g59u6\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=hwu9x"
+- "id": "listing.parse.registrations.filter[id]=hwu9x"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2893,7 +2893,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=hwu9x\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=hwu9x\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=jez3g"
+- "id": "listing.parse.registrations.filter[id]=jez3g"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2902,7 +2902,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=jez3g\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=jez3g\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=trwb4"
+- "id": "listing.parse.registrations.filter[id]=trwb4"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2911,7 +2911,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=trwb4\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=trwb4\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=vzb48"
+- "id": "listing.parse.registrations.filter[id]=vzb48"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2920,7 +2920,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=vzb48\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=vzb48\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=wrh4x"
+- "id": "listing.parse.registrations.filter[id]=wrh4x"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2929,7 +2929,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=wrh4x\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=wrh4x\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=yab8q"
+- "id": "listing.parse.registrations.filter[id]=yab8q"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2938,7 +2938,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { metacheck:::.osf_parse_response(osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=yab8q\")) }) })()"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/registrations/?filter[id]=yab8q\"))"
   "compare": *id001
-- "id": "listing.parse.registrations.?filter[id]=z2bsa"
+- "id": "listing.parse.registrations.filter[id]=z2bsa"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":

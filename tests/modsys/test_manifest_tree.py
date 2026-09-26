@@ -177,13 +177,18 @@ def test_tree_files_and_hash(tmp_path) -> None:
 
 @pytest.mark.skipif(
     not (shutil.which("find") and shutil.which("sha256sum") and shutil.which("xargs")),
-    reason="needs GNU find, sort, xargs and sha256sum",
+    reason="needs find, sort, xargs and sha256sum",
 )
 def test_tree_hash_equals_sha256sum_pipeline(tmp_path) -> None:
     _tree(tmp_path)
+    gnu = subprocess.run(["find", ".", "-maxdepth", "0", "-printf", ""], capture_output=True)
+    # BSD find (macOS) has no -printf: strip the "./" and NUL-terminate the names instead
+    names = (
+        "-printf '%P\\0'" if gnu.returncode == 0 else "-print | sed 's|^\\./||' | tr '\\n' '\\0'"
+    )
     cmd = (
         "find . -type f ! -path '*/.git/*' ! -path '*/__pycache__/*' ! -name '*.pyc' "
-        "! -name .pytacheck-install.json -printf '%P\\0' "
+        f"! -name .pytacheck-install.json {names} "
         "| LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum"
     )
     out = subprocess.run(

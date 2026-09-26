@@ -25,6 +25,9 @@ from pytacheck.datacheck.columns import (
 )
 
 REV = Path(__file__).parent / "fixtures" / "review"
+# R accumulates in LDOUBLE, which is plain double on some platforms (arm64 macOS):
+# there R's sums, and so the expected values, are the double ones
+EXTENDED = np.finfo(np.longdouble).nmant > np.finfo(np.float64).nmant
 
 
 def test_stats_bit_exact_with_r() -> None:
@@ -32,7 +35,7 @@ def test_stats_bit_exact_with_r() -> None:
     x = [0.1, 0.2, 0.3, 1 / 3, 2 / 3, 0.1, 0.7, 1e8 + 0.1]
     st = data_col_stats(x, x).iloc[0]
     want = {
-        "mean": 12500000.3125,
+        "mean": 12500000.3125 if EXTENDED else 12500000.312499998,
         "sd": 35355338.973464407,
         "se": 12499999.969642855,
         "median": 0.31666666666666665,
@@ -54,7 +57,8 @@ def test_stats_bit_exact_with_r() -> None:
     ("xs", "sd", "skew"),
     [
         ([1e200, -1e200, 3.0, 5.0], math.inf, math.nan),  # squares overflow double
-        ([1e154, -1e154, 1e154], 1.1547005383792515e154, math.nan),  # long-double sum fits
+        # the long-double sum of squares fits
+        ([1e154, -1e154, 1e154], 1.1547005383792515e154 if EXTENDED else math.inf, math.nan),
         ([1e103, 2.0, 3.0, 4.0], 5e102, math.inf),  # cubes overflow
     ],
 )

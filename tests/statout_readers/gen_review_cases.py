@@ -274,7 +274,7 @@ fn_case(
     "import_stata_smcl.nul",
     "import_stata_smcl",
     "pytacheck.statout.stata.import_stata_smcl",
-    {"path": {"$file": f"{FX}/nul.smcl"}},
+    {"path": {"$file": f"{FX}/nul_bytes.smcl"}},
 )
 p = f"{FX}/tricky.smcl"
 fn_case(

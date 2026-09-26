@@ -67,6 +67,9 @@ R_ERROR_PY_VALUE = "<R error, Python value>"
 R_VALUE_PY_ERROR = "<R value, Python error>"
 
 _DIGITS = 10  # significant digits of a double in a digest
+#: a double this close to 0 digests as 0, as compare.py's absolute tolerance treats it
+#: (round-off like a skewness of -4e-16 depends on the platform's long double)
+_ZERO = 1e-12
 
 
 class LockWarning(UserWarning):
@@ -107,7 +110,7 @@ class Fingerprint:
 
 def _rounded(x: Any) -> Any:
     if isinstance(x, float):
-        return 0.0 if x == 0 else float(f"{x:.{_DIGITS}g}")
+        return 0.0 if abs(x) < _ZERO else float(f"{x:.{_DIGITS}g}")
     if isinstance(x, dict):
         return {k: _rounded(v) for k, v in x.items()}
     if isinstance(x, list):

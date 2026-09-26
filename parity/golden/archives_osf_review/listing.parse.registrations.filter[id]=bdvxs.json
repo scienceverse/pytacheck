@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=z2bsa",
+  "id": "listing.parse.registrations.filter[id]=bdvxs",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "z2bsa"
+          "bdvxs"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "On the limited generality of air pollution and anxiety as causal determinants of unethical behavior: Commentary on Lu, Lee, Gino, &amp; Galinsky (2018)"
+          "Ethical Free-Riding"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/z2bsa/"
+          "https://api.osf.io/v2/registrations/bdvxs/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/z2bsa/children/"
+          "https://api.osf.io/v2/registrations/bdvxs/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/z2bsa/files/"
+          "https://api.osf.io/v2/registrations/bdvxs/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "k76b2"
+          "eym9j"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "z2bsa"
+          "bdvxs"
         ]
       }
     ]

@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=vzb48",
+  "id": "listing.parse.registrations.filter[id]=48ncu",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "vzb48"
+          "48ncu"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Using RSA to compare the face 'trait space' with the group-level stereotype space across race and gender: A Replication"
+          "Papercheck Test"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/vzb48/"
+          "https://api.osf.io/v2/registrations/48ncu/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/vzb48/children/"
+          "https://api.osf.io/v2/registrations/48ncu/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/vzb48/files/"
+          "https://api.osf.io/v2/registrations/48ncu/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "p5fny"
+          "pngda"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "vzb48"
+          "48ncu"
         ]
       }
     ]

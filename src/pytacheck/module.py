@@ -775,6 +775,26 @@ class ModuleOutput:
     def __repr__(self) -> str:
         return f"{self.title}: {self.summary_text}"
 
+    def __eq__(self, other: object) -> bool:
+        # Python 3.13's generated __eq__ compares field by field without the identity
+        # shortcut of tuple comparison, so a table field would raise on bool(frame == frame)
+        if other.__class__ is not self.__class__:
+            return NotImplemented
+        return all(_same(getattr(self, f), getattr(other, f)) for f in (*self._FIELDS, "extras"))
+
+    __hash__ = None  # type: ignore[assignment]
+
+
+def _same(a: Any, b: Any) -> bool:
+    """``a == b`` for :meth:`ModuleOutput.__eq__`: identical objects, then pandas' ``equals``."""
+    if a is b:
+        return True
+    if isinstance(a, pd.DataFrame):
+        return isinstance(b, pd.DataFrame) and a.equals(b)
+    if isinstance(a, pd.Series):
+        return isinstance(b, pd.Series) and a.equals(b)
+    return bool(a == b)
+
 
 def _is_list_column(series: pd.Series) -> bool:
     """Whether an ``object`` column is an R list column (e.g. open_practices' ``*_statements``).

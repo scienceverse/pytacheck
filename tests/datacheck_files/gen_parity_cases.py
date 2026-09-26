@@ -231,9 +231,11 @@ for name, sep in [
     add(
         f"detect_header.{name}", fn(".detect_header", f"{PY}._detect_header", path=f(name), sep=sep)
     )
+# ids are file names: no '"' (Windows rejects it)
+_COUNT_FIELDS_IDS = {"": "empty", '"a,b",c': "quoted_a,b,c", '"x"y"z",1': "escaped_quotes,1"}
 for line, sep in [("a,b,c", ","), ('"a,b",c', ","), ("", ","), ('"x"y"z",1', ","), ("a;b;;c", ";")]:
     add(
-        f"count_fields.{line or 'empty'}",
+        f"count_fields.{_COUNT_FIELDS_IDS.get(line, line)}",
         fn(".count_fields", f"{PY}._count_fields", line=line, sep=sep),
     )
 for name in ["blob.csv", "bigcells.csv", "single_col.csv", "empty.csv"]:

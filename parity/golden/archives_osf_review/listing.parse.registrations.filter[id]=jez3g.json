@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=bdvxs",
+  "id": "listing.parse.registrations.filter[id]=jez3g",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "bdvxs"
+          "jez3g"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Ethical Free-Riding"
+          "Does Honesty Require Time? A preregistered replication of SEB2012 Exp2"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/bdvxs/"
+          "https://api.osf.io/v2/registrations/jez3g/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/bdvxs/children/"
+          "https://api.osf.io/v2/registrations/jez3g/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/bdvxs/files/"
+          "https://api.osf.io/v2/registrations/jez3g/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "eym9j"
+          "fnh9u"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "bdvxs"
+          "jez3g"
         ]
       }
     ]

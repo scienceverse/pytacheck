@@ -7,6 +7,8 @@ test-S3-methods.R. The critical t values the R tests build with ``qt()`` and
 
 from __future__ import annotations
 
+import math
+
 import pytest
 
 from pytacheck.stats._rmath import pchisq, pf, pnorm, pt
@@ -200,6 +202,10 @@ def test_p_zero_error_option() -> None:
 # paste(pt(2.15, 28, lower.tail = FALSE) * 2) and paste(pt(2.25, ...) * 2) in R
 UPP = "0.0403381832647296"
 LOWP = "0.0324934361512091"
+# "p < LOWP" is an error only if LOWP is below the lowest p that t = 2.2 allows, which
+# LOWP (15 digits) misses by 1-2 ulps; scipy's pbeta is not R's toms708 to the last ulp
+# on every platform, so this row uses the value just below that bound instead
+BELOW_LOWP = repr(math.nextafter(pt(-2.25, 28) * 2, 0))
 
 
 @pytest.mark.parametrize(
@@ -210,7 +216,7 @@ LOWP = "0.0324934361512091"
         ("t(28) = 2.2, p < .08", False),
         ("t(28) = 2.2, p > .02", False),
         (f"t(28) = 2.2, p > {UPP}", True),
-        (f"t(28) = 2.2, p < {LOWP}", True),
+        (f"t(28) = 2.2, p < {BELOW_LOWP}", True),
         ("t(28) = 2.2, p = .08", True),
         ("t(28) = 2.2, p = .02", True),
         ("t(28) = 2.2, p > .08", True),

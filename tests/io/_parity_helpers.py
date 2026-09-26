@@ -90,6 +90,18 @@ def identity(x: Any) -> Any:
     return x
 
 
+def read_rds_basenames(file: Any) -> Any:
+    """``readRDS(file)`` of a paper list with each paper's ``info$file_name`` basename'd."""
+    from pytacheck.io.corpus import _read_rds
+
+    papers = _read_rds(file)
+    for p in papers:
+        info = p.info.copy()
+        info["file_name"] = info["file_name"].map(basename).astype(info["file_name"].dtype)
+        p.info = info
+    return papers
+
+
 def read_basenames(file_path: Any, recursive: bool = False) -> Any:
     """``read(file_path, recursive)`` with each paper's ``info$file_name`` basename'd."""
     import pytacheck as pc

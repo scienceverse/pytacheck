@@ -20,6 +20,11 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
     UV_PROJECT_ENVIRONMENT=/opt/pytacheck
 ARG WITH_BIBR=0
+# bibr needs a C compiler: numind's cdifflib has no wheel and builds from source
+RUN if [ "$WITH_BIBR" = "1" ]; then \
+      apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && \
+      rm -rf /var/lib/apt/lists/*; \
+    fi
 WORKDIR /src
 COPY pyproject.toml uv.lock README.md LICENSE.md ./
 RUN --mount=type=cache,target=/root/.cache/uv \

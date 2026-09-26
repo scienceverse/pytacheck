@@ -412,14 +412,21 @@ def test_read_dir_lists_like_list_files(tmp_path: Path) -> None:
 
 
 def test_list_files_sorts_full_paths_as_r(tmp_path: Path) -> None:
+    from pytacheck._r.base import r_sort_key
     from pytacheck.io._files import list_files
 
-    for name in ["B.json", "a.json", "a/b.json", "_x.json", "b.json", "e.xml", "x.JSON"]:
-        (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
-        (tmp_path / name).write_text("{}")
+    (tmp_path / "b.json").write_text("{}")
+    # "B.json" is a second file only where names are case-sensitive (not macOS, Windows)
+    upper = not (tmp_path / "B.json").exists()
+    for name in ["B.json" if upper else "", "a.json", "a/b.json", "_x.json", "e.xml", "x.JSON"]:
+        if name:
+            (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
+            (tmp_path / name).write_text("{}")
     rel = [p[len(str(tmp_path)) + 1 :] for p in list_files(tmp_path, r"\.(json|xml)$", True)]
     # R 4.5 list.files(d, "\\.(json|xml)$", recursive = TRUE) (ICU root collation)
-    assert rel == ["_x.json", "a.json", "a/b.json", "b.json", "B.json", "e.xml"]
+    expected = ["_x.json", "a.json", "a/b.json", "b.json", "B.json", "e.xml"]
+    assert rel == (expected if upper else [p for p in expected if p != "B.json"])
+    assert sorted(["B.json", "b.json"], key=r_sort_key) == ["b.json", "B.json"]
     # without recursive, a directory whose name matches is listed, as in R
     (tmp_path / "dir.json").mkdir()
     rel = [p[len(str(tmp_path)) + 1 :] for p in list_files(tmp_path, r"\.json$")]

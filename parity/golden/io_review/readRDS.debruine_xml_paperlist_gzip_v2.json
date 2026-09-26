@@ -93,7 +93,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"
+                  "debruine-child.xml"
                 ]
               },
               {
@@ -2691,7 +2691,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
+                  "debruine-fret.xml"
                 ]
               },
               {
@@ -5037,7 +5037,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"
+                  "debruine-sex.xml"
                 ]
               },
               {
@@ -7696,7 +7696,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"
+                  "debruine-tnl.xml"
                 ]
               },
               {

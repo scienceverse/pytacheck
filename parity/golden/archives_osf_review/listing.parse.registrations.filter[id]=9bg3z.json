@@ -1,5 +1,5 @@
 {
-  "id": "listing.parse.registrations.?filter[id]=hwu9x",
+  "id": "listing.parse.registrations.filter[id]=9bg3z",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -23,13 +23,13 @@
       {
         "t": "chr",
         "v": [
-          "hwu9x"
+          "9bg3z"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Optimism 7575-559-66"
+          "RR4_Does Honesty Require Time? A preregistered direct replication of SEB2012 Exp2"
         ]
       },
       {
@@ -59,31 +59,31 @@
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/hwu9x/"
+          "https://api.osf.io/v2/registrations/9bg3z/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/hwu9x/children/"
+          "https://api.osf.io/v2/registrations/9bg3z/children/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://api.osf.io/v2/registrations/hwu9x/files/"
+          "https://api.osf.io/v2/registrations/9bg3z/files/"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "g8zjm"
+          "xwzpc"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "hwu9x"
+          "9bg3z"
         ]
       }
     ]
