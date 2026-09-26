@@ -11,7 +11,7 @@ contains.
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
@@ -156,7 +156,7 @@ def _fsd_info(fsd_url: Any, pb: Any = None) -> pd.DataFrame:
             _xml_text(_find_first(doc, "//stdyDscr/dataAccs/useStmt/restrctn"))
         )
 
-        nodes = doc.xpath("//fileDscr")
+        nodes = cast("list[etree._Element]", doc.xpath("//fileDscr"))
         obj["files"] = _obj_cell(
             pd.DataFrame(
                 {

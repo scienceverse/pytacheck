@@ -481,11 +481,12 @@ def format_bib_authors(authors: Any) -> Any:
     return "; ".join(f"{fam[i % len(fam)]}, {giv[i % len(giv)]}" for i in range(n))
 
 
-def _authors_frame(given: list[str], family: list[str]) -> pd.DataFrame:
+def _authors_frame(given: Sequence[str | None], family: Sequence[str | None]) -> pd.DataFrame:
     return pd.DataFrame(
         {
-            "given": pd.Series(given, dtype="string"),
-            "family": pd.Series(family, dtype="string"),
+            # pandas-stubs: dtype="string" wants Sequence[str]; None is stored as <NA>
+            "given": pd.Series(given, dtype="string"),  # type: ignore[arg-type]
+            "family": pd.Series(family, dtype="string"),  # type: ignore[arg-type]
         }
     )
 

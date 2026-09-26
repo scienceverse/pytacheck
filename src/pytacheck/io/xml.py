@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Any
 from pytacheck._r.regex import compile_r, gsub
 
 if TYPE_CHECKING:
+    import regex
     from lxml import etree
 
 __all__ = [
@@ -264,7 +265,7 @@ def _node_text(node: Any) -> str:
 
 
 @functools.cache
-def _rx(pattern: str) -> Any:
+def _rx(pattern: str) -> regex.Pattern[str]:
     """A compiled TRE pattern (greedy matching equals leftmost-longest for these)."""
     return compile_r(pattern, posix=False)
 

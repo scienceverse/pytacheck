@@ -563,10 +563,10 @@ def _drop_r_packages(all_files: pd.DataFrame) -> pd.DataFrame:
         return all_files
     # df[!flags, ]: NA keeps a row of NAs, as R does
     rows = []
-    for i, v in enumerate(flags):
-        if v is None:
+    for i, flag in enumerate(flags):
+        if flag is None:
             rows.append(-1)
-        elif not v:
+        elif not flag:
             rows.append(i)
     if all(r >= 0 for r in rows):
         return all_files.iloc[rows].reset_index(drop=True)
@@ -747,7 +747,7 @@ def _summarise_repos(repos: pd.DataFrame, all_files: pd.DataFrame) -> pd.DataFra
     def count(idx: list[int], test: Any) -> int:
         return sum(1 for i in idx if i >= 0 and test(i))
 
-    out = {
+    out: dict[str, list[Any]] = {
         "paper_id": [],
         "repo_url": [],
         "repo_type": [],

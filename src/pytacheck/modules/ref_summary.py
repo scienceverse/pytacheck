@@ -343,8 +343,8 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     values = [*mismatch.tolist(), *(["no match"] * len(extra))]
     return pd.DataFrame(
         {
-            "paper_id": acc["paper_id"].iloc[rows_out].reset_index(drop=True),
-            "bib_id": acc["bib_id"].iloc[rows_out].reset_index(drop=True),
+            "paper_id": acc["paper_id"].iloc[rows_out].reset_index(drop=True),  # type: ignore[call-overload]  # pandas-stubs: Series.iloc rejects a list
+            "bib_id": acc["bib_id"].iloc[rows_out].reset_index(drop=True),  # type: ignore[call-overload]  # pandas-stubs: Series.iloc rejects a list
             "accuracy_mismatch": pd.array(values, dtype="string"),
         }
     )
@@ -372,7 +372,7 @@ def _one_per_reference(tbl: pd.DataFrame) -> pd.DataFrame:
         if col in _KEYS:
             continue
         values = tbl[col].tolist()
-        merged = []
+        merged: list[Any] = []
         for rows in groups.values():
             distinct = list(dict.fromkeys(values[i] for i in rows if not is_na(values[i])))
             if not distinct:

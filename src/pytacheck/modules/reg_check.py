@@ -9,7 +9,7 @@ comparison dimension.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Hashable, Sequence
 from typing import Any
 
 import pandas as pd
@@ -140,6 +140,7 @@ def prereg_row_text(row: pd.DataFrame | pd.Series | dict[str, Any]) -> str:
     and ``ia_url`` are skipped), joined with blank lines, so RegCheck receives
     the full structured content of the preregistration.
     """
+    cells: dict[Hashable, Sequence[Any]]
     if isinstance(row, pd.DataFrame):
         cells = {c: row[c].tolist() for c in dict.fromkeys(row.columns)}
     elif isinstance(row, pd.Series):

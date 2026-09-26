@@ -114,7 +114,9 @@ def text_expand(
 
     join_by = [c for c in by if c in results_table.columns]
     text = _align_keys(results_table, text, join_by)
-    expanded = results_table.merge(text, on=join_by, how="left", suffixes=("", ".full"), sort=False)
+    expanded: pd.DataFrame = results_table.merge(
+        text, on=join_by, how="left", suffixes=("", ".full"), sort=False
+    )
     if "text" in expanded.columns:
         missing = expanded["expanded"].isna()
         expanded["expanded"] = expanded["expanded"].astype(object).where(~missing, expanded["text"])

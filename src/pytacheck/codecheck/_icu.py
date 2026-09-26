@@ -24,6 +24,7 @@ import functools
 import math
 import re
 from collections.abc import Callable, Sequence
+from typing import Literal
 
 from pytacheck.codecheck import _icu_tables as T
 
@@ -137,7 +138,7 @@ def _utf16(det: _Input, big_endian: bool) -> Match | None:
 def _utf32(det: _Input, big_endian: bool) -> Match | None:
     data = det.raw
     limit = (len(data) // 4) * 4
-    order = "big" if big_endian else "little"
+    order: Literal["big", "little"] = "big" if big_endian else "little"
     valid = invalid = 0
     has_bom = False
 

@@ -35,7 +35,7 @@ import warnings
 from collections.abc import Sequence
 from os import PathLike
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 import regex
@@ -314,7 +314,7 @@ def _html_to_text(x: str | None) -> str:
         text = html_text(src)
     except Exception:
         return "NA" if x is None else x
-    return sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", text))
+    return cast(str, sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", text)))
 
 
 def _process_columns(cols: dict[str, list[Any]]) -> dict[str, list[Any]]:
@@ -363,7 +363,7 @@ def _classify(ft: dict[str, list[Any]]) -> dict[str, list[Any]]:
     nospace = gsub(r"\s", "", headers)
 
     def match(pattern: str) -> list[bool]:
-        return grepl(pattern, nospace, ignore_case=True)
+        return cast("list[bool]", grepl(pattern, nospace, ignore_case=True))
 
     abstract = match("abstract")
     intro = match("intro")
@@ -674,7 +674,7 @@ def _html_refs(formatted: Sequence[Any], xpath: str) -> list[tuple[int, Any]]:
         if f is None or not _REF_TAG_RX.search(f):
             continue
         root = read_html(f"<p>{f}</p>", noblanks=True)
-        out.extend((k, node) for node in root.xpath(xpath))
+        out.extend((k, node) for node in cast("list[Any]", root.xpath(xpath)))
     return out
 
 
@@ -1110,7 +1110,7 @@ def _tei_table_contents(tab_node: Any) -> list[list[str]] | None:
         for cell in cells:
             txt = gsub(r"\s+", " ", xml_text(cell, trim=True))
             span_attr = xml_attr(cell, "cols")
-            span = pd.NA
+            span: Any = pd.NA
             if span_attr is not None:
                 span = coerce_column(pd.Series([span_attr], dtype=object), "integer").iloc[0]
             n = 1 if _na(span) or int(span) < 1 else int(span)
@@ -1496,7 +1496,7 @@ def grobid_to_bibr(
         from pytacheck.papers.io import paper_write
 
         file_name = gsub(r"\.xml$", "", Path(xp).name)
-        results.append(str(paper_write(p, file_name, save_path, schema_version)))
+        results.append(str(paper_write(cast(Paper, p), file_name, save_path, schema_version)))
 
     if errors > 0:
         e = "" if errors == 1 else f"1:{errors}"
@@ -1607,10 +1607,10 @@ def convert_grobid(
             )
         xmls: list[str | None] = []
         messages: list[str] = []
-        for pdf, sp in zip(paths, save_paths, strict=True):
+        for pdf_path, sp in zip(paths, save_paths, strict=True):
             try:
                 xml = convert_grobid(
-                    pdf,
+                    pdf_path,
                     sp,
                     api_url,
                     start_page,
@@ -1676,11 +1676,11 @@ def convert_grobid(
         # 12.0 conversion (read()'s default) records the PDF as the source
         # (file_name, sha256, paper_id) rather than a random temporary TEI.
         return _read_grobid_reply(pdf, content)
-    if Path(save_path).is_dir():
+    if Path(cast(PathLikeStr, save_path)).is_dir():
         base = sub(r"\.pdf", "", pdf.name, ignore_case=True) + ".xml"
-        save_file = os.path.join(os.fspath(save_path), base)
+        save_file = os.path.join(os.fspath(cast(PathLikeStr, save_path)), base)
     else:
-        sp = os.fspath(save_path)
+        sp = os.fspath(cast(PathLikeStr, save_path))
         Path(sp).parent.mkdir(parents=True, exist_ok=True)
         save_file = sub(r"\.xml", "", sp, ignore_case=True) + ".xml"
 

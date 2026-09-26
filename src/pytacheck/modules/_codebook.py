@@ -21,7 +21,7 @@ import functools
 import math
 import re
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from typing import Any
+from typing import Any, cast, overload
 
 import pandas as pd
 
@@ -672,6 +672,10 @@ def _scale_name_prefixes(names: Sequence[Any]) -> list[Any]:
     return list(res) if isinstance(res, list | tuple) else [res]
 
 
+@overload
+def _propagate_scale_by_prefix(labels_df: pd.DataFrame) -> pd.DataFrame: ...
+@overload
+def _propagate_scale_by_prefix(labels_df: None) -> None: ...
 def _propagate_scale_by_prefix(labels_df: pd.DataFrame | None) -> pd.DataFrame | None:
     """Give unnamed same-file, same-prefix sibling columns their block's scale.
 
@@ -1370,6 +1374,12 @@ _scale_is_nonanalytic_col = _paradata_col
 _MACHINERY_LABEL = "Export machinery / paradata column (not a measured variable)."
 
 
+@overload
+def _codebook_label_machinery(
+    labels_df: pd.DataFrame, previews: Mapping[str, Any] | None
+) -> pd.DataFrame: ...
+@overload
+def _codebook_label_machinery(labels_df: None, previews: Mapping[str, Any] | None) -> None: ...
 def _codebook_label_machinery(
     labels_df: pd.DataFrame | None, previews: Mapping[str, Any] | None
 ) -> pd.DataFrame | None:
@@ -1794,14 +1804,14 @@ def _scale_text_report(text_scales: pd.DataFrame | None, matched: Sequence[Any] 
         return None if v is None or trimws(_pstr(v)) == "" else trimws(_pstr(v))
 
     if len(matched):
-        m = [tolower(_pstr(x)) for x in matched if not _na(x)]
+        m = [cast(str, tolower(_pstr(x))) for x in matched if not _na(x)]
         m_set = set(m)
         hit_rows = []
         for i in range(len(ts)):
             name_hit = tolower(_pstr(_cell(ts, "scale_name", i))) in m_set
             a = present(_cell(ts, "acronym", i))
             acr_hit = a is not None and any(
-                re.search(r"(?<!\w)" + re.escape(tolower(a)) + r"(?!\w)", x) for x in m
+                re.search(r"(?<!\w)" + re.escape(cast(str, tolower(a))) + r"(?!\w)", x) for x in m
             )
             hit_rows.append(name_hit or acr_hit)
         ts = ts.iloc[[i for i, h in enumerate(hit_rows) if not h]].reset_index(drop=True)
@@ -2160,8 +2170,8 @@ class _LikertLookup:
                 if len(codes) >= 2:
                     return {
                         "points": len(codes),
-                        "min": min(codes),
-                        "max": max(codes),
+                        "min": min(cast(list[int], codes)),
+                        "max": max(cast(list[int], codes)),
                         "labels": [None if _na(v) else as_character(v) for v in values],
                         "order": "ascending",
                         "source": "codebook",
@@ -2628,7 +2638,7 @@ def _identify_scales_selfgen(
             break
     res = bind_rows(out) if out else _empty_scale_frame(None)
     res.attrs = {}
-    res = _selfgen_merge_synonyms(res)
+    res = cast(pd.DataFrame, _selfgen_merge_synonyms(res))
     res.attrs["llm_model"] = model_used
     return res
 
@@ -2695,7 +2705,7 @@ def _selfgen_merge_synonyms(res: pd.DataFrame | None) -> pd.DataFrame | None:
         tk = [_synonym_tokens(nm) for nm in names_f]
         order = sorted(range(len(tk)), key=lambda i: len(tk[i]))
         canon = {j: names_f[j] for j in range(len(names_f))}
-        pos = {}
+        pos: dict[Any, int] = {}
         for j, nm in enumerate(names_f):
             pos.setdefault(nm, j)
         for a in order:
@@ -2916,4 +2926,4 @@ def _nv(x: Any) -> Any:
 
 def _r_strsplit_fixed(x: str, split: str) -> list[str]:
     """``strsplit(x, split, fixed = TRUE)[[1]]`` (no trailing empty string)."""
-    return strsplit([x], split, fixed=True)[0]
+    return cast(list[str], strsplit([x], split, fixed=True)[0])

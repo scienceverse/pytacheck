@@ -16,7 +16,7 @@ from __future__ import annotations
 import functools
 import warnings
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
@@ -129,7 +129,7 @@ def _scan_links(
         folded = texts[i].casefold()
         if any(lit in folded for lit in lits):
             keep.append(i)
-    found = text_search(frame.iloc[keep], pattern, return_="match", perl=True)
+    found: pd.DataFrame = text_search(frame.iloc[keep], pattern, return_="match", perl=True)
     cols = ["text"] + [c for c in ("text_id", "paper_id") if c in found.columns]
     return found.loc[:, cols].rename(columns={"text": "href"})
 
@@ -304,7 +304,7 @@ def _resp_body_string(resp: Any) -> str | None:
     """
     import codecs
 
-    content = resp.content
+    content: bytes = resp.content
     if not content:
         raise ValueError("Can't retrieve empty body.")
     content = content.split(b"\x00", 1)[0]
@@ -352,7 +352,7 @@ def _local_name(node: etree._Element) -> str:
 def _find_first(node: etree._Element, xpath: str) -> etree._Element | None:
     """``xml2::xml_find_first()``: the first matching element (``None``: R's ``xml_missing``)."""
     hits = node.xpath(xpath)
-    return hits[0] if isinstance(hits, list) and hits else None
+    return cast("etree._Element", hits[0]) if isinstance(hits, list) and hits else None
 
 
 def _xml_text(node: etree._Element | None) -> str | None:
@@ -440,12 +440,14 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
             return pd.DataFrame(obj)
 
         title = _text_of(doc, _local("title"))
-        authors = [_creator_name(cr) for cr in doc.xpath(_local("creator"))]
+        authors = [
+            _creator_name(cr) for cr in cast("list[etree._Element]", doc.xpath(_local("creator")))
+        ]
         pub_date = _text_of(doc, _local("pubDate"))
         license_ = _text_of(doc, _local("intellectualRights"))
 
         files = []
-        for p in doc.xpath(_local("physical")):
+        for p in cast("list[etree._Element]", doc.xpath(_local("physical"))):
             name = _text_of(p, _local("objectName"))
             size = _text_of(p, _local("size"))
             url = _text_of(p, _local("url"))

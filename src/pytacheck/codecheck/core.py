@@ -22,7 +22,7 @@ import os
 import re
 from collections.abc import Iterable, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -926,7 +926,7 @@ def code_extract_r(
     file_path: str | os.PathLike[str] | None = None,
     save_path: str | os.PathLike[str] | None = None,
     documentation: int = 0,
-    text: str | Sequence[str] | None = None,
+    text: str | Sequence[str | None] | None = None,
 ) -> Any:
     """Extract the R code of an R Markdown/Quarto document (``knitr::purl()``).
 
@@ -1014,7 +1014,7 @@ def code_extract_qmd_py(
     length), without ``#|`` option lines, each chunk followed by a blank line.
     """
     text_lines = _text_arg(file_path, text)
-    out: list[str] = []
+    out: list[str | None] = []
     i = 0
     n = len(text_lines)
     opens = regexec(r"^(```+)\s*\{python\b", text_lines, ignore_case=True)
@@ -1025,8 +1025,8 @@ def code_extract_qmd_py(
             continue
         close = compile_r(f"^{fence[1]}\\s*$")
         j = i + 1
-        body: list[str] = []
-        while j < n and (text_lines[j] is None or close.search(text_lines[j]) is None):
+        body: list[str | None] = []
+        while j < n and (text_lines[j] is None or close.search(cast(str, text_lines[j])) is None):
             body.append(text_lines[j])
             j += 1
         keep = grepl(r"^\s*#\|", body)
@@ -1279,7 +1279,7 @@ def _flags(pattern: str, lines: list[str | None]) -> list[bool]:
 
 
 def code_remove_comments(
-    code_text: str | Sequence[str], lang: str | Sequence[str] = LANGS
+    code_text: str | Sequence[str | None], lang: str | Sequence[str] = LANGS
 ) -> list[str | None]:
     """Remove comments (and, for R/Python, blank lines) from code.
 
@@ -1428,7 +1428,7 @@ def _code_comment_flags(code_text: Sequence[str | None], lang: str) -> list[bool
     return has
 
 
-def _code_has_docstring(code_text: str | Sequence[str]) -> bool:
+def _code_has_docstring(code_text: str | Sequence[str | None]) -> bool:
     """Whether Python code holds a complete triple-quoted string block.
 
     Port of ``R/code_check.R::.code_has_docstring()``.
@@ -1617,7 +1617,7 @@ def code_packages(packages: Any) -> list[str]:
     values = [v for v in values if v is not None and v != ""]
     if not values:
         return []
-    parts = strsplit(", ".join(values), r"\s*,\s*")
+    parts = strsplit(", ".join(cast(list[str], values)), r"\s*,\s*")
     return r_sorted(list(dict.fromkeys(parts)))
 
 

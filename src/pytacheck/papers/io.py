@@ -122,7 +122,7 @@ def _empty_record_frames(records: list[dict[str, Any]], columns: Sequence[str]) 
     harness and to pytacheck's code).
     """
     for col in columns:
-        cells = [r.get(col, None) for r in records]
+        cells: list[Any] = [r.get(col, None) for r in records]
         if (
             cells
             and all(_is_record_list(v) for v in cells)

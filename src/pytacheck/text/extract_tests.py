@@ -16,7 +16,7 @@ Each row's ``components`` cell is a list of dicts with the keys ``name``,
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -470,7 +470,7 @@ def extract_tests(paper: Any) -> pd.DataFrame:
         return _empty_tests()
 
     def series(name: str, dtype: Any) -> pd.Series:
-        return pd.Series([r[name] for r in rows], dtype=dtype)
+        return cast(pd.Series, pd.Series([r[name] for r in rows], dtype=dtype))
 
     text_dtype = eq["text_id"].dtype
     out = pd.DataFrame(

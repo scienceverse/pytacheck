@@ -32,6 +32,7 @@ import pandas as pd
 
 from pytacheck._r.base import as_character
 from pytacheck._r.regex import compile_r
+from pytacheck.datacheck._strings import RAW_STRING
 
 
 def _rx(pattern: str, ignore_case: bool = False) -> Any:
@@ -660,7 +661,7 @@ def read_excel(
 
             series.append(posixct_series([math.nan if v is None else v for v in vals]))
         else:
-            series.append(pd.Series(vals, dtype="string"))
+            series.append(pd.Series(vals, dtype=RAW_STRING))
     out = pd.DataFrame(dict(enumerate(series)))
     trimmed = [None if nm is None else _trim(nm) for nm in names]
     final = (
@@ -815,7 +816,7 @@ def read_ods(
         final = [s.strip() for s in final]
         if name_repair == "unique":
             final = vec_as_names_unique(final)
-        out = pd.DataFrame({j: pd.Series([], dtype="string") for j in range(len(final))})
+        out = pd.DataFrame({j: pd.Series([], dtype=RAW_STRING) for j in range(len(final))})
         out.columns = pd.Index(final, dtype=object)
         return out
     header = grid[0] if col_names else [""] * len(grid[0])
@@ -826,7 +827,7 @@ def read_ods(
         col_types is pd.NA or (isinstance(col_types, float) and math.isnan(col_types))
     )
     if na_col_types or not data:
-        series = [pd.Series(c, dtype="string") for c in cols]
+        series = [pd.Series(c, dtype=RAW_STRING) for c in cols]
     else:
         guess_max = int(min(1000, n_max)) if math.isfinite(n_max) else 1000
         series = [_minty_convert(c, guess_max) for c in cols]
@@ -936,7 +937,7 @@ def _minty_convert(values: list[str], guess_max: int) -> pd.Series:
                 h = 0
             secs.append(h * 3600 + mi * 60 + s)
         return pd.Series(secs, dtype="float64")
-    return pd.Series(vals, dtype="string")
+    return pd.Series(vals, dtype=RAW_STRING)
 
 
 # -----------------------------------------------------------------------------

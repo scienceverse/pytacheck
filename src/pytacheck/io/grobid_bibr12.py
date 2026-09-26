@@ -625,7 +625,7 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
 
     bib_doi = _na_if_empty(bib_col("doi"))
     year = [_int(v) for v in bib_col("year")]
-    bib_tbl = {
+    bib_tbl: dict[str, Sequence[Any]] = {
         "bib_id": list(range(1, n_bib + 1)),
         "text_id": ref_text_id,
         "bib_type": _bibr12_bib_type(bib_col("bib_type")),

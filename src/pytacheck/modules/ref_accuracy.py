@@ -6,7 +6,7 @@ import math
 import numbers
 from collections.abc import Mapping, Sequence
 from functools import cache
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
@@ -356,6 +356,7 @@ def _align_key(x: pd.DataFrame, y: pd.DataFrame, key: str) -> tuple[pd.DataFrame
     if dx == dy:
         return x, y
     num = pd.api.types.is_numeric_dtype
+    target: Literal["Float64", "Int64", "string"]
     if num(dx) and num(dy):
         target = "Float64" if "float" in str(dx).lower() or "float" in str(dy).lower() else "Int64"
     else:
@@ -373,7 +374,7 @@ def _left_join(
     return out.reset_index(drop=True)
 
 
-def _lgl(values: list[bool | None], index: pd.Index) -> pd.Series:
+def _lgl(values: Sequence[bool | None], index: pd.Index) -> pd.Series:
     return pd.Series(values, index=index, dtype="boolean")
 
 
@@ -561,7 +562,7 @@ def ref_accuracy(
     container_mismatch = [False] * len(table)
     for k, i in enumerate(rows):
         container_mismatch[i] = not _journal_coherent(toks[k], toks[len(rows) + k])
-    table["container_mismatch"] = _lgl(container_mismatch, idx)  # type: ignore[arg-type]
+    table["container_mismatch"] = _lgl(container_mismatch, idx)
 
     # title: character similarity, or the record title verbatim in the reference text
     match_clean = _clean(_drop_sup(title_m))
@@ -575,7 +576,7 @@ def ref_accuracy(
         charsim = 1 - _adist(x, y) / max(len(x), len(y))
         in_text = pattern is not None and pattern != "" and txt is not None and pattern in txt
         title_mismatch.append(charsim < title_similarity and not in_text)
-    table["title_mismatch"] = _lgl(title_mismatch, idx)  # type: ignore[arg-type]
+    table["title_mismatch"] = _lgl(title_mismatch, idx)
 
     # authors: are the leading surnames of the record in the cited author list?
     last_names = [_last_names(a) for a in auth_m]
@@ -587,12 +588,14 @@ def ref_accuracy(
     clean_orig = _clean(auth_o)
     author_mismatch: list[bool] = []
     pos = 0
-    for names, o in zip(wanted, clean_orig, strict=True):
+    for wanted_names, o in zip(wanted, clean_orig, strict=True):
         # grepl(clean(x), clean(o), fixed = TRUE) is FALSE for a missing `o`
-        found = [o is not None and c is not None and c in o for c in flat[pos : pos + len(names)]]
-        pos += len(names)
-        author_mismatch.append(bool(names) and not all(found))
-    table["author_mismatch"] = _lgl(author_mismatch, idx)  # type: ignore[arg-type]
+        found = [
+            o is not None and c is not None and c in o for c in flat[pos : pos + len(wanted_names)]
+        ]
+        pos += len(wanted_names)
+        author_mismatch.append(bool(wanted_names) and not all(found))
+    table["author_mismatch"] = _lgl(author_mismatch, idx)
 
     # tier: how did we get the record we are checking against?
     has_own_doi = [o is not None and o != "" for o in doi_o]
@@ -602,7 +605,7 @@ def ref_accuracy(
         for own, rec in zip(has_own_doi, has_record, strict=True)
     ]
     table["tier"] = pd.Series(tier, index=idx, dtype="string")
-    table["no_match"] = _lgl([not r for r in has_record], idx)  # type: ignore[arg-type]
+    table["no_match"] = _lgl([not r for r in has_record], idx)
 
     # incoherence: cited details disagree with the record the reference's OWN DOI points to
     incoherent: list[bool] = []
@@ -612,14 +615,14 @@ def ref_accuracy(
         incoherent.append(
             t == "unresolved" or (t == "provided" and (strong or n_parsing >= min_mismatches))
         )
-    table["incoherent"] = _lgl(incoherent, idx)  # type: ignore[arg-type]
+    table["incoherent"] = _lgl(incoherent, idx)
 
     # traffic_light ----
     tl = "yellow" if any(incoherent) else "green"
 
     # summary_table ----
     no_doi = [t == "none" for t in tier]
-    table["no_doi"] = _lgl(no_doi, idx)  # type: ignore[arg-type]
+    table["no_doi"] = _lgl(no_doi, idx)
     checked = [t in ("provided", "unresolved") for t in tier]
     counts = pd.DataFrame(
         {"refs_checked": checked, "incoherent": incoherent, "no_doi": no_doi}, index=idx

@@ -840,18 +840,19 @@ def zenodo_upload(
                 "Pass the result of osf_file_download(), or a vector of folder paths."
             )
         dl_paths = folders["download_path"].tolist()
-        paths = [str(p) for p in dict.fromkeys(p for p in dl_paths if not is_na(p))]
+        found = [str(p) for p in dict.fromkeys(p for p in dl_paths if not is_na(p))]
+        given: list[str | None] = list(found)
         if "osf_project" in folders.columns:
             first: dict[str, Any] = {}
             for p, o in zip(dl_paths, folders["osf_project"].tolist(), strict=True):
                 if not is_na(p) and str(p) not in first:
                     first[str(p)] = None if is_na(o) else o
-            osf_ids = [first.get(p) for p in paths]
+            osf_ids = [first.get(p) for p in found]
     else:
-        paths = [as_character(p) for p in _as_list(folders)]
+        given = [as_character(p) for p in _as_list(folders)]
 
-    keep_idx = [i for i, p in enumerate(paths) if p is not None]
-    paths = [paths[i] for i in keep_idx]
+    keep_idx = [i for i, p in enumerate(given) if p is not None]
+    paths = [p for p in given if p is not None]
     if osf_ids is not None:
         osf_ids = [osf_ids[i] for i in keep_idx]
     exists = [os.path.isdir(os.path.expanduser(p)) for p in paths]

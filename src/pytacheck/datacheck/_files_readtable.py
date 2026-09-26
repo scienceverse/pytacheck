@@ -36,6 +36,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from pytacheck.datacheck._strings import RAW_STRING
+
 _LF = 0x0A
 _CR = 0x0D
 _QUOTE = 0x22
@@ -510,7 +512,7 @@ def type_convert(values: list[bytes | None]) -> pd.Series:
             return pd.Series(out_c, dtype="complex128")
     return pd.Series(
         [None if v is None else v.decode("utf-8", "surrogateescape") for v in values],
-        dtype="string",
+        dtype=RAW_STRING,
     )
 
 

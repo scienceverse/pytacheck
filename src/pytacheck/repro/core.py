@@ -35,7 +35,7 @@ import shutil
 import subprocess
 import tempfile
 import time
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any, cast
 
@@ -885,6 +885,7 @@ def repro_rewrite_paths(
 
     script_grp = _data_group_from_path([file_name])[0]
 
+    plan_hash_of: Callable[[int], str | None]
     if structure_df is not None and all(
         c in structure_df.columns for c in ("file_name", "file_location")
     ):
@@ -956,7 +957,7 @@ def repro_rewrite_paths(
     plan_index: dict[str, list[int]] = {}
     for j in range(n_plan):
         if has_target[j] and plan_base[j] is not None:
-            plan_index.setdefault(plan_base[j], []).append(j)
+            plan_index.setdefault(cast(str, plan_base[j]), []).append(j)
 
     rows: list[tuple[Any, ...]] = []
     for i, r in enumerate(refs):
@@ -1094,7 +1095,7 @@ def repro_run_order(
     by_norm: dict[str, list[int]] = {}
     for j in range(n):
         if base_name[j] is not None:
-            by_base.setdefault(base_name[j], []).append(j)
+            by_base.setdefault(cast(str, base_name[j]), []).append(j)
         if norm_base[j] is not None and norm_base[j] != "":
             by_norm.setdefault(norm_base[j], []).append(j)
     for i in range(n):

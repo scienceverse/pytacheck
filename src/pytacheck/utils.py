@@ -208,7 +208,7 @@ def _short_hash(s: str) -> str:
 def _shorten_component(comp: str, budget: int) -> str:
     if len(comp) <= budget:
         return comp
-    ext = sub(r"^.*(\.[A-Za-z0-9]{1,8})$", r"\1", comp)
+    ext: str = sub(r"^.*(\.[A-Za-z0-9]{1,8})$", r"\1", comp)
     if ext == comp:
         ext = ""
     h = "-" + _short_hash(comp)
@@ -427,7 +427,8 @@ def left_join(
             )
             out_cols[name] = pd.Series(values, dtype=_nullable_dtype(col.dtype))
         else:
-            out_cols[name] = col.iloc[ysel].reset_index(drop=True)
+            # pandas-stubs omits list[int] from Series.iloc's accepted keys
+            out_cols[name] = col.iloc[ysel].reset_index(drop=True)  # type: ignore[call-overload]
     return pd.DataFrame(out_cols, index=pd.RangeIndex(len(xi)))
 
 

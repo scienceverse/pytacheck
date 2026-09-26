@@ -157,8 +157,11 @@ def index_location(url: str) -> tuple[str, str]:
     m = _GITLAB.match(url)
     if m:
         return ("http", f"{url.rstrip('/').removesuffix('.git')}/-/raw/HEAD/index.json")
-    path = parts.path.rstrip("/") + "/index.json"
-    return ("http", urlunsplit((parts.scheme, parts.netloc, path, parts.query, parts.fragment)))
+    index_path = parts.path.rstrip("/") + "/index.json"
+    return (
+        "http",
+        urlunsplit((parts.scheme, parts.netloc, index_path, parts.query, parts.fragment)),
+    )
 
 
 def _cache(name: str) -> Path:

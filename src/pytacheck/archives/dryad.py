@@ -18,7 +18,7 @@ import threading
 import time
 import warnings
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -155,7 +155,7 @@ def _dryad_doi_one(url: str | None) -> str | None:
     for rx in _dryad_doi_patterns():
         m = rx.search(url)
         if m is not None:
-            return m.group(1).lower()
+            return cast("str", m.group(1)).lower()
     return None
 
 

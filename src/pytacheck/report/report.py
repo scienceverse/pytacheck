@@ -29,7 +29,7 @@ from functools import cache
 from importlib import resources
 from pathlib import Path
 from types import ModuleType
-from typing import Any
+from typing import Any, cast
 
 from pytacheck._r.regex import gsub, regextract_all, sub
 from pytacheck.module import SECTION_LEVELS, ModuleOutput, module_find, module_info, module_run
@@ -302,7 +302,7 @@ def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
         paragraphs = [p for p in (info.description or None, details, author_ack) if p is not None]
         if not paragraphs:
             return None, validation
-        return collapse_section(paragraphs, "How It Works", callout="note"), validation
+        return cast(str, collapse_section(paragraphs, "How It Works", callout="note")), validation
     except Exception:
         return None, validation
 
@@ -486,7 +486,7 @@ def _info_values(paper: Any, column: str) -> list[Any] | None:
     info = getattr(paper, "info", None) if paper is not None else None
     if info is None or not hasattr(info, "columns") or column not in info.columns:
         return None
-    return info[column].tolist()
+    return cast("list[Any]", info[column].tolist())
 
 
 def _is_na(x: Any) -> bool:

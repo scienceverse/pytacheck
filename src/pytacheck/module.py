@@ -404,7 +404,7 @@ def _builtin_names() -> tuple[str, ...]:
 
 
 def _spec_from_pymodule(pymod: Any, name: str) -> ModuleSpec:
-    candidates = [
+    candidates: list[ModuleSpec] = [
         obj.__pytacheck_module__
         for obj in vars(pymod).values()
         if callable(obj)
@@ -818,7 +818,7 @@ def _apply_na_replace(
     """
     cols = [c for c in summary.columns if c in own]
     if isinstance(na_replace, Mapping):
-        mapping = {}
+        mapping: dict[str, Any] = {}
         for k, v in na_replace.items():
             if k in cols:
                 mapping[k] = v

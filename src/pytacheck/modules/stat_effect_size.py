@@ -21,7 +21,7 @@ import functools
 import math
 import warnings
 from collections.abc import Iterable, Iterator, Sequence
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, cast
 
 import pandas as pd
 
@@ -231,8 +231,8 @@ def _ld_pow10_exact(k: int) -> tuple[int, int]:
 
 # format.c's tbl[] of powers of ten: long doubles initialised from *double*
 # literals, so 1e23..1e27 are not exact
-_TBL = [
-    (lambda n, d: (n, -(d.bit_length() - 1)))(*float(10**k).as_integer_ratio()) for k in range(28)
+_TBL: list[tuple[int, int]] = [
+    (n, -(d.bit_length() - 1)) for n, d in (float(10**k).as_integer_ratio() for k in range(28))
 ]
 
 
@@ -493,7 +493,7 @@ def _hits(pattern: str, text: str | None) -> list[list[str]]:
         return []
     rx = compile_r(pattern, perl=True)
     out = []
-    for m in rx.finditer(text):
+    for m in rx.finditer(cast(str, text)):
         g = rx.search(m.group(0))
         if g is not None:
             out.append([g.group(0), *(x if x is not None else "" for x in g.groups())])
@@ -1067,7 +1067,7 @@ def _format_coherence_text(
     )
 
 
-def _paper_id_frame(paper: Any, paper_cls: type) -> pd.DataFrame:
+def _paper_id_frame(paper: Any, paper_cls: type[Any]) -> pd.DataFrame:
     """R ``data.frame(paper_id = paper$paper_id)``.
 
     One row for a paper; a paper list has no ``paper_id`` element, so R builds

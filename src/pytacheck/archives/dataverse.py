@@ -24,7 +24,7 @@ import shutil
 import tempfile
 import warnings
 from collections.abc import Callable, Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
@@ -413,7 +413,7 @@ def _is_true(x: Any) -> bool:
     if isinstance(x, str):
         return x == "TRUE"
     if isinstance(x, numbers.Number):
-        return bool(x == 1)
+        return bool(cast("Any", x) == 1)
     return False
 
 
@@ -672,7 +672,7 @@ def _link_matches(
         if frame is not None:
             keep = grepl(prefilter, frame["text"].tolist(), ignore_case=True, perl=True)
             target = frame.loc[[bool(k) for k in keep]]
-    found = text_search(target, pattern, return_="match", perl=True)
+    found: pd.DataFrame = text_search(target, pattern, return_="match", perl=True)
     ids = [c for c in ("text_id", "paper_id") if c in found.columns]
     if "text" not in found.columns:
         # an empty paper list: R's `href = text` then names the (NULL) local

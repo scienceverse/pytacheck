@@ -493,7 +493,7 @@ def _safe_member_path(name: str) -> str | None:
 
 
 def _zip_fetch_members(
-    url: str, names: Sequence[str] | str | None = None, dest: str = ".", verify: bool = True
+    url: str, names: Sequence[str | None] | str | None = None, dest: str = ".", verify: bool = True
 ) -> pd.DataFrame | None:
     """Port of ``R/zip-peek.R::.zip_fetch_members()``: download selected zip members.
 

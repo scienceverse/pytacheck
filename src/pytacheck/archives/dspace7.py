@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import functools
 import warnings
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -242,7 +242,7 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
                     vals = [_chr1(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)]
                     vals = [v for v in vals if v is not None]
                     if vals:
-                        return "; ".join(vals)
+                        return "; ".join(cast("list[str]", vals))
             return None
 
         name = _empty_or(_dollar(item, "name"), None)

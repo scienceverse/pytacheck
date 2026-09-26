@@ -89,7 +89,7 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
 
     # build all columns at once (one DataFrame construction, not one insert per DOI)
     columns: dict[str, Any] = {"paper_id": pd.array(id_vals, dtype="string")}
-    bid_dtype = counts["bib_id"].dtype
+    bid_dtype: Any = counts["bib_id"].dtype
     for doi, col in zip(doi_vals, values, strict=True):
         name = "miscite_" + _chr(doi)
         try:
@@ -237,16 +237,16 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
         # without an in-text citation, or whose sentence is missing, is quoted as
         # "> NA" (U117). The DOIs are never missing here: references without a
         # DOI are dropped before the join.
-        cited: dict[Any, list[Any]] = {}
+        cited_by_doi: dict[Any, list[Any]] = {}
         for d, c in zip(xrefs["doi"].tolist(), xrefs["citation"].tolist(), strict=True):
-            quotes_of = cited.setdefault(_key(d), [])
+            quotes_of = cited_by_doi.setdefault(_key(d), [])
             if not _is_na(c):
                 quotes_of.append(c)
 
         report = []
         for warn_doi, warning, reftext in to_warn.itertuples(index=False, name=None):
             head = f"**{_chr(warn_doi)}**\n\n{_chr(reftext)}\n\n{_chr(warning)}\n\n"
-            all_instances = cited.get(_key(warn_doi), [])
+            all_instances = cited_by_doi.get(_key(warn_doi), [])
             if not all_instances:
                 report.append(f"{head}*No in-text citations were detected.*")
                 continue

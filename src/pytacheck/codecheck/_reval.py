@@ -295,7 +295,7 @@ def r_eval(x: Any) -> Any:
             return NA
         return None if x.kind == "NULL" else x.value
     if isinstance(x, Sym):
-        name = x.name
+        name: str | None = x.name
         if name in ("T", "F"):
             return name == "T"
         if name == "pi":
@@ -336,7 +336,7 @@ def _call(name: str, args: list[Any], tags: list[str | None]) -> Any:
     if name == "!" and n == 1:
         v = r_eval(args[0])
         vals = [_truthy(e, "!") for e in _as_list(v)]
-        out = [NA if e is NA else not e for e in vals]
+        out: list[Any] = [NA if e is NA else not e for e in vals]
         return out if isinstance(v, list) else out[0]
     if name in ("-", "+") and n == 1:
         v = r_eval(args[0])
@@ -372,7 +372,7 @@ def _call(name: str, args: list[Any], tags: list[str | None]) -> Any:
         out = [e in table for e in _as_list(v)]
         return out if isinstance(v, list) else (out[0] if out else [])
     if name in ("c", "list"):
-        out: list[Any] = []
+        out = []
         for a in args:
             out.extend(_as_list(r_eval(a)))
         return out[0] if len(out) == 1 else out

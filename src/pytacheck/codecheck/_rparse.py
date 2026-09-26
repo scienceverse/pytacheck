@@ -111,6 +111,7 @@ class Sym:
     """An R symbol (interned: compare with ``is``)."""
 
     __slots__ = ("name",)
+    name: str
     _table: typing.ClassVar[dict[str, Sym]] = {}
 
     def __new__(cls, name: str) -> Sym:
@@ -1150,7 +1151,7 @@ class _Parser:
                 loc = _Loc(prev.last_line, prev.last_column, prev.last_line, prev.last_column - 1)
             result = self._action(rule, rhs_vals, rhs_locs, loc)
             if rule in (2, 3, 4, 5):
-                return result
+                return typing.cast("tuple[int, Any]", result)
             if length:
                 del states[-length:]
                 del values[-length:]

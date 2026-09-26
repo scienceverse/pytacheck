@@ -337,7 +337,7 @@ def _frame_columns(df: pd.DataFrame) -> list[list[Any]]:
     """The cells of *df*, column by column, with ``None`` for every NA."""
     if df.shape[1] == 0:
         return []
-    arr = df.to_numpy(dtype=object, na_value=None)
+    arr = df.to_numpy(dtype=object, na_value=None)  # type: ignore[arg-type]  # stubs reject None
     return [arr[:, j].tolist() for j in range(arr.shape[1])]
 
 

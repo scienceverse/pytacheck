@@ -440,13 +440,13 @@ if TYPE_CHECKING:  # pragma: no cover
         expand_text,
         extract_eq,
         extract_p_values,
-        extract_tests,
         extract_urls,
-        json_expand,
         search_text,
         text_expand,
         text_search,
     )
+    from pytacheck.text.extract_tests import extract_tests
+    from pytacheck.text.json_expand import json_expand
     from pytacheck.validate import accuracy, validate
 
 

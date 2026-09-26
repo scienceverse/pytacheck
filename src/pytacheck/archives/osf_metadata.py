@@ -13,7 +13,7 @@ import json
 import math
 import os
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -203,8 +203,8 @@ def _osf_license(osf_id: str) -> str | None:
             node = None
     name = _get(node, "embeds", "license", "data", "attributes", "name")
     if isinstance(name, list):
-        return name[0] if name else None
-    return name
+        return cast("str | None", name[0] if name else None)
+    return cast("str | None", name)
 
 
 def _osf_node_metadata(osf_id: str) -> dict[str, Any]:
@@ -600,7 +600,7 @@ def _jl_frame(df: pd.DataFrame | None) -> _JNode:
                 continue
             if hasattr(v, "item"):
                 v = v.item()
-            fields[k] = _jl_vec([v])
+            fields[cast("str", k)] = _jl_vec([v])
         rows.append(("obj", fields))
     return ("df", rows)
 

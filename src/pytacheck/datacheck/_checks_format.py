@@ -117,7 +117,7 @@ def _qualtrics_col_stem(nm: Any) -> str | None:
     m = regexec("^(.*[A-Za-z].*)_([0-9]+)$", nm)
     if len(m) != 3:
         return None
-    stem = m[1]
+    stem: str = m[1]
     if sum(1 for c in stem if "A" <= c <= "Z" or "a" <= c <= "z") < 2:
         return None
     return stem
@@ -276,7 +276,7 @@ def _retype_numeric(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy(deep=False)
     for j, s in cols.items():
         s.index = out.index
-        out.isetitem(j, s)
+        out.isetitem(j, s)  # type: ignore[arg-type]  # stubs omit Series
     return out
 
 
@@ -501,7 +501,7 @@ def data_promote_header_row(df: Any, raw_rows: Any = None, max_scan: int = 4) ->
         if n_scan < 0:  # seq_len() of a negative number
             raise ValueError("argument must be coercible to non-negative integer")
         row = _Rows(df, n_scan)
-        header_as_row = [str(c) for c in df.columns]
+        header_as_row: list[str | None] = [str(c) for c in df.columns]
         body_rows = [row(i) for i in range(n_scan)]
         rows = [header_as_row, *body_rows]
     det = _detect_header_row(rows, max_scan=max_scan)
@@ -542,7 +542,7 @@ def _retype_numeric_safe(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy(deep=False)
     for j, s in cols.items():
         s.index = out.index
-        out.isetitem(j, s)
+        out.isetitem(j, s)  # type: ignore[arg-type]  # stubs omit Series
     return out
 
 

@@ -41,7 +41,8 @@ __all__ = [
 ]
 
 
-class _CallableModule(__import__("types").ModuleType):
+# mypy cannot see the base class through __import__()
+class _CallableModule(__import__("types").ModuleType):  # type: ignore[misc]
     """``pytacheck.report`` is also :func:`report`, so ``pytacheck.report(paper)``
     works even once the subpackage has shadowed the top-level ``report`` export.
 

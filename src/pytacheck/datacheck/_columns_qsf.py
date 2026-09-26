@@ -208,7 +208,7 @@ def _qsf_export_col(tag: Any, choice_tag: Any, code: Any) -> str:
     tp = "NA" if t is None else t  # paste0(NA, "_") is "NA_"
     ct0 = _chr(choice_tag)
     if ct0 is not None and ct0 != "":
-        ct = trimws(ct0)
+        ct: str = trimws(ct0)
         if _tolower(ct).startswith(_tolower(tp + "_")) or (
             t is not None and _tolower(ct) == _tolower(t)
         ):

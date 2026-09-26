@@ -124,7 +124,7 @@ def _scalar(v: Any, digits: int) -> Any:
 
 
 def _series(values: list[Any], kind: str, digits: int) -> list[Any]:
-    out = []
+    out: list[Any] = []
     for v in values:
         if isinstance(v, float) and math.isnan(v) and kind == "list":
             out.append(_Raw('"NaN"'))

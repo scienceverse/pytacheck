@@ -541,10 +541,10 @@ def _pb_str(x: Any) -> str:
     if not isinstance(x, bytes | bytearray):
         return ""
     # rawToChar() drops trailing nuls and errors on an embedded one.
-    x = bytes(x).rstrip(b"\x00")
-    if b"\x00" in x:
+    xb = bytes(x).rstrip(b"\x00")
+    if b"\x00" in xb:
         return ""
-    return x.decode("utf-8", errors="replace")
+    return xb.decode("utf-8", errors="replace")
 
 
 # jamovi field numbers (``.JMV_F``; see inst/schema/jamovi/PROVENANCE.md).

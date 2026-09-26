@@ -23,7 +23,7 @@ import tempfile
 import zipfile
 from collections.abc import Callable, Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -189,7 +189,7 @@ def _json_field(entry: Any, names_want: list[str]) -> str | None:
         if v is None or isinstance(v, list):
             continue
         s = _json_scalar_chr(v)
-        s = None if s is None else trimws(s)
+        s = None if s is None else cast(str, trimws(s))
         if s is not None and s != "":
             return s
     return None
@@ -535,7 +535,7 @@ def _strip_rtf(text: str) -> str:
     text = gsub("\\\\[^a-z\n]", " ", text)
     text = gsub("[{}]", "", text)
     text = gsub(r"\s+", " ", text)
-    return trimws(text)
+    return cast(str, trimws(text))
 
 
 _W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -626,7 +626,7 @@ def _docx_text(path: str | os.PathLike[str]) -> str:
     p_tag, r_tag, rpr_tag = f"{{{_W}}}p", f"{{{_W}}}r", f"{{{_W}}}rPr"
     doc_index = {p: i + 1 for i, p in enumerate(root.iter(p_tag))}
     run_index = {r: i + 1 for i, r in enumerate(root.iter(r_tag))}
-    in_cell = set(root.xpath("//w:tbl/w:tr/w:tc/w:p", namespaces={"w": _W}))
+    in_cell = set(cast(list[Any], root.xpath("//w:tbl/w:tr/w:tc/w:p", namespaces={"w": _W})))
     cell_idx = {doc_index[p] for p in in_cell}
     items: list[tuple[bool, int, int, str, str]] = []
     k = 0
@@ -688,7 +688,7 @@ def _odt_text(path: str | os.PathLike[str]) -> str:
             ("&quot;", '"'),
         ):
             txt = txt.replace(a, b)
-        return trimws(gsub(r"\s+", " ", txt))
+        return cast(str, trimws(gsub(r"\s+", " ", txt)))
 
 
 def _extract_rich_text(path: str | os.PathLike[str], ext: str) -> str:
@@ -937,7 +937,7 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
             {j: pd.Series([None], dtype=raw.iloc[:, j].dtype) for j in range(raw.shape[1])}
         )
         last = raw.iloc[[header_row]].copy()
-        last.columns = range(raw.shape[1])
+        last.columns = range(raw.shape[1])  # type: ignore[assignment]  # stubs omit range
         df = pd.concat([na_row, last], ignore_index=True)
     df = df.reset_index(drop=True).copy()
     df.columns = pd.Index(names, dtype=object)

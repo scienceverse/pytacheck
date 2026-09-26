@@ -16,6 +16,7 @@ share downloaded corpora.
 
 from __future__ import annotations
 
+import builtins
 import bz2
 import gzip
 import lzma
@@ -25,7 +26,7 @@ import struct
 import tempfile
 from os import PathLike
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -55,7 +56,7 @@ def _papers_cache_dir() -> Path:
 
 def _file_path_sans_ext(name: str) -> str:
     """``tools::file_path_sans_ext()``."""
-    return sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", name)
+    return cast(str, sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", name))
 
 
 def _release_assets_frame(rows: list[tuple[str, str, Any, str]]) -> pd.DataFrame:
@@ -309,19 +310,19 @@ class _RdsReader:
         self.pos += 4
         return int(v)
 
-    def length(self) -> int:
+    def length(self) -> builtins.int:
         n = self.int()
         if n == -1:
             hi, lo = self.int(), self.int()
             n = (hi << 32) + lo
         return n
 
-    def bytes(self, n: int) -> bytes:
+    def bytes(self, n: builtins.int) -> bytes:
         out = bytes(self.buf[self.pos : self.pos + n])
         self.pos += n
         return out
 
-    def string(self, flags: int) -> str | None:
+    def string(self, flags: builtins.int) -> str | None:
         n = self.int()
         if n == -1:
             return None
@@ -455,7 +456,9 @@ class _RdsReader:
             return obj
         raise ValueError(f"unsupported R object type {t} in RDS stream")
 
-    def pairlist(self, t: int, flags: int, has_attr: bool, has_tag: bool) -> RObject:
+    def pairlist(
+        self, t: builtins.int, flags: builtins.int, has_attr: bool, has_tag: bool
+    ) -> RObject:
         # iterative over the cdr chain to avoid deep recursion on long pairlists
         entries: list[tuple[Any, Any]] = []
         attrs: dict[str, Any] = {}

@@ -14,7 +14,7 @@ from __future__ import annotations
 import functools
 import os
 import warnings
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -235,7 +235,7 @@ def _figshare_id_one(url: str | None) -> str | None:
     for rx in _figshare_id_patterns():
         m = rx.search(url)
         if m is not None:
-            return m.group(1)
+            return cast("str", m.group(1))
     return None
 
 

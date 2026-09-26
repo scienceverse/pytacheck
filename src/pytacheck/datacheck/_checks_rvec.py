@@ -22,10 +22,13 @@ import datetime as dt
 import functools
 import math
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any, overload
 
 from pytacheck._r.base import as_character as _as_character_scalar
 from pytacheck._r.regex import compile_r
+
+if TYPE_CHECKING:
+    import numpy as np
 
 __all__ = [
     "RVec",
@@ -565,6 +568,10 @@ def column_kinds(df: Any) -> list[str]:
 # -- string helpers ------------------------------------------------------------
 
 
+@overload
+def trim(s: str) -> str: ...
+@overload
+def trim(s: str | None) -> str | None: ...
 def trim(s: str | None) -> str | None:
     """R ``trimws()`` (default ``[ \\t\\r\\n]``) of one string."""
     return None if s is None else s.strip(" \t\r\n")
@@ -614,7 +621,7 @@ def median(values: Sequence[float]) -> float:
 
 
 def quantile7(
-    values: Sequence[float], probs: Sequence[float], is_sorted: bool = False
+    values: Sequence[float] | np.ndarray, probs: Sequence[float], is_sorted: bool = False
 ) -> list[float]:
     """``stats::quantile(x, probs, names = FALSE)`` (type 7) of non-NA numbers."""
     x = values if is_sorted else sorted(values)

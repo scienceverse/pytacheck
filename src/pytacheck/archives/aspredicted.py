@@ -10,7 +10,7 @@ Page text is extracted with a port of ``rvest::html_text2()``
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
@@ -77,7 +77,7 @@ def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.
             {"ap_url": pd.Series([as_character(v) for v in raw_urls], dtype="string")}
         )
 
-    valid_ids = list(dict.fromkeys(as_character(u) for u in raw_urls if not is_na(u)))
+    valid_ids = list(dict.fromkeys(cast("str", as_character(u)) for u in raw_urls if not is_na(u)))
     if not valid_ids:
         _message("No valid AsPredicted links")
         return table
@@ -190,7 +190,7 @@ def _aspredicted_parse(html_text: str, ap_url: str) -> pd.DataFrame:
     from lxml import html as lxml_html
 
     doc = lxml_html.document_fromstring(html_text)
-    bodies = doc.xpath("//body")
+    bodies = cast("list[lxml_html.HtmlElement]", doc.xpath("//body"))
     body = _html_text2(bodies[0]) if bodies else ""
     row: dict[str, Any] = {"ap_url": ap_url}
     if "CLICK after solving captcha" in body:
@@ -198,7 +198,7 @@ def _aspredicted_parse(html_text: str, ap_url: str) -> pd.DataFrame:
         row["error"] = "captcha"
         return pd.DataFrame({k: pd.Series([v], dtype="string") for k, v in row.items()})
 
-    title = doc.xpath("//h3//b//i")
+    title = cast("list[lxml_html.HtmlElement]", doc.xpath("//h3//b//i"))
     row["AP_title"] = title[0].text_content() if title else None
     for i in range(11):
         name, start = _SECTIONS[i]
@@ -230,7 +230,7 @@ _TABLE_TAGS = frozenset({"tbody", "thead", "tfoot", "tr", "td", "th"})
 
 def _collapse_whitespace(x: str, preserve_nbsp: bool = False) -> str:
     x = gsub(r"(^[ \t\n]+)|([ \t\n]+$)", "", x, perl=True)
-    return gsub("[\t\n ]+" if preserve_nbsp else "[\t\n  ]+", " ", x, perl=True)
+    return cast("str", gsub("[\t\n ]+" if preserve_nbsp else "[\t\n  ]+", " ", x, perl=True))
 
 
 class _PaddedText:
@@ -358,7 +358,7 @@ def _html_text2(x: str | lxml_html.HtmlElement | list[Any], preserve_nbsp: bool 
         from lxml import html as lxml_html
 
         doc = lxml_html.document_fromstring(x)
-        bodies = doc.xpath(".//body")
+        bodies = cast("list[lxml_html.HtmlElement]", doc.xpath(".//body"))
         if not bodies:
             return None
         x = bodies[0]

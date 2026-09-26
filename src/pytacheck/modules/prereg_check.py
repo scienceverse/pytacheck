@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextvars import copy_context
 from typing import Any
@@ -65,7 +65,7 @@ def _no_prereg_summary(paper: Any) -> pd.DataFrame:
     )
 
 
-def _rows_frame(rows: Sequence[dict[str, str | None]]) -> pd.DataFrame:
+def _rows_frame(rows: Sequence[Mapping[str, str | None]]) -> pd.DataFrame:
     """``dplyr::bind_rows()`` of one-row named lists (empty lists are skipped)."""
     rows = [r for r in rows if r]
     columns = list(dict.fromkeys(c for r in rows for c in r))  # first-appearance order
@@ -177,7 +177,7 @@ def prereg_check(paper: Any) -> dict[str, Any]:
             schema_bodies[url] = _prereg.fetch_schema_json(url)
         return schema_bodies[url]
 
-    ps: list[dict[str, str | None]] = []
+    ps: list[dict[str, str]] = []
     # which papers link each registration (U110): by OSF id, not by link text
     papers_of: list[list[Any]] = []
     osf_papers: dict[Any, list[Any]] = {}

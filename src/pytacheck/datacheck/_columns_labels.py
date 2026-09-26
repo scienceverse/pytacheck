@@ -22,7 +22,7 @@ import functools
 import json
 import math
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Any
+from typing import Any, cast, overload
 
 import pandas as pd
 
@@ -42,7 +42,7 @@ def _na(x: Any) -> bool:
     if tx is str or tx is int or tx is bool:
         return False
     if tx is float:
-        return x != x
+        return bool(x != x)
     try:
         return bool(is_na(x)) or (isinstance(x, float) and math.isnan(x))
     except (TypeError, ValueError):
@@ -150,6 +150,10 @@ def chr_frame(columns: dict[str, Any], nrow: int) -> pd.DataFrame:
 # -----------------------------------------------------------------------------
 
 
+@overload
+def _tolower(s: str) -> str: ...
+@overload
+def _tolower(s: str | None) -> str | None: ...
 def _tolower(s: str | None) -> str | None:
     """R ``tolower()`` (per-character ``towlower``)."""
     if s is None:
@@ -186,7 +190,7 @@ def _normalize_varname_one(s: str | None) -> str | None:
     s = gsub("[_]+", " ", s)
     s = gsub(r"\s+", " ", s)
     s = gsub("^[.]+|[.]+$", "", s)
-    return trimws(s)
+    return cast(str, trimws(s))
 
 
 def normalize_varname(x: Any) -> Any:
@@ -248,7 +252,7 @@ def _normalize_header_one(s: str | None) -> str | None:
         return None
     s = _tolower(trimws(s))
     s = gsub("[^a-z0-9]+", " ", s)
-    return trimws(gsub(r"\s+", " ", s))
+    return cast(str, trimws(gsub(r"\s+", " ", s)))
 
 
 def _normalize_header(x: Any) -> Any:
@@ -1007,8 +1011,8 @@ def _col_attrs(df: pd.DataFrame, j: int) -> Mapping[str, Any]:
         a = col_attrs_at(df, j)  # by position: columns sharing a name keep their own
         if a or df.columns[j] in ca:
             return a
-    a = getattr(df.iloc[:, j], "attrs", None)
-    return a if isinstance(a, Mapping) else {}
+    sa = getattr(df.iloc[:, j], "attrs", None)
+    return sa if isinstance(sa, Mapping) else {}
 
 
 def _extract_haven_labels(
@@ -1021,7 +1025,7 @@ def _extract_haven_labels(
     column carries a label or a code list.
     """
     names = list(df.columns)
-    first_j = {}
+    first_j: dict[Any, int] = {}
     for j, nm in enumerate(names):
         first_j.setdefault(nm, j)
     labels: list[str | None] = []

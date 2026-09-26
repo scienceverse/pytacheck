@@ -23,7 +23,7 @@ import hashlib
 import itertools
 import time
 from collections.abc import Iterable, Iterator, Mapping, Sequence
-from typing import Any, overload
+from typing import Any, cast, overload
 
 import pandas as pd
 
@@ -313,7 +313,7 @@ class PaperList(Sequence[Paper]):
             raise KeyError(key)
         if isinstance(key, list):
             return PaperList(self[k] for k in key)
-        return self._papers[key]
+        return cast(Paper, self._papers[key])
 
     def __contains__(self, item: object) -> bool:
         if isinstance(item, str):

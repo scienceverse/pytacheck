@@ -52,9 +52,9 @@ import re
 import shutil
 import sys
 import warnings
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -62,7 +62,7 @@ import pandas as pd
 from pytacheck._r.base import plural, trimws
 from pytacheck._r.regex import compile_r, gregexpr_all, grepl, gsub, regexec, strsplit, sub
 from pytacheck.datacheck._files_registry import EXT_REGISTRY
-from pytacheck.datacheck._strings import file_ext, tolower_checked
+from pytacheck.datacheck._strings import RAW_STRING, file_ext, tolower_checked
 from pytacheck.fileinfo._strings import invalid_utf8
 
 __all__ = [
@@ -621,7 +621,7 @@ class RVector(tuple):  # type: ignore[type-arg]
     """An R atomic vector of length != 1 (jsonlite writes it on one line)."""
 
 
-def _json_num(x: float) -> str:
+def _json_num(x: float | np.floating[Any]) -> str:
     """A double as JSON: whole numbers without a fraction, others at full
     precision (shortest round-trip form). metacheck writes with jsonlite's
     ``digits = 4``, which turns ``0.000012345`` into ``0``."""
@@ -1864,7 +1864,7 @@ def _set_names(df: pd.DataFrame, names: list[str]) -> None:
     df.columns = pd.Index(names, dtype=object)
     col_attrs = df.attrs.get("col_attrs")
     if col_attrs or getattr(col_attrs, "positional", None):  # a ColAttrs may key no name
-        df.attrs["col_attrs"] = rename_col_attrs(col_attrs, old, names)
+        df.attrs["col_attrs"] = rename_col_attrs(cast(Mapping[str, Any], col_attrs), old, names)
 
 
 def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
@@ -1885,7 +1885,7 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                 continue
             flat = [_flatten_cell(v, 20) for v in col.tolist()]
             df = df.copy(deep=False) if df is not None else df
-            df.isetitem(j, pd.array(flat, dtype="string"))
+            df.isetitem(j, pd.array(flat, dtype=RAW_STRING))
     names = [str(c) for c in df.columns]
     if any(_has_invalid_utf8(nm) for nm in names):
         fixed = []
@@ -1921,6 +1921,19 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                     repaired[name] = sum(bad)
         if repaired:
             df.attrs["utf8_repaired"] = repaired
+    return _default_strings(df)
+
+
+def _default_strings(df: pd.DataFrame) -> pd.DataFrame:
+    """*df* with its repaired ``RAW_STRING`` columns in pandas' default string dtype."""
+    default = pd.StringDtype()
+    if default.storage == RAW_STRING.storage:  # no pyarrow: they are the same
+        return df
+    raw = [j for j in range(df.shape[1]) if df.dtypes.iloc[j] == RAW_STRING]
+    if raw:
+        df = df.copy(deep=False)
+        for j in raw:
+            df.isetitem(j, df.iloc[:, j].astype(default).array)
     return df
 
 
@@ -1943,7 +1956,7 @@ def _strip_qualtrics(df: pd.DataFrame) -> pd.DataFrame:
     return fn(df) if fn is not None else df
 
 
-def _promote_header(df: pd.DataFrame, raw_rows: list[list[str]]) -> dict[str, Any]:
+def _promote_header(df: pd.DataFrame, raw_rows: list[list[str | None]]) -> dict[str, Any]:
     fn = _checks_fn("data_promote_header_row")
     if fn is None:
         return {"df": df, "promoted": 0}
@@ -2090,7 +2103,7 @@ def _likert_values(x: Any) -> np.ndarray:
             [float(v) for v in _as_list(x) if v is not None and not isinstance(v, str)],
             dtype=float,
         )
-    return arr[np.isfinite(arr)]
+    return cast(np.ndarray, arr[np.isfinite(arr)])
 
 
 def _detect_likert_scale(

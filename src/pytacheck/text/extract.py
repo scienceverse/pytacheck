@@ -10,7 +10,7 @@ follow metacheck exactly.
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -136,7 +136,7 @@ def extract_urls(paper: Any) -> pd.DataFrame:
     """
     # every URL match contains ".xx" (a domain) or "d.d" (an IPv4 address)
     table = _search_table(paper, r"\.[a-z]{2}|\d\.\d", perl=True)
-    return text_search(table, _URL_PATTERN, return_="match", perl=True)
+    return cast(pd.DataFrame, text_search(table, _URL_PATTERN, return_="match", perl=True))
 
 
 def extract_p_values(paper: Any) -> pd.DataFrame:
@@ -316,4 +316,4 @@ def _detect_live_data(paper: Any) -> pd.DataFrame:
     recruitment platforms, student pools, inclusion/exclusion criteria and
     animal data collection. Used by the ``ethics_check`` module.
     """
-    return text_search(paper, list(_LIVE_WORDS))
+    return cast(pd.DataFrame, text_search(paper, list(_LIVE_WORDS)))

@@ -46,6 +46,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r.regex import compile_r
+from pytacheck.datacheck._strings import RAW_STRING
 
 __all__ = ["FreadError", "fread"]
 
@@ -1331,7 +1332,7 @@ def _column(t: int, rows: _Rows, j: int, gram: _Grammar) -> pd.Series:
         raw = rows.vals[j]
         # freadR drops NUL bytes inside a string value
         text = {b: _decode(b.replace(b"\0", b"")) for b in dict.fromkeys(raw) if b is not None}
-        return pd.Series([None if b is None else text[b] for b in raw], dtype="string")
+        return pd.Series([None if b is None else text[b] for b in raw], dtype=RAW_STRING)
     spans = rows.spans[j]
     t2, lookup = _climb_values(gram, spans, t)
     if t2 != t or lookup is None:  # pragma: no cover - t was climbed on these spans

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 import warnings
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -89,7 +89,7 @@ def local_files(path: Any, recursive: bool = False) -> pd.DataFrame:
 
     names = [os.path.basename(p) for p in all_paths]
     sizes = [float(os.path.getsize(p)) if os.path.exists(p) else float("nan") for p in all_paths]
-    categories = file_category(names)["file_category"].tolist()
+    categories = cast("pd.DataFrame", file_category(names))["file_category"].tolist()
     n = len(all_paths)
     return pd.DataFrame(
         {

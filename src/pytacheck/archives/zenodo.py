@@ -16,7 +16,7 @@ import os
 import shutil
 import tempfile
 import warnings
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
@@ -727,7 +727,7 @@ def _zenodo_download_one(
 
     # --- check what actually reached the disk ----
     if target != "":
-        files = _zenodo_verify_downloads(files, target)
+        files = cast("pd.DataFrame", _zenodo_verify_downloads(files, target))
     else:
         files = files.assign(
             size_on_disk=pd.Series([math.nan] * len(files), dtype="float64"),
@@ -959,7 +959,7 @@ def _zenodo_verify_downloads(files: pd.DataFrame | None, download_to: str) -> pd
     is_hex = grepl("^[0-9a-f]{32}$", md5, ignore_case=True)
     for i in range(n):
         if ok[i] and md5[i] is not None and is_hex[i]:
-            got = _md5sum(full[i]) if full[i] is not None else None
+            got = _md5sum(cast("str", full[i])) if full[i] is not None else None
             checksum_ok[i] = got is not None and got.lower() == str(md5[i]).lower()
     ok = [o and c is not False for o, c in zip(ok, checksum_ok, strict=True)]
 

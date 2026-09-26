@@ -22,8 +22,15 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+import pandas as pd
+
 from pytacheck._r.regex import compile_r
 from pytacheck.fileinfo._strings import invalid_utf8
+
+#: The dtype of text read from a data file before ``_utf8_repair_df()``: it
+#: can hold the lone surrogates that stand for bytes that are not UTF-8,
+#: which Arrow-backed strings (pandas' default with pyarrow) cannot.
+RAW_STRING = pd.StringDtype("python")
 
 __all__ = ["file_ext", "file_ext1", "glibc_invalid", "tolower_checked"]
 

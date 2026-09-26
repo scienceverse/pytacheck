@@ -20,10 +20,10 @@ import tempfile
 import threading
 import warnings
 import zipfile
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextvars import copy_context
-from typing import Any
+from typing import Any, cast
 from urllib.parse import unquote, unquote_plus
 
 import pandas as pd
@@ -156,6 +156,7 @@ def osf_links(paper: Any) -> pd.DataFrame:
     from pytacheck.text.search import text_search
 
     urls = paper_table(paper, "url").copy()
+    href: pd.Series[Any] | list[Any]
     if "href" in urls.columns:
         href = urls["href"]
     else:  # R: `urls$href` on the 0 x 0 url table of an empty paper list is NULL
@@ -244,7 +245,7 @@ def _osf_check_one(osf_id: Any) -> str | None:
     raw = as_character(osf_id) if not isinstance(osf_id, str) else osf_id
     if raw is None:
         return None
-    ident = gsub(r"\s", "", raw).lower()
+    ident: str = gsub(r"\s", "", raw).lower()
     if grepl(r"^(https?://)?(www\.)?osf\.io/?$", ident):
         return None
     try:
@@ -280,7 +281,7 @@ def _osf_check_one(osf_id: Any) -> str | None:
         # the first osf.io ID (metacheck coerces the list of matches with
         # as.character(), so a URL with two is rejected: U51)
         for m in matches:
-            id5 = sub("[?/]$", "", m)
+            id5: str = sub("[?/]$", "", m)
             if len(id5) in (5, 8, 9) and id5 not in _OSF_ROUTES:
                 return id5
         warnings.warn(f"{ident} is not a valid OSF ID", stacklevel=3)
@@ -801,6 +802,8 @@ def _cap_helpers() -> tuple[Any, Any, Any]:
     """``cap_report()``, ``.cap_size_str()`` (R/cap-prompt.R) and ``.cap_num()``."""
     from pytacheck.report.blocks import _cap_num
 
+    _cap_size_str: Callable[[float | None], str]
+    cap_report: Callable[[str], None]
     try:
         from pytacheck.llm.cap_prompt import _cap_size_str, cap_report
     except ImportError:
@@ -1202,7 +1205,9 @@ def _osf_file_download_ids(
     file_mask = kind_is_file(files)
     n_f = sum(file_mask)
     if n_f > 0:
-        sizes = pd.to_numeric(files["size"], errors="coerce")[file_mask] if "size" in files else []
+        sizes: pd.Series[Any] | list[Any] = (
+            pd.to_numeric(files["size"], errors="coerce")[file_mask] if "size" in files else []
+        )
         total_bytes = float(pd.Series(sizes, dtype="float64").sum(skipna=True))
         _message(f"{osf_id}: {n_f} file{plural(n_f)}, {cap_size_str(total_bytes)} to download")
 
@@ -1386,8 +1391,8 @@ def _osf_file_download_ids(
     def joined(rows: list[int]) -> pd.DataFrame:
         copied = pd.DataFrame(
             {
-                "osf_id": files["osf_id"].iloc[rows].tolist(),
-                "path": pd.Series(files["save_path"].iloc[rows].tolist(), dtype="string"),
+                "osf_id": files["osf_id"].iloc[rows].tolist(),  # type: ignore[call-overload]  # stubs lack list[int] iloc
+                "path": pd.Series(files["save_path"].iloc[rows].tolist(), dtype="string"),  # type: ignore[call-overload]  # stubs lack list[int] iloc
                 "downloaded": pd.Series([True] * len(rows), dtype="boolean"),
             }
         ).astype({"osf_id": "string"})
@@ -1432,7 +1437,7 @@ def _osf_file_download_ids(
         for i, prov in enumerate(ret["provider"].tolist()):
             if not (is_na(prov) or str(prov).lower() == "osfstorage"):
                 check_size[i] = False
-    ret = _osf_verify_downloads(ret, download_to, check_size=check_size)
+    ret = cast("pd.DataFrame", _osf_verify_downloads(ret, download_to, check_size=check_size))
 
     planned = set(files["osf_id"].tolist()) if "osf_id" in files else set()
     ret["attempted"] = pd.Series([o in planned for o in ret["osf_id"].tolist()], dtype="boolean")

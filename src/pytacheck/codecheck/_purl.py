@@ -25,7 +25,7 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 from pytacheck._r.base import trimws
 from pytacheck._r.regex import compile_r, grepl, gsub, regextract, sub
@@ -232,7 +232,7 @@ def _deparse_expr(x: Any) -> str:
         if x.kind == "logical":
             return "TRUE" if x.value else "FALSE"
         if x.kind == "character":
-            return x.value
+            return cast(str, x.value)
         return _deparse_scalar(x)
     if isinstance(x, Lang):
         fun = _deparse_expr(x.fun)
@@ -452,9 +452,7 @@ def _yaml_to_r(v: Any) -> Any:
     return v
 
 
-def divide_chunk(
-    engine: str, code: list[str]
-) -> tuple[dict[str, Any] | None, list[str], list[str]]:
+def divide_chunk(engine: str, code: list[str]) -> tuple[_Params | None, list[str], list[str]]:
     """``xfun::divide_chunk(engine, code, strict = FALSE)``: (options, src, code)."""
     if not code:
         return None, [], code

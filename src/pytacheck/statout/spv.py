@@ -3419,8 +3419,8 @@ def _spv_table_html_pivot(df: pd.DataFrame, row_dims: list[str], col_dims: list[
     body_rows = []
     for i in range(len(row_levels)):
         stub = "".join(f"<td>{_spv_html_escape(p)}</td>" for p in row_levels[i]) if row_dims else ""
-        cells = "".join(f"<td>{_spv_html_escape(_spv_display_value(v))}</td>" for v in grid[i])
-        body_rows.append(f"<tr>{stub}{cells}</tr>")
+        body = "".join(f"<td>{_spv_html_escape(_spv_display_value(v))}</td>" for v in grid[i])
+        body_rows.append(f"<tr>{stub}{body}</tr>")
     return (
         "<table>\n<thead>\n"
         + "\n".join(header_rows)

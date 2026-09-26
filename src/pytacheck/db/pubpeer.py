@@ -101,6 +101,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
     fb_cols = [c for c in fb_frame.columns if c != "doi"]
     fb_values = {c: fb_frame[c].tolist() for c in fb_cols}
     first: dict[Any, int] = {}
+    i: int | None
     for i, d in enumerate(fb_frame["doi"].tolist()):
         first.setdefault(None if is_na(d) else str(d).lower(), i)
     rows: list[dict[str, Any]] = []

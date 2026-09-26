@@ -287,7 +287,9 @@ class _Deparser:
         names = [str(c) for c in df.columns]
         all_blank = bool(names) and all(n == "" for n in names)
         self.put("structure(list(")
-        cols = [(name, _column_value(df.iloc[:, i])) for i, name in enumerate(names)]
+        cols: list[tuple[str | None, Any]] = [
+            (name, _column_value(df.iloc[:, i])) for i, name in enumerate(names)
+        ]
         self.elements(cols, do_names=not all_blank)
         self.put(")")
         if all_blank:
@@ -703,7 +705,8 @@ def report_table(
         seen.add(name)
         if pd.api.types.is_string_dtype(s.dtype) or s.dtype == object:
             values = [v.replace("\n", "<br>") if isinstance(v, str) else v for v in s.tolist()]
-            data.isetitem(col, pd.Series(values, index=s.index, dtype=s.dtype))
+            # pandas-stubs omits Series from isetitem's accepted values
+            data.isetitem(col, pd.Series(values, index=s.index, dtype=s.dtype))  # type: ignore[arg-type]
     data.columns = [str(c).replace("_", "_<wbr>") for c in data.columns]
     # DT::datatable() adds a right-alignment class for numeric columns and a
     # name for every column to the columnDefs

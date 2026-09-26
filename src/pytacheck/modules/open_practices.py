@@ -117,7 +117,7 @@ def _code_rows(frame: Any) -> Any:
 
 def _chain(frame: Any, *steps: tuple[str | Sequence[str], bool]) -> pd.DataFrame:
     """Successive ``text_search(pattern, exclude = ...)`` calls."""
-    out = frame
+    out: pd.DataFrame = frame
     for pattern, exclude in steps:
         out = text_search(out, pattern, exclude=exclude)
     return out

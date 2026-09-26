@@ -288,7 +288,8 @@ def _fast_column(values: list[Any], schema_type: str | None) -> pd.Series | None
     if schema_type == "integer" and types <= {int}:
         arr = pd.array(values, dtype="Int64")
         present = arr[~arr.isna()]
-        if len(present) and (present.max() > _INT32 or present.min() < -_INT32):
+        # pandas-stubs lacks IntegerArray.max()/.min()
+        if len(present) and (present.max() > _INT32 or present.min() < -_INT32):  # type: ignore[attr-defined]
             return None
         return pd.Series(arr)
     if schema_type == "number" and types <= {int, float}:

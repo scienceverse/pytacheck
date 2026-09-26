@@ -6,7 +6,7 @@ import os
 from collections.abc import Sequence
 from os import PathLike
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from pytacheck.io._files import list_files
 from pytacheck.log import logger
@@ -41,7 +41,7 @@ def _read_one(
     if os.path.splitext(name)[1] in SOURCE_EXTENSIONS:
         from pytacheck.io.bibr import chew
 
-        return chew(Path(path), include_images=include_images, **bibr_options)
+        return cast(Paper, chew(Path(path), include_images=include_images, **bibr_options))
     raise ValueError(f"Don't know how to read {base!r}")
 
 

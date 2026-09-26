@@ -67,7 +67,7 @@ def _format_big_mark(x: float) -> str:
     sign = "-" if s.startswith("-") else ""
     s = s.lstrip("-")
     whole, _, frac = s.partition(".")
-    groups = []
+    groups: list[str] = []
     while len(whole) > 3:
         groups.insert(0, whole[-3:])
         whole = whole[:-3]

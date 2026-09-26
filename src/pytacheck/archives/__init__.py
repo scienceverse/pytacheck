@@ -18,7 +18,7 @@ from __future__ import annotations
 import contextlib
 import importlib
 import sys
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from typing import Any
 
 # public name -> defining module
@@ -57,6 +57,7 @@ def __getattr__(name: str) -> Any:
 
 def _message(*parts: Any) -> None:
     """metacheck's ``message()``: informational output, silent unless verbose."""
+    report_message: Callable[..., None] | None
     try:
         from pytacheck.utils import message as report_message  # added by the report port
     except ImportError:

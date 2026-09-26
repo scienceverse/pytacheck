@@ -380,6 +380,7 @@ def _codebook_check(
             return
         ldf = state["labels_df"]
         sc_index: dict[str, int] = {}
+        j: int | None
         for j, (f, c) in enumerate(
             zip(_vals(sc, "source_file") or [], _vals(sc, "column_name") or [], strict=True)
         ):
@@ -523,6 +524,7 @@ def _codebook_check(
         l_mv = _vals(labels_df, "missing_values")
         # name -> first position (R's df[[cn]]), per preview, built once
         pos_of: dict[Any, dict[str, int]] = {}
+        j: int | None
         for i in range(len(labels_df)):
             f, cn = l_file[i], l_col[i]
             if f is None or cn is None or previews.get(f) is None:
@@ -586,12 +588,12 @@ def _codebook_check(
     l_pid = _vals(labels_df, "paper_id")
     pid_list = l_pid if l_pid is not None else [None] * n_columns
     coverage: dict[Any, list[int]] = {}
-    for pid, m, c, k in zip(pid_list, matched, clean, conflicted, strict=True):
+    for pid, m, c, is_conflicted in zip(pid_list, matched, clean, conflicted, strict=True):
         acc = coverage.setdefault(pid, [0, 0, 0, 0])
         acc[0] += 1
         acc[1] += int(m)
         acc[2] += int(c)
-        acc[3] += int(k)
+        acc[3] += int(is_conflicted)
 
     l_cbvar = _vals(labels_df, "codebook_variable") or [None] * n_columns
     matched_norm_by_paper: dict[Any, set[Any]] = {}

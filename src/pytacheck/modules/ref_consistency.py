@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import numbers
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
@@ -79,6 +79,7 @@ def _align_key(x: pd.DataFrame, y: pd.DataFrame, key: str) -> tuple[pd.DataFrame
     if dx == dy:
         return x, y
     num = pd.api.types.is_numeric_dtype
+    target: Literal["Float64", "Int64", "string"]
     if num(dx) and num(dy):
         target = "Float64" if "float" in str(dx).lower() or "float" in str(dy).lower() else "Int64"
     else:

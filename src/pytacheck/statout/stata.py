@@ -136,11 +136,11 @@ def _smcl_render_line(line: str) -> str:
         if directive.startswith("char ") or directive.startswith("c 0x"):
             if directive.startswith("c 0x"):
                 hexa = directive[4:]
-                code = int(hexa, 16) if re.fullmatch("[0-9A-Fa-f]{1,2}", hexa) else None
+                char_code = int(hexa, 16) if re.fullmatch("[0-9A-Fa-f]{1,2}", hexa) else None
             else:
-                code = _as_integer(directive[5:])
-            if code is not None and 0 <= code <= 255:
-                result.append(chr(code) if code else "")
+                char_code = _as_integer(directive[5:])
+            if char_code is not None and 0 <= char_code <= 255:
+                result.append(chr(char_code) if char_code else "")
                 pos += 1
             continue
         al = regexec(_ALIGN_RE, directive)
@@ -283,7 +283,9 @@ def _cols_names(cols: list[list[str]], n_header: int) -> list[str]:
     return _make_unique([v if v != "" else f"V{i}" for i, v in enumerate(nm, 1)])
 
 
-def _string_columns_frame(columns: list[list[str | None]], names: list[str]) -> pd.DataFrame:
+def _string_columns_frame(
+    columns: Sequence[Sequence[str | None]], names: list[str]
+) -> pd.DataFrame:
     """``as.data.frame(body)`` + ``names<-``: character columns built positionally."""
     import pandas as pd
 
@@ -297,7 +299,7 @@ def _cols_to_frame(cols: list[list[str]], n_header: int) -> pd.DataFrame:
     return _string_columns_frame([cl[n_header:] for cl in cols], _cols_names(cols, n_header))
 
 
-def _any_numlike(columns: list[list[str | None]], fn: Any) -> bool:
+def _any_numlike(columns: Sequence[Sequence[str | None]], fn: Any) -> bool:
     """``any(vapply(df, function(c_) any(fn(c_)), logical(1)))`` on the raw columns."""
     return any(any(fn(col)) for col in columns if col)
 

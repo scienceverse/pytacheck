@@ -169,7 +169,7 @@ def link(url: Any, text: Any = None, new_window: bool = True, type: str = "") ->
     # R's default `text = url` is only evaluated now, after the doi rewrite
     texts = urls if text is None else ([text] if isinstance(text, str) else list(text))
     nw = " target='_blank'" if new_window else ""
-    out = []
+    out: list[str | None] = []
     n = max(len(urls), len(texts))
     for i in range(n):
         u = urls[i % len(urls)]

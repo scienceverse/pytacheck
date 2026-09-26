@@ -14,7 +14,7 @@ from __future__ import annotations
 import os
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from pytacheck._r.regex import grepl, sub
 
@@ -131,10 +131,13 @@ def _html_export_r_source(
         )
     except (OSError, ValueError, lxml.etree.ParserError):  # type: ignore[attr-defined]
         return None
-    classic = doc.xpath("//pre[@class='r']/code")
-    source_div_code = doc.xpath(
-        "//pre[contains(concat(' ', @class, ' '), ' sourceCode ')"
-        " and contains(concat(' ', @class, ' '), ' r ')]/code"
+    classic = cast("list[Any]", doc.xpath("//pre[@class='r']/code"))
+    source_div_code = cast(
+        "list[Any]",
+        doc.xpath(
+            "//pre[contains(concat(' ', @class, ' '), ' sourceCode ')"
+            " and contains(concat(' ', @class, ' '), ' r ')]/code"
+        ),
     )
     chunks = [*classic, *source_div_code]
     if not chunks:

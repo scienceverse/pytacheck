@@ -213,7 +213,7 @@ def _pad(c: Any, n: int) -> Any:
     import numpy as np
     import pandas as pd
 
-    dtype = getattr(c, "dtype", None)
+    dtype: Any = getattr(c, "dtype", None)
     if isinstance(dtype, np.dtype) and dtype.kind == "f":
         return np.concatenate([np.asarray(c, dtype=dtype), np.full(n - len(c), np.nan)])
     if isinstance(dtype, np.dtype):

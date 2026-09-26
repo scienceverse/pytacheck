@@ -22,7 +22,7 @@ from __future__ import annotations
 import functools
 import warnings
 from collections.abc import Callable, Sequence
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -259,7 +259,7 @@ def _vector(values: list[Any]) -> pd.Series:
     return pd.Series(values)
 
 
-def _cached(ns: str | None, key: Any, cache: bool, fetch: Callable[[], pd.DataFrame]) -> Any:
+def _cached(ns: str | None, key: Any, cache: bool, fetch: Callable[..., pd.DataFrame]) -> Any:
     """``.repo_info_cache_get()``, else *fetch* and ``.repo_info_cache_put()`` a good result."""
     if ns is None:
         return fetch()
@@ -370,7 +370,7 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
                 else:
                     vals.append(None)
             vals = [v for v in vals if v is not None]
-            return "; ".join(vals) if vals else None
+            return "; ".join(cast("list[str]", vals)) if vals else None
 
         title = _empty_or(_dollar(item, "name"), None)
         obj["PA_title"] = _field_cell(title if title is not None else md_val("dc.title"))

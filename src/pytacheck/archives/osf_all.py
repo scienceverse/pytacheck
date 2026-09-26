@@ -155,7 +155,7 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
             continue
         os.makedirs(node_dir, exist_ok=True)
         source = info["path"] if "path" in info else info["name"]
-        rel = [sub("^/+", "", "NA" if is_na(v) else str(v)) for v in source.iloc[rows].tolist()]
+        rel = [sub("^/+", "", "NA" if is_na(v) else str(v)) for v in source.iloc[rows].tolist()]  # type: ignore[call-overload]  # stubs lack list[int] iloc
         dests = [os.path.join(node_dir, p, s) for s in path_sanitize(rel)]
         for d in dict.fromkeys(os.path.dirname(x) for x in dests):
             os.makedirs(d, exist_ok=True)

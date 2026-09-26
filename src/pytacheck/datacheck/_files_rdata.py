@@ -31,6 +31,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from pytacheck.datacheck._strings import RAW_STRING
+
 __all__ = ["RObject", "r_frame_to_pandas", "read_rdata", "read_rds", "workspace_first_data_frame"]
 
 # SEXPTYPEs
@@ -689,10 +691,10 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
     v = col.value
     t = col.type
     if t == VECSXP and "data.frame" in classes:
-        return pd.Series(_flatten_df_column(col, n), dtype="string")
+        return pd.Series(_flatten_df_column(col, n), dtype=RAW_STRING)
     dim = col.attr("dim")
     if isinstance(dim, RObject) and len(dim.value) == 2 and t != VECSXP:
-        return pd.Series(_flatten_matrix(col), dtype="string")
+        return pd.Series(_flatten_matrix(col), dtype=RAW_STRING)
     if t == INTSXP and "factor" in classes:
         levels = [_as_bytes_str(x) for x in _strvec(col.attr("levels"))]
         codes = np.where(v == NA_INTEGER, -1, v.astype(np.int64) - 1)
@@ -743,9 +745,9 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
     if t == CPLXSXP:
         return pd.Series(v, dtype=complex)
     if t == STRSXP:
-        return pd.Series([_as_bytes_str(x) for x in v], dtype="string")
+        return pd.Series([_as_bytes_str(x) for x in v], dtype=RAW_STRING)
     if t in (VECSXP, EXPRSXP):
-        return pd.Series([_flatten_list_cell(e, 20) for e in v], dtype="string")
+        return pd.Series([_flatten_list_cell(e, 20) for e in v], dtype=RAW_STRING)
     if t == RAWSXP:
         return pd.Series([f"{b:02x}" for b in v], dtype="string")
     return pd.Series([None] * n, dtype=object)

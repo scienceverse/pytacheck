@@ -276,7 +276,7 @@ def _mplus_is_level_label(ln: str | None) -> bool:
     )
 
 
-def _any_numlike(columns: list[list[str | None]]) -> bool:
+def _any_numlike(columns: Sequence[Sequence[str | None]]) -> bool:
     """``any(vapply(df, function(c_) any(.mplus_is_numlike(c_)), logical(1)))``."""
     return _any_numlike_cols(columns, _mplus_is_numlike)
 
@@ -326,13 +326,13 @@ def _mplus_read_grouped_table(lines: Sequence[str | None], start: int) -> dict[s
     if cols is None or len(cols) < 2:
         return {"data": None, "next_line": start + 1}
     n_header = len(header_lines)
-    columns: list[list[str | None]] = [cl[n_header:] for cl in cols]
+    columns: list[list[str]] = [cl[n_header:] for cl in cols]
     names = _cols_names(cols, n_header)
     if has_group:
-        columns.insert(0, group_col)  # type: ignore[arg-type]
+        columns.insert(0, group_col)
         names.insert(0, "group")
     if has_level:
-        columns.insert(0, level_col)  # type: ignore[arg-type]
+        columns.insert(0, level_col)
         names.insert(0, "level")
     if not _any_numlike(columns):
         return {"data": None, "next_line": start + 1}

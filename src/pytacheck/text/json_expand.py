@@ -22,7 +22,7 @@ from __future__ import annotations
 import json
 import math
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -260,7 +260,7 @@ def type_convert(values: Sequence[Any]) -> pd.Series:
     if info.int:
         ints: list[Any] = []
         for s in vals:
-            v = None if missing(s) else _strtoi(s)  # type: ignore[arg-type]
+            v: float | None = None if missing(s) else _strtoi(s)  # type: ignore[arg-type]
             if v is None and not missing(s):
                 info.int = False
                 info.ruleout(s)  # type: ignore[arg-type]
@@ -1060,8 +1060,7 @@ def _expand_one(value: Any, i: int) -> _Piece:
             return _error_piece(i, "parsing error")
         cols: dict[str, list[Any]] = {}
         for name, col in zip(j.names, j.columns, strict=True):
-            vals = _as_character(col)
-            vals = _fit_rows(vals, j.nrow)
+            vals = _fit_rows(_as_character(col), j.nrow)
             if vals is None:  # "replacement element has k rows, need n"
                 return _error_piece(i, "parsing error")
             cols.setdefault(name, vals)
@@ -1165,7 +1164,7 @@ def json_expand(
     if n == 0:
         # nothing to expand (metacheck fails: "Join columns in `y` must be
         # present in the data"; U151)
-        return table.reset_index(drop=True)
+        return cast(pd.DataFrame, table.reset_index(drop=True))
     table[_TEMP] = pd.Series(range(1, n + 1), index=table.index, dtype="Int64")
 
     pieces = [_expand_one(v, i) for i, v in enumerate(to_expand, start=1)]
@@ -1181,7 +1180,7 @@ def json_expand(
     columns: dict[str, list[Any]] = {nm: [] for nm in names}
     for pc in pieces:
         for nm in names:
-            vals = pc.columns.get(nm)
+            vals: list[Any] | pd.Series | None = pc.columns.get(nm)
             columns[nm].extend(vals if vals is not None else [None] * pc.nrow)
 
     # fix data types from making all character
@@ -1216,12 +1215,13 @@ def json_expand(
             x_idx.append(r)
             y_idx.append(None)
 
-    out = table.iloc[x_idx].reset_index(drop=True)
+    out: pd.DataFrame = table.iloc[x_idx].reset_index(drop=True)
     out.columns = x_out
     for nm in y_aux:
         s = converted[nm]
         if all(k is not None for k in y_idx):
-            vals = s.iloc[[k for k in y_idx if k is not None]].reset_index(drop=True)
+            # pandas-stubs omits list[int] from Series.iloc's accepted keys
+            vals = s.iloc[[k for k in y_idx if k is not None]].reset_index(drop=True)  # type: ignore[call-overload]
         else:
             vals = pd.Series([s.iloc[k] if k is not None else None for k in y_idx], dtype=s.dtype)
         out[y_out[nm]] = vals

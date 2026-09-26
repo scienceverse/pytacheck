@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -197,7 +197,9 @@ def _summarise_causal(causal_abstract: pd.DataFrame, table: pd.DataFrame) -> pd.
     # input sentence, so a repeated sentence's rows are repeated
     per_sentence: dict[Any, Any] = {}
     causal = causal_abstract["causal"].astype("boolean")
-    for sent, flag in zip(causal_abstract["sentence"].tolist(), causal.tolist(), strict=True):
+    for sent, flag in zip(
+        causal_abstract["sentence"].tolist(), cast(list[Any], causal.tolist()), strict=True
+    ):
         if sent not in occurrences:
             continue
         prev = per_sentence.get(sent, 0)

@@ -28,7 +28,7 @@ import importlib
 import math
 import re
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -359,7 +359,7 @@ def _hms_character(secs: list[float | None]) -> list[str | None]:
     value has a fraction of a second, a common number of decimals (at most 6).
     """
     tps = 1_000_000  # hms' TICS_PER_SECOND
-    parts = []
+    parts: list[tuple[bool, int, int, int, float] | None] = []
     for v in secs:
         if v is None:
             parts.append(None)
@@ -863,7 +863,7 @@ def _scale_reference(code: Any) -> dict[str, Any] | None:
 def _item_text_key(x: Any) -> Any:
     """Port of ``.item_text_key()``: normalised item wording for comparison."""
     vals = _chr_vec("" if x is None else x)
-    out = []
+    out: list[str | None] = []
     for v in vals:
         if v is None:
             out.append(None)
@@ -939,10 +939,10 @@ def _infer_group_one(s: Any) -> str | None:
     t = trimws(t)
     m = regextract(r"(?i)pilot\s*(\d+[a-z]?)", t, perl=True)
     if m is not None and m != "":
-        return "pilot" + _tolower(sub(r"(?i)pilot\s*", "", m, perl=True))
+        return "pilot" + _tolower(cast(str, sub(r"(?i)pilot\s*", "", m, perl=True)))
     m = regextract(r"(?i)(experiment|study)\s*(\d+[a-z]?)", t, perl=True)
     if m is not None and m != "":
-        return "ex" + _tolower(sub(r"(?i)(experiment|study)\s*", "", m, perl=True))
+        return "ex" + _tolower(cast(str, sub(r"(?i)(experiment|study)\s*", "", m, perl=True)))
     return None
 
 
