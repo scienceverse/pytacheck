@@ -11,8 +11,10 @@ in their fixed introduction and are never mistaken for deposited output.
 
 from __future__ import annotations
 
+import contextlib
 import os
 import re
+import threading
 from pathlib import Path
 from typing import Any, cast
 
@@ -149,6 +151,15 @@ def _html_export_r_source(
     code_dir = os.path.join(os.path.dirname(html_path) or ".", code_dir_name)
     Path(code_dir).mkdir(parents=True, exist_ok=True)
     out_path = os.path.join(code_dir, _file_path_sans_ext(os.path.basename(html_path)) + ".R")
-    with open(out_path, "w", encoding="utf-8", newline="\n") as fh:
-        fh.write("\n\n".join(chunk_text) + "\n")
+    # written beside *out_path* and moved into place, so a process reading the
+    # file (the same page exported twice at once) never sees it half written
+    tmp = f"{out_path}.{os.getpid()}-{threading.get_ident()}.part"
+    try:
+        with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("\n\n".join(chunk_text) + "\n")
+        os.replace(tmp, out_path)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
     return out_path
