@@ -585,6 +585,7 @@ def test_execute_model_described_across_statements_unites(
     assert long["statistic"].astype(str).str.contains("F").any()
 
 
+@pytest.mark.r  # exec_library loads stringr
 @pytest.mark.slow
 def test_execute_reorders_and_injects_library(rscript: str) -> None:
     mo = rh.rc_run("exec_undefined", execute=True, timeout=60)

@@ -5,10 +5,12 @@ from __future__ import annotations
 
 import json
 import math
+import multiprocessing
 import os
 import shutil
 import struct
 import subprocess
+import sys
 import tempfile
 import time
 import warnings
@@ -1163,7 +1165,7 @@ def test_digests_leave_out_what_differs_from_run_to_run(monkeypatch) -> None:
             stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         shutil.rmtree(folder)
         name = Path(folder).name
-        text = f"{folder}/data.csv, {name}.zip, retrieved {stamp}, analysis.R"
+        text = f"{Path(folder).as_posix()}/data.csv, {name}.zip, retrieved {stamp}, analysis.R"
         return text, run
 
     (a, run_a), (b, run_b) = made(), made()
@@ -1292,7 +1294,15 @@ def test_suggest_recognises_r_crashes() -> None:
 # -- the runner --------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("platform", ["linux", "darwin"])  # forked / spawned workers
+# forked / spawned workers: the runner forks on Linux and spawns elsewhere; a host
+# runs the platforms whose start method it has (Windows cannot fork, and spawns as win32)
+_SPAWNING = "win32" if sys.platform == "win32" else "darwin"
+_RUNNER_PLATFORMS = (
+    ["linux", _SPAWNING] if "fork" in multiprocessing.get_all_start_methods() else [_SPAWNING]
+)
+
+
+@pytest.mark.parametrize("platform", _RUNNER_PLATFORMS)
 def test_run_cases_in_processes_matches_one_process(platform, monkeypatch) -> None:
     by_key = {c.key: c for c in CASES}
     marked = [c for c in CASES if c.area == "text" and pcases.expected_to_fail(c.spec)][:3]

@@ -497,7 +497,7 @@ def test_downloaded_files_keep_their_results(tmp_path: Path) -> None:
             "repo_url": ["https://example.org/code-join-regression"],
             "file_name": ["analysis.R"],
             "file_path": ["code/analysis.R"],
-            "file_url": ["file://" + str(src)],
+            "file_url": [src.as_uri()],
             "file_size": [float(src.stat().st_size)],
             "file_type": ["code"],
             "file_location": pd.Series([None], dtype=object),

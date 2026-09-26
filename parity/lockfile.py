@@ -180,6 +180,8 @@ def _dir(path: str) -> re.Pattern[str]:
 def steady(text: str, run: Run) -> str:
     """*text* with what differs from run to run written as placeholders."""
     dirs = {**run.dirs, **dict.fromkeys(_TMP_ROOTS, "<tmp>")}
+    if os.sep != "/":  # pytacheck writes paths with "/", as R does
+        dirs.update({k.replace(os.sep, "/"): v for k, v in list(dirs.items())})
     # the longest first: the cache directory is in the temporary directory
     for folder in sorted(dirs, key=len, reverse=True):
         text = _dir(folder).sub(dirs[folder], text)

@@ -326,15 +326,15 @@ def test_install_from_a_file_git_repo(ms, paper) -> None:
     (repo / "later.txt").write_text("not in the pinned commit")
     git("add", "-A")
     git("commit", "-q", "-m", "second")
-    pack = pack_install(f"file://{repo}@{sha}", yes=True)
+    pack = pack_install(f"{repo.as_uri()}@{sha}", yes=True)
     assert pack.rev == sha and pack.trust == "unlisted"
     assert not (pack.root / "later.txt").exists()
     assert module_run(paper, "gitpack::gm").summary_text == "from git"
     pin = json.loads(ms.config_file.read_text())["packs"]["gitpack"]
-    assert pin["source"] == {"git": f"file://{repo}"}
+    assert pin["source"] == {"git": repo.as_uri()}
     # a branch name resolves with git ls-remote, once
     pack_remove("gitpack")
-    head = pack_install(f"git+file://{repo}@main", yes=True)
+    head = pack_install(f"git+{repo.as_uri()}@main", yes=True)
     assert head.rev == git("rev-parse", "HEAD") != sha
 
 

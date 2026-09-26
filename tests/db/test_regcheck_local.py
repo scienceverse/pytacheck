@@ -128,7 +128,7 @@ def test_start_and_stop_local_python(monkeypatch: pytest.MonkeyPatch) -> None:
         "--port",
         "8123",
     ]
-    assert started["cmd"][0].endswith("uvicorn")
+    assert Path(started["cmd"][0]).stem == "uvicorn"  # uvicorn.exe on Windows
     # the largest *language* model is selected, embeddings are skipped
     assert started["env"]["OLLAMA_MODEL"] == "mistral:latest"
     assert started["env"]["REGCHECK_API_TOKEN"] == "metacheck-local"

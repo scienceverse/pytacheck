@@ -336,7 +336,7 @@ def test_spv_export_syntax(tmp_path: Path) -> None:
     for name in ("logs_only.spv", "modern.spv", "empty.spv"):
         (tmp_path / name).write_bytes((FIX / name).read_bytes())
     out = _spv_export_syntax(tmp_path / "logs_only.spv")
-    assert out == str(tmp_path / "code" / "logs_only.sps")
+    assert Path(out) == tmp_path / "code" / "logs_only.sps"  # joined with "/", as R does
     assert Path(out).read_text() == "GET FILE='data.sav'.\n\nFREQUENCIES age.\n"
     assert _spv_export_syntax(tmp_path / "empty.spv") is None
     with pytest.raises(FileNotFoundError):

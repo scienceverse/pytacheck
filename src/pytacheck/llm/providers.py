@@ -1881,9 +1881,9 @@ def _parse_r_datetime(s: str) -> Any:
     text = date.replace("/", "-") + (time or "")
     # as.POSIXct() reads the wall time in the session's time zone
     naive = pd.Timestamp(text).to_pydatetime()
-    import time as _time
+    from pytacheck._r import local_epoch
 
-    epoch = _time.mktime(naive.timetuple()) + naive.microsecond / 1e6
+    epoch = local_epoch(naive)
     return pd.Timestamp(epoch, unit="s", tz="UTC")
 
 

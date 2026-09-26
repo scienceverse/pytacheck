@@ -98,7 +98,7 @@ def test_file_download_edge_cases(mock_api: object, tmp_path: Path) -> None:
 
 
 def test_verify_downloads(tmp_path: Path) -> None:
-    (tmp_path / "a.txt").write_text("abc\n")
+    (tmp_path / "a.txt").write_bytes(b"abc\n")
     md5 = hashlib.md5(b"abc\n", usedforsecurity=False).hexdigest()
     files = pd.DataFrame(
         {

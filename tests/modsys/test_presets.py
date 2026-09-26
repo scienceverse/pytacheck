@@ -307,7 +307,7 @@ def test_preset_as_r(lab) -> None:
             },
         }
     )
-    apa_r = str(lab.root / "lab" / "apa.R")
+    apa_r = str(lab.root / "lab" / "apa.R").replace("\\", "\\\\")  # as an R literal
     assert preset_as_r("t") == (
         "# left out (no metacheck .R version): lab::llmcheck\n"
         "report(paper,\n"

@@ -302,10 +302,12 @@ def utc(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     import time
 
     monkeypatch.setenv("TZ", "UTC")
-    time.tzset()
+    if hasattr(time, "tzset"):  # POSIX; elsewhere TZ is read on each call
+        time.tzset()
     yield
     monkeypatch.undo()
-    time.tzset()
+    if hasattr(time, "tzset"):
+        time.tzset()
 
 
 @pytest.mark.usefixtures("utc")

@@ -1158,9 +1158,9 @@ def list_local(local_path: Any) -> pd.DataFrame:
             continue
         loc_norm = os.path.realpath(os.path.expanduser(str(loc)))
         root_norm = os.path.realpath(os.path.expanduser(str(root)))
-        prefix = root_norm + "/"
+        prefix = os.path.join(root_norm, "")
         if loc_norm.startswith(prefix):
-            rel = loc_norm[len(prefix) :]
+            rel = slashed(loc_norm[len(prefix) :])  # R: "/" on every platform
         elif loc_norm == root_norm:
             rel = r_basename(loc_norm) or ""
         else:

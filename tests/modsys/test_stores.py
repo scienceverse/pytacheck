@@ -50,7 +50,7 @@ def test_index_locations(tmp_path) -> None:
         "https://mirror.example.org/store/index.json",
     )
     assert index_location(str(tmp_path)) == ("file", str(tmp_path / "index.json"))
-    assert index_location(f"file://{tmp_path}") == ("file", str(tmp_path / "index.json"))
+    assert index_location(tmp_path.as_uri()) == ("file", str(tmp_path / "index.json"))
     with pytest.raises(StoreError, match="ssh"):
         index_location("git@github.com:x/y.git")
 

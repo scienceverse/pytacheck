@@ -200,6 +200,13 @@ def test_memo_hits_do_not_share_containers(paper) -> None:
 
 
 def test_file_paths_containing_double_colons_still_load(ms) -> None:
+    with pytest.raises(ModuleError, match="no active pack named 'nopack'"):
+        module_find("nopack::thing")
+    drive = ms.work / "drive.py"  # an absolute path; on Windows it starts "C:"
+    drive.write_text(mod_src("drive"))
+    assert module_find(str(drive)).title == "Drive"
+    if os.name == "nt":  # ":" cannot be part of a file name there
+        return
     (ms.work / "a::b.py").write_text(mod_src("colon"))
     assert module_find("a::b.py").title == "Colon"
     folder = ms.work / "proj::v2"
@@ -207,8 +214,6 @@ def test_file_paths_containing_double_colons_still_load(ms) -> None:
     (folder / "mod.py").write_text(mod_src("inner"))
     assert module_find(str(folder / "mod.py")).title == "Inner"
     assert module_find("proj::v2/mod.py").title == "Inner"
-    with pytest.raises(ModuleError, match="no active pack named 'nopack'"):
-        module_find("nopack::thing")
     (ms.work / "nopack::thing.py").write_text(mod_src("legacy"))  # legacy ./<name>.py lookup
     assert module_find("nopack::thing").title == "Legacy"
 
@@ -466,20 +471,24 @@ def test_writable_or_foreign_project_configs_are_ignored(scoped, ms, monkeypatch
     shared = victim.parents[1]
     monkeypatch.chdir(victim)
     assert [s for s, _ in config_files()] == ["project"]
-    shared.chmod(0o777)
+    posix = os.name != "nt"  # Windows has neither mode bits for others nor user ids
+    if posix:
+        shared.chmod(0o777)
     try:
-        with pytest.warns(UserWarning, match="writable by everyone"):
-            assert config_files() == []
-        shared.chmod(0o1777)  # sticky, like /tmp: others cannot replace the file
+        if posix:
+            with pytest.warns(UserWarning, match="writable by everyone"):
+                assert config_files() == []
+            shared.chmod(0o1777)  # sticky, like /tmp: others cannot replace the file
         assert [s for s, _ in config_files()] == ["project"]
     finally:
         shared.chmod(0o755)
-    if os.geteuid() == 0:
+    if posix and os.geteuid() == 0:
         os.chown(shared / "pytacheck.json", 12345, -1)
         with pytest.warns(UserWarning, match="owned by another user"):
             assert config_files() == []
         os.chown(shared / "pytacheck.json", 0, -1)
     monkeypatch.setenv("HOME", str(victim.parent))  # the search stops at the home folder
+    monkeypatch.setenv("USERPROFILE", str(victim.parent))  # the home folder on Windows
     assert config_files() == []
 
 

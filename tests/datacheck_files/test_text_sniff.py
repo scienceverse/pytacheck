@@ -54,14 +54,14 @@ def test_vec_as_names_unique() -> None:
 
 
 def test_rscript_path_honours_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    fake = tmp_path / "Rscript"
+    fake = tmp_path / ("Rscript.exe" if os.name == "nt" else "Rscript")  # PATHEXT on Windows
     fake.write_text("#!/bin/sh\n")
     fake.chmod(0o755)
     monkeypatch.setenv("PYTACHECK_RSCRIPT", str(fake))
     assert F.rscript_path() == str(fake)
     monkeypatch.delenv("PYTACHECK_RSCRIPT")
     monkeypatch.setenv("PATH", str(tmp_path) + os.pathsep + os.environ.get("PATH", ""))
-    assert Path(F.rscript_path()).name == "Rscript"
+    assert Path(F.rscript_path()).name.lower() == fake.name.lower()
 
 
 def test_read_rdata_isolated_needs_no_r(monkeypatch: pytest.MonkeyPatch) -> None:

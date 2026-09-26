@@ -93,7 +93,7 @@ def test_unknown_objects_are_kept_as_repr() -> None:
 
 def test_capture_writes_json_not_pickle(chain, tmp_path: Path) -> None:
     path = capture_module_tables(chain, tmp_path)
-    assert path == str(tmp_path / "to_err_is_human.json")
+    assert Path(path) == tmp_path / "to_err_is_human.json"  # joined with "/", as R does
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     assert raw["format"] == "pytacheck.module_tables"
     assert raw["paper_id"] == "to_err_is_human"

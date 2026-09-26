@@ -137,7 +137,7 @@ def test_export_html_and_syntax(tmp_path: Path) -> None:
     src = tmp_path / "analysis.smcl"
     src.write_bytes((FIX / "analysis.smcl").read_bytes())
     do = _smcl_export_syntax(src)
-    assert do == str(tmp_path / "code" / "analysis.do")
+    assert Path(do) == tmp_path / "code" / "analysis.do"  # joined with "/", as R does
     lines = Path(do).read_text().splitlines()
     assert lines[0] == "summarize price mpg weight"
     assert lines[-1] == "log close"

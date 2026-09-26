@@ -25,6 +25,8 @@ __all__ = [
     "as_character",
     "format_num",
     "is_na",
+    "local_epoch",
+    "local_utc_offset",
     "paste",
     "plural",
     "r_round",
@@ -41,6 +43,51 @@ def slashed(path: str) -> str:
     (``file.path()``, ``list.files()``) on every platform: Windows' ``"\\"``
     becomes ``"/"``; elsewhere a backslash is part of a name and is kept."""
     return path if os.sep == "/" else path.replace(os.sep, "/")
+
+
+def _tz_zone() -> Any:
+    """The zone ``TZ`` names where the C library cannot be told about it.
+
+    R reads the wall clock in the zone ``TZ`` names on every platform. Where
+    :func:`time.tzset` exists (POSIX) the time module follows ``TZ`` and this
+    is ``None``; on Windows it does not, so a set ``TZ`` is looked up in the
+    IANA database (``None`` when unset or unknown: the system's zone).
+    """
+    import time
+
+    tz = os.environ.get("TZ", "").lstrip(":")
+    if hasattr(time, "tzset") or not tz:
+        return None
+    from zoneinfo import ZoneInfo
+
+    try:
+        return ZoneInfo(tz)
+    except (KeyError, ValueError, OSError):  # ZoneInfoNotFoundError is a KeyError
+        return None
+
+
+def local_utc_offset(secs: float) -> float:
+    """The session time zone's UTC offset (seconds) at the POSIX time *secs*."""
+    import time
+
+    zone = _tz_zone()
+    if zone is None:
+        return float(time.localtime(math.floor(secs)).tm_gmtoff)
+    import datetime as dt
+
+    off = dt.datetime.fromtimestamp(math.floor(secs), zone).utcoffset()
+    return off.total_seconds() if off is not None else 0.0
+
+
+def local_epoch(naive: Any) -> float:
+    """The POSIX time of the naive wall time *naive* (a :class:`datetime.datetime`)
+    read in the session time zone, as ``as.POSIXct()`` reads it."""
+    import time
+
+    zone = _tz_zone()
+    if zone is None:
+        return float(time.mktime(naive.timetuple()) + naive.microsecond / 1e6)
+    return float(naive.replace(tzinfo=zone).timestamp())
 
 
 def format_num(x: Any, digits: int = 7) -> str:

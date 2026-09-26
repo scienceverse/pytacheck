@@ -121,7 +121,7 @@ def test_genuine_output_and_syntax(tmp_path: Path) -> None:
     src = tmp_path / "twolevel.out"
     src.write_bytes((FIX / "twolevel.out").read_bytes())
     inp = _mplus_export_syntax(src)
-    assert inp == str(tmp_path / "code" / "twolevel.inp")
+    assert Path(inp) == tmp_path / "code" / "twolevel.inp"  # joined with "/", as R does
     assert Path(inp).read_text().splitlines()[0] == "TITLE: Two-level regression;"
     comp = tmp_path / "c.out"
     comp.write_bytes((FIX / "compiler.out").read_bytes())

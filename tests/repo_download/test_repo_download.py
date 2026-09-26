@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import io
 import math
+import os
 import secrets
 import time
 import warnings
@@ -998,5 +999,6 @@ def test_archive_member_rows(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
     dl = download_repo_files(files)
     assert calls == [("https://files.example.org/x.zip", ["a.csv", "dir/b.csv"])]
     assert dl["file_location"].notna().tolist() == [True, True, False]
-    assert "/.archive_members/files.example.org_x.zip.contents/" in dl["file_location"].iloc[0]
+    loc = dl["file_location"].iloc[0].replace(os.sep, "/")
+    assert "/.archive_members/files.example.org_x.zip.contents/" in loc
     assert dl.attrs["oversize_skipped"]["file_name"].tolist() == ["huge.csv"]

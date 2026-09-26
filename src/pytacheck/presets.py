@@ -510,7 +510,10 @@ def select(
 
 
 def _r_name(name: str) -> str:
-    return name if _R_NAME.match(name) and name not in _R_RESERVED else f"`{name}`"
+    if _R_NAME.match(name) and name not in _R_RESERVED:
+        return name
+    # R reads escapes inside backticks as in strings: a Windows path keeps its "\\"
+    return "`" + name.replace("\\", "\\\\").replace("`", "\\`") + "`"
 
 
 def _r_value(value: Any) -> str:

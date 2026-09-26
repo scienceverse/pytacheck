@@ -265,13 +265,15 @@ def test_models_anthropic_reads_dates_like_r(monkeypatch: pytest.MonkeyPatch) ->
 
 def test_parse_r_datetime_uses_local_time_zone(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("TZ", "America/New_York")
-    time.tzset()
+    if hasattr(time, "tzset"):  # POSIX; elsewhere TZ is read on each call
+        time.tzset()
     try:
         t = P._parse_r_datetime("2025-09-29T18:30:00Z")
         assert t.timestamp() == 1759118400  # R: as.numeric(as.POSIXct(...)) in that zone
     finally:
         monkeypatch.undo()
-        time.tzset()
+        if hasattr(time, "tzset"):
+            time.tzset()
 
 
 @respx.mock

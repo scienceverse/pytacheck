@@ -4,6 +4,7 @@ the foundation and are tested there)."""
 
 from __future__ import annotations
 
+import os
 import socket
 import warnings
 
@@ -113,7 +114,9 @@ def test_safe_write_path() -> None:
         short = _safe_write_path(long)
     assert short is not None
     leaf = short.split("/")[-1]
-    assert len(leaf) == 255 and leaf.endswith(".txt")
+    # 255 characters a component; on Windows the whole path must also fit in 250,
+    # so long components are cut to 40 (R: .safe_write_path)
+    assert len(leaf) == (40 if os.name == "nt" else 255) and leaf.endswith(".txt")
     # deterministic, and unique per original name
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")

@@ -737,10 +737,10 @@ def _civil_from_days(z: int) -> tuple[int, int, int]:
 
 def _utc_offset(secs: float) -> float:
     """The local time zone's UTC offset (seconds) at *secs*; 0 when unknown."""
-    import time
+    from pytacheck._r import local_utc_offset
 
     try:
-        return float(time.localtime(math.floor(secs)).tm_gmtoff)
+        return local_utc_offset(secs)
     except (OverflowError, OSError, ValueError):
         return 0.0
 

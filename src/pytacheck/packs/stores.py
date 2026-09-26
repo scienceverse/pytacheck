@@ -45,7 +45,8 @@ from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
-from urllib.parse import unquote, urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit
+from urllib.request import url2pathname
 
 from pytacheck.config import BUILTIN_STORE, config_path, data_dir, load_config, update_config
 from pytacheck.packs.manifest import PACK_NAME_RE, PackError
@@ -130,7 +131,7 @@ def index_location(url: str) -> tuple[str, str]:
 
     _refuse_credentials(url)
     if url.startswith("file://"):
-        url = unquote(urlsplit(url).path)
+        url = url2pathname(urlsplit(url).path)  # file:///C:/x -> C:\\x on Windows
     if not _is_url(url):
         path = Path(url).expanduser()
         return ("file", str(path if path.suffix == ".json" else path / "index.json"))

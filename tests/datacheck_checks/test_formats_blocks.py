@@ -391,6 +391,7 @@ def test_tasks_data() -> None:
 _RSCRIPT = os.environ.get("PYTACHECK_RSCRIPT") or shutil.which("Rscript")
 
 
+@pytest.mark.r
 @pytest.mark.skipif(_RSCRIPT is None, reason="needs R with metacheck")
 def test_convert_script_reproduces_bundled_data(tmp_path: Path) -> None:
     subprocess.run(

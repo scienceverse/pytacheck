@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from pytacheck._r import slashed
 from pytacheck.archives.local import local_files
 
 COLUMNS = ["repo_url", "file_name", "file_url", "file_location", "file_size", "file_type"]
@@ -41,7 +42,7 @@ def test_local_files_file_path(fixtures_dir: Path, category: None) -> None:
     obs = local_files(path)
     assert obs["repo_url"].tolist() == [path]
     assert obs["file_name"].tolist() == ["analysis.R"]
-    assert obs["file_location"].tolist() == [os.path.realpath(path)]
+    assert obs["file_location"].tolist() == [slashed(os.path.realpath(path))]  # R: "/"
 
 
 def test_local_files_dir_path(fixtures_dir: Path, category: None) -> None:

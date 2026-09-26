@@ -15,6 +15,7 @@ import pandas as pd
 import pytest
 import respx
 
+from pytacheck._r import slashed
 from pytacheck.archives.osf import (
     _normalize,
     _r_basename,
@@ -143,7 +144,7 @@ def test_r_dirname_basename() -> None:
 
 def test_normalize_keeps_missing_paths_relative(tmp_path: Path) -> None:
     assert _normalize("not/there/yet") == "not/there/yet"
-    assert _normalize(str(tmp_path)) == os.path.realpath(tmp_path)
+    assert _normalize(str(tmp_path)) == slashed(os.path.realpath(tmp_path))  # winslash = "/"
     assert _normalize("~/not-there") == os.path.expanduser("~/not-there")
 
 

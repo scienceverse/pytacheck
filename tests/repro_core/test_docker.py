@@ -31,8 +31,10 @@ def _na(s: pd.Series) -> list[Any]:
 def _mount(args: list[str], target: str) -> str:
     """The host side of the ``-v host:target`` mount in docker *args*."""
     for i, a in enumerate(args):
-        if a == "-v" and args[i + 1].split(":")[1] == target:
-            return args[i + 1].split(":")[0]
+        # host:target[:ro], where a Windows host path has a drive colon of its own
+        m = re.fullmatch(r"(.+):(/[^:]*)(?::ro)?", args[i + 1]) if a == "-v" else None
+        if m and m.group(2) == target:
+            return m.group(1)
     raise AssertionError(f"no mount for {target}: {args}")
 
 
@@ -360,12 +362,12 @@ def test_wrapper_runs_in_r(rscript: str, tmp_path: Path) -> None:
         docker._repro_docker_capture_preamble(), str(script), False, str(cap)
     )
     wrapper = tmp_path / "w.R"
-    wrapper.write_text("\n".join(lines) + "\n")
+    wrapper.write_text("\n".join(lines) + "\n", encoding="utf-8")
     out = subprocess.run(
         [rscript, str(wrapper)], capture_output=True, text=True, check=True, cwd=tmp_path
     )
     assert out.stdout.startswith("> x <- c(1, 2, 3, 4, 5)\n> t.test(x, mu = 1)\n")
-    caps = json.loads(cap.read_text())
+    caps = json.loads(cap.read_text(encoding="utf-8"))
     assert caps[0]["analysis"] == "One Sample t-test"
     assert caps[0]["line"] == 2
 
@@ -374,6 +376,11 @@ def test_run_scripts_docker_real(tmp_path: Path) -> None:
     """With a running Docker daemon and the rocker image, a script really runs."""
     if not repro_docker_available()["ok"]:
         pytest.skip("Docker not available")
+    info = subprocess.run(
+        ["docker", "info", "--format", "{{.OSType}}"], capture_output=True, text=True
+    )
+    if info.stdout.strip() != "linux":  # a Windows-containers daemon cannot run rocker
+        pytest.skip("Docker does not run Linux containers")
     root = tmp_path / "sb"
     root.mkdir()
     (root / "a.R").write_text('cat("hello\\n")\n')

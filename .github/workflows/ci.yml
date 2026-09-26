@@ -57,8 +57,11 @@ jobs:
           - os: windows-latest
             python: "3.12"
     steps:
-      # fixtures are hashed byte for byte: check them out as committed, not with CRLF
-      - run: git config --global core.autocrlf false
+      # fixtures are hashed byte for byte: check them out as committed, not with
+      # CRLF (core.eol too: upstream/metacheck marks its files `text=auto`)
+      - run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
