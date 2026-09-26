@@ -8,10 +8,10 @@ name: Parity (R reference)
 #
 # Runs on the self-hosted fridge runner (label pytacheck-fridge-ci; Debian, not
 # Ubuntu). R still comes from the exact conda-forge lock, which does not depend
-# on the host distribution. The runner persists between jobs, so the R
-# environment is removed after the job (the next run restores the pristine one
-# from the cache), and the runner user's shell profile is left alone. Fork PRs
-# are refused by the job `if`.
+# on the host distribution. The runner persists between jobs, so micromamba and
+# the R environment live under $RUNNER_TEMP and are gone after the job (the next
+# run restores the pristine environment from the cache), and the runner user's
+# shell profile is left alone. Fork PRs are refused by the job `if`.
 
 on:
   pull_request:
@@ -61,6 +61,12 @@ jobs:
           environment-file: parity/r/conda-linux-64.lock
           environment-name: r-reference
           cache-environment: true
+          # Binary and root under $RUNNER_TEMP, which the runner empties per job:
+          # the default ~/micromamba-bin/micromamba survives the job, and the
+          # next run's download refuses an existing destination and fails. The
+          # runners also share one OS user, so ~/micromamba would be shared.
+          micromamba-binary-path: ${{ runner.temp }}/micromamba-bin/micromamba
+          micromamba-root-path: ${{ runner.temp }}/micromamba
           init-shell: none
           post-cleanup: environment
 

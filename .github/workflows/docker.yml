@@ -10,7 +10,8 @@ name: Docker
 # arm64 half of the pushed image; its binfmt handler is registered host-wide
 # until reboot) is only set up when an image is pushed. Fork PRs are refused by
 # the job `if`. The runner's Docker daemon persists between jobs, so the image
-# loaded for testing is removed at the end.
+# loaded for testing gets a per-run tag and is removed at the end, and the GHCR
+# login goes to a per-job Docker client config, not the shared ~/.docker.
 
 on:
   push:
@@ -56,6 +57,13 @@ jobs:
             with_bibr: "1"
             suffix: "-bibr"
     steps:
+      # The fleet's runners share one OS user: a GHCR login in ~/.docker would
+      # overwrite, and its logout delete, the login of another repository's
+      # concurrent image job (bibr-private also pushes to ghcr.io from fridge).
+      - name: Per-job Docker client config
+        run: |
+          install -d -m 0700 "$RUNNER_TEMP/docker-config"
+          echo "DOCKER_CONFIG=$RUNNER_TEMP/docker-config" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
@@ -78,7 +86,8 @@ jobs:
           else
             echo "tags=$image:edge${{ matrix.suffix }}" >> "$GITHUB_OUTPUT"
           fi
-          echo "local=pytacheck-ci:${{ matrix.variant }}" >> "$GITHUB_OUTPUT"
+          # unique per run: the host's Docker daemon is shared and persistent
+          echo "local=pytacheck-ci:${{ matrix.variant }}-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - name: Build (load for testing)
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.0.0
         with:
