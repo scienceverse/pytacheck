@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import functools
 import math
+import os
 import unicodedata
 from collections.abc import Iterable, Sequence
 from typing import Any
@@ -30,8 +31,16 @@ __all__ = [
     "r_sort_key",
     "r_sorted",
     "signif",
+    "slashed",
     "trimws",
 ]
+
+
+def slashed(path: str) -> str:
+    """*path* with ``"/"`` between its parts, as R's file functions write paths
+    (``file.path()``, ``list.files()``) on every platform: Windows' ``"\\"``
+    becomes ``"/"``; elsewhere a backslash is part of a name and is kept."""
+    return path if os.sep == "/" else path.replace(os.sep, "/")
 
 
 def format_num(x: Any, digits: int = 7) -> str:

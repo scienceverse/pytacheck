@@ -18,7 +18,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from pytacheck._r.base import as_character, plural
+from pytacheck._r.base import as_character, plural, slashed
 from pytacheck._r.regex import grepl
 
 # R: listed_langs / checked_langs
@@ -102,7 +102,7 @@ def _r_tolower(x: str) -> str:
 
 def _r_basename(x: str) -> str:
     """R ``basename()`` of a ``/``-separated path (trailing slashes ignored)."""
-    return os.path.basename(x.rstrip("/"))
+    return slashed(x).rstrip("/").rsplit("/", 1)[-1]
 
 
 def _base_names(x: Sequence[Any]) -> list[str | None]:

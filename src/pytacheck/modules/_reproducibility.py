@@ -28,7 +28,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from pytacheck._r import as_character, grepl, plural, sub
+from pytacheck._r import as_character, grepl, plural, slashed, sub
 from pytacheck.report import scroll_table
 
 # -- small R helpers ---------------------------------------------------------------
@@ -92,7 +92,7 @@ def _basename(path: str | None) -> str | None:
     """R ``basename()`` on Unix."""
     if path is None:
         return None
-    return path.rstrip("/").rpartition("/")[2]
+    return slashed(path).rstrip("/").rpartition("/")[2]
 
 
 def _file_exists(path: str | None) -> bool:

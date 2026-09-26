@@ -85,13 +85,13 @@ def _repo_rows(repo: dict[str, Any], default_pid: str, copy: bool) -> list[dict[
                 "file_name": os.path.basename(rel),
                 "file_path": rel,
                 "file_url": (
-                    "file://" + str((src / rel).resolve())
+                    "file://" + (src / rel).resolve().as_posix()
                     if repo.get("file_url") == "local"
                     else (repo["file_url"] + rel)
                     if repo.get("file_url")
                     else None
                 ),
-                "file_location": str(base / rel) if local else None,
+                "file_location": (base / rel).as_posix() if local else None,
                 "file_size": float(os.path.getsize(src / rel)),
             }
         )
@@ -304,7 +304,7 @@ def dc_run_local(d: str, **kwargs: Any) -> Any:
 
     # R passes the relative path (it runs from the repository root), which
     # repo_check reports as the repository URL
-    local = os.path.join("tests", "mod_data_check", "fixtures", "repos", d)
+    local = f"tests/mod_data_check/fixtures/repos/{d}"
     with (
         contextlib.chdir(ROOT),
         local_options({"pytacheck.careless": False, "metacheck.llm.use": False}),
@@ -322,7 +322,7 @@ def norm_paths(out: Any) -> Any:
     import re
 
     st = out.get("structure")
-    root = str(ROOT) + os.sep
+    root = ROOT.as_posix() + "/"
     if isinstance(st, pd.DataFrame) and "file_location" in st.columns:
         locs = [
             None

@@ -16,7 +16,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from pytacheck._r import gsub, is_na, plural, r_sort_key, regextract, sub
+from pytacheck._r import gsub, is_na, plural, r_sort_key, regextract, slashed, sub
 from pytacheck.module import module
 from pytacheck.report import scroll_table
 
@@ -132,7 +132,7 @@ def _basename(path: str | None) -> str | None:
         return None
     if path.startswith("~"):
         path = os.path.expanduser(path)
-    return path.rstrip("/").rpartition("/")[2]
+    return slashed(path).rstrip("/").rpartition("/")[2]
 
 
 def _dirname(path: str) -> str:

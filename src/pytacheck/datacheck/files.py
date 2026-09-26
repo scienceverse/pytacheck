@@ -59,7 +59,7 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 
-from pytacheck._r.base import plural, trimws
+from pytacheck._r.base import plural, slashed, trimws
 from pytacheck._r.regex import compile_r, gregexpr_all, grepl, gsub, regexec, strsplit, sub
 from pytacheck.datacheck._files_registry import EXT_REGISTRY
 from pytacheck.datacheck._strings import RAW_STRING, file_ext, tolower_checked
@@ -239,7 +239,7 @@ def _toupper(s: str) -> str:
 
 def _r_basename(path: str) -> str:
     """R ``basename()`` (trailing slashes are dropped first)."""
-    stripped = path.rstrip("/")
+    stripped = slashed(path).rstrip("/")
     if not stripped:
         return ""
     return stripped.rsplit("/", 1)[-1]

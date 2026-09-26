@@ -19,7 +19,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from pytacheck._r import as_character, grepl, gsub, is_na, sub
+from pytacheck._r import as_character, grepl, gsub, is_na, slashed, sub
 
 # ---------------------------------------------------------------------------
 # R idioms
@@ -183,7 +183,7 @@ def r_basename(x: Any) -> str | None:
     """R ``basename()`` of one path (trailing slashes dropped; ``NA`` kept)."""
     if _na(x):
         return None
-    s = str(x).rstrip("/")
+    s = slashed(str(x)).rstrip("/")
     return s.rsplit("/", 1)[-1]
 
 

@@ -17,6 +17,7 @@ from pytacheck._r.base import (
     r_sort_key,
     r_sorted,
     signif,
+    slashed,
     trimws,
 )
 from pytacheck._r.frames import bind_rows, count
@@ -55,6 +56,7 @@ __all__ = [
     "regextract",
     "regextract_all",
     "signif",
+    "slashed",
     "strsplit",
     "sub",
     "trimws",

@@ -19,7 +19,7 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck._r.base import trimws
+from pytacheck._r.base import slashed, trimws
 from pytacheck._r.frames import bind_rows
 from pytacheck._r.regex import grepl, gsub
 from pytacheck.datacheck._columns_labels import (
@@ -354,5 +354,5 @@ def _as_list(x: Any) -> list[Any]:
 
 def _basename(path: str | os.PathLike[str]) -> str:
     """R ``basename()`` (trailing separators removed first)."""
-    s = os.fspath(path).rstrip("/")
+    s = slashed(os.fspath(path)).rstrip("/")
     return s.rsplit("/", 1)[-1] if s else ""

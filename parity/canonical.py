@@ -23,8 +23,10 @@ import numpy as np
 import orjson
 import pandas as pd
 
-_ROOT = str(Path(__file__).resolve().parent.parent)  # the checkout
-_ROOT_JSON = orjson.dumps(_ROOT)[1:-1]
+_CHECKOUT = Path(__file__).resolve().parent.parent
+#: the checkout, as the OS writes it and (on Windows) with "/" as R writes it
+_ROOTS = tuple(dict.fromkeys((str(_CHECKOUT), _CHECKOUT.as_posix())))
+_ROOTS_JSON = tuple(orjson.dumps(r)[1:-1] for r in _ROOTS)
 _SCALAR_TYPES = (str, bool, int, float, complex, np.generic)
 
 
@@ -196,19 +198,27 @@ def canonical(x: Any) -> dict[str, Any]:
 def portable(value: Any) -> Any:
     """*value* (canonical JSON or a string) with the checkout directory written ``<repo>``."""
     if isinstance(value, str):
-        return value.replace(_ROOT, "<repo>")
+        return _portable_str(value)
     try:
         raw = orjson.dumps(value)
     except TypeError:  # e.g. a lone surrogate from undecodable bytes
         return _portable_walk(value)
-    if _ROOT_JSON not in raw:
+    if not any(r in raw for r in _ROOTS_JSON):
         return value
-    return orjson.loads(raw.replace(_ROOT_JSON, b"<repo>"))
+    for r in _ROOTS_JSON:
+        raw = raw.replace(r, b"<repo>")
+    return orjson.loads(raw)
+
+
+def _portable_str(value: str) -> str:
+    for r in _ROOTS:
+        value = value.replace(r, "<repo>")
+    return value
 
 
 def _portable_walk(value: Any) -> Any:
     if isinstance(value, str):
-        return value.replace(_ROOT, "<repo>")
+        return _portable_str(value)
     if isinstance(value, dict):
         return {_portable_walk(k): _portable_walk(v) for k, v in value.items()}
     if isinstance(value, list):

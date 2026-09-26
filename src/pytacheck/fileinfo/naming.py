@@ -19,7 +19,7 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck._r import grepl, regexec, regextract_all, sub
+from pytacheck._r import grepl, regexec, regextract_all, slashed, sub
 
 __all__ = ["check_file_naming"]
 
@@ -92,7 +92,7 @@ def _r_basename(path: str | None) -> str | None:
     """R ``basename()`` on Unix (trailing slashes dropped; ``NA`` stays ``NA``)."""
     if path is None:
         return None
-    return _expand(path).rstrip("/").rpartition("/")[2]
+    return slashed(_expand(path)).rstrip("/").rpartition("/")[2]
 
 
 def _r_dirname(path: str | None) -> str | None:

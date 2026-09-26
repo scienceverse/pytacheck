@@ -36,6 +36,7 @@ from pytacheck._r import (
     plural,
     regextract,
     regextract_all,
+    slashed,
     strsplit,
     sub,
 )
@@ -972,7 +973,7 @@ def _r_dirname(path: str) -> str:
 
 def _r_basename(path: str) -> str:
     """R ``basename()`` on Unix: the part after the last slash, trailing slashes dropped."""
-    return path.rstrip("/").rpartition("/")[2]
+    return slashed(path).rstrip("/").rpartition("/")[2]
 
 
 def _r_num(x: float) -> str:

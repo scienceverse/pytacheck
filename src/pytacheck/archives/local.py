@@ -60,7 +60,7 @@ def local_files(path: Any, recursive: bool = False) -> pd.DataFrame:
     with *recursive* (metacheck lists them non-recursively: U49); a path that
     does not exist warns and contributes no rows.
     """
-    from pytacheck._r import bind_rows
+    from pytacheck._r import bind_rows, slashed
 
     if not isinstance(path, str | os.PathLike):
         paths = list(path)
@@ -96,7 +96,9 @@ def local_files(path: Any, recursive: bool = False) -> pd.DataFrame:
             "repo_url": pd.Series([path] * n, dtype="string"),
             "file_name": pd.Series(names, dtype="string"),
             "file_url": pd.Series([None] * n, dtype="string"),
-            "file_location": pd.Series([os.path.realpath(p) for p in all_paths], dtype="string"),
+            "file_location": pd.Series(
+                [slashed(os.path.realpath(p)) for p in all_paths], dtype="string"
+            ),
             "file_size": pd.Series(sizes, dtype="float64"),
             "file_type": pd.Series(categories, dtype="string"),
         }

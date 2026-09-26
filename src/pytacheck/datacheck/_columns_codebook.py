@@ -27,7 +27,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from pytacheck._r.base import trimws
+from pytacheck._r.base import slashed, trimws
 from pytacheck._r.frames import bind_rows
 from pytacheck._r.regex import grep, gsub, strsplit, sub
 from pytacheck.datacheck._columns_labels import (
@@ -66,7 +66,7 @@ def _file_ext(path: str) -> str:
 
 def _basename(path: str | os.PathLike[str]) -> str:
     """R ``basename()`` (trailing separators removed first)."""
-    s = os.fspath(path).rstrip("/")
+    s = slashed(os.fspath(path)).rstrip("/")
     return s.rsplit("/", 1)[-1] if s else ""
 
 

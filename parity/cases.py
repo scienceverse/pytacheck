@@ -797,7 +797,7 @@ def decode(x: Any) -> Any:
         if key == "$NA":
             return None
         if key == "$file":
-            return str(ROOT / val)
+            return (ROOT / val).as_posix()  # R's file.path(): "/" on Windows too
         if key == "$expr":
             _import_named_modules(val["py"])
             return eval(val["py"], {"pc": pc, "pd": pd, "np": np})

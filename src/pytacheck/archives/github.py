@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from pytacheck._r import is_na
+from pytacheck._r import is_na, slashed
 
 if TYPE_CHECKING:
     import httpx
@@ -222,7 +222,7 @@ def _check_combine(frames: Sequence[pd.DataFrame | None]) -> None:
 
 def _r_basename(path: str) -> str:
     """R ``basename()`` (trailing separators are dropped first)."""
-    stripped = path.rstrip("/")
+    stripped = slashed(path).rstrip("/")
     if not stripped:
         return ""
     return stripped.rsplit("/", 1)[-1]

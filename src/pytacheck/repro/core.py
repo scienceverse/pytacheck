@@ -41,7 +41,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from pytacheck._r.base import as_character, r_sort_key, trimws
+from pytacheck._r.base import as_character, r_sort_key, slashed, trimws
 from pytacheck._r.frames import bind_rows
 from pytacheck._r.regex import (
     gregexpr_all,
@@ -141,7 +141,7 @@ def _basename(x: str | None) -> str | None:
         return None
     if x.startswith("~"):
         x = os.path.expanduser(x)
-    return x.rstrip("/").rpartition("/")[2]
+    return slashed(x).rstrip("/").rpartition("/")[2]
 
 
 def _tolower(x: str | None) -> str | None:
