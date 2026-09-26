@@ -733,8 +733,17 @@ def _zip_name(info: Any) -> str:
 _R_UNZIP_METHODS = (0, 8, 12)
 
 
-def _r_member_path(raw: bytes) -> bytes:
-    """R's internal unzip drops ``../`` path components (with a warning)."""
+def _r_member_path(raw: bytes, windows: bool = os.name == "nt") -> bytes:
+    """R's internal unzip drops ``../`` path components (with a warning).
+
+    On Windows a ``"\\"`` in a name separates folders (``..\\x`` would climb out
+    of the destination) and a drive (``C:/``) cannot be a folder name, so
+    backslashes are read as ``"/"`` and a leading drive is dropped first.
+    """
+    if windows:
+        raw = raw.replace(b"\\", b"/")
+        if len(raw) >= 2 and raw[1:2] == b":" and raw[:1].isalpha():
+            raw = raw[2:].lstrip(b"/")
     if raw.startswith(b"../") or b"/../" in raw:
         shown = raw.decode("utf-8", "replace")
         warnings.warn(f"skipped \"../\" path component(s) in '{shown}'", stacklevel=4)

@@ -6,6 +6,7 @@ are in ``parity/cases/repo_download_review.yaml``.
 
 from __future__ import annotations
 
+import os
 import time
 import warnings
 import zipfile
@@ -125,7 +126,7 @@ def test_fetch_members_survives_a_file_in_the_way(tmp_path: Path) -> None:
     assert ok["a"] is True and ok["a/b.csv"] is False  # "a" is a file, not a folder
     assert ok["../evil.csv"] is False and ok["/abs.csv"] is True
     assert (tmp_path / "sub" / "win.csv").read_bytes() == b"win\n"
-    assert (tmp_path / "C:" / "drive.csv").exists() is False  # "C:/" is stripped
+    assert "C:" not in os.listdir(tmp_path)  # "C:/" is stripped
     assert (tmp_path / "drive.csv").exists()
 
 
@@ -141,11 +142,27 @@ def test_unzip_drops_dotdot_components_and_keeps_other_bytes(tmp_path: Path) -> 
         warnings.simplefilter("always")
         _unzip_all(str(REVIEW / "climb.zip"), str(tmp_path))
     assert sum("skipped" in str(x.message) for x in w) == 4
-    got = _extracted(tmp_path)
+    got = [p.replace(os.sep, "/") for p in _extracted(tmp_path)]
     assert "evil.csv" in got and "z/up.csv" in got and "a/b/c.csv" in got
-    assert "sub\\win.csv" in got  # a backslash is part of the name
-    assert "C:/drive.csv" in got  # a folder named "C:"
-    assert "x/..../y2.csv" in got and "..../z.csv" in got and "k..csv" in got
+    if os.name == "nt":  # "\\" separates folders and a drive is no folder name
+        assert "sub/win.csv" in got and "drive.csv" in got
+    else:
+        assert "sub\\win.csv" in got  # a backslash is part of the name
+        assert "C:/drive.csv" in got  # a folder named "C:"
+        assert "x/..../y2.csv" in got and "..../z.csv" in got and "k..csv" in got
+
+
+def test_unzip_member_paths_cannot_climb_out_on_windows() -> None:
+    # on Windows "..\\" climbs as "../" does, and "C:/x" would leave the destination
+    w = zpm._r_member_path
+    with pytest.warns(UserWarning, match="skipped"):
+        assert w(b"..\\evil.csv", windows=True) == b"evil.csv"
+    with pytest.warns(UserWarning, match="skipped"):
+        assert w(b"a\\..\\..\\up.csv", windows=True) == b"a/up.csv"
+    assert w(b"C:/drive.csv", windows=True) == b"drive.csv"
+    assert w(b"d:\\x\\y.csv", windows=True) == b"x/y.csv"
+    assert w(b"sub\\win.csv", windows=False) == b"sub\\win.csv"
+    assert w(b"C:/drive.csv", windows=False) == b"C:/drive.csv"
 
 
 def test_unzip_stops_at_a_member_it_cannot_write_or_open(tmp_path: Path) -> None:
@@ -181,7 +198,10 @@ def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:
                 "hostile.tar.gz/sub\\win.csv",
             ]
         else:
-            assert "climb.zip/C:/drive.csv" in paths and "climb.zip/sub\\win.csv" in paths
+            if os.name == "nt":
+                assert "climb.zip/drive.csv" in paths and "climb.zip/sub/win.csv" in paths
+            else:
+                assert "climb.zip/C:/drive.csv" in paths and "climb.zip/sub\\win.csv" in paths
 
 
 # -- httr2's error messages -----------------------------------------------------
