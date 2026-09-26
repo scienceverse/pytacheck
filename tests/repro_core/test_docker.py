@@ -201,7 +201,7 @@ def test_install_deps_docker_partial_results(
             return {"status": 0, "timeout": False}
         seen["args"] = args
         sandbox = _mount(args, "/sandbox")
-        seen["script"] = Path(sandbox, "install.R").read_text()
+        seen["script"] = Path(sandbox, "install.R").read_text(encoding="utf-8")
         rds = Path(sandbox, ".install_results.rds")
         subprocess.run(
             [
@@ -209,7 +209,7 @@ def test_install_deps_docker_partial_results(
                 "-e",
                 "saveRDS(data.frame(package = c('a', 'b'), source = c('cran', 'bioc'),"
                 " installed = c(TRUE, FALSE), message = c('', 'there is no package called \\'zz\\'')),"
-                f" '{rds}')",
+                f" '{rds.as_posix()}')",
             ],
             check=True,
         )
@@ -294,7 +294,7 @@ def test_run_scripts_docker_outcomes(monkeypatch: pytest.MonkeyPatch, tmp_path: 
         wrapper = args[-1]
         host_wrapper = Path(_mount(args, "/sandbox"), wrapper.removeprefix("/sandbox/"))
         assert host_wrapper.exists()
-        text = host_wrapper.read_text()
+        text = host_wrapper.read_text(encoding="utf-8")
         if "ok.R" in text:
             Path(stdout or "").write_text("> x <- 1\n")
             cap = [{"analysis": "t", "method": "t", "rows": [], "line": 1, "call_text": "t"}]
@@ -359,8 +359,8 @@ def test_wrapper_runs_in_r(rscript: str, tmp_path: Path) -> None:
     script.write_text("x <- c(1, 2, 3, 4, 5)\nt.test(x, mu = 1)\n")
     cap = tmp_path / "cap.json"
     lines = docker._wrapper_lines(
-        docker._repro_docker_capture_preamble(), str(script), False, str(cap)
-    )
+        docker._repro_docker_capture_preamble(), script.as_posix(), False, cap.as_posix()
+    )  # the container's paths have "/"
     wrapper = tmp_path / "w.R"
     wrapper.write_text("\n".join(lines) + "\n", encoding="utf-8")
     out = subprocess.run(

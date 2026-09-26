@@ -315,7 +315,7 @@
               "r": "convert_grobid"
               "py": "pytacheck.io.grobid.convert_grobid"
               "args":
-                "file_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.pdf', 'upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf'))", "py": "[str(__import__('pathlib').Path.cwd() / p) for p in ['upstream/metacheck/inst/demos/to_err_is_human.pdf', 'upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf']]"}}
+                "file_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.pdf', 'upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf'))", "py": "[(__import__('pathlib').Path.cwd() / p).as_posix() for p in ['upstream/metacheck/inst/demos/to_err_is_human.pdf', 'upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf']]"}}
                 "save_path": {"$expr": {"r": "file.path(tempdir(), 'pc_io_review_grobid_multi')", "py": "__import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_grobid_multi')"}}
                 "api_url": "https://grobid.hti.ieis.tue.nl"
 # convert(method = "bibr"): R calls do.call(convert_bibr, valid_args) with the argument

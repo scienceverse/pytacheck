@@ -140,7 +140,13 @@ def _extracted(root: Path) -> list[str]:
 def test_unzip_drops_dotdot_components_and_keeps_other_bytes(tmp_path: Path) -> None:
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
-        _unzip_all(str(REVIEW / "climb.zip"), str(tmp_path))
+        if os.name == "nt":
+            # Windows cannot make a folder named "....": unzip stops at
+            # "x/..../y2.csv", as at any member it cannot open
+            with pytest.raises(RuntimeError, match="cannot open file"):
+                _unzip_all(str(REVIEW / "climb.zip"), str(tmp_path))
+        else:
+            _unzip_all(str(REVIEW / "climb.zip"), str(tmp_path))
     assert sum("skipped" in str(x.message) for x in w) == 4
     got = [p.replace(os.sep, "/") for p in _extracted(tmp_path)]
     assert "evil.csv" in got and "z/up.csv" in got and "a/b/c.csv" in got
@@ -195,7 +201,8 @@ def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:
                 "hostile.tar.gz/last.csv",
                 "hostile.tar.gz/ok/data.csv",
                 "hostile.tar.gz/rel_link.csv",
-                "hostile.tar.gz/sub\\win.csv",
+                # on Windows "\\" separates folders
+                "hostile.tar.gz/sub/win.csv" if os.name == "nt" else "hostile.tar.gz/sub\\win.csv",
             ]
         else:
             if os.name == "nt":

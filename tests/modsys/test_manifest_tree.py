@@ -186,10 +186,13 @@ def test_tree_hash_equals_sha256sum_pipeline(tmp_path) -> None:
     names = (
         "-printf '%P\\0'" if gnu.returncode == 0 else "-print | sed 's|^\\./||' | tr '\\n' '\\0'"
     )
+    # sha256sum on Windows (Git for Windows) marks binary reads "hash *name": the
+    # manifest is the "hash  name" text form
     cmd = (
         "find . -type f ! -path '*/.git/*' ! -path '*/__pycache__/*' ! -name '*.pyc' "
         f"! -name .pytacheck-install.json {names} "
-        "| LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum"
+        "| LC_ALL=C sort -z | xargs -0 sha256sum | sed 's/^\\([0-9a-f]\\{64\\}\\) \\*/\\1  /' "
+        "| sha256sum"
     )
     out = subprocess.run(
         ["sh", "-c", cmd], cwd=tmp_path, capture_output=True, text=True, check=True

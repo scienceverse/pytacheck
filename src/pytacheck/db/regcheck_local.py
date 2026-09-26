@@ -81,9 +81,12 @@ def _build_app_archive(
     src_path = Path(src)
     dest_path = Path(dest) if dest else Path(__file__).with_name(_ARCHIVE)
     files = sorted(
-        p
-        for p in src_path.rglob("*")
-        if p.is_file() and "__pycache__" not in p.parts and ".venv" not in p.parts
+        (
+            p
+            for p in src_path.rglob("*")
+            if p.is_file() and "__pycache__" not in p.parts and ".venv" not in p.parts
+        ),
+        key=lambda p: p.relative_to(src_path).parts,  # case-sensitive on Windows too
     )
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.PAX_FORMAT) as tar:

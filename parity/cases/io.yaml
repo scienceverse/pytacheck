@@ -222,7 +222,7 @@
   "r": "grobid_to_bibr"
   "py": "pytacheck.io.grobid.grobid_to_bibr"
   "args":
-    "xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml'))", "py": "[str(__import__('pathlib').Path.cwd() / p) for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml']]"}}
+    "xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml'))", "py": "[(__import__('pathlib').Path.cwd() / p).as_posix() for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml']]"}}
     "save_path": {"$null": true}
 - "id": "grobid_to_bibr.null_save.one_failure"
   "r": "grobid_to_bibr"
@@ -246,7 +246,7 @@
   "r": "read"
   "py": "pytacheck.read"
   "args":
-    "file_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json'))", "py": "[str(__import__('pathlib').Path.cwd() / p) for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json']]"}}
+    "file_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json'))", "py": "[(__import__('pathlib').Path.cwd() / p).as_posix() for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json']]"}}
 # internals on a parsed TEI document ----------------------------------------
 - "id": ".tei_text.edge_body"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a nested div's paragraphs are not repeated in the outer div (R repeats them)"}

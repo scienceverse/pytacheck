@@ -958,10 +958,11 @@ def _osf_prepare_save_paths(
 
 
 def _r_dirname(path: str) -> str:
-    """R ``dirname()`` on Unix: trailing slashes dropped, ``"."`` without a slash."""
+    """R ``dirname()``: trailing slashes dropped, ``"."`` without a slash (on
+    Windows ``"\\"`` separates too, and the result has ``"/"``)."""
     if path == "":
         return ""
-    stripped = path.rstrip("/")
+    stripped = slashed(path).rstrip("/")
     if stripped == "":
         return "/"
     head, sep, _ = stripped.rpartition("/")

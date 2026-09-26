@@ -259,7 +259,7 @@ def test_zenodo_upload_validates_input() -> None:
 
 
 def test_zenodo_upload_needs_a_token(tmp_path: Path) -> None:
-    (tmp_path / "data.csv").write_text("a,b\n")
+    (tmp_path / "data.csv").write_text("a,b\n", newline="\n")
     with pytest.raises(ValueError, match="ZENODO_SANDBOX_PAT"):
         zenodo_upload(str(tmp_path), ask=False)
     with pytest.raises(ValueError, match="ZENODO_PAT"):
@@ -280,7 +280,7 @@ def test_zenodo_upload_nothing_to_upload(tmp_path: Path) -> None:
 
 def test_zenodo_upload_rejects_a_bad_token_before_uploading(respx_mock: respx.MockRouter,
                                                             tmp_path: Path) -> None:  # fmt: skip
-    (tmp_path / "data.csv").write_text("a,b\n")
+    (tmp_path / "data.csv").write_text("a,b\n", newline="\n")
     respx_mock.get(f"{SANDBOX}/deposit/depositions").mock(return_value=httpx.Response(500))
     create = respx_mock.post(f"{SANDBOX}/deposit/depositions").mock(
         return_value=httpx.Response(201, json={})
@@ -383,8 +383,8 @@ def test_zenodo_upload_as_zip_split(
     proj = tmp_path / "My Study"
     (proj / "data").mkdir(parents=True)
     (proj / "stimuli").mkdir()
-    (proj / "data" / "raw.csv").write_text("a,b\n1,2\n")
-    (proj / "analysis.R").write_text("x <- 1\n")
+    (proj / "data" / "raw.csv").write_text("a,b\n1,2\n", newline="\n")
+    (proj / "analysis.R").write_text("x <- 1\n", newline="\n")
     (proj / "stimuli" / "face.png").write_bytes(b"\x89PNG....")
     fake = _Zenodo(respx_mock)
 
@@ -405,8 +405,8 @@ def test_zenodo_upload_as_zip_split(
 def test_zenodo_upload_as_zip_single(respx_mock: respx.MockRouter, tmp_path: Path) -> None:
     proj = tmp_path / "proj"
     proj.mkdir()
-    (proj / "a.csv").write_text("a\n1\n")
-    (proj / "b.txt").write_text("b\n")
+    (proj / "a.csv").write_text("a\n1\n", newline="\n")
+    (proj / "b.txt").write_text("b\n", newline="\n")
     fake = _Zenodo(respx_mock)
 
     out = zenodo_upload(
@@ -433,11 +433,11 @@ def test_zenodo_upload_individual_files_to_bucket(
 ) -> None:
     proj = tmp_path / "p"
     (proj / "x").mkdir(parents=True)
-    (proj / "README.md").write_text("top\n")
-    (proj / "x" / "README.md").write_text("inner\n")
+    (proj / "README.md").write_text("top\n", newline="\n")
+    (proj / "x" / "README.md").write_text("inner\n", newline="\n")
     (proj / "big.bin").write_bytes(b"0" * 2048)
     (proj / "_osf_metadata").mkdir()
-    (proj / "_osf_metadata" / "log.txt").write_text("log\n")
+    (proj / "_osf_metadata" / "log.txt").write_text("log\n", newline="\n")
     fake = _Zenodo(respx_mock)
 
     out = zenodo_upload(
@@ -452,7 +452,7 @@ def test_zenodo_upload_individual_files_to_bucket(
 def test_zenodo_upload_failed_file_warns(respx_mock: respx.MockRouter, tmp_path: Path) -> None:
     proj = tmp_path / "p"
     proj.mkdir()
-    (proj / "a.txt").write_text("a\n")
+    (proj / "a.txt").write_text("a\n", newline="\n")
     _Zenodo(respx_mock)
     respx_mock.routes.clear()
     respx_mock.get(f"{SANDBOX}/deposit/depositions").mock(return_value=httpx.Response(200, json=[]))
@@ -535,11 +535,11 @@ def test_zenodo_upload_as_zip_leaves_out_skipped_files(
     # the OSF metadata and oversized files it reports as skipped are zipped too)
     proj = tmp_path / "p"
     (proj / "x").mkdir(parents=True)
-    (proj / "README.md").write_text("top\n")
-    (proj / "x" / "data.csv").write_text("a\n1\n")
+    (proj / "README.md").write_text("top\n", newline="\n")
+    (proj / "x" / "data.csv").write_text("a\n1\n", newline="\n")
     (proj / "big.bin").write_bytes(b"0" * 2048)
     (proj / "_osf_metadata").mkdir()
-    (proj / "_osf_metadata" / "log.txt").write_text("log\n")
+    (proj / "_osf_metadata" / "log.txt").write_text("log\n", newline="\n")
     fake = _Zenodo(respx_mock)
 
     out = zenodo_upload(
