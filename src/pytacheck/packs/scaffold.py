@@ -22,8 +22,7 @@ __all__ = ["INSTALL_SPEC", "module_template", "pack_new"]
 #: store's workflow uses too (pytacheck is not on PyPI yet). One place to change.
 #: The branch is the head of scienceverse/pytacheck#1; main once that merges.
 INSTALL_SPEC = (
-    "pytacheck @ git+https://github.com/scienceverse/pytacheck"
-    "@claude/elegant-fermat-eo7s89"
+    "pytacheck @ git+https://github.com/scienceverse/pytacheck@claude/elegant-fermat-eo7s89"
 )
 
 #: template file -> path inside a new pack ("{module}" is the example module's name)
