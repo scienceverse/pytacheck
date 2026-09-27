@@ -379,7 +379,7 @@ Labs and institutes may run their own stores, public or private (§4.11). Allowl
 
 `packs/` is 5,361 lines, with 5,351 lines of tests **(M)**. It serves a store with two packs.
 
-**Precondition.** The official store is private today, and every user reaches it through the token fetch chain (§1.4). None of the fetch or auth deletions below lands until both `thesanogoeffect/pytacheck` and `thesanogoeffect/pytacheck-modules` are public and index.json has been rebuilt from the public store. Even then private GitHub stores keep working, through the token path that stays.
+**Precondition.** The official store is private today, and every user reaches it through the token fetch chain (§1.4). None of the fetch or auth deletions below lands until both `scienceverse/pytacheck` and `thesanogoeffect/pytacheck-modules` are public and index.json has been rebuilt from the public store. Even then private GitHub stores keep working, through the token path that stays.
 
 | Item | Lines | Where |
 |---|---:|---|
@@ -565,8 +565,8 @@ None of these has been pushed; the store has no designated branch in this sessio
 
 | # | Fix | Where |
 |---|---|---|
-| 1 | **Make CI run, and let outsiders in.** Make both `thesanogoeffect/pytacheck` and `thesanogoeffect/pytacheck-modules` public (recommended; the simplest route for AGPL §13, fork-based contributions and a public catalog). Adding the `PYTACHECK_READ_TOKEN` secret is only a stopgap: it fixes maintainer PRs, never fork PRs, which get no secrets. Until the store is public, pytacheck keeps the token fetch path (§4.11), so no user is cut off | store and pytacheck settings |
-| 2 | **Re-pin** to pytacheck's main branch, or a tag, once `thesanogoeffect/pytacheck#1` merges. Make the scaffold derive its pin from the installed version instead of a constant | `check.yml:16`, `README.md:16,37`, `CONTRIBUTING.md:9,16`; pytacheck `packs/scaffold.py:23-26` |
+| 1 | **Make CI run, and let outsiders in.** Make both `scienceverse/pytacheck` and `thesanogoeffect/pytacheck-modules` public (recommended; the simplest route for AGPL §13, fork-based contributions and a public catalog). Adding the `PYTACHECK_READ_TOKEN` secret is only a stopgap: it fixes maintainer PRs, never fork PRs, which get no secrets. Until the store is public, pytacheck keeps the token fetch path (§4.11), so no user is cut off | store and pytacheck settings |
+| 2 | **Re-pin** to pytacheck's main branch, or a tag, once `scienceverse/pytacheck#1` merges. Make the scaffold derive its pin from the installed version instead of a constant | `check.yml:16`, `README.md:16,37`, `CONTRIBUTING.md:9,16`; pytacheck `packs/scaffold.py:23-26` |
 | 3 | **Rebuild index.json** (the push-to-main job commits it once CI runs), and again from the public repository once it is public | `index.json` |
 | 4 | **Licence wording:** "a licence on the §5.4 list" for packs, in place of the CC0-only-for-presets and OSI wording; pytacheck's `check.py:284` message to match | `REVIEW.md:22`, `CONTRIBUTING.md:23` |
 | 5 | **Scope the read token to one step.** Move `PYTACHECK_READ_TOKEN` out of the workflow-level `env` onto the install step; run pack code and tests with `permissions: {}`; commit index.json from a separate job on main (§4.8) | `check.yml` |

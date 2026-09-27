@@ -21,7 +21,7 @@ __all__ = ["INSTALL_SPEC", "module_template", "pack_new"]
 #: What CI installs to check a pack: the pip requirement the pytacheck-modules
 #: store's workflow uses too (pytacheck is not on PyPI yet). One place to change.
 INSTALL_SPEC = (
-    "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck"
+    "pytacheck @ git+https://github.com/scienceverse/pytacheck"
     "@claude/pytacheck-metacheck-fork-0x7q73"
 )
 

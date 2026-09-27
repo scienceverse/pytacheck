@@ -12,7 +12,7 @@ services:
       context: .
       args:
         WITH_BIBR: "1"
-    image: ghcr.io/thesanogoeffect/pytacheck:bibr
+    image: ghcr.io/scienceverse/pytacheck:bibr
     command: ["serve", "--host", "0.0.0.0", "--port", "8000"]
     ports:
       - "8000:8000"

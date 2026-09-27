@@ -14,7 +14,7 @@ rather than copied, and nothing invented ([the accuracy contract](docs/PORTING.m
 > **Status: alpha.** The port is in progress; see [the porting status](docs/STATUS.md).
 > A difference from metacheck that is not documented as a fix or a deliberate change
 > in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md) is a bug: please
-> [open an issue](https://github.com/thesanogoeffect/pytacheck/issues).
+> [open an issue](https://github.com/scienceverse/pytacheck/issues).
 
 ## Install
 
@@ -24,7 +24,7 @@ pip install "pytacheck[bibr]"         # + extract PDF/DOCX/HTML with bibr, in-pr
 pip install "pytacheck[all]"          # + bibr, data-file readers, REST API, charset detection
 ```
 
-Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/thesanogoeffect/pytacheck run paper.json -m all_p_values`.
+Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/scienceverse/pytacheck run paper.json -m all_p_values`.
 
 ## Use
 

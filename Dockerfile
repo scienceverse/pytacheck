@@ -41,7 +41,7 @@ FROM ${BASE_IMAGE} AS runtime
 ARG WITH_BIBR=0
 LABEL org.opencontainers.image.title="pytacheck" \
       org.opencontainers.image.description="Check research outputs for best practices (Python port of metacheck)" \
-      org.opencontainers.image.source="https://github.com/thesanogoeffect/pytacheck" \
+      org.opencontainers.image.source="https://github.com/scienceverse/pytacheck" \
       org.opencontainers.image.licenses="AGPL-3.0-or-later"
 RUN if [ "$WITH_BIBR" = "1" ]; then \
       apt-get update && apt-get install -y --no-install-recommends libmagic1 && \

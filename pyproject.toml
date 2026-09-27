@@ -76,11 +76,11 @@ charset = ["chardet>=7"]
 all = ["pytacheck[bibr,data,api,charset]"]
 
 [project.urls]
-Homepage = "https://github.com/thesanogoeffect/pytacheck"
-Documentation = "https://github.com/thesanogoeffect/pytacheck#readme"
-Repository = "https://github.com/thesanogoeffect/pytacheck"
-Issues = "https://github.com/thesanogoeffect/pytacheck/issues"
-Changelog = "https://github.com/thesanogoeffect/pytacheck/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/scienceverse/pytacheck"
+Documentation = "https://github.com/scienceverse/pytacheck#readme"
+Repository = "https://github.com/scienceverse/pytacheck"
+Issues = "https://github.com/scienceverse/pytacheck/issues"
+Changelog = "https://github.com/scienceverse/pytacheck/blob/main/CHANGELOG.md"
 Upstream = "https://github.com/scienceverse/metacheck"
 
 [project.scripts]

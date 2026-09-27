@@ -5,7 +5,7 @@ message: >-
 title: "pytacheck: check research outputs for best practices"
 type: software
 license: AGPL-3.0-or-later
-repository-code: "https://github.com/thesanogoeffect/pytacheck"
+repository-code: "https://github.com/scienceverse/pytacheck"
 authors:
   - given-names: Jakub
     family-names: Werner

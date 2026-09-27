@@ -71,7 +71,7 @@ def _user_agent() -> str:
 
     contact = email()
     mail = f"; mailto:{contact}" if contact else ""
-    return f"pytacheck/{__version__} (+https://github.com/thesanogoeffect/pytacheck{mail})"
+    return f"pytacheck/{__version__} (+https://github.com/scienceverse/pytacheck{mail})"
 
 
 def client() -> httpx.Client:

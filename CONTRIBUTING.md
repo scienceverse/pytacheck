@@ -17,7 +17,7 @@ documentation.
 ## Setup
 
 ```bash
-git clone --recurse-submodules https://github.com/thesanogoeffect/pytacheck
+git clone --recurse-submodules https://github.com/scienceverse/pytacheck
 cd pytacheck
 uv sync --all-extras
 uv run pre-commit install
