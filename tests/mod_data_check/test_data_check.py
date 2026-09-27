@@ -874,9 +874,10 @@ def test_repo_tree_rows_scales_linearly() -> None:
 
     paths = [f"data/sub{i % 20}/file{i}.csv" for i in range(4000)]
     paths += [f"flat{i}.txt" for i in range(4000)]
-    t = time.perf_counter()
+    # CPU time, not wall time: a busy CI host must not fail a complexity check
+    t = time.process_time()
     rows = h.repo_tree_rows(paths)
-    assert time.perf_counter() - t < 1.5
+    assert time.process_time() - t < 1.5
     assert len(rows) == 8021
     # the 20 folders first (sub0, sub1, sub10, ...), then the flat files
     assert rows["text"].tolist()[:2] == ["├── data/", "│   ├── sub0/"]

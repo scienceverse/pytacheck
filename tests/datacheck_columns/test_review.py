@@ -71,11 +71,12 @@ def test_stats_overflow_like_r(xs: list[float], sd: float, skew: float) -> None:
 
 def test_numeric_paths_are_vectorised() -> None:
     x = pd.Series(np.random.default_rng(0).normal(size=1_000_000))
-    start = time.perf_counter()
+    # CPU time, not wall time: a busy CI host must not fail a complexity check
+    start = time.process_time()
     res = data_col_type("x", x)
     data_col_stats(res["numeric_values"], x)
     assert res["col_type"] == "continuous"
-    assert time.perf_counter() - start < 5
+    assert time.process_time() - start < 5
 
 
 def test_invalid_utf8_files_fall_back_to_raw_lines() -> None:

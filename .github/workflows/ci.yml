@@ -25,6 +25,11 @@ concurrency:
 env:
   UV_VERSION: "0.9.8"
   PRIMARY_PYTHON: "3.12"
+  # Only uv's own Python builds. uv otherwise takes an installed interpreter of
+  # the requested version over downloading one, and the fridge runner's Debian
+  # python3.13 comes without headers, so sdists such as cdifflib (in the bibr
+  # extra) fail to build against it.
+  UV_PYTHON_PREFERENCE: only-managed
 
 jobs:
   lint:
@@ -94,6 +99,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
           python-version: ${{ matrix.python }}
       - run: uv sync --locked --all-extras
+      - uses: ./.github/actions/xdist-workers
       - name: Tests (unit + tier-1 parity against committed R goldens)
         run: uv run pytest -n auto -m "not network and not r and (not parity or tier1)" --cov --cov-report=xml
       - uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.0.2
@@ -158,6 +164,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
           python-version: ${{ env.PRIMARY_PYTHON }}
       - run: uv sync --locked --all-extras
+      - uses: ./.github/actions/xdist-workers
       - name: Tier-1 parity cases with pyarrow installed
         run: uv run --with pyarrow pytest -n auto -m "parity and tier1"
 
