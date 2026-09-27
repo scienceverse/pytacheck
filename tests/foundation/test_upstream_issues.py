@@ -107,11 +107,13 @@ def _refs(ref: str) -> list[str]:
 
 
 def test_entries_are_unique_and_numbered() -> None:
-    entries, _, duplicates = _parse()
+    entries, lanes, duplicates = _parse()
     assert not duplicates
     for prefix, at_least in (("D", 28), ("U", 158)):
         main = {int(e.id[1:]) for e in entries.values() if e.id[0] == prefix and e.lane is None}
-        assert main == set(range(1, max(main) + 1)), f"gaps in the {prefix}-entries"
+        reserved = {n for ranges in lanes.values() for n in ranges[prefix]}
+        expected = set(range(1, max(main) + 1)) - reserved
+        assert main == expected, f"gaps in the {prefix}-entries"
         assert max(main) >= at_least
 
 
