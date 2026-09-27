@@ -949,7 +949,9 @@ rs("edge_errors", ["parse_err.R", "quit0.R", "quit3.R", "nocall.R", "multi.R", "
 rs("warn_err", ["warn_err.R"])
 rs("nopkg_failed_dep", ["nopkg.R"], failed_deps=('"notapkg_xyz"', "['notapkg_xyz']"))
 rs("lib_dir", ["libpath.R"], lib=("TRUE", "True"))
-rs("timeout", ["sleep.R"], timeout=("3", "3"))
+# 10 s, not less: R must start and reach the first cat() before the limit, and a
+# busy CI host can take over 3 s to start R (sleep.R sleeps 60 s either way)
+rs("timeout", ["sleep.R"], timeout=("10", "10"))
 case(
     "repro_run_scripts.empty",
     "repro_run_scripts",

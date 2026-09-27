@@ -1427,8 +1427,8 @@
   "args":
     "x":
       "$expr":
-        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_run_scripts(c(\"sleep.R\"), order = NULL, timeout = 3) }"
-        "py": "lambda m: m.run_scripts(['sleep.R'], order=None, timeout=3)"
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_run_scripts(c(\"sleep.R\"), order = NULL, timeout = 10) }"
+        "py": "lambda m: m.run_scripts(['sleep.R'], order=None, timeout=10)"
 - "id": "repro_run_scripts.empty"
   "r": "repro_run_scripts"
   "py": "pytacheck.repro.core.repro_run_scripts"
