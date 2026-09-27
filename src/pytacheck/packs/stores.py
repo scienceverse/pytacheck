@@ -1,7 +1,7 @@
 """Stores: git repositories whose ``index.json`` lists packs (like plugin marketplaces).
 
 A store is data only: listing, searching and showing never run pack code.
-The default store ``pytacheck`` is ``https://github.com/thesanogoeffect/pytacheck-modules``;
+The default store ``pytacheck`` is ``https://github.com/scienceverse/pytacheck-modules``;
 config can add others or remove it (see ``docs/MODULES.md``).
 
 Where the index is read from:

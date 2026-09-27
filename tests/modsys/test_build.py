@@ -1,6 +1,6 @@
 """``store build``: index.json for a store repo, ``--check``, git revs, and a local store folder.
 
-The real store is https://github.com/thesanogoeffect/pytacheck-modules (its CI
+The real store is https://github.com/scienceverse/pytacheck-modules (its CI
 runs ``store build``); these tests use the tiny store in ``fixtures/store``.
 """
 

@@ -34,7 +34,7 @@ def store(ms, monkeypatch):
 
 
 def test_index_locations(tmp_path) -> None:
-    raw = "https://raw.githubusercontent.com/thesanogoeffect/pytacheck-modules/HEAD/index.json"
+    raw = "https://raw.githubusercontent.com/scienceverse/pytacheck-modules/HEAD/index.json"
     assert index_location(BUILTIN_STORE_URL) == ("http", raw)
     assert index_location(BUILTIN_STORE_URL + ".git") == ("http", raw)
     assert index_location("https://example.org/store/index.json") == (

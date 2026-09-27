@@ -83,7 +83,7 @@ equal to R's, so upstream-sync picks up any change.
 
 **Store.** A git repository whose `index.json` lists packs, like a Claude
 Code plugin marketplace. The default store is named `pytacheck` and lives at
-**`https://github.com/thesanogoeffect/pytacheck-modules`**. Config can add
+**`https://github.com/scienceverse/pytacheck-modules`**. Config can add
 other stores (a lab's or an institute's) or remove this one. A store is data
 only: nothing in it runs until the user installs a pack.
 
@@ -265,7 +265,7 @@ take the sha256 of the concatenated lines. This is the same as running
 ```json
 {
   "preset": "psych::default",
-  "stores": {"pytacheck": "https://github.com/thesanogoeffect/pytacheck-modules",
+  "stores": {"pytacheck": "https://github.com/scienceverse/pytacheck-modules",
              "mylab": "https://gitlab.uni.edu/lab/pytacheck-store"},
   "packs": {
     "psych": {"source": {"github": "janedoe/pytacheck-psych"}, "rev": "<40 hex>",
@@ -801,7 +801,7 @@ from the text above:
 * **Still open.** The report renderer does not run modules through
   `run_modules()` yet, so HTML reports neither embed the run record nor show
   pack names (MODULES.md says so). The default store is published at
-  <https://github.com/thesanogoeffect/pytacheck-modules>, which is the single
+  <https://github.com/scienceverse/pytacheck-modules>, which is the single
   source of truth for its packs (this repository no longer carries a
   `contrib/` copy; the tests use `tests/modsys/fixtures/store`). While it is
   private, users need read access (see below).

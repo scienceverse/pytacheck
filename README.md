@@ -88,7 +88,7 @@ output.
 
 Choose the checks that matter for your field with **presets**, and add community
 checks from **packs** (folders of modules, shared through the
-[pytacheck-modules](https://github.com/thesanogoeffect/pytacheck-modules) store):
+[pytacheck-modules](https://github.com/scienceverse/pytacheck-modules) store):
 
 ```bash
 pytacheck init                                   # pick field presets; installs their packs

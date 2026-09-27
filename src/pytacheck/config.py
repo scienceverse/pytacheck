@@ -148,7 +148,7 @@ def cache_dir(subdir: str = "", override: str | os.PathLike[str] | None = None) 
 # user has trusted that code (``trust_local()``; ``pack install`` asks).
 
 BUILTIN_STORE = "pytacheck"
-BUILTIN_STORE_URL = "https://github.com/thesanogoeffect/pytacheck-modules"
+BUILTIN_STORE_URL = "https://github.com/scienceverse/pytacheck-modules"
 PROJECT_CONFIG = "pytacheck.json"
 _SECTIONS = ("stores", "packs", "presets")
 _ENV_KEYS = ("PYTACHECK_CONFIG", "PYTACHECK_DATA_DIR", "PYTACHECK_STORE_URL", "PYTACHECK_PRESET")

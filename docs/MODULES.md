@@ -201,7 +201,7 @@ Python package, R package or metacheck `./modules/*.R` file. What pytacheck does
 instead:
 
 * **Curation.** The official store (`pytacheck`,
-  <https://github.com/thesanogoeffect/pytacheck-modules>) reviews submissions
+  <https://github.com/scienceverse/pytacheck-modules>) reviews submissions
   and records the date of review. Other stores are as trustworthy as whoever
   runs them.
 * **Pinning.** A pin is a commit and a hash of the pack's files, so what you
@@ -573,7 +573,7 @@ not run. Add your own tests in `tests/` and run them with `pytest`.
 
 ### Publish to the store
 
-The official store is <https://github.com/thesanogoeffect/pytacheck-modules>.
+The official store is <https://github.com/scienceverse/pytacheck-modules>.
 There are two ways in; both are a pull request:
 
 1. **A folder in the store** (no repository of your own needed): add

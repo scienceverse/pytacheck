@@ -755,7 +755,7 @@ def test_live_private_store(live_github_token, ms, monkeypatch, capsys, request)
     assert "clinical_trials" in searched.out
     pin = json.loads(ms.config_file.read_text())["packs"]["clinical_trials"]
     assert pin["source"] == {
-        "github": "thesanogoeffect/pytacheck-modules",
+        "github": "scienceverse/pytacheck-modules",
         "subdir": "packs/clinical_trials",
     }
     assert re.fullmatch(r"[0-9a-f]{40}", pin["rev"]) and pin["store"] == "pytacheck"

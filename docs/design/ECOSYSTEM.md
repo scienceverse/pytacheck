@@ -1,8 +1,8 @@
 # Pytacheck ecosystem: validation status, presets, the module store and R ports
 
-**Status.** Draft 2 (2026-09-27; draft 1 was 2026-09-26). Proposed; nothing here is implemented, in pytacheck or in the store repository `thesanogoeffect/pytacheck-modules`. It extends `docs/design/module-system-v2.md`, whose deferred item "multi-level trust tiers, a policy engine" (`:592`) it brings back as data, not as a policy engine. Legal statements in §5 are an engineering assessment, not legal advice.
+**Status.** Draft 2 (2026-09-27; draft 1 was 2026-09-26). Proposed; nothing here is implemented, in pytacheck or in the store repository `scienceverse/pytacheck-modules`. It extends `docs/design/module-system-v2.md`, whose deferred item "multi-level trust tiers, a policy engine" (`:592`) it brings back as data, not as a policy engine. Legal statements in §5 are an engineering assessment, not legal advice.
 
-**Evidence markers.** As in FIDELITY.md: **(M)** measured in this session (upstream metacheck at the harness pin; pytacheck at f559c1be; the store at 56ff399), **(E)** an estimate with its basis. The research notes behind this document are in `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/results/` (`tiers.md`, `market-gap.md`, `market-research.md`, `porting.md`).
+**Evidence markers.** As in FIDELITY.md: **(M)** measured in this session (upstream metacheck at the harness pin; pytacheck at f559c1be; the store at 1005d6b), **(E)** an estimate with its basis. The research notes behind this document are in `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/results/` (`tiers.md`, `market-gap.md`, `market-research.md`, `porting.md`).
 
 ---
 
@@ -77,9 +77,9 @@ These decide the launch list (§3.1). Pytacheck should record the team's answers
 
 ### 1.4 The real store today
 
-`thesanogoeffect/pytacheck-modules` at 56ff399 **(M)**:
+`scienceverse/pytacheck-modules` at 1005d6b **(M)**:
 - **Two packs.** `clinical_trials` (MIT, one module `trial_registration`, with tests) and `fields` (CC0-1.0, presets only: `general`, `psychology`, `medicine`, `open-science`).
-- **The store repository is private too.** Its README says: "While this store is private, pytacheck needs read access to it: set PYTACHECK_GITHUB_TOKEN (or GH_TOKEN / GITHUB_TOKEN)". Every index.json entry points at `thesanogoeffect/pytacheck-modules`. So today every store user goes through the token fetch chain in `stores.py:223-295`, and outside researchers cannot fork it to contribute.
+- **The store repository is private too.** Its README says: "While this store is private, pytacheck needs read access to it: set PYTACHECK_GITHUB_TOKEN (or GH_TOKEN / GITHUB_TOKEN)". Every index.json entry points at `scienceverse/pytacheck-modules`. So today every store user goes through the token fetch chain in `stores.py:223-295`, and outside researchers cannot fork it to contribute.
 - **CI fails on every PR.** `check.yml` installs pytacheck from git, and the pytacheck repository is private, so it needs `PYTACHECK_READ_TOKEN`. That secret is empty. It is also set in the workflow-level `env`, so it would reach the steps that run a pack's code and tests.
 - **It pins a stale feature branch.** `claude/pytacheck-metacheck-fork-0x7q73` (6cec4b56; main is 8d8a2364) is named at `check.yml:16`, `README.md:16,37` and `CONTRIBUTING.md:9,16`. pytacheck's own `packs/scaffold.py:23-26` writes the same pin into every new pack.
 - **index.json is stale.** It was generated at 2026-09-24T21:00:27Z and lists clinical_trials 0.1.0 and fields 0.1.0; the pack.json files say 0.2.0 and 0.1.1.
@@ -379,7 +379,7 @@ Labs and institutes may run their own stores, public or private (§4.11). Allowl
 
 `packs/` is 5,361 lines, with 5,351 lines of tests **(M)**. It serves a store with two packs.
 
-**Precondition.** The official store is private today, and every user reaches it through the token fetch chain (§1.4). None of the fetch or auth deletions below lands until both `scienceverse/pytacheck` and `thesanogoeffect/pytacheck-modules` are public and index.json has been rebuilt from the public store. Even then private GitHub stores keep working, through the token path that stays.
+**Precondition.** The official store is private today, and every user reaches it through the token fetch chain (§1.4). None of the fetch or auth deletions below lands until both `scienceverse/pytacheck` and `scienceverse/pytacheck-modules` are public and index.json has been rebuilt from the public store. Even then private GitHub stores keep working, through the token path that stays.
 
 | Item | Lines | Where |
 |---|---:|---|
@@ -565,7 +565,7 @@ None of these has been pushed; the store has no designated branch in this sessio
 
 | # | Fix | Where |
 |---|---|---|
-| 1 | **Make CI run, and let outsiders in.** Make both `scienceverse/pytacheck` and `thesanogoeffect/pytacheck-modules` public (recommended; the simplest route for AGPL §13, fork-based contributions and a public catalog). Adding the `PYTACHECK_READ_TOKEN` secret is only a stopgap: it fixes maintainer PRs, never fork PRs, which get no secrets. Until the store is public, pytacheck keeps the token fetch path (§4.11), so no user is cut off | store and pytacheck settings |
+| 1 | **Make CI run, and let outsiders in.** Make both `scienceverse/pytacheck` and `scienceverse/pytacheck-modules` public (recommended; the simplest route for AGPL §13, fork-based contributions and a public catalog). Adding the `PYTACHECK_READ_TOKEN` secret is only a stopgap: it fixes maintainer PRs, never fork PRs, which get no secrets. Until the store is public, pytacheck keeps the token fetch path (§4.11), so no user is cut off | store and pytacheck settings |
 | 2 | **Re-pin** to pytacheck's main branch, or a tag, once `scienceverse/pytacheck#1` merges. Make the scaffold derive its pin from the installed version instead of a constant | `check.yml:16`, `README.md:16,37`, `CONTRIBUTING.md:9,16`; pytacheck `packs/scaffold.py:23-26` |
 | 3 | **Rebuild index.json** (the push-to-main job commits it once CI runs), and again from the public repository once it is public | `index.json` |
 | 4 | **Licence wording:** "a licence on the §5.4 list" for packs, in place of the CC0-only-for-presets and OSI wording; pytacheck's `check.py:284` message to match | `REVIEW.md:22`, `CONTRIBUTING.md:23` |
