@@ -4,11 +4,12 @@ name: Release
 # pushed. Configure the "pypi" environment and a trusted publisher for this
 # workflow on pypi.org first (Project > Publishing).
 #
-# Building and the GitHub release run on the self-hosted fridge runner (label
-# pytacheck-fridge-ci). The PyPI upload stays on a GitHub-hosted runner: PyPA
-# supports gh-action-pypi-publish there, and its recommended split is to build
-# on a self-hosted runner and publish the artifact from a GitHub-hosted one.
-# Only tag pushes and manual runs trigger this workflow, never fork PRs.
+# Building and the GitHub release run on the runner the CI_RUNNER variable
+# names, by the rule in ci.yml (the self-hosted fridge runner), else on GitHub's
+# runners. The PyPI upload stays on a GitHub-hosted runner: PyPA supports
+# gh-action-pypi-publish there, and its recommended split is to build on a
+# self-hosted runner and publish the artifact from a GitHub-hosted one. Only
+# tag pushes and manual runs trigger this workflow, never fork PRs.
 
 on:
   push:
@@ -25,7 +26,11 @@ concurrency:
 jobs:
   build:
     name: Build and verify
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 30
     env:
       UV_PYTHON_PREFERENCE: only-managed # not the runner's Python (see ci.yml)
@@ -72,7 +77,11 @@ jobs:
   github-release:
     name: GitHub release
     needs: publish
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 10
     permissions:
       contents: write

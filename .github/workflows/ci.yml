@@ -1,13 +1,12 @@
 name: CI
 
-# Linux jobs run on the self-hosted fridge runner (repo-level runner
-# fridge-pytacheck-ci, label pytacheck-fridge-ci); the macOS and Windows test
-# legs stay on GitHub-hosted runners. PR runs are for branches of THIS repo
-# only: fork PRs are refused by each job's `if`, so outside code never executes
-# on the runner (a fork PR gets no CI; push its branch here to test it). The
-# runner keeps its workspace, caches and home directory between jobs, so
-# scratch files go to $RUNNER_TEMP (emptied per job), not /tmp, and no step
-# changes the runner user's global configuration.
+# Linux jobs run on the self-hosted runner named by the CI_RUNNER variable
+# (pytacheck-fridge-ci: the fridge runner) when the repository is private and
+# the code comes from this repository (not a fork); otherwise, and whenever
+# CI_RUNNER is unset, on GitHub's runners. The macOS and Windows test legs are
+# always GitHub-hosted. A self-hosted runner keeps its workspace, caches and
+# home directory between jobs, so scratch files go to $RUNNER_TEMP (emptied
+# per job), not /tmp, and no step changes the runner user's global configuration.
 
 on:
   push:
@@ -34,10 +33,11 @@ env:
 jobs:
   lint:
     name: Lint & types
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -61,15 +61,14 @@ jobs:
   # corpus, parity/corpus.toml); the `parity` job runs every case once.
   test:
     name: Tests (${{ matrix.os }}, py${{ matrix.python }})
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    # `ubuntu-latest` names the Linux legs (and their check names); they run on
-    # the fridge runner. macOS and Windows stay GitHub-hosted.
+    # `ubuntu-latest` names the Linux legs (and their check names), wherever
+    # they run
     runs-on: >-
-      ${{ matrix.os == 'ubuntu-latest'
-      && fromJSON('["self-hosted", "Linux", "X64", "pytacheck-fridge-ci"]')
-      || matrix.os }}
+      ${{ matrix.os == 'ubuntu-latest' &&
+      github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || matrix.os }}
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -81,15 +80,17 @@ jobs:
             python: "3.12"
           - os: windows-latest
             python: "3.12"
+    # fixtures are hashed byte for byte: check them out as committed, not with
+    # CRLF (core.eol too: upstream/metacheck marks its files `text=auto`). Set
+    # through the environment, not `git config --global`, which would outlive
+    # the job on a self-hosted runner.
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
     steps:
-      # fixtures are hashed byte for byte: check them out as committed, not with
-      # CRLF (core.eol too: upstream/metacheck marks its files `text=auto`).
-      # Hosted VMs only: these are git's Linux defaults already, and the
-      # self-hosted runner's global git config is not this workflow's to change.
-      - if: runner.environment == 'github-hosted'
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
@@ -113,10 +114,11 @@ jobs:
   # from the committed R outputs (parity/accuracy/golden).
   parity:
     name: Parity and accuracy (committed R goldens)
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -149,10 +151,11 @@ jobs:
   # rejects text that is not valid Unicode: the realistic cases must pass there too.
   parity-pyarrow:
     name: Tier-1 parity with pyarrow
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -170,10 +173,11 @@ jobs:
 
   benchmark:
     name: Performance
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -193,10 +197,11 @@ jobs:
 
   build:
     name: Build distributions
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -211,8 +216,8 @@ jobs:
         run: |
           uv venv "$RUNNER_TEMP/wheel-env"
           uv pip install --python "$RUNNER_TEMP/wheel-env" dist/*.whl
-          "$RUNNER_TEMP/wheel-env/bin/pytacheck" version
-          "$RUNNER_TEMP/wheel-env/bin/python" -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
+          "$RUNNER_TEMP/wheel-env"/bin/pytacheck version
+          "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
       - name: Audit dependencies
         run: uvx pip-audit --strict -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -5,15 +5,16 @@ name: Docker
 #   ghcr.io/<owner>/pytacheck:<tag>-bibr   + bibr (reads PDF/DOCX/HTML directly)
 # Tags: edge (main), X.Y.Z and latest (release tags).
 #
-# Runs on the self-hosted fridge runner (label pytacheck-fridge-ci), a shared
-# service host. The runner has its own OS user and its own rootless Docker
-# daemon; everything that user runs, containers and BuildKit included, is
-# capped at 4 CPUs and 16 GB, and BuildKit asks for 4 CPUs and 12 GB of that.
-# The arm64 half of the pushed image runs under the host's QEMU binfmt handler
-# (a rootless daemon cannot register one). Fork PRs are refused by the job `if`.
-# The Docker daemon persists between jobs, so the image loaded for testing gets
-# a per-run tag and is removed at the end, and the GHCR login goes to a per-job
-# Docker client config instead of the runner user's ~/.docker.
+# Runs on the runner the CI_RUNNER variable names, by the rule in ci.yml, else
+# on GitHub's runners. The self-hosted fridge runner (pytacheck-fridge-ci) is a
+# shared service host: the runner has its own OS user and its own rootless
+# Docker daemon; everything that user runs, containers and BuildKit included,
+# is capped at 4 CPUs and 16 GB, and BuildKit asks for 4 CPUs and 12 GB of that.
+# There the arm64 half of the pushed image runs under the host's QEMU binfmt
+# handler (a rootless daemon cannot register one). The Docker daemon persists
+# between jobs, so the image loaded for testing gets a per-run tag and is
+# removed at the end, and the GHCR login goes to a per-job Docker client config
+# instead of the runner user's ~/.docker.
 
 on:
   push:
@@ -40,10 +41,11 @@ env:
 jobs:
   image:
     name: Image (${{ matrix.variant }})
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, pytacheck-fridge-ci]
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 60
     permissions:
       contents: read
@@ -68,12 +70,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
-      # arm64 emulation for the multi-platform push only (the PR build is native).
-      # setup-qemu-action cannot register binfmt from a rootless daemon; the host
-      # provides the handler (qemu-user-static). Flag F keeps the interpreter
+      # arm64 emulation for the multi-platform push. On a GitHub-hosted VM
+      # setup-qemu-action registers it; it cannot from a rootless daemon, so a
+      # self-hosted runner's host provides the handler (qemu-user-static), checked
+      # before a push (the PR build is native). Flag F keeps the interpreter
       # usable inside the build's containers and user namespace.
+      - if: runner.environment == 'github-hosted'
+        uses: docker/setup-qemu-action@v3
       - name: Check arm64 emulation
-        if: github.event_name != 'pull_request'
+        if: runner.environment == 'self-hosted' && github.event_name != 'pull_request'
         run: |
           f=/proc/sys/fs/binfmt_misc/qemu-aarch64
           if ! grep -qx enabled "$f" 2>/dev/null || ! grep -q '^flags:.*F' "$f"; then
@@ -82,7 +87,8 @@ jobs:
           fi
       - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.0.0
         with:
-          # inside the runner user's slice cap (4 CPUs, 16 GB)
+          # inside the fridge runner user's slice cap (4 CPUs, 16 GB); on a
+          # smaller hosted VM only an upper bound
           driver-opts: memory=12g,cpu-quota=400000,cpu-period=100000
       - name: Tags
         id: tags
