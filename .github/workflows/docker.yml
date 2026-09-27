@@ -30,7 +30,11 @@ env:
 jobs:
   image:
     name: Image (${{ matrix.variant }})
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 60
     permissions:
       contents: read

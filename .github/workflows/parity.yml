@@ -31,7 +31,11 @@ concurrency:
 jobs:
   regenerate:
     name: Regenerate goldens with R and compare
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 60
     defaults:
       run:
@@ -55,9 +59,9 @@ jobs:
           LANG: C.UTF-8
           LC_ALL: C.UTF-8
         run: |
-          git clone --quiet https://github.com/nealrichardson/httptest2.git /tmp/httptest2
-          git -C /tmp/httptest2 checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
-          R CMD INSTALL /tmp/httptest2
+          git clone --quiet https://github.com/nealrichardson/httptest2.git "$RUNNER_TEMP/httptest2"
+          git -C "$RUNNER_TEMP/httptest2" checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
+          R CMD INSTALL "$RUNNER_TEMP/httptest2"
           R CMD INSTALL --no-test-load upstream/metacheck
           # metacheck's suggested careless, in the library only the accuracy report loads
           Rscript parity/r/install-suggests.R

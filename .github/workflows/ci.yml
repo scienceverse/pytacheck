@@ -17,10 +17,18 @@ env:
   UV_VERSION: "0.9.8"
   PRIMARY_PYTHON: "3.12"
 
+# Linux jobs run on the self-hosted runner named by the CI_RUNNER variable
+# when the repository is private and the code comes from this repository (not
+# a fork); otherwise, and whenever CI_RUNNER is unset, on GitHub's runners.
+
 jobs:
   lint:
     name: Lint & types
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -44,7 +52,12 @@ jobs:
   # corpus, parity/corpus.toml); the `parity` job runs every case once.
   test:
     name: Tests (${{ matrix.os }}, py${{ matrix.python }})
-    runs-on: ${{ matrix.os }}
+    runs-on: >-
+      ${{ matrix.os == 'ubuntu-latest' &&
+      github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || matrix.os }}
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -56,12 +69,17 @@ jobs:
             python: "3.12"
           - os: windows-latest
             python: "3.12"
+    # fixtures are hashed byte for byte: check them out as committed, not with
+    # CRLF (core.eol too: upstream/metacheck marks its files `text=auto`). Set
+    # through the environment, not `git config --global`, which would outlive
+    # the job on a self-hosted runner.
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
     steps:
-      # fixtures are hashed byte for byte: check them out as committed, not with
-      # CRLF (core.eol too: upstream/metacheck marks its files `text=auto`)
-      - run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
@@ -84,7 +102,11 @@ jobs:
   # from the committed R outputs (parity/accuracy/golden).
   parity:
     name: Parity and accuracy (committed R goldens)
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -117,7 +139,11 @@ jobs:
   # rejects text that is not valid Unicode: the realistic cases must pass there too.
   parity-pyarrow:
     name: Tier-1 parity with pyarrow
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -134,7 +160,11 @@ jobs:
 
   benchmark:
     name: Performance
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -154,7 +184,11 @@ jobs:
 
   build:
     name: Build distributions
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -167,10 +201,10 @@ jobs:
       - run: uv build
       - name: Check the wheel installs and runs
         run: |
-          uv venv /tmp/wheel-env
-          uv pip install --python /tmp/wheel-env dist/*.whl
-          /tmp/wheel-env/bin/pytacheck version
-          /tmp/wheel-env/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
+          uv venv "$RUNNER_TEMP/wheel-env"
+          uv pip install --python "$RUNNER_TEMP/wheel-env" dist/*.whl
+          "$RUNNER_TEMP/wheel-env"/bin/pytacheck version
+          "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
       - name: Audit dependencies
         run: uvx pip-audit --strict -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
