@@ -33,7 +33,9 @@ the table it built) and C-3's shared matcher (`_r.regex.detector()`). The
 accuracy run's Python side takes 16.9 s instead of 34.7 s (minimum of 5
 interleaved runs), all 439 outputs byte-identical.
 Next: phase A of revision 3 (SNAP, HARNESS, SPIKE-2, TIERS; ARCHITECTURE.md,
-section 4.4), once the maintainer has decided section 6.
+section 4.4), once the maintainer has decided the rest of section 6.
+Decisions 1, 3-11, 13 and 14 are decided (maintainer, 2026-09-27), all as
+recommended except 3, which takes (b). The rest remain open.
 
 `patches/` keeps the prototype the plan builds on:
 

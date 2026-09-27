@@ -381,7 +381,7 @@ class RunContext:
 | N4 threads for hosts, Grobid/bibr/RegCheck jobs, causal | REPO (L7-6), SERVICES-b (L7-7), LINKS (RegCheck), REFS (L5-8); per-host work queues across a paper's repositories in FETCH (RF-3) |
 | N5 LLM single-flight, atomic writes, breaker | LLM-b |
 | E1 `_assemble`/`_call`/`module_run_each`; E3 Settings | CORE 1d |
-| E2 `ModuleSpec.batch` + BL-8 corpus mode | Deferred behind a measured gate (decision 3): build only if loop/list is still ≥ 1.5x after W1-W3 (3.45x today, **M**) |
+| E2 `ModuleSpec.batch` + BL-8 corpus mode | Deferred behind a measured gate (decision 3): build only if loop/list is still ≥ 1.5x after W1-W3 (3.45x today, **M**). The maintainer chose decision 3 (b) on 2026-09-27; this row is not yet re-planned for it |
 | E4-E6, forkserver preload | BATCH-b; the preload imports pandas and `regex`, compiles the built-in sets and loads the DOI dictionaries |
 
 Workers run `with trusted_scope(settings): for path in chunk: execute([read_one(path)], …)`, and Docs die with the chunk.
@@ -529,7 +529,7 @@ Today's parsers keep working (`packs/manifest.py:134` copies unknown keys; `pack
 | Four module forms, dtypes from annotations, `pack.json` schema 2 (D3) | Too many concepts; a hint edit would change dtypes; schema 2 breaks every installed pytacheck. Revision 3 keeps one form and adds no pack field |
 | Union alternation; per-sentence prefilter; `re` for simple patterns | 2.5-4.5x slower; 140.9 against 86.0 ms; case-folding risk for ≈ 0.4 s **(M)** |
 | Aho-Corasick, pyarrow, polars | The prefilter is already cheap; pyarrow is 152 MB; `regex` needs `str` |
-| Corpus mode (BL-8) now | ≈ 1.1-1.3x expected on the core **(E)**, plus a neighbour-invariance risk (decision 3) |
+| Corpus mode (BL-8) now | ≈ 1.1-1.3x expected on the core **(E)**, plus a neighbour-invariance risk (decision 3). The maintainer chose decision 3 (b) on 2026-09-27; this row is not yet re-planned for it |
 
 Revision 3 dropped one rejection: **document order where R shows pattern-major order**. Row order is Band B (FIDELITY.md §8), so funding_check_oi may use document order; it is noted in the release notes (decision 1 b), and no deviation row is needed. The `text_search` façade keeps pattern-major order.
 
@@ -904,7 +904,7 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**` (after lane 2), `pape
 
 **STORE-2a** (1.5 d; phase A; after TIERS). Files: `packs/**` except the §4.11 rows (before MODSYS), the store repository (with the maintainer's permission). Content: ECOSYSTEM.md §4.3 (without the re-pin bot), §4.4, §4.5, §4.7's `CATALOG.md`, the §4.8 additions and §4.10; the §6 store fixes. The project-config code-trust gate stays. Gates: G7; `CATALOG.md` builds; the security baseline rejects reserved and near-duplicate names. Depends on: TIERS.
 
-**STORE-2b** (1.5-2 d, planned at 2; after decision 13, after both `scienceverse/pytacheck` and `scienceverse/pytacheck-modules` are public and index.json is rebuilt from the public store, and after CORE-1d closes). Files: the §4.11 rows of `packs/**`. The `module.py`, `config.py` and `registry.py` rows go as change requests to the core agent. Content: ECOSYSTEM.md §4.11's deletions. Private GitHub stores keep working through the token-only path (host allowlist, cross-origin strip, credential-free records). It writes the `docs/MIGRATING.md` entry for the removals, with the token setup as the before/after example (§4.6). Gates: G7; the token path's tests pass; no pin or run record holds a credential. Until its preconditions hold, STORE-2b does not start, and nothing else waits for it.
+**STORE-2b** (1.5-2 d, planned at 2; after decision 13 (decided 2026-09-27: (a)), after both `scienceverse/pytacheck` and `scienceverse/pytacheck-modules` are public and index.json is rebuilt from the public store, and after CORE-1d closes). Files: the §4.11 rows of `packs/**`. The `module.py`, `config.py` and `registry.py` rows go as change requests to the core agent. Content: ECOSYSTEM.md §4.11's deletions. Private GitHub stores keep working through the token-only path (host allowlist, cross-origin strip, credential-free records). It writes the `docs/MIGRATING.md` entry for the removals, with the token setup as the before/after example (§4.6). Gates: G7; the token path's tests pass; no pin or run record holds a credential. Until its preconditions hold, STORE-2b does not start, and nothing else waits for it.
 
 **COMPAT** (2.5 d; phase C; after PATTERNS, STATS and REFS, days 21-23.5). Files: `compat/**` (new), `src/pytacheck/__init__.py` (from the core agent), `docs/MIGRATING.md`. Content: `pc.check()` and `Report`, `pc.configure`, `pc.status`, `pc.status_table` (the surface of ECOSYSTEM.md §3.3); the 303 R-shaped names in `pytacheck.compat`, on the existing `_EXPORTS` lazy map plus a deprecation hook; deprecated top-level re-exports until 1.0; `pc.hosts` with the `Host` protocol, and the list of what happens to the 25 non-protocol host functions (decision 15). Gates: every name in today's `_EXPORTS` resolves from compat; the parity harness runs on compat with no case changes; an old-style script runs with deprecation warnings only. Depends on: CORE-1e.
 
@@ -955,7 +955,7 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**` (after lane 2), `pape
 
 **SERVICES-a** (**3 d**, was 2; after HARNESS) and **SERVICES-b** (**2.5 d**, was 1.5; after CORE-1e and SERVICES-a, days 16-18.5). Files: `io/**` (the grobid hook after CORE-1b), `statout/**`, `report/**` except `blocks.to_canonical` (SERVICES-b; `report/render.py` and `report/blocks.py` pass to it when CORE-1e closes), `api/**` except `api/web.py` (SERVICES-b), `tests/{io,bibr12,grobid12,statout_*,report,api}/**`. SERVICES-a: statout, timestamps, corpus RDS, `bibr_convert`, R-internal warnings. SERVICES-b: `_Deparser` → R-literal writer; `read_plan`/`read_one`, `read(workers=)`; L7-7 to L7-9; the report's "Source" footer (AGPL §13, ECOSYSTEM.md §5.4), a block built from the data `GET /source` returns, inside its 2.5 days. Gates: lane 7's SERVICES gates; G1 on io, bibr12, grobid12, statout_*, report (+ review); the api tests; the report footer names the running commit and each active pack; `read(xml)` ≤ SPIKE-2's target. Deletes: the SPV R evaluator, the civil-date and `R_strtod` ports, `_RdsReader`, `_Deparser` and its Unicode tables.
 
-**BATCH-a** (**3 d**: 1.5 in revision 2, +0.5 in revision 3, +1 from REPO_FETCH.md; after HARNESS, placed at days 6.5-9.5 to hold parallelism to 7) and **BATCH-b** (6 d; after CORE-1d and SERVICES-b). Files: `http.py`, `log.py`, `cli.py`, `batch/**` (new), `parity/batch.py` (from HARNESS), `docs/BATCH.md`, `tests/batch/**`. BATCH-a: BL-1 (N1 limiter, rolling window), BL-4 (per-process logs); from REPO_FETCH.md: HTTP/1.1 on the shared client with its test and pool sizing (RF-1), `HostPolicy` path scopes with several windows, an identity dimension and sliding-window logs, the OSF and GitHub policies (§2.2 there), and an empty cookie jar for OSF hosts. BATCH-b: BL-2, BL-5 to BL-7, H2 (a, c, d), BL-9; BL-8 only if decision 3's gate calls for it. Gates: G8 `batch`; a 1,000-paper synthetic run under `jobs` × 300 MB RSS; the fault test; CLI tests; httpmock replays unchanged; `io/bench_window.py` ≥ 2x. Deletes: per-call `Throttle`; `_host_reset`.
+**BATCH-a** (**3 d**: 1.5 in revision 2, +0.5 in revision 3, +1 from REPO_FETCH.md; after HARNESS, placed at days 6.5-9.5 to hold parallelism to 7) and **BATCH-b** (6 d; after CORE-1d and SERVICES-b). Files: `http.py`, `log.py`, `cli.py`, `batch/**` (new), `parity/batch.py` (from HARNESS), `docs/BATCH.md`, `tests/batch/**`. BATCH-a: BL-1 (N1 limiter, rolling window), BL-4 (per-process logs); from REPO_FETCH.md: HTTP/1.1 on the shared client with its test and pool sizing (RF-1), `HostPolicy` path scopes with several windows, an identity dimension and sliding-window logs, the OSF and GitHub policies (§2.2 there), and an empty cookie jar for OSF hosts. BATCH-b: BL-2, BL-5 to BL-7, H2 (a, c, d), BL-9; BL-8 only if decision 3's gate calls for it (the maintainer chose decision 3 (b) on 2026-09-27; this is not yet re-planned for it). Gates: G8 `batch`; a 1,000-paper synthetic run under `jobs` × 300 MB RSS; the fault test; CLI tests; httpmock replays unchanged; `io/bench_window.py` ≥ 2x. Deletes: per-call `Throttle`; `_host_reset`.
 
 **FETCH** (**4 d**; new, from REPO_FETCH.md; after BATCH-a, days 9.5-13.5). Files: the network paths in `archives/**` (`osf.py`, `osf_helpers.py`, `zip_peek.py`, `github.py`, `gitlab.py`, the dataset clients' `_query` and `repo_info_cache` call sites, and in `download.py` `_remote_content_length` (`:615-633`), the OSF zip gate (`:1731-1740`), the Git repository reuse and the GitHub zipball size HEAD with the warnings that read it (`:1906-1951`) and the member path (`:1452-1500`)), `modules/{repo_check,_repo_check}.py` (the listing loops and `_peek_zips`), `modules/data_check.py` (the zip-peek loop, `:884-901`, for RF-6; the zip-gate count, `:926-940`, for U-1), `tests/{mod_repo_check,mod_data_check,archives_d1,archives_d2,archives_gz,archives_osf,repo_download}/**` (`mod_data_check` until DATA-b), and a new replayed row in `parity/cassettes/**` through the `parity/**` owner. Content: REPO_FETCH.md RF-2's call sites and RF-3 to RF-7; U-1 to U-4; the OSF tree-vector and git-SHA validators, on CACHE's API; the `repo_info_cache` call sites moved onto the store. `repo_check.py` and `_repo_check.py` come first (days 9.5-11), since REPO takes them at day 13.5. Gates: G1 on the archives areas, repo_download, mod_repo_check and mod_data_check (+ review), with fixtures re-recorded where request counts change (BATCH R4); the replayed row, `repo_check` and `data_check` on the demo, psy737 and a GitHub + Zenodo paper, recorded live once with HARNESS-NET's mechanism; frames identical with and without RF-4′ on the recorded trees; with the store on, the replayed row cold and then warm gives identical outputs; recorded vector fixtures (a child's date changed, a node added or removed, a node missing from a token caller's vector, a vector over 2 pages that skips or repeats a node, a component link against a root link, a view-only link) each force a re-list; deviation rows for U-1 and U-2, and for OSF file `downloads` counts served from the store (REPO_FETCH.md §5.2), with the note in `osf_info()`'s and `osf_file_download()`'s docs. A token-bearing OSF fixture needs two OSF test accounts; until they exist, RF-4′ runs only without a token. Depends on: BATCH-a, and CACHE's store protocol (day 10.5) for the validators.
 
@@ -1209,9 +1209,9 @@ Implications:
 
 ## 6. Decisions for the user
 
-The plan assumes each recommendation until the user says otherwise.
+Decisions 1, 3-11, 13 and 14 are decided (maintainer, 2026-09-27), all as recommended except 3, which takes (b). The rest remain open, and the plan assumes each recommendation until the user says otherwise.
 
-**1. Output shape where it is visible but does not affect accuracy** (row order, R's 15-digit number text, list-column shapes). Revised in revision 3.
+**1. Output shape where it is visible but does not affect accuracy** (row order, R's 15-digit number text, list-column shapes). Revised in revision 3. **Decided (maintainer, 2026-09-27): (b).**
 - (a) Keep R's shape everywhere; only R bugs change, as U-entries. Revision 2's recommendation.
 - **(b) Adopt FIDELITY.md's three bands: results locked (Band A); order, dtypes, number text, whitespace and error text free and unrecorded (Band B); wording recorded with one scoped row per change (Band C).** Recommended (changed from (a)).
 - *Why (b):* the user asked for relaxed fidelity where it makes the code more Pythonic. The 1,298 case marks become about 200-280 rows before Band B removal, and fewer after (FIDELITY.md §3.2), and ≈ 11,150 more lines of emulation can go (§3.5). The validated modules keep Band A exact on every tier, with a validator's code-owner approval for any change (§4.1). *Cost:* funding_check_oi's row order changes on 11 of 21 papers **(M)**; the release notes list every module whose default order changed (FIDELITY.md §10, risk 7).
@@ -1223,16 +1223,16 @@ The plan assumes each recommendation until the user says otherwise.
 - (d) TOML checks in phase D, once `pytacheck.doc` is stable: patterns, section filters and a traffic-light rule, compiled to `pytacheck.doc`; marginal and all_urls as the proof.
 - *Why (c):* revision 3 proposed (d) because the R translator would emit TOML, but the porting design writes `.py` against `pytacheck.doc` (ECOSYSTEM.md §5.2), and no store author has asked. (d) adds a second module form and ≈ 2 days for no current user, against the goal of fewer lines. Under revision 3 the one-module-per-R-module objection is gone (the map is `porting/modules.toml`, F2), so (d) stays open for when a user appears.
 
-**3. Batch corpus mode (BATCH BL-8).**
+**3. Batch corpus mode (BATCH BL-8).** **Decided (maintainer, 2026-09-27): (b).** The plan (§2.8, §2.13, §4.3 BATCH-b, §4.4) still follows (a) and is not yet re-planned for (b).
 - **(a) Defer: re-measure the loop/list ratio after W1-W3 and build only if still ≥ 1.5x (3.45x today, M).** Recommended.
 - (b) Build it with the batch engine, taking on per-module neighbour-invariance risk.
 
-**4. LLM grounding flags.**
+**4. LLM grounding flags.** **Decided (maintainer, 2026-09-27): (a).**
 - **(a) Observation-only checks that LLM quotes occur in their source; a note, a warning and a count, and no value changed.** Recommended.
 - (b) Not now.
 - *Why (a):* it makes hallucination visible, and it runs only when the LLM is on.
 
-**5. Pacing.** Revised in revision 3.
+**5. Pacing.** Revised in revision 3. **Decided (maintainer, 2026-09-27): (a).**
 - **(a) Phases A-D (§4.4) with three stop points: after SPIKE-2 (day 2), at day 11.5 (the deviation rows and the metacheck team's answers), and at the CORE checkpoint at CORE-1d's close (day 13.5), before any wave starts.** Recommended.
 - (b) Phase A only, then re-plan: the fidelity contract, validation status, presets and the store ship, and the rewrite waits.
 - (c) Phases A and B plus the paper-module waves (PATTERNS, STATS, REFS, MODSYS, COMPAT); the repository cluster then gets only the lane 3/4 leaf de-emulations behind adapters.
@@ -1240,28 +1240,28 @@ The plan assumes each recommendation until the user says otherwise.
 - *Context:* ≈ 126 package-days in 36 packages (116.5 in 34 before REPO_FETCH.md); critical path ≈ 27 days, ≈ 31 with ≈ 4 days of calendar contingency (§4.4). The payoff is ≈ 4.5x on module CPU, −26% code (≈ 93,300 lines, §5.3), and the ecosystem of ECOSYSTEM.md. CORE-0 alone already gave 2.1x on the accuracy matrix (34.7 → 16.9 s, **C**); the rest of the plan adds ≈ 1.5x there (to 10-12 s, §5.4).
 - *Why (a):* phase A is useful on its own (users choose validated or experimental checks from the first release), and each stop point comes with measured numbers.
 
-**6. Repeated `paper_id`s in a paper list** (new; changes counts users read).
+**6. Repeated `paper_id`s in a paper list** (new; changes counts users read). **Decided (maintainer, 2026-09-27): (a).**
 - **(a) Resolve once at the list boundary: warn, and rename later repeats `id~2`, `id~3`, as `report(list)` already plans; every module then treats them as distinct papers.** Recommended.
 - (b) Keep R's per-module behaviour (merged pools, cross-joined sections, crashes), each replicated and pinned.
 - (c) Refuse such lists with an error.
 - *Why (a):* one defined behaviour instead of five; no pooling of different papers (ref_consistency merged two distinct papers' references, **R**); a list that repeats one paper in two formats still works.
 
-**7. A pack whose `requires.pytacheck` excludes the running version** (new; store contract).
+**7. A pack whose `requires.pytacheck` excludes the running version** (new; store contract). **Decided (maintainer, 2026-09-27): (a).**
 - **(a) Warn at load (as at install today), with dev builds satisfying `>= X.Y.Z`; error only in `pack check` and `store build --check`.** Recommended.
 - (b) Refuse at load and hide the pack from `store search`.
 - *Why (a):* (b) would reject every pack on a dev build, including in our own store CI **(R)**, and it changes user-facing store behaviour for no measured benefit.
 
-**Revision 3 decisions.** Decisions 8-14 and 17-19 come from ECOSYSTEM.md §9, which gives the evidence for each.
+**Revision 3 decisions.** Decisions 8-14 and 17-19 come from ECOSYSTEM.md §9, which gives the evidence for each. In a decided row, (a) is the recommendation.
 
 | # | Decision | Recommendation | Where |
 |---|---|---|---|
-| 8 | The launch validated set | the 5 team-validated modules (power, stat_p_exact, stat_p_nonsig, marginal, stat_effect_size), or 4 if the team drops one; the team decides. stat_check and ref_accuracy stay experimental until a team rerun on this implementation certifies them. Every gate applies to every module the registry snapshot labels validated | ECOSYSTEM.md §1.1, §3.1 |
-| 9 | Replace `metacheck::validated` | yes, by the `validated` policy, with a deprecated alias until 1.0. The web app uses validated ∩ `server_safe` (16 → at most 5 modules); data_check becomes experimental | ECOSYSTEM.md §3.2, §3.4 |
-| 10 | Default policies | library and CLI `experimental`, which also runs modules from packs the user installed; web app and API `validated` | ECOSYSTEM.md §3.4 |
-| 11 | Field scope | applies only when the preset declares `fields`; with no preset fields a certification counts, and the badge names the corpus field | ECOSYSTEM.md §2.6 |
+| 8 | The launch validated set. **Decided (maintainer, 2026-09-27): (a).** | the 5 team-validated modules (power, stat_p_exact, stat_p_nonsig, marginal, stat_effect_size), or 4 if the team drops one; the team decides. stat_check and ref_accuracy stay experimental until a team rerun on this implementation certifies them. Every gate applies to every module the registry snapshot labels validated | ECOSYSTEM.md §1.1, §3.1 |
+| 9 | Replace `metacheck::validated`. **Decided (maintainer, 2026-09-27): (a).** | yes, by the `validated` policy, with a deprecated alias until 1.0. The web app uses validated ∩ `server_safe` (16 → at most 5 modules); data_check becomes experimental | ECOSYSTEM.md §3.2, §3.4 |
+| 10 | Default policies. **Decided (maintainer, 2026-09-27): (a).** | library and CLI `experimental`, which also runs modules from packs the user installed; web app and API `validated` | ECOSYSTEM.md §3.4 |
+| 11 | Field scope. **Decided (maintainer, 2026-09-27): (a).** | applies only when the preset declares `fields`; with no preset fields a certification counts, and the badge names the corpus field | ECOSYSTEM.md §2.6 |
 | 12 | Lookup modules | experimental until certified through `metrics` | ECOSYSTEM.md §2.4 |
-| 13 | Private stores | make pytacheck and the store (`scienceverse/pytacheck-modules`, private today) public, and fix store CI. Private packs and stores stay supported on GitHub only, through a token on the contents and tarball API; netrc, the git fallback and the GitLab and Codeberg forms go (−850 to −1,100 lines, STORE-2b). The project-config code-trust gate stays. No fetch or auth deletion lands before the store is public | ECOSYSTEM.md §4.11, §6 |
-| 14 | Where the registry lives | a team-owned repository, with CODEOWNERS as the validator group; the same validators are code owners of the validated modules and their deviation rows in pytacheck | ECOSYSTEM.md §2.3, §2.5 |
+| 13 | Private stores. **Decided (maintainer, 2026-09-27): (a).** | make pytacheck and the store (`scienceverse/pytacheck-modules`, private today) public, and fix store CI. Private packs and stores stay supported on GitHub only, through a token on the contents and tarball API; netrc, the git fallback and the GitLab and Codeberg forms go (−850 to −1,100 lines, STORE-2b). The project-config code-trust gate stays. No fetch or auth deletion lands before the store is public | ECOSYSTEM.md §4.11, §6 |
+| 14 | Where the registry lives. **Decided (maintainer, 2026-09-27): (a).** | a team-owned repository, with CODEOWNERS as the validator group; the same validators are code owners of the validated modules and their deviation rows in pytacheck | ECOSYSTEM.md §2.3, §2.5 |
 | 17 | Consent for ports | required for store listing, beyond what the licence requires | ECOSYSTEM.md §5.5 |
 | 18 | Inbound terms | DCO, no CLA, for the pytacheck repository and packs kept in the store repository; pinned external packs rely on the licence check and the consent record | ECOSYSTEM.md §5.4 |
 | 19 | Legal review | counsel reviews ECOSYSTEM.md §5.4, including its Uncertainties list, before third-party ports are listed | ECOSYSTEM.md §5.4 |

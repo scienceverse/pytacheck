@@ -1,6 +1,6 @@
 # Pytacheck fidelity: results locked, presentation free
 
-**Status.** Draft 2 (2026-09-27), after review 3. Proposed; nothing here is implemented. It changes F1-F3 and F5 of ARCHITECTURE.md §1.1, and it adds harness package HARNESS-v2 (§11) to the plan in ARCHITECTURE.md §4.
+**Status.** Draft 2 (2026-09-27), after review 3. Decision 1 (b) of ARCHITECTURE.md §6 adopts its three bands (maintainer, 2026-09-27); nothing here is implemented. It changes F1-F3 and F5 of ARCHITECTURE.md §1.1, and it adds harness package HARNESS-v2 (§11) to the plan in ARCHITECTURE.md §4.
 
 **Evidence markers.**
 - **(M)**: measured in this session, from `parity.cases.load_cases()`, the case YAML and the source tree at f559c1be. The scripts are in `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/fidelity/` (`count_cases.py`, `count_priv.py`, `pres.py`, `val.py`), and review 3's scripts in `scratchpad/review3/` (`c1.py`-`c7.py`, `num.py`).
@@ -287,7 +287,7 @@ HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbol
 | §2.13 `module_api` / store filtering | CHANGE | Filtering by validation status is now needed (ECOSYSTEM.md §3) |
 | §2.13 schema 2 | KEEP rejected | Packs keep their existing `validation` record; status comes from the registry (ECOSYSTEM.md §2.3) |
 | §2.13 document order | DROP the rejection | Band B allows it |
-| §2.13 corpus mode | KEEP deferred | Neighbour invariance is a correctness risk |
+| §2.13 corpus mode | KEEP deferred. The maintainer chose decision 3 (b) on 2026-09-27; this row is not yet re-planned for it | Neighbour invariance is a correctness risk |
 | §3.4: R parser, `.rds`, user-visible regex semantics, business logic, statcheck's three-valued logic, coi agrep, ODS walker, SPV decoders, stat-output readers, archive and database clients, `html_text2`, Grobid TEI, UAX#29, bibr 12, tier-2 corpora | KEEP | They decide inputs and detections (Band A) |
 | §3.4 R number formatting | CHANGE | In the report renderer, plus `_r.format_num` for statout cells and LLM prompts (§8, item 2) |
 | §3.4 ICU-like collation | CHANGE | Only for sorted lists users see; audit the 55 `r_sort_key` call sites |
@@ -299,8 +299,8 @@ HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbol
 | §3.4 harness comparator | CHANGE | The canonicaliser goes in front |
 | §3.4 U-entries marked Kept | CHANGE | Keep only those that touch Band A |
 | §3.4 rejected dependencies | KEEP | Unrelated to fidelity |
-| Decision 1 (document order) | CHANGE to (b), unrecorded | Band B |
-| Decision 5 (plan) | CHANGE | Re-planned as phases A-D (ARCHITECTURE.md §4.4) |
+| Decision 1 (document order) | CHANGE to (b), unrecorded. **Decided (maintainer, 2026-09-27): (b).** | Band B |
+| Decision 5 (plan) | CHANGE. **Decided (maintainer, 2026-09-27): (a).** | Re-planned as phases A-D (ARCHITECTURE.md §4.4) |
 
 ---
 

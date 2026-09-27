@@ -2,7 +2,7 @@
 
 **Status.** Draft 2 (2026-09-27; draft 1 was 2026-09-26). Proposed; nothing here is implemented, in pytacheck or in the store repository `scienceverse/pytacheck-modules`. It extends `docs/design/module-system-v2.md`, whose deferred item "multi-level trust tiers, a policy engine" (`:592`) it brings back as data, not as a policy engine. Legal statements in §5 are an engineering assessment, not legal advice.
 
-**Evidence markers.** As in FIDELITY.md: **(M)** measured in this session (upstream metacheck at the harness pin; pytacheck at f559c1be; the store at 1005d6b), **(E)** an estimate with its basis. The research notes behind this document are in `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/results/` (`tiers.md`, `market-gap.md`, `market-research.md`, `porting.md`).
+**Evidence markers.** As in FIDELITY.md: **(M)** measured in this session (upstream metacheck at the harness pin; pytacheck at f559c1be; the store at 1005d6b, and at 23736aa for §1.4 and §6), **(E)** an estimate with its basis. The research notes behind this document are in `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/results/` (`tiers.md`, `market-gap.md`, `market-research.md`, `porting.md`).
 
 ---
 
@@ -77,12 +77,12 @@ These decide the launch list (§3.1). Pytacheck should record the team's answers
 
 ### 1.4 The real store today
 
-`scienceverse/pytacheck-modules` at 1005d6b **(M)**:
+`scienceverse/pytacheck-modules` at 23736aa (main, after pytacheck-modules#1 merged on 2026-09-27) **(M)**:
 - **Two packs.** `clinical_trials` (MIT, one module `trial_registration`, with tests) and `fields` (CC0-1.0, presets only: `general`, `psychology`, `medicine`, `open-science`).
 - **The store repository is private too.** Its README says: "While this store is private, pytacheck needs read access to it: set PYTACHECK_GITHUB_TOKEN (or GH_TOKEN / GITHUB_TOKEN)". Every index.json entry points at `scienceverse/pytacheck-modules`. So today every store user goes through the token fetch chain in `stores.py:223-295`, and outside researchers cannot fork it to contribute.
-- **CI fails on every PR.** `check.yml` installs pytacheck from git, and the pytacheck repository is private, so it needs `PYTACHECK_READ_TOKEN`. That secret is empty. It is also set in the workflow-level `env`, so it would reach the steps that run a pack's code and tests.
-- **It pins a stale feature branch.** `claude/pytacheck-metacheck-fork-0x7q73` (6cec4b56; main is 8d8a2364) is named at `check.yml:16`, `README.md:16,37` and `CONTRIBUTING.md:9,16`. pytacheck's own `packs/scaffold.py:23-26` writes the same pin into every new pack.
-- **index.json is stale.** It was generated at 2026-09-24T21:00:27Z and lists clinical_trials 0.1.0 and fields 0.1.0; the pack.json files say 0.2.0 and 0.1.1.
+- **CI passes.** pytacheck-modules#1 (merged 2026-09-27) moved `check.yml` to a self-hosted runner and gave `PYTACHECK_READ_TOKEN` only to the two "Install pytacheck" steps (`check.yml:86-87`, `:150-151`), as an HTTP header scoped to `scienceverse/pytacheck`. It is no longer in the workflow-level `env`. The secret is set, and every run since 09:11 UTC on 2026-09-27 passed, including the push to main after the merge and pytacheck-modules#2. The `check` job still runs pack code and tests with `contents: read` (§6 item 5), and it skips PRs from forks (`check.yml:59-61`), so an outside contributor gets no CI run.
+- **Main still pins a stale feature branch.** `claude/pytacheck-metacheck-fork-0x7q73` (6cec4b56; pytacheck's main is 8d8a2364, the initial commit only) is named at `check.yml:39`, `README.md:16,37` and `CONTRIBUTING.md:9,16`. pytacheck-modules#2 (open; `ci/repin-pytacheck` at 160a27e) re-pins all five to `claude/elegant-fermat-eo7s89`, the head of `scienceverse/pytacheck#1`, and says to switch to `@main` once that pull request merges. pytacheck's own `packs/scaffold.py:24-27` now writes the same branch into every new pack. It is still a constant, not derived from the installed version.
+- **index.json is current.** 40cc467 (in pytacheck-modules#1) rebuilt it: generated at 2026-09-27T13:19:18Z, it lists clinical_trials 0.2.0 and fields 0.1.1, as the pack.json files say. The index job's run on main after the merge found it up to date.
 - **Licence wording.** `REVIEW.md:22` and `CONTRIBUTING.md:23` allow CC0-1.0 for packs, while `pack check` asks for "an OSI-approved licence" (`check.py:284`). CC0 is not OSI-approved but is GPL-compatible, so the two rules disagree. The store should ask for a licence on the §5.4 list instead.
 - **The medicine preset says** "add the clinical_trials pack" in prose, because pack.json cannot declare a pack dependency (§4.10).
 - **No `packs/*.json` entries yet.** Both packs are folders in the store repository; no pack is pinned from an author's repository.
@@ -396,7 +396,7 @@ Labs and institutes may run their own stores, public or private (§4.11). Allowl
 
 The project-config code-trust gate is **not** deleted (§4.8). Nor is `config_files()` (`config.py:231-261`), which is core config loading.
 
-**Total (E):** 850-1,100 source lines and about 700 test lines, about 16-20% of `packs/`. This is a decision (§9, decision 13): private-store support was added deliberately in the store's last commit, so it is narrowed to GitHub with a token, not removed. "Clone it and use a path pin" is not the replacement: a path pack is `trust=local`, unpinned ("live: edits take effect at once, nothing is pinned", `install.py:666`), gets no integrity check or yank notice, and is excluded from the API and the web app (`registry.py:453-458`). The rows that touch `module.py`, `config.py` and `registry.py` are files CORE holds, so they land as a change request to the core agent after CORE-1d (§8, STORE-2b).
+**Total (E):** 850-1,100 source lines and about 700 test lines, about 16-20% of `packs/`. This is a decision (§9, decision 13): private-store support was added deliberately in the store's commit 1005d6b, so it is narrowed to GitHub with a token, not removed. "Clone it and use a path pin" is not the replacement: a path pack is `trust=local`, unpinned ("live: edits take effect at once, nothing is pinned", `install.py:666`), gets no integrity check or yank notice, and is excluded from the API and the web app (`registry.py:453-458`). The rows that touch `module.py`, `config.py` and `registry.py` are files CORE holds, so they land as a change request to the core agent after CORE-1d (§8, STORE-2b).
 
 ### 4.12 Net size
 
@@ -465,7 +465,7 @@ Cost for 22 inputs (E, from `PERF_REPORT.md:30-35`): R ≈ 15 s, Python 1-2 s. `
 
 **Size (E).** ≈ 1,260 new lines (licence 200, consent 120, extract 200, brief and loop 150, diff 250, update 80, enforcement 140, CLI 120) and ≈ 1,100 moved (the R runner and the scorer, extracted to `pytacheck.port`).
 
-**The pilot.** No third-party metacheck R module is known today; all 30 upstream modules are already ported by hand. So PORT's gate is a round-trip port of an upstream module, for example `marginal.R`, that passes `port diff` at the thresholds above. An external pilot needs a named module and author, with consent in hand before PORT starts: waiting for an author's reply is not in PORT's 5 days. The lack of demand evidence is a risk, and PORT can wait behind ARCHITECTURE.md decision 5's phase-A stop point until a real request arrives.
+**The pilot.** No third-party metacheck R module is known today; all 30 upstream modules are already ported by hand. So PORT's gate is a round-trip port of an upstream module, for example `marginal.R`, that passes `port diff` at the thresholds above. An external pilot needs a named module and author, with consent in hand before PORT starts: waiting for an author's reply is not in PORT's 5 days. The lack of demand evidence is a risk, and PORT can wait behind ARCHITECTURE.md decision 5's phase-A stop point (decided 2026-09-27: (a)) until a real request arrives.
 
 **For R authors.** What an R author does to get a module into the store:
 1. Put the `.R` module in a public GitHub repository with a LICENSE on the §5.4 list.
@@ -561,15 +561,15 @@ The install card gains one line: "ported from owner/repo (MIT); consent by @aaut
 
 ## 6. The real store: proposed fixes
 
-None of these has been pushed; the store has no designated branch in this session.
+Status on 2026-09-27: rows 1, 2, 3 and 5 are partly done, through pytacheck-modules#1 (merged 2026-09-27) and pytacheck-modules#2 (open). The other rows are open.
 
 | # | Fix | Where |
 |---|---|---|
-| 1 | **Make CI run, and let outsiders in.** Make both `scienceverse/pytacheck` and `scienceverse/pytacheck-modules` public (recommended; the simplest route for AGPL §13, fork-based contributions and a public catalog). Adding the `PYTACHECK_READ_TOKEN` secret is only a stopgap: it fixes maintainer PRs, never fork PRs, which get no secrets. Until the store is public, pytacheck keeps the token fetch path (§4.11), so no user is cut off | store and pytacheck settings |
-| 2 | **Re-pin** to pytacheck's main branch, or a tag, once `scienceverse/pytacheck#1` merges. Make the scaffold derive its pin from the installed version instead of a constant | `check.yml:16`, `README.md:16,37`, `CONTRIBUTING.md:9,16`; pytacheck `packs/scaffold.py:23-26` |
-| 3 | **Rebuild index.json** (the push-to-main job commits it once CI runs), and again from the public repository once it is public | `index.json` |
+| 1 | **Make CI run, and let outsiders in.** Make both `scienceverse/pytacheck` and `scienceverse/pytacheck-modules` public (recommended; the simplest route for AGPL §13, fork-based contributions and a public catalog). Adding the `PYTACHECK_READ_TOKEN` secret is only a stopgap: it fixes maintainer PRs, never fork PRs, which get no secrets. Until the store is public, pytacheck keeps the token fetch path (§4.11), so no user is cut off. **Partly done** (pytacheck-modules#1): store CI runs on a self-hosted runner and passes, with the `PYTACHECK_READ_TOKEN` secret set. Both repositories are still private | store and pytacheck settings |
+| 2 | **Re-pin** to pytacheck's main branch, or a tag, once `scienceverse/pytacheck#1` merges. Make the scaffold derive its pin from the installed version instead of a constant. **Partly done**: pytacheck-modules#2 (open) re-pins the store to `claude/elegant-fermat-eo7s89`, the head of `scienceverse/pytacheck#1`, since pytacheck's main holds only the initial commit; pytacheck's scaffold names the same branch. The move to main and the derived scaffold pin are not done | `check.yml:39`, `README.md:16,37`, `CONTRIBUTING.md:9,16`; pytacheck `packs/scaffold.py:24-27` |
+| 3 | **Rebuild index.json** (the push-to-main job commits it once CI runs), and again from the public repository once it is public. **Partly done** (pytacheck-modules#1): 40cc467 rebuilt it, and the index job on main found it up to date after the merge. The rebuild from the public repository waits | `index.json` |
 | 4 | **Licence wording:** "a licence on the §5.4 list" for packs, in place of the CC0-only-for-presets and OSI wording; pytacheck's `check.py:284` message to match | `REVIEW.md:22`, `CONTRIBUTING.md:23` |
-| 5 | **Scope the read token to one step.** Move `PYTACHECK_READ_TOKEN` out of the workflow-level `env` onto the install step; run pack code and tests with `permissions: {}`; commit index.json from a separate job on main (§4.8) | `check.yml` |
+| 5 | **Scope the read token to one step.** Move `PYTACHECK_READ_TOKEN` out of the workflow-level `env` onto the install step; run pack code and tests with `permissions: {}`; commit index.json from a separate job on main (§4.8). **Partly done** (pytacheck-modules#1): the token reaches only the install steps. The separate `index` job on main, which commits index.json, was already there before #1. The `check` job still runs pack code and tests with `contents: read` | `check.yml` |
 | 6 | **Drop the other forges from the docs:** remove "gitlab and codeberg sources work the same way" | `CONTRIBUTING.md:61` |
 | 7 | **A validation section in REVIEW.md:** reviewers check code, not accuracy. Status requests go to the registry repository | `REVIEW.md` |
 | 8 | **Three PR templates:** add or update a pack, port an R module (consent, licence verdict, `port diff` table), request a status (evidence record, corpus link) | `.github/PULL_REQUEST_TEMPLATE/` |
@@ -601,7 +601,7 @@ What metacheck needs so both packages read the same registry, in about 150 lines
 |---|---:|---|---|
 | **TIERS** | 2.5 | the provisional `validation.json` snapshot at `src/pytacheck/resources/status/validation.json` (§2.3), labels, policies, `status=` everywhere, `dropped_reasons`, `init`, report badges and box, the `metacheck::validated` alias and its five test files (§3.2), removal of `DEFAULT_MODULES`. Gate: the snapshot's schema, a built-in entry for each module, `select(preset="metacheck::default", status="validated")` returns the 5 modules, and an installed store module named by a preset still runs by default | none; phase A. Owns `presets.py` before CORE-1d. The §8.1 asks are sent before it closes |
 | **STORE-2a** | 1.5 | §4.3 (without the bot), §4.4, §4.5, §4.7 `CATALOG.md`, §4.8 additions, §4.10; the store fixes 1-6 of §6. Files: `packs/**` except the §4.11 rows | TIERS |
-| **STORE-2b** | 1.5-2 | the deletions of §4.11. The `module.py`, `config.py` and `registry.py` rows go as a change request to the core agent | decision 13; both repositories public and index.json rebuilt (§4.11 precondition); CORE-1d closed |
+| **STORE-2b** | 1.5-2 | the deletions of §4.11. The `module.py`, `config.py` and `registry.py` rows go as a change request to the core agent | decision 13 (decided 2026-09-27: (a)); both repositories public and index.json rebuilt (§4.11 precondition); CORE-1d closed |
 | **PORT** | 5 | §5.2-§5.6, with the round-trip pilot of §5.2 | HARNESS-v2 (the canonicaliser), STORE-2a |
 
 The registry repository, its CI and the validator group are the team's work, not a pytacheck package.
@@ -625,17 +625,17 @@ The design needs work or agreement from people outside pytacheck. The pytacheck 
 
 ## 9. Decisions
 
-Numbered as in ARCHITECTURE.md §6, which carries the full list.
+Numbered as in ARCHITECTURE.md §6, which carries the full list. Decisions 8-11, 13 and 14 are decided (maintainer, 2026-09-27), all as recommended; in a decided row, (a) is the recommendation. Decisions 12 and 17-20 remain open.
 
 | # | Decision | Recommendation |
 |---|---|---|
-| 8 | The launch validated set (Q1) | the 5 team-validated modules (or 4, if the team drops one); the team decides. stat_check and ref_accuracy stay experimental until a team rerun on this implementation certifies them. Gates apply to every module the registry snapshot labels validated |
-| 9 | Replace `metacheck::validated` | yes, by the `validated` policy, with a deprecated alias until 1.0 (§3.2). The web app uses validated ∩ `server_safe` (16 → at most 5 modules); data_check becomes experimental |
-| 10 | Default policies | library and CLI `experimental`, which also runs modules from packs the user installed; web app and API `validated` |
-| 11 | Field scope (Q5) | applies only when the preset declares `fields`: then a certification counts only for overlapping fields. With no preset fields it counts, and the badge names the corpus field |
+| 8 | The launch validated set (Q1). **Decided (maintainer, 2026-09-27): (a).** | the 5 team-validated modules (or 4, if the team drops one); the team decides. stat_check and ref_accuracy stay experimental until a team rerun on this implementation certifies them. Gates apply to every module the registry snapshot labels validated |
+| 9 | Replace `metacheck::validated`. **Decided (maintainer, 2026-09-27): (a).** | yes, by the `validated` policy, with a deprecated alias until 1.0 (§3.2). The web app uses validated ∩ `server_safe` (16 → at most 5 modules); data_check becomes experimental |
+| 10 | Default policies. **Decided (maintainer, 2026-09-27): (a).** | library and CLI `experimental`, which also runs modules from packs the user installed; web app and API `validated` |
+| 11 | Field scope (Q5). **Decided (maintainer, 2026-09-27): (a).** | applies only when the preset declares `fields`: then a certification counts only for overlapping fields. With no preset fields it counts, and the badge names the corpus field |
 | 12 | Lookup modules (Q6) | experimental until certified through `metrics` |
-| 13 | Private stores | make pytacheck and the store public, and fix store CI. Private packs and stores stay supported on GitHub only, through a token on the contents and tarball API (host allowlist, cross-origin strip and credential-free records kept); netrc, the git fallback and the GitLab and Codeberg forms go (−850 to −1,100 lines). The project-config code-trust gate stays. No fetch or auth deletion lands before the store is public |
-| 14 | Where the registry lives | a team-owned repository, with CODEOWNERS as the validator group; the same validators are code owners of the validated modules and their deviation rows in pytacheck (§2.5) |
+| 13 | Private stores. **Decided (maintainer, 2026-09-27): (a).** | make pytacheck and the store public, and fix store CI. Private packs and stores stay supported on GitHub only, through a token on the contents and tarball API (host allowlist, cross-origin strip and credential-free records kept); netrc, the git fallback and the GitLab and Codeberg forms go (−850 to −1,100 lines). The project-config code-trust gate stays. No fetch or auth deletion lands before the store is public |
+| 14 | Where the registry lives. **Decided (maintainer, 2026-09-27): (a).** | a team-owned repository, with CODEOWNERS as the validator group; the same validators are code owners of the validated modules and their deviation rows in pytacheck (§2.5) |
 | 17 | Consent for ports | required for store listing, beyond what the licence requires |
 | 18 | Inbound terms | DCO, no CLA, for the pytacheck repository and packs kept in the store repository; pinned external packs rely on the licence check and consent record |
 | 19 | Legal review | counsel reviews §5.4, including its Uncertainties list, before third-party ports are listed |
