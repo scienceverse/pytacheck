@@ -41,6 +41,8 @@ jobs:
     name: Regenerate goldens with R and compare
     runs-on: ubuntu-24.04 # the goldens' glibc (see the header)
     timeout-minutes: 60
+    env:
+      UV_PYTHON_PREFERENCE: only-managed # as in ci.yml
     defaults:
       run:
         shell: bash -el {0}
@@ -75,7 +77,11 @@ jobs:
         with:
           version: "0.9.8"
           python-version: "3.12"
+      # Outside the R environment (a shell without its activation), so the C
+      # extensions (cdifflib) build with the system compiler like in ci.yml, not
+      # with the conda compiler the environment sets as CC, which fails on them.
       - run: uv sync --locked --all-extras
+        shell: bash
 
       - name: Regenerate all goldens
         run: uv run python -m parity generate
