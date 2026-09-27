@@ -20,6 +20,7 @@ import hashlib
 import inspect
 import math
 import os
+import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -44,11 +45,17 @@ __all__ = [
 ]
 
 _sha_cache: dict[str, tuple[tuple[int, int, int], str]] = {}
+#: Files modified less than this long ago are not cached: rewritten again within
+#: the same tick of the filesystem clock (a few ms; 2 s on FAT), a file keeps its
+#: mtime, size and inode, and the cache would serve the old hash (git's "racily
+#: clean" entries).
+_RACY_NS = 3_000_000_000
 
 
 def file_sha256(path: str | os.PathLike[str]) -> str:
     """The sha256 hex digest of a file, cached against its ``(mtime_ns, size, inode)``."""
     key = os.fspath(path)
+    now = time.time_ns()  # before the stat: later writes get a later mtime
     st = os.stat(key)
     sig = (st.st_mtime_ns, st.st_size, st.st_ino)
     hit = _sha_cache.get(key)
@@ -59,7 +66,8 @@ def file_sha256(path: str | os.PathLike[str]) -> str:
         for chunk in iter(lambda: fh.read(1 << 20), b""):
             h.update(chunk)
     digest = h.hexdigest()
-    _sha_cache[key] = (sig, digest)
+    if now - st.st_mtime_ns >= _RACY_NS:
+        _sha_cache[key] = (sig, digest)
     return digest
 
 

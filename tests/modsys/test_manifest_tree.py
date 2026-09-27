@@ -20,7 +20,7 @@ from pytacheck.packs.manifest import (
     validate_preset,
 )
 from pytacheck.packs.registry import builtin_pack, install_dir, pin_rev12
-from pytacheck.packs.tree import tree_files, tree_sha256
+from pytacheck.packs.tree import file_sha256, tree_files, tree_sha256
 
 
 @pytest.mark.parametrize("name", ["ab", "psych", "my-pack", "lab_2", "a" * 40])
@@ -173,6 +173,18 @@ def test_tree_files_and_hash(tmp_path) -> None:
     assert tree_sha256(tmp_path) == first
     (tmp_path / "alpha.py").write_text("x = 2\n")
     assert tree_sha256(tmp_path) != first
+
+
+def test_rewrite_in_the_same_timestamp_tick_is_seen(tmp_path) -> None:
+    # a same-size rewrite in place that lands in the tick of the filesystem clock
+    # the first write did: mtime, size and inode all stay the same
+    f = tmp_path / "alpha.py"
+    f.write_text("x = 1\n")
+    first = file_sha256(f)
+    st = f.stat()
+    f.write_text("x = 2\n")
+    os.utime(f, ns=(st.st_atime_ns, st.st_mtime_ns))
+    assert file_sha256(f) != first
 
 
 @pytest.mark.skipif(
