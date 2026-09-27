@@ -70,6 +70,13 @@ jobs:
           persist-credentials: false
           submodules: true
 
+      # checkout marks the workspace safe only in a temporary HOME. The job's
+      # git runs as root on a folder the runner's user owns, so without this
+      # git refuses the repository, and `git diff A B` then compares the two
+      # folders with each other (--no-index) instead of against HEAD.
+      - name: Trust the workspace for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: R reference environment (exact conda-forge builds)
         uses: mamba-org/setup-micromamba@v2
         with:
@@ -112,6 +119,7 @@ jobs:
       - name: Goldens must match the committed ones
         if: always()
         run: |
+          git rev-parse --show-toplevel > /dev/null # fails here, not in a folder-to-folder diff, if git sees no repository
           if ! git diff --quiet -- parity/golden parity/accuracy/golden; then
             git diff --stat -- parity/golden parity/accuracy/golden
             echo "::error::Goldens regenerated from R differ from the committed goldens."
