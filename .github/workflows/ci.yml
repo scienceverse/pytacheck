@@ -3,10 +3,12 @@ name: CI
 # Linux jobs run on the self-hosted runner named by the CI_RUNNER variable
 # (pytacheck-fridge-ci: the fridge runner) when the repository is private and
 # the code comes from this repository (not a fork); otherwise, and whenever
-# CI_RUNNER is unset, on GitHub's runners. The macOS and Windows test legs are
-# always GitHub-hosted. A self-hosted runner keeps its workspace, caches and
-# home directory between jobs, so scratch files go to $RUNNER_TEMP (emptied
-# per job), not /tmp, and no step changes the runner user's global configuration.
+# CI_RUNNER is unset, on GitHub's runners. The macOS and Windows test legs run
+# only when the Linux jobs are GitHub-hosted too: the fridge runner is Linux
+# only, and a private repository pays for GitHub's runners. A self-hosted
+# runner keeps its workspace, caches and home directory between jobs, so
+# scratch files go to $RUNNER_TEMP (emptied per job), not /tmp, and no step
+# changes the runner user's global configuration.
 
 on:
   push:
@@ -75,11 +77,13 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python: ["3.11", "3.12", "3.13", "3.14"]
-        include:
-          - os: macos-latest
-            python: "3.12"
-          - os: windows-latest
-            python: "3.12"
+        # left out when the Linux legs go to CI_RUNNER (see the header)
+        include: >-
+          ${{ fromJSON(github.event.repository.private &&
+          (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)
+          && vars.CI_RUNNER && '[]' ||
+          '[{"os": "macos-latest", "python": "3.12"}, {"os": "windows-latest", "python": "3.12"}]') }}
     # fixtures are hashed byte for byte: check them out as committed, not with
     # CRLF (core.eol too: upstream/metacheck marks its files `text=auto`). Set
     # through the environment, not `git config --global`, which would outlive

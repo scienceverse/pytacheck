@@ -6,13 +6,15 @@ name: Parity (R reference)
 # report's R outputs (parity/accuracy/golden). Then runs the Python side and
 # the accuracy gate.
 #
-# Unlike the other Linux jobs, this one ignores CI_RUNNER (see ci.yml) and runs
-# on GitHub-hosted Ubuntu 24.04, not ubuntu-latest: the goldens depend on the
-# host's C library. The conda-forge R uses glibc's character tables, so
-# deparse() keeps or escapes a character by the Unicode version of the host's
-# glibc. The goldens are glibc 2.39's (Unicode 15.1, which
-# pytacheck.report.render reproduces); the fridge runner's Debian glibc 2.41
-# (Unicode 16) prints U+1FAE9 and U+0897 where 2.39 escapes them.
+# Runs on the runner the CI_RUNNER variable names, by the rule in ci.yml, else
+# on GitHub's runners, and on either inside an Ubuntu 24.04 container: the
+# goldens depend on the C library. The conda-forge R uses glibc's character
+# tables, so deparse() keeps or escapes a character by the Unicode version of
+# the glibc it runs on. The goldens are glibc 2.39's (Ubuntu 24.04, Unicode
+# 15.1, which pytacheck.report.render reproduces); the fridge runner's own
+# Debian glibc 2.41 (Unicode 16) prints U+1FAE9 and U+0897 where 2.39 escapes
+# them. The container starts bare, so the job installs the few host tools it
+# needs and sets the UTF-8 locale GitHub's Ubuntu runners have.
 
 on:
   pull_request:
@@ -39,14 +41,30 @@ concurrency:
 jobs:
   regenerate:
     name: Regenerate goldens with R and compare
-    runs-on: ubuntu-24.04 # the goldens' glibc (see the header)
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    container: ubuntu:noble-20260911@sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffbb1bf33ca3 # the goldens' glibc (see the header)
     timeout-minutes: 60
     env:
       UV_PYTHON_PREFERENCE: only-managed # as in ci.yml
+      LANG: C.UTF-8
     defaults:
       run:
         shell: bash -el {0}
     steps:
+      # git for checkout's submodules and the httptest2 clone, a C compiler for
+      # the sdists `uv sync` builds (cdifflib); tzdata and unzip as on GitHub's
+      # runners, for R's time zone and utils::unzip()
+      - name: Host tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update -q
+          apt-get install -q -y --no-install-recommends build-essential ca-certificates git tzdata unzip
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
