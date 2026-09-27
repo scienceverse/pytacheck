@@ -96,8 +96,9 @@ jobs:
   sync:
     needs: detect
     if: needs.detect.outputs.sync == 'true' && needs.detect.outputs.open_pr == '0'
-    # GitHub-hosted on purpose (see the header)
-    runs-on: ubuntu-latest
+    # GitHub-hosted on purpose (see the header), on the Ubuntu whose glibc the
+    # goldens it regenerates are made with (see parity.yml)
+    runs-on: ubuntu-24.04
     timeout-minutes: 240
     permissions:
       contents: write
