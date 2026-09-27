@@ -6,7 +6,13 @@ awaiting decisions, not descriptions of the shipped code. (Earlier designs:
 
 - [ARCHITECTURE.md](ARCHITECTURE.md): the indexed-document core, the
   rewrite plan (work packages, gates, schedule) and the decisions that
-  need the maintainer (section 6). Revision 2, after a measured spike.
+  need the maintainer (section 6). Revision 3: a structural re-plan on
+  top of revision 2 (the measured spike), built on the two proposals below.
+- [FIDELITY.md](FIDELITY.md): what pytacheck must keep exactly equal to R
+  (results) and what it may change (presentation), how deviations are
+  recorded, and the canonicaliser that makes this checkable.
+- [ECOSYSTEM.md](ECOSYSTEM.md): validation status and presets, the module
+  store as a marketplace, and porting R modules (licences and consent).
 - [PERF_REPORT.md](PERF_REPORT.md): where the time goes today, R against
   Python per module, and the verified optimisation prototypes.
 - [BATCH_DESIGN.md](BATCH_DESIGN.md): batch processing (fixed costs,
@@ -23,7 +29,8 @@ cached frame stays private; the memo token is used only while the paper holds
 the table it built) and C-3's shared matcher (`_r.regex.detector()`). The
 accuracy run's Python side takes 16.9 s instead of 34.7 s (minimum of 5
 interleaved runs), all 439 outputs byte-identical.
-Next: SNAP, HARNESS and SPIKE-2 (ARCHITECTURE.md, section 4).
+Next: phase A of revision 3 (SNAP, HARNESS, SPIKE-2, TIERS; ARCHITECTURE.md,
+section 4.4), once the maintainer has decided section 6.
 
 `patches/` keeps the prototype the plan builds on:
 
