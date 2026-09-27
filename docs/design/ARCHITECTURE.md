@@ -4,6 +4,8 @@
 - [FIDELITY.md](FIDELITY.md): results locked, presentation free. It replaces F1-F3 and amends F5.
 - [ECOSYSTEM.md](ECOSYSTEM.md): validation status, presets, the module store as a marketplace, and porting R modules.
 
+Amended on 2026-09-27 by [REPO_FETCH.md](REPO_FETCH.md): batched repository fetches, a cache store across runs, and OSF's rate limits. It adds packages FETCH and CACHE, grows BATCH-a and LINKS, and adds decisions 22 and 23 (§0, §2.6, §2.8, §3.2, §4.3 to §4.6, §5.2, §5.3, §6 and Appendix A).
+
 Carried over from revision 2:
 - It replaces the paused right-sizing lanes 3-7. Every de-emulation goal and every acceptance item of those lanes has a home in §3.3; §3.5 adds what relaxed fidelity makes possible.
 - It absorbs `perf/batch/BATCH_DESIGN.md`; §2.8 lists only what changes.
@@ -78,7 +80,8 @@ Revision 2 kept R's output shape everywhere (old decision 1a), so every de-emula
 | Accuracy matrix, Python side (439 outputs) | 35.7 s; R 91.6 s. **16.9 s after CORE-0 (C)** | 21.4 s, with only the façade and 4 modules | ≈ 14-15 s after CORE (was ≈ 15-18 s, already reached by CORE-0); ≈ 10-12 s at the end |
 | 1,000 offline XML papers, 19 modules | ≈ 12.7 min | – | ≈ 6-7 min at `-j 1`; ≈ 2-2.5 min at `-j 4` on idle cores (scaling unmeasured) |
 | `src/pytacheck` | 125,800 lines (M3) | core subset 1,975 lines | **≈ 93,300 (−26%; range 88-97k)**, after adding status, compat, `port/` and the web app. Revision 2's plan, re-sized on the same sweeps, gives ≈ 103,000 (−18%; it claimed ≈ 98,000); relaxed fidelity removes ≈ 11,000 more. One ledger: §5.3 |
-| Work | – | – | **≈ 116.5 package-days in 34 packages** (CORE-0's 1 day is done); **critical path ≈ 27 days**, plus ≈ 4 days of calendar contingency (≈ 31). Revision 2: 78.5 days in 27 packages, critical path 25 (§4.4) |
+| Repository fetches, demo paper | `repo_check` 38.95 s; `data_check` 72.9-76.0 s cold, 35.6 s on a `cache=True` re-run in a new process (REPO_FETCH.md §1) | – | ≈ 12-15 s and ≈ 20-30 s cold; ≈ 2-3 s warm from the cache store (REPO_FETCH.md §7) |
+| Work | – | – | **≈ 126 package-days in 36 packages** (116.5 in 34 before REPO_FETCH.md; CORE-0's 1 day is done); **critical path ≈ 27 days**, plus ≈ 4 days of calendar contingency (≈ 31). Revision 2: 78.5 days in 27 packages, critical path 25 (§4.4) |
 
 All hard per-module budgets stay **provisional** until W1 (PATTERNS) lands and re-measures them.
 
@@ -320,6 +323,7 @@ class RunContext:
     counters: Counter | None
     def cache(self, name) -> RunCache: ...      # BATCH N2: single-flight, errors never stored, LRU 256 MB
     def repo(self, key) -> RepoIndex: ...
+    store: CacheStore | None       # REPO_FETCH §5: across runs; off in the parity harness and tests
     def override(self, **settings): ...         # e.g. llm_use=False, scoped; the one override API
 ```
 
@@ -328,7 +332,7 @@ class RunContext:
 - `local_options` becomes a context-local overlay (L6-1). `_reproducibility`'s process-wide `llm_use(False)` becomes `with current().override(llm_use=False):`.
 - A test asserts that `Settings.capture()` covers every setter exported from `pytacheck/__init__.py`.
 
-**Lifetimes.** Per process: compiled patterns, literal CNFs, DOI dictionaries, host limiters, resolved module specs, file modules. Per run: the output memo, run caches, `RepoIndex`es, `Settings`. Per paper generation: Doc, masks, facets, `RefIndex`. Per call: `get_prev_outputs`.
+**Lifetimes.** Per process: compiled patterns, literal CNFs, DOI dictionaries, host limiters, resolved module specs, file modules. Per run: the output memo, run caches, `RepoIndex`es, `Settings`. Per paper generation: Doc, masks, facets, `RefIndex`. Per call: `get_prev_outputs`. Across runs (REPO_FETCH.md §5): the `CacheStore`, which holds only validated, immutable or short-TTL (1-30 d) repository metadata, zip-peek indexes and file blobs, and the request ledger for OSF's and GitHub's windows of a minute or longer.
 
 **Output memo** (revised; Review B-8). The key is the label, the module identity (pack, rev, file sha256), the frozen arguments, `settings.digest()` (including the 4 LLM options memo keys use today) and the paper state (generation plus id; lazily built tables no longer change it, P3-memo-built-tables). **Only plain-paper calls are memoised, as today; chain steps are not.** A chain-prefix key cannot see whether a predecessor succeeded (errors are never cached, BATCH R5), and no measurement shows chain-step hits, since each `report()` step runs once per paper. A test runs a chain whose predecessor fails the second time.
 
@@ -369,10 +373,12 @@ class RunContext:
 | BATCH item | With this core |
 |---|---|
 | Layer 1 (F1-F4 fixed costs) | Replaced by Doc, RefIndex, DOI dictionaries and facets; L5-1 to L5-3 dropped |
-| N1 host limiter, rolling window | BATCH-a (BL-1), days 6.5-8.5, after phase 0 |
+| N1 host limiter, rolling window | BATCH-a (BL-1), days 6.5-9.5, after phase 0. REPO_FETCH.md §2.2 adds path scopes, several windows per scope, an identity dimension and sliding-window logs, and moves the shared client to HTTP/1.1 (RF-1) |
 | N2 `run_cache` | `RunContext.cache` (CORE 1d); HTTP memo wired by BATCH-b (BL-2) |
+| R5 "nothing persistent is added in v1"; P3-2, an opt-in SQLite HTTP cache | Superseded in part by REPO_FETCH.md §5 (decision 22): a `CacheStore` in v1, on by default only for validated, immutable or short-TTL (1-30 d) repository metadata and blobs, in files with an optional Redis/Valkey backend (CACHE). Lookups (Crossref, PubPeer, retractions) stay unpersisted, and errors are never stored |
+| R6 across processes and runs | The request ledger (CACHE) keeps OSF's and GitHub's windows of a minute or longer across processes and runs; the `1/jobs` rate share stays for shorter windows (decision 23) |
 | N3 key dedup, PubPeer chunks, `add_bib_match` groupby | REFS (L7-1 to L7-3); `osf_type` via the run cache in LINKS (L7-5) |
-| N4 threads for hosts, Grobid/bibr/RegCheck jobs, causal | REPO (L7-6), SERVICES-b (L7-7), LINKS (RegCheck), REFS (L5-8) |
+| N4 threads for hosts, Grobid/bibr/RegCheck jobs, causal | REPO (L7-6), SERVICES-b (L7-7), LINKS (RegCheck), REFS (L5-8); per-host work queues across a paper's repositories in FETCH (RF-3) |
 | N5 LLM single-flight, atomic writes, breaker | LLM-b |
 | E1 `_assemble`/`_call`/`module_run_each`; E3 Settings | CORE 1d |
 | E2 `ModuleSpec.batch` + BL-8 corpus mode | Deferred behind a measured gate (decision 3): build only if loop/list is still ≥ 1.5x after W1-W3 (3.45x today, **M**) |
@@ -566,8 +572,8 @@ class FileEntry:
 
 class RepoIndex:              # one per (repo URL or realpath, listing fingerprint) per run
     entries: tuple[FileEntry, ...]
-    def listing(self): ...                      # archives.listing adapter (REPO), host threads (L7-6)
-    def fetch(self, entries, policy): ...       # shared Settings.download_dir
+    def listing(self): ...                      # archives.listing adapter (REPO), host threads (L7-6), per-host queues (FETCH)
+    def fetch(self, entries, policy): ...       # shared Settings.download_dir; one download scheduler (RF-8); blobs by hash (CACHE's store, wired in LINKS's archives/fetch.py)
     def raw(self, e) -> bytes: ...              # read once; hashes memoised
     def text(self, e) -> Decoded: ...           # delegates to codecheck._decode (CODE-a/b)
     def table(self, e, sheet=None) -> Table: ...# delegates to datacheck readers (DATA-a/b)
@@ -937,9 +943,9 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**` (after lane 2), `pape
 
 **REFS / W3** (**5 d**, was 4.5; after CORE-1e; behaviour PRs after HARNESS-NET). Files: `modules/{ref_accuracy,ref_consistency,ref_miscitation,ref_pubpeer,ref_replication,ref_retraction,ref_summary,causal_claims}.py`, `text/causal.py`, `db/**` except `regcheck*.py`, `tests/{mod_ref_accuracy,mod_ref_db,mod_ref_pubpeer_summary,mod_causal,db}/**`. Order: **ref_consistency first, with per-Doc joins, before any other ref_* module** (Review B-1); the other ref_* modules on `RefIndex` records; ref_summary's 260-line join engine → dict rows with `depends=` for its 4 predecessors; db L7-1 to L7-3 and one JSON path; then the behaviour PRs: ref_pubpeer NA per failed chunk (L5-9), causal_claims dedup, 2 in flight, per-sentence isolation, each paper's own title (L5-8). Gates: G1 on mod_ref_accuracy, mod_ref_db, mod_ref_pubpeer_summary, mod_causal, db (+ review, httpmock replays); G2 incl. miscite/RW rows and HARNESS-NET's rows; G5 incl. the distinct-papers fixture; causal request bodies byte-identical; G4. Deletes: the 7 join helpers, `_key_kind`/`_align_key`, `_refs_with_doi` copies, pivot emulations, dplyr error replays.
 
-**LINKS / W4** (**7.5 d**, was 5.5; after CORE-1e; behaviour PRs after HARNESS-NET; step 5 after REPO). Files: `archives/**` except `archives/listing.py` while REPO holds it, `modules/{prereg_check,_prereg,reg_check}.py`, `db/regcheck.py`, `db/regcheck_local.py`, `tests/{archives_d1,archives_d2,archives_gz,archives_osf,repo_download,mod_prereg,mod_reg}/**`. Order: `archives/links.py` behind `links()` (facet hook via the core steward), `*_links` as façades; prereg_check (pure rewrite), then the `_prereg` flatten and `osf_type` via the run cache; reg_check (pure rewrite), then RegCheck submit-then-poll (L7-7); lane 7's archive units; step 5: host clients return `FileEntry` behind REPO's `archives/listing.py`. Gates: G1 on the four archives areas, repo_download, mod_prereg, mod_reg (+ review); 502/502 bodies; 68/70 zips; the paper-side repo_check row; link detection ≤ 25 ms/paper (205 today, **M**); G4, G5. Deletes: the 14 detectors' `text_search` pipelines, `dataverse._search_frame`, `dataone._scan_links`, `_tre_wide`, the yajl/JSON shims, zip internals, the `_prereg` value model.
+**LINKS / W4** (**8 d**: 5.5 in revision 2, +2 in revision 3, +0.5 from REPO_FETCH.md; after CORE-1e; behaviour PRs after HARNESS-NET; step 5 after REPO). Files: `archives/**` except `archives/listing.py` while REPO holds it, `modules/{prereg_check,_prereg,reg_check}.py`, `db/regcheck.py`, `db/regcheck_local.py`, `tests/{archives_d1,archives_d2,archives_gz,archives_osf,repo_download,mod_prereg,mod_reg}/**`. Order: `archives/links.py` behind `links()` (facet hook via the core steward), `*_links` as façades; prereg_check (pure rewrite), then the `_prereg` flatten and `osf_type` via the run cache; reg_check (pure rewrite), then RegCheck submit-then-poll (L7-7); lane 7's archive units; step 5: host clients return `FileEntry` behind REPO's `archives/listing.py`. The `archives/fetch.py` engine is REPO_FETCH.md's one download scheduler (RF-8), with the GitHub zipball capped by the want-set (U-5); it reads and writes file blobs through CACHE's store, by the listing hash, and keeps a downloaded zip in the run directory for other modules (RF-9). Gates: G1 on the four archives areas, repo_download, mod_prereg, mod_reg (+ review); 502/502 bodies; 68/70 zips; the paper-side repo_check row; link detection ≤ 25 ms/paper (205 today, **M**); G4, G5. Deletes: the 14 detectors' `text_search` pipelines, `dataverse._search_frame`, `dataone._scan_links`, `_tre_wide`, the yajl/JSON shims, zip internals, the `_prereg` value model.
 
-**REPO** (**5 d**, was 4; after CORE-1d). Files: `repository/**` (new), `archives/listing.py` (new, handed to LINKS at close), `modules/{repo_check,_repo_check,_schemas}.py`, `fileinfo/**`, `tests/mod_repo_check/**`. Content: freeze the extras schemas first (`structure`, `previews`, `codebook_vars`, `gated_repos`, `naming_issues`, `repo_metadata`, `version_pin`) with snapshot tests; `RepoIndex` with delegating parse methods and a `FileEntry` adapter over today's listing frames; repo_check as a records-first renderer with host threads, per-repository isolation and `paper_id` per row (L7-6, U). Gates: G1 on mod_repo_check(+review), with the error-text cases passing by presence; G2 on the repository block; file opens ≤ 23 on the traced chain; G5.
+**REPO** (**5 d**, was 4; after CORE-1d and FETCH). Files: `repository/**` (new), `archives/listing.py` (new, handed to LINKS at close), `modules/{repo_check,_repo_check,_schemas}.py`, `fileinfo/**`, `tests/mod_repo_check/**`. Content: freeze the extras schemas first (`structure`, `previews`, `codebook_vars`, `gated_repos`, `naming_issues`, `repo_metadata`, `version_pin`) with snapshot tests; `RepoIndex` with delegating parse methods and a `FileEntry` adapter over today's listing frames; repo_check as a records-first renderer with host threads, per-repository isolation and `paper_id` per row (L7-6, U); FETCH's per-host queues kept; archives shared across modules in one run through `RepoIndex.fetch` (RF-9; LINKS keeps the zip, CODE-b moves code_check onto it). Gates: G1 on mod_repo_check(+review), with the error-text cases passing by presence; G2 on the repository block; file opens ≤ 23 on the traced chain; G5.
 
 **DATA-a** (**3.5 d**, was 3; after HARNESS) and **DATA-b** (**6 d**, was 5; after REPO and DATA-a). Files: `datacheck/**`, `modules/{data_check,_data_check,codebook_check,_codebook,psychds_check}.py` (DATA-b; `_codebook.py` after CORE-0), `tests/{datacheck_*,mod_data_check,mod_codebook,mod_psychds}/**`. Content: §3.3 lane 3; psychds_check as a pure rewrite PR first; DATA-b breaks the data_check/codebook_check cycle, since it owns both files (§2.7). Gates: lane 3's gates; G1 on the datacheck_* areas, mod_data_check, mod_codebook, mod_psychds (+ review); G2 incl. extras and the psychds plan row; codebook scan of the 94K paper ≤ 0.5 s; G5. Deletes: `_files_fread.py`, `_files_readtable.py`, the readxl XML reader, `_LineReader`, `_checks_rvec.py`, `_stats_frame`/`_stack_stats`, the fread fuzz tests.
 
@@ -949,7 +955,11 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**` (after lane 2), `pape
 
 **SERVICES-a** (**3 d**, was 2; after HARNESS) and **SERVICES-b** (**2.5 d**, was 1.5; after CORE-1e and SERVICES-a, days 16-18.5). Files: `io/**` (the grobid hook after CORE-1b), `statout/**`, `report/**` except `blocks.to_canonical` (SERVICES-b; `report/render.py` and `report/blocks.py` pass to it when CORE-1e closes), `api/**` except `api/web.py` (SERVICES-b), `tests/{io,bibr12,grobid12,statout_*,report,api}/**`. SERVICES-a: statout, timestamps, corpus RDS, `bibr_convert`, R-internal warnings. SERVICES-b: `_Deparser` → R-literal writer; `read_plan`/`read_one`, `read(workers=)`; L7-7 to L7-9; the report's "Source" footer (AGPL §13, ECOSYSTEM.md §5.4), a block built from the data `GET /source` returns, inside its 2.5 days. Gates: lane 7's SERVICES gates; G1 on io, bibr12, grobid12, statout_*, report (+ review); the api tests; the report footer names the running commit and each active pack; `read(xml)` ≤ SPIKE-2's target. Deletes: the SPV R evaluator, the civil-date and `R_strtod` ports, `_RdsReader`, `_Deparser` and its Unicode tables.
 
-**BATCH-a** (**2 d**, was 1.5; after HARNESS, placed at days 6.5-8.5 to hold parallelism to 7) and **BATCH-b** (6 d; after CORE-1d and SERVICES-b). Files: `http.py`, `log.py`, `cli.py`, `batch/**` (new), `parity/batch.py` (from HARNESS), `docs/BATCH.md`, `tests/batch/**`. BATCH-a: BL-1 (N1 limiter, rolling window), BL-4 (per-process logs). BATCH-b: BL-2, BL-5 to BL-7, H2 (a, c, d), BL-9; BL-8 only if decision 3's gate calls for it. Gates: G8 `batch`; a 1,000-paper synthetic run under `jobs` × 300 MB RSS; the fault test; CLI tests; httpmock replays unchanged; `io/bench_window.py` ≥ 2x. Deletes: per-call `Throttle`; `_host_reset`.
+**BATCH-a** (**3 d**: 1.5 in revision 2, +0.5 in revision 3, +1 from REPO_FETCH.md; after HARNESS, placed at days 6.5-9.5 to hold parallelism to 7) and **BATCH-b** (6 d; after CORE-1d and SERVICES-b). Files: `http.py`, `log.py`, `cli.py`, `batch/**` (new), `parity/batch.py` (from HARNESS), `docs/BATCH.md`, `tests/batch/**`. BATCH-a: BL-1 (N1 limiter, rolling window), BL-4 (per-process logs); from REPO_FETCH.md: HTTP/1.1 on the shared client with its test and pool sizing (RF-1), `HostPolicy` path scopes with several windows, an identity dimension and sliding-window logs, the OSF and GitHub policies (§2.2 there), and an empty cookie jar for OSF hosts. BATCH-b: BL-2, BL-5 to BL-7, H2 (a, c, d), BL-9; BL-8 only if decision 3's gate calls for it. Gates: G8 `batch`; a 1,000-paper synthetic run under `jobs` × 300 MB RSS; the fault test; CLI tests; httpmock replays unchanged; `io/bench_window.py` ≥ 2x. Deletes: per-call `Throttle`; `_host_reset`.
+
+**FETCH** (**4 d**; new, from REPO_FETCH.md; after BATCH-a, days 9.5-13.5). Files: the network paths in `archives/**` (`osf.py`, `osf_helpers.py`, `zip_peek.py`, `github.py`, `gitlab.py`, the dataset clients' `_query` and `repo_info_cache` call sites, and in `download.py` `_remote_content_length` (`:615-633`), the OSF zip gate (`:1731-1740`), the Git repository reuse and the GitHub zipball size HEAD with the warnings that read it (`:1906-1951`) and the member path (`:1452-1500`)), `modules/{repo_check,_repo_check}.py` (the listing loops and `_peek_zips`), `modules/data_check.py` (the zip-peek loop, `:884-901`, for RF-6; the zip-gate count, `:926-940`, for U-1), `tests/{mod_repo_check,mod_data_check,archives_d1,archives_d2,archives_gz,archives_osf,repo_download}/**` (`mod_data_check` until DATA-b), and a new replayed row in `parity/cassettes/**` through the `parity/**` owner. Content: REPO_FETCH.md RF-2's call sites and RF-3 to RF-7; U-1 to U-4; the OSF tree-vector and git-SHA validators, on CACHE's API; the `repo_info_cache` call sites moved onto the store. `repo_check.py` and `_repo_check.py` come first (days 9.5-11), since REPO takes them at day 13.5. Gates: G1 on the archives areas, repo_download, mod_repo_check and mod_data_check (+ review), with fixtures re-recorded where request counts change (BATCH R4); the replayed row, `repo_check` and `data_check` on the demo, psy737 and a GitHub + Zenodo paper, recorded live once with HARNESS-NET's mechanism; frames identical with and without RF-4′ on the recorded trees; with the store on, the replayed row cold and then warm gives identical outputs; recorded vector fixtures (a child's date changed, a node added or removed, a node missing from a token caller's vector, a vector over 2 pages that skips or repeats a node, a component link against a root link, a view-only link) each force a re-list; deviation rows for U-1 and U-2, and for OSF file `downloads` counts served from the store (REPO_FETCH.md §5.2), with the note in `osf_info()`'s and `osf_file_download()`'s docs. A token-bearing OSF fixture needs two OSF test accounts; until they exist, RF-4′ runs only without a token. Depends on: BATCH-a, and CACHE's store protocol (day 10.5) for the validators.
+
+**CACHE** (**4 d**; new, from REPO_FETCH.md; after BATCH-a, days 9.5-13.5, beside FETCH). Files: `cache/**` (new), `archives/{info_cache,cache}.py`, the ledger hook in `http.py` (between BATCH-a's close and BATCH-b), `docker-compose.yml`, `README.md` (the Docker volume only), `docs/CACHE.md`, `tests/cache/**`, `cli.py` (`--cache-store` only, after BATCH-a); `config.py`, the `redis` extra in `pyproject.toml`, `provenance.py` (the run-record fields), `core/run.py` (`RunContext.store`) and the Valkey service in `.github/workflows/**`, through the core agent. Content: REPO_FETCH.md §5 and §6.3: the store protocol first (by day 10.5, so FETCH can build its validators on it), the file backend, the blob store, the request ledger, the Redis/Valkey backend and the bundled Valkey service, the `cache_store` option and run-record fields, and the dead settings. Gates: the ledger's windows tested with a fake clock across two processes, as a sliding log; a Redis test against a Valkey service container in CI; fail-open when the backend is down; no credentialed or view-only response in the networked tier, and no `anon` OSF tree or id type served to a token caller; a deviation row under FIDELITY.md for a request the ledger refuses (decision 23), with a test that `skip_on_api_limit` fails it at once; with the store off, full parity and the accuracy gate byte-identical to today; NFS-safe writes. Depends on: BATCH-a.
 
 **CLOSE** (**2.5 d**, was 2; after all; core agent). Shrink `docs/UPSTREAM_ISSUES.md` to the Band A metacheck bugs, each linked from its rows (FIDELITY.md §3.2); no directory renames (decision 21); the final test sweep, measured before and after (§5.3); WEB moved onto `pc.check`; ratchet G6 (no module imports `_r.frames`); remove helpers without importers; docs (`docs/ARCHITECTURE.md`, `MODULES.md`, `PORTING.md`, the upstream-sync prompt); CHANGELOG and `docs/MIGRATING.md` for the release (§4.6); re-measure on an idle machine and replace the (E) figures. Gates: one green nightly on main (G1-G9, idle G4).
 
@@ -960,7 +970,7 @@ Revision 3 runs in four phases. They overlap: a phase is defined by what it deli
 | Phase | Days | Packages | Delivers | Stop point |
 |---|---|---|---|---|
 | **A, contract and ecosystem** | 0-13 | SNAP, HARNESS, HARNESS-v2, HARNESS-NET, SPIKE-2, TIERS, STORE-2a | the three fidelity bands, enforced by the harness; status labels, policies and presets; the store fixes and catalog. TIERS and STORE-2a can ship in a release on their own (0.4, §4.6), before any module is rewritten | after SPIKE-2 (day 2); at day 11.5, when the user reviews the deviation rows that the mark migration produced and the metacheck team's answers (ECOSYSTEM.md §8.1). Without the answers, phase A still closes, with a provisional snapshot |
-| **B, the core** | 1-16 | CORE-1a to 1e, and the first halves that need only HARNESS (LLM-a, SERVICES-a, DATA-a, CODE-a, BATCH-a) | `Doc`, the pattern engine, facets, the enforced `depends=` graph, `Result` and typed blocks | the CORE checkpoint at CORE-1d's close (day 13.5): measured numbers go to the user before any wave starts |
+| **B, the core** | 1-16 | CORE-1a to 1e, the first halves that need only HARNESS (LLM-a, SERVICES-a, DATA-a, CODE-a, BATCH-a), and FETCH and CACHE after BATCH-a | `Doc`, the pattern engine, facets, the enforced `depends=` graph, `Result` and typed blocks; batched repository fetches and the cache store (REPO_FETCH.md) | the CORE checkpoint at CORE-1d's close (day 13.5): measured numbers go to the user before any wave starts |
 | **C, the waves** | 13.5-27 | REPO, LLM-b, SERVICES-b, BATCH-b, MODSYS, COMPAT, PATTERNS, STATS, REFS, LINKS, DATA-b, CODE-b, CLOSE | every module on the core; `pc.check` and `pytacheck.compat`; ≈ 93,300 lines | CLOSE (day 27) |
 | **D, porting, the web app and the store deletions** | 11.5-16.5 | PORT, WEB, STORE-2b | `pytacheck port` and the round-trip pilot; the web app as `pytacheck[app]`; the ECOSYSTEM.md §4.11 deletions once their preconditions hold | independent of C: stopping PORT, WEB or STORE-2b does not hold up the rewrite |
 
@@ -979,7 +989,9 @@ LLM-a / LLM-b            ███████                 ███
 SERVICES-a/-b            ██████                 █████
 DATA-a                   ███████
 CODE-a                   ████████
-BATCH-a / -b                 ████                    ████████████
+BATCH-a / -b                 ██████                  ████████████
+FETCH                              ████████
+CACHE                              ████████
 PORT                                   ██████████
 REPO                                       ██████████
 WEB                                        █████
@@ -987,7 +999,7 @@ STORE-2b                                   ████
 PATTERNS                                        ██████████
 STATS                                           ██████████
 REFS                                            ██████████
-LINKS                                           ███████████████
+LINKS                                           ████████████████
 COMPAT                                                    █████
 MODSYS                                                    ███
 DATA-b                                               ████████████
@@ -995,7 +1007,8 @@ CODE-b                                               █████████
 CLOSE                                                            █████
 ```
 
-- **Critical path:** HARNESS (4.5) → CORE-1b (5) → 1c (1.5) → 1d (2.5) → REPO (5) → DATA-b (6) → CLOSE (2.5) ≈ **27 agent-days**, ≈ 31 with the contingency below. It ties with the path through CORE-1e (2.5), SERVICES-b (2.5) and BATCH-b (6). The next path, through CORE-1e and LINKS (7.5), is 26 days. Revision 2: 25.
+- **Critical path:** HARNESS (4.5) → CORE-1b (5) → 1c (1.5) → 1d (2.5) → REPO (5) → DATA-b (6) → CLOSE (2.5) ≈ **27 agent-days**, ≈ 31 with the contingency below. It ties with the path through CORE-1e (2.5), SERVICES-b (2.5) and BATCH-b (6). The next path, through CORE-1e and LINKS (8), is 26.5 days. Revision 2: 25.
+- **FETCH → REPO has no slack.** HARNESS (4.5) → BATCH-a (placed at 6.5-9.5) → FETCH (4) ends at day 13.5, the day CORE-1d closes and REPO takes over `repo_check.py` and `_repo_check.py`. A day's slip in BATCH-a or FETCH, or in CACHE's store protocol (day 10.5), moves REPO, and so the end, by a day; FETCH lands those two files first (REPO_FETCH.md §8).
 - **HARNESS-v2 is off the critical path.** It runs in parallel with CORE-1b, which is checked against SNAP's raw snapshots under today's byte-identical bar. HARNESS-v2 re-points the private cases of CORE-1b's deleted helpers first, as CORE-1b's change requests; from its close (day 13) each deleting PR re-points or retires its own private cases. CORE-1c's first Band B change (`json_expand`'s nulls) needs only the canonicaliser and the flip audit, done by about day 7. The waves need the deviation rows, done by day 11.5.
 - **The checkpoint is a real stop.** It is at CORE-1d's close (day 13.5), before REPO, WEB, STORE-2b and the waves start. Each day the user takes to review it moves the end by a day.
 - **Total:**
@@ -1005,12 +1018,14 @@ CLOSE                                                            █████
   | Revision 2's packages | 78.5 |
   | New packages: HARNESS-v2 8.5, TIERS 2.5, STORE-2a 1.5, STORE-2b 2, COMPAT 2.5, PORT 5, WEB 2.5 | + 24.5 |
   | Changes to revision 2's packages (§4.3), including HARNESS −0.5, CORE-1d +0.5, CORE-1e +1, CLOSE +0.5 and LLM-b +0.5 | + 13.5 |
-  | **Total, in 34 packages** | **≈ 116.5** |
+  | Revision 3 before REPO_FETCH.md, in 34 packages | 116.5 |
+  | REPO_FETCH.md: FETCH 4 and CACHE 4 (new), BATCH-a +1, LINKS +0.5 | + 9.5 |
+  | **Total, in 36 packages** | **≈ 126** |
   | Already done (CORE-0) | 1 |
 
-  The contingency is calendar slack on the critical path, not package-days: ≈ 4 days, sized as the ≈ 10% of the 39.5 package-days that carried marks and U write-ups per PR, which revision 3 no longer needs. It is not in the 116.5 total and not taken out of any package; it is the margin between 27 and ≈ 31 days.
-- **Peak parallelism:** 7 agents on days 4.5-6.5 (HARNESS-v2, HARNESS-NET, CORE-1b, LLM-a, SERVICES-a, DATA-a and CODE-a are separate packages with separate owners), 16-18 and 18.5-21, not counting the core agent as steward. Revision 2: 7. That comes from placing BATCH-a at 6.5-8.5 (after HARNESS-NET closes), PORT after the day-11.5 stop point, LLM-b at 16.5-18 and MODSYS at 21-22.5; none of them is on a critical path.
-- **Slack in the middle:** on days 8.5-11.5 only HARNESS-v2 and the core agent work. WEB cannot use it, since it needs CORE-1d.
+  The contingency is calendar slack on the critical path, not package-days: ≈ 4 days, sized as the ≈ 10% of the 39.5 package-days that carried marks and U write-ups per PR, which revision 3 no longer needs. It is not in the 126 total and not taken out of any package; it is the margin between 27 and ≈ 31 days.
+- **Peak parallelism:** 7 agents on days 4.5-6.5 (HARNESS-v2, HARNESS-NET, CORE-1b, LLM-a, SERVICES-a, DATA-a and CODE-a are separate packages with separate owners), 16-18 and 18.5-21, not counting the core agent as steward. Revision 2: 7. That comes from placing BATCH-a at 6.5-9.5 (after HARNESS-NET closes), PORT after the day-11.5 stop point, LLM-b at 16.5-18 and MODSYS at 21-22.5. PORT, LLM-b and MODSYS are on no critical path. BATCH-a, as placed, now is: it feeds FETCH and REPO with no float (the bullet on FETCH → REPO).
+- **The middle:** before REPO_FETCH.md, days 8.5-11.5 held only HARNESS-v2 and the core agent. Now BATCH-a's third day fills 8.5-9.5, and FETCH and CACHE run 9.5-13.5 beside HARNESS-v2, the core agent and, from day 11.5, PORT: at most 4 agents besides the core agent. WEB cannot start there, since it needs CORE-1d.
 - **Stop points:** after SPIKE-2 (day 2); at day 11.5 (the deviation rows and the team's answers); at the CORE checkpoint (day 13.5).
 
 ### 4.5 Coexistence, deletion and ownership rules
@@ -1036,7 +1051,7 @@ CLOSE                                                            █████
 | `porting/**` | HARNESS-v2 for `porting/modules.toml`, `porting/map/**` and `symbols.json` until it closes (day 13); CORE-1b's entries go to it as change requests. After that the core agent owns both files, and each deleting PR updates its own entries in them (the Deletion rule above; one sorted entry per line). PORT holds `porting/ports/**` only |
 | `compat/**`, `src/pytacheck/__init__.py` | COMPAT from CORE-1e's close; the core agent before and after. The wave packages never edit `__init__.py`; COMPAT re-exports what they add |
 | `api/web.py` | WEB, then LLM-b for the LLM option. It is outside SERVICES-b's `api/**` |
-| `cli.py` | TIERS (`status`, `--status`, `init`), BATCH-a, WEB (`serve --app`), BATCH-b, in that order; each changes only its own commands |
+| `cli.py` | TIERS (`status`, `--status`, `init`), BATCH-a, CACHE (`--cache-store`), WEB (`serve --app`), BATCH-b, in that order; each changes only its own commands |
 | `src/pytacheck/resources/status/validation.json` | A snapshot of the team's registry, refreshed only by a PR that names the registry commit (ECOSYSTEM.md §2.3) |
 | `parity/lock/<area>.json` | Re-locked only by the package that owns the area; others send requests |
 | `porting/symbols.json` | One sorted entry per line, so parallel edits merge line by line |
@@ -1048,7 +1063,7 @@ The tree is at 0.3.1.dev1. The rewrite ships in four minor releases, so users me
 | Release | When | Contents | Breaking for users |
 |---|---|---|---|
 | 0.4 | after phase A (day 13) | TIERS (derived labels, `status=`, badges), STORE-2a, the fidelity bands and the canonicaliser | `DEFAULT_MODULES` goes (use the `metacheck::default` preset); `metacheck::validated` becomes a deprecated alias |
-| 0.5 | after the CORE checkpoint (CORE-1d closes, day 13.5) and CORE-1e | Doc, `depends=`, `Result` and blocks, WEB; STORE-2b if its preconditions hold (decision 13) | none intended for modules: v1 modules and string reports still load; `Result` is new. If STORE-2b lands: netrc, the git fallback and the GitLab, Codeberg, `file://` and `git+` store forms go; private GitHub stores use a `GITHUB_TOKEN` (ECOSYSTEM.md §4.11). If it lands later, these removals move to that release's notes |
+| 0.5 | after the CORE checkpoint (CORE-1d closes, day 13.5) and CORE-1e | Doc, `depends=`, `Result` and blocks, WEB; FETCH and CACHE (REPO_FETCH.md); STORE-2b if its preconditions hold (decision 13) | none intended for modules: v1 modules and string reports still load; `Result` is new. From FETCH and CACHE: U-1 and U-2 change data_check and repo_check results (deviation rows); the cache store is on by default (`cache_store`, decision 22), and `repo_info_cache()` becomes its alias; without `OSF_PAT`, a request past OSF's hourly window fails after waiting at most 60 s with a message naming `OSF_PAT`, and without a GitHub token a request past api.github.com's 60 per hour fails the same way, naming `GITHUB_PAT_GITHUB_COM` (decision 23). If STORE-2b lands: netrc, the git fallback and the GitLab, Codeberg, `file://` and `git+` store forms go; private GitHub stores use a `GITHUB_TOKEN` (ECOSYSTEM.md §4.11). If it lands later, these removals move to that release's notes |
 | 0.6 | after the waves, COMPAT and CLOSE (day 27) | W1-W3, `pytacheck.compat`, the top-level surface (§2.10) | R-shaped top-level names warn and point to `pytacheck.compat`; Band B/C changes listed per module in the release notes |
 | 1.0 | after 0.7 at the earliest, so the names that warn from 0.6 warn for two minor releases (§3.6's deprecation rule) | end of the deprecations | the deprecated top-level re-exports and the `metacheck::validated` alias go |
 
@@ -1118,10 +1133,11 @@ code_decodes_per_file = 1
 | Module work against R | 2.3x | – | ≈ 4x | ≈ 6-8x |
 | 1,000 offline XML papers | ≈ 12.7 min | – | ≈ 8 min | ≈ 6-7 min at `-j 1` (≈ 0.26 s chain + 0.1 s read per paper); ≈ 2-2.5 min at `-j 4` on idle cores |
 | Repository chain (40 outputs) | 9.3-10.2 s | 2.5 s **(M, P3)** | 2.5 s | ≈ 2 s; opens 96 → ≤ 23 |
+| Repository fetches, demo paper (network) | `repo_check` 38.95 s; `data_check` 72.9-76.0 s cold (REPO_FETCH.md §1) | – | after FETCH and CACHE: `repo_check` ≈ 12-15 s cold, ≈ 2-2.5 s warm; `data_check`'s downloads wait for RF-8 (LINKS) | `repo_check` the same; `data_check` ≈ 20-30 s cold and ≈ 2-3 s warm, with RF-8's scheduler and blobs from the store (REPO_FETCH.md §7) |
 | Codebook scan, 94K characters | 16.0 s | 0.2-0.3 s **(M)** | same | same |
 | Memory | Doc – | Doc 0.37 MB mean, 1.02 MB max **(S)** | a finished run's caches are collectable (the gc test) | + ≈ 0.4 MB per paper in flight |
 
-Network- and LLM-bound workloads keep BATCH_DESIGN §4.1's gains (rolling window 1.45-2.7x, **M**).
+Network- and LLM-bound workloads keep BATCH_DESIGN §4.1's gains (rolling window 1.45-2.7x, **M**), except repository listings: §4.1's "3-4x, since wall time becomes the slowest host" does not hold, because 92.7% of psychology papers' repositories are on OSF and 3.1% of those papers use two or more hosts **(M)**. REPO_FETCH.md §1.4 and §7 replace it.
 
 ### 5.3 Size
 
@@ -1143,6 +1159,7 @@ Network- and LLM-bound workloads keep BATCH_DESIGN §4.1's gains (rolling window
 
 - **Like for like:** revision 2's plan on the same sweeps is ≈ 103,000; relaxed fidelity removes ≈ 11,000 more (§3.5's ≈ 11,150). The rest of the difference to 93,300 is the smaller core and `packs/`, less the new status, compat, port and web lines.
 - **Net:** the sweeps take out ≈ 36,300 lines, `packs/` ≈ 1,000, and the additions put back ≈ 4,900 (core 2,500, status 600, compat 300, port 1,260, web 215).
+- **Not yet summed:** REPO_FETCH.md's CACHE package adds ≈ 700 lines (`cache/**`; E, not yet sized from a prototype: upstream-apis.md put an HTTP store alone at 250-400, and CACHE adds the blob store, the ledger and the Redis backend). It removes at most ≈ 250 of the 266 lines in `archives/info_cache.py` (156) and `archives/cache.py` (110), because `repo_info_cache()`, `repo_info_cache_clear()` and `metacheck_cache_info()` stay public, and the download and LLM caches still resolve their directories there. That is ≈ +450 net or more **(E)**, inside the 88-97k range. The total is re-summed once decision 22 is made.
 - **Not in the ledger:** parity data (140 MB in 9,745 files under `parity/`, **M3**), which the mark migration and the retired cases shrink but which is not code.
 
 ### 5.4 Where the time goes after CORE-0 (C)
@@ -1220,7 +1237,7 @@ The plan assumes each recommendation until the user says otherwise.
 - (b) Phase A only, then re-plan: the fidelity contract, validation status, presets and the store ship, and the rewrite waits.
 - (c) Phases A and B plus the paper-module waves (PATTERNS, STATS, REFS, MODSYS, COMPAT); the repository cluster then gets only the lane 3/4 leaf de-emulations behind adapters.
 - (d) The whole plan without stop points.
-- *Context:* ≈ 116.5 package-days in 34 packages; critical path ≈ 27 days, ≈ 31 with ≈ 4 days of calendar contingency (§4.4). The payoff is ≈ 4.5x on module CPU, −26% code (≈ 93,300 lines, §5.3), and the ecosystem of ECOSYSTEM.md. CORE-0 alone already gave 2.1x on the accuracy matrix (34.7 → 16.9 s, **C**); the rest of the plan adds ≈ 1.5x there (to 10-12 s, §5.4).
+- *Context:* ≈ 126 package-days in 36 packages (116.5 in 34 before REPO_FETCH.md); critical path ≈ 27 days, ≈ 31 with ≈ 4 days of calendar contingency (§4.4). The payoff is ≈ 4.5x on module CPU, −26% code (≈ 93,300 lines, §5.3), and the ecosystem of ECOSYSTEM.md. CORE-0 alone already gave 2.1x on the accuracy matrix (34.7 → 16.9 s, **C**); the rest of the plan adds ≈ 1.5x there (to 10-12 s, §5.4).
 - *Why (a):* phase A is useful on its own (users choose validated or experimental checks from the first release), and each stop point comes with measured numbers.
 
 **6. Repeated `paper_id`s in a paper list** (new; changes counts users read).
@@ -1274,6 +1291,21 @@ The plan assumes each recommendation until the user says otherwise.
 - (b) Revision 3's renames in CLOSE: `modules/` → `checks/`, `archives/` → `hosts/`, `packs/` + presets + provenance → `market/`, with compat re-exports for one minor release.
 - (c) Only `packs/` → `market/`, if presets and provenance really merge.
 - *Why (a):* the renames save no lines, break import paths that store modules and scripts use (§3.6's stable paths), and make every wave's file list stale. *Cost of (b):* +0.5 day in CLOSE and a deprecation window for every moved path.
+
+**REPO_FETCH.md decisions** (2026-09-27). REPO_FETCH.md gives the evidence for each.
+
+**22. Persistence across runs, and Redis** (new; amends BATCH R5 and P3-2).
+- **(a) A `CacheStore` in v1, on by default for repository metadata and file blobs only. Most entries are validated on every run or immutable: OSF trees behind the tree vector, git trees by commit SHA, versioned Dataverse datasets, zip-peek indexes and file blobs by hash. The rest are served on a TTL and can be up to one TTL stale: GitHub `/repos` metadata, the Dataverse latest-version pointer and the other dataset records 1 d, Zenodo records 7 d, OSF id types 30 d. Only a 200 answer's id type is stored; a 401 or 403 ("private") answer lasts one run, like a 404. A local file tier by default; an optional Redis/Valkey tier chosen by `PYTACHECK_CACHE_URL`; Valkey bundled in `docker-compose.yml`; pytacheck's own keyspace, not shared with bibr.** Recommended.
+- (b) The same store, off by default (BATCH R5 as written; P3-2 moved into v1).
+- (c) No persistent store in v1: batching only (RF-1 to RF-10); P3-2 stays in phase 3. With 23 (a), CACHE still builds the request ledger and its file and Redis backends.
+- (d) One Redis shared with bibr, as the request proposed.
+- *Why (a):* a warm re-run of the demo drops from 35.6 s to ≈ 2-3 s, and a repeat paper costs 4-6 counted OSF requests instead of ≈ 16-20, so ≈ 15-25 warm re-runs fit in OSF's anonymous hour (REPO_FETCH.md §7). BATCH §7 rejected a persistent cache on by default because a re-run could miss a new retraction; (a) keeps that rule for lookups, and stores only what it re-validates, what cannot change, or what expires within 1-30 days. (d) gives 0 shared cache hits: bibr never calls a repository host, its Crossref cache is for another host (`api.crossref.org`; pytacheck uses `api.labs.crossref.org`), and its LLM cache uses other keys and formats. It would also couple eviction, credentials and deploys (REPO_FETCH.md §6.2). *Cost:* CACHE, 4 days; ≈ +450 lines net or more; the store is off in the parity harness and the tests; TTL entries can be up to one TTL old, so within those TTLs an edited dataset record or repository description is served stale; OSF file download counts can be up to the max-age old, 7 days for projects and 30 for registrations (a deviation row); and a stale entry is possible when OSF drops a log callback or a file moves to another project, which the 7-day max-age bounds.
+
+**23. OSF's limits under BATCH R6** (new).
+- **(a) Enforce OSF's published and coded windows per identity, those of a minute or longer through a request ledger across processes and runs (anonymous: 10 per second and 100 per hour on default views, 3 per second and 75 per minute on file lists; with `OSF_PAT`: 10,000 per day), with R's 10 in flight as the per-host envelope. The same ledger keeps api.github.com's published 60 requests per hour anonymous and 5,000 per hour with a token. When a window is exhausted, wait up to 60 s (not at all under `skip_on_api_limit`, as for a known reset today), then fail as a 429 would, naming `OSF_PAT` or, for GitHub, `GITHUB_PAT_GITHUB_COM`. Recommend `OSF_PAT` in the docs and in a warning when a run would exceed the anonymous hour. The ledger is CACHE's (REPO_FETCH.md §5.5), so (a) needs CACHE whatever decision 22 says. It runs even with `cache_store="off"`, and is off only in the parity harness and the tests.** Recommended.
+- (b) Keep only R's bound per call site: serial listings, 1 in flight for `batch_query`, no ledger. That forbids RF-3 and RF-4's fan-out and returns pytacheck's traversal and `batch_query` to R's pace.
+- (c) Ignore the windows of a minute or longer, since production sent no 429 for 451 anonymous requests in 24.5 minutes **(M)**.
+- *Why (a):* R6 says "never exceed … a service's published limit", and OSF publishes 100 per hour for anonymous clients. R itself goes past that after 2-3 OSF-heavy papers. The measured headroom is not a published limit: OSF's own web app hit its throttles, and third parties report 429s (REPO_FETCH.md §2.2). *Cost:* a deviation row, because R would have sent the request that (a) refuses; a user without a token gets about 5-6 cold demo-like papers per hour from one IP, or 15-25 warm re-runs with 22 (a); and if the networked ledger fails, replicas fall back to separate counts for the rest of the run, so OSF's windows can be exceeded across replicas (REPO_FETCH.md §5.5).
 
 ---
 
@@ -1332,6 +1364,7 @@ All paths are under `scratchpad/`.
 | Public API, store contract, global state, parity surface | `arch/census_core_api.md` |
 | Gaps, coupling, thin coverage per module | `arch/census_critic.md` |
 | Batch engine | `perf/batch/BATCH_DESIGN.md` |
+| Repository fetches, cache store, OSF limits (2026-09-27, another session's scratchpad) | REPO_FETCH.md, Appendix |
 | R vs Python, TS1-TS4, P2, P3, P4 | `arch/inputs/perf_partial.json`; `perf/patches/*.patch` |
 | D1/D2/D3 prototypes and judge re-measurements | `arch/minimal_proto/`, `arch/design_performance/`, `arch/domain_proto/`, `arch/judge1/`, `arch/judge_integrity/` |
 | Lanes 3-7: units, gates, divergences, acceptance | `rightsize_plan.json` → `lanes` |

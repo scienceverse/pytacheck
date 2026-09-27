@@ -17,6 +17,9 @@ awaiting decisions, not descriptions of the shipped code. (Earlier designs:
   Python per module, and the verified optimisation prototypes.
 - [BATCH_DESIGN.md](BATCH_DESIGN.md): batch processing (fixed costs,
   network and LLM batching, a batch runner with resumable output).
+- [REPO_FETCH.md](REPO_FETCH.md): repository fetches (where the ~40 s
+  goes, batching per host, OSF's rate limits), a cache store across runs
+  with an optional Redis/Valkey tier, and why it is not shared with bibr.
 
 Paths under `scratchpad/` in these documents refer to the session's
 working directory where the measurements were taken; the evidence that

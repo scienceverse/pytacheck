@@ -17,7 +17,7 @@ pass over both code bases (2026-09-24).
 | 3 | **Run record.** Each run records modules, packs, commits, file hashes and effective arguments. It is embedded in reports and can be replayed with `rerun`. | yes (outside the compared outputs) | in module system v2 |
 | 4 | **CLI per-module arguments.** `-a power.seed=1` mirrors R's `report(args = list(power = list(seed = 1)))`, instead of passing every argument to every module. | yes | in module system v2 |
 | 5 | **Batch bibr extraction in `read()`.** All PDFs and other source documents go through one `chew()` call, so the models load once. | yes | after the io lane lands |
-| 6 | **HTTP response store.** In-run deduplication, an optional persistent cache, and record/replay bundles for offline, reproducible network-backed outputs. | yes | planned |
+| 6 | **HTTP response store.** In-run deduplication, a persistent cache for repository hosts (on by default under ARCHITECTURE.md decision 22 (a): validated, immutable or short-TTL entries), and record/replay bundles for offline, reproducible network-backed outputs. | yes, except entries up to their max-age or TTL old (REPO_FETCH.md §2.4, §5.1) | designed for repository hosts in [REPO_FETCH.md](REPO_FETCH.md) §5; record/replay still planned |
 | 7 | **LLM layer.** Bounded concurrency, a JSON cache with a replay-only mode, and a per-run token and call ledger. | yes | after the llm lane lands |
 | 8 | **Corpus `report()`.** Parallel, resumable, with a lossless typed-JSON results store. | yes | after the report lane lands |
 | 9 | **No pickle in on-disk caches.** A crafted `.pkl` in a cloned project could execute code. | yes | after the archives lane lands |
