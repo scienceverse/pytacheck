@@ -137,3 +137,15 @@ jobs:
           path: |
             parity/_out/report.json
             parity/_out/accuracy.json
+
+      # The container runs as root. On a self-hosted runner whose user reaches
+      # the host's Docker daemon, what it leaves in the mounted work folder (the
+      # checkout, the temp folder with HOME, the tool cache) stays root's, and
+      # that user can no longer clean it: the runner's next job then fails in
+      # actions/checkout. Hand it all back to the work folder's owner.
+      - name: Hand the work folder back to the runner's user
+        if: always()
+        shell: bash
+        run: >-
+          chown -R "$(stat -c %u:%g "$(dirname "$RUNNER_TEMP")")"
+          "$GITHUB_WORKSPACE" "$RUNNER_TEMP" "$RUNNER_TOOL_CACHE"
