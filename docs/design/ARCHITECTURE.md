@@ -16,7 +16,7 @@ Carried over from revision 2:
 - **(R)**: measured by the spike's reviewer (`arch/review_*.py`, reproductions quoted in Appendix B).
 - **(C)**: measured after CORE-0, at commit 23704aec (accuracy fingerprint a312423fa7, the same as before CORE-0). The files are in a later session's scratchpad, `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/perf/` (Appendix A).
 - **(E)**: an estimate, always given with its basis.
-- **(M3)**: measured for revision 3 at f559c1be. The notes and scripts are in this session's scratchpad, `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/` (`results/structure.md`, `results/emul-{paper,repo,services}.json`, `idioms.py`, `anatomy.py`, `fnsizes.py`).
+- **(M3)**: measured for revision 3 at f559c1be. The notes and scripts are in this session's scratchpad, `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/` (`results/structure.md`, `results/emul-{paper,repo,services}.json`, `idioms.py`, `anatomy.py`, `fnsizes.py`). The web spike's files and report are in the same scratchpad, under `gradio-spike/` (`REPORT.md`).
 - The spike report (`arch/SPIKE_REPORT.md`, planned as `arch/spike/REPORT.md`) was never written. Every spike figure here comes from `results.json` and the tree.
 - Absolute times are ±10-20% on this shared VM. Ratios measured within one run are reliable.
 
@@ -68,7 +68,7 @@ Revision 2 kept R's output shape everywhere (old decision 1a), so every de-emula
 | **The store as a marketplace** | Modules live in their authors' repositories, pinned by SHA, with a generated catalog and nightly CI | ECOSYSTEM.md §4 |
 | **Porting R modules** | `pytacheck port` translates an R module with the author's recorded consent, and checks the result against R | ECOSYSTEM.md §5 |
 | **Further de-emulation** | ≈ 30,000 more lines of R emulation can go once presentation is free: wholesale library ports (ellmer, ICU, fread, knitr), value models and deparsers | §3.5 |
-| **The web app** | The Shiny app is not ported. A web front end sits on the FastAPI app | §3.7 |
+| **The web app** | The Shiny app is not ported. A Gradio app, the optional extra `pytacheck[app]`, is mounted on the API server; it covers the Shiny app's features in ≈ 200 lines and makes no third-party calls | §3.7 |
 
 ### Headline targets, re-based on the spike
 
@@ -78,7 +78,7 @@ Revision 2 kept R's output shape everywhere (old decision 1a), so every de-emula
 | Accuracy matrix, Python side (439 outputs) | 35.7 s; R 91.6 s. **16.9 s after CORE-0 (C)** | 21.4 s, with only the façade and 4 modules | ≈ 14-15 s after CORE (was ≈ 15-18 s, already reached by CORE-0); ≈ 10-12 s at the end |
 | 1,000 offline XML papers, 19 modules | ≈ 12.7 min | – | ≈ 6-7 min at `-j 1`; ≈ 2-2.5 min at `-j 4` on idle cores (scaling unmeasured) |
 | `src/pytacheck` | 125,200 lines | core subset 1,975 lines | **≈ 88,000 (−30%; range 82-92k)**. Revision 2 targeted ≈ 98,000 (−22%). The extra ≈ 10,000 come from relaxed fidelity (§3.5, §5.3) |
-| Work | – | – | **≈ 111 agent-days in 33 packages** (≈ 109 without the optional TOML package; CORE-0's 1 day is done); **critical path ≈ 28 days** (≈ 32 with slack). Revision 2: 78 days in 27 packages, critical path 25 (§4.4) |
+| Work | – | – | **≈ 113.5 agent-days in 34 packages** (≈ 111.5 without the optional TOML package; CORE-0's 1 day is done); **critical path ≈ 28 days** (≈ 32 with slack). Revision 2: 78 days in 27 packages, critical path 25 (§4.4) |
 
 All hard per-module budgets stay **provisional** until W1 (PATTERNS) lands and re-measures them.
 
@@ -726,7 +726,46 @@ src/pytacheck/                                             now (M3) -> target (E
 
 ### 3.7 Report and web app (revision 3)
 
-*Pending: written from the Gradio spike's measurements.*
+**The Shiny app is not ported.** It is 1,297 lines of R: `app.R` 818, `render_report.R` 121, `setup.R` 83, `www/custom.css` 221 and `www/custom.js` 54 **(M3)**. `render_report.R` and `setup.R` exist to drive Quarto; `app.R` holds the form, the four job slots, the privacy text and the LLM options. pytacheck already renders the report itself: `render_module_outputs()` writes one self-contained HTML page in the layout of `_report.qmd`, with no Quarto (`report/render.py`). A web front end is therefore a thin form in front of `read()`, the preset and status selection, and `report()`.
+
+**The report page** keeps metacheck's design, with relaxed fidelity: layout, colours, the traffic lights, the summary table, the details toggles, dark mode and table paging stay close to the Quarto report, but not pixel-identical (Band B). Under revision 3 it is rendered from the typed blocks of §2.9, so the page, the `.md` output and the `.qmd` output share one source. TIERS adds the status badge, the validation box and the header line (ECOSYSTEM.md §3.6).
+
+**The spike** built two front ends on today's code and tested them in headless Chromium on the demo paper ("To Err is Human", TEI XML and bibr JSON). The figures are **(M3)**, from `gradio-spike/REPORT.md`:
+
+| | Gradio 6.28.0 | Static page on the API |
+|---|---|---|
+| Size | 200 lines of Python (169 without blanks and comments), no custom JS | 81 lines of HTML + 15 lines of server |
+| Install on top of `pytacheck[api]` | +21 packages, +129.5 MB (gradio is 84 MB, 68 MB of it the frontend) | nothing |
+| `import gradio` | 2.6-2.9 s; RSS 9 → 127 MiB (pytacheck + api + uvicorn: 0.41 s, 42 MiB) | – |
+| Server ready, idle memory | 3.6-3.7 s, 151 MiB | 1.1 s, 94 MiB |
+| Demo report, 10 offline modules | 0.69 s on the server; 2.7-3.2 s from click to report in the browser | 1.4 s in the browser |
+| Inputs | PDF (through GROBID), TEI XML, bibr JSON | bibr JSON only |
+| Queue, progress, cooldown | queue with position shown (`max_size=20`, `concurrency_limit`), per-step progress, a 20 s cooldown; 3 simultaneous jobs finished in 25.1 s with 0 errors | none: requests wait at the API's semaphore |
+| Options | GROBID server (EU or USA), CrossRef, PubPeer, repositories; the privacy text updates with them | none |
+| Shiny's 16 features | 14; not the anonymous usage counts or the LLM option | upload, report, download |
+| Third-party hosts contacted | none over 4 starts, with the settings below; with Gradio's defaults, huggingface.co twice and api.gradio.app once at each start | none |
+
+Both show the report in a sandboxed `<iframe srcdoc>`, where the report's own JS works (details toggles, dark mode, the four paging buttons), and both offer the same self-contained file as a download (52 KB) and an open-in-new-tab link.
+
+**Recommendation: Gradio, as the optional extra `pytacheck[app]`** (decision 20).
+- **Why:** 200 lines cover 14 of the Shiny app's 16 features, and the queue, progress, uploads and cooldown come built in. The static page would need API changes to gain a queue, progress or XML input, which rebuilds what Gradio provides.
+- **Cost:** only for those who install `[app]`: +129.5 MB, about +57 MiB idle memory and about +2.5 s startup. The base and `[api]` installs do not change, and an import test keeps them free of gradio.
+- **Mounting:** `gr.mount_gradio_app(create_app(), demo, path="/app")`, so one process serves the REST API at `/` and the app at `/app`. WEB adds `pytacheck serve --app` to start both.
+- **Fixed settings, not options:** `GRADIO_ANALYTICS_ENABLED=False` (set before the import; it also disables Hugging Face telemetry), `run_history=False` (otherwise past runs, reports included, are kept in the browser), `api_visibility="private"` on every event (otherwise a script can call the report function directly and skip the cooldown), `ssr_mode=False` (no Node process), `footer_links=[]`, and never `share=True` (a tunnel through api.gradio.app). The theme and CSS go to `mount_gradio_app()`, and `gr.HTML` gets `js_on_load=None`.
+- **Uploads:** Gradio stores uploads by content hash, so deleting one after its job broke the other queued jobs with the same file. `delete_cache=(300, 600)` removes them instead, which leaves an upload on disk for up to about 15 minutes; Shiny deletes it at once. The privacy text says so (decision 20 asks whether that is acceptable). Reports are kept in memory only, for an hour, under an unguessable token.
+- **Usage counts:** the Shiny app keeps anonymous counts on purpose ("so that continued development of metacheck can be justified in future grant applications", `app.R:42-44`): one CSV row per session or report with the date, the number of reports and the number of modules, no identifier of any kind, written only on the hosted server and never sent anywhere. WEB carries the same record over in ≈ 15 lines, to the same file format, so the counts of both apps can be added up (decision 20).
+- **Modules:** the server's policy is validated ∩ server-safe (ECOSYSTEM.md §3.4; decisions 9 and 10), and a request can be stricter, never looser. A module is server-safe when it finishes within the server's time limit and its network need, including that of everything it `requires=`, is covered by the options the user switched on.
+
+**What the library needs first.** The spike found four gaps. Each lands in the package that owns the code, not in the app:
+
+| Gap **(M3)** | Fix | Package |
+|---|---|---|
+| `llm_use` is process-global, so two users of one server would race on each other's LLM settings. The prototype leaves the LLM option out | per-run `Settings` and `override` (§2.6); the app gets the LLM option afterwards | CORE-1d, then LLM-b (+0.5 d) |
+| codebook_check declares no network need but reaches the network through its repository and data dependencies, so `offline=True` keeps it; it takes 55-63 s even with every network option off | the network need is derived through the `requires=` graph (§2.7); codebook_check is not server-safe until DATA-b brings it within the time limit | CORE-1d, DATA-b |
+| ref_accuracy fails when the CrossRef match was not run | it `requires=` the match, so switching CrossRef off drops it with a reason, like any other network module | CORE-1d, REFS |
+| `/paper/check` returns `report_html` boxed as `["<html>…"]` | plain JSON | SERVICES-b (`api/jsonlite.py` goes, §3.4) |
+
+**Not measured:** the PDF path. The sandbox's proxy blocked both GROBID servers (403), so conversion time and its error messages were not tested; the prototype carries over `app.R`'s plain-language messages for them. The network options with the network on were not measured either. WEB measures both before the app is announced.
 
 ---
 
@@ -835,6 +874,8 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**` (after lane 2), `pape
 
 **TOML** (2 d; phase D; optional, decision 2). Files: `core/declarative.py` (new, through the core agent), `checks/*.toml`. Content: the TOML check form (§2.10), compiled to `pytacheck.doc`; marginal and all_urls converted as the proof. Gates: the converted checks are G5-equal; `pack check` validates a TOML pack. Depends on: CORE-1e, PATTERNS.
 
+**WEB** (2 d; phase D; placed on days 11.5-13.5, in the slack of §4.4, but it can run any time after TIERS). Files: `src/pytacheck/api/web.py` (new; it mounts itself on `create_app()`, so `api/app.py` is not edited), `cli.py` (`serve --app` only), `tests/web/**`, the `[app]` extra in `pyproject.toml` (through the core agent). Content: §3.7: the spike's app on the public report functions, which compat keeps, so later packages change the report under it without editing it; TIERS's status policy with the server's ceiling; the fixed settings; the privacy text, including the upload retention; plain-language errors, the cooldown and the queue limit; the anonymous usage counts; the PDF path and the network options measured. Gates: the base and `[api]` installs import no gradio; the app loads under `[app]`; no third-party host is contacted at startup or during a demo run, through a logging proxy; a nightly Playwright run of upload → report → download, with the report's JS working in the iframe; the 3-job queue test; a request for a looser status than the ceiling is refused. Depends on: TIERS.
+
 **Changes to revision 2's packages:**
 
 | Package | Days | Change |
@@ -845,6 +886,7 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**` (after lane 2), `pape
 | STATS | +1 | the statcheck R runtime and nmath → Optional values and `scipy.special`; the p-value facet |
 | LINKS | +2 | the shared `archives/fetch.py` download engine |
 | LLM-a | +1.5 | the ellmer port → a thin client (decision 16) |
+| LLM-b | +0.5 | the web app's LLM option (§3.7) |
 | SERVICES-a | +1 | one Grobid converter; statout floats until the boundary; jasp typing |
 | SERVICES-b | +1 | the report deparser removed; `api/jsonlite.py` → plain JSON; `zenodo_upload` split out |
 | CODE-a | +1 | `_rparse` messages and AST trims |
@@ -872,9 +914,9 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**` (after lane 2), `pape
 
 **CODE-a** (**4 d**, was 3; after HARNESS) and **CODE-b** (**5 d**, was 4; after REPO and CODE-a). Files: `codecheck/**`, `repro/**`, `modules/{code_check,_code_check,reproducibility_check,_reproducibility}.py` (CODE-b), `scripts/gen_rparse_tables.py`, `tests/{codecheck,mod_code,mod_repro,repro_core}/**`. Content: §3.3 lane 4; the scoped LLM override; reproducibility_check as a pure rewrite PR first. Gates: lane 4's gates; G1 on codecheck, mod_code, mod_repro, repro_core (+ review); G2 incl. the plan-only row; G5. Deletes: `_encoding.py`, `_icu.py`, `_icu_tables.py`, `_purl.py`, `_reval.py`, `_rjson.py`'s parser, `RNamedList`, the ICU-pinning tests.
 
-**LLM-a** (**3.5 d**, was 2; after HARNESS) and **LLM-b** (1 d; after CORE-1d and LLM-a). Files: `llm/**`, `tests/llm/**`. LLM-a: lane 6's de-emulation units. LLM-b: `Settings` wiring, scoped overrides, N5, L6-2 to L6-6, typed structured results with source references for grounding. Gates: lane 6's gates; G1 on llm(+review) with 0 changes in mod_power, mod_codebook, mod_data_check, mod_reg and mod_causal. Deletes: `_Lexer`, `parse_json`, `_render`, `Vec`/`RInt`, the `.rds` cache, `EllmerOutput`, the S7 printer, `_friendly`, the `_cli_*` helpers.
+**LLM-a** (**3.5 d**, was 2; after HARNESS) and **LLM-b** (**1.5 d**, was 1; after CORE-1d, LLM-a and WEB). Files: `llm/**`, `tests/llm/**`, and `api/web.py` in LLM-b. LLM-a: lane 6's de-emulation units. LLM-b: `Settings` wiring, scoped overrides, N5, L6-2 to L6-6, typed structured results with source references for grounding; the web app's LLM option, once LLM settings are per run (§3.7). Gates: lane 6's gates; G1 on llm(+review) with 0 changes in mod_power, mod_codebook, mod_data_check, mod_reg and mod_causal. Deletes: `_Lexer`, `parse_json`, `_render`, `Vec`/`RInt`, the `.rds` cache, `EllmerOutput`, the S7 printer, `_friendly`, the `_cli_*` helpers.
 
-**SERVICES-a** (**3 d**, was 2; after HARNESS) and **SERVICES-b** (**2.5 d**, was 1.5; after CORE-1d and SERVICES-a). Files: `io/**` (the grobid hook after CORE-1b), `statout/**`, `report/**` except `blocks.to_canonical` (SERVICES-b), `api/**` (SERVICES-b), `tests/{io,bibr12,grobid12,statout_*,report,api}/**`. SERVICES-a: statout, timestamps, corpus RDS, `bibr_convert`, R-internal warnings. SERVICES-b: `_Deparser` → R-literal writer; `read_plan`/`read_one`, `read(workers=)`; L7-7 to L7-9. Gates: lane 7's SERVICES gates; G1 on io, bibr12, grobid12, statout_*, report (+ review); the api tests; `read(xml)` ≤ SPIKE-2's target. Deletes: the SPV R evaluator, the civil-date and `R_strtod` ports, `_RdsReader`, `_Deparser` and its Unicode tables.
+**SERVICES-a** (**3 d**, was 2; after HARNESS) and **SERVICES-b** (**2.5 d**, was 1.5; after CORE-1d and SERVICES-a). Files: `io/**` (the grobid hook after CORE-1b), `statout/**`, `report/**` except `blocks.to_canonical` (SERVICES-b), `api/**` except `api/web.py` (SERVICES-b), `tests/{io,bibr12,grobid12,statout_*,report,api}/**`. SERVICES-a: statout, timestamps, corpus RDS, `bibr_convert`, R-internal warnings. SERVICES-b: `_Deparser` → R-literal writer; `read_plan`/`read_one`, `read(workers=)`; L7-7 to L7-9. Gates: lane 7's SERVICES gates; G1 on io, bibr12, grobid12, statout_*, report (+ review); the api tests; `read(xml)` ≤ SPIKE-2's target. Deletes: the SPV R evaluator, the civil-date and `R_strtod` ports, `_RdsReader`, `_Deparser` and its Unicode tables.
 
 **BATCH-a** (**2 d**, was 1.5; after HARNESS) and **BATCH-b** (6 d; after CORE-1d and SERVICES-b). Files: `http.py`, `log.py`, `cli.py`, `batch/**` (new), `parity/batch.py` (from HARNESS), `docs/BATCH.md`, `tests/batch/**`. BATCH-a: BL-1 (N1 limiter, rolling window), BL-4 (per-process logs). BATCH-b: BL-2, BL-5 to BL-7, H2 (a, c, d), BL-9; BL-8 only if decision 3's gate calls for it. Gates: G8 `batch`; a 1,000-paper synthetic run under `jobs` × 300 MB RSS; the fault test; CLI tests; httpmock replays unchanged; `io/bench_window.py` ≥ 2x. Deletes: per-call `Throttle`; `_host_reset`.
 
@@ -889,7 +931,7 @@ Revision 3 runs in four phases. They overlap: a phase is defined by what it deli
 | **A, contract and ecosystem** | 0-11.5 | SNAP, HARNESS, HARNESS-v2, HARNESS-NET, SPIKE-2, TIERS, STORE-2 | the three fidelity bands, enforced by the harness; status labels, policies and presets; the store as a marketplace. TIERS and STORE-2 can ship in a release on their own, before any module is rewritten | after SPIKE-2 (day 2); at day 11.5, when the user reviews the deviation rows that the mark migration produced |
 | **B, the core** | 1-17.5 | CORE-1a to 1e, and the first halves that need only HARNESS (LLM-a, SERVICES-a, DATA-a, CODE-a, BATCH-a) | `Doc`, the pattern engine, facets, the enforced `requires=` graph, `Result` and templates | the CORE checkpoint (day 17.5): measured numbers go to the user before the waves |
 | **C, the waves** | 14.5-28 | REPO, LLM-b, SERVICES-b, BATCH-b, MODSYS, COMPAT, PATTERNS, STATS, REFS, LINKS, DATA-b, CODE-b, CLOSE | every module on the core; `pc.check` and `pytacheck.compat`; ≈ 88,000 lines | CLOSE (day 28) |
-| **D, porting and declarative checks** | 6.5-24.5 | PORT; TOML (optional) | `pytacheck port` and one pilot port; TOML checks | independent of C: stopping PORT or TOML does not hold up the rewrite |
+| **D, porting, declarative checks and the web app** | 6.5-24.5 | PORT; WEB; TOML (optional) | `pytacheck port` and one pilot port; the web app as `pytacheck[app]`; TOML checks | independent of C: stopping PORT, WEB or TOML does not hold up the rewrite |
 
 ```
 day             0   2   4   6   8   10  12  14  16  18  20  22  24  26  28
@@ -902,11 +944,12 @@ HARNESS-v2               ██████████████
 HARNESS-NET              ████
 CORE-1b                  ██████████
 CORE-1c/1d/1e                      ████████████████
-LLM-a / LLM-b            ███████             ██
+LLM-a / LLM-b            ███████             ███
 SERVICES-a/-b            ██████              █████
 DATA-a, CODE-a           ████████
 BATCH-a / -b             ████                     ████████████
 PORT                         ██████████
+WEB                                 ████
 REPO                                         ██████████
 MODSYS                                             ███
 COMPAT                                             █████
@@ -927,14 +970,14 @@ CLOSE                                                              ████�
   | | Days (E) |
   |---|---:|
   | Revision 2's packages | 78.5 |
-  | New packages: HARNESS-v2 7, TIERS 2.5, STORE-2 3, COMPAT 2.5, PORT 5 | + 20 |
-  | Changes to revision 2's packages (§4.3), including HARNESS −0.5 and CLOSE +0.5 | + 14.5 |
+  | New packages: HARNESS-v2 7, TIERS 2.5, STORE-2 3, COMPAT 2.5, PORT 5, WEB 2 | + 22 |
+  | Changes to revision 2's packages (§4.3), including HARNESS −0.5, CLOSE +0.5 and LLM-b +0.5 | + 15 |
   | No marks or U write-ups per PR (kept in the schedule as slack) | − 4 |
-  | **Total** | **≈ 109**, or ≈ 111 with TOML |
+  | **Total** | **≈ 111.5**, or ≈ 113.5 with TOML |
   | Already done (CORE-0) | 1 |
 
 - **Peak parallelism:** ≈ 9 agents on days 4.5-5.5 and 8 on days 17.5-19.5, not counting the core agent as steward. Revision 2: 7. Holding it to 7 costs nothing on the critical path: HARNESS-NET starts a day later, BATCH-a at day 7.5, PORT after day 11.5, and COMPAT after MODSYS.
-- **Slack in the middle:** on days 11.5-14.5 only the core agent works (CORE-1d). §3.7's web front end fits there if decision 20 approves it.
+- **Slack in the middle:** on days 11.5-14.5 only the core agent works (CORE-1d), so WEB (§3.7) goes there. If decision 20 rejects the web app, the days stay slack.
 - **Stop points:** after SPIKE-2 (day 2); at the end of phase A (day 11.5); at the CORE checkpoint (day 17.5).
 
 ### 4.5 Coexistence, deletion and ownership rules
@@ -956,6 +999,8 @@ CLOSE                                                              ████�
 | `parity/**` | HARNESS, then HARNESS-v2 from day 4.5, then the core agent. Wave packages send requests, except for their own deviation rows and lock areas |
 | `presets.py` | TIERS until it closes (day 2.5), then the core agent from CORE-1d. TIERS lands the status axis before CORE-1d moves presets into `market/` |
 | `compat/**`, `src/pytacheck/__init__.py` | COMPAT from CORE-1e's close; the core agent before and after. The wave packages never edit `__init__.py`; COMPAT re-exports what they add |
+| `api/web.py` | WEB, then LLM-b for the LLM option. It is outside SERVICES-b's `api/**` |
+| `cli.py` | TIERS (`status`, `--status`, `init`), BATCH-a, WEB (`serve --app`), BATCH-b, in that order; each changes only its own commands |
 | `resources/status/validation.json` | A snapshot of the team's registry, refreshed only by a PR that names the registry commit (ECOSYSTEM.md §2.3) |
 | `parity/lock/<area>.json` | Re-locked only by the package that owns the area; others send requests |
 | `porting/symbols.json` | One sorted entry per line, so parallel edits merge line by line |
@@ -1119,7 +1164,7 @@ The plan assumes each recommendation until the user says otherwise.
 - (b) Phase A only, then re-plan: the fidelity contract, validation status, presets and the store ship, and the rewrite waits.
 - (c) Phases A and B plus the paper-module waves (PATTERNS, STATS, REFS, MODSYS, COMPAT); the repository cluster then gets only the lane 3/4 leaf de-emulations behind adapters.
 - (d) The whole plan without stop points.
-- *Context:* ≈ 111 agent-days, critical path ≈ 28 days (§4.4). The payoff is ≈ 4.5x on module CPU, −30% code (≈ 88,000 lines), and the ecosystem of ECOSYSTEM.md. CORE-0 alone already gave 2.1x on the accuracy matrix (34.7 → 16.9 s, **C**); the rest of the plan adds ≈ 1.5x there (to 10-12 s, §5.4).
+- *Context:* ≈ 113.5 agent-days (≈ 111.5 without TOML), critical path ≈ 28 days (§4.4). The payoff is ≈ 4.5x on module CPU, −30% code (≈ 88,000 lines), and the ecosystem of ECOSYSTEM.md. CORE-0 alone already gave 2.1x on the accuracy matrix (34.7 → 16.9 s, **C**); the rest of the plan adds ≈ 1.5x there (to 10-12 s, §5.4).
 - *Why (a):* phase A is useful on its own (users choose validated or experimental checks from the first release), and each stop point comes with measured numbers.
 
 **6. Repeated `paper_id`s in a paper list** (new; changes counts users read).
@@ -1160,7 +1205,13 @@ The plan assumes each recommendation until the user says otherwise.
 - *Why (a):* ≈ 11,350 lines become ≈ 1,950 (§3.5), and `zenodo_upload`'s 1,228 leave the package. The differences are edge cases (non-UTF-8 code without a BOM, computed chunk options, unusual CSVs); each gets one scoped deviation row, and none touches a validated module's Band A outputs. power's request bodies stay byte-identical. *Cost:* fewer built-in LLM providers.
 
 **20. The web app** (new).
-*Pending the web spike (§3.7).*
+- **(a) A Gradio app as the optional extra `pytacheck[app]`, mounted at `/app` on the API server, with the fixed settings of §3.7.** Recommended.
+- (b) The static page on the API (96 lines, no new dependency): bibr JSON only, with no queue, progress or options.
+- (c) Both: Gradio for the public server, and the static page as a no-dependency fallback.
+- (d) No web front end: the API only, and the R Shiny app keeps serving the public.
+- *Why (a):* 200 lines cover 14 of the Shiny app's 16 features, with no custom JS and no third-party calls (§3.7); WEB adds the usage counts and LLM-b the LLM option. The cost (+129.5 MB, ≈ +2.5 s startup) falls only on `[app]` installs. (b) needs API changes to gain a queue, progress or XML input; (c) keeps two front ends in step for one fallback case; (d) keeps R on the public server. *Cost:* WEB, 2 days, and LLM-b +0.5 day.
+- **Upload retention.** **(i) Up to ≈ 15 minutes on disk, stated in the privacy text.** Recommended: Gradio shares one cached file among queued jobs with the same upload, and deleting it after each job broke the others **(M3)**. (ii) Delete an upload once no queued job refers to it, with a count taken when the job is submitted (≈ 20 lines, not measured).
+- **Usage counts.** **(i) Keep the Shiny app's anonymous record** (date, event, reports, modules; no identifier; only on the hosted server; never sent anywhere), since the team keeps it to justify funding. Recommended. (ii) Record nothing.
 
 ---
 

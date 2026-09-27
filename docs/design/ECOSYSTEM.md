@@ -239,7 +239,7 @@ The team may cut this to "around 4". Whatever the answer, it is data in `validat
 |---|---|---|
 | library | `experimental` | All built-ins are team modules, so `report(paper)` and the parity goldens do not change. Unreviewed external modules pulled in by a preset are dropped |
 | CLI | what `init` saved, else `experimental` | the same |
-| web app and API server | `validated` | public users. The Shiny set of 16 becomes the validated ∩ server-safe set, 5-7 modules depending on Q1 |
+| web app and API server | `validated` | public users. The Shiny set of 16 becomes the validated ∩ server-safe set, 5-7 modules depending on Q1. The web app is the Gradio extra `pytacheck[app]`, mounted on the API server (ARCHITECTURE.md §3.7); the server's status is a ceiling for both |
 
 ### 3.5 Combinations that are not allowed
 
@@ -549,3 +549,4 @@ Numbered as in ARCHITECTURE.md §6, which carries the full list.
 | 17 | Consent for ports | required for store listing, beyond what the licence requires |
 | 18 | Inbound terms | DCO, no CLA |
 | 19 | Legal review | counsel reviews §5.4 before third-party ports are listed |
+| 20 | The web app | a Gradio app as `pytacheck[app]` on the API server, with analytics, run history and the public event API off; uploads kept up to ≈ 15 minutes; the Shiny app's anonymous usage counts kept (ARCHITECTURE.md §3.7) |
