@@ -147,6 +147,19 @@ def test_cache_follows_edits(scopes) -> None:
     assert load_config().preset == "two"
 
 
+def test_rewrite_in_the_same_timestamp_tick_is_seen(scopes) -> None:
+    # a same-size rewrite in place that lands in the tick of the filesystem clock
+    # the first write did: mtime and size both stay the same
+    user, _ = scopes
+    user.write_text(json.dumps({"preset": "one"}))
+    assert load_config().preset == "one"
+    st = user.stat()
+    user.write_text(json.dumps({"preset": "two"}))
+    os.utime(user, ns=(st.st_atime_ns, st.st_mtime_ns))
+    assert load_config().preset == "two"
+    assert load_config() is load_config()
+
+
 @pytest.mark.parametrize(
     ("content", "error"),
     [

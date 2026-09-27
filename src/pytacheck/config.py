@@ -12,12 +12,14 @@ The module system's JSON config (stores, pack pins, presets) is read by
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import json
 import os
 import re
 import stat
 import sys
 import tempfile
+import time
 import warnings
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
@@ -155,6 +157,11 @@ _ENV_KEYS = ("PYTACHECK_CONFIG", "PYTACHECK_DATA_DIR", "PYTACHECK_STORE_URL", "P
 TRUST_FILE = "trusted.json"
 _config_cache: dict[str, Any] = {}
 _writes = 0  # bumped by update_config(): mtime_ns alone can miss rapid rewrites
+#: A file modified less than this long before a stamp may be rewritten within the
+#: same tick of the filesystem clock and keep its mtime and size (git's "racily
+#: clean" entries), so its stamp also holds a digest of its bytes (as in
+#: provenance.file_sha256).
+_RACY_NS = 3_000_000_000
 _warned_unsafe: set[tuple[str, str]] = set()
 
 
@@ -307,26 +314,32 @@ def local_code(section: str, value: Any) -> list[str]:
     return []
 
 
+def _file_stamp(path: Path, now: int) -> tuple[int, int, str | None] | None:
+    """``(mtime_ns, size, digest)`` of a file, the digest only while it is racy."""
+    try:
+        st = path.stat()
+    except OSError:
+        return None
+    digest = None
+    if now - st.st_mtime_ns < _RACY_NS:
+        with contextlib.suppress(OSError):
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    return (st.st_mtime_ns, st.st_size, digest)
+
+
 def config_stamp() -> tuple[Any, ...]:
     """A cheap fingerprint of everything config depends on (for cache invalidation)."""
-    files: list[tuple[str, str, int | None, int | None]] = []
-    for scope, path in config_files():
-        try:
-            st = path.stat()
-            files.append((scope, str(path), st.st_mtime_ns, st.st_size))
-        except OSError:
-            files.append((scope, str(path), None, None))
+    now = time.time_ns()  # before the stats: later writes get a later mtime
+    files = tuple((scope, str(path), _file_stamp(path, now)) for scope, path in config_files())
     env = tuple(os.environ.get(k) for k in _ENV_KEYS)
     try:
         cwd = os.getcwd()
     except OSError:
         cwd = ""
-    trust: tuple[int, int] | None = None
+    trust = None
     if any(f[0] == "project" for f in files):
-        with contextlib.suppress(OSError):
-            st = _trust_file().stat()
-            trust = (st.st_mtime_ns, st.st_size)
-    return (env, cwd, tuple(files), trust, _writes)
+        trust = _file_stamp(_trust_file(), now)
+    return (env, cwd, files, trust, _writes)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
