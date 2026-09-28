@@ -20,6 +20,10 @@ review never carries over to changed files. The build otherwise keeps both
 from the existing index (``reviewed`` only while the tree hash is unchanged).
 A review that no longer matches the pack is cleared, and is an error under
 ``--check`` so CI fails until a maintainer reviews the new files.
+
+A pack or module name that is new to the index may not be one typo from a
+name already in use (``clinical_trial`` next to ``clinical_trials``), so a
+typo cannot pick up someone else's code. That too is an error under ``--check``.
 """
 
 from __future__ import annotations
@@ -191,6 +195,73 @@ def _review_fields(
         )
         issues.append(_err(f"packs/{name}", message) if check else _warn(f"packs/{name}", message))
     return out
+
+
+def _within_one_edit(a: str, b: str) -> bool:
+    """Whether *a* and *b* are at most one typo apart.
+
+    A typo is one character added, removed or changed, or two neighbouring
+    characters swapped.
+    """
+    if a == b:
+        return True
+    if len(a) > len(b):
+        a, b = b, a
+    if len(b) - len(a) > 1:
+        return False
+    i = 0
+    while i < len(a) and a[i] == b[i]:
+        i += 1
+    if len(a) < len(b):
+        return a[i:] == b[i + 1 :]
+    return a[i + 1 :] == b[i + 1 :] or (
+        a[i : i + 2] == b[i : i + 2][::-1] and a[i + 2 :] == b[i + 2 :]
+    )
+
+
+def _module_names(entry: Mapping[str, Any] | None) -> list[str]:
+    modules = (entry or {}).get("modules") or []
+    return [m["name"] for m in modules if isinstance(m, Mapping) and isinstance(m.get("name"), str)]
+
+
+def _name_issues(
+    entries: Mapping[str, Mapping[str, Any]],
+    old: Mapping[Any, Mapping[str, Any]],
+    *,
+    check: bool = False,
+) -> list[CheckIssue]:
+    """New pack and module names one typo away from a name in use.
+
+    A new pack is compared with the other packs and ``metacheck``; a new module
+    with the built-in modules and the other packs' modules. Case, ``-`` and
+    ``_`` do not count. Names in the previous index are not checked again, so a
+    new built-in module never fails a store that already lists a close name.
+    """
+    from pytacheck.module import _builtin_names
+    from pytacheck.presets import _declared_builtin
+
+    def fold(name: str) -> str:
+        return name.lower().replace("-", "").replace("_", "")
+
+    rule = "rename it (a name new to the store must differ by more than one typo)"
+    issue = _err if check else _warn
+    issues: list[CheckIssue] = []
+    for name in sorted(set(entries) - set(old)):
+        for other in ("metacheck", *entries):
+            if other != name and _within_one_edit(fold(name), fold(other)):
+                message = f"the pack name '{name}' is one typo from the pack '{other}'"
+                issues.append(issue(f"packs/{name}", f"{message}: {rule}"))
+    modules = [("metacheck", m) for m in sorted({*_builtin_names(), *_declared_builtin()})]
+    modules += [(name, m) for name, entry in entries.items() for m in _module_names(entry)]
+    for name, mod in modules:
+        if name == "metacheck" or mod in _module_names(old.get(name)):
+            continue
+        for pack, other in modules:
+            if pack != name and _within_one_edit(fold(mod), fold(other)):
+                how = "the same as" if mod == other else "one typo from"
+                message = f"the module name '{mod}' is {how} '{pack}::{other}'"
+                issues.append(issue(f"packs/{name}", f"{message}: {rule}"))
+    return issues
 
 
 def _read_json(path: Path) -> Any:
@@ -406,6 +477,7 @@ def store_build(
         )
         entries[name] = entry
 
+    issues.extend(_name_issues(entries, old, check=check))
     fields = list(dict.fromkeys([*FIELDS, *(meta.get("fields") or [])]))
     packs = [entries[n] for n in sorted(entries)]
     index: dict[str, Any] = {
