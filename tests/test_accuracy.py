@@ -387,7 +387,7 @@ def _wrapper(
     tmp_path: Path, cwd: Path, image_exists: bool = True, **env: str
 ) -> subprocess.CompletedProcess[str]:
     bin_dir = tmp_path / "bin"
-    bin_dir.mkdir()
+    bin_dir.mkdir(exist_ok=True)
     docker = bin_dir / "docker"
     exists = 0 if image_exists else 1
     docker.write_text(f'#!/bin/sh\n[ "$1" = image ] && exit {exists}\nprintf "%s\\n" "$@"\n')
@@ -444,6 +444,20 @@ def test_r_image_wrapper_outside_a_checkout(tmp_path: Path) -> None:
     top = _git(ROOT, "rev-parse", "--show-toplevel")
     assert {f"{work}:{work}", f"{top}:{top}"} <= _after(args, "-v")
     assert args[-5] == "r:test"
+
+
+@needs_bash
+def test_r_image_wrapper_mounts_tmpdir(tmp_path: Path) -> None:
+    """Python's temporary files (the accuracy report's cases) are in $TMPDIR."""
+    tmp = tmp_path / "tmp"
+    tmp.mkdir()
+    run = _wrapper(tmp_path, ROOT, TMPDIR=f"{tmp}/", PYTACHECK_R_IMAGE="r:test")
+    assert run.returncode == 0, run.stderr
+    assert f"{tmp}:{tmp}" in _after(run.stdout.splitlines(), "-v")
+    # docker would make a missing folder, as root
+    run = _wrapper(tmp_path, ROOT, TMPDIR=str(tmp_path / "gone"), PYTACHECK_R_IMAGE="r:test")
+    assert run.returncode == 0, run.stderr
+    assert not [v for v in _after(run.stdout.splitlines(), "-v") if "gone" in v]
 
 
 @needs_bash

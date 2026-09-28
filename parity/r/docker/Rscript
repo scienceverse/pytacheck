@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Rscript in the R reference image that build.sh beside this file builds, for
-# PYTACHECK_RSCRIPT. R sees the host's paths: /tmp, the caller's checkout and
-# this file's are mounted at the same places, each with its git common dir
-# (which worktrees and submodules point into). It runs as the caller's user on
-# the host's network, with the caller's environment minus host-only variables.
+# PYTACHECK_RSCRIPT. R sees the host's paths: /tmp ($TMPDIR too), the caller's
+# checkout and this file's are mounted at the same places, each with its git
+# common dir (which worktrees and submodules point into). It runs as the
+# caller's user on the host's network, with the caller's environment minus
+# host-only variables.
 # R_LIBS is kept: the accuracy report puts the suggests library on it.
 #
 # The image is $PYTACHECK_R_IMAGE, else pytacheck-r-reference:<the first 8 hex
@@ -22,6 +23,10 @@ metacheck_rev() {
 }
 
 mounts=(/tmp)
+# Python's and pytest's temporary files are in $TMPDIR when it is set
+if [ -n "${TMPDIR:-}" ] && tmp=$(cd -- "$TMPDIR" 2>/dev/null && pwd); then
+  mounts+=("$tmp")
+fi
 rev=
 seen=
 for dir in "$PWD" "$here"; do
