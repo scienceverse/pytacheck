@@ -8,3 +8,16 @@
 /parity/corpus.toml                  @thesanogoeffect
 /docs/UPSTREAM_ISSUES.md             @thesanogoeffect
 /.github/CODEOWNERS                  @thesanogoeffect
+# The validated checks (marginal, power, stat_effect_size, stat_p_exact, stat_p_nonsig) and their evidence.
+/parity/canon.py                     @thesanogoeffect
+/parity/canon.toml                   @thesanogoeffect
+/parity/deviations/                  @thesanogoeffect
+/parity/accuracy/matrix.d/           @thesanogoeffect
+/parity/accuracy/expected.d/         @thesanogoeffect
+/src/pytacheck/resources/status/validation.json  @thesanogoeffect
+/src/pytacheck/modules/marginal.py   @thesanogoeffect
+/src/pytacheck/modules/power.py      @thesanogoeffect
+/src/pytacheck/modules/_power.py     @thesanogoeffect
+/src/pytacheck/modules/stat_effect_size.py  @thesanogoeffect
+/src/pytacheck/modules/stat_p_exact.py      @thesanogoeffect
+/src/pytacheck/modules/stat_p_nonsig.py     @thesanogoeffect
