@@ -210,8 +210,11 @@ def _resolve(target: Target) -> _Hook:
 
 def _path(value: Any) -> str:
     path = os.fsdecode(value) if isinstance(value, str | bytes | os.PathLike) else str(value)
-    root = f"{ROOT}{os.sep}"
-    return Path(path[len(root) :]).as_posix() if path.startswith(root) else path
+    # as paths, not strings: on Windows the modules join with "/" (as R's file.path does)
+    try:
+        return Path(path).relative_to(ROOT).as_posix()
+    except ValueError:
+        return path
 
 
 def _label(module: Any) -> str:
