@@ -272,9 +272,12 @@ def test_a_case_that_tries_the_network_is_marked_as_a_problem() -> None:
 def test_the_matrix_cases_equal_the_accuracy_reports_outputs(
     upstream_dir: Path, module: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Each case reads its own paper; ``parity accuracy`` shares one per input."""
+    """Each case reads its own paper; ``parity accuracy`` shares one per input.
+    Rows added to the matrix later are not cases (the inputs are pinned)."""
     monkeypatch.setenv("PYTACHECK_CACHE_DIR", str(tmp_path))  # a folder that exists
-    outputs = [o for o in A.load_matrix() if o.module == module]
+    pinned = set(oracle.cases("modules", module=module))
+    outputs = [o for o in A.load_matrix() if o.module == module and o.id in pinned]
+    assert outputs
     theirs = A.run_python(outputs)
     for o in outputs:
         mine = inputs.record(inputs.find("modules", o.id))
