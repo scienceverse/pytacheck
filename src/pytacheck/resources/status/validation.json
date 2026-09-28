@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "provisional": true,
+  "registry_commit": null,
+  "note": "Provisional. pytacheck built this file from the <validation> blocks of metacheck 0.3.1, because the metacheck team's registry does not exist yet (docs/design/ECOSYSTEM.md, section 2.3). The team has not certified these entries. Its first registry commit replaces this file.",
+  "team_packs": ["metacheck"],
+  "modules": {
+    "metacheck::all_p_values": {"provisional": true},
+    "metacheck::all_urls": {"provisional": true},
+    "metacheck::causal_claims": {"provisional": true},
+    "metacheck::code_check": {"provisional": true},
+    "metacheck::codebook_check": {"provisional": true},
+    "metacheck::coi_check": {"provisional": true},
+    "metacheck::coi_check_oi": {"provisional": true},
+    "metacheck::data_check": {"provisional": true},
+    "metacheck::ethics_check": {"provisional": true},
+    "metacheck::funding_check": {"provisional": true},
+    "metacheck::funding_check_oi": {"provisional": true},
+    "metacheck::marginal": {
+      "provisional": true,
+      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "evidence": [
+        {
+          "id": "marginal-r-0.3.1",
+          "validators": null,
+          "date": null,
+          "unit": null,
+          "corpus": {"source": null, "papers": 51, "fields": null, "sampling": null, "labels": null},
+          "counts": {"tp": 38, "fp": 22, "fn": 27, "tn": null},
+          "settings": null,
+          "server_safe": null,
+          "protocol": null,
+          "summary": "In a sample of 51 papers with 87 statements, this module correctly identified 38 statements (true positives) and incorrectly flagged 22 statements (false positives). It failed to detect 27 statements. Thus, among all statements flagged by the module, 63% were genuine cases (positive predictive value). However, the module missed 42% of all true statements (false negative rate)."
+        }
+      ]
+    },
+    "metacheck::open_practices": {"provisional": true},
+    "metacheck::power": {
+      "provisional": true,
+      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "evidence": [
+        {
+          "id": "power-r-0.3.1",
+          "validators": null,
+          "date": null,
+          "unit": null,
+          "corpus": {
+            "source": "Psychological Science",
+            "papers": 128,
+            "fields": ["psychology"],
+            "sampling": null,
+            "labels": null
+          },
+          "counts": {"tp": 203, "fp": 21, "fn": 22, "tn": null},
+          "settings": null,
+          "server_safe": null,
+          "protocol": null,
+          "summary": "In a sample of 128 papers with 246 instances of power statements, 203 were correctly detected (true positives), 22 were missed (false negatives) and 21 were incorrectly detected (false positives). Overall, among all instances flagged as power statements, 90.6% were correct (positive predictive value)."
+        }
+      ]
+    },
+    "metacheck::prereg_check": {"provisional": true},
+    "metacheck::psychds_check": {"provisional": true},
+    "metacheck::ref_accuracy": {
+      "provisional": true,
+      "note": "Candidate. metacheck's <validation> block gives rates only, from 10 papers. It can be certified through metrics once the team says how (question Q6)."
+    },
+    "metacheck::ref_consistency": {"provisional": true},
+    "metacheck::ref_miscitation": {"provisional": true},
+    "metacheck::ref_pubpeer": {"provisional": true},
+    "metacheck::ref_replication": {"provisional": true},
+    "metacheck::ref_retraction": {"provisional": true},
+    "metacheck::ref_summary": {"provisional": true},
+    "metacheck::reg_check": {"provisional": true},
+    "metacheck::repo_check": {"provisional": true},
+    "metacheck::reproducibility_check": {"provisional": true},
+    "metacheck::stat_check": {
+      "provisional": true,
+      "note": "Pending. The counts in metacheck's <validation> block measure the R statcheck package (Nuijten et al. 2017), not this port, which keeps only t- and F-tests. It can be certified after a team rerun on the port."
+    },
+    "metacheck::stat_effect_size": {
+      "provisional": true,
+      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "evidence": [
+        {
+          "id": "stat_effect_size-r-0.3.1",
+          "validators": null,
+          "date": null,
+          "unit": null,
+          "corpus": {"source": null, "papers": 161, "fields": null, "sampling": null, "labels": null},
+          "counts": {"tp": 1106, "fp": 45, "fn": 23, "tn": 295},
+          "settings": null,
+          "server_safe": null,
+          "protocol": null,
+          "summary": "In a sample of 161 papers with 1469 tests, this module correctly detected 1106 reported effect sizes (true positives) and correctly identified 295 cases where no effect size was present (true negatives). However, it missed 23 that were reported (false negatives), and incorrectly identified 45 effect sizes when none were reported (false positives). Among all instances detected by the module, 96% were true cases (positive predictive value). In a validation against 221 reported Cohen's d effect sizes, it correctly indicated coherence in 218 cases (99%). In a validation against 485 partial eta-squared effect sizes, it correctly indicated coherence in 480 (99%)"
+        }
+      ]
+    },
+    "metacheck::stat_p_exact": {
+      "provisional": true,
+      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "evidence": [
+        {
+          "id": "stat_p_exact-r-0.3.1",
+          "validators": null,
+          "date": null,
+          "unit": null,
+          "corpus": {"source": null, "papers": 225, "fields": null, "sampling": null, "labels": null},
+          "counts": {"tp": 269, "fp": 78, "fn": 136, "tn": 4557},
+          "settings": null,
+          "server_safe": null,
+          "protocol": null,
+          "summary": "In a sample of 225 papers containing 405 instances of non-exact p-values, the module correctly detected 269 cases (true positives) and incorrectly identified 78 (false positives). It missed 136 instances of imprecisely reported p-values (false negatives) and correctly identified 4557 cases of precisely reported p-values (true negative). Additionally, 78% of positive detections were correct (positive predictive value)."
+        }
+      ]
+    },
+    "metacheck::stat_p_nonsig": {
+      "provisional": true,
+      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "evidence": [
+        {
+          "id": "stat_p_nonsig-r-0.3.1",
+          "validators": null,
+          "date": null,
+          "unit": null,
+          "corpus": {"source": null, "papers": 194, "fields": null, "sampling": null, "labels": null},
+          "counts": {"tp": 1486, "fp": 153, "fn": null, "tn": null},
+          "settings": null,
+          "server_safe": null,
+          "protocol": null,
+          "summary": "In a sample of 194 papers with 1602 instances of non-significant p-values, this module correctly detected 1486 of them, and incorrectly identified 153. Additionally, 91% of detections were true instances (positive predictive value). That is, when this module flags non-significant p-values in a paper, it correctly identifies an issue 91% of the time."
+        }
+      ]
+    }
+  },
+  "withdrawn": {}
+}
