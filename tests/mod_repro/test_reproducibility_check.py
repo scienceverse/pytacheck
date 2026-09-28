@@ -809,11 +809,17 @@ def test_r_named_list_semantics() -> None:
 
 @pytest.mark.slow
 def test_batch_real_worker_processes(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Spawned worker processes: without Docker each paper's check fails on its own."""
+    """Spawned worker processes: without Docker each paper's check fails on its own.
+
+    Docker is hidden from ``PATH``, which the workers inherit, so the test runs
+    the same whether or not the machine (a CI runner, say) has Docker.
+    """
+    import sys
+
     from pytacheck.repro import docker
 
-    if docker.repro_docker_available().get("ok"):
-        pytest.skip("Docker is available: the real run would execute containers")
+    monkeypatch.setenv("PATH", str(Path(sys.executable).parent))
+    assert not docker.repro_docker_available()["ok"]
     papers = pc.read([ROOT / f for f in rh.PSYCHSCI[:2]])
     mo = module_run(papers, "reproducibility_check", execute=True, sandbox="docker", workers=2)
     assert mo.traffic_light == "error"
