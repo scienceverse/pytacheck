@@ -232,7 +232,8 @@ def _against_committed(
         return 0
     if not _on_recording_platform():
         print(
-            f"not compared with the committed snapshots: they are {RECORDED_WITH}'s, this is {_python()}"
+            f"not compared with the committed snapshots: they are recorded with {RECORDED_WITH}, "
+            f"this is {_python()}"
         )
         return 0
     status = 0
@@ -277,7 +278,9 @@ def _unified(a: store.Record, b: store.Record, max_lines: int) -> list[str]:
 def cmd_diff(args: argparse.Namespace) -> int:
     sets = select(args.only)
     if not _on_recording_platform():
-        print(f"note: the committed snapshots are {RECORDED_WITH}'s, this is {_python()}")
+        print(
+            f"note: the committed snapshots are recorded with {RECORDED_WITH}, this is {_python()}"
+        )
     if args.source:
         source = Path(args.source)
         absent = [s.name for s in sets if not (source / s.name / store.INDEX).is_file()]
