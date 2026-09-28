@@ -50,7 +50,9 @@ git status     # unchanged goldens are rewritten with the same bytes
 
 The `Rscript` wrapper runs `Rscript` in the image with `docker run`:
 
-- as your user and group, on the host's network, with `HOME=/tmp`;
+- as your user and group, on the host's network, with an empty `HOME` of its
+  own (a tmpfs): nothing one run leaves in `~`, such as metacheck's data
+  folder, reaches the next;
 - with `/tmp`, the checkout you call it from and the wrapper's own checkout
   mounted at the same paths, each with its git common dir (worktrees and
   submodules point into it). R sees no other host paths, except the working

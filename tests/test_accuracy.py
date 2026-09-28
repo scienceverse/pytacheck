@@ -422,8 +422,11 @@ def test_r_image_wrapper_mounts_the_checkout_and_keeps_r_libs(tmp_path: Path) ->
     assert _after(args, "--network") == {"host"}
     assert _after(args, "--user") == {f"{os.getuid()}:{os.getgid()}"}
     env = _after(args, "-e")
-    assert {"R_LIBS", "HOME=/tmp"} <= env
+    assert {"R_LIBS", "HOME=/home/r"} <= env
     assert not env & {"R_LIBS_USER", "PATH", "HOME", "PWD"}
+    # HOME is private to the run (/tmp is shared, and anyone can write there)
+    uid, gid = os.getuid(), os.getgid()
+    assert _after(args, "--tmpfs") == {f"/home/r:uid={uid},gid={gid},mode=0700"}
     # the image of the metacheck commit the checkout has
     sub = ROOT / "upstream" / "metacheck"
     if (sub / ".git").exists():
