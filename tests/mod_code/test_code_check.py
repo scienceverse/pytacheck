@@ -1094,7 +1094,11 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
             for n in names
         ]
     )
-    with warnings.catch_warnings():
+    # the refused files are then streamed from their URLs: serve recorded
+    # responses only (a 404)
+    from tests.httpmock import replay
+
+    with replay("apis"), warnings.catch_warnings():
         warnings.simplefilter("ignore")
         mo = module_run(fake_repo_check(table), "code_check")
     assert counts and all(c == {"https://osf.io/x": 5} for c in counts)
@@ -1127,7 +1131,7 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
             for n in [*names, "bundle.zip"]
         ]
     )
-    with warnings.catch_warnings():
+    with replay("apis"), warnings.catch_warnings():
         warnings.simplefilter("ignore")
         mo = module_run(fake_repo_check(zipped), "code_check")
     assert len(counts) == 2 and all(c == {"https://osf.io/x": 6} for c in counts)
