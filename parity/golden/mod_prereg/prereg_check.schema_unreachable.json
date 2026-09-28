@@ -1,0 +1,171 @@
+{
+  "id": "prereg_check.schema_unreachable",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Open-Ended Registration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "WVS Dishonesty"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a6y7r"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/a6y7r"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-08-24T02:39:48.759898"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2023-01-10T15:34:55.292980"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-08-24T02:39:48.740831"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-08-22T00:00:00Z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-a6y7r-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_a6y7r"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/a6y7r' target='_blank'>a6y7r<\/a>\", \n    title = \"WVS Dishonesty\", template = \"Open-Ended Registration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above.",
+          "",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"paper_id\"), \"Preregistration 1\" = c(\"Open-Ended Registration\", \n\"WVS Dishonesty\", \"a6y7r\", \"https://osf.io/a6y7r\", \"2020-08-24T02:39:48.759898\", \n\"2023-01-10T15:34:55.292980\", \"2020-08-24T02:39:48.740831\", \"2024-08-22T00:00:00Z\", \n\"https://archive.org/details/osf-registrations-a6y7r-v1\", \"p_a6y7r\"\n)), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \"date_created\", \n\"date_modified\", \"date_registered\", \"embargo_end_date\", \"ia_url\", \n\"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_a6y7r"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

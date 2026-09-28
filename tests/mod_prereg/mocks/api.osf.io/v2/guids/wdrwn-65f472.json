@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "wdrwn",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/wdrwn/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "wdrwn",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/wdrwn/",
+   "html": "https://osf.io/wdrwn/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.benchmarks/
+# R
+.Rhistory
+.RData
+.Rproj.user/
+# parity scratch output (goldens live in parity/golden and ARE committed)
+parity/_out/
+# editors / OS
+.idea/
+.vscode/
+.DS_Store
+.upstream-sync/

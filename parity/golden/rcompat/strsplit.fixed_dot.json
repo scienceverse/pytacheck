@@ -1,0 +1,115 @@
+{
+  "id": "strsplit.fixed_dot",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "The effect was significant, t(28) = 2",
+          "20, p = ",
+          "036, d = 0",
+          "80"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p<0",
+          "001 and P = ",
+          "04; also p ≤ ",
+          "05 and p=0",
+          "5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Café résumé naïve — Élan vital",
+          " ÉCOLE école"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "non breaking space\tand tab\nnew line"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "back\\slash [bracket] a",
+          "b a-b a_b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "marginally statistically significant trend towards significance"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ab abc abcd aab"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "multi\nline\ntext\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12,345 1",
+          "5e-3 −0",
+          "25 3·10^-4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data are available at https://osf",
+          "io/abc12/ and osf",
+          "io/XYZ9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "aaa"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a,b,"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ",a"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

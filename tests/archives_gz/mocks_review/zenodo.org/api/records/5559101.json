@@ -1,0 +1,46 @@
+{
+ "id": 5559101,
+ "metadata": {
+  "title": "Odd files"
+ },
+ "files": [
+  {
+   "id": "f-nosize",
+   "key": "nosize.txt",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559101/files/nosize.txt/content"
+   }
+  },
+  {
+   "id": "f-nokey",
+   "size": 4,
+   "checksum": "md5:0bee89b07a248e27c83fc3d5951213c1",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559101/files/nokey/content"
+   }
+  },
+  {
+   "id": "f-noself",
+   "key": "noself.txt",
+   "size": 2
+  },
+  {
+   "id": "f-upper",
+   "key": "UPPER.CSV",
+   "size": 4,
+   "checksum": "MD5:0BEE89B07A248E27C83FC3D5951213C1",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559101/files/UPPER.CSV/content"
+   }
+  },
+  {
+   "id": "f-hexupper",
+   "key": "hexupper.csv",
+   "size": 4,
+   "checksum": "md5:0BEE89B07A248E27C83FC3D5951213C1",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559101/files/hexupper.csv/content"
+   }
+  }
+ ]
+}

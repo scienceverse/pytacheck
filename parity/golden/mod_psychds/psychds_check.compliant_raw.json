@@ -1,0 +1,287 @@
+{
+  "id": "psychds_check.compliant_raw",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "study-1_task-stroop_data.tsv",
+              "eeg.npy",
+              "dataset_description.json",
+              "README.md",
+              "LICENSE",
+              "CHANGES",
+              "ro-crate-metadata.json",
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "code",
+              "documentation",
+              "unknown",
+              "unknown",
+              "documentation",
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              null,
+              null,
+              "ex1",
+              null,
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-1_task-stroop_data.tsv",
+              "data/eeg.npy",
+              "dataset_description.json",
+              "README.md",
+              "LICENSE",
+              "CHANGES",
+              "ro-crate-metadata.json",
+              "analysis/analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-study1taskstroopdata_data.csv",
+              "data/eeg.npy",
+              "analysis/dataset_description.json",
+              "README.md",
+              "unknown/LICENSE",
+              "unknown/CHANGES",
+              "README.json",
+              "analysis/analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "move",
+              "move",
+              "move",
+              "present",
+              "move",
+              "move",
+              "move",
+              "present"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-1_task-stroop_data.tsv",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 8 files across 1 study group.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"present\", \"present\", \"present\", \"present\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── analysis.R\n│   └── dataset_description.json <span style=\"color:#b9770e\">(move from dataset_description.json)<\/span>\n├── data/\n│   ├── eeg.npy <span style=\"color:#b9770e\">(move from data/eeg.npy)<\/span>\n│   └── study-study1taskstroopdata_data.csv <span style=\"color:#b9770e\">(move from data/study-1_task-stroop_data.tsv)<\/span>\n├── unknown/\n│   ├── CHANGES <span style=\"color:#b9770e\">(move from CHANGES)<\/span>\n│   └── LICENSE <span style=\"color:#b9770e\">(move from LICENSE)<\/span>\n├── README.json <span style=\"color:#b9770e\">(move from ro-crate-metadata.json)<\/span>\n└── README.md\n<\/pre>",
+          "#### Suggestions",
+          "- **Move** `data/study-1_task-stroop_data.tsv` → `data/study-study1taskstroopdata_data.csv`.\n- **Move** `data/eeg.npy` → `data/eeg.npy`.\n- **Move** `dataset_description.json` → `analysis/dataset_description.json`.\n- **Move** `LICENSE` → `unknown/LICENSE`.\n- **Move** `CHANGES` → `unknown/CHANGES`.\n- ...and 1 more file to relocate.",
+          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
+          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This repository already contains the files required for a Psych-DS dataset."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

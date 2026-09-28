@@ -1,0 +1,34 @@
+{
+ "paper_id": "order_rows_before_df",
+ "schema_version": "12.0",
+ "source": {
+  "file_name": "m.pdf",
+  "sha256": null,
+  "input_format": "pdf"
+ },
+ "metadata": {
+  "title": "Malformed"
+ },
+ "extraction": {
+  "producer": {
+   "name": "bibr",
+   "version": "0.3.0"
+  },
+  "completed_at": "2026-01-02T03:04:05Z"
+ },
+ "eq": [
+  {
+   "eq_id": 1,
+   "df": [
+    "1",
+    "2"
+   ]
+  }
+ ],
+ "bib_match": [
+  {
+   "bib_id": 1
+  },
+  5
+ ]
+}

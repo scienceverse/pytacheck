@@ -1,0 +1,9 @@
+{
+  "id": ".zenodo_check_token.refused",
+  "ok": false,
+  "error": "Zenodo did not accept the token (HTTP 403). Check that it is a zenodo.org token with the deposit:write scope; a sandbox.zenodo.org token will not work here. See ?zenodo_pat",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,401 @@
+{
+  "id": "stat_effect_size.review.no_digits_paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "292d8c66b81659",
+              "cbc48382f83cf5",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t-test",
+              "t-test",
+              "t-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(20) = 2.1",
+              "t(30) = 2.5",
+              "t = n.s."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.94",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A was bigger, t(20) = 2.1, d = 0.94.",
+              "B was smaller, t(30) = 2.5, p = .02.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.94",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.94",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2.1",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "20",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.458257569495584",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.648074069840786",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.895443008693564",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.895443008693564",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.55740168229009",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "n1 = 8, n2 = 14, N = 22",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "match_under_assumptions",
+              "indeterminate",
+              "indeterminate"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "independent_unequal_n_range",
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Match under independent-samples unequal-n range assumption (closest split n1 = 8, n2 = 14, N = 22).",
+              "No parseable d effect size found.",
+              "No parseable t(df)=value found."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We recommend checking the sentences below, and add any missing effect sizes.",
+          "For t-tests with a reported d, coherence checks yielded 1 match under assumptions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"B was smaller, t(30) = 2.5, p = .02.\", NA)), names = \"\", class = \"data.frame\", row.names = c(NA, \n-2L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger, t(20) = 2.1, d = 0.94.\", \n\"B was smaller, t(30) = 2.5, p = .02.\", NA), \"Effect Size\" = c(\"d = 0.94\", \nNA, NA), \"Reported Test\" = c(\"t(20) = 2.1\", \"t(30) = 2.5\", \"t = n.s.\"\n), \"Test Type\" = c(\"t-test\", \"t-test\", \"t-test\"), \"d Coherence\" = c(\"match_under_assumptions\", \n\"indeterminate\", \"indeterminate\"), \"d Assumption\" = c(\"independent_unequal_n_range\", \n\"none\", \"none\"), \"d Coherence Note\" = c(\"Match under independent-samples unequal-n range assumption (closest split n1 = 8, n2 = 14, N = 22).\", \n\"No parseable d effect size found.\", \"No parseable t(df)=value found.\"\n), \"eta Coherence\" = c(NA_character_, NA_character_, NA_character_\n), \"eta Assumption\" = c(NA_character_, NA_character_, NA_character_\n), \"eta Coherence Note\" = c(NA_character_, NA_character_, NA_character_\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 2 t-tests and/or F-tests where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "292d8c66b81659",
+              "cbc48382f83cf5"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

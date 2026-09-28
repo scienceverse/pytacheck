@@ -1,0 +1,58 @@
+{
+  "id": "github_links.test_paper.bare",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "href",
+      "text_id",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://github.com/org/repo/tree/main/sub",
+          "scienceverse/metacheck",
+          "lab/tool.git",
+          "data/set",
+          "x/y",
+          "z/w",
+          "q/r",
+          "lab_1/tool-2.v3"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          1,
+          5,
+          5,
+          7,
+          7,
+          7,
+          8
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

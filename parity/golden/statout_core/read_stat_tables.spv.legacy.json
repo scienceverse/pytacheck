@@ -1,0 +1,104 @@
+{
+  "id": "read_stat_tables.spv.legacy",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode legacy table: spv legacy: expected exactly 2 nests (rows, columns), found 3",
+    "spv: could not decode legacy data: spv binary: expected marker byte(s) 0 (LegacyBinary marker) at offset 1"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "T-Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "One-Sample Statistics"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "Statistics",
+              "dim2",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "N",
+                  "Mean",
+                  "Std. Error Mean",
+                  "N",
+                  "Mean",
+                  "Std. Error Mean"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "age",
+                  "age",
+                  "age",
+                  "score",
+                  "score",
+                  "score"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "118",
+                  "34.5",
+                  ".",
+                  "120",
+                  "-1.79769313486232e+308",
+                  "0.25"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "T-TEST /TESTVAL=0 /VARIABLES=age score."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

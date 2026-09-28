@@ -1,0 +1,207 @@
+{
+  "id": "all_p_values.unicode_ws",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_p_values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              3,
+              4,
+              4,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p\t=\t.02 ",
+              "p = 5.0",
+              "p = 1.2 ",
+              "p =\n.03 ",
+              "p\n< .04"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Mixed p = .04 and p\t=\t.02 and P　=　.5.",
+              "Sci p = 5.0 x 10^-2 and p = 1.2 e -3.",
+              "Sci p = 5.0 x 10^-2 and p = 1.2 e -3.",
+              "Line p =\n.03 and p\n< .04.",
+              "Line p =\n.03 and p\n< .04."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "=",
+              "=",
+              "=",
+              "<"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.02,
+              5,
+              1.2,
+              0.03,
+              0.04
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p\\t=\\t.02 \", \"p = 5.0\", \"p = 1.2 \", \n\"p =<br>.03 \", \"p<br>< .04\"), Sentence = c(\"Mixed p = .04 and p = .02 and P = .5.\", \n\"Sci p = 5.0 x 10^-2 and p = 1.2 e -3.\", \"Sci p = 5.0 x 10^-2 and p = 1.2 e -3.\", \n\"Line p = .03 and p < .04.\", \"Line p = .03 and p < .04.\")), row.names = c(NA, \n-5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 5 p-values"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "p_values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

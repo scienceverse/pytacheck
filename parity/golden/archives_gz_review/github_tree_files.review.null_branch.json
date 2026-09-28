@@ -1,0 +1,157 @@
+{
+  "id": "github_tree_files.review.null_branch",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "gated",
+      "reason",
+      "files",
+      "default_branch",
+      "license"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "repo",
+          "clean_repo",
+          "name",
+          "path",
+          "download_url",
+          "size",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3",
+              "rv/tree3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Makefile",
+              ".gitignore",
+              "x.c++",
+              "READ ME.md",
+              "d.JSON",
+              "d.JSON",
+              "noext.",
+              "nosize.bin",
+              "файл.CSV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Makefile",
+              ".gitignore",
+              "src/x.c++",
+              "docs/READ ME.md",
+              "data/d.JSON",
+              "data/d.JSON",
+              "noext.",
+              "nosize.bin",
+              "Ünïcode/файл.CSV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://raw.githubusercontent.com/rv/tree3/main/Makefile",
+              "https://raw.githubusercontent.com/rv/tree3/main/.gitignore",
+              "https://raw.githubusercontent.com/rv/tree3/main/src/x.c++",
+              "https://raw.githubusercontent.com/rv/tree3/main/docs/READ ME.md",
+              "https://raw.githubusercontent.com/rv/tree3/main/data/d.JSON",
+              "https://raw.githubusercontent.com/rv/tree3/main/data/d.JSON",
+              "https://raw.githubusercontent.com/rv/tree3/main/noext.",
+              "https://raw.githubusercontent.com/rv/tree3/main/nosize.bin",
+              "https://raw.githubusercontent.com/rv/tree3/main/Ünïcode/файл.CSV"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              14,
+              15,
+              null,
+              16
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "file",
+              "config",
+              "file",
+              "text",
+              "code",
+              "data",
+              "file",
+              "exec",
+              "data"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "main"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NOASSERTION"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

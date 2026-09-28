@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "vwonl",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/vwonl/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "vwonl",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/vwonl/",
+   "html": "https://osf.io/vwonl/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

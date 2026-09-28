@@ -1,0 +1,15 @@
+{
+ "paper_id": "source_scalar",
+ "schema_version": "12.0",
+ "source": 7,
+ "metadata": {
+  "title": "Malformed"
+ },
+ "extraction": {
+  "producer": {
+   "name": "bibr",
+   "version": "0.3.0"
+  },
+  "completed_at": "2026-01-02T03:04:05Z"
+ }
+}

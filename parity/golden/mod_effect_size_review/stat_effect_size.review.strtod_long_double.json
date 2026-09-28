@@ -1,0 +1,691 @@
+{
+  "id": "stat_effect_size.review.strtod_long_double",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 13,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "t-test",
+              "t-test",
+              "t-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(98) = 6.25591564",
+              "t(20) = 1.818153880",
+              "t(40) = 1.818153880",
+              "t(10) = 6.793335393",
+              "t(10) = 2.70465715726",
+              "t(38) = 8.779758277",
+              "t(40) = 2.9",
+              "F(1, 20) = 1.818153880",
+              "F(2, 57) = 6.793335393",
+              "F(3, 40) = 2.70465715726",
+              "t(40) = 2.90000000000000000000000001",
+              "t(40) = 290000000000000000000000e-23",
+              "t(40) = 1e-320"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.63",
+              "d = 0.4",
+              "d = 0.4",
+              "d = 2.9",
+              "d = 0.82",
+              "d = 1.99",
+              "d = 0.8050473192",
+              "ηp² = .08",
+              "ηp² = .19",
+              "ηp² = .17",
+              "d = 0.4500000000000000000001",
+              "d = 0.00045",
+              "d = 0.0000000000000000000000000000000000000000000000000000000000000001"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Parse t, t(98) = 6.25591564, d = 0.63.",
+              "Parse t, t(20) = 1.818153880, d = 0.4.",
+              "Parse t, t(40) = 1.818153880, d = 0.4.",
+              "Parse t, t(10) = 6.793335393, d = 2.9.",
+              "Parse t, t(10) = 2.70465715726, d = 0.82.",
+              "Parse t, t(38) = 8.779758277, d = 1.99.",
+              "Parse d, t(40) = 2.9, d = 0.8050473192.",
+              "Parse F, F(1, 20) = 1.818153880, ηp² = .08.",
+              "Parse F, F(2, 57) = 6.793335393, ηp² = .19.",
+              "Parse F, F(3, 40) = 2.70465715726, ηp² = .17.",
+              "Long, t(40) = 2.90000000000000000000000001, d = 0.4500000000000000000001.",
+              "Long exp, t(40) = 290000000000000000000000e-23, d = 0.00045e3.",
+              "Tiny, t(40) = 1e-320, d = 0.0000000000000000000000000000000000000000000000000000000000000001."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.63",
+              "0.4",
+              "0.4",
+              "2.9",
+              "0.82",
+              "1.99",
+              "0.8050473192",
+              null,
+              null,
+              null,
+              "0.45",
+              "0.00045",
+              "1e-64"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.63",
+              "d = 0.4",
+              "d = 0.4",
+              "d = 2.9",
+              "d = 0.82",
+              "d = 1.99",
+              "d = 0.8050473192",
+              null,
+              null,
+              null,
+              "d = 0.4500000000000000000001",
+              "d = 0.00045",
+              "d = 0.0000000000000000000000000000000000000000000000000000000000000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6.25591564",
+              "1.81815388",
+              "1.81815388",
+              "6.793335393",
+              "2.70465715726",
+              "8.779758277",
+              "2.9",
+              null,
+              null,
+              null,
+              "2.9",
+              "2.9",
+              "9.99988867182683e-321"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "98",
+              "20",
+              "40",
+              "10",
+              "10",
+              "38",
+              "40",
+              null,
+              null,
+              null,
+              "40",
+              "40",
+              "40"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.628743178727153",
+              "0.396753703817984",
+              "0.283947931131965",
+              "2.04826768851114",
+              "0.815484816107334",
+              "1.40588648375094",
+              "0.452903909476958",
+              null,
+              null,
+              null,
+              "0.452903909476958",
+              "0.452903909476958",
+              "1.56124744085834e-321"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.889177130605511",
+              "0.561094468861151",
+              "0.401563015214607",
+              "2.89668794446304",
+              "1.15326968684832",
+              "1.9882237324776",
+              "0.64050285123411",
+              null,
+              null,
+              null,
+              "0.64050285123411",
+              "0.64050285123411",
+              "2.20847343691037e-321"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.251183128",
+              "0.775263419321465",
+              "0.561094468861151",
+              "3.92213401784396",
+              "1.56153453780971",
+              "2.77640334610355",
+              "0.894959429780133",
+              null,
+              null,
+              null,
+              "0.894959429780133",
+              "0.894959429780133",
+              "3.08791028650779e-321"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.251183128",
+              "0.775263419321465",
+              "0.561094468861151",
+              "3.92213401784396",
+              "1.56153453780971",
+              "2.77640334610355",
+              "0.894959429780133",
+              null,
+              null,
+              null,
+              "0.894959429780133",
+              "0.894959429780133",
+              "3.08791028650779e-321"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4.46851117142857",
+              "1.34837900541631",
+              "1.31737764288131",
+              "5.26209496845808",
+              "2.09501842545373",
+              "6.3695061116703",
+              "2.10124962819747",
+              null,
+              null,
+              null,
+              "2.10124962819747",
+              "2.10124962819747",
+              "7.24794302449109e-321"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "n = 99",
+              "n = 21",
+              null,
+              null,
+              "n = 11",
+              null,
+              null,
+              null,
+              null,
+              null,
+              "n = 41",
+              null,
+              "n = 41"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "no_match",
+              "no_match",
+              "match_under_assumptions",
+              "no_match",
+              "no_match",
+              null,
+              null,
+              null,
+              "match_under_assumptions",
+              "no_match",
+              "match_under_assumptions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "paired_dz",
+              "paired_dz",
+              "none",
+              "none",
+              "paired_dz",
+              "none",
+              "none",
+              null,
+              null,
+              null,
+              "paired_dz",
+              "none",
+              "paired_dz"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Match under paired-samples dz assumption.",
+              "Match under paired-samples dz assumption.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "Match under paired-samples dz assumption.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              null,
+              null,
+              null,
+              "Match under paired-samples dz assumption.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "Match under paired-samples dz assumption."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "1.81815388",
+              "6.793335393",
+              "2.70465715726",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "F(1, 20) = 1.818153880",
+              "F(2, 57) = 6.793335393",
+              "F(3, 40) = 2.70465715726",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "1",
+              "2",
+              "3",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "20",
+              "57",
+              "40",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "0.0833321595401636",
+              "0.19248210228233",
+              "0.168640651012129",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "0.0358553932234241",
+              "0.161855142288108",
+              "0.104124576338087",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All tests had effect sizes, but some effect sizes do not match the reported test statistic.",
+          "For t-tests with a reported d, coherence checks yielded 5 matches under assumptions, 5 no matches.",
+          "For F-tests with a reported eta-squared effect size, coherence checks yielded 3 matches under assumptions.",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"Parse t, t(98) = 6.25591564, d = 0.63.\", \n\"Parse t, t(20) = 1.818153880, d = 0.4.\", \"Parse t, t(40) = 1.818153880, d = 0.4.\", \n\"Parse t, t(10) = 6.793335393, d = 2.9.\", \"Parse t, t(10) = 2.70465715726, d = 0.82.\", \n\"Parse t, t(38) = 8.779758277, d = 1.99.\", \"Parse d, t(40) = 2.9, d = 0.8050473192.\", \n\"Parse F, F(1, 20) = 1.818153880, ηp² = .08.\", \"Parse F, F(2, 57) = 6.793335393, ηp² = .19.\", \n\"Parse F, F(3, 40) = 2.70465715726, ηp² = .17.\", \"Long, t(40) = 2.90000000000000000000000001, d = 0.4500000000000000000001.\", \n\"Long exp, t(40) = 290000000000000000000000e-23, d = 0.00045e3.\", \n\"Tiny, t(40) = 1e-320, d = 0.0000000000000000000000000000000000000000000000000000000000000001.\"\n), \"Effect Size\" = c(\"d = 0.63\", \"d = 0.4\", \"d = 0.4\", \"d = 2.9\", \n\"d = 0.82\", \"d = 1.99\", \"d = 0.8050473192\", \"ηp² = .08\", \"ηp² = .19\", \n\"ηp² = .17\", \"d = 0.4500000000000000000001\", \"d = 0.00045\", \n\"d = 0.0000000000000000000000000000000000000000000000000000000000000001\"\n), \"Reported Test\" = c(\"t(98) = 6.25591564\", \"t(20) = 1.818153880\", \n\"t(40) = 1.818153880\", \"t(10) = 6.793335393\", \"t(10) = 2.70465715726\", \n\"t(38) = 8.779758277\", \"t(40) = 2.9\", \"F(1, 20) = 1.818153880\", \n\"F(2, 57) = 6.793335393\", \"F(3, 40) = 2.70465715726\", \"t(40) = 2.90000000000000000000000001\", \n\"t(40) = 290000000000000000000000e-23\", \"t(40) = 1e-320\"), \"Test Type\" = c(\"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"F-test\", \n\"F-test\", \"F-test\", \"t-test\", \"t-test\", \"t-test\"), \"d Coherence\" = c(\"match_under_assumptions\", \n\"match_under_assumptions\", \"no_match\", \"no_match\", \"match_under_assumptions\", \n\"no_match\", \"no_match\", NA, NA, NA, \"match_under_assumptions\", \n\"no_match\", \"match_under_assumptions\"), \"d Assumption\" = c(\"paired_dz\", \n\"paired_dz\", \"none\", \"none\", \"paired_dz\", \"none\", \"none\", NA, \nNA, NA, \"paired_dz\", \"none\", \"paired_dz\"), \"d Coherence Note\" = c(\"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"Match under paired-samples dz assumption.\", \"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \nNA, NA, NA, \"Match under paired-samples dz assumption.\", \"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"Match under paired-samples dz assumption.\"), \"eta Coherence\" = c(NA, \nNA, NA, NA, NA, NA, NA, \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", NA, NA, NA), \"eta Assumption\" = c(NA, \nNA, NA, NA, NA, NA, NA, \"partial_eta_squared\", \"partial_eta_squared\", \n\"partial_eta_squared\", NA, NA, NA), \"eta Coherence Note\" = c(NA, \nNA, NA, NA, NA, NA, NA, \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \nNA, NA, NA)), row.names = c(NA, -13L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All effect sizes were reported, but some appear inconsistent with the test statistic. This can be because the effect size is not clearly labeled (e.g., d, instead of d_rm), because the effect sizes is not reported with enough precisions (e.g., 0.3 instead of 0.32), or because the effect size is incorrectly reported."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

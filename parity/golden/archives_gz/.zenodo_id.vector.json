@@ -1,0 +1,35 @@
+{
+  "id": ".zenodo_id.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "12345",
+      "12345",
+      "12345",
+      "12345",
+      "12345",
+      "12345",
+      null,
+      null,
+      "42",
+      "7"
+    ],
+    "names": [
+      "12345",
+      "https://zenodo.org/records/12345",
+      "https://zenodo.org/record/12345",
+      "https://doi.org/10.5281/zenodo.12345",
+      "zenodo.12345",
+      "https://zenodo.org/records/12345 zenodo.98765",
+      "not-a-zenodo-id",
+      "",
+      "  https://zenodo.org/uploads/42  ",
+      "ZENODO.ORG/RECORDS/7"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

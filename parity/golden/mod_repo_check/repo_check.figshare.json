@@ -1,0 +1,422 @@
+{
+  "id": "repo_check.figshare",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "m9.figshare.18093368.v1",
+              "m9.figshare.18093368.v1",
+              "m9.figshare.18093368.v1",
+              "m9.figshare.18093368.v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.6084/m9.figshare.18093368.v1",
+              "https://doi.org/10.6084/m9.figshare.18093368.v1",
+              "https://doi.org/10.6084/m9.figshare.18093368.v1",
+              "https://doi.org/10.6084/m9.figshare.18093368.v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "readme.txt",
+              "video.mp4",
+              "missing.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "readme.txt",
+              "video.mp4",
+              "missing.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://ndownloader.figshare.com/files/555",
+              "https://ndownloader.figshare.com/files/556",
+              "https://ndownloader.figshare.com/files/557",
+              "https://ndownloader.figshare.com/files/558"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              8,
+              22,
+              52428800,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "readme",
+              "video",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "documentation",
+              "materials",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "readme",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              null,
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_figshare",
+              "p_figshare",
+              "p_figshare",
+              "p_figshare"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://doi.org/10.6084/m9.figshare.18093368.v1' target='_blank'>doi.org/10.6084/m9.figshare.18093368.v1<\/a>\", \n    Platform = \"figshare\", \"All Files\" = 4L, \"Data Files\" = 2L, \n    \"Code Files\" = 0L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://doi.org/10.6084/m9.figshare.18093368.v1\", \n\"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \n\"https://doi.org/10.6084/m9.figshare.18093368.v1\"), File = c(\"<a href='https://ndownloader.figshare.com/files/555' target='_blank'>data.csv<\/a>\", \n\"<a href='https://ndownloader.figshare.com/files/556' target='_blank'>readme.txt<\/a>\", \n\"<a href='https://ndownloader.figshare.com/files/557' target='_blank'>video.mp4<\/a>\", \n\"<a href='https://ndownloader.figshare.com/files/558' target='_blank'>missing.csv<\/a>\"\n), Size = c(\"8 B\", \"22 B\", \"52.4 MB\", \"4 B\"), Type = c(\"data\", \n\"readme\", \"video\", \"data\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data.csv\", \"missing.csv\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"data.csv\", \"missing.csv\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"readme.txt\", Group = \"—\", Path = \"readme.txt\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"video.mp4\", Group = \"ex1\", Path = \"video.mp4\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 4 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_figshare"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.6084/m9.figshare.18093368.v1",
+              "https://figshare.com/projects/PERICLES_-_Heritage_values/133332",
+              "https://figshare.com/projects/PERICLES_-_Heritage_values/133332"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.6084/m9.figshare.18093368.v1",
+              "10.6084/m9.figshare.18093368.v1",
+              "10.6084/m9.figshare.6934484"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "CC BY 4.0",
+              "CC BY 4.0",
+              "CC0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_figshare",
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

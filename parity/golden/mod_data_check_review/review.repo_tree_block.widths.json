@@ -1,0 +1,17 @@
+{
+  "id": "review.repo_tree_block.widths",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "#### Data Tree",
+      "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+      "**Repository: r**",
+      "```\n├── 😀.png      📁 materials\n├── a­b.csv     📊 data      ex1\n├── é.csv       📊 data      ex1\n├── tab\there.R 💻 code      ex1\n├── x🟰.txt      ❓ unknown\n└── 日本.csv    📊 data      ex2\n```"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

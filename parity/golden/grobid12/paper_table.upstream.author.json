@@ -1,0 +1,798 @@
+{
+  "id": "paper_table.upstream.author",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 42,
+    "names": [
+      "author_id",
+      "given",
+      "family",
+      "suffix",
+      "literal",
+      "email",
+      "corresponding",
+      "orcid",
+      "role",
+      "credit_roles",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          4,
+          5,
+          1,
+          2,
+          3,
+          4,
+          5,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          1,
+          1,
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          1,
+          1,
+          2,
+          3,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Daniel",
+          "Lisa",
+          "Jakub",
+          "Lisa",
+          "Lisa",
+          "Lisa",
+          "Lisa",
+          "Jens",
+          "Agneta",
+          "Gerben",
+          "Jens",
+          "Agneta",
+          "Gerben",
+          "Ana",
+          "Charlotte",
+          "Aliza",
+          "Tim",
+          "Michael",
+          "Molly",
+          "Andreas",
+          "Nadira",
+          "Guy",
+          "Julian",
+          "Katarzyna",
+          "|",
+          "Robin",
+          "Nicola",
+          "G",
+          "Guillaume",
+          "Lisa",
+          "Lisa",
+          "Daniel",
+          "Lisa",
+          "Jakub",
+          "Daniel",
+          "Lisa",
+          "Jakub",
+          "Lisa",
+          "Daniel",
+          "Lisa",
+          "Jakub",
+          "Lisa"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Lakens",
+          "Debruine",
+          "Werner",
+          "Debruine",
+          "Debruine",
+          "Debruine",
+          "Debruine",
+          "Lange",
+          "Fischer",
+          "Van Kleef",
+          "Lange",
+          "Fischer",
+          "Van Kleef",
+          "Catarino",
+          "Küpper",
+          "Werner-Seidler",
+          "Dalgleish",
+          "Anderson",
+          "Crockett",
+          "Kappes",
+          "Faber",
+          "Kahane",
+          "Savulescu",
+          "Jaworska",
+          "Fei",
+          "Ince",
+          "Van Rijsbergen",
+          "Schyns",
+          "Rousselet",
+          "Debruine",
+          "Debruine",
+          "Lakens",
+          "Debruine",
+          "Werner",
+          "Lakens",
+          "Debruine",
+          "Werner",
+          "Debruine",
+          "Lakens",
+          "Debruine",
+          "Werner",
+          "Debruine"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "debruilm@mcmaster.ca",
+          "debruilm@mcmaster.ca",
+          null,
+          null,
+          "lange.jens@outlook.com.",
+          null,
+          null,
+          "lange.jens@outlook.com",
+          null,
+          null,
+          "ana.catarino@mrc-cbu.cam.ac.uk",
+          null,
+          null,
+          null,
+          null,
+          "mj.crockett@yale.edu",
+          "andreas.kappes@city.ac.uk",
+          null,
+          null,
+          null,
+          "katarzyna.jaworska@glasgow.ac.uk",
+          null,
+          null,
+          null,
+          null,
+          "guillaume.rousselet@glasgow.ac.uk",
+          null,
+          "debruilm@mcmaster.ca",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "debruilm@mcmaster.ca"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "https://orcid.org/0000-0001-6939-8174",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human",
+          "debruine-child",
+          "debruine-fret",
+          "debruine-sex",
+          "debruine-tnl",
+          "preprint",
+          "preprint",
+          "preprint",
+          "published",
+          "published",
+          "published",
+          "0956797615569889",
+          "0956797615569889",
+          "0956797615569889",
+          "0956797615569889",
+          "0956797615569889",
+          "0956797617737129",
+          "0956797617737129",
+          "0956797617737129",
+          "0956797617737129",
+          "0956797617737129",
+          "203020",
+          "203020",
+          "203020",
+          "203020",
+          "203020",
+          "203020",
+          "processFulltextDocument-06d588-POST",
+          "processFulltextDocument-1181af-POST",
+          "processFulltextDocument-4b4691-POST",
+          "processFulltextDocument-4b4691-POST",
+          "processFulltextDocument-4b4691-POST",
+          "processFulltextDocument-619fd9-POST",
+          "processFulltextDocument-619fd9-POST",
+          "processFulltextDocument-619fd9-POST",
+          "processFulltextDocument-9c61e4-POST",
+          "processFulltextDocument-d2308a-POST",
+          "processFulltextDocument-d2308a-POST",
+          "processFulltextDocument-d2308a-POST",
+          "processFulltextDocument-d67d70-POST"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

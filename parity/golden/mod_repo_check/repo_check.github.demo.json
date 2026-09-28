@@ -1,0 +1,733 @@
+{
+  "id": "repo_check.github.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 29,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo",
+              "demo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "good-example.R",
+              "README.md",
+              "01.R",
+              "02.R",
+              "03.R",
+              "04.R",
+              "05.R",
+              "06.R",
+              "07.R",
+              "08.R",
+              "09.R",
+              "10.R",
+              "11.R",
+              "12.R",
+              "13.R",
+              "14.R",
+              "15.R",
+              "16.R",
+              "17.R",
+              "18.R",
+              "19.R",
+              "20.R",
+              "21.R",
+              "22.R",
+              "23.R",
+              "24.R",
+              "25.R",
+              "Archive.zip",
+              "file.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "good-example.R",
+              "README.md",
+              "code/01.R",
+              "code/02.R",
+              "code/03.R",
+              "code/04.R",
+              "code/05.R",
+              "code/06.R",
+              "code/07.R",
+              "code/08.R",
+              "code/09.R",
+              "code/10.R",
+              "code/11.R",
+              "code/12.R",
+              "code/13.R",
+              "code/14.R",
+              "code/15.R",
+              "code/16.R",
+              "code/17.R",
+              "code/18.R",
+              "code/19.R",
+              "code/20.R",
+              "code/21.R",
+              "code/22.R",
+              "code/23.R",
+              "code/24.R",
+              "code/25.R",
+              "folder/Archive.zip",
+              "folder/file.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://raw.githubusercontent.com/scienceverse/demo/main/good-example.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/README.md",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/01.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/02.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/03.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/04.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/05.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/06.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/07.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/08.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/09.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/10.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/11.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/12.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/13.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/14.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/15.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/16.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/17.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/18.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/19.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/20.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/21.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/22.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/23.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/24.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/code/25.R",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/folder/Archive.zip",
+              "https://raw.githubusercontent.com/scienceverse/demo/main/folder/file.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              227,
+              36,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              33,
+              31324,
+              17
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "readme",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "archive",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "documentation",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "unknown",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "readme",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "supplemental"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              null,
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              null,
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh",
+              "p_gh"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='github.com/scienceverse/demo' target='_blank'>github.com/scienceverse/demo<\/a>\", \n    Platform = \"github\", \"All Files\" = 29L, \"Data Files\" = 0L, \n    \"Code Files\" = 26L, READMEs = 1L, Archives = 1L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\", \n\"github.com/scienceverse/demo\", \"github.com/scienceverse/demo\"\n), File = c(\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/good-example.R' target='_blank'>good-example.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/01.R' target='_blank'>01.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/02.R' target='_blank'>02.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/03.R' target='_blank'>03.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/04.R' target='_blank'>04.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/05.R' target='_blank'>05.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/06.R' target='_blank'>06.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/07.R' target='_blank'>07.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/08.R' target='_blank'>08.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/09.R' target='_blank'>09.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/10.R' target='_blank'>10.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/11.R' target='_blank'>11.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/12.R' target='_blank'>12.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/13.R' target='_blank'>13.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/14.R' target='_blank'>14.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/15.R' target='_blank'>15.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/16.R' target='_blank'>16.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/17.R' target='_blank'>17.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/18.R' target='_blank'>18.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/19.R' target='_blank'>19.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/20.R' target='_blank'>20.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/21.R' target='_blank'>21.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/22.R' target='_blank'>22.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/23.R' target='_blank'>23.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/24.R' target='_blank'>24.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/25.R' target='_blank'>25.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/folder/Archive.zip' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://raw.githubusercontent.com/scienceverse/demo/main/folder/file.txt' target='_blank'>file.txt<\/a>\"\n), Size = c(\"227 B\", \"36 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \n\"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \n\"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \n\"33 B\", \"33 B\", \"33 B\", \"33 B\", \"33 B\", \"31.3 kB\", \"17 B\"), Type = c(\"code\", \n\"readme\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \n\"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \n\"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \n\"code\", \"code\", \"archive\", \"text\")), row.names = c(NA, -29L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Rule = \"unclassifiable\", \n    Severity = \"bad\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (26 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"good-example.R\", \"01.R\", \"02.R\", \"03.R\", \n\"04.R\", \"05.R\", \"06.R\", \"07.R\", \"08.R\", \"09.R\", \"10.R\", \"11.R\", \n\"12.R\", \"13.R\", \"14.R\", \"15.R\", \"16.R\", \"17.R\", \"18.R\", \"19.R\", \n\"20.R\", \"21.R\", \"22.R\", \"23.R\", \"24.R\", \"25.R\"), Group = c(\"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\"), Path = c(\"good-example.R\", \n\"code/01.R\", \"code/02.R\", \"code/03.R\", \"code/04.R\", \"code/05.R\", \n\"code/06.R\", \"code/07.R\", \"code/08.R\", \"code/09.R\", \"code/10.R\", \n\"code/11.R\", \"code/12.R\", \"code/13.R\", \"code/14.R\", \"code/15.R\", \n\"code/16.R\", \"code/17.R\", \"code/18.R\", \"code/19.R\", \"code/20.R\", \n\"code/21.R\", \"code/22.R\", \"code/23.R\", \"code/24.R\", \"code/25.R\"\n)), row.names = c(NA, -26L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"file.txt\"), Group = c(\"—\", \n\"ex1\"), Path = c(\"README.md\", \"folder/file.txt\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Group = \"—\", Path = \"folder/Archive.zip\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 29 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 1 archive file.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_gh"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              29
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              26
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_gh"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "github.com/scienceverse/demo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_gh"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,37 @@
+{
+  "id": ".dataone_info.mock.not_eml",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dataone_host",
+      "dataone_pid",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "knb.ecoinformatics.org"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.5063/NOTEML"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unsupported_metadata_format"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

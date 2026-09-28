@@ -1,0 +1,103 @@
+{
+  "id": ".psycharchives_info.review.json_904",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "JSON string contains (illegal) UTF8 byte-order-mark!"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "pa_url",
+      "PA_title",
+      "PA_authors",
+      "PA_doi",
+      "PA_license",
+      "PA_date",
+      "PA_abstract",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://qsardb.org/repository/handle/10967/904"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Item 904"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CC0"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "name",
+              "size",
+              "retrieve"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "café.csv"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  7
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://qsardb.org/rest/bitstreams/4/retrieve"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

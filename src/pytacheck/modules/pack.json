@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "name": "metacheck",
+  "title": "metacheck built-in modules",
+  "description": "The modules ported from metacheck. metacheck_modules lists every metacheck module (ported or not) and the three presets mirror module lists hard-coded in metacheck; tests/modsys/test_builtin_presets.py keeps both equal to R's.",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/scienceverse/metacheck",
+  "fields": ["general"],
+  "metacheck_modules": [
+    "all_p_values",
+    "all_urls",
+    "causal_claims",
+    "code_check",
+    "codebook_check",
+    "coi_check",
+    "coi_check_oi",
+    "data_check",
+    "ethics_check",
+    "funding_check",
+    "funding_check_oi",
+    "marginal",
+    "open_practices",
+    "power",
+    "prereg_check",
+    "psychds_check",
+    "ref_accuracy",
+    "ref_consistency",
+    "ref_miscitation",
+    "ref_pubpeer",
+    "ref_replication",
+    "ref_retraction",
+    "ref_summary",
+    "reg_check",
+    "repo_check",
+    "reproducibility_check",
+    "stat_check",
+    "stat_effect_size",
+    "stat_p_exact",
+    "stat_p_nonsig"
+  ],
+  "presets": {
+    "default": {
+      "description": "metacheck's report() defaults",
+      "modules": [
+        "prereg_check",
+        "funding_check",
+        "coi_check",
+        "power",
+        "repo_check",
+        "code_check",
+        "stat_check",
+        "stat_p_exact",
+        "stat_p_nonsig",
+        "stat_effect_size",
+        "marginal",
+        "ref_accuracy",
+        "ref_replication",
+        "ref_retraction",
+        "ref_pubpeer",
+        "ref_summary"
+      ]
+    },
+    "repository": {
+      "description": "metacheck's report_repository() defaults",
+      "modules": ["repo_check", "code_check", "data_check", "codebook_check"]
+    },
+    "validated": {
+      "description": "The validated modules run by metacheck's Shiny app",
+      "modules": [
+        "power",
+        "marginal",
+        "prereg_check",
+        "ethics_check",
+        "ref_pubpeer",
+        "ref_retraction",
+        "ref_replication",
+        "ref_accuracy",
+        "stat_check",
+        "stat_p_exact",
+        "stat_p_nonsig",
+        "stat_effect_size",
+        "repo_check",
+        "code_check",
+        "data_check",
+        "codebook_check"
+      ]
+    }
+  }
+}

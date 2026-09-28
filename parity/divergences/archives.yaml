@@ -1,0 +1,551 @@
+# Cases in the archives lane's generated case files that differ from R on purpose
+# (docs/UPSTREAM_ISSUES.md); format: see parity/cases.py load_divergences().
+# Hand-written case files (archives_osf*.yaml) mark their cases in place.
+# U31
+"archives_d1/.dataverse_parse.realignment_quirk":
+  kind: r_bug_fixed
+  ref: U31
+  reason: "each URL gets its own Dataverse host (metacheck's regmatches() realignment gives a host-less URL the next URL's host)"
+"archives_d1/.dataverse_parse.shapes":
+  kind: r_bug_fixed
+  ref: U31
+  reason: "each URL gets its own Dataverse host (metacheck's regmatches() realignment gives a host-less URL the next URL's host)"
+"archives_d1/dataverse_info.mock.vector":
+  kind: r_bug_fixed
+  ref: U31
+  reason: "each URL gets its own Dataverse host (metacheck's regmatches() realignment gives a host-less URL the next URL's host)"
+# U32
+"archives_d1/.dataverse_doi_prefix_hosts":
+  kind: r_bug_fixed
+  ref: U32
+  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
+"archives_d1/.dataverse_doi_prefix_regex":
+  kind: r_bug_fixed
+  ref: U32
+  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
+"archives_d1/.dataverse_host_from_doi.shapes":
+  kind: r_bug_fixed
+  ref: U32
+  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
+"archives_d1/dataverse_links.problem_203020":
+  kind: r_bug_fixed
+  ref: U32
+  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
+"archives_d1/dataverse_links.paperlist":
+  kind: r_bug_fixed
+  ref: U32
+  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
+"archives_d1/dataverse_links.test_paper":
+  kind: r_bug_fixed
+  ref: U32
+  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
+"archives_d1_review/dataverse_links.review.generated_shapes":
+  kind: r_bug_fixed
+  ref: U32
+  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
+# U33
+"archives_d1/dryad_info.mock.id_col_name":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_d1/figshare_info.mock.id_col_na_error":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_d2/dataone_info.mock.id_col_na_error":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_d2/researchdata4tu_info.mock.vector":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_d2/researchdata4tu_info.mock.links_table":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_d2/researchdata4tu_info.mock.id_col":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_d2/researchdata4tu_info.mock.na_error":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_d2/researchdata4tu_info.mock.none_valid":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+"archives_gz/zenodo_info.id_col_position.na":
+  kind: r_bug_fixed
+  ref: U33
+  reason: "a table or vector with an NA URL is looked up (metacheck: 'row names contain missing values'); researchdata4tu_info() keeps the table and de-duplicates a vector like the other *_info()"
+# U34
+"archives_d1/dataverse_info.mock.string_license_error":
+  kind: r_bug_fixed
+  ref: U34
+  reason: "a plain-string field (an old licence, a string doi, a string data) is read, not an error ('$ operator is invalid for atomic vectors')"
+"archives_d1/dataverse_file_download.mock.string_license_error":
+  kind: r_bug_fixed
+  ref: U34
+  reason: "a plain-string field (an old licence, a string doi, a string data) is read, not an error ('$ operator is invalid for atomic vectors')"
+"archives_d1_review/figshare_info.review.string_license_error":
+  kind: r_bug_fixed
+  ref: U34
+  reason: "a plain-string field (an old licence, a string doi, a string data) is read, not an error ('$ operator is invalid for atomic vectors')"
+"archives_d1_review/dataverse_info.review.string_data_error":
+  kind: r_bug_fixed
+  ref: U34
+  reason: "a plain-string field (an old licence, a string doi, a string data) is read, not an error ('$ operator is invalid for atomic vectors')"
+"archives_d1_review/dataverse_file_download.review.string_data_error":
+  kind: r_bug_fixed
+  ref: U34
+  reason: "a plain-string field (an old licence, a string doi, a string data) is read, not an error ('$ operator is invalid for atomic vectors')"
+"archives_d2/.mendeley_info.mock.doi_string_error":
+  kind: r_bug_fixed
+  ref: U34
+  reason: "a plain-string field (an old licence, a string doi, a string data) is read, not an error ('$ operator is invalid for atomic vectors')"
+"archives_d2/mendeley_info.mock.error":
+  kind: r_bug_fixed
+  ref: U34
+  reason: "a plain-string field (an old licence, a string doi, a string data) is read, not an error ('$ operator is invalid for atomic vectors')"
+# U35
+"archives_d1/dataverse_info.mock.duplicate_dataset":
+  kind: r_bug_fixed
+  ref: U35
+  reason: "a dataset named by several URLs is fetched once and joined one row per URL (metacheck: fetched per URL, many-to-many join repeats rows)"
+"archives_d1_review/dataverse_info.review.table_duplicates":
+  kind: r_bug_fixed
+  ref: U35
+  reason: "a dataset named by several URLs is fetched once and joined one row per URL (metacheck: fetched per URL, many-to-many join repeats rows)"
+"archives_d2/dataone_info.mock.vector":
+  kind: r_bug_fixed
+  ref: U35
+  reason: "a dataset named by several URLs is fetched once and joined one row per URL (metacheck: fetched per URL, many-to-many join repeats rows)"
+"archives_d2_review/dataone_info.review.table":
+  kind: r_bug_fixed
+  ref: U35
+  reason: "a dataset named by several URLs is fetched once and joined one row per URL (metacheck: fetched per URL, many-to-many join repeats rows)"
+"archives_d2_review/dataone_info.review.table_collisions":
+  kind: r_bug_fixed
+  ref: U35
+  reason: "a dataset named by several URLs is fetched once and joined one row per URL (metacheck: fetched per URL, many-to-many join repeats rows)"
+# U36
+"archives_d1/dryad_file_download.mock.default":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dryad_file_download.mock.download_cap":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dryad_file_download.mock.all_omitted":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dryad_file_download.mock.multi":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dryad_file_download.mock.folder_exists":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dryad_file_download.mock.new_folder":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/figshare_file_download.mock.default":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/figshare_file_download.mock.multi":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dataverse_file_download.mock.default":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dataverse_file_download.mock.vectorised":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dataverse_file_download.mock.recycled_host":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1/dataverse_file_download.mock.error_in_vector":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/figshare_file_download.review.total_cap_ties":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/figshare_file_download.review.file_cap_missing_size":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/figshare_file_download.review.empty_body_error":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/figshare_file_download.review.empty_body_multi":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/dryad_file_download.review.empty_body_error":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/dryad_file_download.review.empty_body_multi":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/dataverse_file_download.review.empty_body_error":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d1_review/dataverse_file_download.review.empty_body_multi":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d2/reshare_file_download.mock.one":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d2/reshare_file_download.mock.total_cap":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_d2/reshare_file_download.mock.multi":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_gz/zenodo_file_download.mixed":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_gz/zenodo_file_download.total_cap":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_gz/zenodo_file_download.zip_no_unzip":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_gz_review/zenodo_file_download.review.ties":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+"archives_gz_review/zenodo_file_download.review.all_too_big":
+  kind: r_bug_fixed
+  ref: U36
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+# U37
+"archives_d1/figshare_file_download.mock.folder_exists_quirk":
+  kind: r_bug_fixed
+  ref: U37
+  reason: "an existing figshare_<id> folder gives figshare_<id>_1 (metacheck strips the id: figshare_1); omitted files also stay listed (U36)"
+# U39
+"archives_d1_review/.dataverse_parse.review.invalid_utf8_error":
+  kind: r_bug_fixed
+  ref: U39
+  reason: "a persistentId decoding to invalid UTF-8 is no DOI for that URL (metacheck aborts the call for every URL)"
+"archives_d1_review/dataverse_links.review.invalid_utf8_error":
+  kind: r_bug_fixed
+  ref: U39
+  reason: "a persistentId decoding to invalid UTF-8 is no DOI for that URL (metacheck aborts the call for every URL)"
+# U40
+"archives_d2/.dataone_pid.shapes":
+  kind: r_bug_fixed
+  ref: U40
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+"archives_d2/dataone_links.mixed":
+  kind: r_bug_fixed
+  ref: U40
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+"archives_d2/dataone_info.mock.links_table":
+  kind: r_bug_fixed
+  ref: U40
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+"archives_d2/dataone_info.mock.id_col_name":
+  kind: r_bug_fixed
+  ref: U40
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+"archives_d2/.dataone_info.mock.eml":
+  kind: r_bug_fixed
+  ref: U40
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+"archives_d2_review/dataone_links.review.unicode_case":
+  kind: r_bug_fixed
+  ref: U40
+  reason: "DataONE: a trailing '.' is not part of a PID, a marked PID may contain '/', and missing creator name parts are left out (not 'NA Smith', 'NA NA')"
+# U41
+"archives_d2/.researchdata4tu_id.shapes":
+  kind: r_bug_fixed
+  ref: U41
+  reason: "a 10.4121 uuid starting with digits is the uuid (metacheck's numeric pattern gives '7')"
+# U43
+"archives_d2/dspace7_file_download.mock.all_null_error":
+  kind: r_bug_fixed
+  ref: U43
+  reason: "several URLs that all fail give NULL (metacheck's left_join() on the empty result errors)"
+"archives_d2/psycharchives_file_download.mock.all_null_error":
+  kind: r_bug_fixed
+  ref: U43
+  reason: "several URLs that all fail give NULL (metacheck's left_join() on the empty result errors)"
+"archives_d2/rbox_file_download.mock.all_null_error":
+  kind: r_bug_fixed
+  ref: U43
+  reason: "several URLs that all fail give NULL (metacheck's left_join() on the empty result errors)"
+# U44
+"archives_d2/.fsd_study_id.vector_one":
+  kind: r_bug_fixed
+  ref: U44
+  reason: ".fsd_study_id() is vectorised: one result per element (metacheck drops non-matches and errors on two ids)"
+"archives_d2/.fsd_study_id.vector_error":
+  kind: r_bug_fixed
+  ref: U44
+  reason: ".fsd_study_id() is vectorised: one result per element (metacheck drops non-matches and errors on two ids)"
+# U46
+"archives_d2/dspace7_file_download.mock.one":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_d2/dspace7_file_download.mock.vector":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_d2/rbox_file_download.mock.cached":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz/github_files.html_json_types":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz/github_tree_files.tree":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz/github_tree_files.meta_fails":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz/gitlab_tree_files.subgroup_paged":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/github_files.review.tricky":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/github_files.review.tricky_rec":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/github_files.review.vector_rec":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/github_tree_files.review.null_branch":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/github_info.review.recursive":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/gitlab_tree_files.review.branch_space":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/github_tree_files.review.vector":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+"archives_gz_review/github_info.review.vector_dup":
+  kind: r_bug_fixed
+  ref: U46
+  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+# U48
+"archives_gz_review/github_languages.review.error_body":
+  kind: r_bug_fixed
+  ref: U48
+  reason: "github_languages() of an error answer (rate limit) is NULL, not languages named after the error body's fields"
+"archives_gz_review/github_languages.review.vector":
+  kind: r_bug_fixed
+  ref: U48
+  reason: "github_languages() of an error answer (rate limit) is NULL, not languages named after the error body's fields"
+# U69
+"repo_download/expand.gz":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+"repo_download/expand.bz2":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+"repo_download/expand.xz":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+"repo_download/expand.gz_uncompressed":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+"repo_download/expand.gz_minimal_row":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+# U70
+"repo_download/zip_crc_ok.near_miss_large":
+  kind: r_bug_fixed
+  ref: U70
+  reason: "CRCs are compared exactly (metacheck's all.equal() tolerance accepts a CRC 40 off)"
+# U71
+"repo_download/zip_inflate_member.big_without_size":
+  kind: r_bug_fixed
+  ref: U71
+  reason: "without a size the whole member is inflated (zip::inflate() stops at 32768 bytes)"
+# U72
+"repo_download/zip_peek.nolength.zip":
+  kind: r_bug_fixed
+  ref: U72
+  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
+"repo_download_review/cd.emptyname":
+  kind: r_bug_fixed
+  ref: U72
+  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
+"repo_download_review/cd.emptyname_last":
+  kind: r_bug_fixed
+  ref: U72
+  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
+"repo_download_review/cd.bigoffset":
+  kind: r_bug_fixed
+  ref: U72
+  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
+# U76
+"repo_download_review/peek.cp437.zip":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/decision.cp437.zip":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/fetch.cp437_all":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/expand.cp437.zip":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/invalid.file_category":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/invalid.filetype":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/invalid.check_file_naming":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/invalid.check_file_naming_path":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+"repo_download_review/invalid.is_readable_archive":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+# U79
+"archives_d1_review/dryad_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d1_review/figshare_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d1_review/dataverse_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/dataone_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/reshare_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/rbox_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/researchdata4tu_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/fsd_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/mendeley_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/psycharchives_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/dspace_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_d2_review/dspace7_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_gz_review/github_links.review.empty_paperlist": &u79_host
+  kind: r_bug_fixed
+  ref: U79
+  reason: "empty paper list: the (empty) link table has its href column, as a non-empty one does; R's has none (the url table of an empty list has no columns), so repo_check() and the modules that call it stop"
+"archives_gz_review/gitlab_links.review.empty_paperlist": *u79_host
+"archives_gz_review/zenodo_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently); pytacheck's zenodo_links() indexed the missing href column of the empty url table"
+# D7 (security: links that leave the extraction folder)
+"repo_download_review/expand.abslink.tar.gz":
+  kind: deliberate
+  ref: D7
+  reason: "GNU tar (R's untar) extracts a symlink to an absolute path; pytacheck refuses links that leave the extraction folder (tarfile's data filter), so abs_link.csv is not listed"
+# U69, cases of the data_check module whose archives hold a .gz file
+"mod_data_check/data_check.archives":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
+"mod_data_check/data_check.archives_nopeek":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
+"mod_data_check/data_check.archives_skip_none":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
+"mod_data_check/data_check.download_archives":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
+# U76 (file names that are not valid UTF-8 are classified; R's grepl() is FALSE for them)
+"datacheck_files_review/review.data_classify_files.invalid_utf8.glibc_valid":
+  kind: r_bug_fixed
+  ref: U76
+  reason: "file names with bytes that are not valid UTF-8 are classified by their extension (R's grepl() is FALSE for invalid strings, so they were 'unknown')"

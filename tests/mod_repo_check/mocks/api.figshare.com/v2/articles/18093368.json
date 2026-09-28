@@ -1,0 +1,53 @@
+{
+  "id": 18093368,
+  "title": "Example Figshare dataset",
+  "doi": "10.6084/m9.figshare.18093368.v1",
+  "published_date": "2022-01-01T10:00:00Z",
+  "modified_date": "2022-02-01T10:00:00Z",
+  "authors": [
+    {
+      "id": 1,
+      "full_name": "Jane Doe"
+    },
+    {
+      "id": 2,
+      "full_name": null
+    }
+  ],
+  "license": {
+    "value": 1,
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "files": [
+    {
+      "id": 555,
+      "name": "data.csv",
+      "size": 8,
+      "computed_md5": "344fd2323dd33d5c058b7cf27de029e8",
+      "download_url": "https://ndownloader.figshare.com/files/555",
+      "is_link_only": false
+    },
+    {
+      "id": 556,
+      "name": "readme.txt",
+      "size": 22,
+      "computed_md5": "380fc7c25eed1ca3428a9952cdbc006c",
+      "download_url": "https://ndownloader.figshare.com/files/556"
+    },
+    {
+      "id": 557,
+      "name": "video.mp4",
+      "size": 52428800,
+      "computed_md5": "",
+      "download_url": "https://ndownloader.figshare.com/files/557"
+    },
+    {
+      "id": 558,
+      "name": "missing.csv",
+      "size": 4,
+      "computed_md5": "",
+      "download_url": "https://ndownloader.figshare.com/files/558"
+    }
+  ]
+}

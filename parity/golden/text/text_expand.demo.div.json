@@ -1,0 +1,146 @@
+{
+  "id": "text_expand.demo.div",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type",
+      "expanded"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data",
+          "Data",
+          "Data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          3,
+          18,
+          20,
+          21,
+          25,
+          31
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          7,
+          8,
+          9,
+          12,
+          17
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          0,
+          4,
+          5,
+          5,
+          8,
+          11
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+          "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+          "We simulated the data using Faux (DeBruine 2025) (Table <ref type=\"table\">1<\/ref>, Figure <ref type=\"figure\" target=\"#fig_1\">1<\/ref>).2",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract",
+          "Abstract",
+          "Discussion",
+          "Data Availability",
+          "Data Availability",
+          "Results",
+          "Figure 1 :"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abstract",
+          "abstract",
+          "discussion",
+          "availability",
+          "availability",
+          "annex",
+          "figure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+          "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+          "Since our data are simulated for demonstration purposes, of course they confirm our hypotheses. It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app",
+          "Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.",
+          "Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx.",
+          "We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2",
+          "The simulated data."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

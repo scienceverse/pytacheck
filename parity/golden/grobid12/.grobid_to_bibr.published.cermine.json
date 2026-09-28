@@ -1,0 +1,1454 @@
+{
+  "id": ".grobid_to_bibr.published.cermine",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "paper",
+    "names": [
+      "paper_id",
+      "info",
+      "author",
+      "text",
+      "section",
+      "url",
+      "bib",
+      "xref",
+      "figure",
+      "table",
+      "eq",
+      "affiliation",
+      "funding",
+      "footnote",
+      "info_match",
+      "affiliation_match",
+      "funding_match",
+      "bib_match",
+      "extraction"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "published.cermine"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "title",
+          "abstract",
+          "keywords",
+          "doi",
+          "pmid",
+          "pmcid",
+          "arxiv",
+          "language",
+          "paper_type",
+          "oecd_l1",
+          "oecd_l2",
+          "journal",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "issn",
+          "publisher",
+          "published",
+          "published_date",
+          "license",
+          "license_url",
+          "license_spdx",
+          "funding_statement",
+          "coi_statement",
+          "ethics_statement",
+          "data_availability",
+          "file_name",
+          "sha256",
+          "input_format",
+          "schema_version",
+          "file_hash",
+          "bibr_version"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Envy shapes social hierarchies. To protect their rank, envied persons react to the threat posed by enviers. Doing so requires that envied persons initially perceive who envies them. However, a common perspective is that envy lacks a unique expression and that enviers disguise their experience, preventing the social perception of envy. In contrast to this perspective, recent evidence indicates that observers perceive benign and malicious forms of envy accurately when they can integrate information about targets. These findings suggest that observers infer envy based on multiple, contextual cues. We hypothesized that observers infer envy from facial and bodily expressions in comparison situations. Specifically, observers should infer benign envy when a target, who encounters an advantaged person, turns with disappointment toward the advantage. Conversely, observers should infer malicious envy when the target turns with anger toward the advantaged person. Three preregistered studies tested these hypotheses (total N = 693). In Studies 1 and 2, targets turned with an emotional or neutral expression either toward a person silhouette or a valuable object, and participants rated targets' envy. In Study 3, participants performed the same task with more realistic stimuli. Across studies, emotional display and head turning had independent effects on inferences of benign and malicious envy. Furthermore, observers inferred envy more when the target expressed an emotion instead of remaining neutral. We discuss how the results inform research on the social perception of envy."
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "published.cermine.xml"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "e79c5cdcdf6e21d3a97d6e4ac30857440068aa4f283197f1a29bd43ce299c40c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tei"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12.0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "e79c5cdcdf6e21d3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "author_id",
+          "given",
+          "family",
+          "suffix",
+          "literal",
+          "email",
+          "corresponding",
+          "orcid",
+          "role",
+          "credit_roles"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 15,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Envy shapes social hierarchies.",
+              "To protect their rank, envied persons react to the threat posed by enviers.",
+              "Doing so requires that envied persons initially perceive who envies them.",
+              "However, a common perspective is that envy lacks a unique expression and that enviers disguise their experience, preventing the social perception of envy.",
+              "In contrast to this perspective, recent evidence indicates that observers perceive benign and malicious forms of envy accurately when they can integrate information about targets.",
+              "These findings suggest that observers infer envy based on multiple, contextual cues.",
+              "We hypothesized that observers infer envy from facial and bodily expressions in comparison situations.",
+              "Specifically, observers should infer benign envy when a target, who encounters an advantaged person, turns with disappointment toward the advantage.",
+              "Conversely, observers should infer malicious envy when the target turns with anger toward the advantaged person.",
+              "Three preregistered studies tested these hypotheses (total N = 693).",
+              "In Studies 1 and 2, targets turned with an emotional or neutral expression either toward a person silhouette or a valuable object, and participants rated targets' envy.",
+              "In Study 3, participants performed the same task with more realistic stimuli.",
+              "Across studies, emotional display and head turning had independent effects on inferences of benign and malicious envy.",
+              "Furthermore, observers inferred envy more when the target expressed an emotion instead of remaining neutral.",
+              "We discuss how the results inform research on the social perception of envy."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "section_id",
+          "header",
+          "level",
+          "parent_section_id",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Abstract"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abstract"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "url_id",
+          "href",
+          "link_text",
+          "text_id",
+          "start",
+          "end"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "bib_id",
+          "text_id",
+          "bib_type",
+          "doi",
+          "title",
+          "authors",
+          "editors",
+          "publisher",
+          "year",
+          "year_suffix",
+          "date",
+          "published_date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url",
+          "is_in_press",
+          "arxiv",
+          "pmid",
+          "series",
+          "access_date",
+          "note"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "xref_id",
+          "target_id",
+          "xref_type",
+          "contents",
+          "text_id",
+          "start",
+          "end"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "figure_id",
+          "label",
+          "section_id",
+          "text_id",
+          "image",
+          "caption",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "table_id",
+          "label",
+          "section_id",
+          "text_id",
+          "html",
+          "contents",
+          "caption",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "eq_id",
+          "text_id",
+          "start",
+          "end",
+          "grp_id",
+          "verbatim",
+          "lhs",
+          "df",
+          "comp",
+          "rhs"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "="
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "693"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "affiliation_id",
+          "text",
+          "institution",
+          "department",
+          "city",
+          "country",
+          "author_ids"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "funding_id",
+          "funder",
+          "award_ids"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "footnote_id",
+          "label",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "service",
+          "service_id",
+          "score",
+          "bib_type",
+          "doi",
+          "title",
+          "author",
+          "editor",
+          "publisher",
+          "year",
+          "published_date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url",
+          "license_url",
+          "license_spdx",
+          "funder",
+          "authors",
+          "editors"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "affiliation_id",
+          "service",
+          "service_id",
+          "score",
+          "name",
+          "country_code"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "funding_id",
+          "service",
+          "service_id",
+          "score",
+          "name",
+          "country_code",
+          "funder_doi"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "bib_id",
+          "service",
+          "service_id",
+          "score",
+          "bib_type",
+          "doi",
+          "title",
+          "author",
+          "editor",
+          "publisher",
+          "year",
+          "published_date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url",
+          "license_url",
+          "license_spdx",
+          "funder",
+          "authors",
+          "editors"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "producer",
+          "converter",
+          "completed_at",
+          "ocr",
+          "llm",
+          "warnings"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "version",
+              "build_sha"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "version",
+              "build_sha"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "metacheck"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.3.1"
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<now>"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "message"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "METACHECK_SOURCE_IS_TEI"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "The PDF Grobid read was not found next to the TEI file, so source is the TEI file."
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

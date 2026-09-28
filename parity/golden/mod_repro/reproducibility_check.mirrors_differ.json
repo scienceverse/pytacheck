@@ -1,0 +1,362 @@
+{
+  "id": "reproducibility_check.mirrors_differ",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "run_results",
+      "install_results",
+      "stat_output",
+      "match_table",
+      "modifications"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reproducibility_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "file_name",
+          "parses",
+          "run_order",
+          "order_basis",
+          "depends_on",
+          "paths_rewritten",
+          "paths_ambiguous",
+          "setwd_removed",
+          "runnable",
+          "not_runnable_reason",
+          "unresolved_inputs",
+          "outcome",
+          "error_type",
+          "undefined_var",
+          "reads",
+          "writes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module assesses whether the paper's code could be run on its data. It performs static analysis only here: **no code is run**. We examined 2 R code files.",
+          "#### Run order",
+          "No ordering signal (no data dependency, `source()` call, or numeric filename prefix) distinguishes the run order of these files. They may need to run in a specific order that could not be determined automatically — check this before running.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:2, File = c(\"analysis.R\", \"analysis.R\"\n), \"Runs after\" = c(\"—\", \"—\"), Basis = c(\"none\", \"none\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File paths",
+          "To run against the Psych-DS layout, 2 referenced data paths would be rewritten to their new locations.",
+          "#### Missing inputs",
+          "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "*Executing the code is a separate, opt-in phase (run with `execute = TRUE`). This report describes what a run would involve; it did not run anything.*",
+          "#### Duplicate files across repo mirrors",
+          "1 file is byte-identical to another file already in the run (the paper links more than one repository/component that mirrors the same materials). It was only run once, from its first occurrence, to avoid wasted duplicate execution: `analysis.R` at `tests/mod_repro/fixtures/scripts/mirror_a/analysis.R` (same as `analysis.R` at `tests/mod_repro/fixtures/scripts/mirror_a/analysis.R`)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We assessed 2 R code files for reproducibility (static analysis; no code was run).\n-  2 files appear runnable so far (parses, inputs resolve, placeable in the run order).\n-  1 file skipped as byte-identical duplicate of another file already in the run (the paper links more than one repository/component).\n-  0 installable dependencies detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_tests_reported",
+          "repro_tests_matched"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file_name",
+          "change_type",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "path_rewrite",
+              "path_rewrite"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "\"data.csv\" -> \"data.csv\"",
+              "\"data.csv\" -> \"data.csv\""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

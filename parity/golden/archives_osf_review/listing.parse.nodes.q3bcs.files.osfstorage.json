@@ -1,0 +1,135 @@
+{
+  "id": "listing.parse.nodes.q3bcs.files.osfstorage",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5880e533ad3c4800444d82a9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data_Experiment_1.xlsx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          251048
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          52
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/Data_Experiment_1.xlsx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/5880e533ad3c4800444d82a9/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/5qsc6/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5880e51aad3c48004cf21019"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "q3bcs"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

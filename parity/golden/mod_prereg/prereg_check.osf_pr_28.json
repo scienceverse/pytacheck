@@ -1,0 +1,255 @@
+{
+  "id": "prereg_check.osf_pr_28",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "existing_data",
+          "existing_data_explanation",
+          "data_collection_procedures",
+          "sample_size",
+          "measured_variables",
+          "statistical_tests",
+          "data_exclusion_criteria",
+          "missing_data_handling",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Preregistered Replication: Little Between-Region and Between-Country Variance When Forming Impressions of Others"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "g59u6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/g59u6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-12-02T15:19:39.427393"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-09-23T20:31:04.221845"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-12-02T15:19:39.350806"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-g59u6-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Region, region*target, country, and country*target will account for no more than 8% of the total variance in ratings across traits (.08 summed ICC)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No blinding is involved in this study."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The data that we are analyzing did originally include manipulations of (a) crying, (b) situational valence, and c) social context. See https://osf.io/p62v8/ for details. Our analyses will not include any of these manipulations."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Registration prior to accessing the data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The data is not publicly accessible, but instead has been offered to us for replication by one of the reviewers of our manuscript. We will only gain access to the data after our preregistration is filed."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The data already exists. See https://osf.io/p62v8/ for more details."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7007 participants, 4 target ratings per participant, 41 countries, ~11 regions (will be clearer when we code using the full data)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Measured outcomes (all perceptions of traits in faces):\n\nCompetent\nCapable\nWarm\nFriendly\nHonest\nReliable\nDominant\nAttractive\n\nMeasured predictors (as included in our model):\n\nParticipant ID\nTarget ID\nParticipant Country\nParticipant Region (coded following the method of PSA001; see https://psyarxiv.com/n26dy/)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TRAIT_model &lt;- lmer(TRAIT ~ 1 + (1|MTurkCode) + (1|StimNum) + (1|country) + (1|country*StimNum) + (1|region) + (1|region*StimNum), data=data)\n\nTRAIT = {Competent, Capable, Warm, Friendly, Honest, Reliable, Dominant, Attractive}\n\n***NOTE: This model does not include an MTurkCode*StimNum (i.e., perceiver-by-target) ICC because estimating this ICC requires two observations for each perceiver-by-target combination.***"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We do not plan on excluding any data."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Missing data will be excluded listwise from the analysis by default."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_g59u6"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/g59u6' target='_blank'>g59u6<\/a>\", \n    title = \"Preregistered Replication: Little Between-Region and Between-Country Variance When Forming Impressions of Others\", \n    template = \"OSF Preregistration\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"g59u6\", sample_size = \"7007 participants, 4 target ratings per participant, 41 countries, ~11 regions (will be clearer when we code using the full data)\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"existing_data\", \"existing_data_explanation\", \"data_collection_procedures\", \n\"sample_size\", \"measured_variables\", \"statistical_tests\", \"data_exclusion_criteria\", \n\"missing_data_handling\", \"paper_id\"), \"Preregistration 1\" = c(\"OSF Preregistration\", \n\"Preregistered Replication: Little Between-Region and Between-Country Variance When Forming Impressions of Others\", \n\"g59u6\", \"https://osf.io/g59u6\", \"2020-12-02T15:19:39.427393\", \n\"2020-09-23T20:31:04.221845\", \"2020-12-02T15:19:39.350806\", \"\", \n\"https://archive.org/details/osf-registrations-g59u6-v1\", \"Region, region*target, country, and country*target will account for no more than 8% of the total variance in ratings across traits (.08 summed ICC).\", \n\"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n\"No blinding is involved in this study.\", \"The data that we are analyzing did originally include manipulations of (a) crying, (b) situational valence, and c) social context. See https://osf.io/p62v8/ for details. Our analyses will not include any of these manipulations.\", \n\"Registration prior to accessing the data\", \"The data is not publicly accessible, but instead has been offered to us for replication by one of the reviewers of our manuscript. We will only gain access to the data after our preregistration is filed.\", \n\"The data already exists. See https://osf.io/p62v8/ for more details.\", \n\"7007 participants, 4 target ratings per participant, 41 countries, ~11 regions (will be clearer when we code using the full data)\", \n\"Measured outcomes (all perceptions of traits in faces):<br><br>Competent<br>Capable<br>Warm<br>Friendly<br>Honest<br>Reliable<br>Dominant<br>Attractive<br><br>Measured predictors (as included in our model):<br><br>Participant ID<br>Target ID<br>Participant Country<br>Participant Region (coded following the method of PSA001; see https://psyarxiv.com/n26dy/)\", \n\"TRAIT_model &lt;- lmer(TRAIT ~ 1 + (1|MTurkCode) + (1|StimNum) + (1|country) + (1|country*StimNum) + (1|region) + (1|region*StimNum), data=data)<br><br>TRAIT = {Competent, Capable, Warm, Friendly, Honest, Reliable, Dominant, Attractive}<br><br>***NOTE: This model does not include an MTurkCode*StimNum (i.e., perceiver-by-target) ICC because estimating this ICC requires two observations for each perceiver-by-target combination.***\", \n\"We do not plan on excluding any data.\", \"Missing data will be excluded listwise from the analysis by default.\", \n\"p_g59u6\")), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"existing_data\", \"existing_data_explanation\", \"data_collection_procedures\", \n\"sample_size\", \"measured_variables\", \"statistical_tests\", \"data_exclusion_criteria\", \n\"missing_data_handling\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_g59u6"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "pubpeer_comments.mock.na_id",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "doi",
+      "total_comments",
+      "url",
+      "users"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.9999/e"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "u",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          ""
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

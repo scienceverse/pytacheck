@@ -1,0 +1,48 @@
+{
+  "id": ".zenodo_verify_downloads.no_path",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "size",
+      "downloaded",
+      "size_on_disk",
+      "checksum_ok"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

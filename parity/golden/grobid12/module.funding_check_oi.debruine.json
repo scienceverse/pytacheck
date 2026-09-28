@@ -1,0 +1,127 @@
+{
+  "id": "module.funding_check_oi.debruine",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "funding_check_oi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Funding Check (Overinclusive)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl",
+              "debruine-fret",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Evidence from self-report studies supports the hypothesis that men favor children who are perceived as facially resembling them (Burch & Gallup, 2000; Volk & Quinsey, 2002). Platek, Burch, Panyavin, Wasserman, and Gallup (2002) and Platek et al. (2003) provided some of the first experimental evidence consistent with the hypothesis that men are more sensitive than women are to children's resemblance to self, reporting a series of results based on reactions to images of child faces that were digitally manipulated to resemble the experimental participants.",
+              "Financial support for this research was provided by grants from the Social Science and Humanities Research Council of Canada to M. Wilson and from the National Sciences and Engineering Research Council of Canada to M. Daly.",
+              "Financial support for this research was provided by grants from the Social Science and Humanities Research Council of Canada to M. Wilson and from the Natural Sciences and Engineering Research Council of Canada to M. Daly.",
+              "Financial support for this research was provided by grants from the Social Science and Humanities Research Council of Canada to M. Wilson and from the Natural Sciences and Engineering Research Council of Canada to M. Daly.",
+              "I thank M. Wilson, M. Daly, D. Earn, P. Ramos, P. Cooper, T. Addison, A. Clark, P. Barclay, M. Burke and the Animal Behaviour journal club for their comments and support.",
+              "I wish to thank M. Wilson, M. Daly, B.C. Jones, S. Balshine, M. MacKenzie and D. Feinberg for comments and support."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following funding statement was detected:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Evidence from self-report studies supports the hypothesis that men favor children who are perceived as facially resembling them (Burch & Gallup, 2000; Volk & Quinsey, 2002). Platek, Burch, Panyavin, Wasserman, and Gallup (2002) and Platek et al. (2003) provided some of the first experimental evidence consistent with the hypothesis that men are more sensitive than women are to children's resemblance to self, reporting a series of results based on reactions to images of child faces that were digitally manipulated to resemble the experimental participants.\", \n\"Financial support for this research was provided by grants from the Social Science and Humanities Research Council of Canada to M. Wilson and from the National Sciences and Engineering Research Council of Canada to M. Daly.\", \n\"Financial support for this research was provided by grants from the Social Science and Humanities Research Council of Canada to M. Wilson and from the Natural Sciences and Engineering Research Council of Canada to M. Daly.\", \n\"Financial support for this research was provided by grants from the Social Science and Humanities Research Council of Canada to M. Wilson and from the Natural Sciences and Engineering Research Council of Canada to M. Daly.\", \n\"I thank M. Wilson, M. Daly, D. Earn, P. Ramos, P. Cooper, T. Addison, A. Clark, P. Barclay, M. Burke and the Animal Behaviour journal club for their comments and support.\", \n\"I wish to thank M. Wilson, M. Daly, B.C. Jones, S. Balshine, M. MacKenzie and D. Feinberg for comments and support.\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -6L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A funding statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "funding_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

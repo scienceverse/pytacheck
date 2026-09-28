@@ -1,0 +1,129 @@
+{
+  "id": "scale_prefix_groups.word_break",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "matwarmth",
+      "mataggr"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "matwarmth"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MATWARMTH"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "matwarmth1",
+              "matwarmth2",
+              "matwarmth3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mataggr"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MATAGGR"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mataggr1",
+              "mataggr2",
+              "mataggr3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

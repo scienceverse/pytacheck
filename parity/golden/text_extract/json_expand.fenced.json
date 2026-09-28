@@ -1,0 +1,82 @@
+{
+  "id": "json_expand.fenced",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "id",
+      "answer",
+      "number",
+      "letter",
+      "bool",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "```json\n      [\n        {\"number\": 1, \"letter\": \"A\", \"bool\": true},\n        {\"number\": 2, \"letter\": \"B\", \"bool\": null}\n      ]\n      ```",
+          "```json\n      [\n        {\"number\": 1, \"letter\": \"A\", \"bool\": true},\n        {\"number\": 2, \"letter\": \"B\", \"bool\": null}\n      ]\n      ```",
+          "Some gibber\n      ```json\n      [{\"number\": 3, \"letter\": \"C\", \"bool\": false}]\n      ```\n      more gibber",
+          "```json\n      ```",
+          "```json\n{\"number\": \"null\", \"letter\": \"D\"}\n```\n```json\n{\"number\": 9}\n```"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          null,
+          9
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "B",
+          "C",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          false,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "parsing error",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

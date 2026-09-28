@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Edges of the   12.0 Conversion</title>
+			</titleStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Åsa</forename><surname>Müller</surname></persName>
+							<email>asa@example.org</email>
+							<idno type="ORCID">ORCID: 0000-0002-1825-009X</idno>
+							<affiliation key="aff0"><orgName type="institution">Uni A</orgName></affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Bo</forename><surname>Berg</surname></persName>
+							<idno type="ORCID">not an orcid</idno>
+							<affiliation key="aff1"><orgName type="institution">Uni B</orgName></affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Cy</forename><surname>Cole</surname></persName>
+							<affiliation key="aff0"><orgName type="institution">Uni A</orgName></affiliation>
+						</author>
+						<author>
+							<persName><surname>Dee</surname></persName>
+						</author>
+					</analytic>
+					<idno type="DOI">doi.org/not-a-doi</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="1.2" ident="SomeTool">
+					<label>SomeTool</label>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>grobid</term>
+					<term>schema   twelve</term>
+				</keywords>
+			</textClass>
+			<abstract>
+				<div><p>First abstract   paragraph.</p><p>Second one.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<note place="foot" n="" xml:id="foot_0">An unlabelled note citing <ref type="bibr" target="#b0">Smith (2020)</ref>.</note>
+<div><head n="1.">Introduction</head><p>Müller and Ångström report <ref type="bibr" target="#b0 #b1">(Smith 2020; Jones 2021)</ref> and <ref type="bibr" target="#b9">(Missing 1999)</ref> and <ref type="bibr" target="">(Empty 2000)</ref>.<ref type="foot" target="#foot_0">1</ref> We saw (Twice) and <ref type="bibr" target="#b1">(Twice)</ref> again.</p><p>See <ref type="formula" target="#formula_0">(1)</ref>, <ref type="other" target="#x">this</ref>, <ref target="#y">that</ref> and <ref type="figure" target="#fig_0">Fig. 3</ref>, <ref type="figure" target="#fig_1">Figure 4</ref>, <ref type="table" target="#tab_0">Table 1a</ref> and <ref type="table" target="#tab_1">Table 2</ref>.</p></div>
+<div><head>Results</head><p>We found t(20) &lt;&gt; 2.10 and r ≤= .5, p =&lt; .05 and F(1, 2) == 3.</p><p>Data are on <ref type="url" target="https://osf.io/xyz">the OSF page</ref> and at <ref type="url" target="https://osf.io/abc">https://osf.io/abc</ref>, which is https://osf.io/abc.</p></div>
+			<figure xml:id="fig_0" coords="2,10,20,30,40">
+				<head>Fig. 3 :</head>
+				<label>3</label>
+				<figDesc>A picture without its label.</figDesc>
+			</figure>
+			<figure xml:id="fig_1">
+				<head>Plot A</head>
+				<label>4</label>
+				<figDesc>plot a shows <ref type="bibr" target="#b1">Jones (2021)</ref> twice: Jones (2021).</figDesc>
+				<graphic coords="0,1,2,3,4" type="bitmap"/>
+			</figure>
+			<figure xml:id="fig_2" coords="x">
+				<head>Figure S1</head>
+				<figDesc>Figure S1. Supplementary figure.</figDesc>
+			</figure>
+			<figure xml:id="fig_3">
+				<head>Figure 5</head>
+				<figDesc>   </figDesc>
+			</figure>
+			<figure type="table" xml:id="tab_0" coords="3,1,1,1,1">
+				<head>Table 1a</head>
+				<label>1 a</label>
+				<figDesc>Means by group.</figDesc>
+				<table><row><cell>Group</cell><cell>M</cell></row><row><cell>A</cell><cell>1.5</cell></row></table>
+			</figure>
+			<figure type="table" xml:id="tab_1">
+				<head>Table 2</head>
+				<figDesc>Table 2: A table without cells.</figDesc>
+			</figure>
+			<note place="foot" n="2" xml:id="foot_1">A second note.</note>
+		</body>
+		<back>
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>We thank the reviewers.</p></div>
+			</div>
+			<div type="availability">
+<div><head>Data availability</head><p>Everything is open.</p></div>
+			</div>
+			<div type="conflict">
+<div><head>Competing interests</head><p>None.</p></div>
+			</div>
+			<div type="contribution">
+<div><head>Author contributions</head><p>All did all.</p></div>
+			</div>
+			<div type="funding">
+<div><head>Funding</head><p>No funding.</p></div>
+			</div>
+			<div type="weird">
+<div><head>Odd</head><p>An odd back section.</p></div>
+			</div>
+			<div type="references">
+				<listBibl>
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">First</title>
+		<author><persName><forename type="first">J</forename><surname>Smith</surname></persName></author>
+		<idno type="DOI">https://doi.org/10.5555/ABC</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal</title>
+		<imprint><date type="published" when="2020">2020</date></imprint>
+	</monogr>
+	<note type="raw_reference">Smith, J. (2020). First. Journal.</note>
+</biblStruct>
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Second</title>
+		<author><persName><forename type="first">K</forename><surname>Jones</surname></persName></author>
+		<idno type="DOI">not a doi</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal</title>
+		<imprint><date type="published" when="2021">2021b</date></imprint>
+	</monogr>
+	<note type="raw_reference">Jones, K. (2021b). Second. Journal.</note>
+</biblStruct>
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">A Book</title>
+		<idno type="DOI">10.99/too-short-prefix</idno>
+		<imprint><date type="published" when="0999">999</date></imprint>
+	</monogr>
+	<note type="raw_reference">A Book (999).</note>
+</biblStruct>
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Another Book</title>
+		<idno type="DOI">doi:10.1234/fine</idno>
+		<idno type="DOI">ignored second doi</idno>
+	</monogr>
+	<note type="raw_reference">Another Book.</note>
+</biblStruct>
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Fourth</title>
+		<idno type="DOI">bad/4</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal</title>
+		<imprint><date type="published" when="3001">3001</date></imprint>
+	</monogr>
+	<note type="raw_reference">Fourth (3001).</note>
+</biblStruct>
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

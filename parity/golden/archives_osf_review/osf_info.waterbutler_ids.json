@@ -1,0 +1,178 @@
+{
+  "id": "osf_info.waterbutler_ids",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6846ed88e49694cd45ab8375",
+          "https://osf.io/j3gcx/files/osfstorage/685a46eb8c103f8ab307047f",
+          "68923297a7e963bc29478335"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6846ed88e49694cd45ab8375",
+          "685a46eb8c103f8ab307047f",
+          "68923297a7e963bc29478335"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.xlsx",
+          "nest-1",
+          "folder"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "github"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "folder",
+          "folder"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9113,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          222,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/data.xlsx",
+          "/nest-1/",
+          "/folder/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6846ed88e49694cd45ab8375/",
+          "https://api.osf.io/v2/files/685a46eb8c103f8ab307047f/",
+          "https://api.osf.io/v2/files/68923297a7e963bc29478335/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a46eb8c103f8ab307047f/",
+          "https://api.osf.io/v2/nodes/mc45x/files/github/folder/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/k6gbt/",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6846ec6a7704517be1addda3",
+          "6846ec6a7704517be1addda3",
+          "mc45x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "j3gcx",
+          "j3gcx",
+          "mc45x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,623 @@
+{
+  "id": "table_typed_cells.t1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "alpha"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "α"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.86
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "mean"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "M"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2.1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "sd"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "SD"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.55
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "alpha"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "α"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.81
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "mean"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "M"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1.95
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "sd"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "SD"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.6
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.45
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "alpha"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "α"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.79
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "mean"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "M"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2.4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "sd"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "SD"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.71
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.38
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "col",
+              "family",
+              "name",
+              "value",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  6
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.52
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://api.figshare.com/v2/projects/404404/articles?page=1&page_size=100", status_code = 404L, headers = structure(list(`content-type` = "application/json"), class = "httr2_headers"), body = charToRaw("{\"message\": \"Not Found\"}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

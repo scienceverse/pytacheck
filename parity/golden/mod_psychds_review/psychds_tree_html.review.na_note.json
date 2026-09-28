@@ -1,0 +1,14 @@
+{
+  "id": "psychds_tree_html.review.na_note",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<pre style=\"line-height:1.4\">\n├── a/\n│   └── x.R <span style=\"color:#b9770e\">(NA)<\/span>\n└── b.R <span style=\"color:#b9770e\">(n)<\/span>\n<\/pre>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

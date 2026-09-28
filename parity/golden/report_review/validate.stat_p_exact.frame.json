@@ -1,0 +1,181 @@
+{
+  "id": "validate.stat_p_exact.frame",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "paper_id",
+      "text",
+      "p_comp.gt",
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "formatted",
+      "header",
+      "section_type",
+      "p_comp.mod",
+      "p_value",
+      "expanded",
+      "imprecise",
+      "zero",
+      "p_comp.valid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "c",
+          "a",
+          "c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The effect was significant, p < .05.",
+          "No test here.",
+          "We found t(20) = 2.1, p = .048.",
+          "p < .05",
+          "p = .048"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<",
+          null,
+          "=",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "The effect was significant, p < .05.",
+          "We found t(20) = 2.1, p = .048."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "Test",
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "unknown",
+          "unknown"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "<",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null,
+          0.05,
+          0.048
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "The effect was significant, p < .05.",
+          "We found t(20) = 2.1, p = .048."
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

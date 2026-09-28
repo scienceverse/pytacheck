@@ -1,0 +1,212 @@
+{
+  "id": "paper_table.io.eq",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "There were 2 errors; use lastlog(1:2)"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "eq_id",
+      "text_id",
+      "start",
+      "end",
+      "grp_id",
+      "verbatim",
+      "lhs",
+      "df",
+      "comp",
+      "rhs",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          6,
+          11,
+          5,
+          5
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rp²",
+          "ηp²",
+          "ηG²",
+          "R²M",
+          "r",
+          "dz",
+          "BF10",
+          "N",
+          "N",
+          "p",
+          "F"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "( 45)",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "(1, 2)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "≤",
+          "="
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ".05",
+          ".10",
+          ".2",
+          ".3",
+          ".30",
+          "0.4",
+          "3.2",
+          "40",
+          "40",
+          ".05",
+          "3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "v12_edges.tei",
+          "v12_edges.tei"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

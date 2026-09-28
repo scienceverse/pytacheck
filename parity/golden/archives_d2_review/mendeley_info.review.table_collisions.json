@@ -1,0 +1,193 @@
+{
+  "id": "mendeley_info.review.table_collisions",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "zzz999 could not be found"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "u",
+      "mendeley_url",
+      "title",
+      "mendeley_id",
+      "title.mendeley",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.17632/vjtxybrc28.2",
+          "zzz999",
+          "nope nope"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17632/vjtxybrc28.2",
+          "zzz999",
+          "nope nope"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mine",
+          "mine",
+          "mine"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "vjtxybrc28",
+          "zzz999",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Survey of research data practices",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17632/vjtxybrc28.1",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Responses to a survey.",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-01T00:00:00.000Z",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-02-02T00:00:00.000Z",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee",
+              "Solo",
+              null
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Creative Commons Attribution 4.0",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "filename",
+                  "size",
+                  "content_details"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "survey.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      10
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "download_url"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://data.mendeley.com/x/survey.csv"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "unfound",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

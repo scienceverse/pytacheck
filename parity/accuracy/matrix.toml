@@ -1,0 +1,71 @@
+# The accuracy report's matrix (`python -m parity accuracy`, docs/PARITY.md):
+# every paper module on every paper, and every repository module on every
+# repository, each with its default arguments, on both sides. Every input must
+# be in the realistic corpus (parity/corpus.toml). Paths are repository-relative.
+#
+# After changing this file, regenerate R's outputs (`python -m parity accuracy
+# --generate`, needs the reference R) and review the new differences.
+
+[papers]
+# the offline paper modules: no network, no LLM, no R code run
+modules = [
+    "all_p_values",
+    "all_urls",
+    "coi_check",
+    "coi_check_oi",
+    "ethics_check",
+    "funding_check",
+    "funding_check_oi",
+    "marginal",
+    "open_practices",
+    "ref_accuracy",
+    "ref_consistency",
+    "ref_miscitation",
+    "ref_replication",
+    "ref_retraction",
+    "ref_summary",
+    "stat_check",
+    "stat_effect_size",
+    "stat_p_exact",
+    "stat_p_nonsig",
+]
+inputs = [
+    "upstream/metacheck/inst/demos/to_err_is_human.xml",
+    "upstream/metacheck/inst/demos/to_err_is_human.json",
+    "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml",
+    "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml",
+    "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml",
+    "upstream/metacheck/tests/testthat/fixtures/problems/203020.xml",
+    "upstream/metacheck/tests/testthat/fixtures/problems/203020.json",
+    "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml",
+    "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml",
+    "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml",
+    "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml",
+    "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml",
+    "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml",
+    "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json",
+    "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json",
+    "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json",
+    "upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json",
+    "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json",
+    "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json",
+    "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json",
+    "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json",
+]
+
+[repositories]
+# run on the demo paper with local_path = the repository and local_only = TRUE
+# (nothing is downloaded or looked up)
+modules = ["code_check", "data_check", "repo_check", "codebook_check"]
+inputs = [
+    "tests/mod_data_check/fixtures/repos/basic",
+    "tests/mod_data_check/fixtures/repos/careless",
+    "tests/mod_data_check/fixtures/repos/qualtrics",
+    "tests/mod_data_check/fixtures/repos/spreadsheets",
+    "tests/mod_data_check/fixtures/repos/encoding",
+    "tests/mod_data_check/fixtures/repos/yellow",
+    "upstream/metacheck/tests/testthat/fixtures/demo",
+    "upstream/metacheck/tests/testthat/fixtures/code_files",
+    "upstream/metacheck/tests/testthat/fixtures/notebooks",
+    "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+]

@@ -1,0 +1,114 @@
+{
+  "id": "openalex_query.replay.match",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "id",
+      "doi",
+      "relevance_score",
+      "display_name",
+      "publication_year",
+      "type",
+      "biblio.volume",
+      "biblio.issue",
+      "source",
+      "authors",
+      "biblio.first_page",
+      "biblio.last_page",
+      "title_match",
+      "source_match"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://openalex.org/W4220832516"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1525/collabra.33267"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3145.6472"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sample Size Justification"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2022"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "8"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Collabra Psychology"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Daniël Lakens"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

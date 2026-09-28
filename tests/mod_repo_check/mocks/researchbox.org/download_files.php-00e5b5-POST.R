@@ -1,0 +1,1 @@
+structure(list(method = "POST", url = "https://researchbox.org/download_files.php", status_code = 404L, headers = structure(list(`content-type` = "text/plain"), class = "httr2_headers"), body = charToRaw("Not found"), cache = new.env(parent = emptyenv())), class = "httr2_response")

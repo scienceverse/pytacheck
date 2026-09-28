@@ -1,0 +1,58 @@
+{
+  "id": "tables.rv_unreadable",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gone.R",
+              "gone.R",
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "—",
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

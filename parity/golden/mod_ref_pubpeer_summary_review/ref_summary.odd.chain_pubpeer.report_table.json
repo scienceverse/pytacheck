@@ -1,0 +1,68 @@
+{
+  "id": "ref_summary.odd.chain_pubpeer.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "text",
+          "pubpeer"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.9999/pp.emptyusers",
+              "Reference 1. https://doi.org/10.9999/pp.nulltc",
+              "Reference 2. https://doi.org/10.9999/pp.statlist",
+              "Reference 3. https://doi.org/10.9999/pp.emptyurl",
+              "Reference 4. https://doi.org/10.9999/pp.statcase"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://pubpeer.com/publications/PP.EMPTYUSERS' target='_blank'>Link<\/a>",
+              null,
+              null,
+              "<a href='' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.STATCASE' target='_blank'>Link<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.75,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          10
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

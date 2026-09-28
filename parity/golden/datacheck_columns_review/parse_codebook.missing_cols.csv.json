@@ -1,0 +1,115 @@
+{
+  "id": "parse_codebook.missing_cols.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Alpha",
+          "Beta",
+          "Gamma",
+          "Delta",
+          "Eps"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "missing_cols.csv",
+          "missing_cols.csv",
+          "missing_cols.csv",
+          "missing_cols.csv",
+          "missing_cols.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"yes\",\"2\":\"no\",\"99\":\"refused\"}",
+          "{\"1\":\"Male\",\"2\":\"Female\"}",
+          null,
+          null,
+          "{\"1\":\"Strongly disagree\",\"5\":\"Strongly agree\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"-9\":\"not answered\"}",
+          "[\"-99\",\"-98\"]",
+          null,
+          "[\"-7\",\"-8\"]",
+          "{\"-1\":\"refused\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "What is a?",
+          null,
+          null,
+          "Delta?",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mean of a1-a3",
+          null,
+          "recoded",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

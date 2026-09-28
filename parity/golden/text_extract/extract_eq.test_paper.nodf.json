@@ -1,0 +1,65 @@
+{
+  "id": "extract_eq.test_paper.nodf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "text_id",
+      "grp_id",
+      "lhs",
+      "df",
+      "comp",
+      "rhs",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "="
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

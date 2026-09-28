@@ -1,0 +1,28 @@
+{
+ "data": {
+  "project": {
+   "repository": {
+    "blobs": {
+     "nodes": [
+      {
+       "path": "z.csv",
+       "size": "300"
+      },
+      {
+       "path": "b.txt",
+       "size": "10"
+      },
+      {
+       "path": "w.JSON",
+       "size": null
+      },
+      {
+       "path": "b.txt",
+       "size": "99"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

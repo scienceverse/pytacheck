@@ -1,0 +1,197 @@
+{
+  "id": "all_p_values.na_text_id",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_p_values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p > .05",
+              "p = .01",
+              "p = .2",
+              "p > .1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A p > .05.",
+              "B p = .01.",
+              "C p = .2.",
+              "D p > .1."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ">",
+              "=",
+              "=",
+              ">"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.05,
+              0.01,
+              0.2,
+              0.1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p > .05\", \"p = .01\", \"p = .2\", \"p > .1\"\n), Sentence = c(\"A p > .05. B p = .01.\", \"A p > .05. B p = .01.\", \n\"C p = .2.\", \"D p > .1.\")), row.names = c(NA, -4L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 4 p-values"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "p_values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

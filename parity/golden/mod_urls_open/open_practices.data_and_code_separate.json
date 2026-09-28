@@ -1,0 +1,322 @@
+{
+  "id": "open_practices.data_and_code_separate",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Our R scripts can be found on GitHub (https://github.com/me/proj).",
+              "Raw data are archived in a Zenodo repository.",
+              "The study was preregistered on AsPredicted (https://aspredicted.org/abc.pdf).",
+              "Figures are shared at https://figshare.com/x."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Our R scripts can be found on GitHub (https://github.com/me/proj).",
+              "Raw data are archived in a Zenodo repository.",
+              "The study was preregistered on AsPredicted (https://aspredicted.org/abc.pdf).",
+              "Figures are shared at https://figshare.com/x."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data was openly shared for this article, based on the following text:\n\n> Raw data are archived in a Zenodo repository.",
+          "Code was openly shared for this article, based on the following text:\n\n> Our R scripts can be found on GitHub (https://github.com/me/proj)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Shared data and code detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Raw data are archived in a Zenodo repository."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Our R scripts can be found on GitHub (https://github.com/me/proj)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Figures are shared at https://figshare.com/x."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The study was preregistered on AsPredicted (https://aspredicted.org/abc.pdf)."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

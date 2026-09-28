@@ -1,0 +1,32 @@
+{
+  "id": "unnest_result.wrapped_frame",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "power_analyses.power_type",
+      "power_analyses.n"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "apriori",
+          "posthoc"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,135 @@
+{
+  "id": "json_expand.row_names",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "replacement element 1 has 1 row to replace 0 rows",
+    "replacement element 1 has 3 rows to replace 2 rows",
+    "Duplicate names in \"_row\" field. Data frames must have unique row names.",
+    "Duplicate names in \"_row\" field. Data frames must have unique row names.",
+    "Duplicate names in \"_row\" field. Data frames must have unique row names.",
+    "Duplicate names in \"_row\" field. Data frames must have unique row names.",
+    "non-unique value when setting 'row.names': ‘1’",
+    "replacement element 1 has 3 rows to replace 1 rows"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 16,
+    "names": [
+      "id",
+      "answer",
+      "error",
+      "a",
+      "b"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          7,
+          7,
+          8,
+          8,
+          9,
+          10
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[{\"_row\": {}, \"a\": 1}]",
+          "[{\"_row\": {\"x\": 1, \"y\": 2}, \"a\": 1}, {\"_row\": {\"x\": 3, \"y\": 4}, \"a\": 2}, {\"a\": 3}]",
+          "[{\"_row\": {\"x\": 1, \"y\": 2}, \"a\": 1}, {\"_row\": {\"x\": 3, \"y\": 4}, \"a\": 2}, {\"a\": 3}]",
+          "[{\"_row\": \"r1\", \"a\": 1}, {\"_row\": \"r1\", \"a\": 2}]",
+          "[{\"_row\": \"r1\", \"a\": 1}, {\"_row\": \"r1\", \"a\": 2}]",
+          "[{\"_row\": {\"x\": {}}, \"a\": 1}, {\"a\": 2}]",
+          "[{\"_row\": {\"x\": {}}, \"a\": 1}, {\"a\": 2}]",
+          "[{\"_row\": [], \"a\": 1}, {\"a\": 2}]",
+          "[{\"_row\": [], \"a\": 1}, {\"a\": 2}]",
+          "[{\"x1\": 0, \"_row\": {\"letter\": {}, \"if\": \"e\"}}, {}, {\"x1\": 1}]",
+          "[{\"_row\": 1, \"b\": 2}, {\"_row\": 1, \"b\": 3}]",
+          "[{\"_row\": 1, \"b\": 2}, {\"_row\": 1, \"b\": 3}]",
+          "[{\"_row\": [1,2], \"a\": 1}, {\"_row\": [1,2], \"a\": 2}]",
+          "[{\"_row\": [1,2], \"a\": 1}, {\"_row\": [1,2], \"a\": 2}]",
+          "[{\"_row\": [1], \"a\": 1}, {\"_row\": \"1\", \"a\": 2}]",
+          "[{\"_row\": {\"x\": 1}, \"a\": 1}, {\"a\": 2}, {\"a\": 3}]"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "parsing error",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "parsing error",
+          null,
+          null,
+          null,
+          null,
+          "parsing error",
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          null,
+          null,
+          null,
+          1,
+          2,
+          null,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          2,
+          3,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

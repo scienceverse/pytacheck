@@ -1,0 +1,14 @@
+{
+  "uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "name": [],
+  "metadata": {
+    "dc.title": [
+      {
+        "value": "Fallback title"
+      },
+      {
+        "value": "Second title"
+      }
+    ]
+  }
+}

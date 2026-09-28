@@ -1,0 +1,14 @@
+{
+  "id": "module_report.validation.hits",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### 🔍 Validation Demo {#validation-demo .yellow}\n\nFound 3 sentences.\n\n<details><summary>View detailed feedback<\/summary><div>\n\nThis module searched every sentence for the pattern and listed the sentences where it was found. Check each of them: a mention is not necessarily a problem, but it is worth a second look before you submit the manuscript, because reviewers will often ask about it.\n\n\n<R-CHUNK>\n\n\n::: {.callout-tip title=\"Full table\" collapse=\"true\"}\n\n\n<R-CHUNK>\n\n\n:::\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nGuidance paragraph one.\n\nGuidance *two*.\n\n:::\n\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nDemo description\n\nDemo details...\n\nA second paragraph of details.\n\nThis module was developed by Lisa DeBruine, Daniel Lakens and Jakub Werner\n\n:::\n\n\n::: {.validation}\nValidation: Here is my demo validation information.\n:::"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

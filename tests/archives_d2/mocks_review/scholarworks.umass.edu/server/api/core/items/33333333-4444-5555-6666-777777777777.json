@@ -1,0 +1,42 @@
+{
+  "uuid": "33333333-4444-5555-6666-777777777777",
+  "name": [],
+  "lastModified": null,
+  "metadata": {
+    "dc.title": [
+      {
+        "value": null
+      },
+      {
+        "value": "Title 3"
+      },
+      {
+        "value": []
+      }
+    ],
+    "dc.contributor.author": {
+      "x": {
+        "value": "C"
+      },
+      "y": {
+        "value": "D"
+      }
+    },
+    "dc.rights": [],
+    "dc.rights.uri": [
+      {
+        "value": "https://creativecommons.org/licenses/by/4.0/"
+      }
+    ],
+    "dc.date.issued": [
+      {
+        "value": null
+      }
+    ],
+    "dc.date.available": [
+      {
+        "value": "2020"
+      }
+    ]
+  }
+}

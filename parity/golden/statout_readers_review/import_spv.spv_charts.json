@@ -1,0 +1,221 @@
+{
+  "id": "import_spv.spv_charts",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode legacy table: spv legacy: missing dimension series"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Graph"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  150,
+                  160
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  55,
+                  60
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "category",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "Zero",
+                  "1",
+                  "NA"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1.5,
+                  2,
+                  null,
+                  4
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Legacy"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "Statistics",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0",
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.5",
+                  "100000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

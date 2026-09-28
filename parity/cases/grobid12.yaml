@@ -1,0 +1,1152 @@
+# Grobid TEI -> bibr export schema 12.0 (R/import-grobid-bibr12.R; metacheck PR #423).
+# Written by tests/grobid12/gen_parity_cases.py; goldens: python -m parity generate --area grobid12
+#
+# Fixtures: every Grobid TEI file in metacheck (the demo, tests/testthat/fixtures and the
+# recorded Grobid responses in tests/testthat/apis) and pytacheck's TEI edge cases
+# (tests/io/fixtures/*.tei.xml, tests/grobid12/fixtures/v12_edges.tei.xml). Every conversion passes schema_version = "12.0" on both
+# sides (the Python side of the harness otherwise runs with metacheck's defaults).
+# $expr helpers: tests/grobid12/_parity_helpers.py (Python) mirror the inline R code.
+area: "grobid12"
+cases:
+# .grobid_to_bibr(schema_version = '12.0') of every TEI file: the whole paper (converter ignored; completed_at too when the TEI does not say when Grobid ran)
+- "id": ".grobid_to_bibr.demo"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.debruine-child"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.debruine-fret"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.debruine-sex"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.debruine-tnl"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apa"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.preprint.cermine"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.preprint"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.published.cermine"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.published"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.0956797615569889"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.0956797617737129"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.203020"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/203020.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.corrupt"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.06d588"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.1181af"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.479883"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.4b4691"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.619fd9"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.9c61e4"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.d2308a"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.tue.d67d70"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.hf.06d588"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-06d588-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.hf.1181af"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-1181af-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.hf.9c61e4"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-9c61e4-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.hf.d2308a"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d2308a-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.apis.hf.d67d70"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d67d70-POST.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.io.bib_page_from"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/bib_page_from.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.bom_paragraphs"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/bom_paragraphs.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.crlf_nonamespace"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/crlf_nonamespace.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.edge_body"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.io.empty_body"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.figure_first"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/figure_first.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.figure_twice"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/figure_twice.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.nonfatal_errors"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/nonfatal_errors.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.ref_token_literal"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/ref_token_literal.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.refs_no_text"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/refs_no_text.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.table_norows"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/table_norows.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.tables_empty_first"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/tables_empty_first.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.tables_empty_second"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/tables_empty_second.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.tables_three_one_empty"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/tables_three_one_empty.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.url_empty"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/url_empty.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.io.xlink_ns"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/xlink_ns.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.edges"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/v12_edges.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+# grobid_to_bibr(schema_version = '12.0')
+- "id": "grobid_to_bibr.null_save.demo"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "save_path": {"$null": true}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "grobid_to_bibr.null_save.multiple_with_failure"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml'])"}}
+    "save_path": {"$null": true}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["preprint.extraction.converter", "edge_body.tei.extraction.converter"]}
+- "id": "grobid_to_bibr.null_save.dir"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine"}
+    "save_path": {"$null": true}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["debruine-child.extraction.converter", "debruine-fret.extraction.converter", "debruine-sex.extraction.converter", "debruine-tnl.extraction.converter"]}
+# schema_version must be NULL or '12.0'
+- "id": "grobid_to_bibr.error.schema_version_11"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "save_path": {"$null": true}
+    "schema_version": "11"
+- "id": "grobid_to_bibr.error.schema_version_number"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "save_path": {"$null": true}
+    "schema_version": 12.0
+- "id": "grobid_to_bibr.error.schema_version_vector"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "save_path": {"$null": true}
+    "schema_version": ["12.0", "12.0"]
+- "id": ".grobid_to_bibr.error.schema_version_11"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "schema_version": "11"
+# pytacheck's read() of a TEI file (schema_version = '12.0', its default) is metacheck's grobid_to_bibr(save_path = NULL, schema_version = '12.0')
+- "id": "read.v12.demo"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "grobid_to_bibr('upstream/metacheck/inst/demos/to_err_is_human.xml', NULL, schema_version = '12.0')", "py": "pc.read(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/inst/demos/to_err_is_human.xml'), schema_version='12.0')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "read.v12.published"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', NULL, schema_version = '12.0')", "py": "pc.read(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml'), schema_version='12.0')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "read.v12.apis.tue.479883"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', NULL, schema_version = '12.0')", "py": "pc.read(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml'), schema_version='12.0')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+# grobid_to_bibr(save_path, schema_version = '12.0'): the file's name and lines (converter blanked: metacheck vs pytacheck; completed_at when it is the conversion time)
+- "id": "written.demo"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/inst/demos/to_err_is_human.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/inst/demos/to_err_is_human.xml', False)"}}
+- "id": "written.debruine-child"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', False)"}}
+- "id": "written.debruine-fret"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', False)"}}
+- "id": "written.debruine-sex"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', False)"}}
+- "id": "written.debruine-tnl"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', False)"}}
+- "id": "written.apa"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^ *\"completed_at\": ', x)] <- '<completed_at>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', True)"}}
+- "id": "written.preprint.cermine"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^ *\"completed_at\": ', x)] <- '<completed_at>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', True)"}}
+- "id": "written.preprint"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', False)"}}
+- "id": "written.published.cermine"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^ *\"completed_at\": ', x)] <- '<completed_at>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', True)"}}
+- "id": "written.published"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', False)"}}
+- "id": "written.0956797615569889"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', False)"}}
+- "id": "written.0956797617737129"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', False)"}}
+- "id": "written.203020"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', False)"}}
+- "id": "written.apis.tue.06d588"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', False)"}}
+- "id": "written.apis.tue.1181af"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', False)"}}
+- "id": "written.apis.tue.479883"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', False)"}}
+- "id": "written.apis.tue.4b4691"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', False)"}}
+- "id": "written.apis.tue.619fd9"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', False)"}}
+- "id": "written.apis.tue.9c61e4"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', False)"}}
+- "id": "written.apis.tue.d2308a"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', False)"}}
+- "id": "written.apis.tue.d67d70"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml', False)"}}
+- "id": "written.edges"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/v12_edges.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^ *\"completed_at\": ', x)] <- '<completed_at>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/v12_edges.tei.xml', True)"}}
+# read() of the written 12.0 file
+- "id": "write_read.demo"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('upstream/metacheck/inst/demos/to_err_is_human.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('upstream/metacheck/inst/demos/to_err_is_human.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "write_read.preprint"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "write_read.published"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "write_read.apa"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('upstream/metacheck/tests/testthat/fixtures/formats/apa.xml')"}}
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": "write_read.0956797617737129"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "write_read.edges"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/v12_edges.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/v12_edges.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+# paper_table() of every table over the 12.0 conversions of the upstream TEI files
+- "id": "paper_table.upstream.info"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "info"
+- "id": "paper_table.upstream.author"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "author"
+- "id": "paper_table.upstream.text"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "text"
+- "id": "paper_table.upstream.section"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "section"
+- "id": "paper_table.upstream.url"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "url"
+- "id": "paper_table.upstream.bib"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "bib"
+- "id": "paper_table.upstream.xref"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "xref"
+- "id": "paper_table.upstream.figure"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "figure"
+- "id": "paper_table.upstream.table"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "table"
+- "id": "paper_table.upstream.eq"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "eq"
+- "id": "paper_table.upstream.affiliation"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "affiliation"
+- "id": "paper_table.upstream.funding"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "funding"
+- "id": "paper_table.upstream.footnote"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "footnote"
+- "id": "paper_table.upstream.info_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "info_match"
+- "id": "paper_table.upstream.affiliation_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "affiliation_match"
+- "id": "paper_table.upstream.funding_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "funding_match"
+- "id": "paper_table.upstream.bib_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/inst/demos/to_err_is_human.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/apa.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml', 'upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/203020.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml', 'upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "bib_match"
+# paper_table() of every table over the 12.0 conversions of the io TEI files
+- "id": "paper_table.io.info"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "info"
+- "id": "paper_table.io.author"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "author"
+- "id": "paper_table.io.text"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "text"
+- "id": "paper_table.io.section"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "section"
+- "id": "paper_table.io.url"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "url"
+- "id": "paper_table.io.bib"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "bib"
+- "id": "paper_table.io.xref"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "xref"
+- "id": "paper_table.io.figure"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "figure"
+- "id": "paper_table.io.table"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "table"
+- "id": "paper_table.io.eq"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "eq"
+- "id": "paper_table.io.affiliation"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "affiliation"
+- "id": "paper_table.io.funding"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "funding"
+- "id": "paper_table.io.footnote"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "footnote"
+- "id": "paper_table.io.info_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "info_match"
+- "id": "paper_table.io.affiliation_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "affiliation_match"
+- "id": "paper_table.io.funding_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "funding_match"
+- "id": "paper_table.io.bib_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/io/fixtures/bib_page_from.tei.xml', 'tests/io/fixtures/bom_paragraphs.tei.xml', 'tests/io/fixtures/crlf_nonamespace.tei.xml', 'tests/io/fixtures/edge_body.tei.xml', 'tests/io/fixtures/empty_body.tei.xml', 'tests/io/fixtures/figure_first.tei.xml', 'tests/io/fixtures/figure_twice.tei.xml', 'tests/io/fixtures/nonfatal_errors.tei.xml', 'tests/io/fixtures/ref_token_literal.tei.xml', 'tests/io/fixtures/refs_no_text.tei.xml', 'tests/io/fixtures/table_norows.tei.xml', 'tests/io/fixtures/tables_empty_first.tei.xml', 'tests/io/fixtures/tables_empty_second.tei.xml', 'tests/io/fixtures/tables_three_one_empty.tei.xml', 'tests/io/fixtures/url_empty.tei.xml', 'tests/io/fixtures/xlink_ns.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+    "table": "bib_match"
+# module_run() of every built-in module that needs no network or LLM, on 12.0 Grobid papers
+- "id": "module.all_urls.demo"
+  "module": "all_urls"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_urls.preprint"
+  "module": "all_urls"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_urls.published"
+  "module": "all_urls"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_urls.0956797615569889"
+  "module": "all_urls"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_urls.debruine"
+  "module": "all_urls"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check.demo"
+  "module": "coi_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check.preprint"
+  "module": "coi_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check.published"
+  "module": "coi_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check.0956797615569889"
+  "module": "coi_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check.debruine"
+  "module": "coi_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check_oi.demo"
+  "module": "coi_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check_oi.preprint"
+  "module": "coi_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check_oi.published"
+  "module": "coi_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check_oi.0956797615569889"
+  "module": "coi_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.coi_check_oi.debruine"
+  "module": "coi_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ethics_check.demo"
+  "module": "ethics_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ethics_check.preprint"
+  "module": "ethics_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ethics_check.published"
+  "module": "ethics_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ethics_check.0956797615569889"
+  "module": "ethics_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ethics_check.debruine"
+  "module": "ethics_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check.demo"
+  "module": "funding_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check.preprint"
+  "module": "funding_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check.published"
+  "module": "funding_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check.0956797615569889"
+  "module": "funding_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check.debruine"
+  "module": "funding_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check_oi.demo"
+  "module": "funding_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check_oi.preprint"
+  "module": "funding_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check_oi.published"
+  "module": "funding_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check_oi.0956797615569889"
+  "module": "funding_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.funding_check_oi.debruine"
+  "module": "funding_check_oi"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.open_practices.demo"
+  "module": "open_practices"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.open_practices.preprint"
+  "module": "open_practices"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.open_practices.published"
+  "module": "open_practices"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.open_practices.0956797615569889"
+  "module": "open_practices"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.open_practices.debruine"
+  "module": "open_practices"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_p_values.demo"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_p_values.preprint"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_p_values.published"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_p_values.0956797615569889"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_p_values.debruine"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.marginal.demo"
+  "module": "marginal"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.marginal.preprint"
+  "module": "marginal"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.marginal.published"
+  "module": "marginal"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.marginal.0956797615569889"
+  "module": "marginal"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.marginal.debruine"
+  "module": "marginal"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_check.demo"
+  "module": "stat_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_check.preprint"
+  "module": "stat_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_check.published"
+  "module": "stat_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_check.0956797615569889"
+  "module": "stat_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_check.debruine"
+  "module": "stat_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_effect_size.demo"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_effect_size.preprint"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_effect_size.published"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_effect_size.0956797615569889"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_effect_size.debruine"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_exact.demo"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_exact.preprint"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_exact.published"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_exact.0956797615569889"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_exact.debruine"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_nonsig.demo"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_nonsig.preprint"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_nonsig.published"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_nonsig.0956797615569889"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_p_nonsig.debruine"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_accuracy.demo"
+  "module": "ref_accuracy"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_accuracy.preprint"
+  "module": "ref_accuracy"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_accuracy.published"
+  "module": "ref_accuracy"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_accuracy.0956797615569889"
+  "module": "ref_accuracy"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_accuracy.debruine"
+  "module": "ref_accuracy"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_consistency.demo"
+  "module": "ref_consistency"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_consistency.preprint"
+  "module": "ref_consistency"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_consistency.published"
+  "module": "ref_consistency"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_consistency.0956797615569889"
+  "module": "ref_consistency"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_consistency.debruine"
+  "module": "ref_consistency"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_miscitation.demo"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_miscitation.preprint"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_miscitation.published"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_miscitation.0956797615569889"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_miscitation.debruine"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_replication.demo"
+  "module": "ref_replication"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_replication.preprint"
+  "module": "ref_replication"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_replication.published"
+  "module": "ref_replication"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_replication.0956797615569889"
+  "module": "ref_replication"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_replication.debruine"
+  "module": "ref_replication"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_retraction.demo"
+  "module": "ref_retraction"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_retraction.preprint"
+  "module": "ref_retraction"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_retraction.published"
+  "module": "ref_retraction"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_retraction.0956797615569889"
+  "module": "ref_retraction"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_retraction.debruine"
+  "module": "ref_retraction"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_summary.demo"
+  "module": "ref_summary"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_summary.preprint"
+  "module": "ref_summary"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_summary.published"
+  "module": "ref_summary"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_summary.0956797615569889"
+  "module": "ref_summary"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_summary.debruine"
+  "module": "ref_summary"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.power.demo"
+  "module": "power"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.power.preprint"
+  "module": "power"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.power.published"
+  "module": "power"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.power.0956797615569889"
+  "module": "power"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.power.debruine"
+  "module": "power"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml', 'upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+# .bibr12_utc(): Grobid's <application when> as bibr 12.x's UTC time (R's strptime())
+- "id": ".bibr12_utc.inputs"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.bibr12_utc"
+  "args":
+    "x": {"$expr": {"r": "unname(vapply(c(\"2026-05-27T08:58+0000\", \"2026-05-27T08:58:30.7+02:00\", \"2026-05-27T08:58:30Z\", \"2026-05-27\", NA, \"\", \"2026-02-30T08:58+0000\", \"2024-02-29T08:58+0000\", \"2026-5-7T8:5+0000\", \" 2026-05-27T08:58+0000xyz\", \"2026-05-27T08:58+01\", \"2026-05-27T08:58:60+0000\", \"2026-05-27T08:58:61+0000\", \"2026-05-27T24:00+0000\", \"2026-05-27T24:30+0000\", \"2026-05-27T08:58 +0000\", \"2026-05-27T08:58:+0000\", \"2026-05-27T08:58:1e1+0000\", \"2026-05-27T08:58-0130\", \"2026-05-27T08:58+1400\", \"2026-05-27T08:58+1500\", \"2026-05-27T08:58+0099\", \"12026-05-27T08:58+0000\", \"2026-05-27T08:58:30.999+0000\", \"2026-05-27 T08:58+0000\", \"0026-05-27T08:58+0000\", \"0000-01-01T00:00+0000\", \"2026-12-31T23:59-0100\", \"2026-05-27T08:58:-1+0000\", \"2026-05-27T08:58: 5+0000\", \"2026-05-27T08:58:NA+0000\", \"2026-05-27T08:58:Inf+0000\", \"2026-05-27T08:58:0x1A+0000\", \"2026-05-27T08:58:.5+0000\", \"2026-05-27T08:58:5.+0000\", \"2026-05-27T08:60+0000\", \"2026-05-27T08:58:30z\", \"2026-05-27T08:58+0000Z\", \"2026-05-27t08:58+0000\", \"2026-05-27T08:58+ 0000\", \"2026-01-40T00:00+0000\", \"2026-011-01T00:00+0000\", \"2026-05-27T08:58:30.5e1+0000\", \"2026-05-27T08:58:1e+0000\", \"2026-05-27T08:58:1e-1+0000\", \"2026-05-27T08:58:59.9999999+0000\", \"2026-05-27T08:58:59.9999+0000\", \"2026-05-27T08:58:59.99999999+0000\", \"1969-12-31T23:59:59.5+0000\", \"0000-01-01T00:00:30.5+0100\"), metacheck:::.bibr12_utc, ''))", "py": "['2026-05-27T08:58+0000', '2026-05-27T08:58:30.7+02:00', '2026-05-27T08:58:30Z', '2026-05-27', None, '', '2026-02-30T08:58+0000', '2024-02-29T08:58+0000', '2026-5-7T8:5+0000', ' 2026-05-27T08:58+0000xyz', '2026-05-27T08:58+01', '2026-05-27T08:58:60+0000', '2026-05-27T08:58:61+0000', '2026-05-27T24:00+0000', '2026-05-27T24:30+0000', '2026-05-27T08:58 +0000', '2026-05-27T08:58:+0000', '2026-05-27T08:58:1e1+0000', '2026-05-27T08:58-0130', '2026-05-27T08:58+1400', '2026-05-27T08:58+1500', '2026-05-27T08:58+0099', '12026-05-27T08:58+0000', '2026-05-27T08:58:30.999+0000', '2026-05-27 T08:58+0000', '0026-05-27T08:58+0000', '0000-01-01T00:00+0000', '2026-12-31T23:59-0100', '2026-05-27T08:58:-1+0000', '2026-05-27T08:58: 5+0000', '2026-05-27T08:58:NA+0000', '2026-05-27T08:58:Inf+0000', '2026-05-27T08:58:0x1A+0000', '2026-05-27T08:58:.5+0000', '2026-05-27T08:58:5.+0000', '2026-05-27T08:60+0000', '2026-05-27T08:58:30z', '2026-05-27T08:58+0000Z', '2026-05-27t08:58+0000', '2026-05-27T08:58+ 0000', '2026-01-40T00:00+0000', '2026-011-01T00:00+0000', '2026-05-27T08:58:30.5e1+0000', '2026-05-27T08:58:1e+0000', '2026-05-27T08:58:1e-1+0000', '2026-05-27T08:58:59.9999999+0000', '2026-05-27T08:58:59.9999+0000', '2026-05-27T08:58:59.99999999+0000', '1969-12-31T23:59:59.5+0000', '0000-01-01T00:00:30.5+0100']"}}

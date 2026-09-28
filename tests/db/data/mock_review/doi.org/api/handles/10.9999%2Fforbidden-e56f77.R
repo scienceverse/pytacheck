@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://doi.org/api/handles/10.9999%2Fforbidden?type=URL", status_code = 403L, headers = structure(list(`content-type` = "application/json;charset=UTF-8"), class = "httr2_headers"), body = charToRaw("{\"responseCode\":1}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

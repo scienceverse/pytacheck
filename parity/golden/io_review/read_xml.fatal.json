@@ -1,0 +1,11 @@
+{
+  "id": "read_xml.fatal",
+  "ok": false,
+  "error": "Opening and ending tag mismatch: c line 1 and a [76]",
+  "warnings": [
+    "ID x already defined [513]"
+  ],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "code_remove_comments.sample.Mplus",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "DATA: FILE = \"d.dat\"; ",
+      "TITLE: t;"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

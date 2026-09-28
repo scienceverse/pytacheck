@@ -1,0 +1,39 @@
+{
+  "name": [
+    "N"
+  ],
+  "contributors": [
+    {
+      "first_name": [
+        null
+      ],
+      "last_name": [
+        "B"
+      ]
+    },
+    {
+      "first_name": {
+        "x": "C"
+      }
+    },
+    {
+      "first_name": [
+        [
+          1,
+          "two"
+        ]
+      ],
+      "last_name": {
+        "k": {
+          "a b": true
+        }
+      }
+    }
+  ],
+  "data_licence": {
+    "short_name": [],
+    "full_name": "CC BY 4.0"
+  },
+  "publish_date": 20200101,
+  "modified_on": 3000000000
+}

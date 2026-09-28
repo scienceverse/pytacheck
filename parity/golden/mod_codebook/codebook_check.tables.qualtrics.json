@@ -1,0 +1,235 @@
+{
+  "id": "codebook_check.tables.qualtrics",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 20,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "TIPI_2",
+              "TIPI_3",
+              "TIPI_4",
+              "TIPI_5",
+              "Duration (in seconds)",
+              "EndDate",
+              "Finished",
+              "Progress",
+              "Q1_DO_order",
+              "Q2_TEXT",
+              "Q8timing_Click.Count",
+              "Q8timing_First.Click",
+              "Q8timing_Last.Click",
+              "Q8timing_Page.Submit",
+              "RecordedDate",
+              "ResponseId",
+              "StartDate",
+              "Status",
+              "TIPI_1",
+              "age"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Other please specify",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Export machinery / paradata column (not a measured variable).",
+              "Extraverted enthusiastic",
+              "Age in years"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Duration (in seconds)",
+              "EndDate",
+              "Finished",
+              "Progress",
+              "Q1_DO_order",
+              "Q2_TEXT",
+              "Q8timing_Click.Count",
+              "Q8timing_First.Click",
+              "Q8timing_Last.Click",
+              "Q8timing_Page.Submit",
+              "RecordedDate",
+              "ResponseId",
+              "StartDate",
+              "Status",
+              "TIPI_1",
+              "age"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "codebook.csv",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Abbrev",
+          "Columns",
+          "Max item",
+          "Scale",
+          "Confidence",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TIPI"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ten Item Personality Inventory"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "medium"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "matched"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

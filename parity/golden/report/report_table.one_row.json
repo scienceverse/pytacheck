@@ -1,0 +1,158 @@
+{
+  "id": "report_table.one_row",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "dom",
+      "autoWidth",
+      "ordering",
+      "pageLength",
+      "columnDefs"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "t"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "className",
+              "targets"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "dt-right"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0,
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "targets"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "targets"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "b"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "targets"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "c"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "targets"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "d"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  3
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

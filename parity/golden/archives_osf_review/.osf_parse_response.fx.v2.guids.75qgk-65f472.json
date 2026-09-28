@@ -1,0 +1,32 @@
+{
+  "id": ".osf_parse_response.fx.v2.guids.75qgk-65f472",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NA has unknown type: guids"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "osf_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

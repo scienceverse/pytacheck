@@ -1,0 +1,13 @@
+{
+  "id": "spv_decode_light_table.0000000015",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode light-binary table: spv binary: unsupported light-table version 2"
+  ],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

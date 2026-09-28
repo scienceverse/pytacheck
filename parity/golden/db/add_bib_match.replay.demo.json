@@ -1,0 +1,320 @@
+{
+  "id": "add_bib_match.replay.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "bib_id",
+      "service",
+      "service_id",
+      "score",
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "date",
+      "container",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "edition",
+      "version",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "crossref",
+          "crossref",
+          "crossref"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          62.074394
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article",
+          "article",
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1037/0003-066x.54.6.408",
+          "10.1177/0956797614520714",
+          "10.1177/2515245918770963"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The origins of sex differences in human behavior: Evolved dispositions versus social roles.",
+          "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+          "Equivalence Testing for Psychological Research: A Tutorial"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Alice H.",
+                  "Wendy"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Eagly",
+                  "Wood"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Francesca",
+                  "Scott S."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gino",
+                  "Wiltermuth"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Daniël",
+                  "Anne M.",
+                  "Peder M."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lakens",
+                  "Scheel",
+                  "Isager"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "SAGE Publications"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1999,
+          2014,
+          2018
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "American Psychologist",
+          "Psychological Science",
+          "Advances in Methods and Practices in Psychological Science"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "54",
+          "25",
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6",
+          "4",
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "408",
+          "973",
+          "259"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "423",
+          "981",
+          "269"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1037/0003-066x.54.6.408",
+          "https://doi.org/10.1177/0956797614520714",
+          "https://doi.org/10.1177/2515245918770963"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

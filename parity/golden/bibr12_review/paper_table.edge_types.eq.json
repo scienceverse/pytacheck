@@ -1,0 +1,249 @@
+{
+  "id": "paper_table.edge_types.eq",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 15,
+    "names": [
+      "eq_id",
+      "text_id",
+      "start",
+      "end",
+      "grp_id",
+      "verbatim",
+      "lhs",
+      "df",
+      "comp",
+      "rhs",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          30,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          41,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t(28) = 2.1",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "1",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(28)",
+          "(28)",
+          "(28)",
+          "()",
+          null,
+          "(1) and (2)",
+          "(1, 2))",
+          "((1, 2)",
+          "(2.5)",
+          "(1,\n2)",
+          "(TRUE)",
+          "(4)",
+          "(5)",
+          "(6)",
+          "(NULL)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.1",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "0.05",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

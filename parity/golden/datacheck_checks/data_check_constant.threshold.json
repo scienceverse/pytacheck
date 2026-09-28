@@ -1,0 +1,43 @@
+{
+  "id": "data_check_constant.threshold",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values",
+      "near"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Near-constant: 90% of values are \"1\"."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

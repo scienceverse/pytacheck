@@ -1,0 +1,82 @@
+{
+  "id": "zenodo_upload.create_fails",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Creating a deposition for proj_plain failed (HTTP 400): Validation error. (metadata.title: Missing data for required field.; ?: Something else.)",
+    "The folder \"proj_plain\" comes from an OSF project without specified license information. The license `cc-by-4.0` was added to Zenodo. You can change it on Zenodo if needed, or choose a different one when uploading:\n    zenodo_upload(result, license = \"cc0-1.0\")   # public domain\n    zenodo_upload(result, license = \"cc-by-4.0\")  # attribution\nOther identifiers are listed at https://zenodo.org/api/vocabularies/licenses"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "folder",
+      "osf_project",
+      "deposition_id",
+      "doi",
+      "url",
+      "files_uploaded",
+      "files_skipped",
+      "published",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "<repo>/tests/archives_gz/fixtures/upload/proj_plain"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Creating a deposition for proj_plain failed (HTTP 400): Validation error. (metadata.title: Missing data for required field.; ?: Something else.)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "scroll_table.escape",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(uc = c(\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \n\"I\", \"J\", \"K\", \"L\", \"M\", \"N\", \"O\", \"P\", \"Q\", \"R\", \"S\", \"T\", \"U\", \n\"V\", \"W\", \"X\", \"Y\", \"Z\"), lc = c(\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \n\"g\", \"h\", \"i\", \"j\", \"k\", \"l\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \n\"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\")), row.names = c(NA, -26L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, TRUE)\n```\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,1392 @@
+{
+  "id": "scales_to_osd.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "osd",
+      "attrs"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition",
+              "translations"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Autism Quotient"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "autism_quotient"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "AQ"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "labels",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          2
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          2
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "No",
+                          "Yes"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "codebook"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQ3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "manuscript"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "A named instrument identified from the manuscript text but not present in the OpenScales registry."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "high"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "s.csv"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "t.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "en"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "AQ1",
+                      "AQ2"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "I like crowds"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Do you notice patterns?"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Autism Quotient"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "autism_quotient"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "AQT"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQT_a"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQT_a"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQT_b"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQT_b"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQT_c"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "AQT_c"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "manuscript"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "A named instrument identified from the manuscript text but not present in the OpenScales registry."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "medium"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "s.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition",
+              "translations"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          ""
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "zz"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ZZ"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          7
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          7
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "observed"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "ZZ1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "ZZ1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "ZZ2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "ZZ2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "ZZ3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "ZZ3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "unnamed_block"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "A coherent block of same-prefix rating columns detected in the data, but NOT named: neither a known instrument nor a construct metacheck could infer from the available text. Recorded for its structure (items + response scale) only."
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "s.csv"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "t.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "en"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "ZZ1"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Zed one?"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition",
+              "translations"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Made Up"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "made_up"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "YY"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "YY1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "YY1"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "YY2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "YY2"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "self_generated"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "This label was GENERATED BY metacheck from the item wording. It is NOT a recognised named instrument, only metacheck's inference of what the items measure."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "low"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "s.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          2
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          2
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "en"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "YY1"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Slider one"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Orphan Total"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "orphan_total"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "OT"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "OT_a"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "OT_a"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "OT_b"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "OT_b"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "OT_c"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "OT_c"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "kind",
+                      "note",
+                      "source_files",
+                      "n_columns"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "manuscript"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "A named instrument identified from the manuscript text but not present in the OpenScales registry."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "medium"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "scale_total_only"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Detected as the total/average score for this scale, but no item-level columns were found. The individual items may not be shared, or are labelled differently. Consider sharing item-level data or labelling items clearly so the scale can be verified."
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "s.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "write",
+              "code",
+              "orphan_total",
+              "scale",
+              "dedup_key"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "autism_quotient"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Autism Quotient"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "autism_quotient\u0002AQ1\u0001AQ2\u0001AQ3"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "write",
+              "code",
+              "orphan_total",
+              "scale",
+              "dedup_key"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "autism_quotient"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Autism Quotient"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "autism_quotient\u0002AQT_a\u0001AQT_b\u0001AQT_c"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "write",
+              "code",
+              "orphan_total",
+              "scale",
+              "dedup_key"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "zz"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "zz\u0002ZZ1\u0001ZZ2\u0001ZZ3"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "write",
+              "code",
+              "orphan_total",
+              "scale",
+              "dedup_key"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "made_up"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Made Up"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "made_up\u0002YY1\u0001YY2"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "write",
+              "code",
+              "orphan_total",
+              "scale",
+              "dedup_key"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "orphan_total"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Orphan Total"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "orphan_total\u0002OT_a\u0001OT_b\u0001OT_c"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

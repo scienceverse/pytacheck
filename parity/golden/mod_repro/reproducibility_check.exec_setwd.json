@@ -1,0 +1,438 @@
+{
+  "id": "reproducibility_check.exec_setwd",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "run_results",
+      "install_results",
+      "stat_output",
+      "match_table",
+      "modifications",
+      "sandbox"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reproducibility_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "file_name",
+          "parses",
+          "run_order",
+          "order_basis",
+          "depends_on",
+          "paths_rewritten",
+          "paths_ambiguous",
+          "setwd_removed",
+          "runnable",
+          "not_runnable_reason",
+          "unresolved_inputs",
+          "outcome",
+          "error_type",
+          "undefined_var",
+          "reads",
+          "writes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad_setwd.R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module assesses whether the paper's code could be run on its data, and — because `execute = TRUE` — **actually ran it**. We examined 1 R code file.",
+          "#### Run order",
+          "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"bad_setwd.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File paths",
+          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
+          "#### Missing inputs",
+          "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "#### Execution",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 1 ran without error, 0 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"bad_setwd.R\", Outcome = \"ran_ok\", Detail = \"\", \n    \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**`setwd()` in the code**",
+          "**1 script calls `setwd()`.** This is bad practice: it hardcodes where the code must run (often an absolute path on the author's own machine) and breaks the moment the code is run anywhere else. To run the code we commented these calls out. Any such script that then ran is **reproducible only after ignoring a `setwd()` that should not have been in the code and needs to be fixed**.",
+          "Reproducible after removing `setwd()`: bad_setwd.R.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"bad_setwd.R\", \"setwd() removed\" = 1L, \n    \"Path(s) it set\" = \"/Users/original_author/project\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "*Expand a row below to see the output each script produced.*",
+          "::: {.callout-tip title=\"Output — bad_setwd.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> mean(dat$x)\n[1] 4\n````\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  1 of 1 script ran without error when executed.\n-  0 installable dependencies detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_tests_reported",
+          "repro_tests_matched"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file_name",
+          "outcome",
+          "error",
+          "error_type",
+          "undefined_var",
+          "stdout",
+          "stderr",
+          "elapsed",
+          "script_lines",
+          "captures"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bad_setwd.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "> dat <- read.csv(\"data.csv\")\n> mean(dat$x)\n[1] 4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "# [reproducibility_check removed setwd] setwd(\"/Users/original_author/project\")",
+                  "dat <- read.csv(\"data.csv\")",
+                  "mean(dat$x)"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file_name",
+          "change_type",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bad_setwd.R",
+              "bad_setwd.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "path_rewrite",
+              "setwd_removed"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "\"data.csv\" -> \"data.csv\"",
+              "/Users/original_author/project"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<root>"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

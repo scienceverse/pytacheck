@@ -1,0 +1,26 @@
+{
+  "id": "scale_text_pattern.2",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Positive[\\s._/'’-]*and[\\s._/'’-]*Negative[\\s._/'’-]*Affect[\\s._/'’-]*Schedule|\\bPANAS\\b"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

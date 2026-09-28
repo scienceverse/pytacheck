@@ -1,0 +1,16 @@
+{
+  "id": "code_lang.review.qmd_tag_expr",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Evaluating R expressions (!expr) requires explicit `eval.expr=TRUE` option (see yaml.load help)"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Python"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

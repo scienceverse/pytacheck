@@ -1,0 +1,256 @@
+{
+  "id": "stat_results_long.omv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 14,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sample_omv_a5_h4_test_student_s_t_h4_test_bayes_factor_h4_test_wilcoxon_w",
+          "sample_omv_a5_h4_test_student_s_t_h4_test_bayes_factor_h4_test_wilcoxon_w",
+          "sample_omv_a5_h4_test_student_s_t_h4_test_bayes_factor_h4_test_wilcoxon_w",
+          "sample_omv_a5_h4_test_student_s_t_h4_test_bayes_factor_h4_test_wilcoxon_w",
+          "sample_omv_a5_h4_test_student_s_t_h4_test_bayes_factor_h4_test_wilcoxon_w",
+          "sample_omv_a5_h4_test_student_s_t_h4_test_bayes_factor_h4_test_wilcoxon_w",
+          "sample_omv_a5_h4_test_student_s_t_h4_test_bayes_factor_h4_test_wilcoxon_w",
+          "sample_omv_a5_h4_test",
+          "sample_omv_a5_h4_test",
+          "sample_omv_a5_h4_test",
+          "sample_omv_a5_h4_test",
+          "sample_omv_a5_h4_test",
+          "sample_omv_a5_h4_test",
+          "sample_omv_a5_h4_test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sample_omv_t1_r1_stat_stud",
+          "sample_omv_t1_r1_df_stud",
+          "sample_omv_t1_r1_p_stud",
+          "sample_omv_t1_r1_md_stud",
+          "sample_omv_t1_r1_cil_stud",
+          "sample_omv_t1_r1_ciu_stud",
+          "sample_omv_t1_r1_es_stud",
+          "sample_omv_t2_r1_w",
+          "sample_omv_t2_r1_p",
+          "sample_omv_t3_r1_num",
+          "sample_omv_t3_r1_mean",
+          "sample_omv_t3_r1_median",
+          "sample_omv_t3_r1_sd",
+          "sample_omv_t3_r1_se"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS",
+          "ttestOneS"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "One Sample T-Test",
+          "One Sample T-Test",
+          "One Sample T-Test",
+          "One Sample T-Test",
+          "One Sample T-Test",
+          "One Sample T-Test",
+          "One Sample T-Test",
+          "Test of Normality (Shapiro-Wilk)",
+          "Test of Normality (Shapiro-Wilk)",
+          "Descriptives",
+          "Descriptives",
+          "Descriptives",
+          "Descriptives",
+          "Descriptives"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "H4 test Student's t H4 test Bayes factor₁₀ H4 test Wilcoxon W",
+          "H4 test Student's t H4 test Bayes factor₁₀ H4 test Wilcoxon W",
+          "H4 test Student's t H4 test Bayes factor₁₀ H4 test Wilcoxon W",
+          "H4 test Student's t H4 test Bayes factor₁₀ H4 test Wilcoxon W",
+          "H4 test Student's t H4 test Bayes factor₁₀ H4 test Wilcoxon W",
+          "H4 test Student's t H4 test Bayes factor₁₀ H4 test Wilcoxon W",
+          "H4 test Student's t H4 test Bayes factor₁₀ H4 test Wilcoxon W",
+          "H4 test",
+          "H4 test",
+          "H4 test",
+          "H4 test",
+          "H4 test",
+          "H4 test",
+          "H4 test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "stat[stud]",
+          "df[stud]",
+          "p[stud]",
+          "md[stud]",
+          "cil[stud]",
+          "ciu[stud]",
+          "es[stud]",
+          "w",
+          "p",
+          "num",
+          "mean",
+          "median",
+          "sd",
+          "se"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t-statistic",
+          "number of degrees of freedom",
+          "p-value",
+          "mean difference",
+          "confidence interval",
+          "confidence interval",
+          "effect size estimate",
+          "w",
+          "p-value",
+          "study group population size",
+          "sample mean",
+          "median",
+          "standard deviation for sample",
+          "standard error of the mean"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://purl.obolibrary.org/obo/STATO_0000176",
+          "http://purl.obolibrary.org/obo/STATO_0000069",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "https://scienceverse.org/schema/metacheck/statistics/meanDifference",
+          "http://purl.obolibrary.org/obo/STATO_0000196",
+          "http://purl.obolibrary.org/obo/STATO_0000196",
+          "http://purl.obolibrary.org/obo/STATO_0000085",
+          "",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000088",
+          "http://purl.obolibrary.org/obo/STATO_0000401",
+          "https://scienceverse.org/schema/metacheck/statistics/median",
+          "http://purl.obolibrary.org/obo/STATO_0000684",
+          "http://purl.obolibrary.org/obo/STATO_0000037"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3.74627189026507",
+          "67",
+          "0.000187879807141863",
+          "0.632352941176471",
+          "0.350816605511086",
+          "Inf",
+          "0.454302197230741",
+          "0.938269121128085",
+          "0.00220590179992331",
+          "68",
+          "0.632352941176471",
+          "1",
+          "1.3919213797139",
+          "0.168795260915173"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

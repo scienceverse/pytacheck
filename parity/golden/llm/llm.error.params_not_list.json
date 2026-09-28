@@ -1,0 +1,9 @@
+{
+  "id": "llm.error.params_not_list",
+  "ok": false,
+  "error": "params must be a named list",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

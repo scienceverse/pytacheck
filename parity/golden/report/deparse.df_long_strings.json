@@ -1,0 +1,16 @@
+{
+  "id": "deparse.df_long_strings",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "structure(list(a = c(1, 2), b = c(\"A very long string that is certainly longer than sixty characters in total\", ",
+      "\"z\"), c = c(\"q\", \"r\"), d = c(\"s\", \"t\")), class = \"data.frame\", row.names = c(NA, ",
+      "-2L))"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

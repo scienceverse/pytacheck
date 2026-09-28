@@ -1,0 +1,95 @@
+{
+  "id": "openalex_add_abstract.synthetic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "id",
+      "abstract_inverted_index",
+      "abstract"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "W1"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "world",
+          "Hello",
+          "again",
+          "big"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Hello world big again world"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

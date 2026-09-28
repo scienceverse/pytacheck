@@ -1,0 +1,7 @@
+variable,label,values,missing values,question text,derivation
+a,Alpha,"1 = yes; 2 = no; 99 = refused",-9 = not answered,What is a?,mean of a1-a3
+b,Beta,"Male = 1, Female = 2",-99; -98,,
+c,Gamma,,N/A,  ,recoded
+d,Delta,"M = Male; F = Female","-7, x, -8",Delta?,
+a,,,,,
+e,Eps,"1 = Strongly disagree | 5 = Strongly agree",refused = -1,,

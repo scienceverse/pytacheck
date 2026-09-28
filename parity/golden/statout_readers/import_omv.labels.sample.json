@@ -1,0 +1,248 @@
+{
+  "id": "import_omv.labels.sample",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "Experiment",
+      "Participant",
+      "Manipulation check",
+      "H1 test",
+      "H2 test",
+      "H3 confirmatory confidence",
+      "H3 dissent confidence",
+      "H4 test",
+      "Guess hypothesis"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "codes",
+              "labels"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "2",
+                  "3"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2",
+              "3"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Diagnoses after hearing first half of symptoms should match those symptoms heard so far"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Diagnoses after hearing second half of symptoms should match the first half of the symptoms"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Instances of seeking confirming info"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Average confidence stated on diagnosis preceding confirmatory info request"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Average confidence stated on diagnosis preceding dissenting information request"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Average change in certainty for consistent diagnosis and confirmatory information request"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "label",
+          "codes",
+          "labels"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "I feltet under skriver du inn hva du tror hypotesen i vårt eksperiment/ formålet med denne studien er. Skriv kort, 1-2 setninger eller stikkord."
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

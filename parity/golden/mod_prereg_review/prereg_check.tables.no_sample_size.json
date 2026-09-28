@@ -1,0 +1,85 @@
+{
+  "id": "prereg_check.tables.no_sample_size",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "id",
+          "title",
+          "template"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/5xysn' target='_blank'>5xysn<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Should Governments Invest More in Nudges?"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Open-Ended Registration"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "Field",
+          "Preregistration 1"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "template_name",
+              "title",
+              "id",
+              "link",
+              "date_created",
+              "date_modified",
+              "date_registered",
+              "embargo_end_date",
+              "ia_url",
+              "description",
+              "paper_id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Open-Ended Registration",
+              "Should Governments Invest More in Nudges?",
+              "5xysn",
+              "https://osf.io/5xysn",
+              "2017-02-28T18:22:56.738000",
+              "2017-02-28T19:47:12.367000",
+              "2017-02-28T18:25:34.318000",
+              "",
+              "https://archive.org/details/osf-registrations-5xysn-v1",
+              "With many “nudge units” already established and more in the planning stages, governments must decide on the appropriate amount of resources to invest in them. An important question, then, is to determine how efficiently nudge initiatives achieve their objectives. To be maximally impactful, future policy-oriented behavioral science research will need to measure the relative effectiveness of behavioral interventions in comparison to more traditional interventions for influencing behavior, such as tax incentives and subsidies. We make this point in our paper and note that past studies of nudges designed to encourage behavior change have typically measured only the extent to which the intended behavior was changed (if at all). In the absence of relative effectiveness calculations determining whether a given nudge is more effective than, say, a tax break, policymakers lack the evidence needed to design optimal policies and to decide on the level of resources to allocate to testing and deploying behaviorally-informed interventions as either supplements to or replacements for traditional interventions.  In addition to raising these important issues, in this paper, we zoom in on four major policy areas where high-profile nudge units have focused attention to date—financial security in retirement, education, energy, and health. Within each area, we focus on one well-studied behavior that government agencies have sought to change through numerous policy interventions, and we provide relative effectiveness calculations using available evidence from published research in leading journals. In the process, we also share new results from one of the first experiments conducted by the recently-formed U.S. White House Social and Behavioral Sciences Team, which included nearly a million active duty members of the U.S. military.  We conclude that compared to traditional policy tools, recent nudge interventions have had especially favorable ratios of impact to cost, but more relative effectiveness calculations are urgently needed.",
+              "p_oer"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

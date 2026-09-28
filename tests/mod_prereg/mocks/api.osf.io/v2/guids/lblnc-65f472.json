@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "lblnc",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/lblnc/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "lblnc",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/lblnc/",
+   "html": "https://osf.io/lblnc/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

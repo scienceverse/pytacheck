@@ -1,0 +1,139 @@
+{
+  "id": "mendeley_info.review.json_vector",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "JSON string contains (illegal) UTF8 byte-order-mark!"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "mendeley_url",
+      "mendeley_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "bomds",
+          "https://data.mendeley.com/datasets/nands/2",
+          "dupds"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bomds",
+          "nands",
+          "dupds"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Café data",
+          null,
+          "first"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17632/bomds.1",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A B"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "parse_error",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

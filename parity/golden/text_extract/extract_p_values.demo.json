@@ -1,0 +1,115 @@
+{
+  "id": "extract_p_values.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type",
+      "p_comp",
+      "p_value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p = 0.005",
+          "p =0.152",
+          "p > .05"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          15,
+          16,
+          17
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_0\">2<\/ref>)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Procedure",
+          "Procedure",
+          "Procedure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method",
+          "method",
+          "method"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          ">"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.005,
+          0.152,
+          0.05
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

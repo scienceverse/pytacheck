@@ -1,0 +1,170 @@
+{
+  "id": "load_module_tables.review.a",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "module_output",
+        "names": [
+          "table",
+          "traffic_light",
+          "module",
+          "title",
+          "section",
+          "summary_table"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "y"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  3.5
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "info"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "other"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "other"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "general"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "paper_id",
+              "n"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mymod",
+          "other"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "x",
+          "f",
+          "l",
+          "s"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "u",
+              "v"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "line one",
+          "line two"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "other"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

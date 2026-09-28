@@ -1,0 +1,126 @@
+{
+  "id": "extract_p_values.review.unicode_space",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type",
+      "p_comp",
+      "p_value"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          2,
+          2,
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p\t=\t.06",
+          "p\n<\n.07",
+          "p = .05",
+          "p = .05e-3",
+          "p = 1.5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "P = .5, p\t=\t.06, p\n<\n.07",
+          "P = .5, p\t=\t.06, p\n<\n.07",
+          "p = .05 e-3 and p = .05e-3 and p = 1.5×10^-3",
+          "p = .05 e-3 and p = .05e-3 and p = 1.5×10^-3",
+          "p = .05 e-3 and p = .05e-3 and p = 1.5×10^-3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "<",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.06,
+          0.07,
+          0.05,
+          5e-05,
+          1.5
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

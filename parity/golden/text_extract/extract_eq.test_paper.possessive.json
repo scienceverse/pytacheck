@@ -1,0 +1,72 @@
+{
+  "id": "extract_eq.test_paper.possessive",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text_id",
+      "grp_id",
+      "lhs",
+      "df",
+      "comp",
+      "rhs",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Cohen's d",
+          "Hedges's g"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ">",
+          "="
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.0",
+          "0.32"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

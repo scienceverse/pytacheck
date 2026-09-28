@@ -1,0 +1,78 @@
+# R source -> Python location for the codebook_check module (see docs/PORTING.md).
+# Parity: parity/cases/mod_codebook.yaml (written by tests/mod_codebook/make_cases.py),
+# goldens parity/golden/mod_codebook/. The module cases chain codebook_check onto
+# metacheck's own data_check output for small fixture repositories
+# (tests/mod_codebook/fixtures/make_fixtures.R -> fixtures/repos/, fixtures/dc/;
+# rebuilt by tests/mod_codebook/cbc_helpers.R and helpers.py); LLM tiers are
+# parity-tested with a deterministic llm() mock (fixtures/llm_mock.json).
+# Review cases: parity/cases/mod_codebook_review.yaml (written by
+# tests/mod_codebook/make_review_cases.py; fixtures from
+# tests/mod_codebook/fixtures/make_review_fixtures.R -> fixtures/dc_review/,
+# adversarial LLM answers in fixtures/llm_review.json), goldens
+# parity/golden/mod_codebook_review/.
+[files]
+"inst/modules/codebook_check.R" = ["src/pytacheck/modules/codebook_check.py", "src/pytacheck/modules/_codebook.py"]
+
+[functions]
+"module:codebook_check" = "pytacheck.modules.codebook_check:codebook_check"
+# closures inside codebook_check()
+".pid" = "pytacheck.modules.codebook_check:_pid"
+"empty_summary" = "pytacheck.modules.codebook_check:_empty_summary"
+"apply_scale" = "pytacheck.modules.codebook_check:_codebook_check"
+# module-local helpers defined in inst/modules/codebook_check.R
+"codebook_file_tabset" = "pytacheck.modules._codebook:codebook_file_tabset"
+"codebook_parse_llm" = "pytacheck.modules._codebook:codebook_parse_llm"
+".scale_paper_context" = "pytacheck.modules._codebook:_scale_paper_context"
+".scale_dictionary" = "pytacheck.modules._codebook:_scale_dictionary"
+".task_dictionary" = "pytacheck.modules._codebook:_task_dictionary"
+".scale_text_pattern" = "pytacheck.modules._codebook:_scale_text_pattern"
+".scan_paper_for_scales" = "pytacheck.modules._codebook:_scan_paper_for_scales"
+".scan_paper_with_dict" = "pytacheck.modules._codebook:_scan_paper_with_dict"
+".scan_paper_for_tasks" = "pytacheck.modules._codebook:_scan_paper_for_tasks"
+".scale_stopwords" = "pytacheck.modules._codebook:_SCALE_STOPWORDS"
+".scale_name_in_text" = "pytacheck.modules._codebook:_scale_name_in_text"
+".propagate_scale_by_prefix" = "pytacheck.modules._codebook:_propagate_scale_by_prefix"
+".identify_scales_rules" = "pytacheck.modules._codebook:_identify_scales_rules"
+".identify_tasks_rules" = "pytacheck.modules._codebook:_identify_tasks_rules"
+".scale_group_min_chars" = "pytacheck.modules._codebook:_SCALE_GROUP_MIN_CHARS"
+".scale_shared_stem" = "pytacheck.modules._codebook:_scale_shared_stem"
+".scale_alpha_prefix" = "pytacheck.modules._codebook:_scale_alpha_prefix"
+".scale_loop_base" = "pytacheck.modules._codebook:_scale_loop_base"
+".scale_same_number_run" = "pytacheck.modules._codebook:_scale_same_number_run"
+".AGG_TOKEN_RE" = "pytacheck.modules._codebook:_AGG_TOKEN_RE"
+".col_looks_like_total" = "pytacheck.modules._codebook:_col_looks_like_total"
+".scale_split_items" = "pytacheck.modules._codebook:_scale_split_items"
+".scale_group_args" = "pytacheck.modules._codebook:_scale_group_args"
+".PARADATA_CHANNEL_RE" = "pytacheck.modules._codebook:_PARADATA_CHANNEL_RE"
+".QUALTRICS_TIMER_RE" = "pytacheck.modules._codebook:_QUALTRICS_TIMER_RE"
+".PARADATA_PLATFORM_COLS" = "pytacheck.modules._codebook:_PARADATA_PLATFORM_COLS"
+".PARADATA_INQUISIT_STIM_RE" = "pytacheck.modules._codebook:_PARADATA_INQUISIT_STIM_RE"
+".PARADATA_PSYCHOPY_RE" = "pytacheck.modules._codebook:_PARADATA_PSYCHOPY_RE"
+".PARADATA_PSYCHOPY_META_COLS" = "pytacheck.modules._codebook:_PARADATA_PSYCHOPY_META_COLS"
+".paradata_name" = "pytacheck.modules._codebook:_paradata_name"
+".paradata_platform_col" = "pytacheck.modules._codebook:_paradata_platform_col"
+".paradata_format" = "pytacheck.modules._codebook:_paradata_format"
+".paradata_col" = "pytacheck.modules._codebook:_paradata_col"
+".scale_is_nonanalytic_col" = "pytacheck.modules._codebook:_scale_is_nonanalytic_col"
+".codebook_label_machinery" = "pytacheck.modules._codebook:_codebook_label_machinery"
+".codebook_duplicate_name_warnings" = "pytacheck.modules._codebook:_codebook_duplicate_name_warnings"
+".scale_prefix_groups" = "pytacheck.modules._codebook:_scale_prefix_groups"
+".scale_prefix_sentences" = "pytacheck.modules._codebook:_scale_prefix_sentences"
+".SCALE_SIGNAL_WORDS" = "pytacheck.modules._codebook:_SCALE_SIGNAL_WORDS"
+".scale_description_sentences" = "pytacheck.modules._codebook:_scale_description_sentences"
+".identify_scales_text_llm" = "pytacheck.modules._codebook:_identify_scales_text_llm"
+".scale_text_report" = "pytacheck.modules._codebook:_scale_text_report"
+".identify_scales_prefix_llm" = "pytacheck.modules._codebook:_identify_scales_prefix_llm"
+".osd_likert_options" = "pytacheck.modules._codebook:_osd_likert_options"
+".scales_to_osd" = "pytacheck.modules._codebook:_scales_to_osd"
+".osd_dedup_by_source" = "pytacheck.modules._codebook:_osd_dedup_by_source"
+".identify_scales_selfgen" = "pytacheck.modules._codebook:_identify_scales_selfgen"
+".selfgen_merge_synonyms" = "pytacheck.modules._codebook:_selfgen_merge_synonyms"
+"codebook_match_llm" = "pytacheck.modules._codebook:codebook_match_llm"
+
+# Not ported: dead code in the upstream module file.
+# * codebook_identify_scales(): never called, and its body references
+#   paper_for_file() and text_scales, which are not defined in its scope (it
+#   would error if called); superseded by .identify_scales_prefix_llm() +
+#   .identify_scales_selfgen().
+# * .scale_prefix_of(): never called (superseded by .scale_shared_stem()).

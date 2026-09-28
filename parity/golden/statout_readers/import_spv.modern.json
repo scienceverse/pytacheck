@@ -1,0 +1,379 @@
+{
+  "id": "import_spv.modern",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode light-binary table: spv binary: needed 32 bytes at offset 300, only 1 available",
+    "spv: could not decode light-binary table: spv binary: unsupported light-table version 2"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Notes"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "Info",
+              "Info.1",
+              "dim",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Output Created",
+                  "Comments"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Value",
+                  "Value"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x",
+                  "x"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "24-SEP-2026 10:00:00",
+                  "^1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "DESCRIPTIVES VARIABLES=age score\n  /STATISTICS=MEAN STDDEV MIN MAX."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Descriptive Statistics"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 9,
+            "names": [
+              "Gender",
+              "Statistics",
+              "Variables",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "N",
+                  "N",
+                  "N",
+                  "Mean",
+                  "Mean",
+                  "Mean",
+                  "Std. Deviation",
+                  "Std. Deviation",
+                  "Std. Deviation"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Scales / age",
+                  "Scales / Score",
+                  "Valid N (listwise)",
+                  "Scales / age",
+                  "Scales / Score",
+                  "Valid N (listwise)",
+                  "Scales / age",
+                  "Scales / Score",
+                  "Valid N (listwise)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "120",
+                  "34.5678901234568",
+                  "0.333333333333333",
+                  "118",
+                  "0",
+                  null,
+                  "1e+20",
+                  ".",
+                  "^1 of ^2"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "DESCRIPTIVES VARIABLES=age score\n  /STATISTICS=MEAN STDDEV MIN MAX."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "T-Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "One-Sample Test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "Statistic",
+              "Test Value = 0",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "t",
+                  "df",
+                  "Sig. (2-tailed)",
+                  "t",
+                  "Sig. (2-tailed)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "score",
+                  "score",
+                  "score",
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "12.345678",
+                  "117",
+                  "4.7e-108",
+                  "4e-04",
+                  "-2.5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "T-TEST\n  /TESTVAL=0\n  /VARIABLES=score."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "One-Sample Test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "Statistic",
+              "Test Value = 0",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "t",
+                  "df",
+                  "Sig. (2-tailed)",
+                  "t",
+                  "Sig. (2-tailed)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "score",
+                  "score",
+                  "score",
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "12.345678",
+                  "117",
+                  "4.7e-108",
+                  "4e-04",
+                  "-2.5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "T-TEST\n  /TESTVAL=0\n  /VARIABLES=score."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

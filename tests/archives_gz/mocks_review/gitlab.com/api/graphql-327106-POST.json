@@ -1,0 +1,28 @@
+{
+ "data": {
+  "project": {
+   "repository": {
+    "blobs": {
+     "nodes": {
+      "n1": {
+       "path": "",
+       "size": "7"
+      },
+      "n2": {
+       "path": "a.txt",
+       "size": 1
+      },
+      "n3": {
+       "path": "d",
+       "size": 2.5
+      },
+      "n4": {
+       "path": "e.txt",
+       "size": null
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,5 @@
+varname,description,values
+bfi_1,Personality item 1,1=Disagree strongly; 2=Disagree; 3=Neutral; 4=Agree; 5=Agree strongly
+bfi_2,Personality item 2,1=Disagree strongly; 2=Disagree; 3=Neutral; 4=Agree; 5=Agree strongly
+bfi_3,Personality item 3,1=Disagree strongly; 2=Disagree; 3=Neutral; 4=Agree; 5=Agree strongly
+bfi_4,Personality item 4,1=Disagree strongly; 2=Disagree; 3=Neutral; 4=Agree; 5=Agree strongly

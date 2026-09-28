@@ -1,0 +1,14 @@
+{
+  "id": "rtransparent_funding.na_text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "This study was funded by the ERC."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

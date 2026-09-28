@@ -1,0 +1,13 @@
+Record ID,Title,Subject,Institution,Journal,Publisher,Country,Author,URLS,ArticleType,RetractionDate,RetractionDOI,RetractionPubMedID,OriginalPaperDate,OriginalPaperDOI,OriginalPaperPubMedID,RetractionNature,Reason,Paywalled,Notes
+1,"A paper, with commas","(BLS) Biology",Uni,J Bio,Pub,UK,Smith,,Research Article;,1/2/2020 0:00,10.1/ret1,0,1/1/2019 0:00,10.1234/abc,0,Retraction,+Error;,No,
+2,Second,"(HSC) Medicine",Uni,J Med,Pub,US,Jones,,Research Article;,1/2/2020 0:00,10.1/ret2,0,1/1/2019 0:00,10.1234/abc,0,Correction,+Error;,No,
+3,Third,"(HSC) Medicine",Uni,J Med,Pub,US,Jones,,Research Article;,1/2/2020 0:00,10.1/ret3,0,1/1/2019 0:00,10.1234/abc,0,Retraction,+Error;,No,
+4,Unavailable,"(HSC) Medicine",Uni,J Med,Pub,US,Jones,,Research Article;,1/2/2020 0:00,10.1/ret4,0,1/1/2019 0:00,unavailable,0,Retraction,+Error;,No,
+5,Empty nature,"(HSC) Medicine",Uni,J Med,Pub,US,Jones,,Research Article;,1/2/2020 0:00,10.1/ret5,0,1/1/2019 0:00,10.5555/empty.nature,0,,+Error;,No,
+6,"Multi
+line title",x,Uni,J,Pub,DE,Müller,,Review;,1/2/2020 0:00,10.1/ret6,0,1/1/2019 0:00,10.1016/j.jml.2012.11.001,0,Expression of concern,+Unreliable;,No,"a ""quoted"" note"
+7,No DOI,x,Uni,J,Pub,DE,Müller,,Review;,1/2/2020 0:00,10.1/ret7,0,1/1/2019 0:00,,0,Retraction,+Unreliable;,No,
+8,NA DOI,x,Uni,J,Pub,DE,Müller,,Review;,1/2/2020 0:00,10.1/ret8,0,1/1/2019 0:00,NA,0,Retraction,+Unreliable;,No,
+9,Again,x,Uni,J,Pub,DE,Müller,,Review;,1/2/2020 0:00,10.1/ret9,0,1/1/2019 0:00,10.1016/j.jml.2012.11.001,0,Retraction,+Unreliable;,No,
+10,Again2,x,Uni,J,Pub,DE,Müller,,Review;,1/2/2020 0:00,10.1/ret10,0,1/1/2019 0:00,10.1016/j.jml.2012.11.001,0,Expression of concern,+Unreliable;,No,
+11,Spaces, x ,Uni,J,Pub,DE,Müller,,Review;,1/2/2020 0:00,10.1/ret11,0,1/1/2019 0:00, 10.7777/space ,0,Reinstatement,+Unreliable;,No,

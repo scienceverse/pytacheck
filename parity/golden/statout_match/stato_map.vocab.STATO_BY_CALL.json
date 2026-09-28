@@ -1,0 +1,505 @@
+{
+  "id": "stato_map.vocab.STATO_BY_CALL",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "shapiro.test",
+      "wilcox.test",
+      "kruskal.test",
+      "bartlett.test",
+      "friedman.test",
+      "chisq.test",
+      "prop.test",
+      "mcnemar.test",
+      "cor.test",
+      "var.test",
+      "t.test",
+      "ks.test",
+      "cohen.d",
+      "cohens_d",
+      "repeated_measures_d",
+      "ttestresult",
+      "ttest_indresult",
+      "mannwhitneyuresult",
+      "wilcoxonresult",
+      "kruskalresult",
+      "kstestresult"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "w",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:shapiroWilkW",
+              "mcSTAT:shapiroWilkW"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "w",
+              "v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:wilcoxonW",
+              "mcSTAT:wilcoxonV"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "kruskal-wallis chi-squared",
+              "chi-squared",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000030",
+              "STATO:0000030",
+              "STATO:0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bartlett's k-squared",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000030",
+              "STATO:0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "friedman chi-squared",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000030",
+              "STATO:0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x-squared",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000030",
+              "STATO:0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x-squared",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000030",
+              "STATO:0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mcnemar's chi-squared",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000030",
+              "STATO:0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "s",
+              "t",
+              "z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:spearmanS",
+              "STATO:0000176",
+              "STATO:0000376"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "f",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000282",
+              "STATO:0000282"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000176",
+              "STATO:0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "d",
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:kolmogorovSmirnovD",
+              "mcSTAT:kolmogorovSmirnovD"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000618"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000618"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000618"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:mannWhitneyU"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:wilcoxonV"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:kruskalWallisH"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mcSTAT:kolmogorovSmirnovD"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,257 @@
+{
+  "id": "ethics_check.paperlist_red",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ethics_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ethics Approval Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "ethics",
+          "live_data"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              2,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The IRB approved the study.",
+              "Participants were recruited online.",
+              "Participants were recruited online."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The IRB approved the study.",
+              "Participants were recruited online.",
+              "Participants were recruited online."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "z9",
+              "z9",
+              "a1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 of 3 papers appeared to involve live data collection and lacked an ethics approval statement."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 of 3 papers appeared to involve live data collection and lacked an ethics approval statement."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "ethics_approved",
+          "ethics_statements",
+          "needs_ethics",
+          "live_data_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "z9",
+              "a1",
+              "m5"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The IRB approved the study."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Participants were recruited online."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Participants were recruited online."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "ethics_approved"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

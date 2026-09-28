@@ -1,0 +1,48 @@
+{
+ "sha": "abc123",
+ "tree": [
+  {
+   "path": "README.md",
+   "type": "blob",
+   "size": 120
+  },
+  {
+   "path": "data",
+   "type": "tree"
+  },
+  {
+   "path": "data/study 1.csv",
+   "type": "blob",
+   "size": 2048
+  },
+  {
+   "path": "code/analysis.R",
+   "type": "blob",
+   "size": 512
+  },
+  {
+   "path": "code/config.json",
+   "type": "blob",
+   "size": 64
+  },
+  {
+   "path": "LICENSE",
+   "type": "blob",
+   "size": 1070
+  },
+  {
+   "path": "archive.tar.gz",
+   "type": "blob",
+   "size": 99999
+  },
+  {
+   "path": "weird.file-name",
+   "type": "blob"
+  },
+  {
+   "path": "sub",
+   "type": "commit"
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,259 @@
+{
+  "id": "stat_check.red",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "StatCheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "test_type",
+          "df1",
+          "df2",
+          "test_comp",
+          "test_value",
+          "p_comp",
+          "reported_p",
+          "computed_p",
+          "raw",
+          "error",
+          "decision_error",
+          "one_tailed_in_txt",
+          "apa_factor",
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              97.2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              -1.96
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.152
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.05285936397754
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(97.2) = -1.96, p = 0.152"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This is wrong: t(97.2) = -1.96, p = 0.152"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This is wrong: t(97.2) = -1.96, p = 0.152"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected possible errors in test statistics. Note that as the accuracy of statcheck has only been validated for *t*-tests and *F*-tests. As Metacheck only uses validated modules, we only provide statcheck results for *t* tests and *F*-tests.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = \"t(97.2) = -1.96, p = 0.152\", \"Recomputed p\" = 0.05286, \n    Sentence = \"This is wrong: t(97.2) = -1.96, p = 0.152\"), row.names = 1L, class = c(\"statcheck\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"10em\", NA, NA, NA), 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific research on the validity of statcheck, and it's usefulness to prevent statistical reporting errors, see:\n\nNuijten M, van Assen M, Hartgerink C, Epskamp S, Wicherts J (2017). &ldquo;The validity of the tool &quot;statcheck&quot; in discovering statistical reporting inconsistencies.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/tcxaja\">doi:10.31234/osf.io/tcxaja<\/a>, Preprint.\n\nNuijten M, Wicherts J (2023). &ldquo;The effectiveness of implementing statcheck in the peer review process to avoid statistical reporting errors.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/bxau9\">doi:10.31234/osf.io/bxau9<\/a>, Preprint.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 possible error in t-tests or F-tests"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "statcheck_found",
+          "statcheck_errors",
+          "statcheck_decision_errors"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

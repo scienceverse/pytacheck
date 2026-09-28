@@ -1,0 +1,9 @@
+{
+"link.doi_vector_na": {"r": "ade6654d1e2a4058", "py": "ef85af4cf748ebf8", "diff": ["[]"]},
+"module_report.stat_p_exact.headers": {"r": "cd1d9fe09bba5c01", "py": "e80f092f38b6294c", "diff": ["[]"]},
+"report.paperlist.one_file": {"r": "25b7b11e247040ed", "py": "90a6cdf1341fa9d2", "diff": ["files[]", "save_path[]"]},
+"report_qmd.no_doi_column": {"r": "80cae6d34dda494b", "py": "3b55e60d984a63a8", "diff": ["[]"]},
+"report_qmd.vector_summary": {"r": "ac5146cf65ca52a8", "py": "31c89867ba4e98ba", "diff": ["<R error, Python value>"]},
+"report_qmd.zero_row_info": {"r": "80cae6d34dda494b", "py": "36f8135270dc3a81", "diff": ["[]"]},
+"scroll_table.vector_newlines": {"r": "60cacfc93e27153f", "py": "1e7b816117c3bb8b", "diff": ["[]"]}
+}

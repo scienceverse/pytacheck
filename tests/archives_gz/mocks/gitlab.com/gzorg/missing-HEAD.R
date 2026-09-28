@@ -1,0 +1,1 @@
+structure(list(method = "HEAD", url = "https://gitlab.com/gzorg/missing", status_code = 404L, headers = structure(list(`content-type` = "text/html"), class = "httr2_headers"), body = charToRaw(""), cache = new.env(parent = emptyenv())), class = "httr2_response")

@@ -1,0 +1,32 @@
+{
+  "id": ".mendeley_info.mock.unfound",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "zzz999 could not be found"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "mendeley_id",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "zzz999"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

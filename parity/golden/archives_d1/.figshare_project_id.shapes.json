@@ -1,0 +1,35 @@
+{
+  "id": ".figshare_project_id.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "133332",
+      "999",
+      null,
+      null,
+      null,
+      "1",
+      null,
+      "77",
+      "5",
+      null
+    ],
+    "names": [
+      "https://figshare.com/projects/PERICLES_-_Heritage_values/133332",
+      "https://figshare.com/projects/A_Project_With-Punctuation.In.It/999",
+      "https://figshare.com/articles/dataset/some_title/18093368",
+      "not-a-figshare-url",
+      "",
+      " https://figshare.com/projects/x/1/ ",
+      "https://figshare.com/projects/x/y/1",
+      "https://figshare.le.ac.uk/projects/Leicester/77",
+      "https://FIGSHARE.com/Projects/Name/5",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

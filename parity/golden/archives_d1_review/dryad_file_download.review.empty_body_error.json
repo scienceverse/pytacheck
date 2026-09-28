@@ -1,0 +1,9 @@
+{
+  "id": "dryad_file_download.review.empty_body_error",
+  "ok": false,
+  "error": "Can't retrieve empty body.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

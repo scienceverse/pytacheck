@@ -1,0 +1,46 @@
+{
+  "id": "read.file_name_verbatim",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "dir_slash",
+      "dot",
+      "double"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "D//p.xml",
+          "D//q.xml"
+        ],
+        "names": [
+          "p",
+          "q"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "D/./p.xml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "D//q.xml",
+          "D/p.xml"
+        ],
+        "names": [
+          "q",
+          "p"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

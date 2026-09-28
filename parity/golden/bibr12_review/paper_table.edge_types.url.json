@@ -1,0 +1,74 @@
+{
+  "id": "paper_table.edge_types.url",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "url_id",
+      "href",
+      "link_text",
+      "text_id",
+      "start",
+      "end",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          " https://osf.io/abc. ",
+          "https://example.org"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_types",
+          "edge_types"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

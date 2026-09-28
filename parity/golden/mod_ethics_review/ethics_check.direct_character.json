@@ -1,0 +1,9 @@
+{
+  "id": "ethics_check.direct_character",
+  "ok": false,
+  "error": "Argument 1 must be a data frame or a named atomic vector.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

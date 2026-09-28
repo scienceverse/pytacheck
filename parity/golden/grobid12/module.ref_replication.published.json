@@ -1,0 +1,160 @@
+{
+  "id": "module.ref_replication.published",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_replication"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Replication Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "replication_ref",
+          "replication_doi",
+          "replication_url",
+          "replication_outcome",
+          "replication_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "published"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1126/science.1224313"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Aviezer, H., Trope, Y., & Todorov, A. (2012). Body cues, not facial expressions, discriminate between intense positive and negative emo- tions. Science, 338(6111), 1225-1229. https://doi.org/10.1126/science.1224313"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1038/s41562-018-0399-z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/367yu"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "successful"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 76 references with DOIs. We found 1 replication for 1 original you cited.\n\nCheck if you are aware of the replication studies, and cite them where appropriate.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = \"Aviezer, H., Trope, Y., & Todorov, A. (2012). Body cues, not facial expressions, discriminate between intense positive and negative emo- tions. Science, 338(6111), 1225-1229. https://doi.org/10.1126/science.1224313\", \n    Replication = \"Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.5, 0.5), 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 replication for 1 original you cited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "replications"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "published"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,256 @@
+{
+  "id": ".osf_parse_response.fx.v2.preprints-e4a237",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "provider",
+      "public",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "self",
+      "parent",
+      "project",
+      "primary_file"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "pwe4x_v1",
+          "4m79q_v1",
+          "q6fmv_v1",
+          "yv2tm_v1",
+          "a7wdj_v1",
+          "2mjye_v1",
+          "rvgup_v1",
+          "5nxtw_v1",
+          "sbe3d_v1",
+          "kpu5f_v1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Assessing Unpredictability in Caregiver-Child Relationships: Insights from Theoretical and Empirical Perspectives",
+          "Does violence within a non-violent social movement help or hurt the movement? Evidence from the 2020 BlackLivesMatter Protests",
+          "Finding a positive me: Affective and neural insights into the challenges of positive autobiographical memory reliving in borderline personality disorder",
+          "What Neural Oscillations Can(not) Do for Syntactic Structure Building",
+          "Untangling Self-Reported Interoceptive Attention and Accuracy: Evidence from the European Portuguese Validation of the Body Perception Questionnaire and the Interoceptive Accuracy Scale",
+          "What drives beliefs in COVID-19 conspiracy theories? The role of psychotic-like experiences and confinement-related factors",
+          "Disrupting the System Constructively:  Testing the Effectiveness of Nonnormative Nonviolent Collective Action",
+          "Musicians can reliably discriminate between string register locations on the violoncello",
+          "Acting together with the enemy",
+          "Seeking Hope in Times of Darkness: Perceived Setbacks in Achieving Goals Predict Increased Motivation for Hope among Disadvantaged Group Members"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There has been significant interest and progress in understanding the role of caregiver unpredictability on brain maturation, cognitive and socioemotional development, and psychopathology. Theoretical consensus has emerged about the unique influence of unpredictability in shaping children’s experience, distinct from other adverse exposures or features of stress exposure. Nonetheless, the field still lacks theoretical and empirical common ground due to difficulties in accurately operationalizing and measuring unpredictability in the caregiver-child relationship. In this paper, we first provide an overview of the role of unpredictability in theories of caregiving and childhood adversity and present four issues that are currently under-discussed but are crucial to the field. Focusing on how moment-to-moment and day-to-day dynamics are at the heart of caregiver unpredictability, we review three approaches aiming to address some of these nuances: Environmental statistics, entropy and dynamic systems. Lastly, we conclude with a broad summary and suggest future research directions. Systematic progress in this field can inform interventions and policies aiming to increase stability in the lives of children.",
+          "The murder of George Floyd ignited one of the largest mass mobilizations in US history, including both non-violent and violent BlackLivesMatter protests in the summer of 2020. Many have since asked: did the violence within the largely non-violent movement help or hurt its goals? To answer this question, we used real-world data (ACLED, 2020) about the location of all BlackLivesMatter protests during the summer of 2020 to identify US counties that featured no protests, only nonviolent protests, or both nonviolent and violent protests. We then combined this data with survey data (N = 494, Study 1), data from the Congressional Cooperative Election Study (N = 43,924, Study 2A), and data from Project Implicit (N = 180,480, Study 2B), in order to examine how exposure (i.e. living in a county with) different types of protest affected both support for the key policy goals of the movement and prejudice towards Black Americans. We found that the 2020 BLM protests had no impact on prejudice among either liberals or conservatives. However, they were, even when violent, able to increase support for BlackLivesMatter’s key policy goals among conservatives living in relatively liberal areas. As such, this research suggests that violent, disruptive actions within a broader non-violent movement may affect those likely to be resistant to the movement. We connect these findings to the notion of disruptive action, which explains why these effects do not materialize in reducing prejudice, but in generating support for important policy goals of the movement.",
+          "Background\nThis study aimed to investigate whether people with borderline personality disorder (BPD) can benefit from reliving positive autobiographical memories in terms of mood and state self-esteem and elucidate the neural processes supporting optimal memory reliving. Particularly the role of vividness and brain areas involved in autonoetic consciousness were studied, as key factors involved in improving mood and state self-esteem by positive memory reliving.\nMethods\nWomen with BPD (N = 25), Healthy Controls (HC, N = 33) and controls with Low Self-Esteem (LSE, N = 22) relived four neutral and four positive autobiographical memories in an MRI scanner. After reliving each memory mood and vividness was rated. State self-esteem was assessed before and after the Reliving Autobiographical Memories (RAM) task.\nResults\nOverall, mood and state self-esteem were lower in participants with BPD compared to HC and LSE, but both the BPD and LSE group improved significantly after positive memory reliving. Moreover, participants with BPD indicated that they relived their memories with less vividness than HC but not LSE, regardless of valence. When reliving (vs reading) memories, participants with BPD showed increased precuneus and lingual gyrus activation compared to HC but not LSE, which was inversely related to vividness.\nDiscussion\nWomen with BPD seem to experience more challenges in reliving neutral and positive autobiographical memories with lower vividness and less deactivated precuneus potentially indicating altered autonoetic consciousness. Nevertheless, participants with BPD do benefit in mood and self-esteem from reliving positive memories. These findings underline the potential of positive autobiographical memory reliving and suggest that interventions may be further shaped to improve mood and strengthen self-views in people with BPD.",
+          "Understanding what someone says requires relating words in the sentence to one another as instructed by grammatical rules of language. In recent years, a neurophysiological basis for this process has become a prominent topic of discussion in cognitive neuroscience. Current proposals about the neural mechanisms of syntactic structure building converge in assigning a key role to neural oscillations but differ in the exact function assigned to them. We discuss two types of approaches – oscillations for chunking and oscillations for multi-scale information integration – and evaluate their merits and limitations considering a fundamentally hierarchical nature of syntactic representations in natural language. We highlight insights that can provide a tangible starting point for a wide-scope neurocognitive model of syntactic structure building.",
+          "Objectives: To explore the factor structure and psychometric properties of the European Portuguese versions of the Interoceptive Accuracy Scale (IAS) and the Body Perception Questionnaire (BPQ) - Body Awareness and Autonomic Reactivity; to examine the association between self-reported interoceptive attention and accuracy (BPQ Body Awareness and IAS, respectively).\nMethod: A community-sample (n=515) completed an online survey comprising the IAS, BPQ, and Toronto Alexithymia Scale. Factor structure analyses followed a comprehensive pipeline (parallel analysis and EFA, to establish the number of factors and item loadings; CFA and ESEM, to compare different factor structures). Additional psychometric analyses included internal consistency and test-retest analyses. Correlational analyses examined the associations between alexithymia, interoceptive attention and accuracy. Polynomial regression and two-lines testing investigated the quadratic association between IAS and BPQ.\nResults: Parallel-analysis indicated a one-factor solution for BPQ Body Awareness. For IAS and BPQ Autonomic Reactivity, bifactor ESEM models were retained. Ancillary measures revealed that both scales were mainly unidimensional and presented reliable total scores. All scales displayed excellent internal consistency, although test-rest reliability was modest. IAS and BPQ Body Awareness were moderately correlated and further displayed a quadratic U-shaped association. Alexithymia was negatively correlated with IAS and unassociated with BPQ Body Awareness.\nConclusions: The European Portuguese IAS and BPQ displayed good psychometric properties and can thus be used within clinical and research settings. These questionnaires were differentially related to alexithymia, suggesting that interoceptive attention and accuracy may be dissociated using self-reports, although future research should further examine their linear vs. quadratic association.",
+          "The COVID-19 pandemic is a worldwide threat to public health and the global economy. The climate of fear and uncertainty associated with the pandemic has fostered the emergence of a wide-range of COVID-19 conspiracy theories that has the potential do shape public opinion and hinder the effective dissemination of valid information. Beliefs in conspiracy theories has been associated with maladaptive personality traits such as schizotypy and paranoia, as well as other non-psychotic psychological characteristics (e.g., social isolation, stress). The current study aimed to examine the association between beliefs in COVID-19 conspiracy theories and psychotic-like experiences within the community, while also addressing the role of sociodemographic information, psychological outcomes (e.g., stress, affective states) and other pandemic-related factors (e.g., confinement conditions/behaviors). Our results suggest that psychotic-like experiences are associated with beliefs in COVID-19 conspiracy theories, particularly perceptual abnormalities and persecutory ideation. Moreover, increased health-related concerns and reduced education levels also seem to be liability factors for these conspiracy beliefs. These results add important insights into how the adherence to illogical and erroneous disease-related arguments may be contingent to proneness to psychotic-like experiences. COVID-19 conspiracy theories are yet another major challenge that governments and policy makers must contemplate when defining strategic directions to manage the current and future pandemics.",
+          "Collective action research tends to focus on motivations of the disadvantaged group, rather than on which tactics are effective at driving the advantaged group to make concessions to the disadvantaged. We focused on the potential of nonnormative nonviolent action as a tactic to generate support for concessions among advantaged group members who are resistant to social change. We propose that this tactic, relative to normative nonviolent and to violent action, is particularly effective because it reflects constructive disruption: a delicate balance between disruption (which can put pressure on the advantaged group to respond), and perceived constructive intentions (which can help ensure that the response to action is a conciliatory one). We test these hypotheses across four contexts (total N = 3650). Studies 1-3 demonstrate that nonnormative nonviolent action (compared to inaction, normative nonviolent action, and violent action) is uniquely effective at increasing support for concessions to the disadvantaged among resistant advantaged group members (compared to advantaged group members more open to social change). Study 3 shows that constructive disruption mediates this effect. Study 4 shows that perceiving a real-world ongoing protest as constructively disruptive predicts support for the disadvantaged, while Study 5 examines these processes longitudinally over 2 months in the context of an ongoing social movement. Taken together, we show that nonnormative nonviolent action can be an effective tactic for generating support for concessions to the disadvantaged among those who are most resistant because it generates constructive disruption.",
+          "Vocal range location is an important vocal affective signal. Humans use different areas of their vocal range to communicate emotional intensity. Consequently, humans are good at identifying where someone is speaking within their vocal range. Research on music and emotion has demonstrated that musical expressive behaviors often reflect or take inspiration from vocal expressive behaviors. Is it possible for musicians to utilize range-related signals on their instrument similarly to how humans use vocal range-related signals? Might musicians therefore be similarly sensitive to instrumental range location? We present two experiments that investigate musicians’ ability to hear instrumental range location, specifically string register location on the violoncello. Experiment one is a behavioral study that tests whether musicians can reliably distinguish between higher and lower string register locations. In experiment two, we analyze acoustic features that could be impacted by register location. Our results support the conjecture that musicians can reliably discriminate between string register locations, although perhaps only when vibrato is utilized. Our results also suggest that higher string register locations have a darker timbre and possibly a wider and faster vibrato. Further research on whether musicians can effectively imitate vocal range location signals with their instruments is warranted.",
+          "The current research examines joint collective action (e.g., between Blacks and Whites) from the perspective of disadvantaged group members, for whom such action reflects a dilemma of whether to “sleep with the enemy.” Integrating insights from research on intergroup contact, helping, and collective action, we suggest that an important part of this dilemma lies in the tension between a key motivation (joint action’s perceived instrumentality) and a key barrier (joint action’s perceived potential to normalize power relations between the groups). We test this idea in three studies using different methods and different intergroup contexts. Studies 1 and 2 showed that manipulated instrumentality increased motivation for joint action, whereas manipulated normalization decreased this motivation. Study 3 showed that manipulated normalization decreased perceptions of instrumentality and thus undermined the motivation for joint action, and this occurred mainly among high identifiers with the disadvantaged group, for whom the dilemma should be most salient. We discuss the implications of our findings for theory and research on collective action and call for future research on joint action.",
+          "Within contexts of prolonged oppression and struggle for social change, in which hope is constantly challenged, do disadvantaged group members still want to feel hope?  If so, does this desire translate into actual hope? We suggest that specifically when faced with setbacks in the struggle for social change, disadvantaged group members want to feel hope. We consider two competing hypotheses regarding the affective consequences of this desire: the emotion regulation literature predicts that emotional preferences are likely to generate emotional experiences, which means that motivation for hope should lead to increased hope. Alternatively, given that the context of oppression challenges the ability to feel positive about the future, the motivation to feel hope may not be enough to increase hope. We address these questions in a two-wave sample of 429 Palestinians living under military occupation in the West Bank. Our results suggest that particularly in the face of setbacks in their struggle, Palestinians want to feel hope for social change. Nonetheless, their experience of hope does not rise in line with this motivation. We discuss the implications of our findings for understanding motivated emotion regulation processes and hope in contexts of oppression."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "10.1016/j.brat.2022.104182",
+          null,
+          null,
+          "10.1016/j.socscimed.2021.114611",
+          null,
+          "10.1525/mp.2022.40.1.27",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2022-02-02T17:33:44.015956",
+          "2021-11-07T17:27:18.745571",
+          "2021-10-13T11:49:50.031318",
+          "2021-09-27T07:59:34.527691",
+          "2021-08-13T17:45:54.050977",
+          "2020-12-31T11:50:29.969366",
+          "2020-06-21T08:22:19.914103",
+          "2020-06-04T17:37:41.045417",
+          "2019-06-23T15:15:06.062622",
+          "2019-06-23T14:43:41.414213"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2022-09-01T16:55:01.961660",
+          "2022-09-01T23:59:22.534516",
+          "2022-09-01T04:46:34.906744",
+          "2022-09-01T11:40:18.451208",
+          "2022-09-01T12:15:27.283624",
+          "2022-09-01T12:15:27.207402",
+          "2022-09-01T23:59:22.458913",
+          "2022-09-01T12:44:27.003162",
+          "2022-09-01T23:59:22.253267",
+          "2022-09-01T23:59:22.195103"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/preprints/pwe4x_v1/",
+          "https://api.osf.io/v2/preprints/4m79q_v1/",
+          "https://api.osf.io/v2/preprints/q6fmv_v1/",
+          "https://api.osf.io/v2/preprints/yv2tm_v1/",
+          "https://api.osf.io/v2/preprints/a7wdj_v1/",
+          "https://api.osf.io/v2/preprints/2mjye_v1/",
+          "https://api.osf.io/v2/preprints/rvgup_v1/",
+          "https://api.osf.io/v2/preprints/5nxtw_v1/",
+          "https://api.osf.io/v2/preprints/sbe3d_v1/",
+          "https://api.osf.io/v2/preprints/kpu5f_v1/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "pz9c2",
+          "djuzn",
+          null,
+          "hmtz9",
+          "c82gs",
+          null,
+          "w62nt",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/61fac07db63ee30cbef361c7/",
+          "https://api.osf.io/v2/files/61880c7cdde25b01a2fa43cc/",
+          "https://api.osf.io/v2/files/6166c7e3c5565802634b913f/",
+          "https://api.osf.io/v2/files/615179ebed4cbe0097dd0519/",
+          "https://api.osf.io/v2/files/6116afd48e5921005a77837b/",
+          "https://api.osf.io/v2/files/5fedbb08e3acd103334a9bc0/",
+          "https://api.osf.io/v2/files/5eef18c976ebd80166cd8a88/",
+          "https://api.osf.io/v2/files/5ed9316fa8777300776c6e7e/",
+          "https://api.osf.io/v2/files/5d0f977d693ba800198da418/",
+          "https://api.osf.io/v2/files/5d0f9022e200da00176dfb5c/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

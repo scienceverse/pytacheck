@@ -1,0 +1,58 @@
+{
+  "id": "dryad_links.review.text_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dryad_url",
+      "dryad_doi"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.5061/dryad.abc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5061/dryad.abc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5061/dryad.abc"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

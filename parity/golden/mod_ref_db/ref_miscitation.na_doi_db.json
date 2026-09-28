@@ -1,0 +1,145 @@
+{
+  "id": "ref_miscitation.na_doi_db",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic",
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "10.1000/x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 0.",
+              "Body sentence 2 cites 1."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Ref X"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warn NA",
+              "Warn X"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**NA**\n\nNA\n\nWarn NA\n\n*2 Instances:*\n\n> NA\n\n> NA",
+          "**10.1000/x**\n\nRef X\n\nWarn X\n\n*2 Instances:*\n\n> NA\n\n> Body sentence 2 cites 1."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 2 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "miscite_NA",
+          "miscite_10.1000/x"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

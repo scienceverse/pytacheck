@@ -1,0 +1,180 @@
+{
+  "id": "dryad_links.review.generated_shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 18,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dryad_url",
+      "dryad_doi"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "doi:datadryad.org/stash/dataset/doi: ",
+          "http://10.5061/DRYAD.J1FD7",
+          "doi:10.5068/D14671)",
+          "https://dx.doi.org/10.6078/x_y;",
+          " datadryad.org/datasets/doi%3A\n",
+          "http://10.72721/abc;",
+          "HTTPS://datadryad.org/datasets/doi%3A",
+          "https://dx.doi.org/10.5061/dryad.j1fd7\n",
+          "10.5061/DRYAD.J1FD7.",
+          "datadryad.org/dataset/doi:.",
+          "https://10.5068/D14671",
+          "10.5061/dryad.abc",
+          "10.5061/dryad.j1fd7",
+          "https://datadryad.org/stash/dataset/doi:10.5061/dryad.j1fd7",
+          "https://doi.org/10.5061/dryad.abc",
+          "10.7941/D18907",
+          "doi.org/10.15146/R3XQ19",
+          "https://www.datadryad.org/dataset/doi:10.5061/dryad."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5,
+          15,
+          18,
+          23,
+          27,
+          32,
+          36,
+          38,
+          46,
+          48,
+          8,
+          11,
+          13,
+          25,
+          27,
+          30,
+          34,
+          41
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:datadryad.org/stash/dataset/doi: ",
+          "http://10.5061/DRYAD.J1FD7",
+          "doi:10.5068/D14671)",
+          "https://dx.doi.org/10.6078/x_y;",
+          " datadryad.org/datasets/doi%3A\n",
+          "http://10.72721/abc;",
+          "HTTPS://datadryad.org/datasets/doi%3A",
+          "https://dx.doi.org/10.5061/dryad.j1fd7\n",
+          "10.5061/DRYAD.J1FD7.",
+          "datadryad.org/dataset/doi:.",
+          "https://10.5068/D14671",
+          "10.5061/dryad.abc",
+          "10.5061/dryad.j1fd7",
+          "https://datadryad.org/stash/dataset/doi:10.5061/dryad.j1fd7",
+          "https://doi.org/10.5061/dryad.abc",
+          "10.7941/D18907",
+          "doi.org/10.15146/R3XQ19",
+          "https://www.datadryad.org/dataset/doi:10.5061/dryad."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.5061/dryad.j1fd7",
+          "10.5068/d14671",
+          "10.6078/x",
+          null,
+          null,
+          null,
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.j1fd7",
+          null,
+          "10.5068/d14671",
+          "10.5061/dryad.abc",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.abc",
+          "10.7941/d18907",
+          "10.15146/r3xq19",
+          null
+        ],
+        "names": [
+          "doi:datadryad.org/stash/dataset/doi: ",
+          "http://10.5061/DRYAD.J1FD7",
+          "doi:10.5068/D14671)",
+          "https://dx.doi.org/10.6078/x_y;",
+          " datadryad.org/datasets/doi%3A\n",
+          "http://10.72721/abc;",
+          "HTTPS://datadryad.org/datasets/doi%3A",
+          "https://dx.doi.org/10.5061/dryad.j1fd7\n",
+          "10.5061/DRYAD.J1FD7.",
+          "datadryad.org/dataset/doi:.",
+          "https://10.5068/D14671",
+          "10.5061/dryad.abc",
+          "10.5061/dryad.j1fd7",
+          "https://datadryad.org/stash/dataset/doi:10.5061/dryad.j1fd7",
+          "https://doi.org/10.5061/dryad.abc",
+          "10.7941/D18907",
+          "doi.org/10.15146/R3XQ19",
+          "https://www.datadryad.org/dataset/doi:10.5061/dryad."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "repo_cache_rel.url5",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "zenodo.org_records_123_files/data/a.csv",
+      "zenodo.org_records_123_files/win//b.R",
+      "zenodo.org_records_123_files/abs/c.txt",
+      "zenodo.org_records_123_files/",
+      "zenodo.org_records_123_files/NA",
+      "zenodo.org_records_123_files/déjà/vu.txt"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

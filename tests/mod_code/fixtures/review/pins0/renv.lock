@@ -1,0 +1,6 @@
+{
+  "R": {"Version": "4.4.0"},
+  "Packages": {
+    "a": {"Package": "a", "Version": "1.0"}
+  }
+}

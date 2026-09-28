@@ -1,0 +1,98 @@
+{
+  "id": "codebook_check.llm.osd_attrs.loop",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "write",
+          "code",
+          "orphan_total",
+          "scale",
+          "dedup_key"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slider_ratings_of_power"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slider ratings of power"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slider_ratings_of_power\u0002POWER.PP1_1\u0001POWER.PP1_2\u0001POWER.PP1_3\u0001POWER.PP1_4\u0001POWER.PP2_1\u0001POWER.PP2_2\u0001POWER.PP2_3\u0001POWER.PP2_4\u0001POWER.PP3_1\u0001POWER.PP3_2\u0001POWER.PP3_3\u0001POWER.PP3_4"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "write",
+          "code",
+          "orphan_total",
+          "scale",
+          "dedup_key"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slider_ratings"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Slider ratings"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slider_ratings\u0002slider_1\u0001slider_2\u0001slider_3\u0001slider_4\u0001slider_5"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

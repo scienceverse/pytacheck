@@ -1,0 +1,1876 @@
+{
+  "id": ".paper_schema_bibr12",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "properties",
+      "required",
+      "description",
+      "defs",
+      "enums"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq",
+          "bib_match",
+          "info_match",
+          "funding",
+          "affiliations",
+          "ocr_config",
+          "enrichment",
+          "processing_warnings",
+          "llm_usage",
+          "extraction",
+          "validation",
+          "_regions",
+          "affiliation",
+          "footnote",
+          "affiliation_match",
+          "funding_match"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A research paper, as processed by bibr (v10.5)"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib_author",
+          "bib",
+          "bib_match",
+          "info_match",
+          "funding",
+          "affiliation",
+          "xref",
+          "figure",
+          "table",
+          "eq",
+          "footnote",
+          "affiliation_match",
+          "funding_match",
+          "person"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "title",
+              "abstract",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "schema_version",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence",
+              "journal",
+              "volume",
+              "issue",
+              "first_page",
+              "last_page",
+              "issn",
+              "publisher",
+              "published",
+              "license",
+              "funding_statement",
+              "coi_statement",
+              "ethics_statement",
+              "data_availability",
+              "sha256",
+              "pmid",
+              "pmcid",
+              "arxiv",
+              "language",
+              "published_date",
+              "license_url",
+              "license_spdx"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "author_id",
+              "given",
+              "family",
+              "affiliation",
+              "email",
+              "corresponding",
+              "orcid",
+              "role",
+              "suffix",
+              "literal",
+              "credit_roles"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "boolean"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "section_id",
+              "header",
+              "level",
+              "parent_section_id",
+              "section_type",
+              "classification_score",
+              "classification_source"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "href",
+              "link_text",
+              "text_id",
+              "url_id",
+              "start",
+              "end"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "bib_id",
+              "text_id",
+              "bib_type",
+              "doi",
+              "title",
+              "authors",
+              "editors",
+              "publisher",
+              "year",
+              "year_suffix",
+              "date",
+              "container",
+              "volume",
+              "issue",
+              "first_page",
+              "last_page",
+              "edition",
+              "version",
+              "url",
+              "is_in_press",
+              "consolidated_fields",
+              "published_date",
+              "arxiv",
+              "pmid",
+              "series",
+              "access_date",
+              "note"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "boolean"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "service",
+              "bib_id",
+              "service_id",
+              "score",
+              "bib_type",
+              "doi",
+              "title",
+              "authors",
+              "editors",
+              "publisher",
+              "year",
+              "date",
+              "container",
+              "volume",
+              "issue",
+              "first_page",
+              "last_page",
+              "edition",
+              "version",
+              "url",
+              "author",
+              "editor",
+              "published_date",
+              "license_url",
+              "license_spdx",
+              "funder"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "service",
+              "service_id",
+              "score",
+              "bib_type",
+              "doi",
+              "title",
+              "authors",
+              "editors",
+              "publisher",
+              "year",
+              "date",
+              "container",
+              "volume",
+              "issue",
+              "first_page",
+              "last_page",
+              "edition",
+              "version",
+              "url",
+              "author",
+              "editor",
+              "published_date",
+              "license_url",
+              "license_spdx",
+              "funder"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "funder",
+              "award_ids",
+              "funding_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "affiliation_id",
+              "text",
+              "institution",
+              "department",
+              "city",
+              "country",
+              "author_ids"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id",
+              "target_id",
+              "start",
+              "end"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "caption",
+              "page_number",
+              "label",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "caption",
+              "page_number",
+              "label",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs",
+              "eq_id",
+              "start",
+              "end",
+              "verbatim"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "footnote_id",
+              "label",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "affiliation_id",
+              "service",
+              "service_id",
+              "score",
+              "name",
+              "country_code"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "funding_id",
+              "service",
+              "service_id",
+              "score",
+              "name",
+              "country_code",
+              "funder_doi"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "integer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "given",
+              "family",
+              "literal",
+              "suffix",
+              "orcid",
+              "affiliation"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "string"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "array"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "info.input_format",
+          "info.paper_type",
+          "info.oecd_l1",
+          "info.oecd_l2",
+          "section.section_type",
+          "bib.bib_type",
+          "bib_match.service",
+          "info_match.service",
+          "xref.xref_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "pdf",
+              "docx",
+              "xml",
+              "unknown",
+              "jats",
+              "tei",
+              "html",
+              "epub"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "empirical",
+              "review",
+              "commentary",
+              "meta-analysis",
+              "case-study",
+              "unknown",
+              null,
+              "meta_analysis",
+              "case_study",
+              "corrigendum",
+              "erratum",
+              "retraction"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Natural Sciences",
+              "Engineering and Technology",
+              "Medical and Health Sciences",
+              "Agricultural and Veterinary Sciences",
+              "Social Sciences",
+              "Humanities and the Arts",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Mathematics",
+              "Computer and Information Sciences",
+              "Physical Sciences",
+              "Chemical Sciences",
+              "Earth and Related Environmental Sciences",
+              "Biological Sciences",
+              "Civil Engineering",
+              "Electrical Engineering, Electronic Engineering, Information Engineering",
+              "Mechanical Engineering",
+              "Chemical Engineering",
+              "Materials Engineering",
+              "Medical Engineering",
+              "Environmental Engineering",
+              "Environmental Biotechnology",
+              "Industrial Biotechnology",
+              "Nano-technology",
+              "Basic Medicine",
+              "Clinical Medicine",
+              "Health Sciences",
+              "Medical Biotechnology",
+              "Agriculture, Forestry, and Fisheries",
+              "Animal and Dairy Science",
+              "Veterinary Science",
+              "Agricultural Biotechnology",
+              "Psychology and Cognitive Sciences",
+              "Economics and Business",
+              "Education",
+              "Sociology",
+              "Law",
+              "Political Science",
+              "Social and Economic Geography",
+              "Media and Communications",
+              "History and Archaeology",
+              "Languages and Literature",
+              "Philosophy, Ethics and Religion",
+              "Arts (arts, history of arts, performing arts, music)",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "title",
+              "abstract",
+              "keywords",
+              "intro",
+              "method",
+              "results",
+              "discussion",
+              "references",
+              "acknowledgment",
+              "funding",
+              "author_contributions",
+              "coi",
+              "ethics",
+              "open_data",
+              "appendix",
+              "endnote",
+              "footnote",
+              "table",
+              "figure",
+              "unknown",
+              null,
+              "data_availability"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal_article",
+              "book",
+              "book_chapter",
+              "dataset",
+              "software",
+              "preprint",
+              "conference_paper",
+              "report",
+              "other",
+              null,
+              "thesis"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "crossref",
+              "openalex",
+              "datacite",
+              "doi.org",
+              "openlibrary",
+              "manual",
+              "other",
+              "ror"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "crossref",
+              "openalex",
+              "datacite",
+              "doi.org",
+              "openlibrary",
+              "manual",
+              "other",
+              "ror"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bib",
+              "table",
+              "figure",
+              "foot",
+              "supplementary",
+              "equation",
+              "section"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

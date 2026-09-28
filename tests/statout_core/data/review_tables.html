@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>review tables</title></head><body>
+<h1>T1 na footnote row</h1>
+<table>
+<tr><th colspan="4">Descriptives</th></tr>
+<tr><th></th><th>N</th><th>Mean</th><th>SD</th></tr>
+<tr><td>x</td><td>10</td><td>1.5</td><td>0.2</td></tr>
+<tr><td></td></tr>
+<tr></tr>
+<tr><td>Note.</td></tr>
+<tr><td>y</td><td>12</td></tr>
+</table>
+<h2>T2 colspans</h2>
+<table>
+<tr><th>a</th><th colspan="2.7">b</th><th colspan=" 3 ">c</th><th colspan="0">d</th><th colspan="-1">e</th><th colspan="abc">f</th><th colspan="0x2">g</th><th colspan="">h</th></tr>
+<tr><td>1</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+</table>
+<h3>T3 whitespace</h3>
+<table>
+<tr><th>  Independent
+   Samples   T-Test </th></tr>
+<tr><th>&nbsp;</th><th>t&nbsp;value</th><th>  p
+ </th></tr>
+<tr><td>&nbsp;</td><td>2.1</td><td> .04 </td></tr>
+<tr><td>row&#8201;2</td><td>&nbsp;&nbsp;</td><td>&lt; .001</td></tr>
+</table>
+<h4>T4 footnotes</h4>
+<table>
+<tr><th>Effect</th><th>F</th><th>p</th></tr>
+<tr><td>A</td><td>4.5</td><td>.03</td></tr>
+<tr><td colspan="3">Note. Type III sums of squares</td></tr>
+<tr><td colspan="3">* p &lt; .05</td></tr>
+<tr><td colspan="3">a p = .01</td></tr>
+<tr><td colspan="3">A p-value</td></tr>
+<tr><td colspan="3">This is a rather long single-valued row of prose text here</td></tr>
+<tr><td>x</td><td>x</td><td></td></tr>
+<tr><td colspan="3">n = 12</td></tr>
+<tr><td colspan="3">note</td></tr>
+</table>
+<table>
+<tr><th>t</th><th>df</th><th>t</th><th></th><th></th><th>df</th></tr>
+<tr><td>1</td><td>2</td><td>3</td><td></td><td>q</td><td>4</td></tr>
+</table>
+<table>
+<tr><th>only</th><th>headers</th></tr>
+<tr><th>more</th><th>headers</th></tr>
+</table>
+<table>
+<tr><th>a</th><th>b</th></tr>
+<tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+<tr><th>row</th><td>5</td></tr>
+<tr><th>th</th><th>only</th></tr>
+<tr><td>6</td><td>7</td></tr>
+</table>
+<table>
+<tr><th>outer</th><th>cols</th></tr>
+<tr><td>1</td><td><table><tr><th>in</th><th>ner</th></tr><tr><td>8</td><td>9</td></tr></table></td></tr>
+</table>
+<table>
+<tr><th>x</th><th>y</th></tr>
+<tr><th colspan="2">Super</th></tr>
+<tr><th>same</th><th>same</th></tr>
+<tr><td>1</td><td>2</td></tr>
+</table>
+<table>
+<tr><th>h1</th><th>h2</th></tr>
+<tr><th>k1</th><th>k2</th></tr>
+<tr><td>1</td><td>2</td></tr>
+</table>
+<table>
+<tr><th>a</th><th>b</th></tr>
+<tr><td colspan="2">Note. all footnotes</td></tr>
+<tr><td></td><td></td></tr>
+</table>
+<table>
+<tr><th>val<br>ue</th><th>p</th><th></th></tr>
+<tr><td>1<br/>2</td><td>&lt;.001<sup>a</sup></td><td></td></tr>
+</table>
+<table>
+<tr><td>no</td><td>header</td></tr>
+</table>
+<table></table>
+</body></html>

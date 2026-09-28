@@ -1,0 +1,107 @@
+{
+  "id": ".aspredicted_info.ve2qn_pdf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "ap_url",
+      "AP_title",
+      "AP_authors",
+      "AP_created",
+      "AP_data",
+      "AP_hypotheses",
+      "AP_key_dv",
+      "AP_conditions",
+      "AP_analyses",
+      "AP_outliers",
+      "AP_sample_size",
+      "AP_anything_else",
+      "AP_version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://aspredicted.org/ve2qn.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "How infants encode unexpected events: a SSVEP study"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Moritz Köster (Freie Universität Berlin) - moritz.koester@ur.de\nMiriam Langeloh (Max Planck Institute for Human Cognitive and) - langeloh@cbs.mpg.de\nStephanie Höhl (Max Planck Institute for Human Cognitive and) - stefanie.hoehl@univie.ac.at"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2017/08/18 06:55 (PT)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No, no data have been collected for this study yet"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We assess infants’ brain responses to unexpected events (violation of expectation response). Specifically, we will present sequences with a physically or socially expected or unexpected outcome (e.g. a ball falling through a table), while flickering these sequences at a theta (4 Hz) or alpha (6 Hz) frequency (rapid repetition paradigm). We will look at power differences in oscillatory responses at posterior electrodes (steady state visually evoked potentials; SSVEPs). We predict power differences between the unexpected and the expected outcome, possibly interacting with the driving frequency. That is, higher theta SSVEPs for the unexpected outcome, indicating an interaction with learning processes, but higher alpha SSVEPs for the expected outcome, indicating reduced attention."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The dependent variable is the SSVEP signal at posterior recording sites (focussing on electrodes O1, O2, Oz).\n\nThe SSVEP Signal will be preprocessed as follows:\n- Artifact removal by ICA decomposition and visual inspection (Chaumon et al., 2015).\n- Wavelet Analysis at the 2 SSVEP Frequencies (4 Hz, 6 Hz)\n- Main Score: relative signal change in % (SSVEP Amplitude) for the outcome picture (3.0 – 4.5 after stimulus onset), relative to the preceding 1.5 sec (1.5 – 3 after stimulus onset). used as baseline."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Design\n- 4 Core Knowledge Domains (action, number, continuity, physics), with 4 stimulus variations (for each domain)\n- 2 Outcomes (expected, unexpected)\n- 2 Frequencies (alpha, theta)\n\nComplete within-subjects design:\n- 64 trials (4 Domains in 4 Variations, 2 Outcomes, 2 Frequencies)\n- 4.5 seconds presentation of each trial: Initial situation (1.5 s), action/physical event (1.5 s), outcome (1.5 s).\n- The presentation is blocked (4 stimuli per block), but may be paused after each trial.\n- If the infant is still attentive, the whole presentation (ca. 10 minutes) will be repeated a second time"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "For the extraction of the SSVEP signal from the EEG data see 3) Dependent Measure\n\nANOVA (3 within factors)\n- 4 Core Knowledge Domänen (action, number, continuity, physics)\n- 2 Outcomes (expected, unexpected)\n- 2 Freq (alpha, theta)\n\nHypothesis:\n1. Main Effect Outcome: Higher Amplitudes for unexpected opposed to expected outcomes\n2. Outcome*Frequency interaction (possibly): Functional differentiation between Theta (higher for unexpected) and Alpha (higher [less supression] for expected).\n\n\n6) Any secondary analyses?\n3. Explorative: Different strength in effects for the 4 core knowledge domains? (effect of cognition or stimulus material?)\n4. Explorative: temporal characteristics of the SSVEP Amplitude (similar to the temporal characteristics found in ERP Studies? Frequency Specific?)\n\n\n7) How many observations will be collected or what will determine sample size?\nNo need to justify decision, but be precise about exactly how the number will be determined.\nNine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.\n\n8) Anything else you would like to pre-register?\n(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)\nThere are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less\n\n\nVersion of AsPredicted Questions: 1.05\n\n\nReport a bug | Make a suggestion | Terms of use | Help | About\n\n\nset_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Nine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.\n\n8) Anything else you would like to pre-register?\n(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)\nThere are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less\n\n\nVersion of AsPredicted Questions: 1.05\n\n\nReport a bug | Make a suggestion | Terms of use | Help | About\n\n\nset_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.05"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

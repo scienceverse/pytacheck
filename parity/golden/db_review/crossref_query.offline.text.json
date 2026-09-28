@@ -1,0 +1,43 @@
+{
+  "id": "crossref_query.offline.text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "bib_text",
+      "DOI",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref one",
+          null,
+          "ref two"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "offline",
+          "offline",
+          "offline"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

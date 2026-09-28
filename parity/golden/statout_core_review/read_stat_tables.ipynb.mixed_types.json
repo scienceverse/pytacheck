@@ -1,0 +1,265 @@
+{
+  "id": "read_stat_tables.ipynb.mixed_types",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cell 1 [7]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stdout (cell 1)"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "t",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.04"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cell 1 [7]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stdout (cell 1)"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "text"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "112.5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cell 1 [7]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Output (cell 1)"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "text"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "100000",
+                  "1e-20"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cell 1 [7]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Output (cell 1)"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "F"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "3.2"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cell 3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "a",
+              "b"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

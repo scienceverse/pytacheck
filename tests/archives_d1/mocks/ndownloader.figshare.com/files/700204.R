@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://ndownloader.figshare.com/files/700204", status_code = 404L, headers = structure(list(`content-type` = "application/json"), class = "httr2_headers"), body = charToRaw("{\"message\": \"Not Found\"}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

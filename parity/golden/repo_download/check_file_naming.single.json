@@ -1,0 +1,44 @@
+{
+  "id": "check_file_naming.single",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "my file.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "spaces"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains a space"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

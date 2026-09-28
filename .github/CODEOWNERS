@@ -1,0 +1,10 @@
+# What pytacheck may do differently from metacheck (docs/PORTING.md, section 1):
+# a change to these files needs a code owner's review, whoever or whatever
+# (the upstream sync) makes it.
+/parity/divergences/                 @thesanogoeffect
+/parity/lock/                        @thesanogoeffect
+/parity/accuracy/expected.yaml       @thesanogoeffect
+/parity/accuracy/matrix.toml         @thesanogoeffect
+/parity/corpus.toml                  @thesanogoeffect
+/docs/UPSTREAM_ISSUES.md             @thesanogoeffect
+/.github/CODEOWNERS                  @thesanogoeffect

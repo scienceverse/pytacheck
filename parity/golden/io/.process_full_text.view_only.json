@@ -1,0 +1,76 @@
+{
+  "id": ".process_full_text.view_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "text",
+      "section",
+      "header",
+      "div",
+      "p",
+      "formatted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "The stimuli used in the main think/no-think task reported in this article are available at https://osf.io/t9j8e/?view_only=f171  281f212f4435917b16a9e581a73b.",
+          "The complete Open Practices Disclosure for this article can be found at http://pss.sagepub  .com/content/by/supplemental-data.",
+          "No urls here!",
+          "A non-problematic URL."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demo",
+          "demo",
+          "demo",
+          "demo"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The stimuli used in the main think/no-think task reported in this article are available at <ref type=\"url\" target=\"https://osf.io/t9j8e/?view_only=f171281f212f4435917b16a9e581a73b\">https://osf.io/t9j8e/?view_only=f171  281f212f4435917b16a9e581a73b<\/ref>.",
+          "The complete Open Practices Disclosure for this article can be found at <ref type=\"url\" target=\"http://pss.sagepub.com/content/by/supplemental-data\">http://pss.sagepub  .com/content/by/supplemental-data<\/ref>.",
+          null,
+          "A non-problematic <ref type=\"url\" target=\"https://osf.io/t9j8e\">URL<\/ref>."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

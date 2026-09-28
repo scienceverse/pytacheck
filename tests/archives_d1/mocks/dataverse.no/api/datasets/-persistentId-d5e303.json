@@ -1,0 +1,38 @@
+{
+  "status": "OK",
+  "data": {
+    "persistentUrl": "https://doi.org/10.18710/OLDLIC",
+    "publicationDate": "2019-12-31",
+    "latestVersion": {
+      "releaseTime": "2020-01-01T00:00:00Z",
+      "lastUpdateTime": "2020-01-02T00:00:00Z",
+      "license": "CC0",
+      "metadataBlocks": {
+        "citation": {
+          "fields": [
+            {
+              "typeName": "title",
+              "value": "Example Dataset"
+            },
+            {
+              "typeName": "author",
+              "value": [
+                {
+                  "authorName": {
+                    "value": "Doe, Jane"
+                  }
+                },
+                {
+                  "authorAffiliation": {
+                    "value": "Uni"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "files": []
+    }
+  }
+}

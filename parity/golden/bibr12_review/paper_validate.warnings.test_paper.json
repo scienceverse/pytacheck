@@ -1,0 +1,16 @@
+{
+  "id": "paper_validate.warnings.test_paper",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "The section_id column of the text table is a double type, but should be a integer type\nThe paragraph_id column of the text table is a double type, but should be a integer type\nThe section_id column of the section table is a double type, but should be a integer type"
+  ],
+  "value": {
+    "t": "lgl",
+    "v": [
+      true
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,29 @@
+{
+  "id": ".tabular_usable.worksheet",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "usable",
+      "reason"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "40% of columns are free text and 40% are mostly empty -- this looks like a coding worksheet, not a rectangular dataset"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

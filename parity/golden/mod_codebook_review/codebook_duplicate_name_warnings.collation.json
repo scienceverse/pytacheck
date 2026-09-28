@@ -1,0 +1,16 @@
+{
+  "id": "codebook_duplicate_name_warnings.collation",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "non-empty data for zero-extent matrix"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "**Duplicated column names in `f.csv`.** 8 column names appear more than once (worst: `a`×3, `_x`×2, `A`×2, `b`×2, `B`×2), so 17 of the file's 18 columns share a name with another. This usually means a survey loop/merge exported repeated blocks without numbering each iteration; the repeats cannot be told apart and can only be documented once. Consider re-exporting with per-iteration column names."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

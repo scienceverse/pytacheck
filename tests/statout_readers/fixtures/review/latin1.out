@@ -1,0 +1,7 @@
+Mplus VERSION 8
+INPUT INSTRUCTIONS
+  DATA: FILE = C:\José\d.dat;
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters   5

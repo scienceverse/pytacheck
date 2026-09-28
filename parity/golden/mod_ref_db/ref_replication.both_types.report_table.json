@@ -1,0 +1,74 @@
+{
+  "id": "ref_replication.both_types.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "Reference",
+          "Replication/Reproduction"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 1. https://doi.org/10.1093/qje/qjac034",
+              "Reference 2. https://doi.org/10.1037/0022-3514.50.3.502"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<b>[Replication]<\/b> Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. <a href='https://doi.org/10.1037/pspa0000064' target='_blank'>doi:10.1037/pspa0000064<\/a>",
+              "<b>[Replication]<\/b> Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>",
+              "<b>[Replication]<\/b> Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from <a href='https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf' target='_blank'>www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf<\/a>",
+              "<b>[Replication]<\/b> Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144. <a href='https://doi.org/10.1080/02699931.2017.1279591' target='_blank'>doi:10.1080/02699931.2017.1279591<\/a>",
+              "<b>[Replication]<\/b> Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531. <a href='https://doi.org/10.1177/1948550618775410' target='_blank'>doi:10.1177/1948550618775410<\/a>",
+              "<b>[Replication]<\/b> van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1). <a href='https://doi.org/10.1525/collabra.117' target='_blank'>doi:10.1525/collabra.117<\/a>",
+              "<b>[Reproduction]<\/b> Hallman, A., Johannesson, M., & Kujansuu, E. (2024). Robustness Reproducibility of\" Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention\". (No. 118), I4R Discussion Paper Series. <a href='https://doi.org/10.10419/295247' target='_blank'>doi:10.10419/295247<\/a>",
+              "<b>[Replication]<\/b> Hongye, L., & Feldman, G. (2020). Revisiting Illusion of Invulnerability effect: Replication and extension of Perloff and Fetzer (1986). <a href='https://docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0' target='_blank'>docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

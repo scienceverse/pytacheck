@@ -1,0 +1,14 @@
+{
+  "id": "cache_key.null_params",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "627bb1cc85d6fe8e6a1cef82ddc1b619"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,345 @@
+{
+  "id": "module.ethics_check.preprint",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ethics_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ethics Approval Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "ethics",
+          "live_data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The studies were conducted in accordance with the Declaration of Helsinki and received ethics approval from the Institutional Review Board of the University of Amsterdam (2018 -SP-8824, 2018-SP-9418).",
+              "Ninety students from different majors at a Dutch university and volunteers participated in Study 1.",
+              "Participants were randomly allocated to one of nine objects, namely a bike, a car, a bachelor thesis grade, a laptop, a phone, a trophy, a tv, a vacation spot, or a watch.",
+              "Participants were distributed equally across conditions.",
+              "Because of a coding error, however, 11 participants were allocated to the vacation spot and nine people to the tv.",
+              "The categories of objects and the specific pictures were chosen from a larger sample of objects based on a pretest with N = 50 participants from the same subject pool 1 .",
+              "This finding indicates that participants were more likely to infer envy when the target reacted emotionally to another person's advantage, but not when the target remained neutral.",
+              "Ninety-eight students from different majors of a Dutch university and volunteers participated in Study 2.",
+              "Even though this exclusion criterion was not preregistered, we reasoned that these participants' responses would work against proper tests of our hypotheses.",
+              "Four hundred and ninety-five US workers from Amazon Mechanical Turk participated in Study 3.",
+              "We selected these pictures based on a pretest with MTurk workers (N = 59).",
+              "Importantly, Study 3 used a between-and a within-subjects design, new stimuli, and a different participant pool, speaking to the generality of the findings."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              104,
+              115,
+              120,
+              121,
+              123,
+              124,
+              201,
+              215,
+              218,
+              322,
+              339,
+              415
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              19,
+              22,
+              24,
+              24,
+              24,
+              25,
+              41,
+              47,
+              48,
+              70,
+              73,
+              87
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              8,
+              9,
+              9,
+              9,
+              9,
+              13,
+              16,
+              16,
+              24,
+              25,
+              29
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Current Research",
+              "Participants",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Discussion",
+              "Participants",
+              "Participants",
+              "Participants",
+              "Materials and Procedure",
+              "Discussion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "discussion",
+              "method",
+              "method",
+              "method",
+              "method",
+              "discussion"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Based on the following text, we would expect an ethics approval statement, and it was present:\n\n> Ninety students from different majors at a Dutch university and volunteers participated in Study 1.\n\n> Participants were randomly allocated to one of nine objects, namely a bike, a car, a bachelor thesis grade, a laptop, a phone, a trophy, a tv, a vacation spot, or a watch.\n\n> Participants were distributed equally across conditions.\n\n> Because of a coding error, however, 11 participants were allocated to the vacation spot and nine people to the tv.\n\n> The categories of objects and the specific pictures were chosen from a larger sample of objects based on a pretest with N = 50 participants from the same subject pool 1 .\n\n> This finding indicates that participants were more likely to infer envy when the target reacted emotionally to another person's advantage, but not when the target remained neutral.\n\n> Ninety-eight students from different majors of a Dutch university and volunteers participated in Study 2.\n\n> Even though this exclusion criterion was not preregistered, we reasoned that these participants' responses would work against proper tests of our hypotheses.\n\n> Four hundred and ninety-five US workers from Amazon Mechanical Turk participated in Study 3.\n\n> We selected these pictures based on a pretest with MTurk workers (N = 59).\n\n> Importantly, Study 3 used a between-and a within-subjects design, new stimuli, and a different participant pool, speaking to the generality of the findings.\n\nEthics approval statement:\n\n> The studies were conducted in accordance with the Declaration of Helsinki and received ethics approval from the Institutional Review Board of the University of Amsterdam (2018 -SP-8824, 2018-SP-9418)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All papers that appeared to involve live data collection contained an ethics approval statement."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ethics_approved",
+          "ethics_statements",
+          "needs_ethics",
+          "live_data_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The studies were conducted in accordance with the Declaration of Helsinki and received ethics approval from the Institutional Review Board of the University of Amsterdam (2018 -SP-8824, 2018-SP-9418)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Ninety students from different majors at a Dutch university and volunteers participated in Study 1.",
+                  "Participants were randomly allocated to one of nine objects, namely a bike, a car, a bachelor thesis grade, a laptop, a phone, a trophy, a tv, a vacation spot, or a watch.",
+                  "Participants were distributed equally across conditions.",
+                  "Because of a coding error, however, 11 participants were allocated to the vacation spot and nine people to the tv.",
+                  "The categories of objects and the specific pictures were chosen from a larger sample of objects based on a pretest with N = 50 participants from the same subject pool 1 .",
+                  "This finding indicates that participants were more likely to infer envy when the target reacted emotionally to another person's advantage, but not when the target remained neutral.",
+                  "Ninety-eight students from different majors of a Dutch university and volunteers participated in Study 2.",
+                  "Even though this exclusion criterion was not preregistered, we reasoned that these participants' responses would work against proper tests of our hypotheses.",
+                  "Four hundred and ninety-five US workers from Amazon Mechanical Turk participated in Study 3.",
+                  "We selected these pictures based on a pretest with MTurk workers (N = 59).",
+                  "Importantly, Study 3 used a between-and a within-subjects design, new stimuli, and a different participant pool, speaking to the generality of the findings."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "ethics_approved"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

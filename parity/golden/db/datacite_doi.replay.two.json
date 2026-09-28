@@ -1,0 +1,165 @@
+{
+  "id": "datacite_doi.replay.two",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "service",
+      "service_id",
+      "score",
+      "doi",
+      "bib_type",
+      "title",
+      "authors",
+      "container",
+      "publisher",
+      "year",
+      "date",
+      "url",
+      "version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "datacite",
+          "datacite"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586",
+          "10.5281/zenodo.3564348"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586",
+          "10.5281/zenodo.3564348"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "misc",
+          "misc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "faux: Simulation for Factorial Designs",
+          "Data Skills for Reproducible Science"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lisa"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DeBruine"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lisa",
+                  "Dale"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DeBruine",
+                  "Barr"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Zenodo",
+          "Zenodo"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2023,
+          2019
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2023-02-03",
+          "2019-12-05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/record/2669586",
+          "https://zenodo.org/record/3564348"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.2.0",
+          "1.0.0"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "expand.climb.zip_skip_data",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "skipped \"../\" path component(s) in '../evil.csv'",
+    "skipped \"../\" path component(s) in 'z/../../up.csv'",
+    "skipped \"../\" path component(s) in 'q/../inside.csv'",
+    "skipped \"../\" path component(s) in 'a/b/../../c.csv'"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "dbl",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,92 @@
+{
+  "id": "codebook_check.llm.tables.scales",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "File",
+          "Abbrev",
+          "Columns",
+          "Max item",
+          "Scale",
+          "Confidence",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "AQ",
+              "SWLS",
+              "PSS",
+              "BFI"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              5,
+              10,
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12",
+              "5",
+              "10",
+              "6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Autism Spectrum Quotient",
+              "Satisfaction With Life Scale",
+              "Perceived Stress Scale",
+              "Personality traits"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "high",
+              "medium",
+              "medium",
+              "low"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "manuscript",
+              "matched",
+              "manuscript",
+              "self_generated"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

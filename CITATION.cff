@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: >-
+  pytacheck is a Python port of metacheck. Please cite metacheck (below) and,
+  if relevant, the pytacheck version you used.
+title: "pytacheck: check research outputs for best practices"
+type: software
+license: AGPL-3.0-or-later
+repository-code: "https://github.com/scienceverse/pytacheck"
+authors:
+  - given-names: Jakub
+    family-names: Werner
+    orcid: "https://orcid.org/0009-0004-0388-0362"
+references:
+  - type: software
+    title: "metacheck: Check Research Outputs for Best Practices"
+    url: "https://github.com/scienceverse/metacheck"
+    authors:
+      - given-names: Lisa
+        family-names: DeBruine
+        orcid: "https://orcid.org/0000-0002-7523-5539"
+      - given-names: Cristian
+        family-names: Mesquida
+        orcid: "https://orcid.org/0000-0002-1542-8355"
+      - given-names: Jakub
+        family-names: Werner
+        orcid: "https://orcid.org/0009-0004-0388-0362"
+      - given-names: Daniel
+        family-names: Lakens
+        orcid: "https://orcid.org/0000-0002-0247-239X"

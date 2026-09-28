@@ -1,0 +1,70 @@
+{
+  "id": "parse_zip_central_dir.stimuli.zip",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "name",
+      "size",
+      "method",
+      "csize",
+      "offset",
+      "crc"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.png",
+          "b.jpg",
+          "readme.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          72,
+          72,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          8,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          74,
+          74,
+          10
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          109,
+          218
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2149987689,
+          2149987689,
+          1480919894
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,442 @@
+{
+  "id": "ref_accuracy.suggest.boundary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi.orig",
+          "title.orig",
+          "year.orig",
+          "authors.orig",
+          "container.orig",
+          "doi.match",
+          "title.match",
+          "year.match",
+          "authors.match",
+          "container.match",
+          "text",
+          "score",
+          "doi_mismatch",
+          "year_mismatch",
+          "container_mismatch",
+          "title_mismatch",
+          "author_mismatch",
+          "tier",
+          "no_match",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "10.1037/0003-066x.54.6.408",
+              "10.1177/0956797614520714",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Faux: Simulation for Factorial Designs",
+              "The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles",
+              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+              "Equivalence Testing for Psychological Research",
+              "Human Error Is a Symptom of a Poor Design"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2025,
+              1999,
+              2014,
+              2018,
+              2021
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Debruine, Lisa",
+              "Eagly, Alice H; Wood, Wendy",
+              "Gino, Francesca; Wiltermuth, Scott S",
+              "Lakens, Daniël",
+              "Smith, F"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "American Psychologist",
+              "Psychological Science",
+              "Psychological Science",
+              "Journal of Journals"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "10.1037/0003-066x.54.6.408",
+              "10.1177/0956797614520714",
+              "10.1177/2515245918770963",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "The origins of sex differences in human behavior: Evolved dispositions versus social roles.",
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              1999,
+              2014,
+              2018,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Alice H.",
+                      "Wendy"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Eagly",
+                      "Wood"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Francesca",
+                      "Scott S."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gino",
+                      "Wiltermuth"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël",
+                      "Anne M.",
+                      "Peder M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Scheel",
+                      "Isager"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "American Psychologist",
+              "Psychological Science",
+              "Advances in Methods and Practices in Psychological Science",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
+              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
+              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
+              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
+              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              61.7559,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "provided",
+              "provided",
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "### References without a DOI\n",
+          "These references have no DOI, so they could not be checked here, and they also cannot be checked by the other reference modules (retraction, PubPeer, and replication checks all rely on the DOI). We searched CrossRef for a matching DOI; where a confident match was found it is suggested below. We recommend adding a DOI to every reference that has one: it lets these checks run and makes each cited work easier to find and verify.\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Lakens, Daniël. 2018. \\\"Equivalence Testing for Psychological Research.\\\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\"\n), \"Suggested DOI\" = c(\"\", \"\", \"\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.7, 0.3), 5, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked the 2 references that supplied a DOI against the record that DOI points to, and found 0 incoherent references to check for parsing errors or mistakes. 3 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing). Adding a DOI to every reference that has one lets the other reference checks (retraction, PubPeer, and replication) run on them too."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "refs_checked",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

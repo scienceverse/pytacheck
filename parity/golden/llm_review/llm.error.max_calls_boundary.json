@@ -1,0 +1,9 @@
+{
+  "id": "llm.error.max_calls_boundary",
+  "ok": false,
+  "error": "This would make 3 calls to the LLM, but your maximum number of calls is set to 2. Set `llm_max_calls(3)` (or higher) to allow this call.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

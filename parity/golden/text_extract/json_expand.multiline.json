@@ -1,0 +1,66 @@
+{
+  "id": "json_expand.multiline",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "id",
+      "answer",
+      "number",
+      "letter",
+      "bool"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[\n        {\"number\": 1, \"letter\": \"A\", \"bool\": true},\n        {\"number\": 2, \"letter\": \"B\", \"bool\": null}\n      ]",
+          "[\n        {\"number\": 1, \"letter\": \"A\", \"bool\": true},\n        {\"number\": 2, \"letter\": \"B\", \"bool\": null}\n      ]",
+          "[{\"number\": 3, \"letter\": \"C\", \"bool\": false}]",
+          "[]"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "B",
+          "C",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          false,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

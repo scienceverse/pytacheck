@@ -1,0 +1,112 @@
+{
+  "id": "match_reported_output.tt.site_ties_collation.no_test_id",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=2.1 df=20 p=0.048",
+          "d=0.45"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=2.1, df=20, p=0.048",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "_z.omv",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "an _z",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full",
+          "none"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

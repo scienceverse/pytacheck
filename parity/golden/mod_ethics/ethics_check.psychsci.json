@@ -1,0 +1,565 @@
+{
+  "id": "ethics_check.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ethics_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ethics Approval Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 27,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "ethics",
+          "live_data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The ethics committee for the region of Midtjylland, Denmark, approved the experiment.",
+              "The experiment was approved by a National Health Service (England) research ethics committee.",
+              "Each participant took part in a preliminary session in which a T1 structural scan was performed, and then in two experimental sessions, each of which was preceded by a TMS session (see Fig. 2).",
+              "After completing their second experimental session, participants were debriefed.",
+              "In the intermediate block, participants were asked to choose the object that best complemented the action pantomimed.",
+              "In each block, participants completed 80 trials (depicting 40 hand actions and 40 mouth actions), the order of which was randomized.",
+              "Participants were instructed to complete each trial as quickly and accurately as possible.",
+              "In the simple block, the three images were of a hand or mouth, and participants were told to \"choose the image that depicts the same action as the video you just saw.\"",
+              "Participants were then shown three new images, from which they had to choose the one that best complemented the video.",
+              "For this reason, participants were asked immediately prior to the administering of cTBS in this experiment to clench their fist while relaxing their lip, and then to relax their fist while squeezing their lips together, in alternation, for 5 min.",
+              "Also using rTMS to create virtual lesions in left IFG, Tidoni, Borgomaneri, di Pellegrino, and Avenanti (2013) found that participants were impaired in identifying videos of actions in which the actor was attempting to deceive them about the weight of an object, and Urgesi, Candidi, Ionta, and Aglioti (2006) reported that rTMS over left ventral PMC specifically impaired visual discrimination of actions but not visual discrimination of bodily identity.",
+              "In the intermediate block, participants were asked to choose the object that best complemented the action pantomimed.",
+              "All reported normal or corrected-to-normal vision and gave informed consent before participating.",
+              "However, it is not clear what participants were doing during this time: If participants in the subordinate condition used the extra time to accrue HSF information to facilitate their judgment, they should have made more eye movements than participants in the basic condition.",
+              "Participants were asked to categorize individual scenes, but unlike in the gazecontingent experiment, each scene contained objects identified as diagnostic at either the basic level (example shown on left) or subordinate level (example shown in middle).",
+              "Participants were introduced to three people (in fact, experimental confederates), and the four-player group was given access to a resource of nominal value (points) that could be harvested and, after the experiment, converted into monetary payoffs.",
+              "Participants provided informed consent after reading an information sheet indicating that the experiment would involve making decisions as part of a small group but not specifying all the details of, or the rationale for playing, the multiplayer resource-dilemma game.",
+              "Thirty-two healthy adults were recruited from Oxford University and the local community; 24 were full-time students.",
+              "In an initial session, all participants were assessed using a semistructured interview from the Structured Clinical Interview for DSM-IV-TR Axis I Disorders (First, Spitzer, Gibbon, & Williams, 2002).",
+              "Participants completed measures of cognitive ability (Raven's Standard Progressive Matrices Sets A, B, C, D, & E;Raven, 1996) and impulsivity (Barratt Impulsiveness Scale; Patton, Stanford, & Barratt, 1995).",
+              "During the harvesting phase (left panel), participants had 5 s to choose how much to harvest from the resource and enter that amount in the box marked \"Select your take:.\"",
+              "Participants were told that these points, accumulated over the whole game, could be exchanged for a real monetary reward at the end of the experiment (up to a maximum value of £15).",
+              "On each harvesting opportunity, participants were allowed to harvest points by pressing the uparrow and down-arrow keys of a keyboard to scroll through integer values.",
+              "This running-total mechanism dampened fluctuations in resource value over the course of the game, increased the number of harvesting opportunities that participants were likely to complete in a game, and facilitated the emergence of stable resource-management strategies (see the Supplemental Material for an example replenishment).",
+              "After finishing the resource-dilemma game, participants completed a postgame questionnaire to measure their satisfaction with the game and the strategies that they employed.",
+              "Converging evidence that tryptophan depletion suppressed the regulation of harvesting through diminished sensitivity to social norms is provided by the observation that, whereas the T-and T+ participants were equally happy with the outcomes of their resource-dilemma games and reported acting for their own benefit to a very similar extent, the T-participants reported significantly less concern about the best outcome for the wider group of players than the T+ participants.",
+              "During the harvesting phase (left panel), participants had 5 s to choose how much to harvest from the resource and enter that amount in the box marked \"Select your take:.\""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              42,
+              30,
+              37,
+              41,
+              46,
+              51,
+              52,
+              58,
+              69,
+              79,
+              120,
+              158,
+              24,
+              60,
+              160,
+              19,
+              31,
+              33,
+              38,
+              40,
+              52,
+              60,
+              69,
+              80,
+              96,
+              150,
+              173
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              2,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              6,
+              6,
+              9,
+              14,
+              3,
+              8,
+              23,
+              1,
+              2,
+              3,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              10,
+              15
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Each participant took part in a preliminary session in which a T1 structural scan was performed, and then in two experimental sessions, each of which was preceded by a TMS session (see Fig. <ref type=\"figure\" target=\"#fig_1\">2<\/ref>).",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Also using rTMS to create virtual lesions in left IFG, <ref type=\"bibr\" target=\"#b38\">Tidoni, Borgomaneri, di Pellegrino, and Avenanti (2013)<\/ref> found that participants were impaired in identifying videos of actions in which the actor was attempting to deceive them about the weight of an object, and <ref type=\"bibr\" target=\"#b39\">Urgesi, Candidi, Ionta, and Aglioti (2006)<\/ref> reported that rTMS over left ventral PMC specifically impaired visual discrimination of actions but not visual discrimination of bodily identity.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "In an initial session, all participants were assessed using a semistructured interview from the Structured Clinical Interview for DSM-IV-TR Axis I Disorders <ref type=\"bibr\" target=\"#b12\">(First, Spitzer, Gibbon, &amp; Williams, 2002)<\/ref>.",
+              "Participants completed measures of cognitive ability <ref type=\"bibr\">(Raven's Standard Progressive Matrices Sets A, B, C, D, &amp; E;<\/ref><ref type=\"bibr\" target=\"#b29\">Raven, 1996)<\/ref> and impulsivity (Barratt Impulsiveness Scale; <ref type=\"bibr\" target=\"#b26\">Patton, Stanford, &amp; Barratt, 1995)<\/ref>.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614527830",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Procedure",
+              "Method",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Data acquisition",
+              "Data acquisition",
+              "Discussion",
+              "Fig 1",
+              "Participants",
+              "Results",
+              "Fig 6",
+              "Research Article",
+              "Method",
+              "Participants",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Procedure",
+              "Discussion",
+              "Fig 1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "discussion",
+              "figure",
+              "method",
+              "results",
+              "figure",
+              "intro",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "discussion",
+              "figure"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 of 4 papers appeared to involve live data collection and lacked an ethics approval statement."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 of 4 papers appeared to involve live data collection and lacked an ethics approval statement."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "ethics_approved",
+          "ethics_statements",
+          "needs_ethics",
+          "live_data_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The ethics committee for the region of Midtjylland, Denmark, approved the experiment."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The experiment was approved by a National Health Service (England) research ethics committee."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Each participant took part in a preliminary session in which a T1 structural scan was performed, and then in two experimental sessions, each of which was preceded by a TMS session (see Fig. 2).",
+                  "After completing their second experimental session, participants were debriefed.",
+                  "In the intermediate block, participants were asked to choose the object that best complemented the action pantomimed.",
+                  "In each block, participants completed 80 trials (depicting 40 hand actions and 40 mouth actions), the order of which was randomized.",
+                  "Participants were instructed to complete each trial as quickly and accurately as possible.",
+                  "In the simple block, the three images were of a hand or mouth, and participants were told to \"choose the image that depicts the same action as the video you just saw.\"",
+                  "Participants were then shown three new images, from which they had to choose the one that best complemented the video.",
+                  "For this reason, participants were asked immediately prior to the administering of cTBS in this experiment to clench their fist while relaxing their lip, and then to relax their fist while squeezing their lips together, in alternation, for 5 min.",
+                  "Also using rTMS to create virtual lesions in left IFG, Tidoni, Borgomaneri, di Pellegrino, and Avenanti (2013) found that participants were impaired in identifying videos of actions in which the actor was attempting to deceive them about the weight of an object, and Urgesi, Candidi, Ionta, and Aglioti (2006) reported that rTMS over left ventral PMC specifically impaired visual discrimination of actions but not visual discrimination of bodily identity."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "All reported normal or corrected-to-normal vision and gave informed consent before participating.",
+                  "However, it is not clear what participants were doing during this time: If participants in the subordinate condition used the extra time to accrue HSF information to facilitate their judgment, they should have made more eye movements than participants in the basic condition.",
+                  "Participants were asked to categorize individual scenes, but unlike in the gazecontingent experiment, each scene contained objects identified as diagnostic at either the basic level (example shown on left) or subordinate level (example shown in middle)."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Participants were introduced to three people (in fact, experimental confederates), and the four-player group was given access to a resource of nominal value (points) that could be harvested and, after the experiment, converted into monetary payoffs.",
+                  "Participants provided informed consent after reading an information sheet indicating that the experiment would involve making decisions as part of a small group but not specifying all the details of, or the rationale for playing, the multiplayer resource-dilemma game.",
+                  "Thirty-two healthy adults were recruited from Oxford University and the local community; 24 were full-time students.",
+                  "In an initial session, all participants were assessed using a semistructured interview from the Structured Clinical Interview for DSM-IV-TR Axis I Disorders (First, Spitzer, Gibbon, & Williams, 2002).",
+                  "Participants completed measures of cognitive ability (Raven's Standard Progressive Matrices Sets A, B, C, D, & E;Raven, 1996) and impulsivity (Barratt Impulsiveness Scale; Patton, Stanford, & Barratt, 1995).",
+                  "During the harvesting phase (left panel), participants had 5 s to choose how much to harvest from the resource and enter that amount in the box marked \"Select your take:.\"",
+                  "Participants were told that these points, accumulated over the whole game, could be exchanged for a real monetary reward at the end of the experiment (up to a maximum value of £15).",
+                  "On each harvesting opportunity, participants were allowed to harvest points by pressing the uparrow and down-arrow keys of a keyboard to scroll through integer values.",
+                  "This running-total mechanism dampened fluctuations in resource value over the course of the game, increased the number of harvesting opportunities that participants were likely to complete in a game, and facilitated the emergence of stable resource-management strategies (see the Supplemental Material for an example replenishment).",
+                  "After finishing the resource-dilemma game, participants completed a postgame questionnaire to measure their satisfaction with the game and the strategies that they employed.",
+                  "Converging evidence that tryptophan depletion suppressed the regulation of harvesting through diminished sensitivity to social norms is provided by the observation that, whereas the T-and T+ participants were equally happy with the outcomes of their resource-dilemma games and reported acting for their own benefit to a very similar extent, the T-participants reported significantly less concern about the best outcome for the wider group of players than the T+ participants."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "ethics_approved"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

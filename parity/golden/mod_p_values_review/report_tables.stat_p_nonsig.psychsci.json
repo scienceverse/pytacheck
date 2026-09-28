@@ -1,0 +1,98 @@
+{
+  "id": "report_tables.stat_p_nonsig.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "table",
+          "colwidths",
+          "maxrows",
+          "escape"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 17,
+            "names": [
+              "Text",
+              "Sentence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p = .153",
+                  "p = .315",
+                  "p = .09",
+                  "p = .122",
+                  "p = .237",
+                  "p = .156",
+                  "p = .121",
+                  "p = .072",
+                  "p = .151",
+                  "p = .070",
+                  "p = .058",
+                  "p = .055",
+                  "p = .068",
+                  "p = .203",
+                  "p = .288",
+                  "p = .299",
+                  "p = .094"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "There was also a main effect of stimuli type, F(3, 78) = 12.910, p < .001, ηp² = .332 (Ms = 2,832, 2,709, 3,419, and 2,157 ms for classrooms, pools, restaurants, and roads, respectively), but no interaction between the two factors, F(3, 78) = 1.805, p = .153, ηp² = .065 (Table 1).",
+                  "There was also a main effect of stimuli type, F(3, 78) = 9.558, p < .001, ηp² = .269 (Ms = 7.76, 7.23, 9.36, and 5.89 for classrooms, pools, restaurants, and roads, respectively), but no interaction, F(3, 78) = 1.201, p = .315, ηp² = .044 (Table 1).",
+                  "There was a main effect of judgment on fixation duration, F(1, 26) = 8.246, p = .008, ηp² = .241 (basic: M = 381 ms; subordinate: M = 300 ms), a trend for stimuli type, F(3, 78) = 2.242, p = .09, ηp² = .079 (Ms = 329, 354, 341, and 335 ms for classrooms, pools, restaurants, and roads, respectively), as well as a significant interaction, F(3, 78) = 3.207, p = .028, ηp² = .110.",
+                  "This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts > 2.370, ps < .025 (Table 1).",
+                  "There was no interaction, F(3, 78) = 1.444, p = .237, ηp² = .053.",
+                  "For the sake of completeness, there was no main effect of judgment, F(1, 22) = 2.163, p = .156, ηp² = .090, though there was an effect of stimuli type, F(3, 66) = 4.342, p = .007, ηp² = .165 (Ms = 3.88°, 3.47°, 3.87°, and 3.52° for classrooms, pools, restaurants, and roads, respectively) as well as of ordinal fixation, F(2.286, 50.288) = 42.240, p < .001, ηp² = .658 (Ms = 2.55°, 3.28°, 3.86°, 4.26°, and 4.48° from the center for Fixations 1 through 5, respectively).",
+                  "There was no interaction between stimuli type and ordinal count (F < 1), no interaction between judgment and stimuli type, F(3, 66) = 2.012, p = .121, ηp² = .084, and no three-way interaction (F < 1).",
+                  "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+                  "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+                  "During these normal viewing conditions, there was a strong trend of judgment on RT, F(1, 26) = 3.568, p = .070, ηp² = .121, with basic categorization needing less time (1,062 ms) than subordinate categorization (1,272 ms).",
+                  "There was a main effect of stimuli type, F(2.084, 54.188) = 7.080, p = .002, ηp² = .214 (Ms = 1,269, 1,128, 1,273, and 998 ms for classrooms, pools, restaurants, and roads, respectively) as well as a trend for an interaction, F(3, 78) = 2.596, p = .058, ηp² = .091, which was due to restaurants taking significantly longer to categorize at the subordinate level (M = 1,471 ms) than at the basic level (M = 1,075 ms), t(26) = 3.00, p = .006.",
+                  "There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.",
+                  "There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.",
+                  "For initial saccade latency, there was no main effect of judgment, F(1, 26) = 1.708, p = .203, ηp² = .062, or stimuli type, nor was there an interaction between the two for initial saccade latency (Fs < 1).",
+                  "There was no interaction, F(3, 78) = 1.276, p = .288, ηp² = .047.",
+                  "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.",
+                  "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.1,
+              0.9
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

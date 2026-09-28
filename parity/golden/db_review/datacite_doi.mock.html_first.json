@@ -1,0 +1,151 @@
+{
+  "id": "datacite_doi.mock.html_first",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "service",
+      "service_id",
+      "score",
+      "doi",
+      "bib_type",
+      "title",
+      "authors",
+      "container",
+      "publisher",
+      "year",
+      "date",
+      "url",
+      "version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "datacite",
+          "datacite"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.9999/dc1"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.9999/dc1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "misc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  "A",
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  "B",
+                  "C"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "P"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          2021
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2021-01-01"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://x.org"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

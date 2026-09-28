@@ -1,0 +1,133 @@
+{
+  "id": "download.stale_locations",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "file_location",
+      "gated",
+      "oversize_skipped",
+      "failed",
+      "on_disk",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "<SESSION>/example.org_par2/ok.csv",
+          "<SESSION>/example.org_par2/unsized.csv",
+          "stale/short.csv",
+          "stale/gone.csv"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_url",
+          "paper_id",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://example.org/par2",
+              "https://example.org/par2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gone.csv",
+              "short.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://srv.example.org/par/gone.csv",
+              "https://srv.example.org/par/short.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "HTTP 404",
+              "truncated (4 of 10 bytes)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "example.org_par2/ok.csv",
+          "example.org_par2/unsized.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          8
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,52 @@
+# R source -> Python location for the foundation (see docs/PORTING.md).
+[files]
+"R/paper.R" = ["src/pytacheck/papers/model.py", "src/pytacheck/papers/io.py", "src/pytacheck/papers/tables.py", "src/pytacheck/papers/schema.py", "src/pytacheck/papers/validate.py"]
+"R/import-read.R" = ["src/pytacheck/io/read.py", "src/pytacheck/papers/io.py"]
+"R/module.R" = ["src/pytacheck/module.py"]
+"R/text_search.R" = ["src/pytacheck/text/search.py"]
+"R/text_expand.R" = ["src/pytacheck/text/expand.py"]
+"R/utils.R" = ["src/pytacheck/http.py"]
+"R/utils-logging.R" = ["src/pytacheck/log.py"]
+"R/svutils-utils.R" = ["src/pytacheck/_r/base.py", "src/pytacheck/config.py"]
+"inst/schema/paper.json" = ["src/pytacheck/resources/schema/paper.json"]
+"inst/demos" = ["src/pytacheck/resources/demos"]
+"inst/modules/marginal.R" = ["src/pytacheck/modules/marginal.py"]
+
+[functions]
+paper = "pytacheck.papers.io:paper"
+paperlist = "pytacheck.papers.model:PaperList"
+test_paper = "pytacheck.papers.io:test_paper"
+paper_validate = "pytacheck.papers.validate:paper_validate"
+".paper_coerce" = "pytacheck.papers.io:coerce_paper"
+".is_paper" = "pytacheck.papers.model:is_paper"
+".is_paper_list" = "pytacheck.papers.model:is_paper_list"
+demopaper = "pytacheck.papers.io:demopaper"
+demofile = "pytacheck.papers.io:demofile"
+paper_table = "pytacheck.papers.tables:paper_table"
+paper_id = "pytacheck.papers.tables:paper_id"
+ref_table = "pytacheck.papers.tables:ref_table"
+paper_write = "pytacheck.papers.io:paper_write"
+read = "pytacheck.io.read:read"
+".read_bibr" = "pytacheck.papers.io:read_bibr"
+module_run = "pytacheck.module:module_run"
+module_find = "pytacheck.module:module_find"
+module_list = "pytacheck.module:module_list"
+module_info = "pytacheck.module:module_info"
+module_help = "pytacheck.module:module_help"
+get_prev_outputs = "pytacheck.module:get_prev_outputs"
+text_search = "pytacheck.text.search:text_search"
+search_text = "pytacheck.text.search:search_text"
+text_expand = "pytacheck.text.expand:text_expand"
+expand_text = "pytacheck.text.expand:expand_text"
+logger = "pytacheck.log:logger"
+lastlog = "pytacheck.log:lastlog"
+logpath = "pytacheck.log:logpath"
+email = "pytacheck.config:email"
+verbose = "pytacheck.config:verbose"
+plural = "pytacheck._r.base:plural"
+scroll_table = "pytacheck.report.blocks:scroll_table"
+collapse_section = "pytacheck.report.blocks:collapse_section"
+link = "pytacheck.report.blocks:link"
+format_ref = "pytacheck.report.blocks:format_ref"
+cap_gate_count = "pytacheck.report.blocks:cap_gate_count"
+".batch_query" = "pytacheck.http:batch_query"

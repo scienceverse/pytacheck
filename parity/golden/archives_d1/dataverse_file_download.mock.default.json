@@ -1,0 +1,133 @@
+{
+  "id": "dataverse_file_download.mock.default",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "folder",
+      "dataverse_host",
+      "dataverse_doi",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.7910_DVN_ABC123",
+          "10.7910_DVN_ABC123",
+          "10.7910_DVN_ABC123"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.7910/DVN/ABC123",
+          "10.7910/DVN/ABC123",
+          "10.7910/DVN/ABC123"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "999",
+          "1000",
+          "1001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "codebook.pdf",
+          "fallback_name.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "codebook.pdf",
+          "fallback_name.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          11,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          11,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "344fd2323dd33d5c058b7cf27de029e8",
+          "abc",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.harvard.edu/api/access/datafile/999",
+          "https://dataverse.harvard.edu/api/access/datafile/1000",
+          "https://dataverse.harvard.edu/api/access/datafile/1001"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

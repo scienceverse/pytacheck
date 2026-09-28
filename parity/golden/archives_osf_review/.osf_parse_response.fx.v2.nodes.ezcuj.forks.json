@@ -1,0 +1,120 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.ezcuj.forks",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "wusvb",
+          "eq3s2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Fork of Reproducibility Project: Psychology",
+          "Fork of Reproducibility Project: Psychology"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility is a defining feature of science, but the extent to which it characterizes current research is unknown. We conducted replications of 100 experimental and correlational studies published in three psychology journals using high-powered designs and original materials when available.",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          "project"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/wusvb/",
+          "https://api.osf.io/v2/nodes/eq3s2/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/wusvb/children/",
+          "https://api.osf.io/v2/nodes/eq3s2/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/wusvb/files/",
+          "https://api.osf.io/v2/nodes/eq3s2/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "wusvb",
+          "eq3s2"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

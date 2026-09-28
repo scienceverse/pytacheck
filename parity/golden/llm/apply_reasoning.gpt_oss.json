@@ -1,0 +1,36 @@
+{
+  "id": "apply_reasoning.gpt_oss",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "params_list",
+      "api_args"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": [
+          "reasoning_effort"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "low"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

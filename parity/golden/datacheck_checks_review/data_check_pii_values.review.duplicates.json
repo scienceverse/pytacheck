@@ -1,0 +1,38 @@
+{
+  "id": "data_check_pii_values.review.duplicates",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Values look like personal information: email (3 values, 38%); ip_address (1 value, 12%); credit_card (2 values, 25%). Review before sharing."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "email",
+          "ip_address",
+          "credit_card"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

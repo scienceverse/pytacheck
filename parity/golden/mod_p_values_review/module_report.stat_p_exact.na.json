@@ -1,0 +1,14 @@
+{
+  "id": "module_report.stat_p_exact.na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ⬜ Exact P-Values {#exact-p-values .na}\n\nWe detected no *p* values.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nList any p-values reported with insufficient precision (e.g., p < .05 or p = n.s.) or reported as exactly zero (e.g., p = .000).\n\nThis module uses regular expressions to identify p-values. It will flag any values reported as p > ? or p < numbers greater than .001. It will also flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), which are mathematically impossible — p-values are never exactly zero and should instead be reported as p < .001.\n\nWe try to exclude figure and table notes like \"* p < .05\", but may not succeed at excluding all false positives.\n\nThis module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables (as opposed to a table's footnote text, which the module does see and tries to exclude — see above).\n\nThis module was developed by Lisa DeBruine\n\n:::\n\n\n::: {.validation}\nValidation: In a sample of 225 papers containing 405 instances of non-exact p-values, the module correctly detected 269 cases (true positives) and incorrectly identified 78 (false positives). It missed 136 instances of imprecisely reported p-values (false negatives) and correctly identified 4557 cases of precisely reported p-values (true negative). Additionally, 78% of positive detections were correct (positive predictive value).\n:::"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

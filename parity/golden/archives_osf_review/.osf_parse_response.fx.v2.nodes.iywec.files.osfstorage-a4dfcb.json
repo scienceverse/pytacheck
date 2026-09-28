@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.iywec.files.osfstorage-a4dfcb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5a8c5e4a21991adddc",
+          "553e9d5a8c5e4a21991adddd",
+          "553e9d5a8c5e4a21991addde",
+          "553e9d5a8c5e4a21991adddf",
+          "553e9d5a8c5e4a21991adde0",
+          "553e9d5a8c5e4a21991adde1",
+          "553e9d5a8c5e4a21991adde2",
+          "553e9d5a8c5e4a21991adde3",
+          "553e9d5a8c5e4a21991adde4",
+          "553e9d5a8c5e4a21991adde5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bench.jpg",
+          "bike.jpg",
+          "boot.jpg",
+          "bottle.jpg",
+          "bowl.jpg",
+          "brick.jpg",
+          "broom.jpg",
+          "camcorder.jpg",
+          "carton.jpg",
+          "cellphone.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          13454,
+          11286,
+          6622,
+          5200,
+          6276,
+          10279,
+          4457,
+          8579,
+          8445,
+          7747
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          12,
+          9,
+          12,
+          11,
+          11,
+          11,
+          9,
+          10,
+          9,
+          9
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/bench.jpg",
+          "/bike.jpg",
+          "/boot.jpg",
+          "/bottle.jpg",
+          "/bowl.jpg",
+          "/brick.jpg",
+          "/broom.jpg",
+          "/camcorder.jpg",
+          "/carton.jpg",
+          "/cellphone.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adddc/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adddd/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991addde/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adddf/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adde0/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adde1/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adde2/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adde3/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adde4/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991adde5/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/tvprn/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/ekf5p/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/6rp4j/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/q7dut/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/prcd3/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/kazrt/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/qwyrm/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/agv6e/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/2amx9/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/26v8e/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

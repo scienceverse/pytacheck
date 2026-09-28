@@ -1,0 +1,184 @@
+{
+  "id": "statcheck.one_tailed.OneTailedTxt",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "source",
+      "test_type",
+      "df1",
+      "df2",
+      "test_comp",
+      "test_value",
+      "p_comp",
+      "reported_p",
+      "computed_p",
+      "raw",
+      "error",
+      "decision_error",
+      "one_tailed_in_txt",
+      "apa_factor"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "2",
+          "3",
+          "4",
+          "4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "F",
+          "Z",
+          "t",
+          "t",
+          "r"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          1,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          28,
+          28,
+          null,
+          28,
+          28,
+          28
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.8,
+          3.24,
+          1.7,
+          2.2,
+          1.8,
+          0.3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.04,
+          0.04,
+          0.045,
+          0.04,
+          0.1,
+          0.06
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.0413224805595368,
+          0.0826449611190736,
+          0.044565462758543,
+          0.0362254847788378,
+          0.0826449611190736,
+          0.0536229740289772
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t(28) = 1.80, p = .04",
+          "F(1, 28) = 3.24, p = .04",
+          "z = 1.70, p = .045",
+          "t(28) = 2.20, p = .04",
+          "t(28) = 1.80, p = .10",
+          "r(28) = .30, p = .06"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          false,
+          false,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

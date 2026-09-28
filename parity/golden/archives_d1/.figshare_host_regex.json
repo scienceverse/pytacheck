@@ -1,0 +1,14 @@
+{
+  "id": ".figshare_host_regex",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "figshare\\.com|figsh\\.com|aura\\.american\\.edu|books\\.openmonographs\\.org|indigo\\.uic\\.edu|figshare\\.le\\.ac\\.uk|drum\\.um\\.edu\\.mt|data\\.dtu\\.dk|dro\\.deakin\\.edu\\.au|repository\\.mmu\\.ac\\.uk|figshare\\.unimelb\\.edu\\.au|ore\\.exeter\\.ac\\.uk|figshare\\.shef\\.ac\\.uk|orda\\.shef\\.ac\\.uk|figshare\\.warwick\\.ac\\.uk|rdr\\.ucl\\.ac\\.uk|zivahub\\.uct\\.ac\\.za|redata\\.arizona\\.edu|bridges\\.monash\\.edu|brunel\\.figshare\\.com|city\\.figshare\\.com|curate\\.curtin\\.edu\\.au|tandf\\.figshare\\.com|asha\\.figshare\\.com|smithsonian\\.figshare\\.com|orcid\\.figshare\\.com|plus\\.figshare\\.com|griffith\\.figshare\\.com|repository\\.lboro\\.ac\\.uk|nhlbi\\.figshare\\.com|arizona\\.figshare\\.com|su\\.figshare\\.com|figshare\\.swinburne\\.edu\\.au|ucb\\.figshare\\.com|auckland\\.figshare\\.com|uc\\.figshare\\.com|figshare\\.manchester\\.ac\\.uk|novasbe\\.figshare\\.com|figshare\\.uts\\.edu\\.au|melbourne\\.figshare\\.com"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

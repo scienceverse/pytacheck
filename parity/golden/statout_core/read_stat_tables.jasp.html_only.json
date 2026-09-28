@@ -1,0 +1,221 @@
+{
+  "id": "read_stat_tables.jasp.html_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Paired Samples T-Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Paired Samples T-Test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              " ",
+              "t",
+              "df",
+              "p",
+              "Mean Difference",
+              "SE Difference",
+              "Lower",
+              "Upper",
+              "Cohen's d",
+              "Lower.1",
+              "Upper.1"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Illusion_score_sync",
+                  "Illusion_score_sync"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "6.900",
+                  "5.047"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "8",
+                  "8"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "< .001",
+                  "< .001"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.074",
+                  "1.222"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.301",
+                  "0.242"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.381",
+                  "0.664"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.767",
+                  "1.781"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.300",
+                  "1.682"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.000",
+                  "0.623"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.567",
+                  "2.703"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              " ",
+              "N",
+              "Mean",
+              "SD",
+              "SE"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Illusion_score_sync",
+                  "control_score_sync",
+                  "Illusion_score_async"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9",
+                  "9",
+                  "9"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.926",
+                  "-0.148",
+                  "0.704"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.862",
+                  "1.192",
+                  "0.964"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.287",
+                  "0.397",
+                  "0.321"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

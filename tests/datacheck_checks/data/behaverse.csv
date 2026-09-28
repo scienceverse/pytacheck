@@ -1,0 +1,11 @@
+instrument_id,participant_id,trial_index,response_numeric,response_time
+STROOP,p1,1,1,457
+STROOP,p1,2,0,464
+STROOP,p1,3,1,471
+STROOP,p1,4,0,478
+STROOP,p1,5,1,485
+STROOP,p1,6,0,492
+STROOP,p1,7,1,499
+STROOP,p1,8,0,506
+STROOP,p1,9,1,513
+STROOP,p1,10,0,520

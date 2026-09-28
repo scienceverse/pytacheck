@@ -1,0 +1,222 @@
+{
+  "id": "module.all_p_values.review",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]",
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]"
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_p_values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p < .001 ",
+              "p =.03",
+              "p =.036",
+              "p =< .05 "
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              3,
+              2,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              4,
+              2,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              2,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "review_urls.tei",
+              "review_noapp.tei",
+              "review_sentences.tei",
+              "v12_edges.tei"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Same",
+              "Intro",
+              "1 Introduction",
+              "Results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "intro",
+              "intro",
+              "results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<",
+              "=",
+              "=",
+              "=<"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.001,
+              0.03,
+              0.036,
+              0.05
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p < .001 \", \"p =.03\", \"p =.036\", \"p =< .05 \"\n), Sentence = c(\"Different text here with p < .001 and d ≈ 0.5 and r ≠ 0 and t(3) ~ 1 and x !\", \n\"Text with (A, 2001) and p =.03.\", \"We tested t(28) = 2.20, p =.036. See Fig.1 and Smith (2020).\", \n\"We found t(20) <> 2.10 and r ≤= .5, p =< .05 and F(1, 2) ==3.\"\n)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 4 p-values"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "p_values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "review_urls.tei",
+              "review_url_na.tei",
+              "review_noapp.tei",
+              "review_inline.tei",
+              "review_sentences.tei",
+              "v12_edges.tei"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              1,
+              0,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

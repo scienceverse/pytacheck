@@ -1,0 +1,14 @@
+{
+  "id": "code_read.review.nb_escapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"metadata\": {\"kernelspec\": {\"language\": \"python\"}}, \"cells\": [{\"cell_type\": \"code\", \"source\": [\"x = '\\ud83d\\ude00'\\n\", \"y = 1\\n\"]}, {\"cell_type\": \"code\", \"source\": [1, true, 3000000000]}, {\"cell_type\": \"code\", \"source\": [\"import os\", 2.5, false, null]}]}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

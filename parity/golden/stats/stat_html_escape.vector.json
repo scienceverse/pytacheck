@@ -1,0 +1,17 @@
+{
+  "id": "stat_html_escape.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "a&lt;b &amp; c&gt;d",
+      "plain",
+      "&amp;amp;",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

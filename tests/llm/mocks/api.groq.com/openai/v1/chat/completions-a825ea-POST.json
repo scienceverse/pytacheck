@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-review",
+  "object": "chat.completion",
+  "created": 1760000000,
+  "model": "probe-model",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"items\":[{\"name\":\"big\",\"count\":3000000000,\"score\":12345678901234567890},{\"name\":\"frac\",\"count\":2.7,\"score\":-0.0},{\"name\":\"min\",\"count\":-2147483648,\"score\":1e-320}]}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 42,
+    "completion_tokens": 7,
+    "total_tokens": 49
+  }
+}

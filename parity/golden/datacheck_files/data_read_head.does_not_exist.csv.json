@@ -1,0 +1,14 @@
+{
+  "id": "data_read_head.does_not_exist.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "cannot open file '<repo>/tests/datacheck_files/data/does_not_exist.csv': No such file or directory",
+    "Could not read does_not_exist.csv: cannot open the connection"
+  ],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

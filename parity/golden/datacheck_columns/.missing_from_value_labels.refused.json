@@ -1,0 +1,14 @@
+{
+  "id": ".missing_from_value_labels.refused",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"-99\":\"Refused\",\"-9\":\"N/A\",\"98\":\"Don't know\",\"4\":\"Declined to answer\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

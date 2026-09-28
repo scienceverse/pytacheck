@@ -1,0 +1,57 @@
+{
+  "id": "match_reported_output.demo_jasp.summary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "n_tests",
+      "n_found",
+      "n_full",
+      "n_partial",
+      "n_missing",
+      "pct_found"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          6
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          6
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

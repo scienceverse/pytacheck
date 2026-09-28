@@ -1,0 +1,107 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.8uqfb-e7c2eb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "8uqfb"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "An Inception Cohort Study Quantifying How Many Registered Studies are Published"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We quantified how many studies registered on the Open Science Framework (OSF) up to November 2017 are performed but not shared after at least 4 years. Examining a sample of 169 registered research studies we found that 104 (61.5%) were publicly shared. We estimate that 5316 out of 9172 (58%) registered studies on the OSF are publicly shared. Researchers use registries to make unpublished studies public, and the OSF policy to open registrations after a four year embargo substantially increases the number of studies that become known to the scientific community. In responses to emails asking researchers why studies remained unpublished logistical issues (e.g., lack of time, researchers changing jobs) were the most common cause, followed by null results, and rejections during peer review. Our exploratory study shows that a substantial amount of studies that researchers perform remain unpublished."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/8uqfb/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/8uqfb/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/8uqfb/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "8uqfb"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

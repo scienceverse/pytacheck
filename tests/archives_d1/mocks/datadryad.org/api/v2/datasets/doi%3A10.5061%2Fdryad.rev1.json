@@ -1,0 +1,17 @@
+{
+  "_links": {
+    "stash:version": {
+      "href": "/api/v2/versions/7001"
+    }
+  },
+  "identifier": "doi:10.5061/dryad.rev1",
+  "title": "Review dataset",
+  "authors": {
+    "one": {
+      "firstName": "Ann",
+      "lastName": "Lee"
+    }
+  },
+  "publicationDate": "2021-01-01",
+  "license": "https://spdx.org/licenses/CC0-1.0.html"
+}

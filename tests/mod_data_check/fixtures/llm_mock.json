@@ -1,0 +1,23 @@
+{
+  "basic": {
+    "file_types": {
+      "xyz": "documentation",
+      "png": "materials"
+    },
+    "concepts": {
+      "q3": "reaction_time",
+      "v7": "condition",
+      "label": "measure",
+      "pp": "id",
+      "y": "likert"
+    },
+    "group": "ex1"
+  },
+  "errors": {
+    "error_phases": [
+      "Classifying file types",
+      "Classifying column concepts",
+      "Assigning study groups"
+    ]
+  }
+}

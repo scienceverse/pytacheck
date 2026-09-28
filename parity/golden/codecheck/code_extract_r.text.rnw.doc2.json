@@ -1,0 +1,21 @@
+{
+  "id": "code_extract_r.text.rnw.doc2",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "#' \\documentclass{article}",
+      "## ----setup--------------------------------------------------------------------",
+      "x <- 1",
+      "",
+      "#' Text \\Sexpr{x}",
+      "## ----eval=FALSE---------------------------------------------------------------",
+      "# y",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

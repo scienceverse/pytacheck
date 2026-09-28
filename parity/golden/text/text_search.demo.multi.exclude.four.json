@@ -1,0 +1,9 @@
+{
+  "id": "text_search.demo.multi.exclude.four",
+  "ok": false,
+  "error": "`...` must be empty.\n✖ Problematic arguments:\n• ..1 = <tibble[,9]>\n• ..2 = <tibble[,9]>\nℹ Did you forget to name an argument?",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,1 @@
+{"results": [{"id": "https://openalex.org/W6", "doi": "https://doi.org/10.9999/w6", "relevance_score": 1.5, "display_name": "Only Title Match", "publication_year": 2020, "primary_location": {"source": {"display_name": "Some Journal"}}, "authorships": [{"raw_author_name": "A B"}], "type": "article", "biblio": {"volume": "1", "issue": null, "first_page": "5", "last_page": "9"}}]}

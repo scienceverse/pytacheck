@@ -1,0 +1,303 @@
+{
+  "id": "prereg_check.synthetic.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "my_custom_field_ber_weird",
+          "sample_size",
+          "field",
+          "additional_comments",
+          "numbers_flags",
+          "description",
+          "q2",
+          "q3",
+          "statistical_tests",
+          "q7",
+          "matrix",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic Template",
+              "Synthetic Template",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic registration blkss",
+              "A withdrawn study",
+              "Synthetic registration pagss"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "blkss",
+              "wdrwn",
+              "pagss"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/blkss",
+              "https://osf.io/wdrwn",
+              "https://osf.io/pagss"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-02T03:04:05.000001",
+              "2024-01-02T03:04:05.000001",
+              "2024-01-02T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-03T03:04:05.000001",
+              "2024-01-03T03:04:05.000001",
+              "2024-01-03T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-04T03:04:05.000001",
+              "2024-01-04T03:04:05.000001",
+              "2024-01-04T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "2030-01-01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-blkss-v1",
+              "https://archive.org/details/osf-registrations-wdrwn-v1",
+              "https://archive.org/details/osf-registrations-pagss-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "H1: people like cake. RQ: why?",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Option A Option B",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will collect 200 participants.",
+              null,
+              "120 students N = 50"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ida idb a.csv b.csv https://osf.io/h/a https://osf.io/h/b https://osf.io/d/a https://osf.io/d/b shaa shab",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann Bo NA 0000-1",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 2.5 1 3e+09",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "WITHDRAWN",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "long-title answer"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "idc c.csv https://osf.io/h/c https://osf.io/d/c shac"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "t-test 1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "empty title uses the qid"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "a c b d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_one",
+              "p_one",
+              "p_two"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 3 preregistrations.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"<a href='https://osf.io/blkss' target='_blank'>blkss<\/a>\", \n\"<a href='https://osf.io/wdrwn' target='_blank'>wdrwn<\/a>\", \"<a href='https://osf.io/pagss' target='_blank'>pagss<\/a>\"\n), title = c(\"Synthetic registration blkss\", \"A withdrawn study\", \n\"Synthetic registration pagss\"), template = c(\"Synthetic Template\", \n\"Synthetic Template\", \"\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the links above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"blkss\", \"wdrwn\", \"pagss\"), sample_size = c(\"We will collect 200 participants.\", \nNA, \"120 students N = 50\")), row.names = c(NA, -3L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"my_custom_field_ber_weird\", \n\"sample_size\", \"field\", \"additional_comments\", \"numbers_flags\", \n\"description\", \"q2\", \"q3\", \"statistical_tests\", \"q7\", \"matrix\", \n\"paper_id\"), \"Preregistration 1\" = c(\"Synthetic Template\", \"Synthetic registration blkss\", \n\"blkss\", \"https://osf.io/blkss\", \"2024-01-02T03:04:05.000001\", \n\"2024-01-03T03:04:05.000001\", \"2024-01-04T03:04:05.000001\", \"\", \n\"https://archive.org/details/osf-registrations-blkss-v1\", \"H1: people like cake. RQ: why?\", \n\"Option A Option B\", \"We will collect 200 participants.\", \"ida idb a.csv b.csv https://osf.io/h/a https://osf.io/h/b https://osf.io/d/a https://osf.io/d/b shaa shab\", \n\"Ann Bo NA 0000-1\", \"1 2.5 1 3e+09\", NA, NA, NA, NA, NA, NA, \n\"p_one\"), \"Preregistration 2\" = c(\"Synthetic Template\", \"A withdrawn study\", \n\"wdrwn\", \"https://osf.io/wdrwn\", \"2024-01-02T03:04:05.000001\", \n\"2024-01-03T03:04:05.000001\", \"2024-01-04T03:04:05.000001\", \"\", \n\"https://archive.org/details/osf-registrations-wdrwn-v1\", NA, \nNA, NA, NA, NA, NA, \"WITHDRAWN\", NA, NA, NA, NA, NA, \"p_one\"), \n    \"Preregistration 3\" = c(\"\", \"Synthetic registration pagss\", \n    \"pagss\", \"https://osf.io/pagss\", \"2024-01-02T03:04:05.000001\", \n    \"2024-01-03T03:04:05.000001\", \"2024-01-04T03:04:05.000001\", \n    \"2030-01-01\", \"https://archive.org/details/osf-registrations-pagss-v1\", \n    NA, NA, \"120 students N = 50\", NA, NA, NA, NA, \"long-title answer\", \n    \"idc c.csv https://osf.io/h/c https://osf.io/d/c shac\", \"t-test 1\", \n    \"empty title uses the qid\", \"a c b d\", \"p_two\")), row.names = c(\"template_name\", \n\"title\", \"id\", \"link\", \"date_created\", \"date_modified\", \"date_registered\", \n\"embargo_end_date\", \"ia_url\", \"research_questions\", \"my_custom_field_ber_weird\", \n\"sample_size\", \"field\", \"additional_comments\", \"numbers_flags\", \n\"description\", \"q2\", \"q3\", \"statistical_tests\", \"q7\", \"matrix\", \n\"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 3 preregistrations."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_one",
+              "p_two",
+              "p_three"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

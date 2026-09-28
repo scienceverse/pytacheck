@@ -1,0 +1,84 @@
+{
+  "id": "regextract_all.caret.pcre",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "The"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Caf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "non"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "back"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "marginally"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ab"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "multi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

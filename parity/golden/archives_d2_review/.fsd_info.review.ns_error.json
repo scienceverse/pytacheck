@@ -1,0 +1,89 @@
+{
+  "id": ".fsd_info.review.ns_error",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Namespace prefix x on i is not defined [201]"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "fsd_url",
+      "FSD_title",
+      "FSD_doi",
+      "FSD_access",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://services.fsd.tuni.fi/catalogue/FSD3333"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Barometer survey 2001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60686/t-fsd3333"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The dataset is (A) openly available for all users."
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "name",
+              "format",
+              "cases",
+              "variables"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "daF3333.sav"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "SPSS"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1000
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  42
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

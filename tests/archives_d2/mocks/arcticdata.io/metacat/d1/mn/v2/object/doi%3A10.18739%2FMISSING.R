@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://arcticdata.io/metacat/d1/mn/v2/object/doi%3A10.18739%2FMISSING", status_code = 404L, headers = structure(list(`content-type` = "application/json"), class = "httr2_headers"), body = charToRaw("{\"message\": \"Not Found\"}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

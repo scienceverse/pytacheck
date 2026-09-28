@@ -1,0 +1,62 @@
+{
+  "odd": {
+    "Identifying scales in the manuscript": {
+      "scales.scale_name": ["Grit Scale", "grit scale", null, "  ", " Other Test ", "Big Five Inventory"],
+      "scales.acronym": ["GS", null, "X", "Y", null, "BFI"],
+      "scales.n_items": [null, "3", "", "", " 7 ", "44"],
+      "scales.administered": ["unclear", "no", null, "yes", "UNCLEAR", "yes"],
+      "scales.confidence": ["low", "high", null, "low", "medium", "high"]
+    },
+    "Matching scales to text": {
+      "scales.prefix": [" bfi ", "BFI", null, "abc", "sat", "ABC"],
+      "scales.scale_name": ["  Big Five Inventory ", "Second answer", "x", null, "N/A", "Alphabet"],
+      "scales.confidence": [null, "high", "low", "high", "Medium ", "certain"]
+    },
+    "Labelling scales": {
+      "construct": [" Unknown "],
+      "confidence": ["HIGH"]
+    },
+    "Matching codebook columns/merge": {
+      "equivalent": [true, false],
+      "canonical": ["  Merged label  ", "ignored"]
+    },
+    "Matching codebook columns/match": {
+      "matches.column_name": ["AGE_YEARS", "nonexistent", null, "gender_code", "income_k"],
+      "matches.codebook_variable": ["age", "age", "gender", "Gender", "no_such_var"]
+    },
+    "Parsing codebook": {
+      "variables.variable_name": ["mood", null, "  ", "sleep_hours", "grp"],
+      "variables.label": ["Positive affect", "x", "y", null, "Condition"],
+      "variables.experiment_context": ["Study 1", null, "", "Experiment 3", "  "]
+    }
+  },
+  "odd_na": {
+    "Identifying scales in the manuscript": {
+      "scales.acronym": ["GS"]
+    },
+    "Matching scales to text": {
+      "scales.scale_name": ["Big Five Inventory"]
+    },
+    "Labelling scales": {
+      "construct": [null],
+      "confidence": [null]
+    },
+    "Matching codebook columns/merge": {
+      "equivalent": [null],
+      "canonical": ["Merged"]
+    },
+    "Matching codebook columns/match": {
+      "matches.column_name": ["age_years"]
+    },
+    "Parsing codebook": {
+      "variables.variable_name": ["mood", "grp"],
+      "variables.label": ["Positive affect", "Condition"]
+    }
+  },
+  "odd_selfgen": {
+    "Labelling scales": {
+      "construct": ["  Power ratings  ", "ignored"],
+      "confidence": [" Low ", "high"]
+    }
+  }
+}

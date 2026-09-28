@@ -1,0 +1,56 @@
+{
+ "paper_id": "order_coerce",
+ "schema_version": "12.0",
+ "source": {
+  "file_name": "m.pdf",
+  "sha256": null,
+  "input_format": "pdf"
+ },
+ "metadata": {
+  "title": "Malformed"
+ },
+ "extraction": {
+  "producer": {
+   "name": "bibr",
+   "version": "0.3.0"
+  },
+  "completed_at": "2026-01-02T03:04:05Z"
+ },
+ "affiliation": [
+  {
+   "affiliation_id": [
+    null
+   ]
+  },
+  {
+   "affiliation_id": 2
+  },
+  {
+   "affiliation_id": 3
+  }
+ ],
+ "text": [
+  {
+   "text": "a",
+   "text_id": 1
+  },
+  {
+   "text": "b",
+   "text_id": [
+    null
+   ]
+  },
+  {
+   "text": "c",
+   "text_id": 3
+  },
+  {
+   "text": "d",
+   "text_id": 4
+  },
+  {
+   "text": "e",
+   "text_id": 5
+  }
+ ]
+}

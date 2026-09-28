@@ -1,0 +1,288 @@
+{
+  "id": "stat_check.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "StatCheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "test_type",
+          "df1",
+          "df2",
+          "test_comp",
+          "test_value",
+          "p_comp",
+          "reported_p",
+          "computed_p",
+          "raw",
+          "error",
+          "decision_error",
+          "one_tailed_in_txt",
+          "apa_factor",
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t",
+              "t"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              97.7,
+              97.2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2.9,
+              -1.96
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.005,
+              0.152
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.00460939058690088,
+              0.05285936397754
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(97.7) = 2.9, p = 0.005",
+              "t(97.2) = -1.96, p =0.152"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
+              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              15,
+              16
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Procedure",
+              "Procedure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected possible errors in test statistics. Note that as the accuracy of statcheck has only been validated for *t*-tests and *F*-tests. As Metacheck only uses validated modules, we only provide statcheck results for *t* tests and *F*-tests.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = \"t(97.2) = -1.96, p =0.152\", \"Recomputed p\" = 0.05286, \n    Sentence = \"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.\"), row.names = 2L, class = c(\"statcheck\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"10em\", NA, NA, NA), 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific research on the validity of statcheck, and it's usefulness to prevent statistical reporting errors, see:\n\nNuijten M, van Assen M, Hartgerink C, Epskamp S, Wicherts J (2017). &ldquo;The validity of the tool &quot;statcheck&quot; in discovering statistical reporting inconsistencies.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/tcxaja\">doi:10.31234/osf.io/tcxaja<\/a>, Preprint.\n\nNuijten M, Wicherts J (2023). &ldquo;The effectiveness of implementing statcheck in the peer review process to avoid statistical reporting errors.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/bxau9\">doi:10.31234/osf.io/bxau9<\/a>, Preprint.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 possible error in t-tests or F-tests"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "statcheck_found",
+          "statcheck_errors",
+          "statcheck_decision_errors"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

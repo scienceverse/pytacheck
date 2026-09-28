@@ -1,0 +1,101 @@
+{
+  "id": ".psycharchives_info.mock.apis",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "pa_url",
+      "PA_title",
+      "PA_authors",
+      "PA_doi",
+      "PA_license",
+      "PA_date",
+      "PA_abstract",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://hdl.handle.net/20.500.12034/17526"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Items, psychometrica data and automatic item generators from the International Cognitive Ability Resource (ICAR) project"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Doebler, Philipp; Revelle, William; Condon, David; Holling, Heinz; Gühne, Daniela; Rust, John; Stillwell, David; Sun, Luning; Chan, Fiona; Loe, Baosheng"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "restrictedAccess"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-06-02T16:00:43Z"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Items and Tests from the International Cognitive Ability Resource (ICAR). Core team (in alphabetical order): F. Chan, D. Condon, P. Doebler, D. Gühne,  H. Holling, B. Loe, E. Masoudi, J. Rust, W. Revelle, D. Stillwell & L. Sun. Please see readme.txt for funding notes and further ICAR contributors."
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "name",
+              "size",
+              "retrieve"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "readme.txt"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  4644
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://www.psycharchives.org/rest/bitstreams/112719a3-3346-447a-96dc-e253af34a9b3/retrieve"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

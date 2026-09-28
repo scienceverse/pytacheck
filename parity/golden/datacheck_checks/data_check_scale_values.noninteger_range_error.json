@@ -1,0 +1,9 @@
+{
+  "id": "data_check_scale_values.noninteger_range_error",
+  "ok": false,
+  "error": "invalid format '%d'; use format %f, %e, %g or %a for numeric objects",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

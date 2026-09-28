@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "pgbnd",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/pgbnd/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "pgbnd",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/pgbnd/",
+   "html": "https://osf.io/pgbnd/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

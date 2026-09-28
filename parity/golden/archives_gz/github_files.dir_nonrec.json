@@ -1,0 +1,96 @@
+{
+  "id": "github_files.dir_nonrec",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "repo",
+      "clean_repo",
+      "name",
+      "path",
+      "download_url",
+      "size",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ".gitignore",
+          "CODEOWNERS",
+          "ISSUE_TEMPLATE",
+          "workflows"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ".github/.gitignore",
+          ".github/CODEOWNERS",
+          ".github/ISSUE_TEMPLATE",
+          ".github/workflows"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/.gitignore",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/CODEOWNERS",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          7,
+          41,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "gitignore",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "config",
+          "file",
+          "dir",
+          "dir"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

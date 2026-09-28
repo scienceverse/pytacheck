@@ -1,0 +1,1237 @@
+{
+  "id": "review.int64",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/int64",
+              "https://osf.io/int64",
+              "https://osf.io/int64",
+              "https://osf.io/int64",
+              "https://osf.io/int64",
+              "https://osf.io/int64",
+              "https://osf.io/int64",
+              "https://osf.io/int64"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "participant",
+              "age",
+              "item_1",
+              "item_2",
+              "item_3",
+              "item_4",
+              "item_5",
+              "item_6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "age",
+              "likert",
+              "likert",
+              "likert",
+              "likert",
+              "likert",
+              "likert"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "years",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "200000000001 | 300000000002 | 400000000000 | 100000000004 | 200000000005",
+              "19 | 20 | 21 | 22 | 23",
+              "4 | 3 | 4 | 3 | 1",
+              "4 | 3 | 1 | 3 | 3",
+              "1 | 3 | 1 | 3 | 5",
+              "1 | 5 | 3 | 3 | 4",
+              "5 | 4 | 4 | 3 | 3",
+              "5 | 5 | 1 | 3 | 4"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              35,
+              35,
+              35,
+              35,
+              35,
+              35,
+              35,
+              35
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              28,
+              35,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              36,
+              2.68571428571429,
+              3.08571428571429,
+              3.14285714285714,
+              2.8,
+              3.17142857142857,
+              3.05714285714286
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              10.2469507659596,
+              1.38842756110536,
+              1.17251435640097,
+              1.43778541192916,
+              1.323986849055,
+              1.22440175753939,
+              1.51352446379998
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1.73205080756888,
+              0.234687092130106,
+              0.19819109940851,
+              0.243030091655704,
+              0.223794623736687,
+              0.206961670976298,
+              0.255832328043249
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              36,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              19,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              53,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              34,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              27.5,
+              1,
+              2.5,
+              2,
+              2,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              44.5,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              17,
+              3,
+              1.5,
+              2,
+              2,
+              2,
+              2.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0,
+              0.169560382559876,
+              -0.37295538578888,
+              -0.242477880835644,
+              0.209773455422932,
+              -0.037204468649213,
+              0.00528749631643489
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              -1.3032380952381,
+              -1.32558604278571,
+              -0.760420638912722,
+              -1.3633543363806,
+              -1.1006451446846,
+              -1.05978028670496,
+              -1.53903900466262
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://osf.io/int64**",
+          "```\n└── survey.csv  📊 data ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(participant = structure(c(9.88131291687434e-313, \n1.48219693753362e-312, 1.97626258336499e-312, 4.94065645861009e-313, \n9.88131291707196e-313, 1.48219693752374e-312, 1.97626258339957e-312, \n4.94065645880772e-313, 9.88131291682493e-313, 1.48219693757315e-312, \n1.97626258341933e-312, 4.94065645841247e-313, 9.88131291746722e-313, \n1.48219693759291e-312, 1.97626258336499e-312, 4.94065645920297e-313, \n9.88131291766484e-313, 1.48219693752374e-312, 1.97626258345886e-312, \n4.9406564594006e-313, 9.88131291682493e-313, 1.48219693763243e-312, \n1.97626258347862e-312, 4.94065645841247e-313, 9.88131291806009e-313, \n1.4821969376522e-312, 1.97626258336499e-312, 4.94065645979585e-313, \n9.88131291825772e-313, 1.48219693752374e-312, 1.97626258351815e-312, \n4.94065645999348e-313, 9.88131291682493e-313, 1.48219693769172e-312, \n1.97626258353791e-312), class = \"integer64\"), age = 19:53, item_1 = c(4L, \n3L, 4L, 3L, 1L, 3L, 1L, 2L, 4L, 5L, 2L, 1L, 1L, 5L, 4L, 1L, 2L, \n1L, 1L, 3L, 5L, 3L, 4L, 3L, 2L, 5L, 2L, 3L, 2L, 1L, 3L, 1L, 4L, \n1L, 4L), item_2 = c(4L, 3L, 1L, 3L, 3L, 1L, 4L, 4L, 4L, 3L, 1L, \n4L, 2L, 3L, 5L, 4L, 4L, 1L, 3L, 3L, 4L, 4L, 4L, 3L, 5L, 3L, 3L, \n2L, 2L, 3L, 4L, 2L, 5L, 1L, 3L), item_3 = c(1L, 3L, 1L, 3L, 5L, \n4L, 1L, 4L, 5L, 4L, 2L, 5L, 4L, 2L, 4L, 4L, 2L, 1L, 5L, 3L, 2L, \n1L, 3L, 4L, 3L, 1L, 2L, 5L, 5L, 4L, 3L, 4L, 5L, 4L, 1L), item_4 = c(1L, \n5L, 3L, 3L, 4L, 3L, 2L, 4L, 3L, 3L, 2L, 2L, 5L, 5L, 4L, 1L, 1L, \n5L, 1L, 3L, 3L, 1L, 1L, 2L, 2L, 3L, 5L, 2L, 4L, 3L, 3L, 2L, 1L, \n2L, 4L), item_5 = c(5L, 4L, 4L, 3L, 3L, 2L, 3L, 1L, 2L, 4L, 2L, \n3L, 3L, 5L, 4L, 2L, 3L, 2L, 1L, 3L, 3L, 4L, 2L, 5L, 5L, 5L, 5L, \n2L, 3L, 2L, 1L, 3L, 4L, 4L, 4L), item_6 = c(5L, 5L, 1L, 3L, 4L, \n5L, 2L, 2L, 4L, 2L, 2L, 3L, 5L, 1L, 4L, 1L, 5L, 5L, 2L, 3L, 5L, \n4L, 1L, 1L, 1L, 3L, 5L, 4L, 1L, 5L, 2L, 2L, 3L, 2L, 4L)), row.names = c(NA, \n35L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"item_1\", \"item_2\", \"item_3\", \n\"item_4\", \"item_5\", \"item_6\", \"participant\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"text\"), Level = c(\"ratio\", \"ordinal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"ordinal\", \"ordinal\", \"nominal\"), Concept = c(\"age\", \n\"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \"id\"\n), Role = c(\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n\"measure\", \"measure\", \"identifier\"), Unit = c(\"years\", \"\", \"\", \n\"\", \"\", \"\", \"\", \"\"), Rows = c(35L, 35L, 35L, 35L, 35L, 35L, 35L, \n35L), \"% Missing\" = c(0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(35L, \n5L, 5L, 5L, 5L, 5L, 5L, 28L), Mean = c(36, 2.686, 3.086, 3.143, \n2.8, 3.171, 3.057, NA), SD = c(10.247, 1.388, 1.173, 1.438, 1.324, \n1.224, 1.514, NA), Min = c(19, 1, 1, 1, 1, 1, 1, NA), Max = c(53, \n5, 5, 5, 5, 5, 5, NA)), row.names = c(\"age\", \"item_1\", \"item_2\", \n\"item_3\", \"item_4\", \"item_5\", \"item_6\", \"participant\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 8 columns across 1 data file.",
+          "#### Careless Responding",
+          "2 distinct respondents were flagged for **straightlining**: giving the same answer for at least 80% of the items in a multi-item scale of 5 items or more. One respondent can be flagged in several scales; the table below is **one row per person**, and the *Longest run* column gives the run that triggered the strongest flag, so you can check it against the raw data.",
+          "Of these, **2 were flagged *only* by short-scale straightlining** (a run of identical answers on a scale of 7 items or fewer). On a short, one-directional scale, answering consistently is often normal, coherent responding rather than carelessness — treat these as weak signals and inspect the actual responses before excluding anyone.",
+          "These are prompts to inspect those rows, not definitive judgements.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Respondent = c(\"100000000004\", \"100000000020\"), \n    \"Blocks flagged\" = c(1L, 1L), Scales = c(\"item (1-5, 6 items)\", \n    \"item (1-5, 6 items)\"), \"Longest run\" = c(\"same answer 6 times in a row, out of 6 items (flagged at 5)\", \n    \"same answer 6 times in a row, out of 6 items (flagged at 5)\"\n    ), \"Short-scale only\" = c(\"yes\", \"yes\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "**What this does not cover.** Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 8 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 8 columns and found no issues. 2 survey respondents were flagged for possible careless responding (2 of them only via short-scale straightlining, which can be normal answering). We detected demographic column for Age."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "100000000004",
+              "100000000020"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "item (1-5, 6 items)",
+              "item (1-5, 6 items)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "straightlining",
+              "straightlining"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              6,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "same answer 6 times in a row, out of 6 items (flagged at 5)",
+              "same answer 6 times in a row, out of 6 items (flagged at 5)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "age"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "age"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "review_int64"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/int64"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/review_int64/survey.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1038
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "survey.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 35,
+            "names": [
+              "participant",
+              "age",
+              "item_1",
+              "item_2",
+              "item_3",
+              "item_4",
+              "item_5",
+              "item_6"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  200000000001,
+                  300000000002,
+                  400000000000,
+                  100000000004,
+                  200000000005,
+                  300000000000,
+                  400000000007,
+                  100000000008,
+                  200000000000,
+                  300000000010,
+                  400000000011,
+                  100000000000,
+                  200000000013,
+                  300000000014,
+                  400000000000,
+                  100000000016,
+                  200000000017,
+                  300000000000,
+                  400000000019,
+                  100000000020,
+                  200000000000,
+                  300000000022,
+                  400000000023,
+                  100000000000,
+                  200000000025,
+                  300000000026,
+                  400000000000,
+                  100000000028,
+                  200000000029,
+                  300000000000,
+                  400000000031,
+                  100000000032,
+                  200000000000,
+                  300000000034,
+                  400000000035
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  19,
+                  20,
+                  21,
+                  22,
+                  23,
+                  24,
+                  25,
+                  26,
+                  27,
+                  28,
+                  29,
+                  30,
+                  31,
+                  32,
+                  33,
+                  34,
+                  35,
+                  36,
+                  37,
+                  38,
+                  39,
+                  40,
+                  41,
+                  42,
+                  43,
+                  44,
+                  45,
+                  46,
+                  47,
+                  48,
+                  49,
+                  50,
+                  51,
+                  52,
+                  53
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4,
+                  3,
+                  4,
+                  3,
+                  1,
+                  3,
+                  1,
+                  2,
+                  4,
+                  5,
+                  2,
+                  1,
+                  1,
+                  5,
+                  4,
+                  1,
+                  2,
+                  1,
+                  1,
+                  3,
+                  5,
+                  3,
+                  4,
+                  3,
+                  2,
+                  5,
+                  2,
+                  3,
+                  2,
+                  1,
+                  3,
+                  1,
+                  4,
+                  1,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4,
+                  3,
+                  1,
+                  3,
+                  3,
+                  1,
+                  4,
+                  4,
+                  4,
+                  3,
+                  1,
+                  4,
+                  2,
+                  3,
+                  5,
+                  4,
+                  4,
+                  1,
+                  3,
+                  3,
+                  4,
+                  4,
+                  4,
+                  3,
+                  5,
+                  3,
+                  3,
+                  2,
+                  2,
+                  3,
+                  4,
+                  2,
+                  5,
+                  1,
+                  3
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  3,
+                  1,
+                  3,
+                  5,
+                  4,
+                  1,
+                  4,
+                  5,
+                  4,
+                  2,
+                  5,
+                  4,
+                  2,
+                  4,
+                  4,
+                  2,
+                  1,
+                  5,
+                  3,
+                  2,
+                  1,
+                  3,
+                  4,
+                  3,
+                  1,
+                  2,
+                  5,
+                  5,
+                  4,
+                  3,
+                  4,
+                  5,
+                  4,
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  5,
+                  3,
+                  3,
+                  4,
+                  3,
+                  2,
+                  4,
+                  3,
+                  3,
+                  2,
+                  2,
+                  5,
+                  5,
+                  4,
+                  1,
+                  1,
+                  5,
+                  1,
+                  3,
+                  3,
+                  1,
+                  1,
+                  2,
+                  2,
+                  3,
+                  5,
+                  2,
+                  4,
+                  3,
+                  3,
+                  2,
+                  1,
+                  2,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  5,
+                  4,
+                  4,
+                  3,
+                  3,
+                  2,
+                  3,
+                  1,
+                  2,
+                  4,
+                  2,
+                  3,
+                  3,
+                  5,
+                  4,
+                  2,
+                  3,
+                  2,
+                  1,
+                  3,
+                  3,
+                  4,
+                  2,
+                  5,
+                  5,
+                  5,
+                  5,
+                  2,
+                  3,
+                  2,
+                  1,
+                  3,
+                  4,
+                  4,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  5,
+                  5,
+                  1,
+                  3,
+                  4,
+                  5,
+                  2,
+                  2,
+                  4,
+                  2,
+                  2,
+                  3,
+                  5,
+                  1,
+                  4,
+                  1,
+                  5,
+                  5,
+                  2,
+                  3,
+                  5,
+                  4,
+                  1,
+                  1,
+                  1,
+                  3,
+                  5,
+                  4,
+                  1,
+                  5,
+                  2,
+                  2,
+                  3,
+                  2,
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,54 @@
+{
+ "id": 5550001,
+ "doi": "10.5281/zenodo.5550001",
+ "metadata": {
+  "title": "All good",
+  "publication_date": "2026-01-01",
+  "resource_type": {
+   "type": "dataset"
+  },
+  "license": {
+   "id": "cc-by-4.0"
+  },
+  "creators": [
+   {
+    "name": "Doe, Jane"
+   }
+  ],
+  "keywords": [
+   "one",
+   "two"
+  ]
+ },
+ "updated": "2026-01-02T00:00:00+00:00",
+ "owners": [
+  {
+   "id": "1"
+  }
+ ],
+ "stats": {
+  "downloads": 1,
+  "unique_downloads": 1,
+  "views": 2
+ },
+ "files": [
+  {
+   "id": "5550001-data.csv",
+   "key": "data.csv",
+   "size": 9,
+   "checksum": "md5:5d02e4d2354eae28589766cca211477d",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550001/files/data.csv/content"
+   }
+  },
+  {
+   "id": "5550001-notes.txt",
+   "key": "notes.txt",
+   "size": 6,
+   "checksum": "md5:b1946ac92492d2347c6235b4d2611184",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550001/files/notes.txt/content"
+   }
+  }
+ ]
+}

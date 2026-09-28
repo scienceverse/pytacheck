@@ -1,0 +1,30 @@
+{
+  "id": "readRDS.fake_paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "paperlist",
+    "names": [
+      "info"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "title"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fake paper"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

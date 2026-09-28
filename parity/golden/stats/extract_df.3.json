@@ -1,0 +1,30 @@
+{
+  "id": "extract_df.3",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "df1",
+      "df2"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,120 @@
+{
+  "id": "listing.parse.nodes.t9j8e.children.vo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "cezg3",
+          "iywec"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Scenes",
+          "Objects"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "methods and measures",
+          "methods and measures"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/cezg3/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/nodes/iywec/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/cezg3/children/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/nodes/iywec/children/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/cezg3/files/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/nodes/iywec/files/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t9j8e",
+          "t9j8e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t9j8e",
+          "t9j8e"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

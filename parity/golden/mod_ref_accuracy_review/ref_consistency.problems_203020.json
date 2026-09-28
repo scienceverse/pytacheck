@@ -1,0 +1,308 @@
+{
+  "id": "ref_consistency.problems_203020",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 32,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "reference",
+          "contents",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020",
+              "203020"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              23,
+              74,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Biometrika, 69(3), 635-640. https://doi.org/10.1093/biomet/69.3.635",
+              "Zhan, J., Ince, R. A. A., Van Rijsbergen, N. J., & Schyns, P. G. (2018). Dynamic construction of reduced representations in the brain for per- ceptual decision behavior. Current Biology, 29(2), 319-326.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "[RE]",
+              "(68 ms [64, 72]",
+              "[62,",
+              "75]",
+              "[-7, 5]",
+              "[9,",
+              "24]",
+              "[9,",
+              "38]",
+              "(i.e., 22 ms [10, 32]",
+              "[7,",
+              "31]",
+              "[42,",
+              "82]",
+              "[23,",
+              "57]",
+              "[30,",
+              "81]",
+              "[155,",
+              "178]",
+              "[196,",
+              "246]",
+              "[20,",
+              "86]",
+              "[161,",
+              "186]",
+              "[196,",
+              "261]",
+              "Rijsbergen et al., 2014;",
+              "RE and LE)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Based on these trials, a full brain analysis revealed larger average ERPs associated with face detection at the right hemisphere occipital-temporal electrode (right electrode [RE], whose location is sketched with a cranial view of the head underneath) of both young and older adults. (d) Brain information.",
+              "However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.",
+              "However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.",
+              "However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.",
+              "However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.",
+              "Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).",
+              "Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).",
+              "Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).",
+              "Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).",
+              "These N170 peak delays on the RE were confirmed in bubbles trials that sampled face and noise information  (i.e., 22 ms [10, 32] and 18 ms [7, 31], respectively, see Figure 3c; see Figure 3b for a summary topography).",
+              "These N170 peak delays on the RE were confirmed in bubbles trials that sampled face and noise information  (i.e., 22 ms [10, 32] and 18 ms [7, 31], respectively, see Figure 3c; see Figure 3b for a summary topography).",
+              "These N170 peak delays on the RE were confirmed in bubbles trials that sampled face and noise information  (i.e., 22 ms [10, 32] and 18 ms [7, 31], respectively, see Figure 3c; see Figure 3b for a summary topography).",
+              "To do this, we computed the MI relationship between <pixel visibility information; EEG activ-ity>, for each stimulus pixel, on the left (LE) and right (RE) electrode (see Section 4.5), every 2 ms between 0 and 400 ms post-stimulus.  [42, 82] of that of young adults, see Figure 4b,c).",
+              "To do this, we computed the MI relationship between <pixel visibility information; EEG activ-ity>, for each stimulus pixel, on the left (LE) and right (RE) electrode (see Section 4.5), every 2 ms between 0 and 400 ms post-stimulus.  [42, 82] of that of young adults, see Figure 4b,c).",
+              "Peak EEG representation of the left eye occurred 40 ms [23, 57] earlier in young adults relative to older adults (i.e., ~164 ms in young vs. ~204 ms in older adults).",
+              "Peak EEG representation of the left eye occurred 40 ms [23, 57] earlier in young adults relative to older adults (i.e., ~164 ms in young vs. ~204 ms in older adults).",
+              "On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).",
+              "On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).",
+              "On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).",
+              "On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).",
+              "On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).",
+              "On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).",
+              "We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).",
+              "We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).",
+              "We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).",
+              "We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).",
+              "We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).",
+              "We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).",
+              "While face processing strategies might vary depending on the age of the observer relative to the age of the stimuli shown (own-age bias; van Rijsbergen et al., 2014; Anastasi & Rhodes, 2005; Wiese et al., 2008), we do not know whether these will affect N170 latencies or amplitudes (Komes, Schweinberger, & Wiese, 2015; Wiese et al., 2008).",
+              "Then, for each participant, we plotted the time course of redundancy at occipital-temporal electrodes specified above (i.e., RE and LE) between 0 and 400 ms poststimulus."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(23L, 74L, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA), type = c(\"extra\", \"extra\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\"), contents = c(NA, \nNA, \"[RE]\", \"(68 ms [64, 72]\", \"[62,\", \"75]\", \"[-7, 5]\", \"[9,\", \n\"24]\", \"[9,\", \"38]\", \"(i.e., 22 ms [10, 32]\", \"[7,\", \"31]\", \"[42,\", \n\"82]\", \"[23,\", \"57]\", \"[30,\", \"81]\", \"[155,\", \"178]\", \"[196,\", \n\"246]\", \"[20,\", \"86]\", \"[161,\", \"186]\", \"[196,\", \"261]\", \"Rijsbergen et al., 2014;\", \n\"RE and LE)\"), reference = c(\"Biometrika, 69(3), 635-640. https://doi.org/10.1093/biomet/69.3.635\", \n\"Zhan, J., Ince, R. A. A., Van Rijsbergen, N. J., & Schyns, P. G. (2018). Dynamic construction of reduced representations in the brain for per- ceptual decision behavior. Current Biology, 29(2), 319-326.\", \n\"Based on these trials, a full brain analysis revealed larger average ERPs associated with face detection at the right hemisphere occipital-temporal electrode (right electrode [RE], whose location is sketched with a cranial view of the head underneath) of both young and older adults. (d) Brain information.\", \n\"However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.\", \n\"However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.\", \n\"However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.\", \n\"However, we found similar ERP STD onsets in young (68 ms [64, 72]) and older (69 ms [62, 75]) participants (Figure 3a), with a negligible difference between them (-0.5 ms [-7, 5]), which suggests that there is no clear evidence for a generic delay in the onset of cortical activity in response to visual stimuli in older participants.\", \n\"Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).\", \n\"Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).\", \n\"Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).\", \n\"Despite no clear generic neural delay in older participants, their peak N170 response latencies to full faces on the right occipital electrode (RE) were delayed relative to the N170 response of young participants by 18 ms [9, 24] (and by 23 ms [9, 38], in response to the practice full noise trials; see Section 4.2).\", \n\"These N170 peak delays on the RE were confirmed in bubbles trials that sampled face and noise information  (i.e., 22 ms [10, 32] and 18 ms [7, 31], respectively, see Figure 3c; see Figure 3b for a summary topography).\", \n\"These N170 peak delays on the RE were confirmed in bubbles trials that sampled face and noise information  (i.e., 22 ms [10, 32] and 18 ms [7, 31], respectively, see Figure 3c; see Figure 3b for a summary topography).\", \n\"These N170 peak delays on the RE were confirmed in bubbles trials that sampled face and noise information  (i.e., 22 ms [10, 32] and 18 ms [7, 31], respectively, see Figure 3c; see Figure 3b for a summary topography).\", \n\"To do this, we computed the MI relationship between <pixel visibility information; EEG activ-ity>, for each stimulus pixel, on the left (LE) and right (RE) electrode (see Section 4.5), every 2 ms between 0 and 400 ms post-stimulus.  [42, 82] of that of young adults, see Figure 4b,c).\", \n\"To do this, we computed the MI relationship between <pixel visibility information; EEG activ-ity>, for each stimulus pixel, on the left (LE) and right (RE) electrode (see Section 4.5), every 2 ms between 0 and 400 ms post-stimulus.  [42, 82] of that of young adults, see Figure 4b,c).\", \n\"Peak EEG representation of the left eye occurred 40 ms [23, 57] earlier in young adults relative to older adults (i.e., ~164 ms in young vs. ~204 ms in older adults).\", \n\"Peak EEG representation of the left eye occurred 40 ms [23, 57] earlier in young adults relative to older adults (i.e., ~164 ms in young vs. ~204 ms in older adults).\", \n\"On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).\", \n\"On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).\", \n\"On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).\", \n\"On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).\", \n\"On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).\", \n\"On the RE, we found a 46 ms [30, 81] redundancy delay between the young and older participants (i.e., 165 ms peak [155, 178] for young, and a 215 ms peak [196, 246] for older adults; see Figure 4f).\", \n\"We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).\", \n\"We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).\", \n\"We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).\", \n\"We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).\", \n\"We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).\", \n\"We observed a similar 42 ms [20, 86] delay between young and older participants on the LE, where right eye redundancy peaked at 172 ms [161, 186] for young, and at 220 ms [196, 261] for older adults (see Supplementary Figure S10).\", \n\"While face processing strategies might vary depending on the age of the observer relative to the age of the stimuli shown (own-age bias; van Rijsbergen et al., 2014; Anastasi & Rhodes, 2005; Wiese et al., 2008), we do not know whether these will affect N170 latencies or amplitudes (Komes, Schweinberger, & Wiese, 2015; Wiese et al., 2008).\", \n\"Then, for each participant, we plotted the time course of redundancy at occipital-temporal electrodes specified above (i.e., RE and LE) between 0 and 400 ms poststimulus.\"\n)), row.names = c(NA, -32L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n_bib",
+          "n_xrefs",
+          "n_missing",
+          "n_extra"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "203020"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              75
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              138
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              30
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

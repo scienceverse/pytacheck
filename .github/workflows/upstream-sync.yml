@@ -1,0 +1,271 @@
+name: Upstream sync
+
+# Keeps pytacheck in step with metacheck's dev branch. When dev moves:
+#   1. move the upstream/metacheck submodule + pin to the new commit;
+#      while the pin names a pull request (pull_request/base_commit in
+#      parity/UPSTREAM.toml, e.g. #423 = bibr export schema 12.0), follow that
+#      pull request's head instead, and warn about dev commits it lacks; once
+#      it is merged into dev, go back to dev and drop it from the pin
+#      (scripts/upstream_sync.py);
+#   2. install the new metacheck in the pinned R environment and regenerate every
+#      golden and the accuracy report's R outputs (changed goldens = upstream
+#      behaviour changes); the brief lists the marked cases whose golden changed
+#      (r_changed) or that now match R (xpass), and the accuracy report before
+#      porting;
+#   3. let Claude Code port the changes (brief: .upstream-sync/brief.md, rules:
+#      docs/PORTING.md, prompt: .github/prompts/upstream-sync.md);
+#   4. verify (parity, the accuracy gate, tests, lint) and open a pull request. It
+#      is a draft labelled needs-human-review when tier-1 marks (or which cases
+#      are tier 1), parity/accuracy/expected.yaml or matrix.toml, parity/corpus.toml,
+#      or D-entries changed, or the accuracy report warns
+#      (scripts/upstream_sync.py review). The PR can only be merged once the
+#      CI and Parity workflows are green (branch protection).
+#
+# Requires the repository secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN).
+#
+# `detect` runs on the runner the CI_RUNNER variable names, by the rule in
+# ci.yml (the self-hosted fridge runner), else on GitHub's runners.
+# `sync` stays on a GitHub-hosted runner on purpose: it installs and runs
+# metacheck code nobody here has reviewed yet (dev's or a pull request's head)
+# and hands a Bash-capable agent a write token and the API secrets for up to
+# four hours. That belongs on a throwaway VM, not on the always-on service
+# host, where it would also hold the repository's only runner that long.
+
+on:
+  schedule:
+    - cron: "23 5 * * *" # daily
+  workflow_dispatch:
+    inputs:
+      to:
+        description: "metacheck commit to sync to (default: the pinned pull request's head while it is open, else head of dev)"
+        required: false
+      drop_pr:
+        description: "stop tracking the pinned pull request (e.g. closed unmerged) and sync to dev"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 10
+    outputs:
+      sync: ${{ steps.status.outputs.sync }}
+      head: ${{ steps.status.outputs.head }}
+      open_pr: ${{ steps.pr.outputs.open }}
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+      - id: status
+        env:
+          TO: ${{ inputs.to }}
+          DROP_PR: ${{ inputs.drop_pr }}
+        run: |
+          args=()
+          [ -z "$TO" ] || args+=(--to "$TO")
+          [ "$DROP_PR" != "true" ] || args+=(--drop-pr)
+          json=$(python3 scripts/upstream_sync.py status "${args[@]}")
+          echo "$json"
+          field() { echo "$json" | python3 -c "import json,sys; v=json.load(sys.stdin)['$1']; print(str(v).lower() if isinstance(v, bool) else v)"; }
+          echo "head=$(field head)" >> "$GITHUB_OUTPUT"
+          echo "sync=$(field sync)" >> "$GITHUB_OUTPUT"
+          if [ "$(field mode)" = "pull_request" ] && [ "$(field not_in_pr)" != "0" ]; then
+            echo "::warning::metacheck dev has $(field not_in_pr) commit(s) that pull request #$(field pull_request) lacks; they are not synced until it is merged or rebased."
+          fi
+          if [ "$(field mode)" = "merged" ]; then
+            echo "::notice::pull request #$(field pull_request) was merged into dev ($(field pr_merged)); syncing back to dev."
+          fi
+      - id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh pr list --repo "$GITHUB_REPOSITORY" --label upstream-sync --state open --json number --jq length)
+          echo "open=$n" >> "$GITHUB_OUTPUT"
+
+  sync:
+    needs: detect
+    if: needs.detect.outputs.sync == 'true' && needs.detect.outputs.open_pr == '0'
+    # GitHub-hosted on purpose (see the header), on the Ubuntu whose glibc the
+    # goldens it regenerates are made with (see parity.yml)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Branch
+        id: branch
+        env:
+          HEAD_SHA: ${{ needs.detect.outputs.head }}
+        run: |
+          short=$(echo "$HEAD_SHA" | cut -c1-10)
+          echo "name=upstream-sync/$short" >> "$GITHUB_OUTPUT"
+          echo "base=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git switch -c "upstream-sync/$short"
+
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.9.8"
+          python-version: "3.12"
+      - run: uv sync --locked --all-extras
+
+      - name: Move the pin and write the brief
+        env:
+          HEAD_SHA: ${{ needs.detect.outputs.head }}
+          DROP_PR: ${{ inputs.drop_pr }}
+        run: |
+          args=(--to "$HEAD_SHA")
+          [ "$DROP_PR" != "true" ] || args+=(--drop-pr)
+          uv run python scripts/upstream_sync.py prepare "${args[@]}"
+
+      - name: R reference environment
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: parity/r/conda-linux-64.lock
+          environment-name: r-reference
+          cache-environment: true
+
+      - name: Install the new metacheck (adding any new R dependencies)
+        env:
+          # non-ASCII names in metacheck's code only survive a UTF-8 install locale
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
+        run: |
+          git clone --quiet https://github.com/nealrichardson/httptest2.git /tmp/httptest2
+          git -C /tmp/httptest2 checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
+          R CMD INSTALL /tmp/httptest2
+          Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", repos = "https://cloud.r-project.org"); remotes::install_deps("upstream/metacheck", dependencies = NA, upgrade = "never", repos = "https://cloud.r-project.org")'
+          R CMD INSTALL --no-test-load upstream/metacheck
+          # metacheck's suggested careless, in the library only the accuracy report loads
+          Rscript parity/r/install-suggests.R
+          echo "PYTACHECK_RSCRIPT=$(command -v Rscript)" >> "$GITHUB_ENV"
+
+      - name: Regenerate goldens with the new metacheck
+        run: |
+          uv run python -m parity generate || true
+          uv run python -m parity accuracy --generate \
+            --report .upstream-sync/accuracy-before.json || true
+          uv run python -m parity check --jobs 0 \
+            --report .upstream-sync/check-before.json > /dev/null 2>&1 || true
+          {
+            echo ""
+            echo "## Goldens that changed with the new metacheck"
+            echo ""
+            git diff --stat -- parity/golden parity/accuracy/golden | sed 's/^/    /'
+          } >> .upstream-sync/brief.md
+          uv run python scripts/upstream_sync.py brief-parity \
+            --check .upstream-sync/check-before.json \
+            --accuracy .upstream-sync/accuracy-before.json
+          uv run python scripts/upstream_sync.py tier1-marks --out .upstream-sync/tier1-marks.json
+
+      - name: Load the porting prompt
+        id: prompt
+        run: |
+          {
+            echo "text<<PROMPT_EOF"
+            cat .github/prompts/upstream-sync.md
+            echo "PROMPT_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Port the changes with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          prompt: ${{ steps.prompt.outputs.text }}
+          claude_args: >-
+            --max-turns 400
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep"
+
+      - name: Verify
+        id: verify
+        run: |
+          set +e
+          uv run ruff format . >/dev/null
+          uv run python -m parity check --jobs 0 --report .upstream-sync/check.json \
+            --md .upstream-sync/parity.md > .upstream-sync/parity.txt 2>&1; parity=$?
+          uv run python -m parity accuracy --gate --report .upstream-sync/accuracy.json \
+            --md .upstream-sync/accuracy.md > .upstream-sync/accuracy.txt 2>&1; accuracy=$?
+          uv run pytest -n auto -m "not network and not r and not parity" -q > .upstream-sync/pytest.txt 2>&1; tests=$?
+          uv run ruff check . > .upstream-sync/ruff.txt 2>&1; lint=$?
+          ok=$([ $parity -eq 0 ] && [ $accuracy -eq 0 ] && [ $tests -eq 0 ] && [ $lint -eq 0 ] && echo true || echo false)
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+          # against the commit the sync branched from, whatever the agent committed
+          uv run python scripts/upstream_sync.py review --marks .upstream-sync/tier1-marks.json \
+            --accuracy .upstream-sync/accuracy.json --base "${{ steps.branch.outputs.base }}" \
+            > .upstream-sync/review.json
+          # a review that could not be computed asks for one
+          review=$(python3 -c "import json; print(str(json.load(open('.upstream-sync/review.json'))['needs_review']).lower())" 2>/dev/null || echo true)
+          echo "needs_review=$review" >> "$GITHUB_OUTPUT"
+
+      - name: Commit, push and open the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          meta() { python3 -c "import json; print(json.load(open('.upstream-sync/meta.json'))['$1'])"; }
+          title=$(meta title)
+          git config user.name "pytacheck upstream sync"
+          git config user.email "upstream-sync@users.noreply.github.com"
+          git add -A -- . ':!.upstream-sync'
+          git commit -m "$title"
+          git push -u origin "${{ steps.branch.outputs.name }}"
+          {
+            meta summary
+            echo
+            warning=$(meta warning)
+            [ -z "$warning" ] || { echo "$warning"; echo; }
+            if [ "${{ steps.verify.outputs.ok }}" = "true" ]; then
+              echo "✅ Parity, the accuracy gate, tests and lint pass."
+            else
+              echo "❌ Verification failed — needs attention (see below)."
+            fi
+            echo
+            if [ "${{ steps.verify.outputs.needs_review }}" = "true" ]; then
+              echo "## Needs human review"
+              python3 -c "import json; [print('-', r) for r in json.load(open('.upstream-sync/review.json'))['reasons']]"
+              echo
+            fi
+            [ -f .upstream-sync/notes.md ] && { echo "## Notes from the porting agent"; cat .upstream-sync/notes.md; echo; }
+            echo "<details><summary>Parity</summary>"; echo; head -c 20000 .upstream-sync/parity.md; echo; echo "</details>"
+            echo "<details><summary>Accuracy</summary>"; echo; head -c 20000 .upstream-sync/accuracy.md; echo; echo "</details>"
+            echo "## Tests"; echo '```'; tail -n 20 .upstream-sync/pytest.txt; echo '```'
+            echo "<details><summary>Upstream brief</summary>"; echo; head -c 50000 .upstream-sync/brief.md; echo; echo "</details>"
+          } > .upstream-sync/pr.md
+          flags=(--label upstream-sync)
+          if [ "${{ steps.verify.outputs.ok }}" != "true" ] || [ "${{ steps.verify.outputs.needs_review }}" = "true" ]; then
+            flags+=(--draft)
+          fi
+          if [ "${{ steps.verify.outputs.needs_review }}" = "true" ]; then
+            flags+=(--label needs-human-review)
+          fi
+          gh label create upstream-sync --color 0e8a16 --description "Automated metacheck sync" 2>/dev/null || true
+          gh label create needs-human-review --color d93f0b \
+            --description "Changes what pytacheck may do differently from metacheck" 2>/dev/null || true
+          gh pr create --base main --head "${{ steps.branch.outputs.name }}" "${flags[@]}" \
+            --title "$title" \
+            --body-file .upstream-sync/pr.md

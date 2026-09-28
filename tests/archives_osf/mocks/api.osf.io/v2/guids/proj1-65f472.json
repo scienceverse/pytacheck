@@ -1,0 +1,1 @@
+{"data": {"id": "proj1", "type": "guids", "relationships": {"referent": {"links": {"related": {"href": "https://api.osf.io/v2/nodes/proj1/", "meta": {"type": "nodes"}}}}}}}

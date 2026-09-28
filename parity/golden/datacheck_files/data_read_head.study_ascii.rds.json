@@ -1,0 +1,82 @@
+{
+  "id": "data_read_head.study_ascii.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "id",
+      "score",
+      "f",
+      "s",
+      "d",
+      "l"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.5,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "a",
+          "c",
+          "b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          null,
+          "z",
+          "w",
+          "v"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-01",
+          "2020-01-02",
+          "2020-01-03",
+          "2020-01-04",
+          "2020-01-05"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          false,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

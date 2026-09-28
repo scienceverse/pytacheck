@@ -1,0 +1,132 @@
+{
+  "id": "check_file_naming.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 23,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "my file.csv",
+          "résumé.txt",
+          "résumé.txt",
+          "x_20231301.csv",
+          "a b&c.R",
+          "a b&c.R",
+          "file 1.R",
+          "file 12.R",
+          "naïve data.csv",
+          "naïve data.csv",
+          "naïve data.csv",
+          "日本.csv",
+          "日本.csv",
+          "a\tb.R",
+          "a\nb.R",
+          "file(1).R",
+          "a+b.R",
+          "a,b.R",
+          "a#b.md",
+          "a~b.txt",
+          "a'b.R",
+          "data_2.csv",
+          "file 1.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "spaces",
+          "special-characters",
+          "diacritics",
+          "date-format",
+          "spaces",
+          "special-characters",
+          "spaces",
+          "spaces",
+          "spaces",
+          "special-characters",
+          "diacritics",
+          "special-characters",
+          "diacritics",
+          "special-characters",
+          "special-characters",
+          "special-characters",
+          "special-characters",
+          "special-characters",
+          "special-characters",
+          "special-characters",
+          "special-characters",
+          "zero-padding",
+          "zero-padding"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "suggestion",
+          "suggestion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains a space",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "'20231301' is not a valid YYYYMMDD date",
+          "contains a space",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a space",
+          "contains a space",
+          "contains a space",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains a character other than letters, digits, underscore, or dash",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

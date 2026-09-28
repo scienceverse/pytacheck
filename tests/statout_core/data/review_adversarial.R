@@ -1,0 +1,48 @@
+# Adversarial script for the statout_core review: many printed result shapes.
+set.seed(1)
+d <- data.frame(y = c(rnorm(10), rnorm(10, 1)), g = rep(c("a", "b"), each = 10),
+                h = rep(c("u", "v"), 10), id = rep(1:10, 2))
+m1 <- lm(y ~ g, data = d)
+m2 <- lm(y ~ g * h, data = d)
+summary(m2)
+anova(m1, m2)
+confint(m1)
+fit <- aov(y ~ g + h, data = d)
+TukeyHSD(fit)
+pairwise.t.test(d$y, d$g)
+summary(d)
+quantile(d$y)
+cor(mtcars[, 1:4])
+table(mtcars$cyl, mtcars$am)
+c(a = 1.5, b = -2, `c d` = 3e-10)
+m1
+mcnemar.test(matrix(c(794, 86, 150, 570), nrow = 2))
+friedman.test(matrix(c(1, 2, 3, 2, 3, 1, 3, 1, 2, 1, 3, 2), nrow = 4, byrow = TRUE))
+ks.test(d$y, "pnorm")
+oneway.test(y ~ g, data = d)
+fligner.test(y ~ g, data = d)
+ansari.test(y ~ g, data = d, exact = FALSE)
+mood.test(y ~ g, data = d)
+poisson.test(137, 24.19893)
+power.t.test(n = 20, delta = 1)
+g2 <- glm(am ~ wt + hp, data = mtcars, family = binomial)
+anova(g2, test = "Chisq")
+tibble::tibble(x = 1:3, y = c(-1.5, 2, 3e-10), z = c("p", "q", "r"))
+dplyr::summarise(dplyr::group_by(d, g, h), m = mean(y), n = dplyr::n(), .groups = "drop")
+data.frame(Effect = c("cond", "time"), df = c("2,   560", "1, 28"), F = c("41.86", "3.2"),
+           ges = c(".130", ".01"), p.value = c("<.001", ".08"))
+cat("t = 2.10, df = 10, p-value = 0.03\n")
+cat("+ 5 extra rows were dropped\n")
+cat("\033[36mCohen's d |        95% CI\033[39m\n-------------------------\n0.45      | [ 0.10, 0.80]\n\n\033[36m- Estimated using pooled SD.\033[39m")
+x <- 1
+cat("Cohen's d\n\nd estimate: -0.5031 (medium)\n95 percent confidence interval:\n     lower      upper \n-1.4172   0.4110 \n")
+cat("a\tb\tc\n1\t2.5\t3\nx\t4\t5\n")
+matrix(c(1.5, NA, -2, 3), 2, dimnames = list(c("r1", "r2"), c("F value", "Pr(>F)")))
+data.frame(term = c("é", "−x"), estimate = c(0.5, -1.2), `p value` = c("< 2e-16", "0.0331"),
+           check.names = FALSE)
+res <- t.test(y ~ g,
+              data = d)
+res
+for (k in 1:2) print(cor.test(d$y + k, d$id))
+chisq.test(table(mtcars$cyl, mtcars$gear))
+print(summary(aov(y ~ g + Error(factor(id)), data = d)))

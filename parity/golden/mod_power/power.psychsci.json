@@ -1,0 +1,317 @@
+{
+  "id": "power.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "power_type",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "We used G*Power3.1 (Faul, Erdfelder, Buchner, & Lang, 2009) to calculate desired sample sizes. We based our power analysis on previous research on the optimistic learning bias (Garrett & Sharot, 2014; Garrett et al., 2014; Korn et al., 2014; Kuzmanovic et al., 2015; Moutsiana et al., 2013; Sharot, Guitart-Masip, et al., 2012; Sharot, Kanai, et al., 2012; Sharot et al., 2011),",
+              "Eighteen individuals with a current diagnosis of PTSD (11 females; mean age = 34 years, SD = 13) and a control group of 18 trauma-exposed individuals with no current or past history of PTSD (11 females; mean age = 37 years, SD = 14) were recruited from the local community and departmental participant panels through print advertisements. Sample size was calculated with an a priori power analysis, using the effect sizes reported by Küpper et al. (2014), who used identical procedures, materials, and dependent measures. We determined that a minimum sample size of 7 per group would be necessary for 95% power to detect an effect. Additionally, our choice of a sample size of 18 per group is consistent with sample sizes used in previous think/no-think (TNT) studies (Anderson et al., 2004; Benoit & Anderson, 2012; Benoit, Hulbert, Huddleston, & Anderson, 2015; Gagnepain et al., 2014; Küpper et al., 2014). Diagnostic status was determined using the Structured Clinical Interview for the DSM-IV Axis I Disorders (First, Spitzer, Gibbon, & Williams, 1996). Exclusion criteria for PTSD participants included a current diagnosis of psychosis or borderline personality disorder. Control participants with any current psychiatric disorder were also excluded.",
+              "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+              "We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power.",
+              "which found an average effect size (Cohen's d) of valence (good news vs. bad news) on learning of 0.9. We expected the valence effect for a friend to be less strong than for the self and, hence, estimated a small to medium effect size of 0.4. To achieve a power of .90, we needed a sample of 67 participants. We expected that about 15% of the participants would have a BDI score higher than 12 given our previous experience with MTurk participants. Hence, we aimed for 85 participants to ensure a final sample of about 70 after excluding ineligible participants.",
+              "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/a5bmw/). To obtain .90 power to detect the effect size in the difference between identifiable and unidentifiable strangers found in Study 2a, we aimed to recruit 470 participants after exclusion of participants with a BDI score higher than 12. Hence, we collected participants until we obtained 470 useable participants (mean age = 38.57 years [2 missing], SD = 12.51; male = 205, female = 265; see the preregistered material for further details). Note that we preregistered a different statistical analysis plan from that reported below. We report the preregistered analyses in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 which produced the same results as reported here.",
+              "Participants. As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c). Our goal was to obtain .90 power to detect a small effect size (f ) of .1 at the standard .05 alpha error probability; therefore, we aimed to recruit 280 participants with a BDI score lower than 12 (see the preregistered material for further details). We ended up recruiting 285 participants (mean age = 36.57 years, SD = 12.09; male = 132, female = 150, other = 3) via Prolific, a crowdsourcing site similar to Amazon MTurk (Peer, Brandimarte, Samat, & Acquisti, 2017). The study had a within-subjects design in which all participants did the learning task for the liked and disliked strangers in randomized order.",
+              "pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts.",
+              "Participants. We expected the valence effect for stranger on learning to be small to medium (d = 0.4). To achieve a power of .90, we needed a sample of 67 participants, and for a medium correlation (r = .3) between learning bias and charity donation, we needed 80 participants per condition for a power of .80. Hence, we aimed for 100 participants to have a final sample of about 80 after excluding ineligible participants; 95 participants completed the study (mean age = 35.55 years, SD = 1.55; male = 43, female = 52). We excluded 18 participants with a BDI score higher than 12 and 4 participants who failed to reach at least four valid positive and negative updates on the learning task.",
+              "In Studies 2a and 2b, we manipulated the concern participants had for a stranger and then measured vicarious optimism for that stranger. We utilized the identifiability effect, whereby people have much greater concern for an identifiable person than for an unidentifiable person (Kogut & Ritov, 2005; Loewenstein, Small, & Strnad, 2005). In the identifiable-stranger condition, we presented participants with a description of a person identified with a name and picture. In the unidentifiable-stranger condition, we presented a separate group of participants with the same description without the name and the picture. We hypothesized that participants would show greater vicarious optimism for an identifiable stranger than an unidentifiable stranger. We were also interested in how the magnitude of vicarious optimism for an identifiable stranger would compare with that for a friend: Would people treat strangers more like friends, in terms of their vicarious optimism, when those strangers are identifiable? Method Participants. In Study 2a, for our main test (the difference of the valence effect between the identifiable-stranger and unidentifiable-stranger conditions), we expected a small to medium difference (d = 0.4). We needed 100 participants per condition for a power of .80. Again, we expected that about 15% of the participants on MTurk would have a BDI score higher than 12. Hence, we recruited 240 participants (mean age = 28.31 years, SD = 0.51; male = 122, female = 117, other = 1). We excluded 51 participants with a BDI score higher than 12 and a further 16 participants who failed to provide at least four valid positive and negative updates on the learning task."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11,
+              8,
+              1,
+              11,
+              14,
+              22,
+              28,
+              14,
+              34,
+              21
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              0,
+              7,
+              3,
+              5,
+              8,
+              8,
+              11,
+              5
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797617737129",
+              "0956797615569889",
+              "to_err_is_human",
+              "to_err_is_human",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "to_err_is_human",
+              "0956797617737129",
+              "0956797617737129"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Method",
+              "Participants",
+              "Abstract",
+              "Power Analysis",
+              "Method",
+              "Study 2: Vicarious Optimism Is Greater for Identifiable Strangers",
+              "Method",
+              "Results",
+              "Method",
+              "Study 2: Vicarious Optimism Is Greater for Identifiable Strangers"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "abstract",
+              "annex",
+              "method",
+              "results",
+              "method",
+              "annex",
+              "method",
+              "results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "apriori",
+              "unknown",
+              "sensitivity",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You chose to not use an LLM to assess if all information was reported, so please check for all required information manually.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = 1:10, power_type = c(\"unknown\", \"apriori\", \n\"unknown\", \"sensitivity\", \"unknown\", \"unknown\", \"unknown\", \"unknown\", \n\"unknown\", \"unknown\")), row.names = c(NA, -10L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = c(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \n\"8\", \"9\", \"10\"), text = c(\"We used G*<strong>Power<\/strong>3.1 (Faul, Erdfelder, Buchner, & Lang, 2009) to calculate desired sample sizes. We based our <strong>power<\/strong> analysis on previous research on the optimistic learning bias (Garrett & Sharot, 2014; Garrett et al., 2014; Korn et al., 2014; Kuzmanovic et al., 2015; Moutsiana et al., 2013; Sharot, Guitart-Masip, et al., 2012; Sharot, Kanai, et al., 2012; Sharot et al., 2011),\", \n\"Eighteen individuals with a current diagnosis of PTSD (11 females; mean age = 34 years, SD = 13) and a control group of 18 trauma-exposed individuals with no current or past history of PTSD (11 females; mean age = 37 years, SD = 14) were recruited from the local community and departmental participant panels through print advertisements. Sample size was calculated with an <strong>a priori<\/strong> <strong>power<\/strong> analysis, using the effect sizes reported by Küpper et al. (2014), who used identical procedures, materials, and dependent measures. We determined that a minimum sample size of 7 per group would be necessary for 95% <strong>power<\/strong> to detect an effect. Additionally, our choice of a sample size of 18 per group is consistent with sample sizes used in previous think/no-think (TNT) studies (Anderson et al., 2004; Benoit & Anderson, 2012; Benoit, Hulbert, Huddleston, & Anderson, 2015; Gagnepain et al., 2014; Küpper et al., 2014). Diagnostic status was determined using the Structured Clinical Interview for the DSM-IV Axis I Disorders (First, Spitzer, Gibbon, & Williams, 1996). Exclusion criteria for PTSD participants included a current diagnosis of psychosis or borderline personality disorder. Control participants with any current psychiatric disorder were also excluded.\", \n\"This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \\\"marginally significant\\\" to describe non-significant findings; (7) a <strong>power<\/strong> analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.\", \n\"We conducted a <strong>sensitivity<\/strong> <strong>power<\/strong> analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% <strong>power<\/strong>.\", \n\"which found an average effect size (Cohen's d) of valence (good news vs. bad news) on learning of 0.9. We expected the valence effect for a friend to be less strong than for the self and, hence, estimated a small to medium effect size of 0.4. To achieve a <strong>power<\/strong> of .90, we needed a sample of 67 participants. We expected that about 15% of the participants would have a BDI score higher than 12 given our previous experience with MTurk participants. Hence, we aimed for 85 participants to ensure a final sample of about 70 after excluding ineligible participants.\", \n\"For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/a5bmw/). To obtain .90 <strong>power<\/strong> to detect the effect size in the difference between identifiable and unidentifiable strangers found in Study 2a, we aimed to recruit 470 participants after exclusion of participants with a BDI score higher than 12. Hence, we collected participants until we obtained 470 useable participants (mean age = 38.57 years [2 missing], SD = 12.51; male = 205, female = 265; see the preregistered material for further details). Note that we preregistered a different statistical analysis plan from that reported below. We report the preregistered analyses in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 which produced the same results as reported here.\", \n\"Participants. As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c). Our goal was to obtain .90 <strong>power<\/strong> to detect a small effect size (f ) of .1 at the standard .05 alpha error probability; therefore, we aimed to recruit 280 participants with a BDI score lower than 12 (see the preregistered material for further details). We ended up recruiting 285 participants (mean age = 36.57 years, SD = 12.09; male = 132, female = 150, other = 3) via Prolific, a crowdsourcing site similar to Amazon MTurk (Peer, Brandimarte, Samat, & Acquisti, 2017). The study had a within-subjects design in which all participants did the learning task for the liked and disliked strangers in randomized order.\", \n\"pwr::pwr.t.test(n = 50, <strong>power<\/strong> = 0.8, alternative = \\\"greater\\\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts.\", \n\"Participants. We expected the valence effect for stranger on learning to be small to medium (d = 0.4). To achieve a <strong>power<\/strong> of .90, we needed a sample of 67 participants, and for a medium correlation (r = .3) between learning bias and charity donation, we needed 80 participants per condition for a <strong>power<\/strong> of .80. Hence, we aimed for 100 participants to have a final sample of about 80 after excluding ineligible participants; 95 participants completed the study (mean age = 35.55 years, SD = 1.55; male = 43, female = 52). We excluded 18 participants with a BDI score higher than 12 and 4 participants who failed to reach at least four valid positive and negative updates on the learning task.\", \n\"In Studies 2a and 2b, we manipulated the concern participants had for a stranger and then measured vicarious optimism for that stranger. We utilized the identifiability effect, whereby people have much greater concern for an identifiable person than for an unidentifiable person (Kogut & Ritov, 2005; Loewenstein, Small, & Strnad, 2005). In the identifiable-stranger condition, we presented participants with a description of a person identified with a name and picture. In the unidentifiable-stranger condition, we presented a separate group of participants with the same description without the name and the picture. We hypothesized that participants would show greater vicarious optimism for an identifiable stranger than an unidentifiable stranger. We were also interested in how the magnitude of vicarious optimism for an identifiable stranger would compare with that for a friend: Would people treat strangers more like friends, in terms of their vicarious optimism, when those strangers are identifiable? Method Participants. In Study 2a, for our main test (the difference of the valence effect between the identifiable-stranger and unidentifiable-stranger conditions), we expected a small to medium difference (d = 0.4). We needed 100 participants per condition for a <strong>power<\/strong> of .80. Again, we expected that about 15% of the participants on MTurk would have a BDI score higher than 12. Hence, we recruited 240 participants (mean age = 28.31 years, SD = 0.51; male = 122, female = 117, other = 1). We excluded 51 participants with a BDI score higher than 12 and a further 16 participants who failed to provide at least four valid positive and negative updates on the learning task.\"\n)), row.names = c(NA, -10L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 10 potential power analyses."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "0956797617737129",
+              "0956797615569889",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              6,
+              1,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

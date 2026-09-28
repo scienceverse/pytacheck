@@ -1,0 +1,26 @@
+{
+    "status": "good",
+    "feedbacks": [
+        {
+            "id": "10.1002/(sici)1099-0720(199908)13:4<333::aid-acp588>3.0.co;2-z",
+            "title": "A paper (10.1002/(sici)1099-0720(199908)13:4<333::aid-acp588>3.0.co;2-z)",
+            "total_comments": 3,
+            "url": "https://pubpeer.com/publications/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z",
+            "users": "Sici Fan"
+        },
+        {
+            "id": "10.9999/pp.ä",
+            "title": "A paper (10.9999/pp.ä)",
+            "total_comments": 1,
+            "url": "https://pubpeer.com/publications/PP.Ä",
+            "users": "Umlaut"
+        },
+        {
+            "id": "10.9999/ß.x",
+            "title": "A paper (10.9999/ß.x)",
+            "total_comments": 2,
+            "url": "https://pubpeer.com/publications/SS.X",
+            "users": "Eszett"
+        }
+    ]
+}

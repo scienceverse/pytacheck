@@ -1,0 +1,11 @@
+{
+"repo_check.local.edat_many": {"r": "78c7059ddd0490c0", "py": "a961202a4d2d6bff", "diff": ["table.file_type[]"]},
+"repo_check.local.several_folders.paperlist": {"r": "a4d3a519442f0222", "py": "8c549d13f8404ca3", "diff": ["report[]", "summary_table.files_code[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table", "traffic_light[]"]},
+"repo_check.local.two_folders": {"r": "3a792ebb96483b88", "py": "cf40708abb92f8d7", "diff": ["group_no_evidence[]", "report[]", "roster_check.extra", "roster_check.found", "summary_table.files_data[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_table.repo_n[]", "summary_text[]", "table"]},
+"repo_check.local.two_folders.report": {"r": "803d9c2f47223cd5", "py": "b896ffb993915609", "diff": ["[]"]},
+"repo_check.local.unicode": {"r": "0eff60c30d59af3e", "py": "7b6d5b850b269c6e", "diff": ["table.file_type[]"]},
+"repo_check.local.unicode.tables": {"r": "7ee869c11975c80a", "py": "af0d8792c39c5951", "diff": ["[].Type[]"]},
+"repo_check.module.empty_paper": {"r": "ac5146cf65ca52a8", "py": "1b380f67397bc0f3", "diff": ["<R error, Python value>"]},
+"repo_check.module.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "c28e7c89ff853a4d", "diff": ["<R error, Python value>"]},
+"repo_check.osf_license.invalid": {"r": "d7842d72cb50aa46", "py": "d28a43c696a53a7d", "diff": ["gated_repos", "repo_metadata.paper_id[]", "report[]", "summary_table.repo_n[]", "summary_text[]"]}
+}

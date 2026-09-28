@@ -1,0 +1,19 @@
+{
+  "id": "repo_cache_rel.url6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "doi.org_10.5061_dryad.x1/data/a.csv",
+      "doi.org_10.5061_dryad.x1/win//b.R",
+      "doi.org_10.5061_dryad.x1/abs/c.txt",
+      "doi.org_10.5061_dryad.x1/",
+      "doi.org_10.5061_dryad.x1/NA",
+      "doi.org_10.5061_dryad.x1/déjà/vu.txt"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "gsub.case_upper.pcre",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "The Effect Was Significant, T(28) = 2.20, P = .036, D = 0.80.",
+      "P<0.001 And P = .04; Also P ≤ .05 And P=0.5.",
+      "Café RéSumé NaïVe — ÉLan Vital. ÉCOLE éCole",
+      "Non Breaking Space\tAnd Tab\nNew Line",
+      "Back\\Slash [Bracket] A.B A-B A_b",
+      "Marginally Statistically Significant Trend Towards Significance",
+      "Ab Abc Abcd Aab",
+      "X",
+      "",
+      "Multi\nLine\nText\n",
+      "12,345 1.5e-3 −0.25 3·10^-4",
+      "Data Are Available At Https://Osf.Io/Abc12/ And Osf.Io/XYZ9"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

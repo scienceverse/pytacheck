@@ -1,0 +1,66 @@
+{
+  "id": "expand.zip_minimal_row",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_location",
+      "file_size"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "analysis.R",
+          "README.txt",
+          "study.csv",
+          "codebook.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mixed.zip/analysis.R",
+          "mixed.zip/README.txt",
+          "mixed.zip/study.csv",
+          "mixed.zip/sub/codebook.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/mixed.zip.contents/analysis.R",
+          "<TMP>/mixed.zip.contents/README.txt",
+          "<TMP>/mixed.zip.contents/study.csv",
+          "<TMP>/mixed.zip.contents/sub/codebook.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          38,
+          6,
+          1440,
+          38
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

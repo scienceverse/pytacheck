@@ -1,0 +1,609 @@
+{
+  "id": "paper_table.upstream.table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "table_id",
+      "label",
+      "section_id",
+      "text_id",
+      "html",
+      "contents",
+      "caption",
+      "page_number",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          35,
+          168,
+          280,
+          14,
+          35,
+          35,
+          35,
+          168
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Condition",
+                  "Mistakes Usefulness",
+                  "Mistakes Usefulness"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "10.90",
+                  "4.50"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "experimental",
+                  "9.12",
+                  "5.06"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Question",
+                  "Men / n = 23 ( P)",
+                  "Women / n = 30 ( P)",
+                  "Total / n = 53 ( P)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you",
+                  "26% (.31)",
+                  "23% (.39)",
+                  "25% (.25)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "be most likely to adopt?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children do you",
+                  "30% (.16)",
+                  "37% (.03)",
+                  "34% (.01)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "find to be the most attractive?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you",
+                  "22% (.50)",
+                  "20% (.57)",
+                  "21% (.50)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "be comfortable spending the MOST time with?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you spend",
+                  "22% (.50)",
+                  "33% (.06)",
+                  "28% (.09)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "$50 on if you could only spend it on one child?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you rather baby-sit?",
+                  "26% (.31)",
+                  "33% (.06)",
+                  "30% (.05)"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Characteristic",
+                  "PTSD group / (n = 18)",
+                  "Control group / (n = 18)",
+                  "Group comparison"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Age (mean in years)",
+                  "34.2 (13.4)",
+                  "36.8 (14.2)",
+                  "t(34) = -0.57, p = .57, d = -0.19, 95% CI = [-11.94, 6.72]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gender",
+                  "11 females, 7 males",
+                  "11 females, 7 males",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "PDS (mean score)",
+                  "29.4 (7.4)",
+                  "5.9 (5.4)",
+                  "t(34) = 10.84, p < .001, d = 3.63, 95% CI = [19.09, 27.91]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "IES-R (mean score)",
+                  "44.2 (17.2)",
+                  "11.0 (13.4)",
+                  "t(34) = 6.48, p < .001, d = 2.15, 95% CI = [22.80, 43.64]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Intrusion",
+                  "15.6 (7.9)",
+                  "4.2 (5.1)",
+                  "t(29.073) = 5.12, p < .001, d = 1.71, 95% CI = [6.81, 15.86]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Avoidance",
+                  "15.7 (7.7)",
+                  "5.2 (7.5)",
+                  "t(34) = 4.11, p < .001, d = 1.38, 95% CI = [5.28, 15.61]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hyperarousal",
+                  "13.0 (5.4)",
+                  "1.6 (3.4)",
+                  "t(34) = 7.60, p < .001, d = 2.53, 95% CI = [8.38, 14.51]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "BDI-II (mean score)",
+                  "25.4 (13.8)",
+                  "7.2 (5.5)",
+                  "t(22.212) = 5.20, p < .001, d = 1.73, 95% CI = [10.93, 25.41]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "STAI-T (mean score)",
+                  "54.1 (9.0)",
+                  "39.3 (8.3)",
+                  "t(34) = 5.04, p < .001, d = 1.71, 95% CI = [7.43, 17.46]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "STAI-S (mean score)",
+                  "40.1 (7.4)",
+                  "31.2 (6.4)",
+                  "t(33) = 3.81, p = .001, d = 1.29, 95% CI = [4.15, 13.64]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "TCAQ (mean score)",
+                  "55.7 (14.7)",
+                  "83.9 (14.6)",
+                  "t(34) = -5.79, p < .001, d = -1.92, 95% CI = [-38.14, -18.31]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "NART (mean score)",
+                  "31.3 (7.5)",
+                  "34.2 (6.0)",
+                  "t(34) = -1.31, p = .20, d = -0.43, 95% CI = [-7.53, 1.64]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Note: Standard deviations are given in parentheses. CI = confidence interval for the group difference; PDS = Posttraumatic Stress Diagnostic Scale",
+                  "Note: Standard deviations are given in parentheses. CI = confidence interval for the group difference; PDS = Posttraumatic Stress Diagnostic Scale",
+                  "Note: Standard deviations are given in parentheses. CI = confidence interval for the group difference; PDS = Posttraumatic Stress Diagnostic Scale",
+                  "Note: Standard deviations are given in parentheses. CI = confidence interval for the group difference; PDS = Posttraumatic Stress Diagnostic Scale"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Condition",
+                  "Mistakes Usefulness",
+                  "Mistakes Usefulness"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "10.90",
+                  "4.50"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "experimental",
+                  "9.12",
+                  "5.06"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Condition",
+                  "Mistakes Usefulness",
+                  "Mistakes Usefulness"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "10.90",
+                  "4.50"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "experimental",
+                  "9.12",
+                  "5.06"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Condition",
+                  "Mistakes Usefulness",
+                  "Mistakes Usefulness"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "10.90",
+                  "4.50"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "experimental",
+                  "9.12",
+                  "5.06"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Condition",
+                  "Mistakes Usefulness",
+                  "Mistakes Usefulness"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "10.90",
+                  "4.50"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "experimental",
+                  "9.12",
+                  "5.06"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Question",
+                  "Men / n = 23 ( P)",
+                  "Women / n = 30 ( P)",
+                  "Total / n = 53 ( P)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you",
+                  "26% (.31)",
+                  "23% (.39)",
+                  "25% (.25)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "be most likely to adopt?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children do you",
+                  "30% (.16)",
+                  "37% (.03)",
+                  "34% (.01)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "find to be the most attractive?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you",
+                  "22% (.50)",
+                  "20% (.57)",
+                  "21% (.50)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "be comfortable spending the MOST time with?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you spend",
+                  "22% (.50)",
+                  "33% (.06)",
+                  "28% (.09)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "$50 on if you could only spend it on one child?",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Which one of these children would you rather baby-sit?",
+                  "26% (.31)",
+                  "33% (.06)",
+                  "30% (.05)"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
+          "Table1 Percentage of men and women who chose the self-morph from a choice of five child faces in response to the following questions",
+          "Table 1. Comparison of the Demographic and Clinical Characteristics of the Posttraumatic Stress Disorder (PTSD) and Control Groups",
+          "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
+          "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
+          "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
+          "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
+          "Table1 Percentage of men and women who chose the self-morph from a choice of five child faces in response to the following questions"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "debruine-child",
+          "0956797615569889",
+          "processFulltextDocument-479883-POST",
+          "processFulltextDocument-4b4691-POST",
+          "processFulltextDocument-619fd9-POST",
+          "processFulltextDocument-d2308a-POST",
+          "processFulltextDocument-d67d70-POST"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,14 @@
+{
+  "id": ".extract_rich_text.tricky.docx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Title line\nvar1\tFirst variable\ncont\nlinked text after link\n PAGE 7 field done\ninserted tracked\nsofthy-phenF0B7\nsmart tag\nClosing paragraph\n\nafter cr\ncode\nsecond para\nmeaning\nmerged across\ntop\nr3c2\nr4c2\nnested\nafter nested\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt\nin sdt"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,43 @@
+{
+ "data": {
+  "id": "mixd2",
+  "type": "node-citation",
+  "attributes": {
+   "author": [
+    {
+     "name": [
+      1,
+      2
+     ]
+    },
+    {
+     "name": 1
+    },
+    {
+     "name": null
+    }
+   ],
+   "editor": [
+    {
+     "x": 1
+    },
+    {
+     "x": "y"
+    },
+    {
+     "x": false
+    }
+   ],
+   "issued": [
+    [
+     1,
+     2
+    ],
+    [
+     3,
+     null
+    ]
+   ]
+  }
+ }
+}

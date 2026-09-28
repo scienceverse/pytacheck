@@ -1,0 +1,5 @@
+R version 4.2.3 (2023-03-15)
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+attached base packages:
+[1] stats graphics

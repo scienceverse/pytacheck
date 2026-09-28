@@ -1,0 +1,72 @@
+{
+  "id": "scale_prefix_groups.scale_group",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "sat"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sat"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SAT"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Q1",
+              "Q2",
+              "Q3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

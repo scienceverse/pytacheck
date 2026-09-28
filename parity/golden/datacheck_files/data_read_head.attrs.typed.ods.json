@@ -1,0 +1,74 @@
+{
+  "id": "data_read_head.attrs.typed.ods",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "score",
+          "pct",
+          "ok",
+          "day",
+          "note"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "score",
+          "pct",
+          "ok",
+          "day",
+          "note"
+        ],
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": [
+              "class"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Date"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

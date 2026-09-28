@@ -1,0 +1,194 @@
+{
+  "id": "split_into_tests.dual_role",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "M"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.28"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "95% CI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "[3.18, 3.38]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Cronbach's α"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ".86"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "SD"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ".2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

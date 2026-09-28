@@ -1,0 +1,38 @@
+{
+  "id": "data_check_whitespace.blank_tab",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3 values with leading/trailing whitespace: \" a\", \"b\t\", \"c\n\""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          " a",
+          "b\t",
+          "c\n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

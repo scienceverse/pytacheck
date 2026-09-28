@@ -1,0 +1,195 @@
+{
+  "id": "report_tables.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "File Name",
+          "% Comments",
+          "Missing Files",
+          "Absolute Paths",
+          "Code Between Libraries"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "8%",
+              "25%",
+              "40%"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9,
+              null,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "Missing Files"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "raw.csv, model_fit.rds"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "Absolute paths found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "C:/Users/lisa/project | C:/Users/lisa/project/raw.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "setwd() calls found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "setwd(\"C:/Users/lisa/project\")"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "install.packages() calls found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "install.packages(\"lme4\")"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Lockfile",
+          "Package",
+          "Version",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "renv.lock",
+              "renv.lock"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dplyr",
+              "tidyr"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.1.3",
+              "1.3.0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Repository",
+              "Repository"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

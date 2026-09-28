@@ -1,0 +1,158 @@
+{
+  "id": "read_stat_tables.omv.html_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "One Sample T-Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "One Sample T-Test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              " ",
+              "statistic",
+              "df",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "H4 test"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.75"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "67.00"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "< .001"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "One Sample T-Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              " ",
+              "N",
+              "Mean",
+              "Median",
+              "SD",
+              "SE"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "H4 test"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "68"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.63"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.00"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.39"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.17"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

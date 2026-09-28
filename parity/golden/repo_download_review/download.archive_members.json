@@ -1,0 +1,138 @@
+{
+  "id": "download.archive_members",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "cannot open file '<tempdir>/<tempfile>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/a/b.csv': Not a directory",
+    "unable to translate 'donn<82>es/' to a wide string",
+    "input string 1 is invalid",
+    "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",
+    "input string 2 is invalid",
+    "unable to translate 'caf<82>.R' to a wide string",
+    "input string 3 is invalid"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "file_location",
+      "gated",
+      "oversize_skipped",
+      "failed",
+      "on_disk",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "<SESSION>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/a",
+          null,
+          "<SESSION>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/ok/data.csv",
+          "<SESSION>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/dup.csv",
+          "<SESSION>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/sub/win.csv",
+          null,
+          "<SESSION>/example.org_rc/.archive_members/srv.example.org_cp437.zip.contents/plain.csv",
+          "<SESSION>/example.org_rc/.archive_members/srv.example.org_cp437.zip.contents/nul.csv"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_url",
+          "paper_id",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "example.org_rc/.archive_members/srv.example.org_cp437.zip.contents/nul.csv",
+          "example.org_rc/.archive_members/srv.example.org_cp437.zip.contents/plain.csv",
+          "example.org_rp/.archive_members/srv.example.org_paths.zip.contents/a",
+          "example.org_rp/.archive_members/srv.example.org_paths.zip.contents/dup.csv",
+          "example.org_rp/.archive_members/srv.example.org_paths.zip.contents/ok/data.csv",
+          "example.org_rp/.archive_members/srv.example.org_paths.zip.contents/sub/win.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          817,
+          13,
+          12,
+          817,
+          4
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

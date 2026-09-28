@@ -1,0 +1,933 @@
+{
+ "chains": {
+  "na_name_code_path": {
+   "structure": {
+    "file_name": [
+     null,
+     "b.R",
+     null
+    ],
+    "file_path": [
+     "x/y.R",
+     "analysis/b.R",
+     "old/notes.txt"
+    ],
+    "data_type": [
+     "code",
+     "code",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 1
+  },
+  "na_name_code_nopath": {
+   "structure": {
+    "file_name": [
+     null,
+     "b.R"
+    ],
+    "data_type": [
+     "code",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 1
+  },
+  "na_name_readme_na_path": {
+   "structure": {
+    "file_name": [
+     null
+    ],
+    "file_path": [
+     null
+    ],
+    "data_type": [
+     "documentation"
+    ],
+    "doc_role": [
+     "readme"
+    ],
+    "group": [
+     null
+    ]
+   },
+   "columns": 1
+  },
+  "na_name_data_path": {
+   "structure": {
+    "file_name": [
+     "a.R",
+     null
+    ],
+    "file_path": [
+     "a.R",
+     "raw/x.csv"
+    ],
+    "data_type": [
+     "code",
+     "data"
+    ],
+    "doc_role": [
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 1
+  },
+  "no_name_readme": {
+   "structure": {
+    "file_path": [
+     "x/README.md",
+     "a.R"
+    ],
+    "data_type": [
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     "readme",
+     null
+    ],
+    "group": [
+     null,
+     "ex1"
+    ]
+   },
+   "columns": 1
+  },
+  "no_name_license_second": {
+   "structure": {
+    "file_path": [
+     "a.R",
+     "LICENSE"
+    ],
+    "data_type": [
+     "code",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     "license"
+    ],
+    "group": [
+     "ex1",
+     null
+    ]
+   },
+   "columns": 1
+  },
+  "no_name_na_type_first": {
+   "structure": {
+    "file_path": [
+     "a.R",
+     "b.csv"
+    ],
+    "data_type": [
+     null,
+     "data"
+    ],
+    "doc_role": [
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 1
+  },
+  "no_name_no_path": {
+   "structure": {
+    "data_type": [
+     "code",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 1
+  },
+  "no_name_no_path_no_type": {
+   "structure": {
+    "doc_role": [
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 1
+  },
+  "ext_edge": {
+   "structure": {
+    "file_name": [
+     "README.café",
+     "LICENSE.v2-final",
+     "README.md~",
+     "data.tar.gz",
+     ".hidden",
+     "Book1.XLSX",
+     "x.RData",
+     "t.TSV",
+     "~$Book1.xlsx",
+     "",
+     "dataset_description.JSON",
+     "CHANGES",
+     "dir/",
+     "Ärger Daten-2.csv",
+     "readme",
+     "x.csv.bak",
+     "CHANGELOG.md",
+     "Changes.txt"
+    ],
+    "file_path": [
+     "docs/README.café",
+     "LICENSE.v2-final",
+     "README.md~",
+     "data/data.tar.gz",
+     ".hidden",
+     "Book1.XLSX",
+     "x.RData",
+     "data/t.TSV",
+     "~$Book1.xlsx",
+     "",
+     "dataset_description.JSON",
+     "old/CHANGES",
+     "dir/",
+     "x/Ärger Daten-2.csv",
+     "readme",
+     "x.csv.bak",
+     "CHANGELOG.md",
+     "a/Changes.txt"
+    ],
+    "data_type": [
+     "documentation",
+     "documentation",
+     "documentation",
+     "data",
+     "data",
+     "data",
+     "data",
+     "data",
+     "data",
+     "data",
+     "code",
+     "documentation",
+     "materials",
+     "data",
+     "documentation",
+     "data",
+     "documentation",
+     "documentation"
+    ],
+    "doc_role": [
+     "readme",
+     "license",
+     "readme",
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     "supplemental",
+     null,
+     null,
+     "readme",
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     null,
+     null,
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     null,
+     "ex1",
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 3,
+   "labels": [
+    "labelled",
+    "labelled",
+    "llm",
+    "labelled"
+   ],
+   "group_no_evidence": true
+  },
+  "multi_odd_groups": {
+   "structure": {
+    "file_name": [
+     "s.csv",
+     "t.csv",
+     "u.R",
+     "README",
+     "v.R",
+     "w.pdf"
+    ],
+    "file_path": [
+     "s.csv",
+     "a/b/t.csv",
+     "u.R",
+     "README",
+     "x/v.R",
+     "w.pdf"
+    ],
+    "data_type": [
+     "data",
+     "data",
+     "code",
+     "documentation",
+     "code",
+     "materials"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     "notes",
+     null,
+     null
+    ],
+    "group": [
+     "",
+     "a/b",
+     "a/b",
+     null,
+     "x",
+     null
+    ]
+   },
+   "columns": 2,
+   "labels": [
+    "unlabelled",
+    "llm"
+   ]
+  },
+  "exactly_five": {
+   "structure": {
+    "file_name": [
+     "a.R",
+     "b.R",
+     "c.R",
+     "d.pdf",
+     "e.png",
+     "f.txt",
+     "dataset_description.json"
+    ],
+    "file_path": [
+     "a.R",
+     "b.R",
+     "c.R",
+     "d.pdf",
+     "e.png",
+     "documentation/f.txt",
+     "dataset_description.json"
+    ],
+    "data_type": [
+     "code",
+     "code",
+     "code",
+     "output",
+     "materials",
+     "documentation",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     null
+    ]
+   },
+   "columns": 2,
+   "labels": [
+    "unlabelled",
+    "missing"
+   ],
+   "group_no_evidence": 1
+  },
+  "one_file": {
+   "structure": {
+    "file_name": [
+     "only.csv"
+    ],
+    "file_path": [
+     "only.csv"
+    ],
+    "data_type": [
+     "data"
+    ],
+    "doc_role": [
+     null
+    ],
+    "group": [
+     "g1"
+    ]
+   },
+   "columns": 1,
+   "group_no_evidence": [
+    true,
+    true
+   ]
+  },
+  "dup_targets": {
+   "structure": {
+    "file_name": [
+     "a.R",
+     "a.R",
+     "b.R",
+     "b.R",
+     "m.csv",
+     "m.xlsx",
+     "README.md",
+     "readme.MD"
+    ],
+    "file_path": [
+     "analysis/a.R",
+     "old/a.R",
+     "old/b.R",
+     "analysis/b.R",
+     "data/m.csv",
+     "data/m.xlsx",
+     "README.md",
+     "docs/readme.MD"
+    ],
+    "data_type": [
+     "code",
+     "code",
+     "code",
+     "code",
+     "data",
+     "data",
+     "documentation",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     "readme",
+     "readme"
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     null,
+     "ex1"
+    ]
+   },
+   "columns": 4,
+   "labels": [
+    "labelled"
+   ],
+   "group_no_evidence": false
+  },
+  "slug_edge": {
+   "structure": {
+    "file_name": [
+     "dataset_description.json",
+     ".csv",
+     "a.b.c.csv",
+     "--.sav",
+     "日本語.xlsx"
+    ],
+    "file_path": [
+     "dataset_description.json",
+     "data/.csv",
+     "a.b.c.csv",
+     "--.sav",
+     "日本語.xlsx"
+    ],
+    "data_type": [
+     "code",
+     "data",
+     "data",
+     "data",
+     "data"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "group": [
+     null,
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 5,
+   "labels": [
+    "labelled",
+    "llm",
+    "labelled",
+    "labelled",
+    "labelled"
+   ]
+  },
+  "icu_names": {
+   "structure": {
+    "file_name": [
+     "øre.R",
+     "ore.R",
+     "ōre.R",
+     "æble.R",
+     "afble.R",
+     "łódź.R",
+     "Straße.pdf",
+     "strasse.pdf",
+     "strast.pdf",
+     "Ødegaard.csv",
+     "ｆile.R",
+     "file².R",
+     "file2.R"
+    ],
+    "file_path": [
+     "øre.R",
+     "ore.R",
+     "ōre.R",
+     "æble.R",
+     "afble.R",
+     "łódź.R",
+     "Straße.pdf",
+     "strasse.pdf",
+     "strast.pdf",
+     "data/Ødegaard.csv",
+     "ｆile.R",
+     "file².R",
+     "file2.R"
+    ],
+    "data_type": [
+     "code",
+     "code",
+     "code",
+     "code",
+     "code",
+     "code",
+     "materials",
+     "materials",
+     "materials",
+     "data",
+     "code",
+     "code",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 2
+  }
+ },
+ "trees": {
+  "na_note": {
+   "nodes": {
+    "path": [
+     "a/x.R",
+     "b.R"
+    ],
+    "status": [
+     "move",
+     "move"
+    ],
+    "note": [
+     null,
+     "n"
+    ]
+   }
+  },
+  "na_path_last": {
+   "nodes": {
+    "path": [
+     "a/x.R",
+     null
+    ],
+    "status": [
+     "move",
+     "present"
+    ],
+    "note": [
+     "q",
+     ""
+    ]
+   }
+  },
+  "na_path_first": {
+   "nodes": {
+    "path": [
+     null,
+     "a/x.R"
+    ],
+    "status": [
+     "move",
+     "present"
+    ],
+    "note": [
+     "q",
+     ""
+    ]
+   }
+  },
+  "collation": {
+   "nodes": {
+    "path": [
+     "a-b.R",
+     "a_b.R",
+     "a.b.R",
+     "ab.R",
+     "A.R",
+     "a.R",
+     "b 1.R",
+     "b1.R",
+     "B.R",
+     "Ä.R",
+     "z.R",
+     "é",
+     "~x",
+     "1.R",
+     "01.R",
+     "#x",
+     "(x)",
+     "x!",
+     "a",
+     "Ab",
+     "B/x",
+     "a/y",
+     "_d/z",
+     "Ä/q",
+     "ß",
+     "ss",
+     "İx",
+     "ix"
+    ],
+    "status": [
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present"
+    ],
+    "note": [
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ]
+   }
+  },
+  "collation_icu": {
+   "nodes": {
+    "path": [
+     "øre.csv",
+     "ore.csv",
+     "öre.csv",
+     "ōre.csv",
+     "pre.csv",
+     "æble.csv",
+     "aeble.csv",
+     "afble.csv",
+     "œuvre.R",
+     "oeuvre.R",
+     "łódź.txt",
+     "lodz.txt",
+     "mz.txt",
+     "đak.txt",
+     "ðak.txt",
+     "dak.txt",
+     "ħal.R",
+     "hal.R",
+     "straße.R",
+     "strasse.R",
+     "strast.R",
+     "ıx.R",
+     "iy.R",
+     "jx.R",
+     "ŋa.R",
+     "nb.R",
+     "oa.R",
+     "þa.R",
+     "zz.R",
+     "ｄata.csv",
+     "data².csv",
+     "data2.csv",
+     "ﬁle.R",
+     "file.R",
+     "étude.R",
+     "ètude.R",
+     "êtude.R",
+     "études/x.R",
+     "Øvelse/y.R",
+     "ovelse/z.R",
+     "ÅR.txt",
+     "ÄR.txt",
+     "AR.txt"
+    ],
+    "status": [
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present",
+     "present"
+    ],
+    "note": [
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ]
+   }
+  },
+  "slash_dupes": {
+   "nodes": {
+    "path": [
+     "a\\b",
+     "a/b",
+     "a/b/c",
+     "a\\b",
+     "d/e/",
+     "d/e/f",
+     "<x>/&y"
+    ],
+    "status": [
+     "move",
+     "missing",
+     "present",
+     "missing",
+     "move",
+     "present",
+     "move"
+    ],
+    "note": [
+     "from \\old",
+     "",
+     "",
+     "",
+     "e & e",
+     "",
+     "<from>"
+    ]
+   }
+  }
+ }
+}

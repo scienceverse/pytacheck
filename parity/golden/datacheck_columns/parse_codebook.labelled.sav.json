@@ -1,0 +1,97 @@
+{
+  "id": "parse_codebook.labelled.sav",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sex",
+          "age",
+          "q1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sex",
+          "Age in years",
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled.sav",
+          "labelled.sav",
+          "labelled.sav"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Male\",\"2\":\"Female\",\"-99\":\"Refused\"}",
+          null,
+          "{\"1\":\"Strongly disagree\",\"5\":\"Strongly agree\",\"9\":\"Not applicable\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"-99\":\"Refused\"}",
+          null,
+          "{\"9\":\"Not applicable\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "haven",
+          "haven",
+          "haven"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

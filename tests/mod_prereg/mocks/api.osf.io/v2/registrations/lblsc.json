@@ -1,0 +1,47 @@
+{
+ "data": {
+  "id": "lblsc",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration lblsc",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-lblsc-v1",
+   "registration_responses": {
+    "600-1": "scalar answer 0",
+    "600-3": "scalar answer 1",
+    "600-5": "scalar answer 2",
+    "600-7": "scalar answer 3",
+    "600-9": "scalar answer 4",
+    "600-11": "scalar answer 5",
+    "600-13": "scalar answer 6",
+    "600-15": "scalar answer 7"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "fffffffffffffffffffffff6",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/fffffffffffffffffffffff6/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/lblsc/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

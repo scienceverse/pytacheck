@@ -1,0 +1,238 @@
+{
+  "id": "table_tests_one.t3",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              -7000001
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "beta"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Association with controllability-reappraisal slope / β11 (SE)"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.12
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      5.5
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      7
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              -7000002
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "beta"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Association with controllability-reappraisal slope / β11 (SE)"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      -0.08
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.cezg3.files.osfstorage-1cf327",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade07",
+          "553e9d5c8c5e4a21991ade08",
+          "553e9d5c8c5e4a21991ade09",
+          "553e9d5c8c5e4a21991ade0a",
+          "553e9d5c8c5e4a21991ade0b",
+          "553e9d5c8c5e4a21991ade0c",
+          "553e9d5c8c5e4a21991ade0d",
+          "553e9d5c8c5e4a21991ade0e",
+          "553e9d5c8c5e4a21991ade0f",
+          "553e9d5c8c5e4a21991ade06"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "injury_selfinjury.jpg",
+          "injury_thin.jpg",
+          "sad_boycrying.jpg",
+          "sad_childgrave.jpg",
+          "sad_mantv.JPG",
+          "sad_washcloth.jpg",
+          "sad_womengrieving.JPG",
+          "war_capture.jpg",
+          "war_skulls.jpg",
+          "injury_limps.JPG"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          40385,
+          60622,
+          49568,
+          102721,
+          51208,
+          68725,
+          52585,
+          56069,
+          32434,
+          70091
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/injury_selfinjury.jpg",
+          "/injury_thin.jpg",
+          "/sad_boycrying.jpg",
+          "/sad_childgrave.jpg",
+          "/sad_mantv.JPG",
+          "/sad_washcloth.jpg",
+          "/sad_womengrieving.JPG",
+          "/war_capture.jpg",
+          "/war_skulls.jpg",
+          "/injury_limps.JPG"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade07/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade08/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade09/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade0a/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade0b/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade0c/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade0d/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade0e/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade0f/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade06/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/vd9ch/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/7r26j/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/c7z53/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/i76m8/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/zym6v/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/5eua9/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/7tkdm/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/72hvd/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/rb84y/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/q7zxu/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

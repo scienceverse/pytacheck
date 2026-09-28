@@ -1,0 +1,2577 @@
+# Parity cases for the stats area: stats() (R/stats.R), the statcheck package it
+# wraps (statcheck 1.5.0), R/stat_helpers.R and the stat_check module.
+"area": "stats"
+"cases":
+- "id": "stats.demo"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$paper": "demo"
+- "id": "stats.psychsci"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$read": &id009
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+- "id": "stats.test_paper.error"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$test_paper":
+        "text":
+        - "Test (M=4.5, t(97.2) = -1.96, p = 0.152)."
+  "compare": &id001
+    "ignore":
+    - "paper_id"
+- "id": "stats.test_paper.nomatch"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$test_paper":
+        "text":
+        - "No stats here"
+- "id": "stats.test_paper.nodigits_but_stats_words"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$test_paper":
+        "text":
+        - "t(28) = 2.20, p = .03 but written t(a) = b, p = c"
+        - "none"
+  "compare": *id001
+- "id": "stats.synthetic"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": &id002
+      "$test_paper":
+        "text":
+        - "The effect was significant, t(28) = 2.20, p = .03."
+        - "The effect was significant, t(28) = 2.20, p = .04."
+        - "A negative effect, t(28) = -2.20, p = .036."
+        - "Significant, t(28) = 2.20, p < .05."
+        - "Too small, t(28) = 2.20, p < .01."
+        - "Not significant, t(28) = 1.20, p > .05."
+        - "Wrongly non-significant, t(28) = 2.20, p > .05."
+        - "Bounded statistic t(28) < 2.20, p = .03 here."
+        - "Bounded statistic t(28) > 2.20, p = .03 here."
+        - "Bounded statistic t(28) > 2.20, p < .05 here."
+        - "Nonsignificant, t(28) = 1.20, ns."
+        - "Called nonsignificant, t(28) = 2.20, n.s."
+        - "Thousands, t(28) = 2,000.20, p < .001."
+        - "Weird minus t(28) = %^&2.20, p = .036."
+        - "Unicode minus t(28) = −2.20, p = .036."
+        - "Welch corrected t(28.1) = 2.20, p = .036."
+        - "Spacing:  t ( 28 ) = 2.20 , p = .036"
+        - "Compact t(28)=2.20,p=.036."
+        - "Zero p-value t(28) = 2.20, p = .000."
+        - "Zero p-value, large effect t(28) = 12.20, p = .000."
+        - "Scientific p t(28) = 2.20, p = .5e-3."
+        - "Exact p t(28) = 2.20, p = 0.0362."
+        - "A one-tailed test gave t(28) = 1.80, p = .04."
+        - "Capital T(28) = 2.20, p = .03 is not read."
+        - "Two df t(2,28) = 2.20, p = .03 is not read."
+        - "Impossible p t(28) = 2.20, p = 1.03 is dropped."
+        - "Semicolon t(28) = 2.20; p = .03 is not read."
+        - "Boundary t(28) = 2.05, p = .05 and t(28) = 2.04, p = .05."
+        - "Boundary t(28) = 2.05, p < .05 and t(28) = 2.04, p > .05."
+        - "An interaction, F(1, 20) = 4.35, p = .05."
+        - "A main effect, F(2, 57) = 3.12, p < .05."
+        - "No effect, F(1, 20) = 1.20, p = .29."
+        - "Misread df F(I, 20) = 4.35, p = .05 and F(l, 20) = 4.35, p = .05."
+        - "Corrected F(1.5, 30.2) = 5.10, p = .02."
+        - "Wrong F(1, 20) = 4.35, p = .02."
+        - "Bounded F(1, 20) < 1, ns."
+        - "Bounded F(1, 20) > 10, p < .01."
+        - "Decision F(3, 120) = 2.10, p < .05."
+        - "Correlated, r(28) = .22, p = .24."
+        - "Negatively correlated, r(28) = -.52, p = .004."
+        - "Impossible r(28) = 1.22, p = .03 is dropped."
+        - "Wrong r(28) = .52, p = .04."
+        - "Chi-square χ2(1, N = 100) = 3.84, p = .05."
+        - "Chi-square χ2(1) = 10.2, p = .001."
+        - "Chi-square  X2(2, n = 1,500) = 7.2, p = .03."
+        - "Chi-square chi2(1) = 3.84, p = .05."
+        - "Normal (z = 1.96, p = .05)."
+        - "Normal (Z = 2.58, p < .01)."
+        - "z = 1.4, p < .05 at the start is not read."
+        - "Heterogeneity Q(3) = 8.1, p = .04."
+        - "Heterogeneity Qw(3) = 8.1, p = .04."
+        - "Heterogeneity Qb(3) = 8.1, p = .04."
+        - "Heterogeneity Q-within(3) = 8.1, p = .04."
+        - "Heterogeneity Q-between(3) = 8.1, p = .04."
+        - "Heterogeneity Q-Between(3) = 8.1, p = .04."
+        - "All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01."
+        - "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001."
+        - "Zero df t(0) = 2.1, p = .03."
+        - "Perfect r(20) = 1.00, p < .001."
+        - "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere."
+        - "Bracket t(20) = (2.1, p = .03."
+        - "Twin the MZ = 2.1, p = .03 difference."
+        - "Two comparators F(1, 20) =< 4.2, p = .03."
+        - "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
+        - "Unrecyclable F(1, 20) = 3.1, p = .03 and QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
+        - "Nothing here but 42 participants."
+  "compare": *id001
+- "id": "stats.synthetic.OneTailedTxt"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "OneTailedTxt": !!bool "true"
+  "compare": *id001
+- "id": "stats.synthetic.OneTailedTests"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "OneTailedTests": !!bool "true"
+  "compare": *id001
+- "id": "stats.synthetic.pEqualAlphaSig"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "pEqualAlphaSig": !!bool "false"
+  "compare": *id001
+- "id": "stats.synthetic.pZeroError"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "pZeroError": !!bool "false"
+  "compare": *id001
+- "id": "stats.synthetic.alpha"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "alpha": !!float "0.01"
+  "compare": *id001
+- "id": "stats.synthetic.AllPValues"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "AllPValues": !!bool "true"
+  "compare": *id001
+- "id": "stats.synthetic.stat.t"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "stat": "t"
+  "compare": *id001
+- "id": "stats.synthetic.stat.tF"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "stat": &id005
+      "$chr":
+      - "t"
+      - "F"
+  "compare": *id001
+- "id": "stats.synthetic.stat.cor_chisq"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "r(20) = 1.00, p < .001 is checked with the rounding interval capped at 1 (statcheck fails on if (NA), so R's stats() drops the sentence)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "stat": &id006
+      "$chr":
+      - "cor"
+      - "chisq"
+  "compare": *id001
+- "id": "stats.synthetic.stat.ZQ"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the QB result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id002
+    "stat": &id007
+      "$chr":
+      - "Z"
+      - "Q"
+  "compare": *id001
+- "id": "stats.df.stat_Z"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": &id003
+      "$df":
+        "text":
+        - "t(20) = 4.23, p = .002"
+        - "t(20) = 4.23, p = 0.0004"
+        - "(z = 1.4, p < .05)"
+        - "z = 1.4, p < .05"
+        - "H = 2.2, p = .000"
+    "stat": "Z"
+- "id": "stats.df.stat_t"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id003
+    "stat": "t"
+- "id": "stats.df.AllPValues"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id003
+    "AllPValues": !!bool "true"
+- "id": "stats.df.messages_arg"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "an argument statcheck() does not accept raises TypeError; R swallows the error of every statcheck() call and returns an empty table"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id003
+    "messages": !!bool "true"
+- "id": "stats.df.unknown_arg"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "an argument statcheck() does not accept raises TypeError; R swallows the error of every statcheck() call and returns an empty table"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": *id003
+    "bogus": !!int "1"
+- "id": "stats.df.no_digits"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text":
+        - "no numbers"
+        - "at all"
+- "id": "stats.character.error"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() of a character vector checks the strings (R: 'argument is of length zero')"}
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text": "t(28) = 2.20, p = .03"
+- "id": "stats.paperlist"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+      - "upstream/metacheck/inst/demos/to_err_is_human.json"
+- "id": "statcheck.synthetic"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": &id004
+      - "The effect was significant, t(28) = 2.20, p = .03."
+      - "The effect was significant, t(28) = 2.20, p = .04."
+      - "A negative effect, t(28) = -2.20, p = .036."
+      - "Significant, t(28) = 2.20, p < .05."
+      - "Too small, t(28) = 2.20, p < .01."
+      - "Not significant, t(28) = 1.20, p > .05."
+      - "Wrongly non-significant, t(28) = 2.20, p > .05."
+      - "Bounded statistic t(28) < 2.20, p = .03 here."
+      - "Bounded statistic t(28) > 2.20, p = .03 here."
+      - "Bounded statistic t(28) > 2.20, p < .05 here."
+      - "Nonsignificant, t(28) = 1.20, ns."
+      - "Called nonsignificant, t(28) = 2.20, n.s."
+      - "Thousands, t(28) = 2,000.20, p < .001."
+      - "Weird minus t(28) = %^&2.20, p = .036."
+      - "Unicode minus t(28) = −2.20, p = .036."
+      - "Welch corrected t(28.1) = 2.20, p = .036."
+      - "Spacing:  t ( 28 ) = 2.20 , p = .036"
+      - "Compact t(28)=2.20,p=.036."
+      - "Zero p-value t(28) = 2.20, p = .000."
+      - "Zero p-value, large effect t(28) = 12.20, p = .000."
+      - "Scientific p t(28) = 2.20, p = .5e-3."
+      - "Exact p t(28) = 2.20, p = 0.0362."
+      - "A one-tailed test gave t(28) = 1.80, p = .04."
+      - "Capital T(28) = 2.20, p = .03 is not read."
+      - "Two df t(2,28) = 2.20, p = .03 is not read."
+      - "Impossible p t(28) = 2.20, p = 1.03 is dropped."
+      - "Semicolon t(28) = 2.20; p = .03 is not read."
+      - "Boundary t(28) = 2.05, p = .05 and t(28) = 2.04, p = .05."
+      - "Boundary t(28) = 2.05, p < .05 and t(28) = 2.04, p > .05."
+      - "An interaction, F(1, 20) = 4.35, p = .05."
+      - "A main effect, F(2, 57) = 3.12, p < .05."
+      - "No effect, F(1, 20) = 1.20, p = .29."
+      - "Misread df F(I, 20) = 4.35, p = .05 and F(l, 20) = 4.35, p = .05."
+      - "Corrected F(1.5, 30.2) = 5.10, p = .02."
+      - "Wrong F(1, 20) = 4.35, p = .02."
+      - "Bounded F(1, 20) < 1, ns."
+      - "Bounded F(1, 20) > 10, p < .01."
+      - "Decision F(3, 120) = 2.10, p < .05."
+      - "Correlated, r(28) = .22, p = .24."
+      - "Negatively correlated, r(28) = -.52, p = .004."
+      - "Impossible r(28) = 1.22, p = .03 is dropped."
+      - "Wrong r(28) = .52, p = .04."
+      - "Chi-square χ2(1, N = 100) = 3.84, p = .05."
+      - "Chi-square χ2(1) = 10.2, p = .001."
+      - "Chi-square  X2(2, n = 1,500) = 7.2, p = .03."
+      - "Chi-square chi2(1) = 3.84, p = .05."
+      - "Normal (z = 1.96, p = .05)."
+      - "Normal (Z = 2.58, p < .01)."
+      - "z = 1.4, p < .05 at the start is not read."
+      - "Heterogeneity Q(3) = 8.1, p = .04."
+      - "Heterogeneity Qw(3) = 8.1, p = .04."
+      - "Heterogeneity Qb(3) = 8.1, p = .04."
+      - "Heterogeneity Q-within(3) = 8.1, p = .04."
+      - "Heterogeneity Q-between(3) = 8.1, p = .04."
+      - "Heterogeneity Q-Between(3) = 8.1, p = .04."
+      - "All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01."
+      - "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001."
+      - "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere."
+      - "Two comparators F(1, 20) =< 4.2, p = .03."
+      - "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
+      - "Nothing here but 42 participants."
+    "messages": !!bool "false"
+- "id": "statcheck.synthetic.OneTailedTxt"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "OneTailedTxt": !!bool "true"
+- "id": "statcheck.synthetic.OneTailedTests"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "OneTailedTests": !!bool "true"
+- "id": "statcheck.synthetic.pEqualAlphaSig"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "statcheck.synthetic.pZeroError"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "pZeroError": !!bool "false"
+- "id": "statcheck.synthetic.alpha"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "alpha": !!float "0.01"
+- "id": "statcheck.synthetic.AllPValues"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "AllPValues": !!bool "true"
+- "id": "statcheck.synthetic.stat.t"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "stat": "t"
+- "id": "statcheck.synthetic.stat.tF"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "stat": *id005
+- "id": "statcheck.synthetic.stat.cor_chisq"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "stat": *id006
+- "id": "statcheck.synthetic.stat.ZQ"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": *id004
+    "messages": !!bool "false"
+    "stat": *id007
+- "id": "statcheck.single"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+- "id": "statcheck.ten_sources"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr":
+      - "Study 1: t(21) = 2.10, p = .01"
+      - "Study 2: t(22) = 2.20, p = .02"
+      - "Study 3: t(23) = 2.30, p = .03"
+      - "Study 4: t(24) = 2.40, p = .04"
+      - "Study 5: t(25) = 2.50, p = .05"
+      - "Study 6: t(26) = 2.60, p = .06"
+      - "Study 7: t(27) = 2.70, p = .07"
+      - "Study 8: t(28) = 2.80, p = .08"
+      - "Study 9: t(29) = 2.90, p = .09"
+      - "Study 10: t(30) = 2.100, p = .010"
+    "messages": !!bool "false"
+- "id": "statcheck.named"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$expr":
+        "r": "c(first = \"t(28) = 2.20, p = .03\", second = \"F(1, 20) = 4.35, p = .05 and p < .01\")"
+        "py": "{\"first\": \"t(28) = 2.20, p = .03\", \"second\": \"F(1, 20) = 4.35, p = .05 and p < .01\"\
+          }"
+    "messages": !!bool "false"
+- "id": "statcheck.none"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "No statistics here."
+    "messages": !!bool "false"
+- "id": "statcheck.na"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$NA": !!bool "true"
+    "messages": !!bool "false"
+- "id": "statcheck.none.AllPValues"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "No statistics here."
+    "messages": !!bool "false"
+    "AllPValues": !!bool "true"
+- "id": "statcheck.warning.zero_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(0) = 2.1, p = .03, F(1, 20) = 4.35, p = .05"
+    "messages": !!bool "false"
+    "pZeroError": !!bool "false"
+  "py_args": {}
+- "id": "statcheck.warning.p_range"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .036 and p = .05-.10"
+    "messages": !!bool "false"
+- "id": "statcheck.error.zero_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "Zero df t(0) = 2.1, p = .03."
+    "messages": !!bool "false"
+- "id": "statcheck.error.perfect_r"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "r = 1.00 is checked with the rounding interval capped at 1 (R computes p for r = 1.005 and fails on if (NA))"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "Perfect r(20) = 1.00, p < .001."
+    "messages": !!bool "false"
+- "id": "statcheck.error.condition_length"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "t(20) = (2.1 uses the first test name instead of failing on a length-2 if ()"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "Bracket t(20) = (2.1, p = .03."
+    "messages": !!bool "false"
+- "id": "statcheck.error.no_test_type"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "Twin the MZ = 2.1, p = .03 difference."
+    "messages": !!bool "false"
+- "id": "statcheck.recycled_p"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03"
+    "messages": !!bool "false"
+- "id": "statcheck.error.differing_rows"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result that cannot be checked (zero df, no test name) is dropped instead of failing the whole call; the other results are kept"}
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "F(1, 20) = 3.1, p = .03 and QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03"
+    "messages": !!bool "false"
+- "id": "statcheck.one_tailed.OneTailedTxt"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr":
+      - "A one-tailed test gave t(28) = 1.80, p = .04."
+      - "A directional test gave F(1, 28) = 3.24, p = .04 and z = 1.70, p = .045."
+      - "A one sided test gave t(28) = 2.20, p = .04."
+      - "Not one-tailed t(28) = 1.80, p = .10 and r(28) = .30, p = .06."
+    "messages": !!bool "false"
+    "OneTailedTxt": !!bool "true"
+- "id": "extract_stats.0"
+  "r": "statcheck:::extract_stats"
+  "py": "pytacheck.stats.statcheck.extract_stats"
+  "args":
+    "txt": "t(28) = 2.20, p = .03"
+    "stat":
+      "$chr":
+      - "t"
+      - "F"
+      - "cor"
+      - "chisq"
+      - "Z"
+      - "Q"
+- "id": "extract_stats.1"
+  "r": "statcheck:::extract_stats"
+  "py": "pytacheck.stats.statcheck.extract_stats"
+  "args":
+    "txt": "F(1, 20) = 4.35, p = .05 and χ2(1, N = 100) = 3.84, p < .05"
+    "stat":
+      "$chr":
+      - "t"
+      - "F"
+      - "cor"
+      - "chisq"
+      - "Z"
+      - "Q"
+- "id": "extract_stats.2"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "Q-Between(2) is a Qb test (statcheck looks for a lowercase b and then w anywhere)"}
+  "r": "statcheck:::extract_stats"
+  "py": "pytacheck.stats.statcheck.extract_stats"
+  "args":
+    "txt": "t(28) = 2.20, p = .03 and r(28) = 1.5, p = .04 and Q-Between(3) = 8.1, p = .04"
+    "stat":
+      "$chr":
+      - "t"
+      - "F"
+      - "cor"
+      - "chisq"
+      - "Z"
+      - "Q"
+- "id": "extract_stats.3"
+  "r": "statcheck:::extract_stats"
+  "py": "pytacheck.stats.statcheck.extract_stats"
+  "args":
+    "txt": "F(1, 20) =< 4.2, p = .03 and t(28) = 2.2, p = .03, p = .04"
+    "stat":
+      "$chr":
+      - "t"
+      - "F"
+      - "cor"
+      - "chisq"
+      - "Z"
+      - "Q"
+- "id": "extract_stats.4"
+  "r": "statcheck:::extract_stats"
+  "py": "pytacheck.stats.statcheck.extract_stats"
+  "args":
+    "txt": "no results"
+    "stat":
+      "$chr":
+      - "t"
+      - "F"
+      - "cor"
+      - "chisq"
+      - "Z"
+      - "Q"
+- "id": "extract_stats.stat_t"
+  "r": "statcheck:::extract_stats"
+  "py": "pytacheck.stats.statcheck.extract_stats"
+  "args":
+    "txt": "t(28) = 2.20, p = .03 and F(1, 20) = 4.35, p = .05"
+    "stat": "t"
+- "id": "extract_p_value.0"
+  "r": "statcheck:::extract_p_value"
+  "py": "pytacheck.stats.statcheck.extract_p_value"
+  "args":
+    "raw": "t(28) = 2.20, p = .03, ns, P < .001 and p = .5e-3"
+- "id": "extract_p_value.1"
+  "r": "statcheck:::extract_p_value"
+  "py": "pytacheck.stats.statcheck.extract_p_value"
+  "args":
+    "raw": "p = 0.050 (n.s.)"
+- "id": "extract_p_value.2"
+  "r": "statcheck:::extract_p_value"
+  "py": "pytacheck.stats.statcheck.extract_p_value"
+  "args":
+    "raw": "no p here"
+- "id": "extract_test_stats.0"
+  "r": "statcheck:::extract_test_stats"
+  "py": "pytacheck.stats.statcheck.extract_test_stats"
+  "args":
+    "raw": "t(28) = 2,000.20, p = .03"
+- "id": "extract_test_stats.1"
+  "r": "statcheck:::extract_test_stats"
+  "py": "pytacheck.stats.statcheck.extract_test_stats"
+  "args":
+    "raw": "χ2(1, N = 1,000) = −3.84, p = .05"
+- "id": "extract_test_stats.2"
+  "r": "statcheck:::extract_test_stats"
+  "py": "pytacheck.stats.statcheck.extract_test_stats"
+  "args":
+    "raw": "F(1, 20) =< 4.2, p = .03"
+- "id": "extract_test_stats.3"
+  "r": "statcheck:::extract_test_stats"
+  "py": "pytacheck.stats.statcheck.extract_test_stats"
+  "args":
+    "raw": "t(28) = %^&2.20, p = .03"
+- "id": "extract_df.0"
+  "r": "statcheck:::extract_df"
+  "py": "pytacheck.stats.statcheck.extract_df"
+  "args":
+    "raw": "t(28.5) = 2.20, p = .03"
+    "test_type": "t"
+- "id": "extract_df.1"
+  "r": "statcheck:::extract_df"
+  "py": "pytacheck.stats.statcheck.extract_df"
+  "args":
+    "raw": "F(I, 20) = 4.35, p = .05"
+    "test_type": "F"
+- "id": "extract_df.2"
+  "r": "statcheck:::extract_df"
+  "py": "pytacheck.stats.statcheck.extract_df"
+  "args":
+    "raw": "χ2(2, N = 1,000) = 3.84, p = .05"
+    "test_type": "Chi2"
+- "id": "extract_df.3"
+  "r": "statcheck:::extract_df"
+  "py": "pytacheck.stats.statcheck.extract_df"
+  "args":
+    "raw": "Qw(3) = 8.1, p = .04"
+    "test_type": "Qw"
+- "id": "extract_df.4"
+  "r": "statcheck:::extract_df"
+  "py": "pytacheck.stats.statcheck.extract_df"
+  "args":
+    "raw": " z = 2.1, p = .04"
+    "test_type": "Z"
+- "id": "extract_df.5"
+  "r": "statcheck:::extract_df"
+  "py": "pytacheck.stats.statcheck.extract_df"
+  "args":
+    "raw": "r(30) = .45, p = .01"
+    "test_type": "r"
+- "id": "extract_1tail.0"
+  "r": "statcheck:::extract_1tail"
+  "py": "pytacheck.stats.statcheck.extract_1tail"
+  "args":
+    "txt": "A one-tailed test"
+- "id": "extract_1tail.1"
+  "r": "statcheck:::extract_1tail"
+  "py": "pytacheck.stats.statcheck.extract_1tail"
+  "args":
+    "txt": "One sided"
+- "id": "extract_1tail.2"
+  "r": "statcheck:::extract_1tail"
+  "py": "pytacheck.stats.statcheck.extract_1tail"
+  "args":
+    "txt": "directional hypotheses"
+- "id": "extract_1tail.3"
+  "r": "statcheck:::extract_1tail"
+  "py": "pytacheck.stats.statcheck.extract_1tail"
+  "args":
+    "txt": "two-tailed"
+- "id": "extract_1tail.4"
+  "r": "statcheck:::extract_1tail"
+  "py": "pytacheck.stats.statcheck.extract_1tail"
+  "args":
+    "txt": "one\ntailed"
+- "id": "extract_pattern.0"
+  "r": "statcheck:::extract_pattern"
+  "py": "pytacheck.stats.statcheck.extract_pattern"
+  "args":
+    "txt": "t(28) = 2.20, p = .03"
+    "pattern": "[<>=]"
+- "id": "extract_pattern.1"
+  "r": "statcheck:::extract_pattern"
+  "py": "pytacheck.stats.statcheck.extract_pattern"
+  "args":
+    "txt": "P = .03 and p < .05"
+    "pattern": "p\\s?[<>=]\\s?\\d?\\.\\d+"
+- "id": "extract_pattern.2"
+  "r": "statcheck:::extract_pattern"
+  "py": "pytacheck.stats.statcheck.extract_pattern"
+  "args":
+    "txt": "no match"
+    "pattern": "x"
+- "id": "extract_pattern.case"
+  "r": "statcheck:::extract_pattern"
+  "py": "pytacheck.stats.statcheck.extract_pattern"
+  "args":
+    "txt": "P = .03 and p < .05"
+    "pattern": "p\\s?[<>=]"
+    "ignore.case": !!bool "false"
+- "id": "extract_pattern.vector"
+  "r": "statcheck:::extract_pattern"
+  "py": "pytacheck.stats.statcheck.extract_pattern"
+  "args":
+    "txt":
+      "$chr":
+      - "= 2.1, "
+      - "< 3, "
+    "pattern": "[<>=]"
+- "id": "compute_p.0"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": &id008
+      "$NA": !!bool "true"
+    "df2": !!float "28.0"
+    "two_tailed": !!bool "true"
+- "id": "compute_p.1"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "-2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "two_tailed": !!bool "false"
+- "id": "compute_p.2"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "F"
+    "test_stat": !!float "4.35"
+    "df1": !!float "1.0"
+    "df2": !!float "20.0"
+    "two_tailed": !!bool "true"
+- "id": "compute_p.3"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "F"
+    "test_stat": !!float "-1.0"
+    "df1": !!float "1.0"
+    "df2": !!float "20.0"
+    "two_tailed": !!bool "true"
+- "id": "compute_p.4"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Z"
+    "test_stat": !!float "1.96"
+    "df1": *id008
+    "df2": *id008
+    "two_tailed": !!bool "true"
+- "id": "compute_p.5"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Z"
+    "test_stat": !!float "-1.96"
+    "df1": *id008
+    "df2": *id008
+    "two_tailed": !!bool "false"
+- "id": "compute_p.6"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "r"
+    "test_stat": !!float "0.45"
+    "df1": *id008
+    "df2": !!float "30.0"
+    "two_tailed": !!bool "true"
+- "id": "compute_p.7"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "r"
+    "test_stat": !!float "-0.45"
+    "df1": *id008
+    "df2": !!float "30.0"
+    "two_tailed": !!bool "false"
+- "id": "compute_p.8"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Chi2"
+    "test_stat": !!float "3.84"
+    "df1": !!float "1.0"
+    "df2": *id008
+    "two_tailed": !!bool "true"
+- "id": "compute_p.9"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Q"
+    "test_stat": !!float "8.1"
+    "df1": !!float "3.0"
+    "df2": *id008
+    "two_tailed": !!bool "true"
+- "id": "compute_p.10"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Qb"
+    "test_stat": !!float "8.1"
+    "df1": !!float "3.0"
+    "df2": *id008
+    "two_tailed": !!bool "true"
+- "id": "compute_p.11"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Qw"
+    "test_stat": !!float "0.0"
+    "df1": !!float "3.0"
+    "df2": *id008
+    "two_tailed": !!bool "true"
+- "id": "compute_p.12"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Chi2"
+    "test_stat": !!float "3.84"
+    "df1": !!float "0.0"
+    "df2": *id008
+    "two_tailed": !!bool "true"
+- "id": "compute_p.13"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "40.0"
+    "df1": *id008
+    "df2": !!float "5000.0"
+    "two_tailed": !!bool "true"
+- "id": "compute_p.14"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "F"
+    "test_stat": !!float "1000.0"
+    "df1": !!float "3.0"
+    "df2": !!float "100000.0"
+    "two_tailed": !!bool "true"
+- "id": "compute_p.bad_type"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "W"
+    "test_stat": !!float "1.0"
+    "df1": !!float "1.0"
+    "df2": !!float "1.0"
+    "two_tailed": !!bool "true"
+- "id": "r2t.0"
+  "r": "statcheck:::r2t"
+  "py": "pytacheck.stats.statcheck.r2t"
+  "args":
+    "r": !!float "0.45"
+    "df": !!float "30.0"
+- "id": "r2t.1"
+  "r": "statcheck:::r2t"
+  "py": "pytacheck.stats.statcheck.r2t"
+  "args":
+    "r": !!float "-0.99"
+    "df": !!float "3.0"
+- "id": "remove_1000_sep.0"
+  "r": "statcheck:::remove_1000_sep"
+  "py": "pytacheck.stats.statcheck.remove_1000_sep"
+  "args":
+    "raw":
+      "$chr":
+      - "2,000.20"
+      - "1,234,567"
+      - "a, b"
+      - "12,3"
+- "id": "recover_minus_sign.0"
+  "r": "statcheck:::recover_minus_sign"
+  "py": "pytacheck.stats.statcheck.recover_minus_sign"
+  "args":
+    "raw":
+      "$chr":
+      - " −2.2"
+      - "%^&2.2"
+      - " 2.2"
+      - " -.5"
+      - "– 3"
+- "id": "error_test.0"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.03"
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.1"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.2"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.01"
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": "<"
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.3"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": "<"
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.4"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": ">"
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.5"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "test_type": "F"
+    "test_stat": !!float "4.35"
+    "df1": !!float "1.0"
+    "df2": !!float "20.0"
+    "p_comparison": "="
+    "test_comparison": "<"
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.6"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "test_type": "F"
+    "test_stat": !!float "4.35"
+    "df1": !!float "1.0"
+    "df2": !!float "20.0"
+    "p_comparison": "<"
+    "test_comparison": "<"
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.7"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "test_type": "F"
+    "test_stat": !!float "4.35"
+    "df1": !!float "1.0"
+    "df2": !!float "20.0"
+    "p_comparison": ">"
+    "test_comparison": "<"
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.8"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.01"
+    "test_type": "r"
+    "test_stat": !!float "0.45"
+    "df1": *id008
+    "df2": !!float "30.0"
+    "p_comparison": "="
+    "test_comparison": ">"
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.9"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.01"
+    "test_type": "r"
+    "test_stat": !!float "0.45"
+    "df1": *id008
+    "df2": !!float "30.0"
+    "p_comparison": "<"
+    "test_comparison": ">"
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.10"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.1"
+    "test_type": "r"
+    "test_stat": !!float "0.45"
+    "df1": *id008
+    "df2": !!float "30.0"
+    "p_comparison": ">"
+    "test_comparison": ">"
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.11"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": *id008
+    "test_type": "Z"
+    "test_stat": !!float "1.2"
+    "df1": *id008
+    "df2": *id008
+    "p_comparison": "ns"
+    "test_comparison": "="
+    "p_dec": *id008
+    "test_dec": !!float "1.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.12"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.0"
+    "test_type": "t"
+    "test_stat": !!float "12.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "3.0"
+    "test_dec": !!float "1.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "error_test.13"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.0"
+    "test_type": "t"
+    "test_stat": !!float "12.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "3.0"
+    "test_dec": !!float "1.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "false"
+- "id": "error_test.14"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "test_type": "t"
+    "test_stat": !!float "-1.8"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "1.0"
+    "two_tailed": !!bool "false"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "decision_error_test.0"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.1"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.2"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.3"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.4"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.5"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.6"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.7"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.8"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.9"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.10"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.11"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.12"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.13"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.14"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.15"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.16"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.17"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.18"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.19"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.20"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.21"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.22"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.23"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.24"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.25"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.051"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.26"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.27"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.06"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.28"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.29"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.04"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.30"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.31"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.05"
+    "test_comparison": "="
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.32"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.33"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.34"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.35"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.36"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.37"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.38"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.39"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.40"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.41"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.42"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.43"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.44"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.45"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.46"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.47"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.48"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.49"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.50"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.51"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.52"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.53"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.54"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.55"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.56"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.57"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.051"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.58"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.59"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.06"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.60"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.61"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.04"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.62"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.63"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.05"
+    "test_comparison": "<"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.64"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.65"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.66"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.67"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.68"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.69"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.70"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.71"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.72"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.73"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.74"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.75"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.76"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.77"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.78"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.79"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": "<"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.80"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.81"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.82"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.83"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.84"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.85"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.06"
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.86"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.87"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.05"
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": ">"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.88"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.89"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.051"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.90"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.91"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.06"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.92"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.93"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.04"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "decision_error_test.94"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "true"
+- "id": "decision_error_test.95"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": *id008
+    "computed_p": !!float "0.05"
+    "test_comparison": ">"
+    "p_comparison": "ns"
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!bool "false"
+- "id": "process_stats.0"
+  "r": "statcheck:::process_stats"
+  "py": "pytacheck.stats.statcheck.process_stats"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "reported_p": !!float "0.03"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "OneTailedInTxt": !!bool "false"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+    "pEqualAlphaSig": !!bool "true"
+    "OneTailedTxt": !!bool "false"
+    "OneTailedTests": !!bool "false"
+- "id": "process_stats.1"
+  "r": "statcheck:::process_stats"
+  "py": "pytacheck.stats.statcheck.process_stats"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "1.8"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "reported_p": !!float "0.04"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "1.0"
+    "OneTailedInTxt": !!bool "true"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+    "pEqualAlphaSig": !!bool "true"
+    "OneTailedTxt": !!bool "true"
+    "OneTailedTests": !!bool "false"
+- "id": "process_stats.2"
+  "r": "statcheck:::process_stats"
+  "py": "pytacheck.stats.statcheck.process_stats"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "1.8"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "reported_p": !!float "0.04"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "1.0"
+    "OneTailedInTxt": !!bool "true"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+    "pEqualAlphaSig": !!bool "true"
+    "OneTailedTxt": !!bool "false"
+    "OneTailedTests": !!bool "false"
+- "id": "process_stats.3"
+  "r": "statcheck:::process_stats"
+  "py": "pytacheck.stats.statcheck.process_stats"
+  "args":
+    "test_type": "F"
+    "test_stat": !!float "4.35"
+    "df1": !!float "1.0"
+    "df2": !!float "20.0"
+    "reported_p": !!float "0.02"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "OneTailedInTxt": !!bool "false"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+    "pEqualAlphaSig": !!bool "true"
+    "OneTailedTxt": !!bool "false"
+    "OneTailedTests": !!bool "false"
+- "id": "process_stats.4"
+  "r": "statcheck:::process_stats"
+  "py": "pytacheck.stats.statcheck.process_stats"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id008
+    "df2": !!float "28.0"
+    "reported_p": !!float "0.06"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "OneTailedInTxt": !!bool "true"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+    "pEqualAlphaSig": !!bool "true"
+    "OneTailedTxt": !!bool "true"
+    "OneTailedTests": !!bool "false"
+- "id": "calc_APA_factor.0"
+  "r": "statcheck:::calc_APA_factor"
+  "py": "pytacheck.stats.statcheck.calc_APA_factor"
+  "args":
+    "pRes":
+      "$df":
+        "Source":
+        - "1"
+        - "1"
+        - "2"
+        - "2"
+        - "2"
+        - "3"
+        "p_comp":
+        - "="
+        - "<"
+        - "="
+        - "="
+        - "<"
+        - "="
+    "Res":
+      "$df":
+        "Source":
+        - "1"
+        - "2"
+        - "2"
+        - "1"
+        "x":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+- "id": "summary.statcheck.0"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the Q result R gave another result's p-value by data.frame() recycling (a false error)"}
+  "r": "statcheck:::summary.statcheck"
+  "py": "pytacheck.stats.statcheck.summary_statcheck"
+  "args":
+    "object":
+      "$call":
+        "r": "statcheck::statcheck"
+        "py": "pytacheck.stats.statcheck.statcheck"
+        "args":
+          "texts":
+            "$chr": *id004
+          "messages": !!bool "false"
+  "py_args":
+    "x":
+      "$call":
+        "r": "statcheck::statcheck"
+        "py": "pytacheck.stats.statcheck.statcheck"
+        "args":
+          "texts":
+            "$chr": *id004
+          "messages": !!bool "false"
+  "py_drop":
+  - "object"
+- "id": "trim.0"
+  "r": "statcheck::trim"
+  "py": "pytacheck.stats.statcheck.trim"
+  "args":
+    "object":
+      "$call":
+        "r": "statcheck::statcheck"
+        "py": "pytacheck.stats.statcheck.statcheck"
+        "args":
+          "texts":
+            "$chr":
+            - "The effect was significant, t(28) = 2.20, p = .03."
+            - "The effect was significant, t(28) = 2.20, p = .04."
+            - "A negative effect, t(28) = -2.20, p = .036."
+            - "Significant, t(28) = 2.20, p < .05."
+            - "Too small, t(28) = 2.20, p < .01."
+            - "Not significant, t(28) = 1.20, p > .05."
+            - "Wrongly non-significant, t(28) = 2.20, p > .05."
+            - "Bounded statistic t(28) < 2.20, p = .03 here."
+            - "Bounded statistic t(28) > 2.20, p = .03 here."
+            - "Bounded statistic t(28) > 2.20, p < .05 here."
+          "messages": !!bool "false"
+  "py_drop":
+  - "object"
+  "py_args":
+    "x":
+      "$call":
+        "r": "statcheck::statcheck"
+        "py": "pytacheck.stats.statcheck.statcheck"
+        "args":
+          "texts":
+            "$chr":
+            - "The effect was significant, t(28) = 2.20, p = .03."
+            - "The effect was significant, t(28) = 2.20, p = .04."
+            - "A negative effect, t(28) = -2.20, p = .036."
+            - "Significant, t(28) = 2.20, p < .05."
+            - "Too small, t(28) = 2.20, p < .01."
+            - "Not significant, t(28) = 1.20, p > .05."
+            - "Wrongly non-significant, t(28) = 2.20, p > .05."
+            - "Bounded statistic t(28) < 2.20, p = .03 here."
+            - "Bounded statistic t(28) > 2.20, p = .03 here."
+            - "Bounded statistic t(28) > 2.20, p < .05 here."
+          "messages": !!bool "false"
+- "id": "stat_display_value.0"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "0.840583589880873"
+- "id": "stat_display_value.1"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "0.840583589880873"
+- "id": "stat_display_value.2"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "1.0e-05"
+- "id": "stat_display_value.3"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "100000.0"
+- "id": "stat_display_value.4"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "397.0"
+- "id": "stat_display_value.5"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "397"
+- "id": "stat_display_value.6"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!bool "true"
+- "id": "stat_display_value.7"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "1.2.3"
+- "id": "stat_display_value.8"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": " 5"
+- "id": "stat_display_value.9"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "Inf"
+- "id": "stat_display_value.10"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "-0.0004"
+- "id": "stat_display_value.11"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "5."
+- "id": "stat_display_value.12"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "4.7e-108"
+- "id": "stat_display_value.13"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": ".841"
+- "id": "stat_display_value.14"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "-2.5"
+- "id": "stat_display_value.15"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "2.5"
+- "id": "stat_display_value.16"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "abc"
+- "id": "stat_display_value.17"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "1e3"
+- "id": "stat_display_value.18"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "-12.34567"
+- "id": "stat_display_value.19"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "0.0005"
+- "id": "stat_display_value.20"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "0.0004999"
+- "id": "stat_display_value.21"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": "0.0005"
+- "id": "stat_display_value.22"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x": !!float "12345678.9"
+- "id": "stat_display_value.na"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x":
+      "$NA": !!bool "true"
+- "id": "stat_display_value.null"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x":
+      "$null": !!bool "true"
+- "id": "stat_display_value.int"
+  "r": "metacheck:::.stat_display_value"
+  "py": "pytacheck.stats.helpers._stat_display_value"
+  "args":
+    "x":
+      "$int":
+      - !!int "42"
+- "id": "stat_html_escape.vector"
+  "r": "metacheck:::.stat_html_escape"
+  "py": "pytacheck.stats.helpers._stat_html_escape"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(\"a<b & c>d\", \"plain\", \"&amp;\", NA)"
+        "py": "[\"a<b & c>d\", \"plain\", \"&amp;\", None]"
+- "id": "stat_html_escape.null"
+  "r": "metacheck:::.stat_html_escape"
+  "py": "pytacheck.stats.helpers._stat_html_escape"
+  "args":
+    "x":
+      "$null": !!bool "true"
+- "id": "stat_html_escape.number"
+  "r": "metacheck:::.stat_html_escape"
+  "py": "pytacheck.stats.helpers._stat_html_escape"
+  "args":
+    "x": !!float "0.5"
+- "id": "stato_strip_variant.vector"
+  "r": "metacheck:::.stato_strip_variant"
+  "py": "pytacheck.stats.helpers._stato_strip_variant"
+  "args":
+    "key":
+      "$chr":
+      - "f[gg]"
+      - "p[hf]"
+      - "df[none]"
+      - "stat[stud]"
+      - "stat"
+      - "a[b]c"
+      - "x[]"
+      - "[y]"
+- "id": "r_stat_pattern"
+  "r": "metacheck:::.r_stat_pattern"
+  "py": "pytacheck.stats.helpers._r_stat_pattern"
+  "args": {}
+- "id": "stat_check.demo"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$paper": "demo"
+- "id": "stat_check.psychsci"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$read": *id009
+- "id": "stat_check.psychsci_demo"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+      - "upstream/metacheck/inst/demos/to_err_is_human.json"
+- "id": "stat_check.red"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "This is right: t(17.4), p = 0.137"
+        - "This is wrong: t(97.2) = -1.96, p = 0.152"
+  "compare": &id010
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_check.red.several"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "module": "stat_check"
+  "args":
+    "paper": *id002
+  "compare": *id010
+- "id": "stat_check.green"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Fine: t(28) = 2.20, p = .036."
+        - "Also fine: F(1, 20) = 4.35, p = .05."
+        - "And r(28) = 1.22, p = .03."
+  "compare": *id010
+- "id": "stat_check.none"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "No statistics at all."
+        - "Only 42 numbers."
+  "compare": *id010
+- "id": "stat_check.no_validated"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Correlated r(28) = .22, p = .24."
+        - "Chi-square χ2(1) = 10.2, p = .001."
+  "compare": *id010
+- "id": "stat_check.paperlist.none"
+  "module": "stat_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(\"No statistics.\"), test_paper(\"None here either.\"))"
+        "py": "pc.PaperList([pc.test_paper(\"No statistics.\"), pc.test_paper(\"None here either.\")])"
+  "compare": *id010

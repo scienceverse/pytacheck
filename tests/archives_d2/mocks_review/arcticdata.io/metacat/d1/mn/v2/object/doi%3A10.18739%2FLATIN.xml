@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" packageId="doi:10.18739/LATIN">
+  <dataset>
+    <title>Café soils, Åland</title>
+    <creator><individualName><givenName>Jörg</givenName><surName>Müller</surName></individualName></creator>
+  </dataset>
+</eml:eml>

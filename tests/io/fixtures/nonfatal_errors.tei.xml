@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+<teiHeader><fileDesc><titleStmt><title level="a" type="main">Non-fatal parser errors</title></titleStmt></fileDesc></teiHeader>
+<text><body>
+<div xmlns="http://www.tei-c.org/ns/1.0" xml:id="x"><head>Results</head><p xml:id="x">A duplicated xml:id. And an <ptr xlink:href="u"/> undeclared prefix.</p></div>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><figDesc>Caption <p:q>undeclared element prefix</p:q>.</figDesc></figure>
+</body></text></TEI>

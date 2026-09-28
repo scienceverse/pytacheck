@@ -1,0 +1,124 @@
+{
+  "id": "crossref_query_parse.match",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "score",
+      "type",
+      "title",
+      "author",
+      "publisher",
+      "container-title",
+      "year",
+      "volume",
+      "issue",
+      "page",
+      "URL"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1093/cercor/bhn181"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          147.56873
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The Observation and Execution of Actions Share Motor and Somatosensory Voxels in all Tested Subjects: Single-Subject Analyses of Unsmoothed fMRI Data"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "V.",
+                  "C."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gazzola",
+                  "Keysers"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Oxford University Press (OUP)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Cerebral Cortex"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2009
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "19"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1239-1255"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1093/cercor/bhn181"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

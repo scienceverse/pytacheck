@@ -1,0 +1,40 @@
+{
+  "id": "mplus_export_syntax.twolevel",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "path",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/code/twolevel.inp"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "TITLE: Two-level regression;",
+          "DATA: FILE = data.dat;",
+          "VARIABLE: NAMES = clus y x w;",
+          "CLUSTER = clus;",
+          "WITHIN = x;",
+          "BETWEEN = w;",
+          "ANALYSIS: TYPE = TWOLEVEL;",
+          "MODEL:",
+          "%WITHIN%",
+          "y ON x;",
+          "%BETWEEN%",
+          "y ON w;"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "code_read.demo_demo_Rproj",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Version: 1.0",
+      "",
+      "RestoreWorkspace: No",
+      "SaveWorkspace: No",
+      "AlwaysSaveHistory: Default",
+      "",
+      "EnableCodeIndexing: Yes",
+      "UseSpacesForTab: Yes",
+      "NumSpacesForTab: 2",
+      "Encoding: UTF-8",
+      "",
+      "RnwWeave: Sweave",
+      "LaTeX: pdfLaTeX"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

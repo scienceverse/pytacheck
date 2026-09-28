@@ -1,0 +1,38 @@
+{
+  "id": "locate.boundary.disclosure_blank_next",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      ".where_acknows_txt",
+      ".where_refs_txt",
+      "get_disclosure_1",
+      "get_acknow_1"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4,
+          5
+        ]
+      },
+      {
+        "t": "int",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,359 @@
+{
+  "id": "reshare_info.mock.links_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "reshare_url",
+      "reshare_id",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://reshare.ukdataservice.ac.uk/854001",
+          "10.5255/UKDA-SN-854100"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://reshare.ukdataservice.ac.uk/854001",
+          "10.5255/UKDA-SN-854100"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "854001",
+          "854100"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Interviews with rural households, 2016-2018",
+          "An empty deposit"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5255/UKDA-SN-854001",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-01 10:00:00",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-02-03 04:05:06",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              "Solo",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "fileid",
+                  "filename",
+                  "filesize",
+                  "hash",
+                  "hash_type",
+                  "uri",
+                  "content"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      1001
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "interviews.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      21
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "3eaa201f7665ca5d4d366641daaae1ec"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "MD5"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://reshare.ukdataservice.ac.uk/id/file/1001"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "fileid",
+                  "filename",
+                  "filesize",
+                  "hash",
+                  "hash_type",
+                  "uri",
+                  "content"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      1002
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "guide.pdf"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      20000000
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "c1e29d70414fb62a0fae4d8a57850c6d"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "MD5"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://reshare.ukdataservice.ac.uk/id/file/1002"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "documentation"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "fileid",
+                  "filename",
+                  "filesize",
+                  "hash",
+                  "hash_type",
+                  "uri",
+                  "content"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      1003
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "notes.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "6c7ba9c5a141421e1c03cb9807c97c74"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "MD5"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://reshare.ukdataservice.ac.uk/id/file/1003"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "fileid",
+                  "filename",
+                  "filesize",
+                  "hash_type",
+                  "uri",
+                  "content"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      1004
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "gone.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "SHA1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://reshare.ukdataservice.ac.uk/id/file/1004"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

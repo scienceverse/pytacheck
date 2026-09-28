@@ -1,0 +1,9 @@
+{
+  "id": "regcheck_compare.msg.blank_paper",
+  "ok": false,
+  "error": "paper_text must be a single non-empty string",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,88 @@
+{
+  "id": "extract_urls.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "al.Premotor",
+          "sagepub.com/content/by/supplemental-data"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5,
+          167
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          14
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi=10.1177%2F0956797613520608&amp;domain=pdf&amp;date_stamp=2014-02-18\">520608P SSXXX10.1177/0956797613520608Michael et al.Premotor Homunculus in Action Understanding<\/ref> research-article2014",
+          "Additional supporting information may be found at <ref type=\"url\" target=\"http://pss\">http://pss<\/ref> .sagepub.com/content/by/supplemental-data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0956797613520608",
+          "0956797614527830"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract",
+          "Supplemental Material"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abstract",
+          "annex"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

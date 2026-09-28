@@ -1,0 +1,230 @@
+name: CI
+
+# Linux jobs run on the self-hosted runner named by the CI_RUNNER variable
+# (pytacheck-fridge-ci: the fridge runner) when the repository is private and
+# the code comes from this repository (not a fork); otherwise, and whenever
+# CI_RUNNER is unset, on GitHub's runners. The macOS and Windows test legs run
+# only when the Linux jobs are GitHub-hosted too: the fridge runner is Linux
+# only, and a private repository pays for GitHub's runners. A self-hosted
+# runner keeps its workspace, caches and home directory between jobs, so
+# scratch files go to $RUNNER_TEMP (emptied per job), not /tmp, and no step
+# changes the runner user's global configuration.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.9.8"
+  PRIMARY_PYTHON: "3.12"
+  # Only uv's own Python builds. uv otherwise takes an installed interpreter of
+  # the requested version over downloading one, and the fridge runner's Debian
+  # python3.13 comes without headers, so sdists such as cdifflib (in the bibr
+  # extra) fail to build against it.
+  UV_PYTHON_PREFERENCE: only-managed
+
+jobs:
+  lint:
+    name: Lint & types
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PRIMARY_PYTHON }}
+      - name: Lockfile is current
+        run: uv lock --check
+      - run: uv sync --locked --all-extras
+      - name: ruff
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: mypy
+        run: uv run mypy
+
+  # Unit tests on every platform, with the tier-1 parity cases (the realistic
+  # corpus, parity/corpus.toml); the `parity` job runs every case once.
+  test:
+    name: Tests (${{ matrix.os }}, py${{ matrix.python }})
+    # `ubuntu-latest` names the Linux legs (and their check names), wherever
+    # they run
+    runs-on: >-
+      ${{ matrix.os == 'ubuntu-latest' &&
+      github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.11", "3.12", "3.13", "3.14"]
+        # left out when the Linux legs go to CI_RUNNER (see the header)
+        include: >-
+          ${{ fromJSON(github.event.repository.private &&
+          (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)
+          && vars.CI_RUNNER && '[]' ||
+          '[{"os": "macos-latest", "python": "3.12"}, {"os": "windows-latest", "python": "3.12"}]') }}
+    # fixtures are hashed byte for byte: check them out as committed, not with
+    # CRLF (core.eol too: upstream/metacheck marks its files `text=auto`). Set
+    # through the environment, not `git config --global`, which would outlive
+    # the job on a self-hosted runner.
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true # upstream/metacheck: fixtures and recorded API responses
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ matrix.python }}
+      - run: uv sync --locked --all-extras
+      - uses: ./.github/actions/xdist-workers
+      - name: Tests (unit + tier-1 parity against committed R goldens)
+        run: uv run pytest -n auto -m "not network and not r and (not parity or tier1)" --cov --cov-report=xml
+      - uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.0.2
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  # Every parity case once (docs/PARITY.md), with the per-case report, and the
+  # accuracy gate: pytacheck against metacheck on the realistic corpus, scored
+  # from the committed R outputs (parity/accuracy/golden).
+  parity:
+    name: Parity and accuracy (committed R goldens)
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PRIMARY_PYTHON }}
+      - run: uv sync --locked --all-extras
+      - name: Parity (every case)
+        run: >-
+          uv run python -m parity check --jobs 0
+          --report parity/_out/report.json --md "$GITHUB_STEP_SUMMARY"
+      - name: Accuracy gate (realistic corpus)
+        if: always()
+        run: >-
+          uv run python -m parity accuracy --gate
+          --report parity/_out/accuracy.json --md "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: parity-report
+          path: |
+            parity/_out/report.json
+            parity/_out/accuracy.json
+
+  # pandas 3 stores strings in Arrow when pyarrow is installed, and Arrow
+  # rejects text that is not valid Unicode: the realistic cases must pass there too.
+  parity-pyarrow:
+    name: Tier-1 parity with pyarrow
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PRIMARY_PYTHON }}
+      - run: uv sync --locked --all-extras
+      - uses: ./.github/actions/xdist-workers
+      - name: Tier-1 parity cases with pyarrow installed
+        run: uv run --with pyarrow pytest -n auto -m "parity and tier1"
+
+  benchmark:
+    name: Performance
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PRIMARY_PYTHON }}
+      - run: uv sync --locked --all-extras
+      - run: uv run pytest benchmarks --benchmark-only --benchmark-json=benchmark.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: benchmark
+          path: benchmark.json
+
+  build:
+    name: Build distributions
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PRIMARY_PYTHON }}
+      - run: uv build
+      - name: Check the wheel installs and runs
+        run: |
+          uv venv "$RUNNER_TEMP/wheel-env"
+          uv pip install --python "$RUNNER_TEMP/wheel-env" dist/*.whl
+          "$RUNNER_TEMP/wheel-env"/bin/pytacheck version
+          "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
+      - name: Audit dependencies
+        run: uvx pip-audit --strict -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist
+          path: dist/

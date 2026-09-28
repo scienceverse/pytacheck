@@ -1,0 +1,5 @@
+# Project
+
+Run with:
+
+R version 4.2.0 (2022-04-22)

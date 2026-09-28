@@ -1,0 +1,44 @@
+{
+  "id": "repro_redirect_writes.named_arg",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "call_text",
+      "replacement",
+      "redirected_name",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(x, file = \"../Data/Cleaned/x.csv\", row.names = FALSE)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(x,\"{{REPRO_OUTPUT}}x.csv\", row.names = FALSE)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

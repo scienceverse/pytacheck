@@ -1,0 +1,331 @@
+{
+  "id": "stats.synthetic.stat.ZQ",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "test_type",
+      "df1",
+      "df2",
+      "test_comp",
+      "test_value",
+      "p_comp",
+      "reported_p",
+      "computed_p",
+      "raw",
+      "error",
+      "decision_error",
+      "one_tailed_in_txt",
+      "apa_factor",
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Z",
+          "Z",
+          "Q",
+          "Qw",
+          "Qb",
+          "Qw",
+          "Qb",
+          "Qw",
+          "Q"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          167.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.96,
+          2.58,
+          8.1,
+          8.1,
+          8.1,
+          8.1,
+          8.1,
+          8.1,
+          0.85
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "<",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.05,
+          0.01,
+          0.04,
+          0.04,
+          0.04,
+          0.04,
+          0.04,
+          0.04,
+          0.03
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.0499957902964409,
+          0.00988003151554129,
+          0.0439895899152726,
+          0.0439895899152726,
+          0.0439895899152726,
+          0.0439895899152726,
+          0.0439895899152726,
+          0.0439895899152726,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(z = 1.96, p = .05",
+          "(Z = 2.58, p < .01",
+          "Q(3) = 8.1, p = .04",
+          "Qw(3) = 8.1, p = .04",
+          "Qb(3) = 8.1, p = .04",
+          "Q-within(3) = 8.1, p = .04",
+          "Q-between(3) = 8.1, p = .04",
+          "Q-Between(3) = 8.1, p = .04",
+          "QB(167.5) = 0.85, Nns"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          47,
+          48,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          64
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Normal (z = 1.96, p = .05).",
+          "Normal (Z = 2.58, p < .01).",
+          "Heterogeneity Q(3) = 8.1, p = .04.",
+          "Heterogeneity Qw(3) = 8.1, p = .04.",
+          "Heterogeneity Qb(3) = 8.1, p = .04.",
+          "Heterogeneity Q-within(3) = 8.1, p = .04.",
+          "Heterogeneity Q-between(3) = 8.1, p = .04.",
+          "Heterogeneity Q-Between(3) = 8.1, p = .04.",
+          "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Normal (z = 1.96, p = .05).",
+          "Normal (Z = 2.58, p < .01).",
+          "Heterogeneity Q(3) = 8.1, p = .04.",
+          "Heterogeneity Qw(3) = 8.1, p = .04.",
+          "Heterogeneity Qb(3) = 8.1, p = .04.",
+          "Heterogeneity Q-within(3) = 8.1, p = .04.",
+          "Heterogeneity Q-between(3) = 8.1, p = .04.",
+          "Heterogeneity Q-Between(3) = 8.1, p = .04.",
+          "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

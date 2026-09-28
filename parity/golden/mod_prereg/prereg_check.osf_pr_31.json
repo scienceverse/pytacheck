@@ -1,0 +1,283 @@
+{
+  "id": "prereg_check.osf_pr_31",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "authors",
+          "description",
+          "research_questions",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "existing_data",
+          "existing_data_explanation",
+          "data_collection_procedures",
+          "sample_size",
+          "manipulated_variables",
+          "measured_variables",
+          "statistical_tests",
+          "transformations",
+          "inference_criteria",
+          "data_exclusion_criteria",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ego depletion pre-registered study"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7qcxa"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/7qcxa"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2019-09-19T16:02:01.290943"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2023-12-13T13:19:34.800058"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2019-09-19T16:02:01.270059"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-7qcxa-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Hause Lin, Michael Inzlicht, Blair Saunders, Malte Friese, Nathan J. Evans"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We submitted a manuscript detailing a within-subjects depletion paradigm (N = 686 across four studies). In the manuscript, we fitted the EZ-diffusion model to the Stroop data, and our reviewer suggested we enlist the help of an independent expert modeler to fit more complicated diffusion models specifically designed for conflict tasks. The reviewer also suggested we preregister the extra analyses and share blinded data (with condition labels shuffled) with the modeler."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1. We expect the boundary parameter to be smaller in the high than low demand condition.\n2. We expect the drift rate for the controlled process to be similar (i.e., no significant difference) between the high and low demand conditions.\n3. We expect the drift rate for the automatic process to be similar (i.e., no significant difference) between the high and low demand conditions."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Within-subject design. See attached pdf for manuscript submitted to journal. 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Registration prior to analysis of the data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We are pre-registering additional analyses suggested by a reviewer of our manuscript. In our manuscript, we fitted the EZ-diffusion model to participants' Stroop data. The reviewer suggested we enlist the help of an independent expert modeler to fit more complex diffusion models designed specifically for conflict tasks. Our expert modeler has access to our previous pre-registration protocols and a blinded version of the data, with the condition labels (high/low-demand) shuffled to prevent significance seeking."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The data have already been collected (undergraduate students at a North American university and online Amazon MTurker)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We used within-subjects designs in four studies (total N = 686)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants were assigned low demand condition on one day and the high demand condition on another day."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Three key parameters: drift rate for the controlled process, drift rate for the automatic process, boundary (or threshold). Specifically, the drift rate for the automatic process will be reflected as changes in the maximum amplitude of the gamma function that controls the drift rate for the automatic process in the diffusion model for conflict tasks."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will fit linear mixed effects models using frequentist and Bayesian approaches, using the packages lme4 and brms respectively. As with the models reported in the manuscript (see attached pdf), we will use the following syntax to fit the hierarchical models: \n\noutcome ~ condition + (1 | participant)  # fitted separately to each study (4 studies)\noutcome ~ condition + (1 | study/participant)  # fitted once to \"summarize\" the effect of condition across four studies 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The low demand group will be coded as -0.5 and the high demand group as 0.5. Congruent and incongruent Stroop trials were coded as -0.5 and 0.5 respectively."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Since we are running additional (and exploratory) analyses suggested by our manuscript's reviewer, we will not be focusing on inferential statistics. Instead, as suggested by the reviewer, we are interested in exploring whether the more complicated diffusion models can provide extra insights (relative to the EZ-diffusion model)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will use the same exclusion criteria described in our manuscript."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_7qcxa"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/7qcxa' target='_blank'>7qcxa<\/a>\", \n    title = \"Ego depletion pre-registered study\", template = \"OSF Preregistration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"7qcxa\", sample_size = \"We used within-subjects designs in four studies (total N = 686).\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"authors\", \"description\", \"research_questions\", \"study_type\", \n\"blinding\", \"study_design_overview\", \"existing_data\", \"existing_data_explanation\", \n\"data_collection_procedures\", \"sample_size\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"transformations\", \n\"inference_criteria\", \"data_exclusion_criteria\", \"paper_id\"), \n    \"Preregistration 1\" = c(\"OSF Preregistration\", \"Ego depletion pre-registered study\", \n    \"7qcxa\", \"https://osf.io/7qcxa\", \"2019-09-19T16:02:01.290943\", \n    \"2023-12-13T13:19:34.800058\", \"2019-09-19T16:02:01.270059\", \n    \"\", \"https://archive.org/details/osf-registrations-7qcxa-v1\", \n    \"Hause Lin, Michael Inzlicht, Blair Saunders, Malte Friese, Nathan J. Evans\", \n    \"We submitted a manuscript detailing a within-subjects depletion paradigm (N = 686 across four studies). In the manuscript, we fitted the EZ-diffusion model to the Stroop data, and our reviewer suggested we enlist the help of an independent expert modeler to fit more complicated diffusion models specifically designed for conflict tasks. The reviewer also suggested we preregister the extra analyses and share blinded data (with condition labels shuffled) with the modeler.\", \n    \"1. We expect the boundary parameter to be smaller in the high than low demand condition.<br>2. We expect the drift rate for the controlled process to be similar (i.e., no significant difference) between the high and low demand conditions.<br>3. We expect the drift rate for the automatic process to be similar (i.e., no significant difference) between the high and low demand conditions.\", \n    \"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n    \"Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.\", \n    \"Within-subject design. See attached pdf for manuscript submitted to journal. 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b\", \n    \"Registration prior to analysis of the data\", \"We are pre-registering additional analyses suggested by a reviewer of our manuscript. In our manuscript, we fitted the EZ-diffusion model to participants' Stroop data. The reviewer suggested we enlist the help of an independent expert modeler to fit more complex diffusion models designed specifically for conflict tasks. Our expert modeler has access to our previous pre-registration protocols and a blinded version of the data, with the condition labels (high/low-demand) shuffled to prevent significance seeking.\", \n    \"The data have already been collected (undergraduate students at a North American university and online Amazon MTurker).\", \n    \"We used within-subjects designs in four studies (total N = 686).\", \n    \"Participants were assigned low demand condition on one day and the high demand condition on another day.\", \n    \"Three key parameters: drift rate for the controlled process, drift rate for the automatic process, boundary (or threshold). Specifically, the drift rate for the automatic process will be reflected as changes in the maximum amplitude of the gamma function that controls the drift rate for the automatic process in the diffusion model for conflict tasks.\", \n    \"We will fit linear mixed effects models using frequentist and Bayesian approaches, using the packages lme4 and brms respectively. As with the models reported in the manuscript (see attached pdf), we will use the following syntax to fit the hierarchical models: <br><br>outcome ~ condition + (1 | participant)  # fitted separately to each study (4 studies)<br>outcome ~ condition + (1 | study/participant)  # fitted once to \\\"summarize\\\" the effect of condition across four studies 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b\", \n    \"The low demand group will be coded as -0.5 and the high demand group as 0.5. Congruent and incongruent Stroop trials were coded as -0.5 and 0.5 respectively.\", \n    \"Since we are running additional (and exploratory) analyses suggested by our manuscript's reviewer, we will not be focusing on inferential statistics. Instead, as suggested by the reviewer, we are interested in exploring whether the more complicated diffusion models can provide extra insights (relative to the EZ-diffusion model).\", \n    \"We will use the same exclusion criteria described in our manuscript.\", \n    \"p_7qcxa\")), row.names = c(\"template_name\", \"title\", \"id\", \n\"link\", \"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"authors\", \"description\", \"research_questions\", \"study_type\", \n\"blinding\", \"study_design_overview\", \"existing_data\", \"existing_data_explanation\", \n\"data_collection_procedures\", \"sample_size\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"transformations\", \n\"inference_criteria\", \"data_exclusion_criteria\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_7qcxa"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

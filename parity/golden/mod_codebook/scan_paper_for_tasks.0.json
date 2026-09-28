@@ -1,0 +1,15 @@
+{
+  "id": "scan_paper_for_tasks.0",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Stroop task",
+      "Reaction Time"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

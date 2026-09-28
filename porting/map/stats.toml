@@ -1,0 +1,54 @@
+# R source -> Python location for the stats area (see docs/PORTING.md).
+#
+# R/stat_helpers.R also (re)defines .stat_num_to_chr(), .stat_sanitize_id(),
+# .norm_stat_name(), .norm_value(), .norm_interval(), .stat_is_placeholder(),
+# .stat_is_label_col() and .table_header_ambiguous(). The installed package uses
+# these stat_helpers.R definitions (it is collated after the other files), but
+# their bodies are identical to the ones in R/stat-output.R, R/stat-tables.R,
+# R/match-reported.R, R/match-table.R and R/extract-tests.R, so they are ported
+# with those files (see porting/symbols.json). A change to them in
+# R/stat_helpers.R must be applied to the files listed below.
+#
+# The statcheck R package (1.5.0, a pinned dependency of metacheck, not part of
+# the upstream submodule) is ported in src/pytacheck/stats/statcheck.py (R's
+# nmath/round primitives it relies on in src/pytacheck/stats/_rmath.py); its
+# functions are listed with a "statcheck::" prefix. Not ported (porting/skip.toml):
+# its PDF/HTML file front ends, plot.statcheck(), identify.statcheck() and
+# statcheckReport(), none of which metacheck calls.
+
+[files]
+"R/stats.R" = ["src/pytacheck/stats/core.py"]
+"R/stat_helpers.R" = [
+    "src/pytacheck/stats/helpers.py",
+    "src/pytacheck/statout/stat_output.py",
+    "src/pytacheck/statout/stat_tables.py",
+    "src/pytacheck/statout/match_reported.py",
+    "src/pytacheck/statout/match_table.py",
+    "src/pytacheck/text/extract_tests.py",
+]
+"inst/modules/stat_check.R" = ["src/pytacheck/modules/stat_check.py"]
+
+[functions]
+stats = "pytacheck.stats.core:stats"
+".r_stat_pattern" = "pytacheck.stats.helpers:_r_stat_pattern"
+".stat_display_value" = "pytacheck.stats.helpers:_stat_display_value"
+".stat_html_escape" = "pytacheck.stats.helpers:_stat_html_escape"
+".stato_strip_variant" = "pytacheck.stats.helpers:_stato_strip_variant"
+"module:stat_check" = "pytacheck.modules.stat_check:stat_check"
+"statcheck::statcheck" = "pytacheck.stats.statcheck:statcheck"
+"statcheck::trim" = "pytacheck.stats.statcheck:trim"
+"statcheck:::summary.statcheck" = "pytacheck.stats.statcheck:summary_statcheck"
+"statcheck:::extract_stats" = "pytacheck.stats.statcheck:extract_stats"
+"statcheck:::extract_pattern" = "pytacheck.stats.statcheck:extract_pattern"
+"statcheck:::extract_df" = "pytacheck.stats.statcheck:extract_df"
+"statcheck:::extract_test_stats" = "pytacheck.stats.statcheck:extract_test_stats"
+"statcheck:::extract_p_value" = "pytacheck.stats.statcheck:extract_p_value"
+"statcheck:::extract_1tail" = "pytacheck.stats.statcheck:extract_1tail"
+"statcheck:::remove_1000_sep" = "pytacheck.stats.statcheck:remove_1000_sep"
+"statcheck:::recover_minus_sign" = "pytacheck.stats.statcheck:recover_minus_sign"
+"statcheck:::compute_p" = "pytacheck.stats.statcheck:compute_p"
+"statcheck:::r2t" = "pytacheck.stats.statcheck:r2t"
+"statcheck:::error_test" = "pytacheck.stats.statcheck:error_test"
+"statcheck:::decision_error_test" = "pytacheck.stats.statcheck:decision_error_test"
+"statcheck:::process_stats" = "pytacheck.stats.statcheck:process_stats"
+"statcheck:::calc_APA_factor" = "pytacheck.stats.statcheck:calc_APA_factor"

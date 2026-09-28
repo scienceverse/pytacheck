@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "nosch",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/nosch/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "nosch",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/nosch/",
+   "html": "https://osf.io/nosch/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

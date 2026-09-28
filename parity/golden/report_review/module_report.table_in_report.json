@@ -1,0 +1,16 @@
+{
+  "id": "module_report.table_in_report",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ℹ️ Flexible  Module {#flexible--module .info}\n\nS.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = 1L), class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nReturns what it is given (report review tests).\n\nFirst details.End text.\n\nThis module was developed by A One, B Two, C Three and D Four\n\n:::\n\n\n::: {.validation}\nValidation: One.\n:::\n\n::: {.validation}\nValidation: Two.\n:::",
+      "### ℹ️ Flexible  Module {#flexible--module .info}\n\nS.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = 1:8), class = \"data.frame\", row.names = c(NA, \n-8L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nReturns what it is given (report review tests).\n\nFirst details.End text.\n\nThis module was developed by A One, B Two, C Three and D Four\n\n:::\n\n\n::: {.validation}\nValidation: One.\n:::\n\n::: {.validation}\nValidation: Two.\n:::",
+      "### ℹ️ Flexible  Module {#flexible--module .info}\n\nS.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = 1:40), class = \"data.frame\", row.names = c(NA, \n-40L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nReturns what it is given (report review tests).\n\nFirst details.End text.\n\nThis module was developed by A One, B Two, C Three and D Four\n\n:::\n\n\n::: {.validation}\nValidation: One.\n:::\n\n::: {.validation}\nValidation: Two.\n:::"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,39 @@
+{
+  "id": ".dataone_info.review.root_prefix_undeclared",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Namespace prefix eml on eml is not defined [201]"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dataone_host",
+      "dataone_pid",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "arcticdata.io"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.18739/ROOTNS"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unsupported_metadata_format"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

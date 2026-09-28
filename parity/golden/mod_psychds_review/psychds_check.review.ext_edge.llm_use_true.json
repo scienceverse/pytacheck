@@ -1,0 +1,398 @@
+{
+  "id": "psychds_check.review.ext_edge.llm_use_true",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 18,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "README.café",
+              "LICENSE.v2-final",
+              "README.md~",
+              "data.tar.gz",
+              ".hidden",
+              "Book1.XLSX",
+              "x.RData",
+              "t.TSV",
+              "~$Book1.xlsx",
+              "",
+              "dataset_description.JSON",
+              "CHANGES",
+              "dir/",
+              "Ärger Daten-2.csv",
+              "readme",
+              "x.csv.bak",
+              "CHANGELOG.md",
+              "Changes.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "documentation",
+              "documentation",
+              "documentation",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "code",
+              "documentation",
+              "materials",
+              "data",
+              "documentation",
+              "data",
+              "documentation",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              null,
+              null,
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              null,
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "docs/README.café",
+              "LICENSE.v2-final",
+              "README.md~",
+              "data/data.tar.gz",
+              ".hidden",
+              "Book1.XLSX",
+              "x.RData",
+              "data/t.TSV",
+              "~$Book1.xlsx",
+              "",
+              "dataset_description.JSON",
+              "old/CHANGES",
+              "dir/",
+              "x/Ärger Daten-2.csv",
+              "readme",
+              "x.csv.bak",
+              "CHANGELOG.md",
+              "a/Changes.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.café",
+              "LICENSE",
+              "README",
+              "data/data.tar.gz",
+              "data/.hidden",
+              "data/study-Book1_data.csv",
+              "data/study-x_data.csv",
+              "data/study-t_data.csv",
+              "data/study-Book1_data.csv",
+              "data/study-file10_data.csv",
+              "analysis/dataset_description.JSON",
+              "documentation/CHANGES",
+              "materials/dir",
+              "data/study-rgerDaten2_data.csv",
+              "README",
+              "data/x.csv.bak",
+              "documentation/CHANGELOG.md",
+              "documentation/Changes.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "data/Book1.XLSX",
+              "data/x.RData",
+              "data/t.TSV",
+              "data/~$Book1.xlsx",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 18 files across 1 study group.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"present\", \"present\", \"present\", \"present\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   └── dataset_description.JSON <span style=\"color:#b9770e\">(move from dataset_description.JSON)<\/span>\n├── data/\n│   ├── .hidden <span style=\"color:#b9770e\">(move from .hidden)<\/span>\n│   ├── data.tar.gz <span style=\"color:#b9770e\">(move from data/data.tar.gz)<\/span>\n│   ├── study-Book1_data.csv <span style=\"color:#b9770e\">(move from Book1.XLSX)<\/span>\n│   ├── study-file10_data.csv <span style=\"color:#b9770e\">(move from )<\/span>\n│   ├── study-rgerDaten2_data.csv <span style=\"color:#b9770e\">(move from x/Ärger Daten-2.csv)<\/span>\n│   ├── study-t_data.csv <span style=\"color:#b9770e\">(move from data/t.TSV)<\/span>\n│   ├── study-x_data.csv <span style=\"color:#b9770e\">(move from x.RData)<\/span>\n│   └── x.csv.bak <span style=\"color:#b9770e\">(move from x.csv.bak)<\/span>\n├── documentation/\n│   ├── CHANGELOG.md <span style=\"color:#b9770e\">(move from CHANGELOG.md)<\/span>\n│   ├── CHANGES <span style=\"color:#b9770e\">(move from old/CHANGES)<\/span>\n│   └── Changes.txt <span style=\"color:#b9770e\">(move from a/Changes.txt)<\/span>\n├── materials/\n│   └── dir <span style=\"color:#b9770e\">(move from dir/)<\/span>\n├── LICENSE <span style=\"color:#b9770e\">(move from LICENSE.v2-final)<\/span>\n├── README <span style=\"color:#b9770e\">(move from README.md~)<\/span>\n└── README.café <span style=\"color:#b9770e\">(move from docs/README.café)<\/span>\n<\/pre>",
+          "*Study subgrouping could not be detected: no file path or repository split names a study. Every file was placed in a single default study (`ex1`) rather than from real evidence. If this repository contains multiple studies, name the study in the file or folder names (`study1/`, `experiment2_data.csv`) so a multi-study Psych-DS layout can be modelled.*",
+          "#### Suggestions",
+          "- **Move** `docs/README.café` → `README.café`.\n- **Move** `LICENSE.v2-final` → `LICENSE`.\n- **Move** `README.md~` → `README`.\n- **Move** `data/data.tar.gz` → `data/data.tar.gz`.\n- **Move** `.hidden` → `data/.hidden`.\n- ...and 13 more files to relocate.",
+          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
+          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This repository already contains the files required for a Psych-DS dataset."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

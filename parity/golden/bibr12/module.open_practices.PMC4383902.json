@@ -1,0 +1,350 @@
+{
+  "id": "module.open_practices.PMC4383902",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The Advanced Search also makes it easy to find records that cite data (3) or are linked from various data resources; for example, articles that cite PDB, articles cited in Uniprot or abstracts that have freely available full text in institutional repositories that are not available in Europe PMC (under the External Links tab on abstract pages).",
+              "The External Links service can also be used by repositories that hold the full-text articles for which Europe PMC only has the metadata. See: http://europepmc.org/LabsLink for more details.",
+              "Europe PMC now routinely discovers several types of data citations in the form of accession numbers, for example to the European Nucleotide Archive (8), and DOIs out of the full text of Europe PMC articles (9) via the Europe PMC text-mining engine, which is based on Whatizit (10).",
+              "A quarterly snapshot is archived to make it easier to cite the collection as dataset.",
+              "Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              36,
+              55,
+              56,
+              82,
+              128
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              18,
+              19,
+              34,
+              65
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10,
+              16,
+              17,
+              24,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Advanced search",
+              "Database records that cite articles",
+              "Articles that cite data",
+              "FTP and RSS",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "method",
+              "method",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data was openly shared for this article, based on the following text:\n\n> The Advanced Search also makes it easy to find records that cite data (3) or are linked from various data resources; for example, articles that cite PDB, articles cited in Uniprot or abstracts that have freely available full text in institutional repositories that are not available in Europe PMC (under the External Links tab on abstract pages).\n\n> The External Links service can also be used by repositories that hold the full-text articles for which Europe PMC only has the metadata. See: http://europepmc.org/LabsLink for more details.\n\n> Europe PMC now routinely discovers several types of data citations in the form of accession numbers, for example to the European Nucleotide Archive (8), and DOIs out of the full text of Europe PMC articles (9) via the Europe PMC text-mining engine, which is based on Whatizit (10).\n\n> A quarterly snapshot is archived to make it easier to cite the collection as dataset.\n\n> Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article.",
+          "We did not detect open sharing of code, which could be because there is no code related to this article, or the repository is not reconized by our code. If there is code, please consider sharing it in a repository."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Shared data detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The Advanced Search also makes it easy to find records that cite data (3) or are linked from various data resources; for example, articles that cite PDB, articles cited in Uniprot or abstracts that have freely available full text in institutional repositories that are not available in Europe PMC (under the External Links tab on abstract pages).",
+                  "The External Links service can also be used by repositories that hold the full-text articles for which Europe PMC only has the metadata. See: http://europepmc.org/LabsLink for more details.",
+                  "Europe PMC now routinely discovers several types of data citations in the form of accession numbers, for example to the European Nucleotide Archive (8), and DOIs out of the full text of Europe PMC articles (9) via the Europe PMC text-mining engine, which is based on Whatizit (10).",
+                  "A quarterly snapshot is archived to make it easier to cite the collection as dataset.",
+                  "Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

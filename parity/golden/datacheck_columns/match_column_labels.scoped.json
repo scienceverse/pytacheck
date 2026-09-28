@@ -1,0 +1,212 @@
+{
+  "id": "match_column_labels.scoped",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "paper_id",
+      "source_file",
+      "column_name",
+      "group",
+      "label",
+      "codebook_variable",
+      "label_source",
+      "label_status",
+      "label_method",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "age",
+          "age",
+          "sex",
+          "cond",
+          "cond",
+          "rt",
+          "acc",
+          "sex"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ex1",
+          "ex3",
+          "ex2",
+          "ex3",
+          "ex1",
+          "ex1",
+          "ex1",
+          "ex1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Age",
+          "Age",
+          "Sex | Gender",
+          "Condition A | Condition B",
+          "Condition A",
+          "reaction times",
+          "Accuracy (prop)",
+          "Sex"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "age",
+          "age",
+          "sex",
+          "cond",
+          "cond",
+          "rt",
+          "acc",
+          "sex"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "a.csv",
+          "a.csv | b.csv",
+          "a.csv | b.csv",
+          "a.csv",
+          "a.csv | b.sav",
+          "b.sav | c.sav",
+          "a.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled",
+          "ambiguous_experiment",
+          "conflicting_definition",
+          "ambiguous_experiment",
+          "labelled",
+          "labelled",
+          "labelled",
+          "labelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rules",
+          null,
+          null,
+          null,
+          "rules",
+          "merged_rules",
+          "haven_priority",
+          "rules"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "{\"1\":\"M\"}",
+          null,
+          null,
+          null,
+          "{\"0\":\"no\"}",
+          "{\"1\":\"M\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

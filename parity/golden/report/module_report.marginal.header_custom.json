@@ -1,0 +1,14 @@
+{
+  "id": "module_report.marginal.header_custom",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Custom header\n\nYou described 0 effects with terms related to 'marginally significant'.\n\nNo effects were described with terms related to 'marginally significant'.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nList all sentences that describe an effect as 'marginally significant'.\n\nThe marginal module searches for regular expressions that match a predefined pattern. The list of terms is a subset of those listed in a [blog post by Matthew Hankins](https://web.archive.org/web/20251001114321/https://mchankins.wordpress.com/2013/04/21/still-not-significant-2/). The module returns all sentences that match terms describing ‘marginally significant’ results.\n\nSome of the terms identified might not be problematic in some contexts, and there are ways to describe ‘marginal significance’ that are not detected by the module.\n\nThis module was developed by Daniel Lakens\n\n:::\n\n\n::: {.validation}\nValidation: In a sample of 51 papers with 87 statements, this module correctly identified 38 statements (true positives) and incorrectly flagged 22 statements (false positives). It failed to detect 27 statements. Thus, among all statements flagged by the module, 63% were genuine cases (positive predictive value). However, the module missed 42% of all true statements (false negative rate).\n:::"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

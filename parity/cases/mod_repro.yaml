@@ -1,0 +1,514 @@
+# reproducibility_check parity cases (inst/modules/reproducibility_check.R), generated
+# by tests/mod_repro/make_cases.py -- edit that script, not this file. Each case runs
+# the module on a fake code_check/data_check/psychds_check chain from
+# tests/mod_repro/fixtures/scenarios.json (R: tests/mod_repro/rc_helpers.R, Python:
+# tests/mod_repro/helpers.py); execute cases keep and then scrub the sandbox path.
+"area": "mod_repro"
+"cases":
+- "id": "reproducibility_check.no_code"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('no_code')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('no_code')"
+- "id": "reproducibility_check.ok_noplan"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('ok_noplan')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('ok_noplan')"
+- "id": "reproducibility_check.ok_plan"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('ok_plan')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('ok_plan')"
+- "id": "reproducibility_check.pipeline"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('pipeline')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('pipeline')"
+- "id": "reproducibility_check.missing_input"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('missing_input')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('missing_input')"
+- "id": "reproducibility_check.missing_mixed"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('missing_mixed')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('missing_mixed')"
+- "id": "reproducibility_check.parse_error"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('parse_error')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('parse_error')"
+- "id": "reproducibility_check.sniffed"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('sniffed')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('sniffed')"
+- "id": "reproducibility_check.cycle"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('cycle')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('cycle')"
+- "id": "reproducibility_check.ambiguous_order"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('ambiguous_order')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('ambiguous_order')"
+- "id": "reproducibility_check.fuzzy_source"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('fuzzy_source')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('fuzzy_source')"
+- "id": "reproducibility_check.ambiguous_path"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('ambiguous_path')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('ambiguous_path')"
+- "id": "reproducibility_check.call_paths"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('call_paths')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('call_paths')"
+- "id": "reproducibility_check.rmd"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('rmd')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('rmd')"
+- "id": "reproducibility_check.renv_only"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('renv_only')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('renv_only')"
+- "id": "reproducibility_check.duplicates"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('duplicates')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('duplicates')"
+- "id": "reproducibility_check.mirrors_differ"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('mirrors_differ')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('mirrors_differ')"
+- "id": "reproducibility_check.deps"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('deps')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('deps')"
+- "id": "reproducibility_check.no_language"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('no_language')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('no_language')"
+- "id": "reproducibility_check.url_fallback"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('url_fallback')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('url_fallback')"
+- "id": "reproducibility_check.structure_lookup"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('structure_lookup')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('structure_lookup')"
+- "id": "reproducibility_check.stata_no_data"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('stata_no_data')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('stata_no_data')"
+- "id": "reproducibility_check.spss_no_syntax"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('spss_no_syntax')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('spss_no_syntax')"
+- "id": "reproducibility_check.spss_with_syntax"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('spss_with_syntax')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('spss_with_syntax')"
+- "id": "reproducibility_check.spss_selfcontained"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('spss_selfcontained')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('spss_selfcontained')"
+- "id": "reproducibility_check.stata_red"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('stata_red')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('stata_red')"
+- "id": "reproducibility_check.stata_with_do"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('stata_with_do')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('stata_with_do')"
+- "id": "reproducibility_check.nonr_only"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('nonr_only')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('nonr_only')"
+- "id": "reproducibility_check.nonr_with_r"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('nonr_with_r')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('nonr_with_r')"
+- "id": "reproducibility_check.jasp_only"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('jasp_only')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('jasp_only')"
+- "id": "reproducibility_check.jasp_with_r"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('jasp_with_r')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('jasp_with_r')"
+- "id": "reproducibility_check.smcl_mplus"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('smcl_mplus')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('smcl_mplus')"
+- "id": "reproducibility_check.spv_notebook_py"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('spv_notebook_py')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('spv_notebook_py')"
+- "id": "reproducibility_check.demo"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('demo')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('demo')"
+- "id": "reproducibility_check.psychsci"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('psychsci')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('psychsci')"
+- "id": "reproducibility_check.bibr12"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('bibr12')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('bibr12')"
+- "id": "reproducibility_check.bibr12_nocode"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('bibr12_nocode')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('bibr12_nocode')"
+- "id": "reproducibility_check.jasp_only_keep_sandbox"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('jasp_only', keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('jasp_only', keep_sandbox=True)"
+- "id": "reproducibility_check.jasp_with_r_keep_sandbox"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('jasp_with_r', keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('jasp_with_r', keep_sandbox=True)"
+- "id": "reproducibility_check.project"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('project', local_path = 'tests/mod_repro/fixtures/project', local_only = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('project', local_path='tests/mod_repro/fixtures/project', local_only=True)"
+- "id": "reproducibility_check.project_exec"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('project', local_path = 'tests/mod_repro/fixtures/project', local_only = TRUE, execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('project', local_path='tests/mod_repro/fixtures/project', local_only=True, execute=True, timeout=60, keep_sandbox=True)"
+  "compare":
+    "ignore": []
+- "id": "reproducibility_check.tables_dir"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('pipeline', tables = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('pipeline', tables=True)"
+- "id": "reproducibility_check.tables_dir_missing"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('ok_plan', tables = 'none')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('ok_plan', tables='none')"
+- "id": "reproducibility_check.exec_ok"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_ok', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_ok', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_errors"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_errors', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_errors', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_setwd"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_setwd', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_setwd', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_undefined"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_undefined', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_undefined', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_library"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_library', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_library', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_mixed"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_mixed', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_mixed', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_font"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_font', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_font', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_model_object"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_model_object', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_model_object', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_timeout_10s"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_timeout', execute = TRUE, timeout = 10, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_timeout', execute=True, timeout=10, keep_sandbox=True)"
+  "compare":
+    "ignore":
+    - "run_results.stdout"
+    - "run_results.stderr"
+- "id": "reproducibility_check.exec_install"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run_mocked('exec_install', execute = TRUE, timeout = 60, keep_sandbox = TRUE, install_missing = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run_mocked('exec_install', execute=True, timeout=60, keep_sandbox=True, install_missing=True)"
+- "id": "reproducibility_check.exec_docker"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run_mocked('exec_docker', execute = TRUE, timeout = 60, keep_sandbox = TRUE, sandbox = \"docker\", install_missing = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run_mocked('exec_docker', execute=True, timeout=60, keep_sandbox=True, sandbox=\"docker\", install_missing=True)"
+- "id": "reproducibility_check.exec_chatty"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_chatty', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_chatty', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_jasp"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_jasp', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_jasp', execute=True, timeout=60, keep_sandbox=True)"
+- "id": "reproducibility_check.exec_ok_no_keep"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_ok', execute = TRUE, timeout = 60)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_ok', execute=True, timeout=60)"
+  "compare":
+    "ignore":
+    - "run_results.script_lines"
+- "id": "module.ok_plan"
+  "module": "reproducibility_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_input('ok_plan', absolute = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_input('ok_plan', absolute=True)"
+- "id": "module.pipeline"
+  "module": "reproducibility_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_input('pipeline', absolute = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_input('pipeline', absolute=True)"
+- "id": "module.missing_input"
+  "module": "reproducibility_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_input('missing_input', absolute = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_input('missing_input', absolute=True)"
+- "id": "module.spss_no_syntax"
+  "module": "reproducibility_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_input('spss_no_syntax', absolute = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_input('spss_no_syntax', absolute=True)"
+- "id": "module.jasp_only"
+  "module": "reproducibility_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_input('jasp_only', absolute = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_input('jasp_only', absolute=True)"
+- "id": "module.nonr_only"
+  "module": "reproducibility_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_input('nonr_only', absolute = TRUE)})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_input('nonr_only', absolute=True)"

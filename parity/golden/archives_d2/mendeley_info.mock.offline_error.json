@@ -1,0 +1,9 @@
+{
+  "id": "mendeley_info.mock.offline_error",
+  "ok": false,
+  "error": "data.mendeley.com seems to be offline",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

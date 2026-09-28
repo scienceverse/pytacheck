@@ -1,0 +1,59 @@
+{
+  "id": "paper_table.list.funding",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "funding_id",
+      "funder",
+      "award_ids",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Wellcome Trust",
+          "NSF"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "098231"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12345"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PMC4383902",
+          "demo"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

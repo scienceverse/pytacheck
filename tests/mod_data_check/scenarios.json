@@ -1,0 +1,891 @@
+{
+  "basic": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ]
+      }
+    ]
+  },
+  "flags": {
+    "repos": [
+      {
+        "dir": "flags",
+        "repo_url": "https://osf.io/flags",
+        "files": [
+          "data/messy.csv"
+        ]
+      }
+    ]
+  },
+  "yellow": {
+    "repos": [
+      {
+        "dir": "yellow",
+        "repo_url": "https://github.com/lab/yellow",
+        "files": [
+          "clean.csv",
+          "codebook.csv"
+        ]
+      }
+    ]
+  },
+  "nolocal": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "paper_id": "p1",
+        "repo_name": "remote",
+        "repo_url": "https://osf.io/remot",
+        "file_name": "remote.csv",
+        "file_path": "data/remote.csv",
+        "file_url": null,
+        "file_location": null,
+        "file_size": 120
+      }
+    ]
+  },
+  "nolocal_only": {
+    "rows": [
+      {
+        "paper_id": "p1",
+        "repo_name": "remote",
+        "repo_url": "https://osf.io/remot",
+        "file_name": "a.csv",
+        "file_path": "data/a.csv",
+        "file_url": null,
+        "file_location": null,
+        "file_size": 120
+      },
+      {
+        "paper_id": "p1",
+        "repo_name": "remote",
+        "repo_url": "https://osf.io/remot",
+        "file_name": "b.sav",
+        "file_path": "data/b.sav",
+        "file_url": null,
+        "file_location": null,
+        "file_size": 120
+      },
+      {
+        "paper_id": "p1",
+        "repo_name": "remote",
+        "repo_url": "https://osf.io/remot",
+        "file_name": "readme.md",
+        "file_path": "readme.md",
+        "file_url": null,
+        "file_location": null,
+        "file_size": 120
+      }
+    ]
+  },
+  "nolocal_urls": {
+    "rows": [
+      {
+        "paper_id": "p1",
+        "repo_name": "remote",
+        "repo_url": "https://osf.io/remot",
+        "file_name": "a.csv",
+        "file_path": "data/a.csv",
+        "file_url": "https://osf.io/download/a",
+        "file_location": null,
+        "file_size": 120
+      },
+      {
+        "paper_id": "p1",
+        "repo_name": "remote",
+        "repo_url": "https://osf.io/remot",
+        "file_name": "b.sav",
+        "file_path": "data/b.sav",
+        "file_url": "https://osf.io/download/b",
+        "file_location": null,
+        "file_size": 120
+      },
+      {
+        "paper_id": "p1",
+        "repo_name": "remote",
+        "repo_url": "https://osf.io/remot",
+        "file_name": "readme.md",
+        "file_path": "readme.md",
+        "file_url": "https://osf.io/download/r",
+        "file_location": null,
+        "file_size": 120
+      }
+    ]
+  },
+  "nodata": {
+    "repos": [
+      {
+        "dir": "nodata",
+        "repo_url": "https://osf.io/nodat",
+        "files": [
+          "README.md",
+          "code/analysis.R",
+          "paper.pdf"
+        ]
+      }
+    ]
+  },
+  "none": {},
+  "qualtrics": {
+    "repos": [
+      {
+        "dir": "qualtrics",
+        "repo_url": "https://osf.io/qualt",
+        "files": [
+          "data/survey.csv"
+        ]
+      }
+    ]
+  },
+  "careless": {
+    "repos": [
+      {
+        "dir": "careless",
+        "repo_url": "https://osf.io/carel",
+        "files": [
+          "data/survey.csv"
+        ]
+      }
+    ]
+  },
+  "careless_clean": {
+    "repos": [
+      {
+        "dir": "careless_clean",
+        "repo_url": "https://osf.io/clean",
+        "files": [
+          "survey.csv"
+        ]
+      }
+    ]
+  },
+  "careless_two": {
+    "repos": [
+      {
+        "dir": "careless_two",
+        "repo_url": "https://osf.io/twosc",
+        "files": [
+          "data/survey.csv"
+        ]
+      }
+    ]
+  },
+  "careless_short": {
+    "repos": [
+      {
+        "dir": "careless_short",
+        "repo_url": "https://osf.io/short",
+        "files": [
+          "survey.csv"
+        ]
+      }
+    ]
+  },
+  "spreadsheets": {
+    "repos": [
+      {
+        "dir": "spreadsheets",
+        "repo_url": "https://osf.io/sheet",
+        "files": [
+          "data/broken.xlsx",
+          "data/clean.ods",
+          "data/clean.xlsx",
+          "data/coding.xlsx",
+          "data/legacy.xls",
+          "data/messy.fods",
+          "data/messy.ods",
+          "data/messy.xlsx",
+          "data/offset.xlsx",
+          "data/twosheets.xlsx"
+        ]
+      }
+    ]
+  },
+  "archives": {
+    "copy": true,
+    "repos": [
+      {
+        "dir": "archives",
+        "repo_url": "https://osf.io/archi",
+        "files": [
+          "README.md",
+          "bundle.zip",
+          "extra.csv.gz",
+          "results.tar.gz",
+          "stimuli.zip"
+        ]
+      }
+    ]
+  },
+  "rdata": {
+    "repos": [
+      {
+        "dir": "rdata",
+        "repo_url": "https://osf.io/rdata",
+        "files": [
+          "data/analysis_workspace.RData",
+          "data/clean_data.RData",
+          "data/study.csv"
+        ]
+      }
+    ]
+  },
+  "trial": {
+    "repos": [
+      {
+        "dir": "trial",
+        "repo_url": "https://osf.io/trial",
+        "files": [
+          "data/demographics.csv",
+          "data/sub-01.csv",
+          "data/sub-02.csv"
+        ]
+      }
+    ]
+  },
+  "manifest": {
+    "repos": [
+      {
+        "dir": "manifest",
+        "repo_url": "https://osf.io/manif",
+        "files": [
+          "analysis.R",
+          "data.csv",
+          "files.csv",
+          "paper.pdf"
+        ]
+      }
+    ]
+  },
+  "txt": {
+    "repos": [
+      {
+        "dir": "txt",
+        "repo_url": "https://osf.io/txtfi",
+        "files": [
+          "README.txt",
+          "model.out",
+          "session1.txt"
+        ]
+      }
+    ]
+  },
+  "groups": {
+    "text": [
+      "In Study 1 we measured y.",
+      "Study 2 replicated Study 1 with a new sample."
+    ],
+    "repos": [
+      {
+        "dir": "groups",
+        "repo_url": "https://osf.io/group",
+        "files": [
+          "LICENSE",
+          "README.md",
+          "study1/analysis.R",
+          "study1/data.csv",
+          "study2/data.csv"
+        ]
+      }
+    ]
+  },
+  "encoding": {
+    "repos": [
+      {
+        "dir": "encoding",
+        "repo_url": "https://osf.io/encod",
+        "files": [
+          "latin1.csv"
+        ]
+      }
+    ]
+  },
+  "nontabular": {
+    "repos": [
+      {
+        "dir": "nontabular",
+        "repo_url": "https://osf.io/nonta",
+        "files": [
+          "broken.sav",
+          "coding.csv",
+          "empty.csv",
+          "scores.csv"
+        ]
+      }
+    ]
+  },
+  "llm": {
+    "repos": [
+      {
+        "dir": "llm",
+        "repo_url": "https://osf.io/llmrp",
+        "files": [
+          "README.md",
+          "data/trials.csv",
+          "notes.xyz"
+        ]
+      }
+    ]
+  },
+  "schema": {
+    "repos": [
+      {
+        "dir": "schema",
+        "repo_url": "https://osf.io/schem",
+        "files": [
+          "pp1.csv",
+          "pp2.csv",
+          "pp3.csv",
+          "summary.csv"
+        ]
+      }
+    ]
+  },
+  "download": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ],
+        "file_url": "local",
+        "local": false
+      }
+    ]
+  },
+  "download_capped": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/capped",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ],
+        "file_url": "local",
+        "local": false
+      }
+    ]
+  },
+  "download_mixed": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ]
+      },
+      {
+        "dir": "flags",
+        "repo_url": "https://osf.io/gated",
+        "files": [
+          "data/messy.csv"
+        ],
+        "file_url": "local",
+        "local": false
+      }
+    ]
+  },
+  "download_archives": {
+    "repos": [
+      {
+        "dir": "archives",
+        "repo_url": "https://osf.io/archi",
+        "files": [
+          "README.md",
+          "bundle.zip",
+          "extra.csv.gz",
+          "results.tar.gz",
+          "stimuli.zip"
+        ],
+        "file_url": "local",
+        "local": false
+      }
+    ]
+  },
+  "paperlist": {
+    "papers": [
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ],
+        "paper_id": "p1"
+      },
+      {
+        "dir": "flags",
+        "repo_url": "https://osf.io/flags",
+        "files": [
+          "data/messy.csv"
+        ],
+        "paper_id": "p2"
+      }
+    ]
+  },
+  "samename": {
+    "repos": [
+      {
+        "dir": "groups/study1",
+        "repo_url": "https://osf.io/stud1",
+        "files": [
+          "analysis.R",
+          "data.csv"
+        ],
+        "repo_name": "study1"
+      },
+      {
+        "dir": "groups/study2",
+        "repo_url": "https://osf.io/stud2",
+        "files": [
+          "data.csv"
+        ],
+        "repo_name": "study2"
+      }
+    ]
+  },
+  "naming": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ]
+      }
+    ],
+    "naming_issues": {
+      "file_name": [
+        "study.csv",
+        "study.csv",
+        "analysis.R"
+      ],
+      "rule": [
+        "generic",
+        "case",
+        "generic"
+      ],
+      "severity": [
+        "info",
+        "info",
+        "info"
+      ],
+      "detail": [
+        "Generic file name",
+        "Mixed case",
+        "Generic file name; rename it"
+      ]
+    },
+    "gated_repos": {
+      "repo_url": [
+        "https://github.com/lab/huge"
+      ],
+      "repo_type": [
+        "github"
+      ],
+      "repo_error": [
+        "repository too large to list"
+      ]
+    }
+  },
+  "codebook_chain": {
+    "repos": [
+      {
+        "dir": "flags",
+        "repo_url": "https://osf.io/flags",
+        "files": [
+          "data/messy.csv"
+        ]
+      },
+      {
+        "dir": "careless_two",
+        "repo_url": "https://osf.io/twosc",
+        "files": [
+          "data/survey.csv"
+        ]
+      }
+    ],
+    "codebook": {
+      "source_file": [
+        "messy.csv",
+        "messy.csv",
+        "survey.csv",
+        "survey.csv",
+        "survey.csv"
+      ],
+      "column_name": [
+        "email",
+        "Gender",
+        "panas_1",
+        "rse_2",
+        "participant_id"
+      ],
+      "label": [
+        "E-mail address",
+        "Gender",
+        "Interested",
+        "Satisfied",
+        "ID"
+      ],
+      "label_status": [
+        "labelled",
+        "unlabelled",
+        "llm",
+        "labelled",
+        "labelled"
+      ],
+      "scale": [
+        null,
+        null,
+        "PANAS",
+        "",
+        null
+      ]
+    }
+  },
+  "nofilepath": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ]
+      }
+    ],
+    "drop": [
+      "file_path"
+    ]
+  },
+  "nourl": {
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ]
+      }
+    ],
+    "drop": [
+      "repo_url"
+    ]
+  },
+  "bibr12": {
+    "read": [
+      "tests/fixtures/bibr_v12_full.json"
+    ],
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ],
+        "paper_id": "demo"
+      }
+    ]
+  },
+  "psychsci": {
+    "read": [
+      "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json",
+      "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+    ],
+    "repos": [
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ],
+        "paper_id": "0956797613520608"
+      },
+      {
+        "dir": "careless_two",
+        "repo_url": "https://osf.io/twosc",
+        "files": [
+          "data/survey.csv"
+        ],
+        "paper_id": "0956797614522816"
+      }
+    ]
+  },
+  "review_types": {
+    "repos": [
+      {
+        "dir": "review_types",
+        "repo_url": "https://osf.io/types",
+        "files": [
+          "data/Upper.csv",
+          "data/dupnames.csv",
+          "data/headeronly.csv",
+          "data/long.csv",
+          "data/types.csv"
+        ]
+      }
+    ]
+  },
+  "review_mix": {
+    "repos": [
+      {
+        "dir": "trial",
+        "repo_url": "https://osf.io/trial",
+        "files": [
+          "data/demographics.csv",
+          "data/sub-01.csv",
+          "data/sub-02.csv"
+        ]
+      },
+      {
+        "dir": "manifest",
+        "repo_url": "https://osf.io/manif",
+        "files": [
+          "analysis.R",
+          "data.csv",
+          "files.csv",
+          "paper.pdf"
+        ]
+      },
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ]
+      }
+    ]
+  },
+  "review_nodata_list": {
+    "papers": [
+      "p1",
+      "p2"
+    ],
+    "repos": [
+      {
+        "dir": "nodata",
+        "repo_url": "https://osf.io/nod01",
+        "files": [
+          "README.md",
+          "code/analysis.R",
+          "paper.pdf"
+        ],
+        "paper_id": "p1"
+      },
+      {
+        "dir": "nodata",
+        "repo_url": "https://osf.io/nod02",
+        "files": [
+          "README.md",
+          "code/analysis.R",
+          "paper.pdf"
+        ],
+        "paper_id": "p2"
+      }
+    ]
+  },
+  "review_broken_list": {
+    "papers": [
+      "p1",
+      "p2"
+    ],
+    "repos": [
+      {
+        "dir": "nodata",
+        "repo_url": "https://osf.io/nod01",
+        "files": [
+          "README.md",
+          "code/analysis.R",
+          "paper.pdf"
+        ],
+        "paper_id": "p1"
+      },
+      {
+        "dir": "review_broken",
+        "repo_url": "https://osf.io/brok2",
+        "files": [
+          "broken.xlsx"
+        ],
+        "paper_id": "p2"
+      }
+    ]
+  },
+  "review_qualtrics": {
+    "repos": [
+      {
+        "dir": "review_qualtrics",
+        "repo_url": "https://osf.io/qual2",
+        "files": [
+          "survey.csv"
+        ]
+      }
+    ]
+  },
+  "review_int64": {
+    "repos": [
+      {
+        "dir": "review_int64",
+        "repo_url": "https://osf.io/int64",
+        "files": [
+          "survey.csv"
+        ]
+      }
+    ]
+  },
+  "review_stats": {
+    "repos": [
+      {
+        "dir": "review_stats",
+        "repo_url": "https://osf.io/stats",
+        "files": [
+          "iris.sas7bdat",
+          "labelled.dta",
+          "labelled.sav",
+          "labs.rds",
+          "portable.por",
+          "study.rds",
+          "tibble.rds",
+          "twoframes.rda",
+          "workspace.RData"
+        ]
+      }
+    ]
+  },
+  "review_text": {
+    "repos": [
+      {
+        "dir": "review_text",
+        "repo_url": "https://osf.io/textf",
+        "files": [
+          "big_int.csv",
+          "bom.csv",
+          "dates.csv",
+          "eprime_utf8.txt",
+          "na_strings.csv",
+          "pipe.txt",
+          "semicolon.csv",
+          "single_col.csv",
+          "tabbed.tsv",
+          "table.txt",
+          "title_line.csv",
+          "utf16_table.txt",
+          "whitespace.csv"
+        ]
+      }
+    ]
+  },
+  "review_sheets": {
+    "repos": [
+      {
+        "dir": "review_sheets",
+        "repo_url": "https://osf.io/sheet",
+        "files": [
+          "readxl_type-me.xls",
+          "title.ods",
+          "typed.ods",
+          "written.fods",
+          "xl_bools.xlsx",
+          "xl_dates.xlsx",
+          "xl_gaps.xlsx",
+          "xl_header_only.xlsx",
+          "xl_mixed.xlsx",
+          "xl_numhdr.xlsx",
+          "xl_sheets.xlsx",
+          "xl_title.xlsx"
+        ]
+      }
+    ]
+  },
+  "review_dupclass": {
+    "repos": [
+      {
+        "dir": "review_dupclass",
+        "repo_url": "https://osf.io/dupcl",
+        "files": [
+          "data/dupclass.csv"
+        ]
+      }
+    ]
+  },
+  "review_mixed_list": {
+    "papers": [
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "repos": [
+      {
+        "dir": "review_broken",
+        "repo_url": "https://osf.io/brok2",
+        "files": [
+          "broken.xlsx"
+        ],
+        "paper_id": "p2"
+      },
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ],
+        "paper_id": "p1"
+      }
+    ]
+  }
+}

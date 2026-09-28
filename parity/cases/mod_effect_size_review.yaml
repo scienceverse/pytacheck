@@ -1,0 +1,350 @@
+"area": "mod_effect_size_review"
+# Adversarial review cases for inst/modules/stat_effect_size.R (see mod_effect_size.yaml
+# for the main cases). test_paper() ids are random, so paper_id is ignored.
+"cases":
+# ---------------------------------------------------------------- huge df
+# as.integer(round(df + 2)) is NA beyond .Machine$integer.max: `2:(NA - 2)` errors
+- "id": "stat_effect_size.review.df_int_max"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["Huge, t(2147483646) = 2.0, d = 0.5."]}}
+- "id": "stat_effect_size.review.df_huge"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["Huge, t(9999999999) = 2.0, p = .04."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# the largest df whose unequal-n grid R still builds without error (just below the limit
+# is too big to allocate on either side, so stay at a few million)
+- "id": "stat_effect_size.review.large_df_format"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Equal n, format(N) = 1e+05, t(99998) = 10, d = 0.063."
+        - "Equal n, format(n) = 5e+05, t(999998) = 20, d = 0.04."
+        - "Equal n, half n, t(1999999) = 20, d = 0.0283."
+        - "Paired, as.character(df) = 1e+05, t(100000) = 2, d = 0.0063."
+        - "Unequal, t(3999998) = 20, d = 0.03."
+        - "No match, t(123456) = 2, d = 0.5."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- infinite values
+- "id": "stat_effect_size.review.inf_values"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Inf t, t(40) = 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999, d = 0.5."
+        - "Inf d, t(40) = 2.9, d = 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999."
+        - "Inf F, F(1, 20) = 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999, p < .001."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# |Inf - Inf| is NaN: any(NA) inside if() errors
+- "id": "stat_effect_size.review.inf_t_and_d"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "An infinite t and d (Inf - Inf) give no match instead of stopping the module on if (NA)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Both, t(40) = 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999, d = 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999."
+- "id": "stat_effect_size.review.inf_df"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Inf df, t(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999) = 2.0, d = 0.5."
+# ---------------------------------------------------------------- sentences without digits
+# text_search("[0-9]") misses the sentence: text/section_id/paragraph_id are NA
+- "id": "stat_effect_size.review.no_digits"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["The effect was not significant, t = n.s.", "Other sentence without numbers.", "Bracket, t = [low, high], d = [a, b]."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# a paper whose only test is in a digit-less sentence is not in the paper order: last
+- "id": "stat_effect_size.review.no_digits_paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(\"No digits here, t = n.s.\"), test_paper(\"A was bigger, t(20) = 2.1, d = 0.94.\"), test_paper(c(\"Nothing.\", \"B was smaller, t(30) = 2.5, p = .02.\")))"
+        "py": "pc.PaperList([pc.test_paper(\"No digits here, t = n.s.\"), pc.test_paper(\"A was bigger, t(20) = 2.1, d = 0.94.\"), pc.test_paper([\"Nothing.\", \"B was smaller, t(30) = 2.5, p = .02.\"])])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- d labels and values
+- "id": "stat_effect_size.review.d_variants"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Ds, t(40) = 2.9, ds = 0.92."
+        - "Cohen dz, t(40) = 2.9, Cohen's dz = 0.45."
+        - "Cohen spaced dz, t(40) = 2.9, Cohen's d z = 0.45."
+        - "Cohens, t(40) = 2.9, Cohens d = 0.45."
+        - "Backtick, t(40) = 2.9, Cohen`s d = 0.45."
+        - "D_s, t(40) = 2.9, d_s = 0.92."
+        - "Second d in range, t(38) = 2.10, d = 5.0, d = 0.68."
+        - "Empty df, t() = 2.1, d = 0.4."
+        - "Space df, t( ) = 2.1, d = 0.4."
+        - "Plus, t(40) = +2.9, d = 0.45."
+        - "Lower f, f(1, 20) = 4.10, t(20) = 2.1."
+        - "Zero d, t(40) = 0.0, d = 0.00."
+        - "Neg zero, t(40) = -0, d = -0."
+        - "Dup pair, t(40) = 2.9; t(40) = 2.9, d = 0.45; d = 0.45."
+        - "Three tests two d, t(40) = 2.9; t(40) = 3.3; t(40) = 1.0, d = 0.45; d = 0.52."
+        - "Exp, t(40) = 2.9E-1, d = 4.5e-2."
+        - "Dec comma, t(40) = 2,9, d = 0,45."
+        - "Unequal best split, t(58) = 2.5, d = 1.2."
+        - "Unequal max, t(10) = 3.0, d = 2.33."
+        - "Unequal min edge, t(10) = 3.0, d = 1.90."
+        - "Four, t(2) = 2.0, d = 2.0."
+        - "Three df one, t(1) = 2.0, d = 2.0."
+        - "CI label, t(40) = 2.9, 95% CI = [0.1, 0.8]."
+        - "Drm, t(40) = 2.9, d_rm = 0.64."
+        - "Hedges g_s, t(40) = 2.9, Hedges's g = 0.9."
+        - "Delta, t(40) = 2.9, δ = 0.45."
+        - "Upper Cohen, t(40) = 2.9, COHEN'S D = 0.45."
+        - "d approx and exact, t(40) = 2.9, d ≈ 0.10, d = 0.45."
+        - "Whitespace, t(40)\t=\t2.9,\td = 0.45."
+        - "Newline, t(40) = 2.9, Cohen's\nd = 0.45."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- F / eta labels and values
+- "id": "stat_effect_size.review.f_variants"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "'partial η²' is a partial eta-squared and is checked (match), and 'beta' is not an eta-squared (not verifiable); metacheck reads both as eta-squared."}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Lower f with F, F(1, 20) = 4.10, f(1, 20) = 4.10."
+        - "Zero F, F(1, 20) = 0, ηp² = 0."
+        - "Neg eta, F(1, 20) = 4.10, ηp² = -.17."
+        - "Two partial one matching, F(1, 20) = 4.10, ηp² = .50, ηp² = .17."
+        - "Eta with d, F(1, 20) = 4.10, η² = .17, d = 0.9."
+        - "Partial and r, F(1, 20) = 4.10, ηp² = .17, r = .41."
+        - "Theta, F(1, 20) = 4.10, θ = .17."
+        - "Beta latin, F(1, 20) = 4.10, beta = .41."
+        - "Omega partial, F(1, 20) = 4.10, ωp² = .12."
+        - "Xi upper, F(1, 20) = 4.10, Ξ = .2."
+        - "Cohen's f with eta, F(1, 20) = 4.10, Cohen's f = 0.45, η² = .17."
+        - "Three df, F(1, 2, 3) = 4.1, ηp² = .1."
+        - "N df, F(1, N = 20) = 4.1, ηp² = .1."
+        - "Exponent F, F(1, 20) = 4.1e-1, ηp² = .02."
+        - "Huge F, F(1, 20) = 99999999, ηp² = 1.00."
+        - "Zero df1, F(0, 20) = 4.1, ηp² = 0."
+        - "Zero df2, F(1, 0) = 4.1, ηp² = 1."
+        - "Tab df, F(1,\t20) = 4.10, ηp² = .17."
+        - "Leading zero, F(01, 020) = 4.10, ηp² = .17."
+        - "Eta p spaced, F(1, 20) = 4.10, η p² = .17."
+        - "Partial eta words, F(1, 20) = 4.10, partial η² = .17, η² = .10."
+        - "Eta squared word, F(1, 20) = 4.10, eta-squared = .17."
+        - "Cohen f squared, F(1, 20) = 4.10, Cohen's f² = 0.2."
+        - "Approx F, F(1, 20) ≈ 4.10, ηp² = .17."
+        - "BF only, F(1, 20) = 4.10, BF01 = 0.3."
+        - "p eta, F(1, 20) = 4.10, pη² = .17."
+        - "Eta with CI, F(1, 20) = 4.10, ηp² = .17, 90% CI [.01, .40]."
+        - "Two F two eta, F(1, 20) = 4.10; F(1, 20) = 6.20, ηp² = .17; ηp² = .24."
+        - "Two F paired mismatch, F(1, 20) = 4.10; F(1, 20) = 6.20, ηp² = .24; ηp² = .17."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- report branches
+# only F-tests with effect sizes: no t-test coherence text
+- "id": "stat_effect_size.review.f_only_green"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["F(1, 20) = 4.10, ηp² = .17.", "F(2, 30) = 4.50, η² = .23."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# only t-tests, one indeterminate, no mismatch: green
+- "id": "stat_effect_size.review.t_only_green_indet"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["t(40) = 2.9, d = 0.45.", "t(97.7) = 2.9, d = 0.59.", "t(40) = 2.9, r = .41."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# mismatch in an F-test only, t-tests all missing: red with the missing-text summary
+- "id": "stat_effect_size.review.f_nomatch_t_missing"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["t(40) = 2.9, p = .006.", "F(1, 20) = 4.10, ηp² = .50."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# several mismatches (plural "no matches") and several indeterminate cases
+- "id": "stat_effect_size.review.plural_counts"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["t(40) = 2.9, d = 3.0.", "t(40) = 2.9, d = 4.0.", "t(40.5) = 2.9, d = 0.9.", "t(30) = 2.1, g = 0.3.", "F(1, 20) = 4.10, ηp² = .50.", "F(1, 20) = 4.10, ηp² = .60.", "F(1, 20) = 4.10, f = .45.", "F(1, 20) = 4.10, ω² = .12.", "F(1, 20) = 4.10, ηp² = .17.", "F(1, 20) = 4.10, ηp² = .16."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- real papers
+- "id": "stat_effect_size.review.more_papers"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/203020.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"
+- "id": "stat_effect_size.review.debruine_sex"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"}
+# ---------------------------------------------------------------- text table input
+# module_run() also takes a text table; module_run()'s summary_table (and the
+# module's own early-return one) is then data.frame(paper_id = paper$paper_id):
+# one row per table row
+- "id": "stat_effect_size.review.text_table"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$call":
+        "r": "text_search"
+        "py": "pytacheck.text.text_search"
+        "args": {"paper": {"$paper": "demo"}, "pattern": "significant"}
+- "id": "stat_effect_size.review.text_table_no_tests"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$call":
+        "r": "text_search"
+        "py": "pytacheck.text.text_search"
+        "args": {"paper": {"$paper": "demo"}, "pattern": "Introduction|design"}
+# ---------------------------------------------------------------- near-integer df, LaTeX labels
+# |df - round(df)| <= 1e-8 counts as an integer df: as.integer() truncates df + 1 and
+# format() rounds (df + 2) / 2 to 7 significant digits
+- "id": "stat_effect_size.review.near_integer_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Paired, t(40.00000000001) = 2.9, d = 0.45."
+        - "Paired below, t(39.99999999999) = 2.9, d = 0.45."
+        - "Equal, t(40.99999999999) = 2.00, d = 0.61."
+        - "Equal above, t(41.000000001) = 2.00, d = 0.61."
+        - "Not integer, t(41.00000002) = 2.00, d = 0.61."
+        - "Unequal, t(40.000000001) = 2.9, d = 1.2."
+        - "LaTeX, F(1, 20) = 4.10, \\eta_p^2 = .17."
+        - "LaTeX eta, F(1, 20) = 4.10, \\eta^2 = .17."
+        - "Braces, F(1, 20) = 4.10, \\eta^{2}_{p} = .17."
+        - "LaTeX d, t(40) = 2.9, d_{z} = 0.45."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.review.empty_text"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": [""]}}
+  "compare": {"ignore": ["paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.review.empty_paperlist"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist()"
+        "py": "pc.PaperList([])"
+# ---------------------------------------------------------------- tie order of papers missing from text_search("[0-9]")
+# order() puts papers without a digit sentence last; ties (same text_id) keep split()'s
+# order, i.e. ICU-sorted factor levels of paper_id ("_x" < "aa" < "Ab" < "b" < "B"),
+# not extract_eq()'s C-locale arrange() order
+- "id": "stat_effect_size.review.missing_paper_tie_order"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$expr":
+        "r": "(function() { mk <- function(txt, id) { p <- test_paper(txt); p$paper_id <- id; p }; paperlist(mk(\"No digits, t = n.s.\", \"b\"), mk(\"Also none, t = n.s.\", \"aa\"), mk(\"Sig, t(20) = 2.1, d = 0.9.\", \"mm\"), mk(\"B, t = n.s., d = n.s.\", \"Ab\"), mk(c(\"B, t = n.s., d = n.s.\", \"C, F = n.s.\"), \"B\"), mk(\"B, t = n.s., d = n.s.\", \"_x\"), mk(c(\"Two, t = n.s.\", \"Other, t = n.s., d = n.s.\"), \"a\")) })()"
+        "py": "(lambda mk: pc.PaperList([mk(\"No digits, t = n.s.\", \"b\"), mk(\"Also none, t = n.s.\", \"aa\"), mk(\"Sig, t(20) = 2.1, d = 0.9.\", \"mm\"), mk(\"B, t = n.s., d = n.s.\", \"Ab\"), mk([\"B, t = n.s., d = n.s.\", \"C, F = n.s.\"], \"B\"), mk(\"B, t = n.s., d = n.s.\", \"_x\"), mk([\"Two, t = n.s.\", \"Other, t = n.s., d = n.s.\"], \"a\")]))(lambda t, i: (lambda p: (setattr(p, \"paper_id\", i), p)[1])(pc.test_paper(t)))"
+# ---------------------------------------------------------------- as.numeric() in long double
+# R_strtod() scales the digits in 80-bit long double, then rounds to double: for some
+# 9+ digit numbers that is one ulp away from the correctly rounded value, which shows
+# in the 15 significant digits of the implied effect sizes
+- "id": "stat_effect_size.review.strtod_long_double"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Parse t, t(98) = 6.25591564, d = 0.63."
+        - "Parse t, t(20) = 1.818153880, d = 0.4."
+        - "Parse t, t(40) = 1.818153880, d = 0.4."
+        - "Parse t, t(10) = 6.793335393, d = 2.9."
+        - "Parse t, t(10) = 2.70465715726, d = 0.82."
+        - "Parse t, t(38) = 8.779758277, d = 1.99."
+        - "Parse d, t(40) = 2.9, d = 0.8050473192."
+        - "Parse F, F(1, 20) = 1.818153880, ηp² = .08."
+        - "Parse F, F(2, 57) = 6.793335393, ηp² = .19."
+        - "Parse F, F(3, 40) = 2.70465715726, ηp² = .17."
+        - "Long, t(40) = 2.90000000000000000000000001, d = 0.4500000000000000000001."
+        - "Long exp, t(40) = 290000000000000000000000e-23, d = 0.00045e3."
+        - "Tiny, t(40) = 1e-320, d = 0.0000000000000000000000000000000000000000000000000000000000000001."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- as.character() near-ties
+# R finds the 15 significant digits by scaling in long double (format.c scientific()):
+# on near-ties that differs from correctly rounded conversion, e.g. the drm implied
+# by t(18) = 1.18 is "0.3828425538686" in R, not "0.382842553868599"
+- "id": "stat_effect_size.review.as_character_near_ties"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Tie drm, t(18) = 1.18, d = 0.38."
+        - "Tie equal, t(31) = 2.68, d = 0.93."
+        - "Tie dz, t(32) = 5.36, d = 0.93."
+        - "Tie drm, t(75) = 2.36, d = 0.27."
+        - "Tie eta, F(1, 19) = 8.51, ηp² = .31."
+        - "Tie omega, F(1, 17) = 9.51, ηp² = .36."
+        - "Tie omega, F(2, 35) = 9.51, ηp² = .35."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- spacing, signs, comparators
+- "id": "stat_effect_size.review.tokens"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Neg F, F(1, 20) = -4.10, ηp² = .17."
+        - "Unicode minus, t(40) = −2.9, d = −0.45."
+        - "Tilde d, t(40) = 2.9, d ~ 0.45."
+        - "Not equal d, t(40) = 2.9, d ≠ 0.45."
+        - "Le d, t(40) = 2.9, d <= 0.45."
+        - "Double lt d, t(40) = 2.9, d << 0.45."
+        - "Upper D, t(40) = 2.9, D = 0.45."
+        - "D with df, t(40) = 2.9, d(40) = 0.45."
+        - "Eta d, t(40) = 2.9, ηd = 0.45."
+        - "Space paren, t (40) = 2.9, d = 0.45."
+        - "Tight, t(40)=2.9,d=0.45."
+        - "No df, t40 = 2.9, d = 0.45."
+        - "Thin space, t(40) = 2.9, d = 0.45."
+        - "No-break space, t(40) = 2.9, d = 0.45."
+        - "Cohen nbsp, t(40) = 2.9, Cohen's d = 0.45."
+        - "Hedges, t(40) = 2.9, Hedges' g = 0.45."
+        - "Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15."
+        - "Two t one F, t(40) = 2.9, F(1, 40) = 8.41, d = 0.45, ηp² = .17."
+        - "Pct prefix, F(1, 20) = 4.10, 90% ηp² = .17."
+        - "Semicolon es, F(1, 20) = 4.10, ηp² = .17; ω² = .12."
+        - "Sci rhs, t(40) = 2.9 x 10^-1, d = 4.5 e-2."
+        - "Bracket es, F(1, 20) = 4.10, ηp² = [.01, .40]."
+        - "Upper eta, F(1, 20) = 4.10, Ηp² = .17."
+        - "Latin eta p, F(1, 20) = 4.10, eta_p^2 = .17."
+        - "Partial word, F(1, 20) = 4.10, partial-eta2 = .17."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# a match-level text table: several rows share a text_id, so text_search("[0-9]")
+# repeats sentences and left_join() multiplies the test rows
+- "id": "stat_effect_size.review.text_table_matches"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$call":
+        "r": "text_search"
+        "py": "pytacheck.text.text_search"
+        "args":
+          "paper": {"$test_paper": {"text": ["A, t(40) = 2.9, p = .01, d = 0.45 and t(40) = 3.1, d = 0.48.", "B, F(1, 20) = 4.10, ηp² = .17.", "C, t(30) = 2.0."]}}
+          "pattern": "[tF]\\([0-9, ]+\\) = [0-9.]+|[dη]p?²? = [0-9.]+"
+          "return": "match"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}

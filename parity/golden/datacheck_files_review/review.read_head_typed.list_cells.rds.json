@@ -1,0 +1,71 @@
+{
+  "id": "review.read_head_typed.list_cells.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "l"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "integer"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "character",
+              "character"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "id",
+          "l"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-01-01 10:00:00; 2020-01-01",
+              "2020-01-01 10:00:00.5",
+              "0+1i; 2-0.5i"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

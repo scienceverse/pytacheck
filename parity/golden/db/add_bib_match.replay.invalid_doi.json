@@ -1,0 +1,196 @@
+{
+  "id": "add_bib_match.replay.invalid_doi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "bib_id",
+      "service",
+      "service_id",
+      "score",
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "date",
+      "container",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "edition",
+      "version",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "crossref"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          80.36001
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1098/rspb.2002.2034"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Facial resemblance enhances trust"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lisa M."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DeBruine"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The Royal Society"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2002
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Proceedings of the Royal Society of London. Series B: Biological Sciences"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "269"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1498"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1307"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1312"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1098/rspb.2002.2034"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

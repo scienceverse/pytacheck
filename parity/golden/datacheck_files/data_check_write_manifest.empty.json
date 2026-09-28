@@ -1,0 +1,230 @@
+{
+  "id": "data_check_write_manifest.empty",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "paper_id",
+          "generated",
+          "download",
+          "caps",
+          "provenance",
+          "n_files",
+          "n_downloaded",
+          "not_downloaded",
+          "files"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<volatile>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "max_file_size_mb",
+              "max_download_size_mb"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [],
+                "v": []
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<volatile>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "intentional_n",
+              "unintentional_n",
+              "unintentional_files",
+              "rerun_recommended"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "paper_id",
+          "generated",
+          "download",
+          "caps",
+          "provenance",
+          "n_files",
+          "n_downloaded",
+          "not_downloaded",
+          "files"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<volatile>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "max_file_size_mb",
+              "max_download_size_mb"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [],
+                "v": []
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<volatile>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "intentional_n",
+              "unintentional_n",
+              "unintentional_files",
+              "rerun_recommended"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

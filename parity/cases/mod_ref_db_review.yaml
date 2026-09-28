@@ -1,0 +1,362 @@
+"area": "mod_ref_db_review"
+"cases":
+  - "id": "ref_retraction.paperlist_bib_match"
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(\"10.1177/0956797614520714\", id = \"zeta\"), demopaper(), ref_paper(c(\"10.1371/journal.ppat.1000066\", \"10.1177/0956797614520714\", \"10.1177/0956797614520714\"), id = \"Alpha\"))"
+          "py": "(lambda H: pc.PaperList([H.ref_paper([\"10.1177/0956797614520714\"], id=\"zeta\"), pc.demopaper(), H.ref_paper([\"10.1371/journal.ppat.1000066\", \"10.1177/0956797614520714\", \"10.1177/0956797614520714\"], id=\"Alpha\")]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_retraction.paperlist_bib_match.report_table"
+    "r": "identity"
+    "py": "copy.copy"
+    "args":
+      "x":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(paperlist(ref_paper(\"10.1177/0956797614520714\", id = \"zeta\"), demopaper(), ref_paper(c(\"10.1371/journal.ppat.1000066\", \"10.1177/0956797614520714\", \"10.1177/0956797614520714\"), id = \"Alpha\")), \"ref_retraction\"))"
+          "py": "(lambda H: H.report_tbl(pc.module_run(pc.PaperList([H.ref_paper([\"10.1177/0956797614520714\"], id=\"zeta\"), pc.demopaper(), H.ref_paper([\"10.1371/journal.ppat.1000066\", \"10.1177/0956797614520714\", \"10.1177/0956797614520714\"], id=\"Alpha\")]), \"ref_retraction\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_retraction.exact_doi_match"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: 10.1371/JOURNAL.PPAT.1000066 is the RetractionWatch entry 10.1371/journal.ppat.1000066 (metacheck: exact match, no hit); the padded DOIs still do not match"}
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1371/JOURNAL.PPAT.1000066\", \" 10.1371/journal.ppat.1000066\", \"10.1371/journal.ppat.1000066 \"))"
+          "py": "(lambda H: H.ref_paper([\"10.1371/JOURNAL.PPAT.1000066\", \" 10.1371/journal.ppat.1000066\", \"10.1371/journal.ppat.1000066 \"]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_retraction.single"
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(\"10.1371/journal.ppat.1000066\")"
+          "py": "(lambda H: H.ref_paper([\"10.1371/journal.ppat.1000066\"]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_retraction.rw_sample"
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(rw_sample())"
+          "py": "(lambda H: H.ref_paper(H.rw_sample()))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_retraction.rw_sample.report_table"
+    "r": "identity"
+    "py": "copy.copy"
+    "args":
+      "x":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(rw_sample()), \"ref_retraction\"))"
+          "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper(H.rw_sample()), \"ref_retraction\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_replication.flora_third"
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(flora_originals(3L))"
+          "py": "(lambda H: H.ref_paper(H.flora_originals(3)))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_replication.flora_third.report_table"
+    "r": "identity"
+    "py": "copy.copy"
+    "args":
+      "x":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(flora_originals(3L)), \"ref_replication\"))"
+          "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper(H.flora_originals(3)), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_replication.paperlist_bib_match"
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(\"10.1093/qje/qjac034\", id = \"zeta\"), demopaper(), ref_paper(c(\"10.1126/science.1239918\", \"10.1126/science.1239918\", \"10.1000/none\"), id = \"Alpha\"))"
+          "py": "(lambda H: pc.PaperList([H.ref_paper([\"10.1093/qje/qjac034\"], id=\"zeta\"), pc.demopaper(), H.ref_paper([\"10.1126/science.1239918\", \"10.1126/science.1239918\", \"10.1000/none\"], id=\"Alpha\")]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "show_outcomes": true
+  - "id": "ref_replication.paperlist_bib_match.report_table"
+    "r": "identity"
+    "py": "copy.copy"
+    "args":
+      "x":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(paperlist(ref_paper(\"10.1093/qje/qjac034\", id = \"zeta\"), demopaper(), ref_paper(c(\"10.1126/science.1239918\", \"10.1126/science.1239918\", \"10.1000/none\"), id = \"Alpha\")), \"ref_replication\", show_outcomes = TRUE))"
+          "py": "(lambda H: H.report_tbl(pc.module_run(pc.PaperList([H.ref_paper([\"10.1093/qje/qjac034\"], id=\"zeta\"), pc.demopaper(), H.ref_paper([\"10.1126/science.1239918\", \"10.1126/science.1239918\", \"10.1000/none\"], id=\"Alpha\")]), \"ref_replication\", show_outcomes=True)))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_replication.single"
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(\"10.1037/0022-3514.71.2.230\")"
+          "py": "(lambda H: H.ref_paper([\"10.1037/0022-3514.71.2.230\"]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_replication.single.report_table"
+    "r": "identity"
+    "py": "copy.copy"
+    "args":
+      "x":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(\"10.1037/0022-3514.71.2.230\"), \"ref_replication\"))"
+          "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1037/0022-3514.71.2.230\"]), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_replication.nohit.show_outcomes"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: 10.1126/SCIENCE.1239918 is the FLoRA original 10.1126/science.1239918 with 6 replications (metacheck: exact match, no hit)"}
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1000/x\", \"10.1126/SCIENCE.1239918\"))"
+          "py": "(lambda H: H.ref_paper([\"10.1000/x\", \"10.1126/SCIENCE.1239918\"]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "show_outcomes": true
+  - "id": "ref_miscitation.dup_db"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), cites = list(0L, c(0L, 1L), 2L))"
+          "py": "(lambda H: H.ref_paper([\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], cites=[0, [0, 1], 2]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/a\", \"10.1000/b\"), reftext = c(\"Ref A\", \"Ref A2\", \"Ref B\"), warning = c(\"Warn A1\", \"Warn A2\", \"Warn B\"))"
+          "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/a\", \"10.1000/b\"], \"reftext\": [\"Ref A\", \"Ref A2\", \"Ref B\"], \"warning\": [\"Warn A1\", \"Warn A2\", \"Warn B\"]})"
+  - "id": "ref_miscitation.extra_cols"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1000/a\", \"10.1000/b\"), cites = list(0L, 1L))"
+          "py": "(lambda H: H.ref_paper([\"10.1000/a\", \"10.1000/b\"], cites=[0, 1]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(note = c(\"n1\", \"n2\"), doi = c(\"10.1000/b\", \"10.1000/a\"), warning = c(\"Warn B\", \"Warn A\"), score = c(1.5, 2), reftext = c(\"Ref B\", \"Ref A\"))"
+          "py": "pd.DataFrame({\"note\": [\"n1\", \"n2\"], \"doi\": [\"10.1000/b\", \"10.1000/a\"], \"warning\": [\"Warn B\", \"Warn A\"], \"score\": [1.5, 2.0], \"reftext\": [\"Ref B\", \"Ref A\"]})"
+  - "id": "ref_miscitation.paperlist_order"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A reference without an in-text citation in a paper is not quoted as '> NA' or counted as an instance (metacheck quotes every row of the join)."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(c(\"10.1000/a\", \"10.1000/b\"), id = \"b\", cites = list(1L)), ref_paper(\"10.1000/b\", id = \"C\", cites = list(0L, 0L)), ref_paper(c(\"10.1000/c\", \"10.1000/a\"), id = \"a\", cites = list(c(0L, 1L))), ref_paper(\"10.1000/a\", id = \"_z\"))"
+          "py": "(lambda H: pc.PaperList([H.ref_paper([\"10.1000/a\", \"10.1000/b\"], id=\"b\", cites=[1]), H.ref_paper([\"10.1000/b\"], id=\"C\", cites=[0, 0]), H.ref_paper([\"10.1000/c\", \"10.1000/a\"], id=\"a\", cites=[[0, 1]]), H.ref_paper([\"10.1000/a\"], id=\"_z\")]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
+          "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
+  - "id": "ref_miscitation.bib_id_order"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A reference without an in-text citation in a paper is not quoted as '> NA' or counted as an instance (metacheck quotes every row of the join)."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(c(sprintf(\"10.1000/x%d\", 0:1), \"10.1000/c\", sprintf(\"10.1000/x%d\", 3:9), \"10.1000/a\", \"10.1000/x11\"), id = \"p\", cites = list(10L, 2L, 10L)), ref_paper(c(\"10.1000/a\", \"10.1000/c\"), id = \"q\", cites = list(1L)))"
+          "py": "(lambda H: pc.PaperList([H.ref_paper([f\"10.1000/x{i}\" for i in range(2)] + [\"10.1000/c\"] + [f\"10.1000/x{i}\" for i in range(3, 10)] + [\"10.1000/a\", \"10.1000/x11\"], id=\"p\", cites=[10, 2, 10]), H.ref_paper([\"10.1000/a\", \"10.1000/c\"], id=\"q\", cites=[1])]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
+          "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
+  - "id": "ref_miscitation.xref_quirks"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); set_col(set_col(set_col(ref_paper(c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), cites = list(0L, 1L, 1L, 2L, 0L)), \"xref\", \"text_id\", c(1L, 99L, 2L, 4L, 5L)), \"xref\", \"xref_id\", c(0L, 1L, NA, 2L, 0L)), \"xref\", \"xref_type\", c(\"bibr\", \"bibr\", \"bibr\", \"foot\", \"figure\"))"
+          "py": "(lambda H: H.set_col(H.set_col(H.set_col(H.ref_paper([\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], cites=[0, 1, 1, 2, 0]), \"xref\", \"text_id\", [1, 99, 2, 4, 5]), \"xref\", \"xref_id\", [0, 1, None, 2, 0]), \"xref\", \"xref_type\", [\"bibr\", \"bibr\", \"bibr\", \"foot\", \"figure\"]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
+          "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
+  - "id": "ref_miscitation.empty_db"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1000/a\"), cites = list(0L))"
+          "py": "(lambda H: H.ref_paper([\"10.1000/a\"], cites=[0]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = character(0), reftext = character(0), warning = character(0))"
+          "py": "pd.DataFrame({\"doi\": pd.Series([], dtype=\"string\"), \"reftext\": pd.Series([], dtype=\"string\"), \"warning\": pd.Series([], dtype=\"string\")})"
+  - "id": "ref_miscitation.no_match"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: the reference 10.1000/A is the database entry 10.1000/a (metacheck: exact match, no hit)"}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1000/A\", \"10.1000/z\"), cites = list(0L, 1L))"
+          "py": "(lambda H: H.ref_paper([\"10.1000/A\", \"10.1000/z\"], cites=[0, 1]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
+          "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
+  - "id": "ref_miscitation.dup_bib_multi"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Two references with the same DOI in a paper give the first bib_id, not a list column (and no warning)."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(c(\"10.1000/a\", \"10.1000/b\", \"10.1000/a\"), id = \"p1\", cites = list(0L, 2L, c(0L, 2L), 1L)), ref_paper(c(\"10.1000/b\", \"10.1000/c\"), id = \"p0\", cites = list(1L)))"
+          "py": "(lambda H: pc.PaperList([H.ref_paper([\"10.1000/a\", \"10.1000/b\", \"10.1000/a\"], id=\"p1\", cites=[0, 2, [0, 2], 1]), H.ref_paper([\"10.1000/b\", \"10.1000/c\"], id=\"p0\", cites=[1])]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
+          "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
+  - "id": "ref_miscitation.bundled_db_paperlist"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(demopaper(), ref_paper(c(\"10.1371/journal.pone.0090779\", \"10.1016/j.jml.2012.11.001\"), id = \"b\", cites = list(1L, 1L, 1L, 1L, 1L, 1L, 0L)))"
+          "py": "(lambda H: pc.PaperList([pc.demopaper(), H.ref_paper([\"10.1371/journal.pone.0090779\", \"10.1016/j.jml.2012.11.001\"], id=\"b\", cites=[1, 1, 1, 1, 1, 1, 0])]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_miscitation.na_doi_many"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A missing DOI in the database no longer matches every reference without a DOI."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"10.1000/x\", \"10.1000/a\"), cites = list(1L, 0L, 1L, 0L, 2L, 1L, 1L, 0L, 1L))"
+          "py": "(lambda H: H.ref_paper([None, \"10.1000/x\", \"10.1000/a\"], cites=[1, 0, 1, 0, 2, 1, 1, 0, 1]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = c(\"10.1000/x\", NA, \"10.1000/a\"), reftext = c(\"Ref X\", \"Ref NA\", \"Ref A\"), warning = c(\"Warn X\", \"Warn NA\", \"Warn A\"))"
+          "py": "pd.DataFrame({\"doi\": [\"10.1000/x\", None, \"10.1000/a\"], \"reftext\": [\"Ref X\", \"Ref NA\", \"Ref A\"], \"warning\": [\"Warn X\", \"Warn NA\", \"Warn A\"]})"
+  - "id": "ref_miscitation.logical_na_db"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A missing DOI in the database no longer matches every reference without a DOI."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"10.1000/x\"), cites = list(0L, 1L, 0L))"
+          "py": "(lambda H: H.ref_paper([None, \"10.1000/x\"], cites=[0, 1, 0]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$df":
+          "doi": [null]
+          "reftext": ["r"]
+          "warning": ["w"]
+  - "id": "ref_miscitation.stress"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A reference without an in-text citation in a paper is not quoted as '> NA' or counted as an instance (metacheck quotes every row of the join)."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); stress_papers()"
+          "py": "(lambda H: H.stress_papers())(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); stress_db()"
+          "py": "(lambda H: H.stress_db())(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  - "id": "ref_retraction.bib_without_text_id"
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$paper": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"
+  - "id": "ref_retraction.cermine_no_doi"
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+  - "id": "ref_replication.bib_without_text_id"
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$paper": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"
+  - "id": "ref_replication.cermine_no_doi"
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+  - "id": "ref_miscitation.bib_without_text_id"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$paper": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"
+  - "id": "ref_miscitation.cermine_no_doi"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+  - "id": "ref_miscitation.nan_db"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A missing DOI in the database no longer matches every reference without a DOI."}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"10.1000/x\"), cites = list(0L, 1L, 0L))"
+          "py": "(lambda H: H.ref_paper([None, \"10.1000/x\"], cites=[0, 1, 0]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = NA, reftext = \"r\", warning = \"w\")"
+          "py": "pd.DataFrame({\"doi\": [np.nan], \"reftext\": [\"r\"], \"warning\": [\"w\"]})"
+  - "id": "ref_miscitation.empty_untyped_db"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"10.1000/x\"), cites = list(0L, 1L))"
+          "py": "(lambda H: H.ref_paper([None, \"10.1000/x\"], cites=[0, 1]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = logical(0), reftext = logical(0), warning = logical(0))"
+          "py": "pd.DataFrame({\"doi\": [], \"reftext\": [], \"warning\": []})"
+  - "id": "ref_miscitation.numeric_db"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"10.1000/x\"), cites = list(0L, 1L))"
+          "py": "(lambda H: H.ref_paper([None, \"10.1000/x\"], cites=[0, 1]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = 1, reftext = \"r\", warning = \"w\")"
+          "py": "pd.DataFrame({\"doi\": [1.0], \"reftext\": [\"r\"], \"warning\": [\"w\"]})"
+  - "id": "ref_miscitation.factor_db"
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1000/y\", \"10.1000/x\"), cites = list(0L, 1L, 1L))"
+          "py": "(lambda H: H.ref_paper([\"10.1000/y\", \"10.1000/x\"], cites=[0, 1, 1]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+      "db":
+        "$expr":
+          "r": "data.frame(doi = factor(c(\"10.1000/x\", \"10.1000/y\", \"10.1000/z\")), reftext = c(\"a\", \"b\", \"c\"), warning = c(\"w1\", \"w2\", \"w3\"))"
+          "py": "pd.DataFrame({\"doi\": pd.Categorical([\"10.1000/x\", \"10.1000/y\", \"10.1000/z\"]), \"reftext\": [\"a\", \"b\", \"c\"], \"warning\": [\"w1\", \"w2\", \"w3\"]})"
+  # F50: tidyr's NULL cells of the list columns (a DOI cited twice in one paper)
+  # stay NULL when a chained module's unnamed na_replace fills NA cells (U77)
+  - "id": "ref_miscitation.listcol_null_chain_marginal"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Two references with the same DOI in a paper give the first bib_id, not a list column (and no warning)."}
+    "r": "identity"
+    "py": "copy.copy"
+    "args":
+      "x":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); suppressWarnings(module_run(module_run(paperlist(ref_paper(c(\"10.1000/a\", \"10.1000/a\"), id = \"p1\", cites = list(0L, 1L)), ref_paper(\"10.1000/b\", id = \"p2\", cites = list(0L))), \"ref_miscitation\", db = data.frame(doi = c(\"10.1000/a\", \"10.1000/b\"), reftext = c(\"Ref A\", \"Ref B\"), warning = c(\"Warn A\", \"Warn B\"))), \"marginal\")$summary_table)"
+          "py": "(lambda H: pc.module_run(pc.module_run(pc.PaperList([H.ref_paper([\"10.1000/a\", \"10.1000/a\"], id=\"p1\", cites=[0, 1]), H.ref_paper([\"10.1000/b\"], id=\"p2\", cites=[0])]), \"ref_miscitation\", db=pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\"], \"reftext\": [\"Ref A\", \"Ref B\"], \"warning\": [\"Warn A\", \"Warn B\"]})), \"marginal\")[\"summary_table\"])(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  # U157: DOIs are case-insensitive, RetractionWatch keeps the publishers' capitals
+  # (the retracted Wakefield et al. 1998 Lancet paper is 10.1016/S0140-6736(97)11096-0)
+  # and lists 10.1212/wnl.57.3.445 (Retraction) and 10.1212/WNL.57.3.445 (Expression
+  # of concern) as two entries, whose notices pytacheck joins for either spelling
+  - "id": "ref_retraction.doi_case"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: the lower-case Wakefield DOI is flagged (Correction;Retraction) and both spellings of 10.1212/wnl.57.3.445 get its two notices, 'Retraction;Expression of concern' (metacheck: exact match, one notice each, Wakefield missed)"}
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1016/s0140-6736(97)11096-0\", \"10.1212/WNL.57.3.445\", \"10.1212/wnl.57.3.445\"))"
+          "py": "(lambda H: H.ref_paper([\"10.1016/s0140-6736(97)11096-0\", \"10.1212/WNL.57.3.445\", \"10.1212/wnl.57.3.445\"]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  # U79: an empty paper list has no references (metacheck's ref_table() stops)
+  - "id": "ref_retraction.empty_paperlist"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U79", "reason": "an empty paper list has no references ('na', empty summary table); metacheck's ref_table() stops ('Join columns in `x` must be present in the data.')"}
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "paperlist()"
+          "py": "pc.PaperList([])"
+  - "id": "ref_replication.empty_paperlist"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U79", "reason": "an empty paper list has no references ('na', empty summary table); metacheck's ref_table() stops ('Join columns in `x` must be present in the data.')"}
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$expr":
+          "r": "paperlist()"
+          "py": "pc.PaperList([])"
+  - "id": "ref_miscitation.empty_paperlist"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U79", "reason": "an empty paper list has no references ('green', empty summary table); metacheck's inner_join() stops ('Join columns in `x` must be present in the data.', no doi column)"}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "paperlist()"
+          "py": "pc.PaperList([])"

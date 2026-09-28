@@ -1,0 +1,99 @@
+{
+  "id": ".fsd_info.review.files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "fsd_url",
+      "FSD_title",
+      "FSD_doi",
+      "FSD_access",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://urn.fi/urn:nbn:fi:fsd:T-FSD3335"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Files study"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "name",
+              "format",
+              "cases",
+              "variables"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a.sav",
+                  "b.csv",
+                  null,
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  "CSV",
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  26,
+                  -2147483647,
+                  null,
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

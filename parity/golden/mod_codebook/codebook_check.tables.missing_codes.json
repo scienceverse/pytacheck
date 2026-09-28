@@ -1,0 +1,132 @@
+{
+  "id": "codebook_check.tables.missing_codes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "q1",
+              "q2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Agreement",
+              "Satisfaction"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "q1",
+              "q2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Column",
+          "Codebook range",
+          "N values",
+          "Values found",
+          "Kind"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "s.csv",
+              "s.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "q1",
+              "q2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "[1, 9]",
+              "[1, 5]"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "-99, 12",
+              "77"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "missing, typo:2",
+              "missing"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

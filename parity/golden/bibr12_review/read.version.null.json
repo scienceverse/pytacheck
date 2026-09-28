@@ -1,0 +1,722 @@
+{
+  "id": "read.version.null",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "incomplete final line found on 'upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'"
+  ],
+  "value": {
+    "t": "paper",
+    "names": [
+      "paper_id",
+      "info",
+      "author",
+      "text",
+      "section",
+      "url",
+      "bib",
+      "xref",
+      "figure",
+      "table",
+      "eq"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "probe"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "keywords"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "author_id",
+          "given",
+          "family",
+          "suffix",
+          "literal",
+          "email",
+          "corresponding",
+          "orcid",
+          "role",
+          "credit_roles"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jane",
+              "Bo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Smith",
+              "Lee"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "As shown in Eq. 5 and discussed in Section 2, the effect was large, t(28) = 2.10, p <.05, d = 0.8.",
+              "See the Supplementary Material and Table S2 for details.",
+              "The mathematical italic 𝛼 = 0.05 criterion was used, as in Figure 1.",
+              "We collected data from 40 people. Results are in Table 1.",
+              "Smith, J. (2020). A prior study. Journal of Things, 7, 10-20. https://doi.org/10.1234/PRIOR",
+              "Figure 1. A plot of the effect.",
+              "Table 1. Values"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              2,
+              3,
+              4,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "section_id",
+          "header",
+          "level",
+          "parent_section_id",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Probe Paper on Xrefs",
+              "Introduction",
+              "Methods",
+              "References"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "title",
+              "intro",
+              "method",
+              "references"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "url_id",
+          "href",
+          "link_text",
+          "text_id",
+          "start",
+          "end"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1234/PRIOR"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              62
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              91
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "bib_id",
+          "text_id",
+          "bib_type",
+          "doi",
+          "title",
+          "authors",
+          "editors",
+          "publisher",
+          "year",
+          "year_suffix",
+          "date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url",
+          "is_in_press",
+          "consolidated_fields"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "xref_id",
+          "target_id",
+          "xref_type",
+          "contents",
+          "text_id",
+          "start",
+          "end"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "equation",
+              "section",
+              "supplementary",
+              "supplementary",
+              "figure",
+              "table"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Eq. 5",
+              "Section 2",
+              "Table S2",
+              "Supplementary Material",
+              "Figure 1",
+              "Table 1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              35,
+              35,
+              8,
+              59,
+              49
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              17,
+              44,
+              43,
+              30,
+              67,
+              56
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "figure_id",
+          "label",
+          "section_id",
+          "text_id",
+          "image",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "table_id",
+          "label",
+          "section_id",
+          "text_id",
+          "html",
+          "contents",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<table><caption>Table 1. Values<\/caption><tbody><tr><th>A<\/th><th>B<\/th><\/tr><tr><td>1<\/td><td>2<\/td><\/tr><\/tbody><\/table>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "A",
+                      "B"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1",
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "text_id",
+          "grp_id",
+          "lhs",
+          "df",
+          "comp",
+          "rhs"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

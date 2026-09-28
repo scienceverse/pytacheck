@@ -1,0 +1,100 @@
+{
+  "id": "zenodo_file_download.zip_no_unzip",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "folder",
+      "zenodo_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5550005"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550005"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550005-readme.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "readme.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "readme.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5:2eb6f3d85c8037648139f3ae51ee5274"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/api/records/5550005/files/readme.txt/content"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

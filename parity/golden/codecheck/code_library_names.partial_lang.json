@@ -1,0 +1,49 @@
+{
+  "id": "code_library_names.partial_lang",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "package",
+      "source",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "os",
+          "sys",
+          "numpy",
+          "a",
+          "json"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "import",
+          "import",
+          "import",
+          "import",
+          "import"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          7
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

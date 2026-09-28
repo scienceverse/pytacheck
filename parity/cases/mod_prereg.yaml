@@ -1,0 +1,699 @@
+# Parity cases for the prereg_check module (inst/modules/prereg_check.R).
+# Generated; each case runs module_run(<paper>, "prereg_check") on recorded API
+# responses: metacheck's (upstream .../testthat/apis, with its page[size] redactor)
+# or synthetic ones (tests/mod_prereg/mocks). Python side:
+# tests/mod_prereg/parity_support.py::run_prereg.
+"area": "mod_prereg"
+"cases":
+- "id": "prereg_check.module.no_links"
+  "note": "module_run() directly: a paper list without links"
+  "module": "prereg_check"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+- "id": "prereg_check.module.no_links_test_paper"
+  "note": "module_run() directly: a test paper without links"
+  "module": "prereg_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "(function() { p <- test_paper(c(\"Nothing to see.\", \"No OSF here.\")); p$paper_id <- \"p_plain\"; p })()"
+        "py": "__import__(\"tests.mod_prereg.parity_support\", fromlist=[\"_\"]).tp([], \"p_plain\", [\"Nothing to see.\", \"No OSF here.\"])"
+- "id": "prereg_check.demo"
+  "note": "OSF Preregistration and AsPredicted links in the demo paper"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(demopaper(), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "demo": true
+- "id": "prereg_check.oer"
+  "note": "Open-Ended Registration"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/5xysn\"), \"p_oer\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/5xysn"
+      "id": "p_oer"
+- "id": "prereg_check.prc"
+  "note": "Prereg Challenge (pages format)"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/jez3g\"), \"p_prc\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/jez3g"
+      "id": "p_prc"
+- "id": "prereg_check.osf_pr_28"
+  "note": "older OSF Preregistration (pages format, qN keys)"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/g59u6\"), \"p_g59u6\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/g59u6"
+      "id": "p_g59u6"
+- "id": "prereg_check.osf_pr_31"
+  "note": "OSF Preregistration with uploaded files"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/7qcxa\"), \"p_7qcxa\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/7qcxa"
+      "id": "p_7qcxa"
+- "id": "prereg_check.osf_pre"
+  "note": "OSF-Standard Pre-Data Collection Registration"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/dr42m\"), \"p_dr42m\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/dr42m"
+      "id": "p_dr42m"
+- "id": "prereg_check.prap"
+  "note": "AsPredicted-on-OSF template"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/7v28u\"), \"p_7v28u\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/7v28u"
+      "id": "p_7v28u"
+- "id": "prereg_check.rrbrandt"
+  "note": "Replication Recipe"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/vzb48\"), \"p_vzb48\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/vzb48"
+      "id": "p_vzb48"
+- "id": "prereg_check.prsp"
+  "note": "van 't Veer & Giner-Sorolla (dedicated extractor)"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/r5bme\"), \"p_r5bme\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/r5bme"
+      "id": "p_r5bme"
+- "id": "prereg_check.prsp_files"
+  "note": "van 't Veer & Giner-Sorolla with an uploaded file"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/wrh4x\"), \"p_wrh4x\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/wrh4x"
+      "id": "p_wrh4x"
+- "id": "prereg_check.blocks"
+  "note": "current OSF Preregistration (blocks format)"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/9h2pj\"), \"p_9h2pj\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/9h2pj"
+      "id": "p_9h2pj"
+- "id": "prereg_check.schema_unreachable"
+  "note": "registration whose schema cannot be fetched"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/a6y7r\"), \"p_a6y7r\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/a6y7r"
+      "id": "p_a6y7r"
+- "id": "prereg_check.many"
+  "note": "more than 10 registrations in one paper"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/bdvxs\", \"https://osf.io/wrh4x\", \"https://osf.io/trwb4\", \"https://osf.io/z2bsa\", \"https://osf.io/jez3g\", \"https://osf.io/9bg3z\", \"https://osf.io/7qcxa\", \"https://osf.io/a6y7r\", \"https://osf.io/4v3sg\", \"https://osf.io/hwu9x\", \"https://osf.io/yab8q\"), \"p_many\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/bdvxs"
+      - "https://osf.io/wrh4x"
+      - "https://osf.io/trwb4"
+      - "https://osf.io/z2bsa"
+      - "https://osf.io/jez3g"
+      - "https://osf.io/9bg3z"
+      - "https://osf.io/7qcxa"
+      - "https://osf.io/a6y7r"
+      - "https://osf.io/4v3sg"
+      - "https://osf.io/hwu9x"
+      - "https://osf.io/yab8q"
+      "id": "p_many"
+- "id": "prereg_check.paperlist"
+  "note": "a paper list: one OSF and one AsPredicted paper"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://aspredicted.org/by8i8v.pdf\"), \"paper_b\")), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/48ncu"
+      "id": "paper_a"
+    - "url":
+      - "https://aspredicted.org/by8i8v.pdf"
+      "id": "paper_b"
+- "id": "prereg_check.psychsci_demo"
+  "note": "a paper list where only some papers have links"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(read(c(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\", \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\", \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json\", \"upstream/metacheck/inst/demos/to_err_is_human.json\")), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "read":
+    - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+    - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+    - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+    - "upstream/metacheck/inst/demos/to_err_is_human.json"
+- "id": "prereg_check.no_links"
+  "note": "no links at all"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(character(0), \"p_none\", c(\"No links here.\", \"Nor here.\")), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_none"
+      "text":
+      - "No links here."
+      - "Nor here."
+- "id": "prereg_check.no_links.paperlist"
+  "note": "no links in any paper of a list"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(read(c(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\", \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\", \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json\")), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "read":
+    - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+    - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+    - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+- "id": "prereg_check.no_registrations"
+  "note": "an OSF project link, not a registration"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/pngda\"), \"p_node\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/pngda"
+      "id": "p_node"
+- "id": "prereg_check.no_registrations.many"
+  "note": "OSF links of every other type (and an invalid one)"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/pngda\", \"https://osf.io/629bx\", \"https://osf.io/xp5cy\", \"https://osf.io/75qgk\", \"https://osf.io/4i578\", \"https://osf.io/abc\"), \"p_types\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/pngda"
+      - "https://osf.io/629bx"
+      - "https://osf.io/xp5cy"
+      - "https://osf.io/75qgk"
+      - "https://osf.io/4i578"
+      - "https://osf.io/abc"
+      "id": "p_types"
+- "id": "prereg_check.inaccessible"
+  "note": "an OSF link that cannot be read"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/3cz2e\"), \"p_inacc\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/3cz2e"
+      "id": "p_inacc"
+- "id": "prereg_check.fetch_fails"
+  "note": "a registration that type-checks but cannot be fetched"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/8c3kb\"), \"p_fetch\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/8c3kb"
+      "id": "p_fetch"
+- "id": "prereg_check.inaccessible.mixed"
+  "note": "one readable registration and two unreadable links"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/48ncu\", \"https://osf.io/3cz2e\", \"https://osf.io/8c3kb\"), \"p_mixed\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/48ncu"
+      - "https://osf.io/3cz2e"
+      - "https://osf.io/8c3kb"
+      "id": "p_mixed"
+- "id": "prereg_check.aspredicted_only"
+  "note": "only an AsPredicted link (R errors: osf_type(character(0)))"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\"), \"p_ap\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://aspredicted.org/by8i8v.pdf"
+      "id": "p_ap"
+- "id": "prereg_check.aspredicted.multiple"
+  "note": "two AsPredicted links collapse into one row"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://aspredicted.org/ve2qn.pdf\", \"https://osf.io/pngda\"), \"p_ap2\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://aspredicted.org/by8i8v.pdf"
+      - "https://aspredicted.org/ve2qn.pdf"
+      - "https://osf.io/pngda"
+      "id": "p_ap2"
+- "id": "prereg_check.aspredicted.blind"
+  "note": "blinded and short AsPredicted links with an OSF registration"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/blind.php?x=nq4xa3\", \"https://aspredicted.org/Y2F_6B7\", \"https://osf.io/48ncu\"), \"p_ap3\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://aspredicted.org/blind.php?x=nq4xa3"
+      - "https://aspredicted.org/Y2F_6B7"
+      - "https://osf.io/48ncu"
+      "id": "p_ap3"
+- "id": "prereg_check.aspredicted.unreachable"
+  "note": "an AsPredicted page that cannot be fetched (R errors)"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/zzzzz.pdf\", \"https://osf.io/48ncu\"), \"p_ap4\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://aspredicted.org/zzzzz.pdf"
+      - "https://osf.io/48ncu"
+      "id": "p_ap4"
+- "id": "prereg_check.aspredicted.paperlist"
+  "note": "AsPredicted links of different papers collapse into one row too"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://aspredicted.org/ve2qn.pdf\", \"https://osf.io/5xysn\"), \"paper_b\")), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://aspredicted.org/by8i8v.pdf"
+      - "https://osf.io/48ncu"
+      "id": "paper_a"
+    - "url":
+      - "https://aspredicted.org/ve2qn.pdf"
+      - "https://osf.io/5xysn"
+      "id": "paper_b"
+- "id": "prereg_check.duplicate_links"
+  "note": "the same registration as a link and in the text"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/48ncu\"), \"p_dup\", c(\"The preregistration is at osf.io/48ncu.\")), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/48ncu"
+      "id": "p_dup"
+      "text":
+      - "The preregistration is at osf.io/48ncu."
+- "id": "prereg_check.unjoined_links"
+  "note": "http:// and upper-case links do not join back to the paper"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"http://osf.io/48ncu\", \"https://OSF.io/48NCU/\"), \"p_http\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "http://osf.io/48ncu"
+      - "https://OSF.io/48NCU/"
+      "id": "p_http"
+- "id": "prereg_check.synthetic.withdrawn"
+  "note": "a withdrawn registration"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/wdrwn\"), \"p_wdrwn\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "mock": "local"
+    "papers":
+    - "url":
+      - "https://osf.io/wdrwn"
+      "id": "p_wdrwn"
+- "id": "prereg_check.synthetic.blocks"
+  "note": "blocks schema: reserved/repeated/unlabelled fields, slugs, files"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/blkss\"), \"p_blkss\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "mock": "local"
+    "papers":
+    - "url":
+      - "https://osf.io/blkss"
+      "id": "p_blkss"
+- "id": "prereg_check.synthetic.pages"
+  "note": "pages schema: long titles, questions, sub-keys, nested answers"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/pagss\"), \"p_pagss\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "mock": "local"
+    "papers":
+    - "url":
+      - "https://osf.io/pagss"
+      "id": "p_pagss"
+- "id": "prereg_check.synthetic.prsp"
+  "note": "prsp: $ partial matching, vectors and data frames pasted together"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/prspx\"), \"p_prspx\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "mock": "local"
+    "papers":
+    - "url":
+      - "https://osf.io/prspx"
+      "id": "p_prspx"
+- "id": "prereg_check.synthetic.common_only"
+  "note": "no responses / no schema link: only the common fields"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/emptr\", \"https://osf.io/nosch\"), \"p_common\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "mock": "local"
+    "papers":
+    - "url":
+      - "https://osf.io/emptr"
+      - "https://osf.io/nosch"
+      "id": "p_common"
+- "id": "prereg_check.synthetic.paperlist"
+  "note": "several synthetic registrations across a paper list"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(paperlist(tp(c(\"https://osf.io/blkss\", \"https://osf.io/wdrwn\"), \"p_one\"), tp(c(\"https://osf.io/pagss\"), \"p_two\"), tp(c(\"https://example.org\"), \"p_three\")), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "mock": "local"
+    "papers":
+    - "url":
+      - "https://osf.io/blkss"
+      - "https://osf.io/wdrwn"
+      "id": "p_one"
+    - "url":
+      - "https://osf.io/pagss"
+      "id": "p_two"
+    - "url":
+      - "https://example.org"
+      "id": "p_three"
+- "id": "prereg_check.report.demo"
+  "note": "module_report() of the demo paper"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(demopaper(), \"prereg_check\")), perl = TRUE)) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "demo": true
+    "report": true
+- "id": "prereg_check.report.mixed"
+  "note": "module_report() with inaccessible links"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://osf.io/48ncu\", \"https://osf.io/3cz2e\", \"https://osf.io/8c3kb\"), \"p_mixed\"), \"prereg_check\")), perl = TRUE)) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "report": true
+    "papers":
+    - "url":
+      - "https://osf.io/48ncu"
+      - "https://osf.io/3cz2e"
+      - "https://osf.io/8c3kb"
+      "id": "p_mixed"
+- "id": "prereg_check.report.inaccessible"
+  "note": "module_report() when every link is inaccessible"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://osf.io/3cz2e\"), \"p_inacc\"), \"prereg_check\")), perl = TRUE)) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "report": true
+    "papers":
+    - "url":
+      - "https://osf.io/3cz2e"
+      "id": "p_inacc"
+- "id": "prereg_check.report.no_links"
+  "note": "module_report() without links"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(character(0), \"p_none\", c(\"No links here.\")), \"prereg_check\")), perl = TRUE)) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "report": true
+    "papers":
+    - "url": []
+      "id": "p_none"
+      "text":
+      - "No links here."

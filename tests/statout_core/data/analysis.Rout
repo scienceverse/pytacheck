@@ -1,0 +1,338 @@
+
+> d <- sleep
+
+> head(d)
+  extra group ID
+1   0.7     1  1
+2  -1.6     1  2
+3  -0.2     1  3
+4  -1.2     1  4
+5  -0.1     1  5
+6   3.4     1  6
+
+> t.test(extra ~ group, data = d)
+
+	Welch Two Sample t-test
+
+data:  extra by group
+t = -1.8608, df = 17.776, p-value = 0.07939
+alternative hypothesis: true difference in means between group 1 and group 2 is not equal to 0
+95 percent confidence interval:
+ -3.3654832  0.2054832
+sample estimates:
+mean in group 1 mean in group 2 
+           0.75            2.33 
+
+
+> t.test(extra ~ group, data = d, var.equal = TRUE)
+
+	Two Sample t-test
+
+data:  extra by group
+t = -1.8608, df = 18, p-value = 0.07919
+alternative hypothesis: true difference in means between group 1 and group 2 is not equal to 0
+95 percent confidence interval:
+ -3.363874  0.203874
+sample estimates:
+mean in group 1 mean in group 2 
+           0.75            2.33 
+
+
+> with(d, t.test(extra[group == 1], extra[group == 2], 
++     paired = TRUE))
+
+	Paired t-test
+
+data:  extra[group == 1] and extra[group == 2]
+t = -4.0621, df = 9, p-value = 0.002833
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ -2.4598858 -0.7001142
+sample estimates:
+mean difference 
+          -1.58 
+
+
+> t.test(d$extra, mu = 0)
+
+	One Sample t-test
+
+data:  d$extra
+t = 3.413, df = 19, p-value = 0.002918
+alternative hypothesis: true mean is not equal to 0
+95 percent confidence interval:
+ 0.5955845 2.4844155
+sample estimates:
+mean of x 
+     1.54 
+
+
+> cor.test(mtcars$mpg, mtcars$wt)
+
+	Pearson's product-moment correlation
+
+data:  mtcars$mpg and mtcars$wt
+t = -9.559, df = 30, p-value = 1.294e-10
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9338264 -0.7440872
+sample estimates:
+       cor 
+-0.8676594 
+
+
+> cor.test(mtcars$mpg, mtcars$wt, method = "spearman", 
++     exact = FALSE)
+
+	Spearman's rank correlation rho
+
+data:  mtcars$mpg and mtcars$wt
+S = 10292, p-value = 1.488e-11
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+-0.886422 
+
+
+> cor.test(mtcars$mpg, mtcars$wt, method = "kendall", 
++     exact = FALSE)
+
+	Kendall's rank correlation tau
+
+data:  mtcars$mpg and mtcars$wt
+z = -5.7981, p-value = 6.706e-09
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+       tau 
+-0.7278321 
+
+
+> chisq.test(matrix(c(12, 5, 7, 9), nrow = 2))
+
+	Pearson's Chi-squared test with Yates' continuity correction
+
+data:  matrix(c(12, 5, 7, 9), nrow = 2)
+X-squared = 1.456, df = 1, p-value = 0.2276
+
+
+> prop.test(c(15, 25), c(50, 50))
+
+	2-sample test for equality of proportions with continuity correction
+
+data:  c(15, 25) out of c(50, 50)
+X-squared = 3.375, df = 1, p-value = 0.06619
+alternative hypothesis: two.sided
+95 percent confidence interval:
+ -0.407993141  0.007993141
+sample estimates:
+prop 1 prop 2 
+   0.3    0.5 
+
+
+> shapiro.test(mtcars$mpg)
+
+	Shapiro-Wilk normality test
+
+data:  mtcars$mpg
+W = 0.94756, p-value = 0.1229
+
+
+> wilcox.test(mpg ~ am, data = mtcars, exact = FALSE)
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  mpg by am
+W = 42, p-value = 0.001871
+alternative hypothesis: true location shift is not equal to 0
+
+
+> kruskal.test(mpg ~ cyl, data = mtcars)
+
+	Kruskal-Wallis rank sum test
+
+data:  mpg by cyl
+Kruskal-Wallis chi-squared = 25.746, df = 2, p-value = 2.566e-06
+
+
+> fisher.test(matrix(c(3, 1, 1, 3), nrow = 2))
+
+	Fisher's Exact Test for Count Data
+
+data:  matrix(c(3, 1, 1, 3), nrow = 2)
+p-value = 0.4857
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+   0.2117329 621.9337505
+sample estimates:
+odds ratio 
+  6.408309 
+
+
+> binom.test(7, 20)
+
+	Exact binomial test
+
+data:  7 and 20
+number of successes = 7, number of trials = 20, p-value = 0.2632
+alternative hypothesis: true probability of success is not equal to 0.5
+95 percent confidence interval:
+ 0.1539092 0.5921885
+sample estimates:
+probability of success 
+                  0.35 
+
+
+> bartlett.test(mpg ~ cyl, data = mtcars)
+
+	Bartlett test of homogeneity of variances
+
+data:  mpg by cyl
+Bartlett's K-squared = 8.3934, df = 2, p-value = 0.01505
+
+
+> var.test(mpg ~ am, data = mtcars)
+
+	F test to compare two variances
+
+data:  mpg by am
+F = 0.38656, num df = 18, denom df = 12, p-value = 0.06691
+alternative hypothesis: true ratio of variances is not equal to 1
+95 percent confidence interval:
+ 0.1243721 1.0703429
+sample estimates:
+ratio of variances 
+         0.3865615 
+
+
+> m <- lm(mpg ~ wt + hp, data = mtcars)
+
+> summary(m)
+
+Call:
+lm(formula = mpg ~ wt + hp, data = mtcars)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.941 -1.600 -0.182  1.050  5.854 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 37.22727    1.59879  23.285  < 2e-16 ***
+wt          -3.87783    0.63273  -6.129 1.12e-06 ***
+hp          -0.03177    0.00903  -3.519  0.00145 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.593 on 29 degrees of freedom
+Multiple R-squared:  0.8268,	Adjusted R-squared:  0.8148 
+F-statistic: 69.21 on 2 and 29 DF,  p-value: 9.109e-12
+
+
+> anova(m)
+Analysis of Variance Table
+
+Response: mpg
+          Df Sum Sq Mean Sq F value    Pr(>F)    
+wt         1 847.73  847.73 126.041 4.488e-12 ***
+hp         1  83.27   83.27  12.381  0.001451 ** 
+Residuals 29 195.05    6.73                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> fit <- aov(mpg ~ factor(cyl), data = mtcars)
+
+> summary(fit)
+            Df Sum Sq Mean Sq F value   Pr(>F)    
+factor(cyl)  2  824.8   412.4    39.7 4.98e-09 ***
+Residuals   29  301.3    10.4                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> g <- glm(am ~ wt, data = mtcars, family = binomial)
+
+> summary(g)
+
+Call:
+glm(formula = am ~ wt, family = binomial, data = mtcars)
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)   
+(Intercept)   12.040      4.510   2.670  0.00759 **
+wt            -4.024      1.436  -2.801  0.00509 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 43.230  on 31  degrees of freedom
+Residual deviance: 19.176  on 30  degrees of freedom
+AIC: 23.176
+
+Number of Fisher Scoring iterations: 6
+
+
+> for (v in c("mpg", "wt")) print(t.test(mtcars[[v]] ~ 
++     mtcars$am))
+
+	Welch Two Sample t-test
+
+data:  mtcars[[v]] by mtcars$am
+t = -3.7671, df = 18.332, p-value = 0.001374
+alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+95 percent confidence interval:
+ -11.280194  -3.209684
+sample estimates:
+mean in group 0 mean in group 1 
+       17.14737        24.39231 
+
+
+	Welch Two Sample t-test
+
+data:  mtcars[[v]] by mtcars$am
+t = 5.4939, df = 29.234, p-value = 6.272e-06
+alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+95 percent confidence interval:
+ 0.8525632 1.8632262
+sample estimates:
+mean in group 0 mean in group 1 
+       3.768895        2.411000 
+
+
+> s <- summary(m)
+
+> s$coefficients[2, , drop = FALSE]
+    Estimate Std. Error   t value     Pr(>|t|)
+wt -3.877831  0.6327335 -6.128695 1.119647e-06
+
+> res <- t.test(extra ~ group, data = d)
+
+> res
+
+	Welch Two Sample t-test
+
+data:  extra by group
+t = -1.8608, df = 17.776, p-value = 0.07939
+alternative hypothesis: true difference in means between group 1 and group 2 is not equal to 0
+95 percent confidence interval:
+ -3.3654832  0.2054832
+sample estimates:
+mean in group 1 mean in group 2 
+           0.75            2.33 
+
+
+> aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+  cyl      mpg
+1   4 26.66364
+2   6 19.74286
+3   8 15.10000
+
+> tapply(mtcars$mpg, mtcars$cyl, sd)
+       4        6        8 
+4.509828 1.453567 2.560048 
+
+> r2 <- cor(mtcars$mpg, mtcars$wt)^2
+
+> r2
+[1] 0.7528328
+
+> x <- 5

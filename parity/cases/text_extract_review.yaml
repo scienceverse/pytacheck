@@ -1,0 +1,403 @@
+"area": "text_extract_review"
+# Review cases for the text extractors (R/text-extractors.R, R/extract-tests.R,
+# R/text-json_expand.R, R/causal_sentences.R): data-frame inputs, missing text,
+# zero-row inputs, paper lists with ids in non-C order, Unicode spacing and
+# case folding, and the type.convert()/jsonlite corners of json_expand().
+"cases":
+# ------------------------------------------------------------ extract_p_values
+- "id": "extract_p_values.review.df_no_text_col"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$df":
+        "sentence": ["p = .01 and t = 2", "none"]
+- "id": "extract_p_values.review.df_na_text"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "data.frame(text = c('p = .05', NA, 't = 2, p = .1'), text_id = 1:3, paper_id = 'a')"
+        "py": "pd.DataFrame({'text': pd.Series(['p = .05', None, 't = 2, p = .1'], dtype='string'), 'text_id': pd.Series([1, 2, 3], dtype='Int64'), 'paper_id': pd.Series(['a'] * 3, dtype='string')})"
+- "id": "extract_p_values.review.df_extra_first_col"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$df":
+        "n": [1, 2]
+        "text": ["p = .05", "x"]
+- "id": "extract_p_values.review.zero_rows"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "data.frame(text = character(0))"
+        "py": "pd.DataFrame({'text': pd.Series([], dtype='string')})"
+- "id": "extract_p_values.review.refs_excluded"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$df":
+        "text": ["We found p = .03.", "Smith (2020) reported p < .001.", "p = .2"]
+        "section_type": ["results", "references", "discussion"]
+        "text_id": [1, 2, 3]
+        "paper_id": ["x", "x", "x"]
+- "id": "extract_p_values.review.unicode_space"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "p = .03 and p < .001 and p = .04"
+        - "P = .5, p\t=\t.06, p\n<\n.07"
+        - "p = .05 e-3 and p = .05e-3 and p = 1.5×10^-3"
+  "compare": {"ignore": ["paper_id"]}
+- "id": "extract_p_values.review.paperlist_ids"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('t(10) = 2.1, p = .05', 'p < .01')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('p > .2')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('none', 'p = n.s.')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['t(10) = 2.1, p = .05', 'p < .01'], 'b'), (['p > .2'], 'B'), (['none', 'p = n.s.'], 'a')]])"
+# ------------------------------------------------------------------ extract_eq
+- "id": "extract_eq.review.df_no_text_col"
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$df":
+        "sentence": ["p = .01 and t = 2", "none https://x.org"]
+- "id": "extract_eq.review.df_na_text"
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$expr":
+        "r": "data.frame(text = c('p = .05', NA, 't = 2, p = .1'), text_id = 1:3, paper_id = 'a')"
+        "py": "pd.DataFrame({'text': pd.Series(['p = .05', None, 't = 2, p = .1'], dtype='string'), 'text_id': pd.Series([1, 2, 3], dtype='Int64'), 'paper_id': pd.Series(['a'] * 3, dtype='string')})"
+- "id": "extract_eq.review.zero_rows"
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$expr":
+        "r": "data.frame(text = character(0))"
+        "py": "pd.DataFrame({'text': pd.Series([], dtype='string')})"
+- "id": "extract_eq.review.all_numeric_lhs"
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": ["1 = 2", "3 < 4 and 5 > 6"]
+  "compare": {"ignore": ["paper_id"]}
+- "id": "extract_eq.review.text_id_na_error"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "rows without text_id are grouped by their source sentence (R fails on NA comparisons)"}
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$df":
+        "text": ["t = 2.1", "F = 3"]
+        "paper_id": ["a", "a"]
+- "id": "extract_eq.review.paperlist_ids"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "each sentence of a paper in a list keeps its own grp_id (R restarts at 1 whenever its search order moves to another paper: both of paper B's sentences get grp_id 1)"}
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('a < 2 and b = 3', 'c = 4', 'd > 5, e = 6', 'f ≤ 7')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('g > 5', 'h = 1')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('none', 'k ≈ 2 and m < 3')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['a < 2 and b = 3', 'c = 4', 'd > 5, e = 6', 'f ≤ 7'], 'b'), (['g > 5', 'h = 1'], 'B'), (['none', 'k ≈ 2 and m < 3'], 'a')]])"
+- "id": "extract_eq.review.refs_excluded"
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$df":
+        "text": ["t(20) = 2.1, p = .03", "Smith (2020), F(1, 2) = 5.", "r = .3"]
+        "section_type": ["results", "references", "discussion"]
+        "text_id": [1, 2, 3]
+        "paper_id": ["x", "x", "x"]
+- "id": "extract_eq.review.unicode"
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "t = 2.1, p = .03, F(1, 20) = 3.2"
+        - "t(20) = 2.3 and χ²(2) = 4.1 and µ = 3.2 and Ω = 4"
+        - "K = 5, ſd = 3, ΔR² = .05, Cohen s d(1) = .3"
+        - "t( 28 ) = 2.4; F(2,\n57)\t=\t4.21; M = −0.5"
+  "compare": {"ignore": ["paper_id"]}
+# ---------------------------------------------------------------- extract_urls
+- "id": "extract_urls.review.df_no_text_col"
+  "r": "extract_urls"
+  "py": "pytacheck.text.extract.extract_urls"
+  "args":
+    "paper":
+      "$df":
+        "sentence": ["p = .01 and t = 2", "none https://x.org"]
+- "id": "extract_urls.review.zero_rows"
+  "r": "extract_urls"
+  "py": "pytacheck.text.extract.extract_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "data.frame(text = character(0))"
+        "py": "pd.DataFrame({'text': pd.Series([], dtype='string')})"
+- "id": "extract_urls.review.refs_excluded"
+  "r": "extract_urls"
+  "py": "pytacheck.text.extract.extract_urls"
+  "args":
+    "paper":
+      "$df":
+        "text": ["Data: https://osf.io/abc", "Retrieved from https://doi.org/10.1/x", "See www.example.com."]
+        "section_type": ["method", "references", "discussion"]
+        "text_id": [1, 2, 3]
+        "paper_id": ["x", "x", "x"]
+- "id": "extract_urls.review.caseless_unicode"
+  "r": "extract_urls"
+  "py": "pytacheck.text.extract.extract_urls"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "WWW.EXAMPLE.COM and Example.Org/Path and HTTP://X.IO"
+        - "ex.ſſ and ex.KK and ex.été and café.org"
+        - "https://example.org/été and https://example.org/a b and https://example.org/x y"
+        - "1.2.3.4 and 256.1.1.1:8080/x and v1.2.3.4.5 and doi:10.1234/abc.def"
+  "compare": {"ignore": ["paper_id"]}
+- "id": "extract_urls.review.paperlist_ids"
+  "r": "extract_urls"
+  "py": "pytacheck.text.extract.extract_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('https://osf.io/b', 'x')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('www.a.org and osf.io/a')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['https://osf.io/b', 'x'], 'b'), (['none'], 'B'), (['www.a.org and osf.io/a'], 'a')]])"
+# ----------------------------------------------------------- .detect_live_data
+- "id": "detect_live_data.review.df"
+  "r": "metacheck:::.detect_live_data"
+  "py": "pytacheck.text.extract._detect_live_data"
+  "args":
+    "paper":
+      "$df":
+        "text":
+        - "PARTICIPANTS WERE RECRUITED online."
+        - "Participants were paid."
+        - "Informed consent was obtained from all."
+        - "The rats were housed in pairs."
+        - "Nothing to see."
+        - "Participants were recruited and gave informed consent via Prolific."
+- "id": "detect_live_data.review.paperlist_ids"
+  "r": "metacheck:::.detect_live_data"
+  "py": "pytacheck.text.extract._detect_live_data"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('We used MTurk.', 'x')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('Subjects were debriefed.', 'our participants')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['We used MTurk.', 'x'], 'b'), (['none'], 'B'), (['Subjects were debriefed.', 'our participants'], 'a')]])"
+# --------------------------------------------------------------- extract_tests
+- "id": "extract_tests.review.eq_table"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('first sentence', 'second sentence')); p$paper_id <- 'eqp'; p$eq <- data.frame(text_id = c(2L, 1L, 2L, 1L), grp_id = c(1L, 2L, 1L, 2L), lhs = c('t', 'F', 'p', 'p'), df = c('(3)', NA, NA, NA), comp = c('=', '=', '<', '='), rhs = c('1.5', '2', '.03', '.2')); p})"
+        "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([2, 1, 2, 1], dtype='Int64'), 'grp_id': pd.Series([1, 2, 1, 2], dtype='Int64'), 'lhs': ['t', 'F', 'p', 'p'], 'df': pd.Series(['(3)', None, None, None], dtype='string'), 'comp': ['=', '=', '<', '='], 'rhs': ['1.5', '2', '.03', '.2']})), p)[2])(pc.test_paper(['first sentence', 'second sentence']))"
+- "id": "extract_tests.review.eq_no_df_col"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('first sentence')); p$paper_id <- 'eqp'; p$eq <- data.frame(text_id = c(1L, 1L), lhs = c('t', 'p'), comp = c('=', '<'), rhs = c('1.5', '.03')); p})"
+        "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([1, 1], dtype='Int64'), 'lhs': ['t', 'p'], 'comp': ['=', '<'], 'rhs': ['1.5', '.03']})), p)[2])(pc.test_paper(['first sentence']))"
+- "id": "extract_tests.review.paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a paper list gives each paper's tests once (R repeats every test once per paper id)"}
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('t(10) = 2.1, p = .05', 'no stats')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('F(1, 20) = 5, p < .01', 'x', 'd = .5')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['t(10) = 2.1, p = .05', 'no stats'], 'b'), (['F(1, 20) = 5, p < .01', 'x', 'd = .5'], 'a')]])"
+- "id": "extract_tests.review.dup_text_ids"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('t(10) = 2.1, p = .05', 'F(1, 2) = 3', 'r = .4')); p$paper_id <- 'dup'; p$text$text_id <- c(1L, 1L, 2L); p$text$paragraph_id <- c(5, 6, 7); p})"
+        "py": "(lambda p: (p.__setitem__('paper_id', 'dup'), p.__setitem__('text', p.text.assign(text_id=pd.Series([1, 1, 2], dtype='Int64'), paragraph_id=pd.Series([5.0, 6.0, 7.0]))), p)[2])(pc.test_paper(['t(10) = 2.1, p = .05', 'F(1, 2) = 3', 'r = .4']))"
+- "id": "extract_tests.review.info_empty"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('t(10) = 2.1, p = .05')); p$info <- p$info[0, ]; p})"
+        "py": "(lambda p: (p.__setitem__('info', p.info.iloc[0:0]), p)[1])(pc.test_paper(['t(10) = 2.1, p = .05']))"
+- "id": "extract_tests.review.df_text_only"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$df":
+        "text": ["t(23) = 3.77", "none"]
+- "id": "extract_tests.review.render_na"
+  "r": "metacheck:::.render_test"
+  "py": "pytacheck.text.extract_tests._render_test"
+  "args":
+    "g":
+      "$list":
+      - {"name": "t", "comp": "=", "value": "3.77", "df": "", "sentence_pos": 1}
+      - {"name": "F", "value": "2", "sentence_pos": 2}
+- "id": "extract_tests.review.split_primary_after_satellite"
+  "r": "metacheck:::.split_into_tests"
+  "py": "pytacheck.text.extract_tests._split_into_tests"
+  "args":
+    "comps":
+      "$list":
+      - {"name": "p", "comp": "=", "value": ".05", "df": "", "sentence_pos": 1}
+      - {"name": "SD", "comp": "=", "value": "1", "df": "", "sentence_pos": 2}
+      - {"name": "t", "comp": "=", "value": "2", "df": "(3)", "sentence_pos": 3}
+      - {"name": "95% CI", "comp": "=", "value": "[1, 2]", "df": "", "sentence_pos": 4}
+      - {"name": "CI", "comp": "=", "value": "[3, 4]", "df": "", "sentence_pos": 5}
+      - {"name": "estimate", "comp": "=", "value": ".4", "df": "", "sentence_pos": 6}
+      - {"name": "β", "comp": "=", "value": ".2", "df": "", "sentence_pos": 7}
+      - {"name": "r", "comp": "=", "value": ".1", "df": "", "sentence_pos": 8}
+      - {"name": "z", "comp": "=", "value": "3", "df": "", "sentence_pos": 9}
+      - {"name": "z", "comp": "=", "value": "4", "df": "", "sentence_pos": 10}
+# ----------------------------------------------------------------- json_expand
+- "id": "json_expand.review.type_convert"
+  "r": "json_expand"
+  "py": "pytacheck.text.json_expand.json_expand"
+  "args":
+    "table":
+      "$df":
+        "id": [1, 2, 3]
+        "answer":
+        - '{"i": "i", "nai": "NAi", "nasp": "NA ", "nan": "NAN", "snan": " NAN", "hexp": "0x1p", "hexdot": "0x1.8.8", "plusi": "+i", "a": "1.5", "b": "NAN", "c": "1", "d": "1.5", "e": "T", "f": "0x1p", "g": "NAN", "h": "NAN"}'
+        - '{"i": null, "nai": null, "nasp": null, "nan": null, "snan": null, "hexp": null, "hexdot": null, "plusi": null, "a": "NAN", "b": "1.5", "c": "NAN", "d": "NA ", "e": "1", "f": "1", "g": "nan", "h": "NaN"}'
+        - '{"a": "2", "b": "2", "c": "2", "d": "2", "e": null, "f": null, "g": "-NaN", "h": "1"}'
+- "id": "json_expand.review.bom"
+  "r": "json_expand"
+  "py": "pytacheck.text.json_expand.json_expand"
+  "args":
+    "table":
+      "$df":
+        "id": [1, 2, 3, 4, 5]
+        "answer":
+        - "﻿{\"a\": 1}"
+        - "```json\n﻿{\"a\": 2}\n```"
+        - "﻿﻿{\"a\": 3}"
+        - " ﻿{\"a\": 4}"
+        - "﻿[1]"
+- "id": "json_expand.review.dates"
+  "r": "json_expand"
+  "py": "pytacheck.text.json_expand.json_expand"
+  "args":
+    "table":
+      "$df":
+        "id": [1, 2, 3, 4, 5, 6, 7, 8]
+        "answer":
+        - '{"a": {"$date": 1234567890123}, "b": 1}'
+        - '{"a": {"$date": 1234567890000}}'
+        - '[{"$date": 1}, {"$date": 2}]'
+        - '[{"a": 1, "d": {"$date": 86400000}}, {"a": 2, "d": {"$date": 1500}}]'
+        - '{"a": [{"$date": 1}, {"$date": null}], "b": [{"$date": 1}, 5], "c": {"$date": null}}'
+        - '{"a": {"$date": ["2020-01-01T10:11:12.345Z", "2020-02-30T00:00:00Z", "2020-01-01T24:00:00Z", "2020-01-01T10:11:61Z", "2020-01-01T10:11:62Z", "2020-01-01T10:11Z"]}, "b": 1}'
+        - '{"a": {"$date": [-1500, 0, 1e15, 59999.9999]}, "b": 1}'
+        - '{"a": {"$date": true}, "b": {"$date": "2020-01-01T00:00:00Z", "x": 1}}'
+# U9: a `_row` of nested objects with NA cells (jsonlite's rn[is.na(rn)] <- ...)
+- "id": "json_expand.review.row_names_nested_na"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U9", "reason": "a \"_row\" key holding nested objects is an ordinary column (jsonlite's row-name NA replacement mangled it and changed the row count)"}
+  "r": "json_expand"
+  "py": "pytacheck.text.json_expand.json_expand"
+  "args":
+    "table":
+      "$df":
+        "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        "answer":
+        - '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": "q"}}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": 7}}, "x": 2}, {"x": 3}]'
+        - '[{"_row": {"a": {"b": null}, "c": null}, "x": 1}, {"_row": {"a": {"b": "u"}, "c": "v"}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}, "c": 5}, "x": 1}, {"_row": {"a": {"b": null}, "c": null}, "x": 2}]'
+        - '[{"_row": {"a": {"b": {"d": null}}}, "x": 1}, {"_row": {"a": {"b": {"d": 1}}}, "x": 2}]'
+        - '[{"_row": {"a": {"b": 1, "e": null}}, "x": 1}, {"_row": {"a": {"b": 2, "e": 3}}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}}, "x": 1}]'
+        - '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": null}}, "x": 2}]'
+        - '[{"_row": {"z": {}, "a": {"b": null, "e": 1}}, "x": 1}, {"_row": {"z": {}, "a": {"b": 2, "e": 3}}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}, "c": 1}, "x": 1}, {"_row": {"a": {"b": 5}, "c": 2}, "x": 2}]'
+        - '[{"_row": {"c": null, "a": {"b": 3}}, "x": 1}, {"_row": {"c": 2, "a": {"b": 5}}, "x": 2}]'
+        - '[{"_row": {"a": {"b": [1, null]}}, "x": 1}, {"_row": {"a": {"b": 3}}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": 3}}, "x": 2}, {"_row": {"a": {"b": 4}}, "x": 3}]'
+        - '[{"_row": {"a": {"b": true}, "c": null}, "x": 1}, {"_row": {"a": {"b": false}, "c": "v"}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}, "c": "NA_2"}, "x": 1}, {"_row": {"a": {"b": "u"}, "c": "v"}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}, "c": {"d": "x"}}, "x": 1}, {"_row": {"a": {"b": "u"}, "c": {"d": "y"}}, "x": 2}]'
+        - '[{"_row": {"a": {"b": null}, "c": {"d": null}}, "x": 1}, {"_row": {"a": {"b": "u"}, "c": {"d": "y"}}, "x": 2}]'
+# ------------------------------------------------------------ causal_relations
+- "id": "causal_relations.review.na"
+  "r": "causal_relations"
+  "py": "pytacheck.text.causal.causal_relations"
+  "args":
+    "sentence":
+      "$expr":
+        "r": "NA_character_"
+        "py": "[None]"
+- "id": "causal_relations.review.na_blank"
+  "r": "causal_relations"
+  "py": "pytacheck.text.causal.causal_relations"
+  "args":
+    "sentence":
+      "$expr":
+        "r": "c(NA, '  ')"
+        "py": "[None, '  ']"
+- "id": "causal_relations.review.na_blank_text"
+  "r": "causal_relations"
+  "py": "pytacheck.text.causal.causal_relations"
+  "args":
+    "sentence":
+      "$expr":
+        "r": "c(NA, '')"
+        "py": "[None, '']"
+    "rel_mode": "fast"
+- "id": "causal_relations.review.not_character"
+  "r": "causal_relations"
+  "py": "pytacheck.text.causal.causal_relations"
+  "args":
+    "sentence": {"$dbl": [1.5]}
+- "id": "extract_tests.review.eq_tid_missing"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('first sentence')); p$paper_id <- 'eqp'; p$eq <- data.frame(text_id = c(7L, 7L, 8L), lhs = c('t', 'p', 'r'), df = c('(3)', NA, NA), comp = c('=', '<', '='), rhs = c('1.5', '.03', '.2')); p})"
+        "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([7, 7, 8], dtype='Int64'), 'lhs': ['t', 'p', 'r'], 'df': pd.Series(['(3)', None, None], dtype='string'), 'comp': ['=', '<', '='], 'rhs': ['1.5', '.03', '.2']})), p)[2])(pc.test_paper(['first sentence']))"
+- "id": "extract_tests.review.eq_comp_na"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('first sentence')); p$paper_id <- 'eqp'; p$eq <- data.frame(text_id = c(1L, 1L), lhs = c('t', 'p'), df = c('', NA), comp = c(NA, '<'), rhs = c('1.5', NA)); p})"
+        "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([1, 1], dtype='Int64'), 'lhs': ['t', 'p'], 'df': pd.Series(['', None], dtype='string'), 'comp': pd.Series([None, '<'], dtype='string'), 'rhs': pd.Series(['1.5', None], dtype='string')})), p)[2])(pc.test_paper(['first sentence']))"
+- "id": "extract_tests.review.render_null_name"
+  "r": "metacheck:::.render_test"
+  "py": "pytacheck.text.extract_tests._render_test"
+  "args":
+    "g":
+      "$list":
+      - {"name": "t", "comp": "=", "value": "3.77", "sentence_pos": 1}
+      - {"comp": "=", "value": "2", "sentence_pos": 2}

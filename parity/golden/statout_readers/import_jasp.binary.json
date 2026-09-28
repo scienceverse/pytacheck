@@ -1,0 +1,89 @@
+{
+  "id": "import_jasp.binary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "data",
+      "columns",
+      "format",
+      "data_file_path"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "id",
+          "rt",
+          "cond"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              7,
+              8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.25,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "name",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "rt",
+              "cond"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Nominal",
+              "Continuous",
+              "Ordinal"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "binary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "C:/data/study.csv"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

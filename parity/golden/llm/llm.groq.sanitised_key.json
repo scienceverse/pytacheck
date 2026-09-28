@@ -1,0 +1,32 @@
+{
+  "id": "llm.groq.sanitised_key",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text",
+      "answer"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "hel\u0001lo",
+          "12"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "TRUE"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

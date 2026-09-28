@@ -1,0 +1,20 @@
+{
+  "id": "code_read.my_langs_analysis_sps",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "* Load.",
+      "GET FILE='data/example.sav'.",
+      "COMMENT BEGIN",
+      "ignored",
+      "COMMENT END.",
+      "GET DATA /TYPE=TXT /FILE=raw.txt.",
+      "DESCRIPTIVES VARIABLES=age."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

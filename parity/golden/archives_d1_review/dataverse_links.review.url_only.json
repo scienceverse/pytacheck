@@ -1,0 +1,65 @@
+{
+  "id": "dataverse_links.review.url_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dataverse_url",
+      "dataverse_host",
+      "dataverse_doi"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/Q"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/Q"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.nl"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34894/Q"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

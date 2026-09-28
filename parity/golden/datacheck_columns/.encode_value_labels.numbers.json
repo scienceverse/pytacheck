@@ -1,0 +1,14 @@
+{
+  "id": ".encode_value_labels.numbers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"1.5\":\"3\",\"1e+05\":\"4.25\",\"123456789012.5\":\"1e-20\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,9 @@
+[
+ {
+  "name": "z.sh",
+  "path": "my dir/deeper/z.sh",
+  "type": "file",
+  "size": 5,
+  "download_url": "https://raw.githubusercontent.com/rv/files/main/my dir/deeper/z.sh"
+ }
+]

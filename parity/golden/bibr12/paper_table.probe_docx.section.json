@@ -1,0 +1,70 @@
+{
+  "id": "paper_table.probe_docx.section",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "section_id",
+      "header",
+      "level",
+      "parent_section_id",
+      "section_type",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A DOCX Probe",
+          "Introduction",
+          "Data availability"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "title",
+          "intro",
+          "data_availability"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "probe",
+          "probe",
+          "probe"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

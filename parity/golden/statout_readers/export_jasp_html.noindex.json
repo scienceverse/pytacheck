@@ -1,0 +1,9 @@
+{
+  "id": "export_jasp_html.noindex",
+  "ok": false,
+  "error": "No 'index.html' in sqlite.jasp; nothing to export.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

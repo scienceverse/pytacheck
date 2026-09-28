@@ -1,0 +1,97 @@
+{
+  "id": "text_search.demo.multi.exclude",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "All data are simulated.",
+          "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections.",
+          "Remember, this is a demo and none of this is real."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          6,
+          32
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          18
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          1,
+          12
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "<note place=\"foot\" n=\"1\" xml:id=\"foot_0\">   <p>Remember, this is a demo and none of this is real.<\/p> <\/note>"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract",
+          "[div-01]",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abstract",
+          "intro",
+          "foot"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

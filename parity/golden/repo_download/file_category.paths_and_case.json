@@ -1,0 +1,211 @@
+{
+  "id": "file_category.paths_and_case",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 22,
+    "names": [
+      "name",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sub/dir/data.csv",
+          "README",
+          "ReadMe.md",
+          "read-me",
+          "docs/Codebook.PDF",
+          "DATA.CSV",
+          "Analysis.PY",
+          "model.STAN",
+          "x.Rdata",
+          "x.RDS",
+          "x.sas7bdat",
+          "x.zsav",
+          "archive.ZIP",
+          "a.b.c.d.csv",
+          "trailing.",
+          "no_ext",
+          "data.json.txt",
+          "tab\tname.csv",
+          "résumé.R",
+          "日本語.csv",
+          "x.MAT",
+          "x.parquet"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "readme",
+          "readme",
+          "readme",
+          "codebook",
+          "data",
+          "code",
+          null,
+          "data",
+          null,
+          "data",
+          "data",
+          null,
+          "data",
+          null,
+          null,
+          null,
+          "data",
+          "code",
+          "data",
+          "data",
+          "data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

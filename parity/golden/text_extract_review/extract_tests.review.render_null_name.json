@@ -1,0 +1,9 @@
+{
+  "id": "extract_tests.review.render_null_name",
+  "ok": false,
+  "error": "values must be length 1,\n but FUN(X[[2]]) result is length 0",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,86 @@
+{
+  "id": "selfgen_merge_synonyms.files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "source_file",
+      "column_name",
+      "scale",
+      "confidence",
+      "scale_source"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "a.csv",
+          "a.csv",
+          "a.csv",
+          "b.csv",
+          "b.csv",
+          "b.csv",
+          "c.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "v1",
+          "v2",
+          "v3",
+          "v4",
+          "v5",
+          "v6",
+          "v7",
+          "v8"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "trust",
+          "trust",
+          "trust",
+          "Other thing",
+          "alpha beta",
+          "alpha beta",
+          "the scale",
+          "solo label"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "medium",
+          "medium",
+          "medium",
+          "medium",
+          "medium",
+          "medium",
+          "medium",
+          "medium"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "self_generated",
+          "self_generated",
+          "self_generated",
+          "self_generated",
+          "self_generated",
+          "self_generated",
+          "self_generated",
+          "self_generated"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,120 @@
+{
+  "id": "doi_lookup.replay.with_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "doi",
+      "type",
+      "title",
+      "container",
+      "year",
+      "author",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "editor",
+      "publisher",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.7717/peerj.4375",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The state of OA: a large-scale analysis of the prevalence and impact of Open Access articles",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PeerJ",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2018,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Piwowar, Heather; Priem, Jason; Larivière, Vincent; Alperin, Juan Pablo; Matthias, Lisa; Norlander, Bree; Farley, Ashley; West, Jevin; Haustein, Stefanie",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "e4375",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PeerJ",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://dx.doi.org/10.7717/peerj.4375",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

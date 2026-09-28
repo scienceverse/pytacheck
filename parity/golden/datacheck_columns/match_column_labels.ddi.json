@@ -1,0 +1,114 @@
+{
+  "id": "match_column_labels.ddi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "paper_id",
+      "source_file",
+      "column_name",
+      "group",
+      "label",
+      "codebook_variable",
+      "label_source",
+      "label_status",
+      "label_method",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sex"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sex"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sex"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cb.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rules"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Male\",\"2\":\"Female\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "What is your sex?"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "recoded from raw gender field"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,153 @@
+{
+  "id": "ref_pubpeer.bibr12.preprint",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_pubpeer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer Comments"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "total_comments",
+          "url",
+          "users"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              39
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1037/1528-3542.5.1.3",
+              "10.1037/a0028085"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3–11. https://doi.org/10.1037/1528-3542.5.1.3",
+              "Meade, A. W., & Craig, S. B. (2012). Identifying careless responses in survey data. Psychological Methods, 17(3), 437–455. https://doi.org/10.1037/a0028085"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              4,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://pubpeer.com/publications/1528-3542.5.1.3",
+              "https://pubpeer.com/publications/A0028085"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reviewer One",
+              "Reviewer Two, Statcheck"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 69 references with DOIs. You cited 2 references with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3–11. https://doi.org/10.1037/1528-3542.5.1.3\", \n\"Meade, A. W., & Craig, S. B. (2012). Identifying careless responses in survey data. Psychological Methods, 17(3), 437–455. https://doi.org/10.1037/a0028085\"\n), Comments = c(4, 2), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/1528-3542.5.1.3' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/A0028085' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 2 references with comments in PubPeer."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,79 @@
+{
+  "id": "read_stat_tables.ipynb.r",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "table_index",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cell 2 [2]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stdout (cell 2)"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "t",
+              "df",
+              "p-value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2.8134"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "47.2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.007123"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

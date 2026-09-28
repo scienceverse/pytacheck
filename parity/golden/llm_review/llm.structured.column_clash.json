@@ -1,0 +1,61 @@
+{
+  "id": "llm.structured.column_clash",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "text",
+      "variables.label",
+      "variables.variable_name",
+      "variables.label.extracted",
+      "variables.kind"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "two vars",
+          "two vars",
+          "none"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "in1",
+          "in1",
+          "in2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dv",
+          "iv",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "outcome",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

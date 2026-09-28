@@ -1,0 +1,26 @@
+{
+  "status": "OK",
+  "data": {
+    "persistentUrl": [
+      "https://doi.org/10.7910/DVN/LISTS"
+    ],
+    "latestVersion": {
+      "releaseTime": [],
+      "metadataBlocks": {
+        "citation": {
+          "fields": [
+            {
+              "typeName": "title",
+              "value": [
+                "Listed"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "publicationDate": [
+      "2020-01-01"
+    ]
+  }
+}

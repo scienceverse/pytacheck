@@ -1,0 +1,234 @@
+{
+  "id": "all_urls.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "al.Premotor",
+              "sagepub.com/content/by/supplemental-data",
+              "https://osf.io/48ncu",
+              "https://aspredicted.org/by8i8v.pdf",
+              "https://github.com/Lak-ens/to_err_is_human",
+              "https://researchbox.org/4377",
+              "https://osf.io/5tbm9",
+              "https://osf.io/629bx",
+              "pwr.t.test"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              167,
+              9,
+              9,
+              20,
+              20,
+              21,
+              21,
+              27
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              3,
+              3,
+              8,
+              8,
+              9,
+              9,
+              14
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              14,
+              2,
+              2,
+              5,
+              5,
+              5,
+              5,
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "doi=10.1177%2F0956797613520608&amp;domain=pdf&amp;date_stamp=2014-02-18\">520608P SSXXX10.1177/0956797613520608Michael et al.Premotor Homunculus in Action Understanding<\/ref> research-article2014",
+              "Additional supporting information may be found at <ref type=\"url\" target=\"http://pss\">http://pss<\/ref> .sagepub.com/content/by/supplemental-data",
+              "This study was preregistered at <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and on AsPredicted at <ref type=\"url\" target=\"https://aspredicted.org/by8i8v.pdf\">https://aspredicted.org/by8i8v.pdf<\/ref>.",
+              "This study was preregistered at <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and on AsPredicted at <ref type=\"url\" target=\"https://aspredicted.org/by8i8v.pdf\">https://aspredicted.org/by8i8v.pdf<\/ref>.",
+              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614527830",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Abstract",
+              "Supplemental Material",
+              "Method",
+              "Method",
+              "Data Availability",
+              "Data Availability",
+              "Data Availability",
+              "Data Availability",
+              "Results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abstract",
+              "annex",
+              "method",
+              "method",
+              "availability",
+              "availability",
+              "availability",
+              "availability",
+              "annex"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              1,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

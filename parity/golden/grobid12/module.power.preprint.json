@@ -1,0 +1,206 @@
+{
+  "id": "module.power.preprint",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "power_type",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The sample provided approximately 90% power to find an effect of dZ = 0.35 for our predicted contrasts using α = .05 in a two-tailed test.",
+              "We excluded two additional participants because they mentioned after finishing the study that they did not understand that the target, the person, and the object were supposed to be in the same situation. Even though this exclusion criterion was not preregistered, we reasoned that these participants' responses would work against proper tests of our hypotheses. The sample provided approximately 90% power to find an effect of dZ = 0.33 for our predicted contrasts using α = .05 in a two-tailed test."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              23,
+              48
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8,
+              16
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants",
+              "Participants"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You chose to not use an LLM to assess if all information was reported, so please check for all required information manually.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = 1:2, power_type = c(\"unknown\", \"unknown\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = c(\"1\", \"2\"), text = c(\"The sample provided approximately 90% <strong>power<\/strong> to find an effect of dZ = 0.35 for our predicted contrasts using α = .05 in a two-tailed test.\", \n\"We excluded two additional participants because they mentioned after finishing the study that they did not understand that the target, the person, and the object were supposed to be in the same situation. Even though this exclusion criterion was not preregistered, we reasoned that these participants' responses would work against proper tests of our hypotheses. The sample provided approximately 90% <strong>power<\/strong> to find an effect of dZ = 0.33 for our predicted contrasts using α = .05 in a two-tailed test.\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 2 potential power analyses."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

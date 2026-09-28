@@ -1,0 +1,172 @@
+{
+  "id": "data_read_head.attrs.labelled.dta",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "gender",
+          "score",
+          "name",
+          "when"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "gender",
+          "score",
+          "name",
+          "when"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "format.stata"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "%12.0g"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.stata",
+              "label",
+              "labels"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "haven_labelled",
+                  "vctrs_vctr",
+                  "double"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "%10.0g"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Respondent gender"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "Male",
+                  "Female",
+                  "Refused"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      9
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.stata",
+              "label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "%10.0g"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Total score"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.stata"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "%-9s"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.stata"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Date"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "%td"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

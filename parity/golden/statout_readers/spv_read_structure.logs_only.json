@@ -1,0 +1,93 @@
+{
+  "id": "spv_read_structure.logs_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "command_name",
+      "syntax",
+      "subtype",
+      "bin_member",
+      "xml_member",
+      "is_legacy",
+      "is_graph"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "X",
+          "X",
+          "X",
+          "X",
+          "X"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "GET FILE='data.sav'.",
+          "GET FILE='data.sav'.",
+          null,
+          "FREQUENCIES age.",
+          "FREQUENCIES age."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0000000009_lightTableData.bin",
+          "0000000009_lightTableData.bin",
+          "0000000009_lightTableData.bin",
+          "0000000009_lightTableData.bin",
+          "0000000009_lightTableData.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

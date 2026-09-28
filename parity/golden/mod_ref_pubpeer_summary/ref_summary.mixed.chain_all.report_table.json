@@ -1,0 +1,100 @@
+{
+  "id": "ref_summary.mixed.chain_all.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "text",
+          "pubpeer",
+          "replication_type",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1002/bdm.586",
+              "Reference 0. https://doi.org/10.1002/bdm.586",
+              "Reference 1. https://doi.org/10.1371/journal.ppat.1000066",
+              "Reference 2. https://doi.org/10.9999/pp.one",
+              "Reference 3. https://doi.org/NA",
+              "Reference 4. https://doi.org/10.9999/pp.stat",
+              "Reference 5. https://doi.org/10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>Link<\/a>",
+              null,
+              null,
+              "<a href='https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56' target='_blank'>Link<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Retraction;Expression of concern",
+              null,
+              null,
+              null,
+              "Retraction"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.75,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          10
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

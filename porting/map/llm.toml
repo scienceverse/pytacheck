@@ -1,0 +1,81 @@
+# R source -> Python location for the LLM client (see docs/PORTING.md).
+#
+# metacheck reaches LLMs through ellmer; pytacheck has no SDK dependency. The
+# parts of ellmer metacheck relies on are ported alongside:
+#   ellmer::chat()/chat_*() providers, params(), Chat$chat()/chat_structured(),
+#   models_*()                          -> src/pytacheck/llm/providers.py
+#   ellmer::type_*(), print(<type>), as_json(<type>), convert_from_type()
+#                                       -> src/pytacheck/llm/types.py
+#   jsonlite::toJSON()/parse_json() (httr2 bodies, yajl errors)
+#                                       -> src/pytacheck/llm/_json.py
+#   base::serialize()/saveRDS()/readRDS() (shared LLM cache)
+#                                       -> src/pytacheck/llm/_rds.py
+[files]
+"R/llm.R" = ["src/pytacheck/llm/core.py", "src/pytacheck/llm/providers.py", "src/pytacheck/llm/types.py", "src/pytacheck/llm/_json.py"]
+"R/llm-cache.R" = ["src/pytacheck/llm/cache.py", "src/pytacheck/llm/_rds.py"]
+"R/cap-prompt.R" = ["src/pytacheck/llm/cap_prompt.py"]
+"R/zzz.R" = ["src/pytacheck/llm/core.py"]
+
+[functions]
+llm = "pytacheck.llm.core:llm"
+llm_use = "pytacheck.llm.core:llm_use"
+llm_model = "pytacheck.llm.core:llm_model"
+llm_max_calls = "pytacheck.llm.core:llm_max_calls"
+llm_max_tokens = "pytacheck.llm.core:llm_max_tokens"
+llm_timeout = "pytacheck.llm.core:llm_timeout"
+llm_reasoning = "pytacheck.llm.core:llm_reasoning"
+llm_model_list = "pytacheck.llm.core:llm_model_list"
+".llm_model_list_groq" = "pytacheck.llm.core:_llm_model_list_groq"
+".llm_ollama_native" = "pytacheck.llm.core:_llm_ollama_native"
+".llm_apply_reasoning" = "pytacheck.llm.core:_llm_apply_reasoning"
+".llm_sanitise_text" = "pytacheck.llm.core:_llm_sanitise_text"
+".llm_error_message" = "pytacheck.llm.core:_llm_error_message"
+".llm_json_retryable" = "pytacheck.llm.core:_llm_json_retryable"
+".llm_is_systemic_error" = "pytacheck.llm.core:_llm_is_systemic_error"
+".llm_systemic_notice" = "pytacheck.llm.core:_llm_systemic_notice"
+".llm_extract_thinking" = "pytacheck.llm.core:_llm_extract_thinking"
+".unnest_result" = "pytacheck.llm.core:_unnest_result"
+".LLM_ALLOWED_PLATFORMS" = "pytacheck.llm.core:_LLM_ALLOWED_PLATFORMS"
+llm_cache = "pytacheck.llm.cache:llm_cache"
+llm_cache_clear = "pytacheck.llm.cache:llm_cache_clear"
+".llm_cache_dir" = "pytacheck.llm.cache:_llm_cache_dir"
+".llm_cache_key" = "pytacheck.llm.cache:_llm_cache_key"
+".llm_cache_path" = "pytacheck.llm.cache:_llm_cache_path"
+".llm_cache_get" = "pytacheck.llm.cache:_llm_cache_get"
+".llm_cache_put" = "pytacheck.llm.cache:_llm_cache_put"
+cap_report = "pytacheck.llm.cap_prompt:cap_report"
+".cap_size_str" = "pytacheck.llm.cap_prompt:_cap_size_str"
+
+# R/zzz.R .onLoad(): its LLM defaults (metacheck.llm_max_calls = 30L,
+# metacheck.llm.model = the first provider whose API key is set,
+# metacheck.llm.use = FALSE) are applied lazily by this function.
+[onload]
+".onLoad (LLM options)" = "pytacheck.llm.core:_init_options"
+
+# ellmer (a dependency of R/llm.R) -- ported because pytacheck uses no SDKs.
+[ellmer]
+"ellmer::chat" = "pytacheck.llm.providers:chat"
+"ellmer::params" = "pytacheck.llm.providers:params"
+"ellmer::type_object" = "pytacheck.llm.types:type_object"
+"ellmer::type_array" = "pytacheck.llm.types:type_array"
+"ellmer::type_string" = "pytacheck.llm.types:type_string"
+"ellmer::type_integer" = "pytacheck.llm.types:type_integer"
+"ellmer::type_number" = "pytacheck.llm.types:type_number"
+"ellmer::type_boolean" = "pytacheck.llm.types:type_boolean"
+"ellmer::type_enum" = "pytacheck.llm.types:type_enum"
+"ellmer::type_from_schema" = "pytacheck.llm.types:type_from_schema"
+"ellmer::models_ollama" = "pytacheck.llm.providers:models_ollama"
+"ellmer::models_openai" = "pytacheck.llm.providers:models_openai"
+"ellmer::models_anthropic" = "pytacheck.llm.providers:models_anthropic"
+"ellmer::models_google_gemini" = "pytacheck.llm.providers:models_google_gemini"
+"ellmer::models_mistral" = "pytacheck.llm.providers:models_mistral"
+"ellmer::models_deepseek" = "pytacheck.llm.providers:models_deepseek"
+"ellmer::models_portkey" = "pytacheck.llm.providers:models_portkey"
+"ellmer::models_lmstudio" = "pytacheck.llm.providers:models_lmstudio"
+"ellmer::models_vllm" = "pytacheck.llm.providers:models_vllm"
+# ellmer's bundled price table (ellmer:::prices, first row per provider/model),
+# exported to src/pytacheck/llm/ellmer_prices.csv
+"ellmer:::match_prices" = "pytacheck.llm.providers:match_prices"
+"ellmer:::convert_from_type" = "pytacheck.llm.types:convert_from_type"
+"ellmer:::list_to_atomic" = "pytacheck.llm.types:list_to_atomic"
+"ellmer:::extract_data" = "pytacheck.llm.providers:extract_data"

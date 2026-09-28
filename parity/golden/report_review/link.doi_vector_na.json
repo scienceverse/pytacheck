@@ -1,0 +1,16 @@
+{
+  "id": "link.doi_vector_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<a href='https://doi.org/10.1/x' target='_blank'>doi.org/10.1/x<\/a>",
+      "<a href='https://doi.org/NA' target='_blank'>doi.org/NA<\/a>",
+      "<a href='https://doi.org/10.2/y' target='_blank'>doi.org/10.2/y<\/a>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

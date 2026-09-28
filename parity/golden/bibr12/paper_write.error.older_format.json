@@ -1,0 +1,9 @@
+{
+  "id": "paper_write.error.older_format",
+  "ok": false,
+  "error": "paper_write(schema_version = \"12.0\") writes papers read from a bibr 12.x export, or converted from Grobid TEI with grobid_to_bibr(schema_version = \"12.0\"); 'to_err_is_human' is in metacheck's older format",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

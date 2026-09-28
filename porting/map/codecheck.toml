@@ -1,0 +1,36 @@
+# R source -> Python location for codecheck (see docs/PORTING.md).
+# _encoding/_icu: readr::guess_encoding (stringi/ICU) + readr::read_lines (vroom) + readLines;
+# _rparse: R's gram.y parser (parse errors); _purl/_reval: knitr::purl and chunk-option evaluation;
+# _rjson: jsonlite::fromJSON(simplifyVector = FALSE) (yajl quirks) and unlist()/as.character() of its values.
+[files]
+"R/code_check.R" = ["src/pytacheck/codecheck/core.py", "src/pytacheck/codecheck/_encoding.py", "src/pytacheck/codecheck/_icu.py", "src/pytacheck/codecheck/_icu_tables.py", "src/pytacheck/codecheck/_rparse.py", "src/pytacheck/codecheck/_rparse_tables.py", "src/pytacheck/codecheck/_purl.py", "src/pytacheck/codecheck/_reval.py", "src/pytacheck/codecheck/_rjson.py"]
+
+[functions]
+code_read = "pytacheck.codecheck.core:code_read"
+".ipynb_lang" = "pytacheck.codecheck.core:_ipynb_lang"
+".qmd_lang" = "pytacheck.codecheck.core:_qmd_lang"
+code_lang = "pytacheck.codecheck.core:code_lang"
+".code_predownload" = "pytacheck.codecheck.core:_code_predownload"
+".code_expand_spv" = "pytacheck.codecheck.core:_code_expand_spv"
+".code_expand_smcl" = "pytacheck.codecheck.core:_code_expand_smcl"
+".code_expand_mplus" = "pytacheck.codecheck.core:_code_expand_mplus"
+".code_expand_html" = "pytacheck.codecheck.core:_code_expand_html"
+".code_expand_zip" = "pytacheck.codecheck.core:_code_expand_zip"
+code_extract_r = "pytacheck.codecheck.core:code_extract_r"
+code_extract_py = "pytacheck.codecheck.core:code_extract_py"
+code_extract_qmd_py = "pytacheck.codecheck.core:code_extract_qmd_py"
+code_parse_r = "pytacheck.codecheck.core:code_parse_r"
+code_abs_path = "pytacheck.codecheck.core:code_abs_path"
+code_setwd = "pytacheck.codecheck.core:code_setwd"
+code_install_packages = "pytacheck.codecheck.core:code_install_packages"
+".code_pos_in_string" = "pytacheck.codecheck.core:_code_pos_in_string"
+".code_strip_inline_comment" = "pytacheck.codecheck.core:_code_strip_inline_comment"
+code_remove_comments = "pytacheck.codecheck.core:code_remove_comments"
+".code_comment_flags" = "pytacheck.codecheck.core:_code_comment_flags"
+".code_has_docstring" = "pytacheck.codecheck.core:_code_has_docstring"
+code_line_stats = "pytacheck.codecheck.core:code_line_stats"
+code_library_lines = "pytacheck.codecheck.core:code_library_lines"
+code_library_names = "pytacheck.codecheck.core:code_library_names"
+code_packages = "pytacheck.codecheck.core:code_packages"
+".code_version_pin_check" = "pytacheck.codecheck.core:_code_version_pin_check"
+code_file_refs = "pytacheck.codecheck.core:code_file_refs"

@@ -1,0 +1,985 @@
+{
+  "id": "prereg_check.many",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "hypotheses_interactions",
+          "manipulation_checks",
+          "theoretical_rationale",
+          "design_independent_variables",
+          "design_dependent_variables",
+          "design_covariates_moderators",
+          "data_exclusion_criteria",
+          "data_collection_procedures",
+          "sample_size",
+          "stopping_rule",
+          "outliers_and_exclusions",
+          "fail_safe_exclusion_levels",
+          "indices",
+          "statistical_tests",
+          "rationale_covariate",
+          "variables_roles_in_analyses",
+          "inference_criteria",
+          "multiple_testing_correction",
+          "missing_data_handling",
+          "reliability_criteria",
+          "transformations",
+          "assumptions_and_contingencies",
+          "data_collection_started",
+          "data_looked",
+          "project_dates_start_end",
+          "additional_comments",
+          "description",
+          "existing_data",
+          "existing_data_explanation",
+          "sample_size_rationale",
+          "manipulated_variables",
+          "measured_variables",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "randomization",
+          "follow_up_analyses",
+          "authors",
+          "q7",
+          "name",
+          "finally",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Open-Ended Registration",
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+              "Open-Ended Registration",
+              "Open-Ended Registration",
+              "Prereg Challenge",
+              "OSF Preregistration",
+              "OSF Preregistration",
+              "Open-Ended Registration",
+              "Preregistration Template from AsPredicted.org",
+              "Preregistration Template from AsPredicted.org",
+              "Preregistration Template from AsPredicted.org"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ethical Free-Riding",
+              "Time's up? Time spent using digital technology and adolescent well-being",
+              "Rationality in joint action: Maximizing co-efficiency in coordination",
+              "On the limited generality of air pollution and anxiety as causal determinants of unethical behavior: Commentary on Lu, Lee, Gino, &amp; Galinsky (2018)",
+              "Does Honesty Require Time? A preregistered replication of SEB2012 Exp2",
+              "RR4_Does Honesty Require Time? A preregistered direct replication of SEB2012 Exp2",
+              "Ego depletion pre-registered study",
+              "WVS Dishonesty",
+              "Optimism 7575-559-59",
+              "Optimism 7575-559-66",
+              "One-shot task"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bdvxs",
+              "wrh4x",
+              "trwb4",
+              "z2bsa",
+              "jez3g",
+              "9bg3z",
+              "7qcxa",
+              "a6y7r",
+              "4v3sg",
+              "hwu9x",
+              "yab8q"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/bdvxs",
+              "https://osf.io/wrh4x",
+              "https://osf.io/trwb4",
+              "https://osf.io/z2bsa",
+              "https://osf.io/jez3g",
+              "https://osf.io/9bg3z",
+              "https://osf.io/7qcxa",
+              "https://osf.io/a6y7r",
+              "https://osf.io/4v3sg",
+              "https://osf.io/hwu9x",
+              "https://osf.io/yab8q"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-06-18T17:47:30.234150",
+              "2018-05-08T21:30:06.047337",
+              "2019-02-05T19:00:45.011954",
+              "2019-06-26T22:56:09.594764",
+              "2018-11-02T13:55:48.394132",
+              "2019-03-28T15:21:51.486147",
+              "2019-09-19T16:02:01.290943",
+              "2020-08-24T02:39:48.759898",
+              "2020-04-03T23:16:39.042656",
+              "2020-04-11T02:08:47.567941",
+              "2020-02-28T15:42:37.818828"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-06-18T17:40:24.618785",
+              "2019-04-30T16:04:52.794657",
+              "2022-08-22T18:09:59.007380",
+              "2024-10-18T12:26:04.886587",
+              "2018-11-02T09:29:45.302861",
+              "2019-03-26T10:53:07.836139",
+              "2023-12-13T13:19:34.800058",
+              "2023-01-10T15:34:55.292980",
+              "2020-08-23T03:13:56.121904",
+              "2020-08-23T03:15:07.904910",
+              "2020-07-28T08:20:40.590837"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-06-18T17:47:30.213534",
+              "2018-05-08T21:30:06.030818",
+              "2019-02-05T19:00:44.981065",
+              "2019-06-26T22:56:09.551127",
+              "2018-11-02T13:55:48.367381",
+              "2019-03-28T15:21:51.454410",
+              "2019-09-19T16:02:01.270059",
+              "2020-08-24T02:39:48.740831",
+              "2020-04-03T23:16:39.016061",
+              "2020-04-11T02:08:47.548443",
+              "2020-02-28T15:42:37.798697"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "2020-05-01T00:00:00Z",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "2024-08-22T00:00:00Z",
+              "2024-04-02T00:00:00Z",
+              "2024-04-08T00:00:00Z",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-bdvxs-v1",
+              "https://archive.org/details/osf-registrations-wrh4x-v1",
+              "https://archive.org/details/osf-registrations-trwb4-v1",
+              "https://archive.org/details/osf-registrations-z2bsa-v1",
+              "https://archive.org/details/osf-registrations-jez3g-v1",
+              "https://archive.org/details/osf-registrations-9bg3z-v1",
+              "https://archive.org/details/osf-registrations-7qcxa-v1",
+              "https://archive.org/details/osf-registrations-a6y7r-v1",
+              "https://archive.org/details/osf-registrations-4v3sg-v1",
+              "https://archive.org/details/osf-registrations-hwu9x-v1",
+              "https://archive.org/details/osf-registrations-yab8q-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "H1: Higher self-reported technology use correlates with lower observed levels of adolescent well-being indicators\n\nH2: For those adolescents reporting technology use in their time use diaries, total time spent using technology per day correlates with lower observed levels of adolescent well-being indicators\n\nH3: Technology use 30 minutes before bedtime on a weekday correlates with lower observed levels of adolescent well-being\n\nH4: Technology use 1 hour before bedtime on a weekday correlates with lower observed levels of adolescent well-being\n\nH5: Models without controls (as put forth below) will have significantly smaller effects than models with controls\n",
+              null,
+              null,
+              "In this experiment, we aim to replicate a study by Shalvi, Eldar and Bereby-Meyer (2012, Experiment 2) which suggested that honesty requires overcoming our natural tendency to cheat in tempting situations. We will test the same research question (i.e. are participants under time pressure more likely to cheat than participants without time pressure?) as the original study. Participants under time pressure are more likely to cheat than participants that are not under time pressure.",
+              "Participants under time-pressure report higher outcomes in an incentivized die rolling game than participants that play at their own pace.",
+              "1. We expect the boundary parameter to be smaller in the high than low demand condition.\n2. We expect the drift rate for the controlled process to be similar (i.e., no significant difference) between the high and low demand conditions.\n3. We expect the drift rate for the automatic process to be similar (i.e., no significant difference) between the high and low demand conditions.",
+              null,
+              "We hypothesize that people who are higher in dispositional optimism would be less willing to engage in unethical behaviors.",
+              "We hypothesize that people who are led to be optimistic about the future of the Covid-19 epidemic would perceive unethical behaviors as less justifiable than people who are led to be pessimistic about the future of this epidemic.",
+              "Do people who seek counterfactual information feel worse than those who do not seek counterfactual information?"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We are not planning to test any interactions. ",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "As this study examines a large-scale epidemiological dataset, we are not manipulating any variables.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "This research aims to investigate the effect of technology use on adolescent well-being. Previous research has relied on Likert scale self-report measures to enumerate adolescents’ technology use. We will complement and extend this research by examining both adolescent self-report technology use using Likert scales and by completing time use diaries. These time use diaries allow for a more detailed investigation of the technology-wellbeing relationship, as we examine not only the total time spent using technology but also the timings of this use.  Not Applicable",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We want to note that our study is correlational and therefore does not have strict independent/dependent variables. Our explanatory variables, however, concern an adolescent’s technology use. We use 4 different measurements. \n\n1. Self-report technology use: four eight-point Likert scale questions about hours per weekday spent “watching television programmes or films”, spent “playing electronic games on a computer of games system”. “spent using the internet” in a home setting or spent “on social networking or messaging sites or apps on the internet” (1= none, 8 = 7 hours or more). We take the mean of these measures. \n\nWe also use measures that are calculated using data provided by a child using a time use diary. Each child is randomly assigned a weekend day and weekday to complete a time use diary on paper, on the computer or on their phone. They fill out how much time they spend each day doing a variety of activities, in 10 minute slots. We sum the time they report spending with technology:\n - Answering emails, instant messaging and texting\n - Browsing and updating social networking sites (e.g. Twitter, Facebook, BBM, Snapchat)\n - General internet browsing, programming (not time on social networking sites) \n - Playing electronic games and apps\n - Watching TV, DVDs and downloaded videos\n\nDue to an anticipated negative skew of time use distributions we will create two variables that reflect technology use. A dichotomous variable of whether the child reported any technology use that day or not, and a continuous variable which codes all children who did not use any technology at all that day as N/A, while leaving the others as continuous measures of the self-reported time using technology. The dichotomous variable is not applicable to any of our hypotheses, but we will include it in our general specification curve analyses (see later section).\n \nWe also create 2 dichotomous variables: whether or not the adolescent reported using technology 30 minutes or 1 hour before their reported bedtime. The bedtime is inferred as the time the adolescent reports their activity as ‘sleep’ in the evening of their time use diary completion day. Therefore, our three variables for technology use included in our hypotheses are: \n\n2. Time use survey technology use (continuous)\n3. Time use survey technology use 30 minutes before bedtime \n4. Time use survey technology use 1 hour before bedtime",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Two types of well-being measures were included in the MCS dataset for each adolescent. There are indicators completed by cohort members, and others completed by their primary caretakers. We will examine a subset of these measures to allow for comparisons between datasets (we are also analysing the Growing up in Ireland and the Panel Study of Income Dynamics US; we do not pre-register these analyses as the datasets are already openly available). \n\n1. Self-esteem: Adolescents complete 5 items from an abbreviated Rosenberg self-esteem scale: “On the whole, I am satisfied with myself”, “I feel I have a number of good qualities”, “I am able to do things as well as most other people”, “I am a person of value”, “I feel good about myself” (1 = strongly agree to 4 = strongly disagree). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. \n\n2. Short mood and feelings questionnaire: Adolescents are also asked twelve questions that consider their affective state and mood (Angold, Costello, Messer, &amp; Pickles, 1995): “For each question please select the answer which reflects how you have been feeling or acting in the past two weeks:”, “I felt miserable or unhappy”, “I didn’t enjoy anything at all”, “I felt so tired I just sat around and did nothing”, “I was very restless”, “I felt I was no good any more”, “I cried a lot”, “I found it hard to think properly or concentrate”, “I hated myself”, “I was a bad person”, “I felt lonely”, “I thought nobody really loved me”, “I thought I could never be as good as other kids”, “I did everything wrong” (1 = not true, 2 = sometimes, 3 = true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items.\n\n3. Caretakers fill out the common Strengths and Difficulties Questionnaire (SDQ; Goodman, Ford, Simmons, Gatward, &amp; Meltzer, 2000). The SDQ is popular, and has been used to assess adolescents in schools, clinical settings and schools from diverse backgrounds (Goodman, 2001). It encompasses 25 questions, five each about prosocial behaviour, hyperactivity or inattention, emotional symptoms, conduct problems and peer relationship problems (0 = not true, 1 = somewhat true, 2 = certainly true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. The latent factor will be constructed by loading the four sub-scales of the SDQ (emotional, peer problems, hyperactivity, conduct problems) on four latent factors separately, and then loading them onto a general factor. We do not include pro-sociality in the analyses as this is routinely excluded in previous studies. ",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "We will administer 8 items to measure people’s dispositional optimism:\n\n1.\tIn uncertain times, I usually expect the best.\n2.\tIf something can go wrong for me, it will. \n3.\tI always look on the bright side of things. \n4.\tI am always optimistic about my future. \n5.\tI hardly ever expect things to go my way. \n6.\tThings never work out the way I want them to.\n7.\tI am a believer in the idea that \"every cloud has a silver lining\".\n8.\tI rarely count on good things happening to me.\n\nParticipants would be asked to respond on a 7-point scale ranging from 1 = strongly disagree to 7 = strongly agree.\n\nThe average of these eight items would serve as the independent variable.\n\nWe will administer 8 items to measure the extent to which people find unethical behaviors justifiable:\n\n1.\tYou work in a fast-food restaurant in downtown. It’s against policy to eat food without paying for it. You came straight from classes and are therefore hungry. Your supervisor isn’t around, so you make something for yourself and eat it without paying.\n2.\tYou work as an office assistant for a department in a large company. You’re alone in the office making copies and realize you’re out of copy paper at home. You therefore slip a ream of paper into your backpack. \n3.\tYou’re preparing for the final exam in a class where the professor uses the same exam in both sections. Some of your friends somehow get a copy of the exam after the first section. They are now trying to memorize the right answers. You don’t look at the exam, but just ask them what topics you should focus your studying on. \n4.\tYou’ve waited in line for 10 minutes to buy a coffee and muffin at Starbucks. When you’re a couple of blocks away, you realize that the clerk gave you change for $20 rather than for the $10 you gave him. You savor your coffee, muffin and free $10. \n5.\tYou get the final exam back from your professor and you notice that he’s marked correct three answers that you got wrong. Revealing his error would mean the difference between an A and a B. You say nothing. \n6.\tYour accounting course requires you to purchase a software package that sells for $50. Your friend, who is also in the class, has already bought the software and offers to lend it to you. You take it and load it onto your computer.\n7.\tYour boss at your summer job asks you to get confidential information about a competitor’s product. You therefore pose as a student doing a research project on the competitor’s company and ask for the information.\n8.\tYou are assigned a team project in one of your courses. Your team waits until the last minute to begin working. Several team members suggest using an old project out of their fraternity/sorority files. You go along with this plan.\n\nParticipants would be asked to respond on a 7-point scale ranging from 1 = not at all likely to 7 = extremely likely.\n\nThe average of these eight items would serve as the dependent variable.",
+              "We will administer 5 items to measure the extent to which people find unethical behaviors justifiable:\n\n1.\tA friend says that it is OK to go to a park that is closed for some fresh air and exercise, especially because there are likely to be very few people in a closed park.\n2.\tAnother friend says that it is justifiable to hoard face masks and hand sanitizers given how hard it is to buy them anywhere. \n3.\tA third friend says that we must buy as many groceries as possible and stock up because who knows when supermarkets will run out of food. \n4.\tA fourth friend says that despite all the social distancing guidelines, it is OK to shake hands when meeting someone because otherwise one would appear extremely rude. \n5.\tAnother friend suggests that despite the social distancing guidelines, it is OK to get together with a few friends for a drink, as long as everyone doesn’t show any respiratory symptoms. \n\nParticipants would be asked to respond on a 11-point scale ranging from -5 = strongly disagree to 5 = strongly agree.\n\nThe average of these five items would serve as the dependent variable.",
+              "Emotion ratings measured on a visual analogue scale will be compared between participants who chose to learn how much they could have won and those who did not."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We base our control variables on a previous study that has used the MCS dataset to examine the effects of technology use on well-being outcomes: Parkes et al. 2013. We adapt the controls they include to fit the current wave’s data and therefore include sociodemographic factors and maternal characteristics. In our analyses we either run them with all controls or with none of them. The controls are:\n- Mother’s ethnicity (coded as white/majority or non-white/minority)\n- Mother’s education (NVQ equivalent of highest academic level across sweeps, level 1-5)\n- Mother’s employment status (5 category (current job), 5 levels from manager to semi-routine and routine)\n- Mother’s psychological distress (K6 Kessler Scale, aggregate provided by the questionnaire)\n- Equivalised household income (OECD equivalised weekly family income)\n- Whether father is present (dichotomous, “Does your natural father live with you?”)\n- Number of adolescent’s siblings in household \n- Closeness to parents (mean of four items related to closeness to parent, see uploaded code)\n- Amount of time the primary caretaker spends with the adolescent (“Amount of time with child”, 5 point scale)\n- Reports of any long term illness (“Whether adolescent has longstanding illness”, parent report)\n- Physical activity (“Days last week spent doing moderate to vigorous physical activity” Child report) \n- Negative attitudes towards school (educational motivation, mean of 6 item educational motivation grid) \n- Adolescent’s and primary caretakers word activity score (out of 20, measure of current cognitive ability, take aggregate provided in the data)",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "The data under analysis will be derived from the sixth wave of the Millennium Cohort Study. More details of the selection rules can be found online (https://discover.ukdataservice.ac.uk/series/?sn=2000031), where the dataset user guide can be downloaded.\n",
+              null,
+              null,
+              "Missing data for reported die roll outcome (e.g., due to non-response, technical failure or failure to report within the time limit (high time pressure condition)).",
+              "Missing data for reported dice roll outcome (e.g., due to non-response, technical failure or failure to report within the time limit in the time-pressure condition) will be excluded.",
+              "We will use the same exclusion criteria described in our manuscript.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "The Millennium Cohort Study is a prospective study collected in the UK, the children it follows are born between September 2000 and January 2001. Minority groups and disadvantaged areas are oversampled. We include data from primary caregivers and adolescents. Interviewers came to the participant’s home and administered the survey. The time use diaries could be completed using a phone, computer or paper diary, on two randomly selected days after the household interview. Participants were sent SMS reminders both the day before and the morning of the selected day, which included a weekend day and a weekday. For more details, please see the time use diary documentation that can be downloaded from the UK data service https://discover.ukdataservice.ac.uk/series/?sn=2000031).  All details of the study can be found (https://discover.ukdataservice.ac.uk/catalogue/?sn=8156&amp;type=Data%20catalogue), we recommend examining the user guide that can be downloaded there. ",
+              null,
+              null,
+              "Participants will be attendees participating the testweek at the University of Amsterdam, which is a part of the propaedeutic of the Psychology program. During this testweek, a large amount of students are tested simultaneously. There are no additional prerequisites that need to be met for participation.",
+              "We will recruit participants in a university building (expecting majority of students), financially rewarding their participation. Other than gathering a minimum of 3 and a maximum of 6 participants, there are no in-/exclusion criteria during recruitment.",
+              "The data have already been collected (undergraduate students at a North American university and online Amazon MTurker).",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "In this study we implement a Smallest Effect Size of Interest (SESOI) as proposed by Ferguson (2009). We propose a SESOI of r = 0.1 (95% CI [0.90, 0.011]). Due to the large sample size, we expect well above 5,000 participants (all cohort members in Wales, Scotland and Ireland were invited to complete the time use diary, while 81% of English participants were invited), we will have enough power to be sensitive to such effects. If our effects are significant statistically, but are below this SESOI, we will consider these effects insignificant in practical terms. \n",
+              null,
+              null,
+              "Based upon our power-analysis, we will test a minimum of 366 participants. We have two conditions in our design (time-pressure vs. no-time-pressure), implying we will have a minimum of 183 participants in each condition. Given the setup of Testweek (i.e., mass sessions of about 250 students each), we aim to run our study in two sessions, leading to an expected sample size of about N=500.",
+              "A minimum of N=148 and a maximum of N=475 participants will be tested.",
+              "We used within-subjects designs in four studies (total N = 686).",
+              null,
+              "In a previous study using an identical design, we found an effect size in the predicted direction with r = -.172. A power analsyis using r = .172, alpha = .05 (one-tailed), and power = 80% indicated that we need to recruit 205 participants. Thus, we will post a survey seeking 205 participants on Amazon Mechanical Turk. The final sample size might be higher or lower than 205 depending on the number of participants from unique IP addresses who complete our survey before it expires.",
+              "In two previous studies using a similar design, we found an average effect size of Cohen’s d = .36 in the predicted direction. Thus, we decided on a sample size of 266, which would give us 90% power to detect an effect size of Cohen’s d = .36 with alpha = .05 (one-tailed). Further, in the two previous experiments, on average 8% of the participants were excluded as per the pre-registered criteria mentioned below. We will post a survey seeking 266/.92 = 289 participants on Amazon Mechanical Turk. The total number of participants who complete our survey might be higher or lower than 289, as some participants might complete the survey but not submit the “HIT” on MTurk, whereas others might submit the “HIT” on MTurk but not complete our survey.",
+              "We will collect data from 360 adult participants using the participant recruitment platform Prolific.co. Based on our previous studies using a within-participant design, we expected to see a medium to large effect of counterfactual information seeking on emotion ratings. Based on our pilot data (described below), we expected an uneven distribution between those who sought and those who did not seek information. We used G-Power to determine the sample size required for the between subjects t-test with uneven groups. We used the following parameters: tails = 2; Cohen's d = 0.5; alpha = 0.05; power = 0.8; Allocation ration N2/N1 = 0.25. This gives a minimum sample of 200 participants. Note that this analysis will only contain participants who did not 'go bust'. In our pilot, 8 out of 18 participants 'went bust', we will thus increase our sample by an additional 160 participants to achieve the required number of participants who do not go bust."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We were not responsible for collecting the data, and therefore do not implement a termination rule. ",
+              null,
+              null,
+              "We expect two sessions of Testweek to suffice (2 x ca n = 250 leads to ca n = 500; which exceeds the minimal required sample size of n=366). Should the two sessions of Testweek not suffice to reach n=366, we will add sessions until we reach 366 participants.",
+              "Minimum N=148, thereafter data collection is stopped when reaching decisive evidence or N=475 is reached (Schönbrodt &amp; Wagenmakers, 2018).",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "a) We will not include any participants who report less than three activities in their time diaries on any one day. \nb) The dataset does not include any appropriate check-tests or suspicion probes. \nc) We exclude any participant who noted that the day they filled out their time-use diary was unusual (illness, religious festival/holiday/away from home, birthday/anniversary, other reason). If this only affects one of the diary days, we will only exclude this analysis. \nd) We do not anticipate implementing any of these. \ne) Due to the high quality of the data and missing measures for things like response time, we do not exclude any method-based outliers. The time use diary has soft and hard checks in place to ensure good quality data. ",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Only participants who complete the study will be retained in the analysis. We will exclude multiple responses from the same IP address, based on the IP address recorded in the Qualtrics survey. After participants have completed the two measures noted above, we will ask them an open-ended question asking them to summarize the main point of the statements that they just responded to. We will exclude participants who provide gibberish and ireelevant responses to this question.",
+              "Only participants who complete the study will be retained in the analysis. We will exclude multiple responses from the same IP address, based on the IP address recorded in the Qualtrics survey. We will also exclude participants who provide gibberish responses to an open-ended question asking them to summarize the main point of the information provided in the experimental manipulation (which was administered after the experimental manipulation but before the dependent variable).",
+              "Unlike in our previous experiments, participants who 'go bust' in the critical trial will not be offered the chance to see how far they could have inflated the balloon, so will not be included in the analysis. We decided not to use 'false feedback' to ensure that all participants banked in the task because we did not want to deceive the participants in any way during this task. We were concerned that using false feedback may introduce statistical artefacts into our design because of potential biases in participants' bidding behaviour.\n\nThe recruitment platform pre-screened participants for English as a first language before participation to ensure easy understanding of the task instructions."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Not applicable",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "GENERAL POINTS \nWe analyse the data using lavaan and SEM. We first run a specification curve analysis which runs each possible analysis that is possible using our pre-specified analytical decisions. These analytical decisions are: which technology use measure we use (5 options), which well-being measure we use (3 options), whether we include controls (2 options, yes/no) and whether technology use is on a weekday or weekend (2 options). \n\nWe run each model by extracting the relevant latent factor for well-being and correlating it with the chosen technology use measure. We either filter the data to only include weekend or weekday measures and either include controls or not in our model. After running each possible analysis, we plot these to show the general trend of results. \n\nTo test each hypothesis separately we then run a series of permutation tests. We select all specifications that include the technology use variables addressed in the hypotheses (H1 = self-report Likert scale, H2 = continuous time diary, H3 = 30 minutes before bedtime, H4 = 1 hour before bedtime), and then run a permutation test on these, checking whether the original data results in more significant p values than scrambled datasets where we know the null effect is true. \n\nHYPOTHESIS 1\nSelf-report technology use: mean of 5 likert scale measures as noted above\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none Continuous technology use: sum of time use diary reported technology use for participants that report having used technology at least once during that day\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none Technology use 30 minutes before bedtime: dichotomous variable of whether participant reported using technology in their time diary 30 minutes before they first report sleeping in the evening\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none Technology use 1 hour before bedtime: dichotomous variable of whether participant reported using technology in their time diary 1 hour before they first report sleeping in the evening\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none We will take all the specification curve analysis explained above and split it into the specifications with and without controls. This includes all possible measures of technology use and well-being, in addition to either weekend/weekday.",
+              null,
+              null,
+              "No.",
+              "NA",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Correlation between latent well-being factor and self-report technology use See above See above See above We will run two permutation tests on the control and non-control specifications examining whether the effects are significant. We will then compare whether the effect found in the set of specifications without controls are larger than the effect found in the set of specifications with controls.",
+              null,
+              null,
+              "The study employs a between-subjects design, in which the reported die outcome will be compared between the two conditions. We will run a one-tailed Mann-Whitney test to examine whether the reported outcome is higher in the time-pressure condition than in no-time-pressure condition.",
+              "To examine whether the reported dice roll outcomes are higher in the time-pressure condition than in the no time-pressure condition, we will run a Mann-Whitney test (one-tailed). \n\nFor the manipulation check we will compare the response time in the time pressure condition with the response time in the self paced condition using an independent t-test (one-tailed). \n\nAs follow-up test to evaluate whether there was cheating, we will run, within each condition, a Chi-square goodness of fit test between the distribution of the reported die roll outcomes and the expected uniform distribution.",
+              "We will fit linear mixed effects models using frequentist and Bayesian approaches, using the packages lme4 and brms respectively. As with the models reported in the manuscript (see attached pdf), we will use the following syntax to fit the hierarchical models: \n\noutcome ~ condition + (1 | participant)  # fitted separately to each study (4 studies)\noutcome ~ condition + (1 | study/participant)  # fitted once to \"summarize\" the effect of condition across four studies 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b",
+              null,
+              "We will run a bivariate correlation analysis to assess whether participants higher in dispositional optimism are less willing to engage in unethical behaviors. As we are pre-registering a directional hypothesis, we will use a one-tailed t-test.",
+              "We will average participants’ responses to the five items measuring justifiability of unethical behavior, and run an independent samples t-test to assess whether participants are less likely to judge unethical behaviors as justifiable (i.e., are more likely to disagree with the items) in the optimism condition than in the pessimism condition. As we are pre-registering a directional hypothesis, we will use a one-tailed t-test.",
+              "We will compare emotion ratings between participants who sought information and those who did not in a using the following analyses:\n\n1. Between participant t-test comparing emotion ratings between participants who seek and do not seek information;\n\n2. Linear regression model predicting emotion rating from:\na. information seeking;\nb. the participant's bid (control variable);"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Not applicable: correlation, details of variables given above See above See above See above NA, see above.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "All covariates either included or excluded, covariates chosen because of previous literature (see above) See above See above See above See above.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Not applicable See above See above See above Not applicable.\n",
+              null,
+              null,
+              "We will use the standard α=.05 criterion.",
+              "We rely on nullhypothesis significance testing (NHST), using the criterion that is the standard in the social sciences (α=.05; one-tailed because of directional hypothesis).",
+              "Since we are running additional (and exploratory) analyses suggested by our manuscript's reviewer, we will not be focusing on inferential statistics. Instead, as suggested by the reviewer, we are interested in exploring whether the more complicated diffusion models can provide extra insights (relative to the EZ-diffusion model).",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "None, as we only do one permutation test for each hypothesis.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We will exclude participants from each analysis (listwise deletion) where they do not meet the inclusion criteria (e.g. if their time use diary was completed on an ‘unusual’ day). \n\nThe treatment of missing data in analyses will vary. When analysing self-report measures of dichotomous variables, we can assume that missing data is random and we use ‘Maximum Likelihood’ imputation implemented through the ‘lavaan’ R package. When analysing the continuous technology use variable, we cannot assume that missing data is random and we do not impute missing data, performing listwise deletion instead. ",
+              null,
+              null,
+              "Participants who do not report their die roll outcome will be excluded from all analyses.",
+              "Participants who do not report their dice roll outcome will be excluded from all analyses.",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We have checked the reliability of both the SDQ, the self-esteem and the short form well-being scale beforehand and found that there are no issues with item inclusion in the scale. Detailed reliability tests can be found in the script (uploaded as well). Cronbach’s alphas for well-being (0.93), self-esteem (0.9) and SDQ (0.86) were OK. It is important to note that the Cronbach’s alphas do not take into account the two-factor structure of the SDQ. The fit scores in a CFA was also OK for all three measures:\n\nWellbeing: CFI = 0.93, TLI = 0.91, RMSEA = 0.093, SRMR = 0.049\nSelf-Esteem: CFI = 0.97, TLI = 0.94, RMSEA = 0.142, SRMR = 0.029\nSDQ: CFI = 0.84, TLI = 0.82, RMSEA = 0.068, SRMR = 0.054\n\nThe SDQ is the measure that seems to have to worst fit. This could lead to our SEM not converging in our final analyses. If the model does not converge we will take the means of the items of the appropriate well-being scale, and put that into the model. Taking means of items is widely used, especially in our area, and is an appropriate substitute. ",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Not applicable. ",
+              null,
+              null,
+              "No.",
+              "NA",
+              "The low demand group will be coded as -0.5 and the high demand group as 0.5. Congruent and incongruent Stroop trials were coded as -0.5 and 0.5 respectively.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Not applicable. ",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Yes, data collection is underway or complete",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "No, no data have been collected for this study yet.",
+              "No, no data have been collected for this study yet.",
+              "It's complicated. We have already collected some data but explain in Question 8 why readers may consider this a valid pre-registration nevertheless."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "No",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "After the data are released from embargo on Wednesday the 9th of May 2018.\n",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "None.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "NA. NA.",
+              "NA. NA.",
+              "Data collection before the study: \nData from 18 participants has been collected in a pilot phase to determine whether people are willing to wait 30 seconds at the end of the experiment in return for seeing the balloon's limit. Of those 18 participants, 10 participants stopped before the balloon's limit so banked the money. Of those, 8 sought information about how much they could have won, and 2 did not seek information. The remaining 8 participants 'went bust' so were not given the opportunity to see the balloon's limit. These pilot participants will not be included in the final sample. From this pilot phase we determined that the parameters of our design are suitable to elicit both choices to and not to seek information. This is crucial for comparing emotion ratings between those who did and did not seek information. No other designs were piloted.\n\nAdditional analyses planned:\nFollowing our previous analyses, we will determine the effect of the size of the missed opportunity on emotion ratings for those who observed the missed opportunity while controlling for the number of pumps. We will also run the same analysis on those who did not seek information as a check for any statistical artefacts (we do not expect to see any effect since participants did not observe the missed opportunity).\n\nAdditionally, we are interested in the change in emotion rating that the information brought, so we will compare difference scores between the two information ratings between participants who did and did not seek information."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "This is a registration of data made available to the public for the paper entitled \"Rationality in joint action: Maximizing co-efficiency in coordination\" by Török, G., Pomiechowska, B., Csibra, G., &amp; Sebanz, N.",
+              "R scripts for the reanalyses reported in the paper:\nHeck, Thielmann, Klein &amp; Hilbig (2019). On the limited generality of air pollution and anxiety as causal determinants of unethical behavior: Commentary on Lu, Lee, Gino, &amp; Galinsky (2018).",
+              null,
+              "This is a direct replication of Shalvi, Eldar and Bereby-Meyer (2012, Experiment 2) which found participants under time-pressure to be more likely to cheat than participants without time-pressure, suggesting that honesty requires overcoming our natural tendency to cheat in tempting situations. We already ran 3 replications. A key differences between those replications and the original study was sessions size. Session size may influence the perception of the game (e.g., anonymity, opportunity to cheat, costs, and rewards). In the current study we readdress the research question in a setting that closely mimics the original study, testing participants in small sessions of 3-6 participants.",
+              "We submitted a manuscript detailing a within-subjects depletion paradigm (N = 686 across four studies). In the manuscript, we fitted the EZ-diffusion model to the Stroop data, and our reviewer suggested we enlist the help of an independent expert modeler to fit more complicated diffusion models specifically designed for conflict tasks. The reviewer also suggested we preregister the extra analyses and share blinded data (with condition labels shuffled) with the modeler.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Registration prior to creation of data",
+              "Registration prior to creation of data",
+              "Registration prior to analysis of the data",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Not applicable in this study.",
+              "NA",
+              "We are pre-registering additional analyses suggested by a reviewer of our manuscript. In our manuscript, we fitted the EZ-diffusion model to participants' Stroop data. The reviewer suggested we enlist the help of an independent expert modeler to fit more complex diffusion models designed specifically for conflict tasks. Our expert modeler has access to our previous pre-registration protocols and a blinded version of the data, with the condition labels (high/low-demand) shuffled to prevent significance seeking.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Following Camerer et al. (2018) we aim for 90% power to detect 50% of the original effect size. For one-sided independent Mann-Whitney U test, with alpha=.05, this implies that we should test N = 332 (n=166 in each group) to be able to detect d = .66 [ x 50% ] = .33\n\nAnticipating exclusions (2-5% in original study; conservative estimate for our study: 10%) we will test N=366",
+              "Following Camerer et al. (2018) we aim for 90% power to detect 50% of the original effect size. For a one-sided independent Mann-Whitney U test, with alpha=.05, this implies that we should test N = 428 to be able to detect d = .58 [ x 50% ] = .29. Anticipating exclusions (conservative estimate: ca 10%) this implies N=475. \nTo make maximum use of our resources, testing will, however, be terminated  when decisive evidence is found. After having tested 148 participants (i.e., double the sample size of the original study; to prevent premature stopping) we will calculate the Bayes factor for the Bayesian Mann-Whitney test that assesses the differences between the time pressured and self paced condition on the self-reported die role outcome (using default Cauchy and uninformed prior) after each session and stop testing when we reach decisive evidence for either the alternative hypothesis (i.e., that time pressure leads to higher reported outcome compared to self paced condition; BF10 larger than 10) or the null hypothesis (i.e., that the time pressure manipulation does not affect reported outcome; BF10 smaller than 1/10).",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "The between-subject manipulation of time pressure will have two conditions: time pressure (i.e. report the outcome of the die roll within 8s) vs no time pressure (i.e. report the outcome of the die roll at own pace).",
+              "Time pressure: time-pressured (i.e., max 8s) vs self-paced (i.e., no time limit)",
+              "Participants were assigned low demand condition on one day and the high demand condition on another day.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "-Primary: reported die outcome (1 to 6)\n-For manipulation check: response time. Response time will be operationalized as the time a participant needs to report their dice roll outcome since the start sign (click on response – click on start sign). Outliers (5 SD above mean) will be excluded for the manipulation check analysis.",
+              "For the manipulation check: Time taken to role the die and report the outcome\nFor the effect of interest: Reported die role outcome (1 to 6)",
+              "Three key parameters: drift rate for the controlled process, drift rate for the automatic process, boundary (or threshold). Specifically, the drift rate for the automatic process will be reflected as changes in the maximum amplitude of the gamma function that controls the drift rate for the automatic process in the diffusion model for conflict tasks.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.",
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.",
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Research personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. For studies that involve human subjects, they will not know the treatment group to which they have been assigned.",
+              "For studies that involve human subjects, they will not know the treatment group to which they have been assigned.",
+              "Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "The study employs a between-subjects design, in which the mean reported die roll outcome will be compared between the two conditions (no-time-pressure vs. time-pressure).",
+              "Experimental design with one between-subject factor: Participants are assigned either to the time pressure OR the self paced condition",
+              "Within-subject design. See attached pdf for manuscript submitted to journal. 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b",
+              null,
+              "NA.",
+              "Participants will be randomly assigned to either the optimism condition or the pessimism condition. They will be presented with a scenario stating that the future of Covid-19 is bright vs. bleak, respectively, in the optimism condition vs. the pessimism condition. See attached pdf for detais.",
+              "There is not straightforward condition assignment. Each trial has a randomly determined 'safe limit' (sampled from a uniform distribution between 0 and 12) and the outcome of the trial is determined by whether the participant's bid (i.e. the number of inflations of the balloon they make) exceeds that number. So on some trials the balloon would burst after just one pump, and on others it would not burst after 12 (the maximum number) of pumps. This is randomly determined in the experiment script. Participants can choose whether they wish to seek information (the independent variable in our main emotion rating analysis), so this is outside the control of the experiment. The amount of money the participant missed out on (the missed opportunity they can learn about) is determined by a combination of the participant's bid and the randomly determined safe limit of the balloon."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Participants will be randomly assigned to either the time-pressure condition or the no-time-pressure condition using permuted block randomization, which ensures an even distribution of participants across conditions.",
+              "Participants will be randomly assigned to either the time-pressure condition or the self paced condition using Qualtrics permuted block randomization, which ensures an even distribution of participants across condition",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "Within each condition, we will run a Chi-square goodness of fit test between the distribution of the reported die roll outcomes and the expected distribution of die roll outcomes for each condition.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Bruno verschuere, Ewout Meijer",
+              "Hause Lin, Michael Inzlicht, Blair Saunders, Malte Friese, Nathan J. Evans",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Randomization occurs by computer, after general instructions by experimenter. In principle, there is no more interaction between the experimenter and the participant until the end of the study. Only questions for clarification of instructions could be asked and could potentially de-blind the experimenter.",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Optimism 7575-559-59.",
+              "Optimism 7575-559-66",
+              "Counterfactual Curiosity - One-shot Task\n\nThis experiment is a follow-up to the five experiments reported in our pre-print \"The Lure of Counterfactual Curiosity\" (DOI: https://doi.org/10.31219/osf.io/jm3uc). These studies address the question of whether people seek post-decision counterfactual information - how much they could have won - in a gambling task (the Balloon Analogue Risk Task, BART; Lejuez et al., 2002). In previous studies we used a within-participant design, presenting participants with 60 trials of the BART and giving them the option to view the balloon's limit after each trial. Participants frequently sought information even at some cost even though a. it made them feel bad, and b. (we argue that) it had no instrumental value. Our argument that the information had no instrumental value relied on the independent nature of the trials in the task - since the balloon's limit was randomly determined on each trial - so gaining information about the limit on the previous trial cannot benefit performance on future trials. However, it may be argued that participants believe that there is some non-random structure that can be learned through seeking information about the balloon's limit. Thus, they might have sought information for instrumental reasons, even though the information was actually not of any instrumental value. \n\nIn the current study, we aim to demonstrate that people will still incur costs to learn post-decision counterfactual information when the possibility to use that information in the future is completely removed because there is only one trial and that information still makes them feel bad. In the new version of the task, participants practice by completing 10 trials of the BART with no option to seek information. They rate their emotions on a visual analogue scale after seeing the outcome of each trial. \n\nAfter the 10 practice trials, participants receive the following instructions: \"Now that you've had a chance to practice, it's time for the real thing! There is one more round and this time each pump is worth 20p!\". They then complete one critical round of the BART. If participants 'go bust' on this final round, then they do not get a bonus payment and they are not offered the opportunity to see how far they could have gone. If they 'banked' the money, then after rating their emotions about the outcome, then they are given the following instructions: \"You won £X.XX. Would you like to see how much you could have won if you kept going? The information comes at a price - you will have to wait 30 seconds for your completion code at the end of the experiment! Press Y for yes or N for no.\". \n\nIf they choose to see the information, then they see an animation of the balloon inflating to its randomly determined limit and are presented with information about how much money they could have won on the trial. If they choose not to receive the information then they continue to observe their obtained outcome for the same time as if they had chosen to view the information. Participants then rate their emotions a second time. This second emotion rating is the critical dependent variable."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Experiment",
+              "Experiment",
+              "Experiment"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many",
+              "p_many"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 11 preregistrations.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"<a href='https://osf.io/bdvxs' target='_blank'>bdvxs<\/a>\", \n\"<a href='https://osf.io/wrh4x' target='_blank'>wrh4x<\/a>\", \"<a href='https://osf.io/trwb4' target='_blank'>trwb4<\/a>\", \n\"<a href='https://osf.io/z2bsa' target='_blank'>z2bsa<\/a>\", \"<a href='https://osf.io/jez3g' target='_blank'>jez3g<\/a>\", \n\"<a href='https://osf.io/9bg3z' target='_blank'>9bg3z<\/a>\", \"<a href='https://osf.io/7qcxa' target='_blank'>7qcxa<\/a>\", \n\"<a href='https://osf.io/a6y7r' target='_blank'>a6y7r<\/a>\", \"<a href='https://osf.io/4v3sg' target='_blank'>4v3sg<\/a>\", \n\"<a href='https://osf.io/hwu9x' target='_blank'>hwu9x<\/a>\", \"<a href='https://osf.io/yab8q' target='_blank'>yab8q<\/a>\"\n), title = c(\"Ethical Free-Riding\", \"Time's up? Time spent using digital technology and adolescent well-being\", \n\"Rationality in joint action: Maximizing co-efficiency in coordination\", \n\"On the limited generality of air pollution and anxiety as causal determinants of unethical behavior: Commentary on Lu, Lee, Gino, &amp; Galinsky (2018)\", \n\"Does Honesty Require Time? A preregistered replication of SEB2012 Exp2\", \n\"RR4_Does Honesty Require Time? A preregistered direct replication of SEB2012 Exp2\", \n\"Ego depletion pre-registered study\", \"WVS Dishonesty\", \"Optimism 7575-559-59\", \n\"Optimism 7575-559-66\", \"One-shot task\"), template = c(\"Open-Ended Registration\", \n\"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\", \n\"Open-Ended Registration\", \"Open-Ended Registration\", \"Prereg Challenge\", \n\"OSF Preregistration\", \"OSF Preregistration\", \"Open-Ended Registration\", \n\"Preregistration Template from AsPredicted.org\", \"Preregistration Template from AsPredicted.org\", \n\"Preregistration Template from AsPredicted.org\")), row.names = c(NA, \n-11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the links above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"bdvxs\", \"wrh4x\", \"trwb4\", \"z2bsa\", \"jez3g\", \n\"9bg3z\", \"7qcxa\", \"a6y7r\", \"4v3sg\", \"hwu9x\", \"yab8q\"), sample_size = c(NA, \n\"In this study we implement a Smallest Effect Size of Interest (SESOI) as proposed by Ferguson (2009). We propose a SESOI of r = 0.1 (95% CI [0.90, 0.011]). Due to the large sample size, we expect well above 5,000 participants (all cohort members in Wales, Scotland and Ireland were invited to complete the time use diary, while 81% of English participants were invited), we will have enough power to be sensitive to such effects. If our effects are significant statistically, but are below this SESOI, we will consider these effects insignificant in practical terms. <br>\", \nNA, NA, \"Based upon our power-analysis, we will test a minimum of 366 participants. We have two conditions in our design (time-pressure vs. no-time-pressure), implying we will have a minimum of 183 participants in each condition. Given the setup of Testweek (i.e., mass sessions of about 250 students each), we aim to run our study in two sessions, leading to an expected sample size of about N=500.\", \n\"A minimum of N=148 and a maximum of N=475 participants will be tested.\", \n\"We used within-subjects designs in four studies (total N = 686).\", \nNA, \"In a previous study using an identical design, we found an effect size in the predicted direction with r = -.172. A power analsyis using r = .172, alpha = .05 (one-tailed), and power = 80% indicated that we need to recruit 205 participants. Thus, we will post a survey seeking 205 participants on Amazon Mechanical Turk. The final sample size might be higher or lower than 205 depending on the number of participants from unique IP addresses who complete our survey before it expires.\", \n\"In two previous studies using a similar design, we found an average effect size of Cohen’s d = .36 in the predicted direction. Thus, we decided on a sample size of 266, which would give us 90% power to detect an effect size of Cohen’s d = .36 with alpha = .05 (one-tailed). Further, in the two previous experiments, on average 8% of the participants were excluded as per the pre-registered criteria mentioned below. We will post a survey seeking 266/.92 = 289 participants on Amazon Mechanical Turk. The total number of participants who complete our survey might be higher or lower than 289, as some participants might complete the survey but not submit the “HIT” on MTurk, whereas others might submit the “HIT” on MTurk but not complete our survey.\", \n\"We will collect data from 360 adult participants using the participant recruitment platform Prolific.co. Based on our previous studies using a within-participant design, we expected to see a medium to large effect of counterfactual information seeking on emotion ratings. Based on our pilot data (described below), we expected an uneven distribution between those who sought and those who did not seek information. We used G-Power to determine the sample size required for the between subjects t-test with uneven groups. We used the following parameters: tails = 2; Cohen's d = 0.5; alpha = 0.05; power = 0.8; Allocation ration N2/N1 = 0.25. This gives a minimum sample of 200 participants. Note that this analysis will only contain participants who did not 'go bust'. In our pilot, 8 out of 18 participants 'went bust', we will thus increase our sample by an additional 160 participants to achieve the required number of participants who do not go bust.\"\n)), row.names = c(NA, -11L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"hypotheses_interactions\", \"manipulation_checks\", \n\"theoretical_rationale\", \"design_independent_variables\", \"design_dependent_variables\", \n\"design_covariates_moderators\", \"data_exclusion_criteria\", \"data_collection_procedures\", \n\"sample_size\", \"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"description\", \"existing_data\", \"existing_data_explanation\", \n\"sample_size_rationale\", \"manipulated_variables\", \"measured_variables\", \n\"study_type\", \"blinding\", \"study_design_overview\", \"randomization\", \n\"follow_up_analyses\", \"authors\", \"q7\", \"name\", \"finally\", \"paper_id\"\n), \"Preregistration 1\" = c(\"Open-Ended Registration\", \"Ethical Free-Riding\", \n\"bdvxs\", \"https://osf.io/bdvxs\", \"2018-06-18T17:47:30.234150\", \n\"2018-06-18T17:40:24.618785\", \"2018-06-18T17:47:30.213534\", \"\", \n\"https://archive.org/details/osf-registrations-bdvxs-v1\", NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, \"p_many\"), \"Preregistration 2\" = c(\"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\", \n\"Time's up? Time spent using digital technology and adolescent well-being\", \n\"wrh4x\", \"https://osf.io/wrh4x\", \"2018-05-08T21:30:06.047337\", \n\"2019-04-30T16:04:52.794657\", \"2018-05-08T21:30:06.030818\", \"2020-05-01T00:00:00Z\", \n\"https://archive.org/details/osf-registrations-wrh4x-v1\", \"H1: Higher self-reported technology use correlates with lower observed levels of adolescent well-being indicators<br><br>H2: For those adolescents reporting technology use in their time use diaries, total time spent using technology per day correlates with lower observed levels of adolescent well-being indicators<br><br>H3: Technology use 30 minutes before bedtime on a weekday correlates with lower observed levels of adolescent well-being<br><br>H4: Technology use 1 hour before bedtime on a weekday correlates with lower observed levels of adolescent well-being<br><br>H5: Models without controls (as put forth below) will have significantly smaller effects than models with controls<br>\", \n\"We are not planning to test any interactions. \", \"As this study examines a large-scale epidemiological dataset, we are not manipulating any variables.\", \n\"This research aims to investigate the effect of technology use on adolescent well-being. Previous research has relied on Likert scale self-report measures to enumerate adolescents’ technology use. We will complement and extend this research by examining both adolescent self-report technology use using Likert scales and by completing time use diaries. These time use diaries allow for a more detailed investigation of the technology-wellbeing relationship, as we examine not only the total time spent using technology but also the timings of this use.  Not Applicable\", \n\"We want to note that our study is correlational and therefore does not have strict independent/dependent variables. Our explanatory variables, however, concern an adolescent’s technology use. We use 4 different measurements. <br><br>1. Self-report technology use: four eight-point Likert scale questions about hours per weekday spent “watching television programmes or films”, spent “playing electronic games on a computer of games system”. “spent using the internet” in a home setting or spent “on social networking or messaging sites or apps on the internet” (1= none, 8 = 7 hours or more). We take the mean of these measures. <br><br>We also use measures that are calculated using data provided by a child using a time use diary. Each child is randomly assigned a weekend day and weekday to complete a time use diary on paper, on the computer or on their phone. They fill out how much time they spend each day doing a variety of activities, in 10 minute slots. We sum the time they report spending with technology:<br> - Answering emails, instant messaging and texting<br> - Browsing and updating social networking sites (e.g. Twitter, Facebook, BBM, Snapchat)<br> - General internet browsing, programming (not time on social networking sites) <br> - Playing electronic games and apps<br> - Watching TV, DVDs and downloaded videos<br><br>Due to an anticipated negative skew of time use distributions we will create two variables that reflect technology use. A dichotomous variable of whether the child reported any technology use that day or not, and a continuous variable which codes all children who did not use any technology at all that day as N/A, while leaving the others as continuous measures of the self-reported time using technology. The dichotomous variable is not applicable to any of our hypotheses, but we will include it in our general specification curve analyses (see later section).<br> <br>We also create 2 dichotomous variables: whether or not the adolescent reported using technology 30 minutes or 1 hour before their reported bedtime. The bedtime is inferred as the time the adolescent reports their activity as ‘sleep’ in the evening of their time use diary completion day. Therefore, our three variables for technology use included in our hypotheses are: <br><br>2. Time use survey technology use (continuous)<br>3. Time use survey technology use 30 minutes before bedtime <br>4. Time use survey technology use 1 hour before bedtime\", \n\"Two types of well-being measures were included in the MCS dataset for each adolescent. There are indicators completed by cohort members, and others completed by their primary caretakers. We will examine a subset of these measures to allow for comparisons between datasets (we are also analysing the Growing up in Ireland and the Panel Study of Income Dynamics US; we do not pre-register these analyses as the datasets are already openly available). <br><br>1. Self-esteem: Adolescents complete 5 items from an abbreviated Rosenberg self-esteem scale: “On the whole, I am satisfied with myself”, “I feel I have a number of good qualities”, “I am able to do things as well as most other people”, “I am a person of value”, “I feel good about myself” (1 = strongly agree to 4 = strongly disagree). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. <br><br>2. Short mood and feelings questionnaire: Adolescents are also asked twelve questions that consider their affective state and mood (Angold, Costello, Messer, &amp; Pickles, 1995): “For each question please select the answer which reflects how you have been feeling or acting in the past two weeks:”, “I felt miserable or unhappy”, “I didn’t enjoy anything at all”, “I felt so tired I just sat around and did nothing”, “I was very restless”, “I felt I was no good any more”, “I cried a lot”, “I found it hard to think properly or concentrate”, “I hated myself”, “I was a bad person”, “I felt lonely”, “I thought nobody really loved me”, “I thought I could never be as good as other kids”, “I did everything wrong” (1 = not true, 2 = sometimes, 3 = true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items.<br><br>3. Caretakers fill out the common Strengths and Difficulties Questionnaire (SDQ; Goodman, Ford, Simmons, Gatward, &amp; Meltzer, 2000). The SDQ is popular, and has been used to assess adolescents in schools, clinical settings and schools from diverse backgrounds (Goodman, 2001). It encompasses 25 questions, five each about prosocial behaviour, hyperactivity or inattention, emotional symptoms, conduct problems and peer relationship problems (0 = not true, 1 = somewhat true, 2 = certainly true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. The latent factor will be constructed by loading the four sub-scales of the SDQ (emotional, peer problems, hyperactivity, conduct problems) on four latent factors separately, and then loading them onto a general factor. We do not include pro-sociality in the analyses as this is routinely excluded in previous studies. \", \n\"We base our control variables on a previous study that has used the MCS dataset to examine the effects of technology use on well-being outcomes: Parkes et al. 2013. We adapt the controls they include to fit the current wave’s data and therefore include sociodemographic factors and maternal characteristics. In our analyses we either run them with all controls or with none of them. The controls are:<br>- Mother’s ethnicity (coded as white/majority or non-white/minority)<br>- Mother’s education (NVQ equivalent of highest academic level across sweeps, level 1-5)<br>- Mother’s employment status (5 category (current job), 5 levels from manager to semi-routine and routine)<br>- Mother’s psychological distress (K6 Kessler Scale, aggregate provided by the questionnaire)<br>- Equivalised household income (OECD equivalised weekly family income)<br>- Whether father is present (dichotomous, “Does your natural father live with you?”)<br>- Number of adolescent’s siblings in household <br>- Closeness to parents (mean of four items related to closeness to parent, see uploaded code)<br>- Amount of time the primary caretaker spends with the adolescent (“Amount of time with child”, 5 point scale)<br>- Reports of any long term illness (“Whether adolescent has longstanding illness”, parent report)<br>- Physical activity (“Days last week spent doing moderate to vigorous physical activity” Child report) <br>- Negative attitudes towards school (educational motivation, mean of 6 item educational motivation grid) <br>- Adolescent’s and primary caretakers word activity score (out of 20, measure of current cognitive ability, take aggregate provided in the data)\", \n\"The data under analysis will be derived from the sixth wave of the Millennium Cohort Study. More details of the selection rules can be found online (https://discover.ukdataservice.ac.uk/series/?sn=2000031), where the dataset user guide can be downloaded.<br>\", \n\"The Millennium Cohort Study is a prospective study collected in the UK, the children it follows are born between September 2000 and January 2001. Minority groups and disadvantaged areas are oversampled. We include data from primary caregivers and adolescents. Interviewers came to the participant’s home and administered the survey. The time use diaries could be completed using a phone, computer or paper diary, on two randomly selected days after the household interview. Participants were sent SMS reminders both the day before and the morning of the selected day, which included a weekend day and a weekday. For more details, please see the time use diary documentation that can be downloaded from the UK data service https://discover.ukdataservice.ac.uk/series/?sn=2000031).  All details of the study can be found (https://discover.ukdataservice.ac.uk/catalogue/?sn=8156&amp;type=Data%20catalogue), we recommend examining the user guide that can be downloaded there. \", \n\"In this study we implement a Smallest Effect Size of Interest (SESOI) as proposed by Ferguson (2009). We propose a SESOI of r = 0.1 (95% CI [0.90, 0.011]). Due to the large sample size, we expect well above 5,000 participants (all cohort members in Wales, Scotland and Ireland were invited to complete the time use diary, while 81% of English participants were invited), we will have enough power to be sensitive to such effects. If our effects are significant statistically, but are below this SESOI, we will consider these effects insignificant in practical terms. <br>\", \n\"We were not responsible for collecting the data, and therefore do not implement a termination rule. \", \n\"a) We will not include any participants who report less than three activities in their time diaries on any one day. <br>b) The dataset does not include any appropriate check-tests or suspicion probes. <br>c) We exclude any participant who noted that the day they filled out their time-use diary was unusual (illness, religious festival/holiday/away from home, birthday/anniversary, other reason). If this only affects one of the diary days, we will only exclude this analysis. <br>d) We do not anticipate implementing any of these. <br>e) Due to the high quality of the data and missing measures for things like response time, we do not exclude any method-based outliers. The time use diary has soft and hard checks in place to ensure good quality data. \", \n\"Not applicable\", \"GENERAL POINTS <br>We analyse the data using lavaan and SEM. We first run a specification curve analysis which runs each possible analysis that is possible using our pre-specified analytical decisions. These analytical decisions are: which technology use measure we use (5 options), which well-being measure we use (3 options), whether we include controls (2 options, yes/no) and whether technology use is on a weekday or weekend (2 options). <br><br>We run each model by extracting the relevant latent factor for well-being and correlating it with the chosen technology use measure. We either filter the data to only include weekend or weekday measures and either include controls or not in our model. After running each possible analysis, we plot these to show the general trend of results. <br><br>To test each hypothesis separately we then run a series of permutation tests. We select all specifications that include the technology use variables addressed in the hypotheses (H1 = self-report Likert scale, H2 = continuous time diary, H3 = 30 minutes before bedtime, H4 = 1 hour before bedtime), and then run a permutation test on these, checking whether the original data results in more significant p values than scrambled datasets where we know the null effect is true. <br><br>HYPOTHESIS 1<br>Self-report technology use: mean of 5 likert scale measures as noted above<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none Continuous technology use: sum of time use diary reported technology use for participants that report having used technology at least once during that day<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none Technology use 30 minutes before bedtime: dichotomous variable of whether participant reported using technology in their time diary 30 minutes before they first report sleeping in the evening<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none Technology use 1 hour before bedtime: dichotomous variable of whether participant reported using technology in their time diary 1 hour before they first report sleeping in the evening<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none We will take all the specification curve analysis explained above and split it into the specifications with and without controls. This includes all possible measures of technology use and well-being, in addition to either weekend/weekday.\", \n\"Correlation between latent well-being factor and self-report technology use See above See above See above We will run two permutation tests on the control and non-control specifications examining whether the effects are significant. We will then compare whether the effect found in the set of specifications without controls are larger than the effect found in the set of specifications with controls.\", \n\"Not applicable: correlation, details of variables given above See above See above See above NA, see above.\", \n\"All covariates either included or excluded, covariates chosen because of previous literature (see above) See above See above See above See above.\", \n\"Not applicable See above See above See above Not applicable.<br>\", \n\"None, as we only do one permutation test for each hypothesis.\", \n\"We will exclude participants from each analysis (listwise deletion) where they do not meet the inclusion criteria (e.g. if their time use diary was completed on an ‘unusual’ day). <br><br>The treatment of missing data in analyses will vary. When analysing self-report measures of dichotomous variables, we can assume that missing data is random and we use ‘Maximum Likelihood’ imputation implemented through the ‘lavaan’ R package. When analysing the continuous technology use variable, we cannot assume that missing data is random and we do not impute missing data, performing listwise deletion instead. \", \n\"We have checked the reliability of both the SDQ, the self-esteem and the short form well-being scale beforehand and found that there are no issues with item inclusion in the scale. Detailed reliability tests can be found in the script (uploaded as well). Cronbach’s alphas for well-being (0.93), self-esteem (0.9) and SDQ (0.86) were OK. It is important to note that the Cronbach’s alphas do not take into account the two-factor structure of the SDQ. The fit scores in a CFA was also OK for all three measures:<br><br>Wellbeing: CFI = 0.93, TLI = 0.91, RMSEA = 0.093, SRMR = 0.049<br>Self-Esteem: CFI = 0.97, TLI = 0.94, RMSEA = 0.142, SRMR = 0.029<br>SDQ: CFI = 0.84, TLI = 0.82, RMSEA = 0.068, SRMR = 0.054<br><br>The SDQ is the measure that seems to have to worst fit. This could lead to our SEM not converging in our final analyses. If the model does not converge we will take the means of the items of the appropriate well-being scale, and put that into the model. Taking means of items is widely used, especially in our area, and is an appropriate substitute. \", \n\"Not applicable. \", \"Not applicable. \", \"Yes, data collection is underway or complete\", \n\"No\", \"After the data are released from embargo on Wednesday the 9th of May 2018.<br>\", \n\"None.\", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, \"p_many\"), \"Preregistration 3\" = c(\"Open-Ended Registration\", \n\"Rationality in joint action: Maximizing co-efficiency in coordination\", \n\"trwb4\", \"https://osf.io/trwb4\", \"2019-02-05T19:00:45.011954\", \n\"2022-08-22T18:09:59.007380\", \"2019-02-05T19:00:44.981065\", \"\", \n\"https://archive.org/details/osf-registrations-trwb4-v1\", NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"This is a registration of data made available to the public for the paper entitled \\\"Rationality in joint action: Maximizing co-efficiency in coordination\\\" by Török, G., Pomiechowska, B., Csibra, G., &amp; Sebanz, N.\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"p_many\"\n), \"Preregistration 4\" = c(\"Open-Ended Registration\", \"On the limited generality of air pollution and anxiety as causal determinants of unethical behavior: Commentary on Lu, Lee, Gino, &amp; Galinsky (2018)\", \n\"z2bsa\", \"https://osf.io/z2bsa\", \"2019-06-26T22:56:09.594764\", \n\"2024-10-18T12:26:04.886587\", \"2019-06-26T22:56:09.551127\", \"\", \n\"https://archive.org/details/osf-registrations-z2bsa-v1\", NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"R scripts for the reanalyses reported in the paper:<br>Heck, Thielmann, Klein &amp; Hilbig (2019). On the limited generality of air pollution and anxiety as causal determinants of unethical behavior: Commentary on Lu, Lee, Gino, &amp; Galinsky (2018).\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"p_many\"\n), \"Preregistration 5\" = c(\"Prereg Challenge\", \"Does Honesty Require Time? A preregistered replication of SEB2012 Exp2\", \n\"jez3g\", \"https://osf.io/jez3g\", \"2018-11-02T13:55:48.394132\", \n\"2018-11-02T09:29:45.302861\", \"2018-11-02T13:55:48.367381\", \"\", \n\"https://archive.org/details/osf-registrations-jez3g-v1\", \"In this experiment, we aim to replicate a study by Shalvi, Eldar and Bereby-Meyer (2012, Experiment 2) which suggested that honesty requires overcoming our natural tendency to cheat in tempting situations. We will test the same research question (i.e. are participants under time pressure more likely to cheat than participants without time pressure?) as the original study. Participants under time pressure are more likely to cheat than participants that are not under time pressure.\", \nNA, NA, NA, NA, NA, NA, \"Missing data for reported die roll outcome (e.g., due to non-response, technical failure or failure to report within the time limit (high time pressure condition)).\", \n\"Participants will be attendees participating the testweek at the University of Amsterdam, which is a part of the propaedeutic of the Psychology program. During this testweek, a large amount of students are tested simultaneously. There are no additional prerequisites that need to be met for participation.\", \n\"Based upon our power-analysis, we will test a minimum of 366 participants. We have two conditions in our design (time-pressure vs. no-time-pressure), implying we will have a minimum of 183 participants in each condition. Given the setup of Testweek (i.e., mass sessions of about 250 students each), we aim to run our study in two sessions, leading to an expected sample size of about N=500.\", \n\"We expect two sessions of Testweek to suffice (2 x ca n = 250 leads to ca n = 500; which exceeds the minimal required sample size of n=366). Should the two sessions of Testweek not suffice to reach n=366, we will add sessions until we reach 366 participants.\", \nNA, NA, \"No.\", \"The study employs a between-subjects design, in which the reported die outcome will be compared between the two conditions. We will run a one-tailed Mann-Whitney test to examine whether the reported outcome is higher in the time-pressure condition than in no-time-pressure condition.\", \nNA, NA, \"We will use the standard α=.05 criterion.\", NA, \"Participants who do not report their die roll outcome will be excluded from all analyses.\", \nNA, \"No.\", NA, NA, NA, NA, NA, NA, \"Registration prior to creation of data\", \n\"Not applicable in this study.\", \"Following Camerer et al. (2018) we aim for 90% power to detect 50% of the original effect size. For one-sided independent Mann-Whitney U test, with alpha=.05, this implies that we should test N = 332 (n=166 in each group) to be able to detect d = .66 [ x 50% ] = .33<br><br>Anticipating exclusions (2-5% in original study; conservative estimate for our study: 10%) we will test N=366\", \n\"The between-subject manipulation of time pressure will have two conditions: time pressure (i.e. report the outcome of the die roll within 8s) vs no time pressure (i.e. report the outcome of the die roll at own pace).\", \n\"-Primary: reported die outcome (1 to 6)<br>-For manipulation check: response time. Response time will be operationalized as the time a participant needs to report their dice roll outcome since the start sign (click on response – click on start sign). Outliers (5 SD above mean) will be excluded for the manipulation check analysis.\", \n\"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n\"Research personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. For studies that involve human subjects, they will not know the treatment group to which they have been assigned.\", \n\"The study employs a between-subjects design, in which the mean reported die roll outcome will be compared between the two conditions (no-time-pressure vs. time-pressure).\", \n\"Participants will be randomly assigned to either the time-pressure condition or the no-time-pressure condition using permuted block randomization, which ensures an even distribution of participants across conditions.\", \n\"Within each condition, we will run a Chi-square goodness of fit test between the distribution of the reported die roll outcomes and the expected distribution of die roll outcomes for each condition.\", \nNA, NA, NA, NA, \"p_many\"), \"Preregistration 6\" = c(\"OSF Preregistration\", \n\"RR4_Does Honesty Require Time? A preregistered direct replication of SEB2012 Exp2\", \n\"9bg3z\", \"https://osf.io/9bg3z\", \"2019-03-28T15:21:51.486147\", \n\"2019-03-26T10:53:07.836139\", \"2019-03-28T15:21:51.454410\", \"\", \n\"https://archive.org/details/osf-registrations-9bg3z-v1\", \"Participants under time-pressure report higher outcomes in an incentivized die rolling game than participants that play at their own pace.\", \nNA, NA, NA, NA, NA, NA, \"Missing data for reported dice roll outcome (e.g., due to non-response, technical failure or failure to report within the time limit in the time-pressure condition) will be excluded.\", \n\"We will recruit participants in a university building (expecting majority of students), financially rewarding their participation. Other than gathering a minimum of 3 and a maximum of 6 participants, there are no in-/exclusion criteria during recruitment.\", \n\"A minimum of N=148 and a maximum of N=475 participants will be tested.\", \n\"Minimum N=148, thereafter data collection is stopped when reaching decisive evidence or N=475 is reached (Schönbrodt &amp; Wagenmakers, 2018).\", \nNA, NA, \"NA\", \"To examine whether the reported dice roll outcomes are higher in the time-pressure condition than in the no time-pressure condition, we will run a Mann-Whitney test (one-tailed). <br><br>For the manipulation check we will compare the response time in the time pressure condition with the response time in the self paced condition using an independent t-test (one-tailed). <br><br>As follow-up test to evaluate whether there was cheating, we will run, within each condition, a Chi-square goodness of fit test between the distribution of the reported die roll outcomes and the expected uniform distribution.\", \nNA, NA, \"We rely on nullhypothesis significance testing (NHST), using the criterion that is the standard in the social sciences (α=.05; one-tailed because of directional hypothesis).\", \nNA, \"Participants who do not report their dice roll outcome will be excluded from all analyses.\", \nNA, \"NA\", NA, NA, NA, NA, NA, \"This is a direct replication of Shalvi, Eldar and Bereby-Meyer (2012, Experiment 2) which found participants under time-pressure to be more likely to cheat than participants without time-pressure, suggesting that honesty requires overcoming our natural tendency to cheat in tempting situations. We already ran 3 replications. A key differences between those replications and the original study was sessions size. Session size may influence the perception of the game (e.g., anonymity, opportunity to cheat, costs, and rewards). In the current study we readdress the research question in a setting that closely mimics the original study, testing participants in small sessions of 3-6 participants.\", \n\"Registration prior to creation of data\", \"NA\", \"Following Camerer et al. (2018) we aim for 90% power to detect 50% of the original effect size. For a one-sided independent Mann-Whitney U test, with alpha=.05, this implies that we should test N = 428 to be able to detect d = .58 [ x 50% ] = .29. Anticipating exclusions (conservative estimate: ca 10%) this implies N=475. <br>To make maximum use of our resources, testing will, however, be terminated  when decisive evidence is found. After having tested 148 participants (i.e., double the sample size of the original study; to prevent premature stopping) we will calculate the Bayes factor for the Bayesian Mann-Whitney test that assesses the differences between the time pressured and self paced condition on the self-reported die role outcome (using default Cauchy and uninformed prior) after each session and stop testing when we reach decisive evidence for either the alternative hypothesis (i.e., that time pressure leads to higher reported outcome compared to self paced condition; BF10 larger than 10) or the null hypothesis (i.e., that the time pressure manipulation does not affect reported outcome; BF10 smaller than 1/10).\", \n\"Time pressure: time-pressured (i.e., max 8s) vs self-paced (i.e., no time limit)\", \n\"For the manipulation check: Time taken to role the die and report the outcome<br>For the effect of interest: Reported die role outcome (1 to 6)\", \n\"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n\"For studies that involve human subjects, they will not know the treatment group to which they have been assigned.\", \n\"Experimental design with one between-subject factor: Participants are assigned either to the time pressure OR the self paced condition\", \n\"Participants will be randomly assigned to either the time-pressure condition or the self paced condition using Qualtrics permuted block randomization, which ensures an even distribution of participants across condition\", \nNA, \"Bruno verschuere, Ewout Meijer\", \"Randomization occurs by computer, after general instructions by experimenter. In principle, there is no more interaction between the experimenter and the participant until the end of the study. Only questions for clarification of instructions could be asked and could potentially de-blind the experimenter.\", \nNA, NA, \"p_many\"), \"Preregistration 7\" = c(\"OSF Preregistration\", \n\"Ego depletion pre-registered study\", \"7qcxa\", \"https://osf.io/7qcxa\", \n\"2019-09-19T16:02:01.290943\", \"2023-12-13T13:19:34.800058\", \"2019-09-19T16:02:01.270059\", \n\"\", \"https://archive.org/details/osf-registrations-7qcxa-v1\", \n\"1. We expect the boundary parameter to be smaller in the high than low demand condition.<br>2. We expect the drift rate for the controlled process to be similar (i.e., no significant difference) between the high and low demand conditions.<br>3. We expect the drift rate for the automatic process to be similar (i.e., no significant difference) between the high and low demand conditions.\", \nNA, NA, NA, NA, NA, NA, \"We will use the same exclusion criteria described in our manuscript.\", \n\"The data have already been collected (undergraduate students at a North American university and online Amazon MTurker).\", \n\"We used within-subjects designs in four studies (total N = 686).\", \nNA, NA, NA, NA, \"We will fit linear mixed effects models using frequentist and Bayesian approaches, using the packages lme4 and brms respectively. As with the models reported in the manuscript (see attached pdf), we will use the following syntax to fit the hierarchical models: <br><br>outcome ~ condition + (1 | participant)  # fitted separately to each study (4 studies)<br>outcome ~ condition + (1 | study/participant)  # fitted once to \\\"summarize\\\" the effect of condition across four studies 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b\", \nNA, NA, \"Since we are running additional (and exploratory) analyses suggested by our manuscript's reviewer, we will not be focusing on inferential statistics. Instead, as suggested by the reviewer, we are interested in exploring whether the more complicated diffusion models can provide extra insights (relative to the EZ-diffusion model).\", \nNA, NA, NA, \"The low demand group will be coded as -0.5 and the high demand group as 0.5. Congruent and incongruent Stroop trials were coded as -0.5 and 0.5 respectively.\", \nNA, NA, NA, NA, NA, \"We submitted a manuscript detailing a within-subjects depletion paradigm (N = 686 across four studies). In the manuscript, we fitted the EZ-diffusion model to the Stroop data, and our reviewer suggested we enlist the help of an independent expert modeler to fit more complicated diffusion models specifically designed for conflict tasks. The reviewer also suggested we preregister the extra analyses and share blinded data (with condition labels shuffled) with the modeler.\", \n\"Registration prior to analysis of the data\", \"We are pre-registering additional analyses suggested by a reviewer of our manuscript. In our manuscript, we fitted the EZ-diffusion model to participants' Stroop data. The reviewer suggested we enlist the help of an independent expert modeler to fit more complex diffusion models designed specifically for conflict tasks. Our expert modeler has access to our previous pre-registration protocols and a blinded version of the data, with the condition labels (high/low-demand) shuffled to prevent significance seeking.\", \nNA, \"Participants were assigned low demand condition on one day and the high demand condition on another day.\", \n\"Three key parameters: drift rate for the controlled process, drift rate for the automatic process, boundary (or threshold). Specifically, the drift rate for the automatic process will be reflected as changes in the maximum amplitude of the gamma function that controls the drift rate for the automatic process in the diffusion model for conflict tasks.\", \n\"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n\"Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.\", \n\"Within-subject design. See attached pdf for manuscript submitted to journal. 5d83a68351eeee001ab9c8d4 Manuscript.pdf https://osf.io/project/7qcxa/files/osfstorage/5d83a68351eeee001ab9c8d4 https://osf.io/download/5d83a68351eeee001ab9c8d4 3fa28fdd5b5f13c366fe59b4da566aa07ccb9ea462f0843acc01838539ff340b\", \nNA, NA, \"Hause Lin, Michael Inzlicht, Blair Saunders, Malte Friese, Nathan J. Evans\", \nNA, NA, NA, \"p_many\"), \"Preregistration 8\" = c(\"Open-Ended Registration\", \n\"WVS Dishonesty\", \"a6y7r\", \"https://osf.io/a6y7r\", \"2020-08-24T02:39:48.759898\", \n\"2023-01-10T15:34:55.292980\", \"2020-08-24T02:39:48.740831\", \"2024-08-22T00:00:00Z\", \n\"https://archive.org/details/osf-registrations-a6y7r-v1\", NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, \"p_many\"), \"Preregistration 9\" = c(\"Preregistration Template from AsPredicted.org\", \n\"Optimism 7575-559-59\", \"4v3sg\", \"https://osf.io/4v3sg\", \"2020-04-03T23:16:39.042656\", \n\"2020-08-23T03:13:56.121904\", \"2020-04-03T23:16:39.016061\", \"2024-04-02T00:00:00Z\", \n\"https://archive.org/details/osf-registrations-4v3sg-v1\", \"We hypothesize that people who are higher in dispositional optimism would be less willing to engage in unethical behaviors.\", \nNA, NA, NA, NA, \"We will administer 8 items to measure people’s dispositional optimism:<br><br>1.\\tIn uncertain times, I usually expect the best.<br>2.\\tIf something can go wrong for me, it will. <br>3.\\tI always look on the bright side of things. <br>4.\\tI am always optimistic about my future. <br>5.\\tI hardly ever expect things to go my way. <br>6.\\tThings never work out the way I want them to.<br>7.\\tI am a believer in the idea that \\\"every cloud has a silver lining\\\".<br>8.\\tI rarely count on good things happening to me.<br><br>Participants would be asked to respond on a 7-point scale ranging from 1 = strongly disagree to 7 = strongly agree.<br><br>The average of these eight items would serve as the independent variable.<br><br>We will administer 8 items to measure the extent to which people find unethical behaviors justifiable:<br><br>1.\\tYou work in a fast-food restaurant in downtown. It’s against policy to eat food without paying for it. You came straight from classes and are therefore hungry. Your supervisor isn’t around, so you make something for yourself and eat it without paying.<br>2.\\tYou work as an office assistant for a department in a large company. You’re alone in the office making copies and realize you’re out of copy paper at home. You therefore slip a ream of paper into your backpack. <br>3.\\tYou’re preparing for the final exam in a class where the professor uses the same exam in both sections. Some of your friends somehow get a copy of the exam after the first section. They are now trying to memorize the right answers. You don’t look at the exam, but just ask them what topics you should focus your studying on. <br>4.\\tYou’ve waited in line for 10 minutes to buy a coffee and muffin at Starbucks. When you’re a couple of blocks away, you realize that the clerk gave you change for $20 rather than for the $10 you gave him. You savor your coffee, muffin and free $10. <br>5.\\tYou get the final exam back from your professor and you notice that he’s marked correct three answers that you got wrong. Revealing his error would mean the difference between an A and a B. You say nothing. <br>6.\\tYour accounting course requires you to purchase a software package that sells for $50. Your friend, who is also in the class, has already bought the software and offers to lend it to you. You take it and load it onto your computer.<br>7.\\tYour boss at your summer job asks you to get confidential information about a competitor’s product. You therefore pose as a student doing a research project on the competitor’s company and ask for the information.<br>8.\\tYou are assigned a team project in one of your courses. Your team waits until the last minute to begin working. Several team members suggest using an old project out of their fraternity/sorority files. You go along with this plan.<br><br>Participants would be asked to respond on a 7-point scale ranging from 1 = not at all likely to 7 = extremely likely.<br><br>The average of these eight items would serve as the dependent variable.\", \nNA, NA, NA, \"In a previous study using an identical design, we found an effect size in the predicted direction with r = -.172. A power analsyis using r = .172, alpha = .05 (one-tailed), and power = 80% indicated that we need to recruit 205 participants. Thus, we will post a survey seeking 205 participants on Amazon Mechanical Turk. The final sample size might be higher or lower than 205 depending on the number of participants from unique IP addresses who complete our survey before it expires.\", \nNA, \"Only participants who complete the study will be retained in the analysis. We will exclude multiple responses from the same IP address, based on the IP address recorded in the Qualtrics survey. After participants have completed the two measures noted above, we will ask them an open-ended question asking them to summarize the main point of the statements that they just responded to. We will exclude participants who provide gibberish and ireelevant responses to this question.\", \nNA, NA, \"We will run a bivariate correlation analysis to assess whether participants higher in dispositional optimism are less willing to engage in unethical behaviors. As we are pre-registering a directional hypothesis, we will use a one-tailed t-test.\", \nNA, NA, NA, NA, NA, NA, NA, NA, \"No, no data have been collected for this study yet.\", \nNA, NA, \"NA. NA.\", NA, NA, NA, NA, NA, NA, NA, NA, \"NA.\", NA, \nNA, NA, NA, \"Optimism 7575-559-59.\", \"Experiment\", \"p_many\"), \n    \"Preregistration 10\" = c(\"Preregistration Template from AsPredicted.org\", \n    \"Optimism 7575-559-66\", \"hwu9x\", \"https://osf.io/hwu9x\", \n    \"2020-04-11T02:08:47.567941\", \"2020-08-23T03:15:07.904910\", \n    \"2020-04-11T02:08:47.548443\", \"2024-04-08T00:00:00Z\", \"https://archive.org/details/osf-registrations-hwu9x-v1\", \n    \"We hypothesize that people who are led to be optimistic about the future of the Covid-19 epidemic would perceive unethical behaviors as less justifiable than people who are led to be pessimistic about the future of this epidemic.\", \n    NA, NA, NA, NA, \"We will administer 5 items to measure the extent to which people find unethical behaviors justifiable:<br><br>1.\\tA friend says that it is OK to go to a park that is closed for some fresh air and exercise, especially because there are likely to be very few people in a closed park.<br>2.\\tAnother friend says that it is justifiable to hoard face masks and hand sanitizers given how hard it is to buy them anywhere. <br>3.\\tA third friend says that we must buy as many groceries as possible and stock up because who knows when supermarkets will run out of food. <br>4.\\tA fourth friend says that despite all the social distancing guidelines, it is OK to shake hands when meeting someone because otherwise one would appear extremely rude. <br>5.\\tAnother friend suggests that despite the social distancing guidelines, it is OK to get together with a few friends for a drink, as long as everyone doesn’t show any respiratory symptoms. <br><br>Participants would be asked to respond on a 11-point scale ranging from -5 = strongly disagree to 5 = strongly agree.<br><br>The average of these five items would serve as the dependent variable.\", \n    NA, NA, NA, \"In two previous studies using a similar design, we found an average effect size of Cohen’s d = .36 in the predicted direction. Thus, we decided on a sample size of 266, which would give us 90% power to detect an effect size of Cohen’s d = .36 with alpha = .05 (one-tailed). Further, in the two previous experiments, on average 8% of the participants were excluded as per the pre-registered criteria mentioned below. We will post a survey seeking 266/.92 = 289 participants on Amazon Mechanical Turk. The total number of participants who complete our survey might be higher or lower than 289, as some participants might complete the survey but not submit the “HIT” on MTurk, whereas others might submit the “HIT” on MTurk but not complete our survey.\", \n    NA, \"Only participants who complete the study will be retained in the analysis. We will exclude multiple responses from the same IP address, based on the IP address recorded in the Qualtrics survey. We will also exclude participants who provide gibberish responses to an open-ended question asking them to summarize the main point of the information provided in the experimental manipulation (which was administered after the experimental manipulation but before the dependent variable).\", \n    NA, NA, \"We will average participants’ responses to the five items measuring justifiability of unethical behavior, and run an independent samples t-test to assess whether participants are less likely to judge unethical behaviors as justifiable (i.e., are more likely to disagree with the items) in the optimism condition than in the pessimism condition. As we are pre-registering a directional hypothesis, we will use a one-tailed t-test.\", \n    NA, NA, NA, NA, NA, NA, NA, NA, \"No, no data have been collected for this study yet.\", \n    NA, NA, \"NA. NA.\", NA, NA, NA, NA, NA, NA, NA, NA, \"Participants will be randomly assigned to either the optimism condition or the pessimism condition. They will be presented with a scenario stating that the future of Covid-19 is bright vs. bleak, respectively, in the optimism condition vs. the pessimism condition. See attached pdf for detais.\", \n    NA, NA, NA, NA, \"Optimism 7575-559-66\", \"Experiment\", \"p_many\"\n    ), \"Preregistration 11\" = c(\"Preregistration Template from AsPredicted.org\", \n    \"One-shot task\", \"yab8q\", \"https://osf.io/yab8q\", \"2020-02-28T15:42:37.818828\", \n    \"2020-07-28T08:20:40.590837\", \"2020-02-28T15:42:37.798697\", \n    \"\", \"https://archive.org/details/osf-registrations-yab8q-v1\", \n    \"Do people who seek counterfactual information feel worse than those who do not seek counterfactual information?\", \n    NA, NA, NA, NA, \"Emotion ratings measured on a visual analogue scale will be compared between participants who chose to learn how much they could have won and those who did not.\", \n    NA, NA, NA, \"We will collect data from 360 adult participants using the participant recruitment platform Prolific.co. Based on our previous studies using a within-participant design, we expected to see a medium to large effect of counterfactual information seeking on emotion ratings. Based on our pilot data (described below), we expected an uneven distribution between those who sought and those who did not seek information. We used G-Power to determine the sample size required for the between subjects t-test with uneven groups. We used the following parameters: tails = 2; Cohen's d = 0.5; alpha = 0.05; power = 0.8; Allocation ration N2/N1 = 0.25. This gives a minimum sample of 200 participants. Note that this analysis will only contain participants who did not 'go bust'. In our pilot, 8 out of 18 participants 'went bust', we will thus increase our sample by an additional 160 participants to achieve the required number of participants who do not go bust.\", \n    NA, \"Unlike in our previous experiments, participants who 'go bust' in the critical trial will not be offered the chance to see how far they could have inflated the balloon, so will not be included in the analysis. We decided not to use 'false feedback' to ensure that all participants banked in the task because we did not want to deceive the participants in any way during this task. We were concerned that using false feedback may introduce statistical artefacts into our design because of potential biases in participants' bidding behaviour.<br><br>The recruitment platform pre-screened participants for English as a first language before participation to ensure easy understanding of the task instructions.\", \n    NA, NA, \"We will compare emotion ratings between participants who sought information and those who did not in a using the following analyses:<br><br>1. Between participant t-test comparing emotion ratings between participants who seek and do not seek information;<br><br>2. Linear regression model predicting emotion rating from:<br>a. information seeking;<br>b. the participant's bid (control variable);\", \n    NA, NA, NA, NA, NA, NA, NA, NA, \"It's complicated. We have already collected some data but explain in Question 8 why readers may consider this a valid pre-registration nevertheless.\", \n    NA, NA, \"Data collection before the study: <br>Data from 18 participants has been collected in a pilot phase to determine whether people are willing to wait 30 seconds at the end of the experiment in return for seeing the balloon's limit. Of those 18 participants, 10 participants stopped before the balloon's limit so banked the money. Of those, 8 sought information about how much they could have won, and 2 did not seek information. The remaining 8 participants 'went bust' so were not given the opportunity to see the balloon's limit. These pilot participants will not be included in the final sample. From this pilot phase we determined that the parameters of our design are suitable to elicit both choices to and not to seek information. This is crucial for comparing emotion ratings between those who did and did not seek information. No other designs were piloted.<br><br>Additional analyses planned:<br>Following our previous analyses, we will determine the effect of the size of the missed opportunity on emotion ratings for those who observed the missed opportunity while controlling for the number of pumps. We will also run the same analysis on those who did not seek information as a check for any statistical artefacts (we do not expect to see any effect since participants did not observe the missed opportunity).<br><br>Additionally, we are interested in the change in emotion rating that the information brought, so we will compare difference scores between the two information ratings between participants who did and did not seek information.\", \n    NA, NA, NA, NA, NA, NA, NA, NA, \"There is not straightforward condition assignment. Each trial has a randomly determined 'safe limit' (sampled from a uniform distribution between 0 and 12) and the outcome of the trial is determined by whether the participant's bid (i.e. the number of inflations of the balloon they make) exceeds that number. So on some trials the balloon would burst after just one pump, and on others it would not burst after 12 (the maximum number) of pumps. This is randomly determined in the experiment script. Participants can choose whether they wish to seek information (the independent variable in our main emotion rating analysis), so this is outside the control of the experiment. The amount of money the participant missed out on (the missed opportunity they can learn about) is determined by a combination of the participant's bid and the randomly determined safe limit of the balloon.\", \n    NA, NA, NA, NA, \"Counterfactual Curiosity - One-shot Task<br><br>This experiment is a follow-up to the five experiments reported in our pre-print \\\"The Lure of Counterfactual Curiosity\\\" (DOI: https://doi.org/10.31219/osf.io/jm3uc). These studies address the question of whether people seek post-decision counterfactual information - how much they could have won - in a gambling task (the Balloon Analogue Risk Task, BART; Lejuez et al., 2002). In previous studies we used a within-participant design, presenting participants with 60 trials of the BART and giving them the option to view the balloon's limit after each trial. Participants frequently sought information even at some cost even though a. it made them feel bad, and b. (we argue that) it had no instrumental value. Our argument that the information had no instrumental value relied on the independent nature of the trials in the task - since the balloon's limit was randomly determined on each trial - so gaining information about the limit on the previous trial cannot benefit performance on future trials. However, it may be argued that participants believe that there is some non-random structure that can be learned through seeking information about the balloon's limit. Thus, they might have sought information for instrumental reasons, even though the information was actually not of any instrumental value. <br><br>In the current study, we aim to demonstrate that people will still incur costs to learn post-decision counterfactual information when the possibility to use that information in the future is completely removed because there is only one trial and that information still makes them feel bad. In the new version of the task, participants practice by completing 10 trials of the BART with no option to seek information. They rate their emotions on a visual analogue scale after seeing the outcome of each trial. <br><br>After the 10 practice trials, participants receive the following instructions: \\\"Now that you've had a chance to practice, it's time for the real thing! There is one more round and this time each pump is worth 20p!\\\". They then complete one critical round of the BART. If participants 'go bust' on this final round, then they do not get a bonus payment and they are not offered the opportunity to see how far they could have gone. If they 'banked' the money, then after rating their emotions about the outcome, then they are given the following instructions: \\\"You won £X.XX. Would you like to see how much you could have won if you kept going? The information comes at a price - you will have to wait 30 seconds for your completion code at the end of the experiment! Press Y for yes or N for no.\\\". <br><br>If they choose to see the information, then they see an animation of the balloon inflating to its randomly determined limit and are presented with information about how much money they could have won on the trial. If they choose not to receive the information then they continue to observe their obtained outcome for the same time as if they had chosen to view the information. Participants then rate their emotions a second time. This second emotion rating is the critical dependent variable.\", \n    \"Experiment\", \"p_many\")), row.names = c(\"template_name\", \n\"title\", \"id\", \"link\", \"date_created\", \"date_modified\", \"date_registered\", \n\"embargo_end_date\", \"ia_url\", \"research_questions\", \"hypotheses_interactions\", \n\"manipulation_checks\", \"theoretical_rationale\", \"design_independent_variables\", \n\"design_dependent_variables\", \"design_covariates_moderators\", \n\"data_exclusion_criteria\", \"data_collection_procedures\", \"sample_size\", \n\"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"description\", \"existing_data\", \"existing_data_explanation\", \n\"sample_size_rationale\", \"manipulated_variables\", \"measured_variables\", \n\"study_type\", \"blinding\", \"study_design_overview\", \"randomization\", \n\"follow_up_analyses\", \"authors\", \"q7\", \"name\", \"finally\", \"paper_id\"\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 11 preregistrations."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_many"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

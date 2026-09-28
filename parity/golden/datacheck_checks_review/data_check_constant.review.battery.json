@@ -1,0 +1,1535 @@
+{
+  "id": "data_check_constant.review.battery",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"NA\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"2.5\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2.5"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"B\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "B"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"A\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"b\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"1\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"2.5\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2.5"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"a\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"a\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"x y\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x y"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"x y\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x y"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"NA\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"a\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"B\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "B"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"z\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "z"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"A\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"B\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "B"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"b\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"b\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"2.5\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2.5"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"A\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"b\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"1\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"a\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"b\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"B\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "B"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "problem",
+          "message",
+          "values",
+          "near"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is constant: every value is \"x y\"."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x y"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

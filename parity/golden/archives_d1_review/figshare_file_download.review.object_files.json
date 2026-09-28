@@ -1,0 +1,112 @@
+{
+  "id": "figshare_file_download.review.object_files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "folder",
+      "figshare_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "figshare_700009",
+          "figshare_700009"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "700009",
+          "700009"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "700901",
+          "700902"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "first.csv",
+          "second.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "first.csv",
+          "second.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "344fd2323dd33d5c058b7cf27de029e8",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://ndownloader.figshare.com/files/700901",
+          "https://ndownloader.figshare.com/files/700902"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

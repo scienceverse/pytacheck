@@ -1,0 +1,34 @@
+{
+  "id": "code_library_lines.study_1_script_do",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "code",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "bysort idu: gen run = _n",
+          "gen year_run = birthyear + run",
+          "stset run , id(idu) failure(died_run==1) enter(age_interview)"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          86,
+          87,
+          91
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

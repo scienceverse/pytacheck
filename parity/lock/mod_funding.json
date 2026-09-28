@@ -1,0 +1,17 @@
+{
+"funding_check.error": {"r": "ac5146cf65ca52a8", "py": "582924c6afc14bea", "diff": ["<R error, Python value>"]},
+"funding_check.na_index": {"r": "9cbc6b96a20436ff", "py": "337e38279f19c3e4", "diff": ["table.text[]"]},
+"funding_check_oi.sectioned_none": {"r": "fed9c89af8159d56", "py": "927ece575535bbb6", "diff": ["table"]},
+"helpers.create_synonyms": {"r": "e22e9a779e7f20f7", "py": "0e993319d479f08e", "diff": ["References[]", "conflict_title[]", "foundation[]", "foundation_award[]", "researches[]"]},
+"helpers.patterns": {"r": "19a775d623fc5553", "py": "fca8c37ed381e44b", "diff": ["get_developed_1[]", "get_received_2[]", "get_support_10[]", "get_support_1[]", "get_support_5[]", "get_support_6[]", "get_support_8[]", "get_support_9[]", "where_refs_txt[]"]},
+"locate.error.acknow_1": {"r": "ac5146cf65ca52a8", "py": "8418223326b503e1", "diff": ["<R error, Python value>"]},
+"locate.error.financial_1": {"r": "ac5146cf65ca52a8", "py": "40dfce029d8c7730", "diff": ["<R error, Python value>"]},
+"locate.error.fund_2": {"r": "ac5146cf65ca52a8", "py": "33507235fc1c4b27", "diff": ["<R error, Python value>"]},
+"locate.error.grant_1": {"r": "ac5146cf65ca52a8", "py": "3e3f04fc6a5cfe6a", "diff": ["<R error, Python value>"]},
+"locate.error.where_acknows": {"r": "ac5146cf65ca52a8", "py": "28be7a613d7fe037", "diff": ["<R error, Python value>"]},
+"locate.titles.funding_blank_last": {"r": "51a1274f8b1b986c", "py": "e59daa2bfeeb1841", "diff": ["get_fund_2"]},
+"locate.titles.refs_next": {"r": "54705da763d12ba1", "py": "a6fd8c11dcec6b50", "diff": ["where_refs_txt[]"]},
+"rtransparent_funding.articles": {"r": "f92c3f2fe6d31087", "py": "823ba6be9065adba", "diff": ["[]"]},
+"rtransparent_funding.error": {"r": "ac5146cf65ca52a8", "py": "bffe32b2e7130725", "diff": ["<R error, Python value>"]},
+"rtransparent_funding.na_index": {"r": "31dee972fe244ba8", "py": "40be8b42072fd330", "diff": ["[]"]}
+}

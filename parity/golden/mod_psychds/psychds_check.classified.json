@@ -1,0 +1,364 @@
+{
+  "id": "psychds_check.classified",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 15,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "raw.sav",
+              "model.R",
+              "README.md",
+              "LICENSE",
+              "codebook.xlsx",
+              "img1.png",
+              "fig1.pdf",
+              "notes.xyz",
+              "CHANGES.md",
+              "dataset_description.json",
+              "scores.xlsx",
+              "eeg.npy",
+              "survey.qsf",
+              "table.html",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "code",
+              "documentation",
+              "unknown",
+              "documentation",
+              "materials",
+              "output",
+              "unknown",
+              "documentation",
+              "code",
+              "data",
+              "data",
+              "documentation",
+              "output",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              null,
+              null,
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/raw.sav",
+              "analysis/model.R",
+              "README.md",
+              "LICENSE",
+              "docs/codebook.xlsx",
+              "stimuli/img1.png",
+              "results/fig1.pdf",
+              "notes.xyz",
+              "CHANGES.md",
+              "dataset_description.json",
+              "data/scores.xlsx",
+              "data/eeg.npy",
+              "materials/survey.qsf",
+              "output/table.html",
+              "data/codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-raw_data.csv",
+              "analysis/model.R",
+              "README.md",
+              "unknown/LICENSE",
+              "documentation/codebook.xlsx",
+              "materials/img1.png",
+              "outputs/fig1.pdf",
+              "unknown/notes.xyz",
+              "documentation/CHANGES.md",
+              "analysis/dataset_description.json",
+              "data/study-scores_data.csv",
+              "data/eeg.npy",
+              "documentation/survey.qsf",
+              "outputs/table.html",
+              "documentation/codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "move",
+              "present",
+              "present",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/raw.sav",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "data/scores.xlsx",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 15 files across 1 study group.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"present\", \"present\", \"present\", \"present\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── dataset_description.json <span style=\"color:#b9770e\">(move from dataset_description.json)<\/span>\n│   └── model.R\n├── data/\n│   ├── eeg.npy <span style=\"color:#b9770e\">(move from data/eeg.npy)<\/span>\n│   ├── study-raw_data.csv <span style=\"color:#b9770e\">(move from data/raw.sav)<\/span>\n│   └── study-scores_data.csv <span style=\"color:#b9770e\">(move from data/scores.xlsx)<\/span>\n├── documentation/\n│   ├── CHANGES.md <span style=\"color:#b9770e\">(move from CHANGES.md)<\/span>\n│   ├── codebook.csv <span style=\"color:#b9770e\">(move from data/codebook.csv)<\/span>\n│   ├── codebook.xlsx <span style=\"color:#b9770e\">(move from docs/codebook.xlsx)<\/span>\n│   └── survey.qsf <span style=\"color:#b9770e\">(move from materials/survey.qsf)<\/span>\n├── materials/\n│   └── img1.png <span style=\"color:#b9770e\">(move from stimuli/img1.png)<\/span>\n├── outputs/\n│   ├── fig1.pdf <span style=\"color:#b9770e\">(move from results/fig1.pdf)<\/span>\n│   └── table.html <span style=\"color:#b9770e\">(move from output/table.html)<\/span>\n├── unknown/\n│   ├── LICENSE <span style=\"color:#b9770e\">(move from LICENSE)<\/span>\n│   └── notes.xyz <span style=\"color:#b9770e\">(move from notes.xyz)<\/span>\n└── README.md\n<\/pre>",
+          "#### Suggestions",
+          "- **Move** `data/raw.sav` → `data/study-raw_data.csv`.\n- **Move** `LICENSE` → `unknown/LICENSE`.\n- **Move** `docs/codebook.xlsx` → `documentation/codebook.xlsx`.\n- **Move** `stimuli/img1.png` → `materials/img1.png`.\n- **Move** `results/fig1.pdf` → `outputs/fig1.pdf`.\n- ...and 8 more files to relocate.\n- **Document** the 3 of 6 data columns without a codebook description (see codebook_check).",
+          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
+          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This repository already contains the files required for a Psych-DS dataset."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

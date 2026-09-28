@@ -1,0 +1,125 @@
+{
+  "id": "review.read_head_typed.stata_int_na.dta",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "i",
+          "s",
+          "d",
+          "t",
+          "l"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "character",
+              "character"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "Date"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "POSIXct",
+              "POSIXt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "haven_labelled",
+              "vctrs_vctr",
+              "double"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "i",
+          "s",
+          "d",
+          "t",
+          "l"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              null,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "",
+              "c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-01-01",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              null,
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

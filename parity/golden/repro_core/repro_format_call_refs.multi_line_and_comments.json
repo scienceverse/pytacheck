@@ -1,0 +1,44 @@
+{
+  "id": "repro_format_call_refs.multi_line_and_comments",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "call_text",
+      "fmt",
+      "resolved",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sprintf(\"%s/one.csv\",\n          dir)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "%s/one.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d/one.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

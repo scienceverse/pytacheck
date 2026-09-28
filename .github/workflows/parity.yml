@@ -1,0 +1,162 @@
+name: Parity (R reference)
+
+# Regenerates every golden by running metacheck in R at the pinned commit and
+# fails if any golden differs from the committed one, so the goldens that
+# `pytest` compares against can never drift from R. The same for the accuracy
+# report's R outputs (parity/accuracy/golden). Then runs the Python side and
+# the accuracy gate.
+#
+# Runs on the runner the CI_RUNNER variable names, by the rule in ci.yml, else
+# on GitHub's runners, and on either inside an Ubuntu 24.04 container: the
+# goldens depend on the C library. The conda-forge R uses glibc's character
+# tables, so deparse() keeps or escapes a character by the Unicode version of
+# the glibc it runs on. The goldens are glibc 2.39's (Ubuntu 24.04, Unicode
+# 15.1, which pytacheck.report.render reproduces); the fridge runner's own
+# Debian glibc 2.41 (Unicode 16) prints U+1FAE9 and U+0897 where 2.39 escapes
+# them. The container starts bare, so the job installs the few host tools it
+# needs and sets the UTF-8 locale GitHub's Ubuntu runners have.
+
+on:
+  pull_request:
+    paths:
+      - "parity/**"
+      - "upstream/**"
+      - ".github/workflows/parity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "parity/**"
+      - "upstream/**"
+  schedule:
+    - cron: "17 4 * * 1" # weekly
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: parity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regenerate:
+    name: Regenerate goldens with R and compare
+    runs-on: >-
+      ${{ github.event.repository.private &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+      && vars.CI_RUNNER || 'ubuntu-latest' }}
+    container: ubuntu:noble-20260911@sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffbb1bf33ca3 # the goldens' glibc (see the header)
+    # 30-40 minutes usually, but `parity generate` runs the areas one at a time
+    # and the fridge runner is shared: under other load the job has taken just
+    # over 60 minutes with every step passing
+    timeout-minutes: 120
+    env:
+      UV_PYTHON_PREFERENCE: only-managed # as in ci.yml
+      LANG: C.UTF-8
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      # git for checkout's submodules and the httptest2 clone, a C compiler for
+      # the sdists `uv sync` builds (cdifflib); tzdata and unzip as on GitHub's
+      # runners, for R's time zone and utils::unzip()
+      - name: Host tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update -q
+          apt-get install -q -y --no-install-recommends build-essential ca-certificates git tzdata unzip
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+
+      # checkout marks the workspace safe only in a temporary HOME. The job's
+      # git runs as root on a folder the runner's user owns, so without this
+      # git refuses the repository, and `git diff A B` then compares the two
+      # folders with each other (--no-index) instead of against HEAD.
+      - name: Trust the workspace for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: R reference environment (exact conda-forge builds)
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: parity/r/conda-linux-64.lock
+          environment-name: r-reference
+          cache-environment: true
+
+      - name: Install httptest2 and metacheck at the pinned commits, and careless
+        env:
+          # non-ASCII names in metacheck's code only survive a UTF-8 install locale
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
+        run: |
+          git clone --quiet https://github.com/nealrichardson/httptest2.git "$RUNNER_TEMP/httptest2"
+          git -C "$RUNNER_TEMP/httptest2" checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
+          R CMD INSTALL "$RUNNER_TEMP/httptest2"
+          R CMD INSTALL --no-test-load upstream/metacheck
+          # metacheck's suggested careless, in the library only the accuracy report loads
+          Rscript parity/r/install-suggests.R
+          echo "PYTACHECK_RSCRIPT=$(command -v Rscript)" >> "$GITHUB_ENV"
+
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.9.8"
+          python-version: "3.12"
+      # Outside the R environment (a shell without its activation), so the C
+      # extensions (cdifflib) build with the system compiler like in ci.yml, not
+      # with the conda compiler the environment sets as CC, which fails on them.
+      - run: uv sync --locked --all-extras
+        shell: bash
+
+      - name: Regenerate all goldens
+        run: uv run python -m parity generate
+
+      - name: Regenerate the accuracy report's R outputs, and score them
+        run: >-
+          uv run python -m parity accuracy --generate --gate
+          --report parity/_out/accuracy.json --md "$GITHUB_STEP_SUMMARY"
+
+      - name: Goldens must match the committed ones
+        if: always()
+        run: |
+          git rev-parse --show-toplevel > /dev/null # fails here, not in a folder-to-folder diff, if git sees no repository
+          if ! git diff --quiet -- parity/golden parity/accuracy/golden; then
+            git diff --stat -- parity/golden parity/accuracy/golden
+            echo "::error::Goldens regenerated from R differ from the committed goldens."
+            exit 1
+          fi
+          untracked=$(git ls-files --others --exclude-standard -- parity/golden parity/accuracy/golden)
+          if [ -n "$untracked" ]; then
+            echo "$untracked"
+            echo "::error::Cases or accuracy modules without committed goldens."
+            exit 1
+          fi
+
+      - name: Python matches R
+        if: always()
+        run: >-
+          uv run python -m parity check --jobs 0
+          --report parity/_out/report.json --md "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: parity-report
+          path: |
+            parity/_out/report.json
+            parity/_out/accuracy.json
+
+      # The container runs as root. On a self-hosted runner whose user reaches
+      # the host's Docker daemon, what it leaves in the mounted work folder (the
+      # checkout, the temp folder with HOME, the tool cache) stays root's, and
+      # that user can no longer clean it: the runner's next job then fails in
+      # actions/checkout. Hand it all back to the work folder's owner.
+      - name: Hand the work folder back to the runner's user
+        if: always()
+        shell: bash
+        run: >-
+          chown -R "$(stat -c %u:%g "$(dirname "$RUNNER_TEMP")")"
+          "$GITHUB_WORKSPACE" "$RUNNER_TEMP" "$RUNNER_TOOL_CACHE"

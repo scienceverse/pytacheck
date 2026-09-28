@@ -1,0 +1,16 @@
+{
+  "id": "path_sanitize.vector_no_sep",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "_My_Files_x_y.pdf",
+      "Replicated_Studies",
+      "a_b_c"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

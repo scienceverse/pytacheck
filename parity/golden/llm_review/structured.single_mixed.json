@@ -1,0 +1,106 @@
+{
+  "id": "structured.single_mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Note (not fatal): 1 of 5 LLM extractions failed and was left blank; the other 4 succeeded and all checks continued.\nRow 5: reason\n  arguments imply differing number of rows: 1, 0"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "text",
+      "name",
+      "n",
+      "tags",
+      "a",
+      "sub",
+      ".error",
+      ".error_msg"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "single full",
+          "single full",
+          "single full",
+          "single nulls",
+          "single tags"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s",
+          "s",
+          "s",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          4,
+          4,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          "y",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2.5,
+          2.5,
+          2.5,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "arguments imply differing number of rows: 1, 0"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

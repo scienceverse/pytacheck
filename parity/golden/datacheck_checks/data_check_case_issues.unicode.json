@@ -1,0 +1,39 @@
+{
+  "id": "data_check_case_issues.unicode",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Categories differing only by case: ÄRGER/ärger/Ärger"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ÄRGER/ärger/Ärger"
+        ],
+        "names": [
+          "ärger"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

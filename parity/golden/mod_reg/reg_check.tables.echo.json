@@ -1,0 +1,190 @@
+{
+  "id": "reg_check.tables.echo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "judgement",
+          "explanation"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Paper text",
+              "Preregistration text",
+              "Exclusions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deviation",
+              "Partially",
+              "unclear"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "client: ollama url: http://localhost:8000 task: task-1 token: metacheck-local dims: default",
+              "Details and [not a ref].",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "paper_summary",
+          "prereg_summary",
+          "paper_quotes",
+          "prereg_quotes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Paper text",
+              "Preregistration text",
+              "Exclusions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the",
+              "p",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4902",
+              "template_name<br>OSF Preregistration<br><br>title<br>Papercheck Test<br><br>id<br>48ncu<br><br>date_created<br>2025-11-28T19:14:24.639665<br><br>date_modified<br>2025-08-05T11:55:35.267689<br><br>date_registered<br>2025-11-28T19:14:24.608826<br><br>research_questions<br>Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.<br><br>study_type<br>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.<br><br>blinding<br>No blinding is involved in this study.<br><br>study_design_overview<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>randomization<br>We randomly assign to conditions<br><br>existing_data<br>Registration prior to creation of data<br><br>data_collection_procedures<br>We will include all scientists who are willing to participate.<br><br>sample_size<br>We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>sample_size_rationale<br>Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.<br><br>stopping_rule<br>We will stop after data from 100 researchers has been collected.<br><br>manipulated_variables<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>measured_variables<br>We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.<br><br>statistical_tests<br>We will perform an independent t-test on the number of mistakes in each group.<br><br>inference_criteria<br>We will interpret effects as significant if p &lt; .05<br><br>data_exclusion_criteria<br>No exclusions are expected.<br><br>missing_data_handling<br>No missing data is expected.<br><br>exploratory_analyses<br>We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " first; second",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " q",
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "judgement",
+          "explanation"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Paper text",
+              "Preregistration text",
+              "Exclusions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deviation",
+              "Partially",
+              "unclear"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "client: ollama url: http://localhost:8000 task: task-2 token: metacheck-local dims: default",
+              "Details and [not a ref].",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "paper_summary",
+          "prereg_summary",
+          "paper_quotes",
+          "prereg_quotes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Paper text",
+              "Preregistration text",
+              "Exclusions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the",
+              "p",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4902",
+              "template_name<br>AsPredicted<br><br>title<br>To err is human<br><br>id<br>by8i8v<br><br>date_created<br>2025/11/27 23:20 (PT)<br><br>research_questions<br>Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.<br><br>study_design_overview<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>sample_size<br>We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>statistical_tests<br>We will perform an independent t-test on the number of mistakes in each group.<br><br>existing_data_explanation<br>No, no data have been collected for this study yet.<br><br>design_dependent_variables<br>We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.<br><br>outliers_and_exclusions<br>none are expected.<br><br>additional_comments<br>We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " first; second",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " q",
+              null,
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

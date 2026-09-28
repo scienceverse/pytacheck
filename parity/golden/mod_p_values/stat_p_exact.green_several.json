@@ -1,0 +1,259 @@
+{
+  "id": "stat_p_exact.green_several",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_p_exact"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Exact P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value",
+          "expanded",
+          "imprecise",
+          "zero"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              2,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p = .031",
+              "p < .001 ",
+              "p < .0005",
+              "p = 2.1 x 10^-5",
+              "p < 2.2e-16",
+              "p < .000 "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Fine: p = .031, p < .001 and p < .0005.",
+              "Fine: p = .031, p < .001 and p < .0005.",
+              "Fine: p = .031, p < .001 and p < .0005.",
+              "Scientific: p = 2.1 x 10^-5 and p < 2.2e-16.",
+              "Scientific: p = 2.1 x 10^-5 and p < 2.2e-16.",
+              "Quirk: p < .000 is neither imprecise nor zero."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "<",
+              "<",
+              "=",
+              "<",
+              "<"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.031,
+              0.001,
+              0.0005,
+              2.1e-05,
+              2.2e-16,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Fine: p = .031, p < .001 and p < .0005.",
+              "Fine: p = .031, p < .001 and p < .0005.",
+              "Fine: p = .031, p < .001 and p < .0005.",
+              "Scientific: p = 2.1 x 10^-5 and p < 2.2e-16.",
+              "Scientific: p = 2.1 x 10^-5 and p < 2.2e-16.",
+              "Quirk: p < .000 is neither imprecise nor zero."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no imprecise *p* values or *p*-values of exactly zero out of 6 detected."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no imprecise *p* values or *p*-values of exactly zero out of 6 detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n_imprecise",
+          "n_zero"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

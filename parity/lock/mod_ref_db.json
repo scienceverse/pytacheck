@@ -1,0 +1,8 @@
+{
+"ref_miscitation.demo.custom_db": {"r": "8981fae5b8cbc2f2", "py": "d59eb1d37f6e9efd", "diff": ["report[]", "table.citation[]"]},
+"ref_miscitation.demo.two_db": {"r": "7e4e2e18838ef24f", "py": "40d294504a7d3112", "diff": ["report[]", "summary_text[]", "table"]},
+"ref_miscitation.duplicate_doi": {"r": "1a9076f679dcb472", "py": "cac375ef86d6edb6", "diff": ["summary_table.miscite_10.1525/collabra.33267"]},
+"ref_miscitation.instances": {"r": "c5e5df6cffa25917", "py": "2169b5cc984b3b71", "diff": ["report[]"]},
+"ref_miscitation.na_doi_db": {"r": "a63f524984eb9118", "py": "a96868ab88716b50", "diff": ["report[]", "summary_table", "summary_text[]", "table"]},
+"ref_replication.paperlist": {"r": "0fcfe446bb9205fe", "py": "2761484b16396ab5", "diff": ["report[]", "summary_table.replications[]", "summary_text[]", "table"]}
+}

@@ -1,0 +1,9 @@
+{
+  "id": "report.error.module",
+  "ok": false,
+  "error": "There were no modules that matched notamodule\nuse module_list() to see a list of built-in modules.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

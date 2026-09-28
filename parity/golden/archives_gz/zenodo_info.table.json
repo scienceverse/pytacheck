@@ -1,0 +1,434 @@
+{
+  "id": "zenodo_info.table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "id",
+      "href",
+      "zenodo_url",
+      "zenodo_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "creators",
+      "keywords",
+      "resource_type",
+      "journal",
+      "owners",
+      "license",
+      "downloads",
+      "unique_downloads",
+      "views",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5281/zenodo.17754445",
+          "https://zenodo.org/records/123456789",
+          "not-a-zenodo-id"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5281/zenodo.17754445",
+          "https://zenodo.org/records/123456789",
+          "not-a-zenodo-id"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "17754445",
+          "123456789",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ResearchBox 4377, 'PaperCheck (private)', https://researchbox.org/4377",
+          "Example title",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.17754445",
+          "10.5281/zenodo.123456789",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<b>Box title:<\/b>&nbsp;'PaperCheck (private)'   <br><br><b>Reference:<\/b>&nbsp;<br><br><b>Note<\/b>: this backup was created automatically by a ResearchBox bot",
+          "Example description",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-11-28",
+          "2026-01-01",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-11-28T19:32:37.460472+00:00",
+          "2026-01-02T19:32:37.460472+00:00",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "affiliation"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa DeBruine"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "University of Glasgow"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "affiliation"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniel Lakens"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Eindhoven University of Technology"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "affiliation"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Jane Doe"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "University of Glasgow"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "other",
+          "dataset",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Journal"
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1282165"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cc-by-4.0",
+          "cc-by-4.0",
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          10,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          5,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          121,
+          20,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "83246c6a-4934-4adb-a478-5c4cd18efc64"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ResearchBox_4377.zip"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1828
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:d43506a4d3451f7e35e11f2d125d8bd9"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/17754445/files/ResearchBox_4377.zip/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "f1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      101
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:abc"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://files.example/f1"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

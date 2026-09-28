@@ -1,0 +1,29 @@
+{
+  "id": "html_export_r_source.invalid_utf8",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "file",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code/latin1_pandoc.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x <- 1 # caf�"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

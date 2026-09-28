@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.cezg3.files.osfstorage-26b710",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade24",
+          "553e9d5d8c5e4a21991ade25",
+          "553e9d5d8c5e4a21991ade26",
+          "553e9d5d8c5e4a21991ade27",
+          "553e9d5d8c5e4a21991ade28",
+          "553e9d5d8c5e4a21991ade29",
+          "553e9d5d8c5e4a21991ade2a",
+          "553e9d5d8c5e4a21991ade2b",
+          "553e9d5d8c5e4a21991ade2c",
+          "553e9d5d8c5e4a21991ade2d"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dirt_toilet.JPG",
+          "disaster_couple.jpg",
+          "disaster_dust.jpg",
+          "disaster_fire.jpg",
+          "disaster_flood.jpg",
+          "disaster_peoplefleeing.jpg",
+          "drugs_addictfloor.JPG",
+          "drugs_alcoholics.JPG",
+          "drugs_overdosepills.jpg",
+          "fight_demolish.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          36350,
+          61403,
+          75347,
+          68644,
+          63121,
+          66879,
+          44335,
+          55855,
+          47507,
+          58613
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/dirt_toilet.JPG",
+          "/disaster_couple.jpg",
+          "/disaster_dust.jpg",
+          "/disaster_fire.jpg",
+          "/disaster_flood.jpg",
+          "/disaster_peoplefleeing.jpg",
+          "/drugs_addictfloor.JPG",
+          "/drugs_alcoholics.JPG",
+          "/drugs_overdosepills.jpg",
+          "/fight_demolish.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade24/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade25/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade26/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade27/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade28/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade29/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade2a/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade2b/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade2c/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade2d/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/rx49f/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/29wyz/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/pu7km/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/cbk3m/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/wtejs/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/8zce5/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/9wmbk/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/ebuz6/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/26fep/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/ysc5x/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

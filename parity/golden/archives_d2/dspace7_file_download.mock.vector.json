@@ -1,0 +1,208 @@
+{
+  "id": "dspace7_file_download.mock.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 18,
+    "names": [
+      "dspace7_url",
+      "name",
+      "file_url",
+      "file_location",
+      "size",
+      "isdir",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/handle/1853/67239",
+          "https://repository.gatech.edu/handle/1853/67239",
+          "https://repository.gatech.edu/handle/1853/67239",
+          "https://repository.gatech.edu/handle/1853/67239",
+          "https://repository.gatech.edu/handle/1853/67239",
+          "https://scholarworks.umass.edu/items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+          "https://example.org/x",
+          null,
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
+          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.CSV",
+          "analysis.R",
+          "model.rds",
+          "model.rds",
+          "noext",
+          "data.CSV",
+          "analysis.R",
+          "model.rds",
+          "model.rds",
+          "noext",
+          null,
+          null,
+          null,
+          "data.CSV",
+          "analysis.R",
+          "model.rds",
+          "model.rds",
+          "noext"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://repository.gatech.edu/server/api/core/bitstreams/b1/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b2/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
+          null,
+          "https://repository.gatech.edu/server/api/core/bitstreams/b1/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b2/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
+          null,
+          null,
+          null,
+          null,
+          "https://repository.gatech.edu/server/api/core/bitstreams/b1/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b2/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
+          "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1234,
+          99,
+          5000000000,
+          5000000000,
+          null,
+          1234,
+          99,
+          5000000000,
+          5000000000,
+          null,
+          null,
+          null,
+          null,
+          1234,
+          99,
+          5000000000,
+          5000000000,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          null,
+          null,
+          null,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "csv",
+          "r",
+          "rds",
+          "rds",
+          "",
+          "csv",
+          "r",
+          "rds",
+          "rds",
+          "",
+          null,
+          null,
+          null,
+          "csv",
+          "r",
+          "rds",
+          "rds",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "code",
+          "code",
+          "data",
+          null,
+          "data",
+          "code",
+          "code",
+          "data",
+          null,
+          null,
+          null,
+          null,
+          "data",
+          "code",
+          "code",
+          "data",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

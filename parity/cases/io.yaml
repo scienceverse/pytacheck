@@ -1,0 +1,674 @@
+"area": "io"
+"cases":
+- "id": ".grobid_to_bibr.demos.to_err_is_human"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-child"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-fret"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-sex"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-tnl"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"}
+- "id": ".grobid_to_bibr.formats.apa"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"}
+- "id": ".grobid_to_bibr.formats.preprint.cermine"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"}
+- "id": ".grobid_to_bibr.formats.preprint.pdf.tei"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}
+- "id": ".grobid_to_bibr.formats.published.cermine"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"}
+- "id": ".grobid_to_bibr.formats.published.pdf.tei"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}
+- "id": ".grobid_to_bibr.problems.0956797615569889"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}
+- "id": ".grobid_to_bibr.problems.0956797617737129"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}
+- "id": ".grobid_to_bibr.problems.203020"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/203020.xml"}
+- "id": ".grobid_to_bibr.problems.corrupt"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-06d588"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-1181af"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-479883"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-4b4691"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-619fd9"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-9c61e4"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-d2308a"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-d67d70"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-06d588"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-06d588-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-1181af"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-1181af-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-9c61e4"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-9c61e4-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-d2308a"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d2308a-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-d67d70"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d67d70-POST.xml"}
+# synthetic TEI fixtures (tests/io/fixtures) ------------------------------
+- "id": ".grobid_to_bibr.synthetic.edge_body"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a nested div's paragraphs are not repeated in the outer div, and figure/table rows are made for figure/table sections only (R adds rows with section_id NA); numbers before a tag keep their space (U16)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.crlf_nonamespace"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/crlf_nonamespace.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.empty_body"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.table_norows"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a table without rows has no contents (R's contents[[i]] <- NULL fails the paper)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/table_norows.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.url_empty"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "an empty URL link text is left alone (R: gsub('', ...) fails with 'zero-length pattern')"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/url_empty.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.bib_page_from"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a page range with only 'from' gives first_page (R: 'subscript out of bounds')"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/bib_page_from.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.figure_first"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/figure_first.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.figure_twice"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a headless first div whose two sentences start with 'Figure N' is a figure section (R only fires when exactly one sentence qualifies)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/figure_twice.tei.xml"}
+- "id": ".grobid_to_bibr.missing_file"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": "no/such/file.xml"
+# grobid_to_bibr() / read() ------------------------------------------------
+- "id": "grobid_to_bibr.null_save.one"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "save_path": {"$null": true}
+- "id": "grobid_to_bibr.null_save.multiple_with_failure"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml'))", "py": "[(__import__('pathlib').Path.cwd() / p).as_posix() for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml']]"}}
+    "save_path": {"$null": true}
+- "id": "grobid_to_bibr.null_save.one_failure"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml"}
+    "save_path": {"$null": true}
+- "id": "grobid_to_bibr.bad_arg"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": 1
+- "id": "read.xml.demo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+- "id": "read.xml_and_json"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json'))", "py": "[(__import__('pathlib').Path.cwd() / p).as_posix() for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json']]"}}
+# internals on a parsed TEI document ----------------------------------------
+- "id": ".tei_text.edge_body"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a nested div's paragraphs are not repeated in the outer div (R repeats them)"}
+  "r": ".tei_text"
+  "py": "pytacheck.io.grobid._tei_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".tei_text.0956797617737129"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": ".tei_text"
+  "py": "pytacheck.io.grobid._tei_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}}}}
+- "id": ".tei_text.empty_body"
+  "r": ".tei_text"
+  "py": "pytacheck.io.grobid._tei_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}}}}
+- "id": ".tei_authors.edge_body"
+  "r": ".tei_authors"
+  "py": "pytacheck.io.grobid._tei_authors"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".tei_authors.none"
+  "r": ".tei_authors"
+  "py": "pytacheck.io.grobid._tei_authors"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}}}}
+- "id": ".tei_bib.edge_body"
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".tei_bib.none"
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}}}}
+- "id": ".tei_bib.biblstruct_monogr"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the reference's own DOI broken by a line break is joined in its raw text ('10.1016/j .riob' -> '10.1016/j.riob')"}
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<listBibl><biblStruct status=\"extracted\" xml:id=\"b37\"><monogr><title level=\"m\" type=\"main\">When are organizations punished for organizational misconduct? A review and research agenda</title><author><persName><forename type=\"first\">M</forename><forename type=\"middle\">H</forename><surname>Mcdonnell</surname></persName></author><author><persName><forename type=\"first\">S</forename><surname>Nurmohamed</surname></persName></author><idno type=\"DOI\">10.1016/j.riob.2021.100150</idno><imprint><date type=\"published\" when=\"2021\">2021</date></imprint></monogr><note>Research in Organizational Behavior, 41, Article 100150</note><note type=\"raw_reference\">McDonnell, M. H., &amp; Nurmohamed, S. (2021). When are organizations punished? https://doi.org/10.1016/j .riob.2021.100150</note></biblStruct></listBibl>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<listBibl><biblStruct status=\"extracted\" xml:id=\"b37\"><monogr><title level=\"m\" type=\"main\">When are organizations punished for organizational misconduct? A review and research agenda</title><author><persName><forename type=\"first\">M</forename><forename type=\"middle\">H</forename><surname>Mcdonnell</surname></persName></author><author><persName><forename type=\"first\">S</forename><surname>Nurmohamed</surname></persName></author><idno type=\"DOI\">10.1016/j.riob.2021.100150</idno><imprint><date type=\"published\" when=\"2021\">2021</date></imprint></monogr><note>Research in Organizational Behavior, 41, Article 100150</note><note type=\"raw_reference\">McDonnell, M. H., &amp; Nurmohamed, S. (2021). When are organizations punished? https://doi.org/10.1016/j .riob.2021.100150</note></biblStruct></listBibl>')"}}
+- "id": ".tei_bib.raw_reference_mismatch"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "each reference gets its own raw text (R collects all notes at once and fails: 3 references, 2 notes)"}
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<listBibl><biblStruct xml:id=\"b0\"><monogr><title level=\"j\">J</title></monogr><note type=\"raw_reference\">One</note></biblStruct><biblStruct xml:id=\"b1\"><monogr><title level=\"j\">K</title></monogr></biblStruct><biblStruct xml:id=\"b2\"><monogr><title level=\"j\">L</title></monogr><note type=\"raw_reference\">Three</note></biblStruct></listBibl>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<listBibl><biblStruct xml:id=\"b0\"><monogr><title level=\"j\">J</title></monogr><note type=\"raw_reference\">One</note></biblStruct><biblStruct xml:id=\"b1\"><monogr><title level=\"j\">K</title></monogr></biblStruct><biblStruct xml:id=\"b2\"><monogr><title level=\"j\">L</title></monogr><note type=\"raw_reference\">Three</note></biblStruct></listBibl>')"}}
+- "id": ".xml2bib.pages_attrs"
+  "r": ".xml2bib"
+  "py": "pytacheck.io.grobid._xml2bib"
+  "args":
+    "ref": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<biblStruct><analytic><title level=\"a\">A</title><author><persName><forename>X</forename><forename>Y</forename><surname>Z</surname></persName></author></analytic><monogr><title level=\"j\">J</title><imprint><biblScope unit=\"page\" to=\"9\" from=\"3\"/><date type=\"published\">1987</date></imprint></monogr></biblStruct>'), '//biblStruct')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<biblStruct><analytic><title level=\"a\">A</title><author><persName><forename>X</forename><forename>Y</forename><surname>Z</surname></persName></author></analytic><monogr><title level=\"j\">J</title><imprint><biblScope unit=\"page\" to=\"9\" from=\"3\"/><date type=\"published\">1987</date></imprint></monogr></biblStruct>'), '//biblStruct')"}}
+- "id": ".xml2bib.misc"
+  "r": ".xml2bib"
+  "py": "pytacheck.io.grobid._xml2bib"
+  "args":
+    "ref": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<biblStruct><monogr><imprint/></monogr></biblStruct>'), '//biblStruct')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<biblStruct><monogr><imprint/></monogr></biblStruct>'), '//biblStruct')"}}
+- "id": ".tei_table_contents.demo"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(metacheck:::.xml_read_grobid('upstream/metacheck/inst/demos/to_err_is_human.xml'), '//figure[@type=\"table\"]//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x'])._xml_read_grobid('upstream/metacheck/inst/demos/to_err_is_human.xml'), '//figure[@type=\"table\"]//table')"}}
+- "id": ".tei_table_contents.multirow_header"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<table><row><cell cols=\"3\">Association with mean reappraisal</cell></row><row><cell></cell><cell>Model 1</cell><cell cols=\"x\">Model 2</cell></row><row><cell>Predictor</cell><cell>&#946;01 (SE)</cell><cell>&#946;01 (SE)</cell></row><row><cell>Age</cell><cell>0.059 (0.018)</cell><cell>&lt;.001</cell></row><row><cell>Sex</cell><cell>n.s.</cell><cell>n.s.</cell></row></table>'), '//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<table><row><cell cols=\"3\">Association with mean reappraisal</cell></row><row><cell></cell><cell>Model 1</cell><cell cols=\"x\">Model 2</cell></row><row><cell>Predictor</cell><cell>&#946;01 (SE)</cell><cell>&#946;01 (SE)</cell></row><row><cell>Age</cell><cell>0.059 (0.018)</cell><cell>&lt;.001</cell></row><row><cell>Sex</cell><cell>n.s.</cell><cell>n.s.</cell></row></table>'), '//table')"}}
+- "id": ".tei_table_contents.ordinal_header"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<table><row><cell>Measure</cell><cell>M (SD)</cell><cell>1.</cell><cell>2.</cell><cell>3</cell></row><row><cell>1. Depression</cell><cell>6.38 (6.60)</cell><cell>-</cell><cell>.45</cell><cell>[.1, .2]</cell></row><row><cell>2. Anxiety</cell><cell>2.1</cell><cell cols=\"0\">.3</cell></row></table>'), '//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<table><row><cell>Measure</cell><cell>M (SD)</cell><cell>1.</cell><cell>2.</cell><cell>3</cell></row><row><cell>1. Depression</cell><cell>6.38 (6.60)</cell><cell>-</cell><cell>.45</cell><cell>[.1, .2]</cell></row><row><cell>2. Anxiety</cell><cell>2.1</cell><cell cols=\"0\">.3</cell></row></table>'), '//table')"}}
+- "id": ".tei_table_contents.empty"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<table><row/></table>'), '//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<table><row/></table>'), '//table')"}}
+- "id": ".tei_table_contents.null"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$null": true}
+# .process_full_text(), .tei_xrefs(), .tei_url() on data frames ------------
+- "id": ".process_full_text.view_only"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text":
+      "$df":
+        "p": [1, 1, 1]
+        "div": [1, 1, 1]
+        "section": [1, 1, 1]
+        "header": ["demo", "demo", "demo"]
+        "formatted": ["<p>The stimuli used in the main think/no-think task reported in this article are available at <ref type=\"url\" target=\"https://osf.io/t9j8e/?view_only=f171281f212f4435917b16a9e581a73b\">https://osf.io/t9j8e/?view_only=f171  281f212f4435917b16a9e581a73b</ref>. The complete Open Practices Disclosure for this article can be found at <ref type=\"url\" target=\"http://pss.sagepub.com/content/by/supplemental-data\">http://pss.sagepub  .com/content/by/supplemental-data</ref>.</p>", "<p>No urls here!</p>", "<p>A non-problematic <ref type=\"url\" target=\"https://osf.io/t9j8e\">URL</ref>.</p>"]
+- "id": ".process_full_text.page_numbers"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text":
+      "$df":
+        "p": [1, 2]
+        "div": [1, 1]
+        "section": ["intro", "intro"]
+        "header": ["demo", "demo"]
+        "formatted": ["<p>The authors used structural equation modeling (SEM) assuming linear relationships between the variables, and it is essential to test this assumption <ref type=\"bibr\">(Bentler &amp; Chou, 1987, p. 86;</ref> <ref type=\"bibr\">Ullman, 2007, p. 683)</ref>.</p>", "This research (Frith &amp; Singer, 2008, p. 3876)."]
+- "id": ".process_full_text.headers_and_merge"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text": {"$expr": {"r": "data.frame(header = c('Abstract', '[div-01]', '[div-02]', '<head>Material and Methods</head>', '<head>Results</head>', '<head>General Discussion</head>', '<head>Bibliography</head>', '<head>Other</head>', '', NA), formatted = c('<p>We did things. and more</p>', '<p>First unheaded div without end</p>', '[div-02]', '<p>Some methods e.g. this</p>', '<p>the results were fine. A. B. Author said so.</p>', '<p>Discussion here \\\"quoted.\\\"</p>', '<p>Ref list</p>', '<p>More stuff?</p>', '<p></p>', '<figDesc>  Caption text ends  </figDesc>'), div = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), section = c('abstract', NA, NA, NA, NA, NA, NA, NA, 'foot', 'figure'), p = 1:10, stringsAsFactors = FALSE)", "py": "pd.DataFrame({'header': ['Abstract', '[div-01]', '[div-02]', '<head>Material and Methods</head>', '<head>Results</head>', '<head>General Discussion</head>', '<head>Bibliography</head>', '<head>Other</head>', '', None], 'formatted': ['<p>We did things. and more</p>', '<p>First unheaded div without end</p>', '[div-02]', '<p>Some methods e.g. this</p>', '<p>the results were fine. A. B. Author said so.</p>', '<p>Discussion here \\\"quoted.\\\"</p>', '<p>Ref list</p>', '<p>More stuff?</p>', '<p></p>', '<figDesc>  Caption text ends  </figDesc>'], 'div': [0.0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'section': ['abstract', None, None, None, None, None, None, None, 'foot', 'figure'], 'p': list(range(1, 11))})"}}
+- "id": ".process_full_text.empty"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text": {"$null": true}
+- "id": ".tei_xrefs.query_string"
+  "r": ".tei_xrefs"
+  "py": "pytacheck.io.grobid._tei_xrefs"
+  "args":
+    "text_table": {"$expr": {"r": "data.frame(text_id = 1:3, formatted = c('The gridded soil data are available at <ref type=\\\"url\\\" target=\\\"https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2358\\\">ORNL DAAC</ref> for download.', 'See <ref type=\\\"figure\\\" target=\\\"#fig_0\\\">Fig 1</ref> and <ref type=\\\"bibr\\\" target=\\\"#b12\\\">(Smith, 2020)</ref> <REF type=\\\"table\\\">T</REF> <ref target=\\\"#b1\\\">untyped</ref> <ref type=\\\"bibr\\\" target=\\\"#b99999999999\\\">big</ref>.', NA), stringsAsFactors = FALSE)", "py": "pd.DataFrame({'text_id': [1, 2, 3], 'formatted': ['The gridded soil data are available at <ref type=\\\"url\\\" target=\\\"https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2358\\\">ORNL DAAC</ref> for download.', 'See <ref type=\\\"figure\\\" target=\\\"#fig_0\\\">Fig 1</ref> and <ref type=\\\"bibr\\\" target=\\\"#b12\\\">(Smith, 2020)</ref> <REF type=\\\"table\\\">T</REF> <ref target=\\\"#b1\\\">untyped</ref> <ref type=\\\"bibr\\\" target=\\\"#b99999999999\\\">big</ref>.', None]})"}}
+- "id": ".tei_xrefs.empty"
+  "r": ".tei_xrefs"
+  "py": "pytacheck.io.grobid._tei_xrefs"
+  "args":
+    "text_table":
+      "$df":
+        "text_id": {"$int": []}
+        "formatted": {"$chr": []}
+- "id": ".tei_url.basic"
+  "r": ".tei_url"
+  "py": "pytacheck.io.grobid._tei_url"
+  "args":
+    "text_table":
+      "$df":
+        "text_id": [1, 2, 3]
+        "formatted": ["Data at <ref type=\"url\" target=\"https://osf.io/abc\">https://osf.io/ abc</ref> and <ref type=\"url\">no target</ref>.", "No refs.", "<ref type=\"bibr\" target=\"#b0\">(A, 2020)</ref>"]
+# xml utilities ---------------------------------------------------------------
+- "id": ".xml_read_grobid.demo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "numbers before a tag are not glued to the word before them (R treats the '<' of the tag as an operator)"}
+  "r": "as.character"
+  "py": "pytacheck.io.xml.as_character"
+  "args":
+    "x": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}}}}
+- "id": ".xml_read_grobid.edge_body"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "numbers before a tag are not glued to the word before them (R treats the '<' of the tag as an operator)"}
+  "r": "as.character"
+  "py": "pytacheck.io.xml.as_character"
+  "args":
+    "x": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".xml_read_grobid.missing"
+  "r": ".xml_read_grobid"
+  "py": "pytacheck.io.xml._xml_read_grobid"
+  "args":
+    "path": "no/such/file.xml"
+- "id": ".xml_find_text.terms"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": ".//textClass/keywords/term"
+- "id": ".xml_find_text.join"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": "//affiliation"
+    "join": " | "
+- "id": ".xml_find_text.none"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": "//nosuchnode"
+- "id": ".xml_find1_text.title"
+  "r": ".xml_find1_text"
+  "py": "pytacheck.io.xml._xml_find1_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": ".//titleStmt/title"
+# Grobid server (recorded responses) ------------------------------------------
+- "id": ".grobid_isalive.tue"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+- "id": ".grobid_isalive.hf"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://grobidorg-grobid.hf.space"
+- "id": ".grobid_isalive.not_grobid.error"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://google.com"
+- "id": ".grobid_isalive.not_grobid.no_error"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://google.com"
+    "error": false
+- "id": "convert_grobid.demo.null_save"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.demo.consolidate_citations"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+    "consolidate_citations": 1
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.demo.pages"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+    "start_page": 2
+    "end_page": 3
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.hf.debruine"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobidorg-grobid.hf.space/"
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.server_error"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobidorg-grobid.hf.space"
+- "id": "convert_grobid.missing_file"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "args":
+    "file_path": {"$chr": ["wrongfile.pdf", "wrongfile.pdf"]}
+# convert() -----------------------------------------------------------------
+- "id": "convert.no_files"
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": "notes.txt"
+- "id": "convert.xml.null_save"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}
+    "save_path": {"$null": true}
+    "api_url": "unused"
+- "id": "convert.bad_method"
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "method": "pandoc"
+# paper corpora (recorded GitHub responses) ------------------------------------
+- "id": "papers_available.scienceverse"
+  "r": "papers_available"
+  "py": "pytacheck.io.corpus.papers_available"
+  "mock_dir": "apis"
+  "args":
+    "repo": "scienceverse/papers"
+- "id": ".papers_release_assets.retag"
+  "r": ".papers_release_assets"
+  "py": "pytacheck.io.corpus._papers_release_assets"
+  "mock_dir": "apis_papers_retag"
+  "args":
+    "repo": "scienceverse/retagtest"
+- "id": ".papers_release_assets.empty"
+  "r": ".papers_release_assets"
+  "py": "pytacheck.io.corpus._papers_release_assets"
+  "mock_dir": "apis_papers_empty"
+  "args":
+    "repo": "scienceverse/norealeases"
+- "id": ".papers_release_assets.404"
+  "r": ".papers_release_assets"
+  "py": "pytacheck.io.corpus._papers_release_assets"
+  "mock_dir": "apis_papers_404"
+  "args":
+    "repo": "scienceverse/doesnotexist12345"
+- "id": "papers_metadata.jdm"
+  "r": "papers_metadata"
+  "py": "pytacheck.io.corpus.papers_metadata"
+  "mock_dir": "apis"
+  "args":
+    "name": "jdm"
+- "id": "papers_metadata.unknown"
+  "r": "papers_metadata"
+  "py": "pytacheck.io.corpus.papers_metadata"
+  "mock_dir": "apis"
+  "args":
+    "name": "doesnotexist999"
+- "id": "papers_load.unknown"
+  "r": "papers_load"
+  "py": "pytacheck.io.corpus.papers_load"
+  "mock_dir": "apis"
+  "args":
+    "name": "not_a_real_corpus"
+    "repo": "scienceverse/papers"
+- "id": "papers_remove.not_cached"
+  "r": "papers_remove"
+  "py": "pytacheck.io.corpus.papers_remove"
+  "args":
+    "name": "pytacheck_parity_not_cached_corpus"
+# author helpers ----------------------------------------------------------------
+- "id": "format_bib_authors.df"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$df": {"given": ["Alice H.", "Wendy"], "family": ["Eagly", "Wood"]}}
+- "id": "format_bib_authors.chr"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$chr": ["Eagly, A. H.", "Wood, W."]}
+- "id": "format_bib_authors.null"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$null": true}
+- "id": "format_bib_authors.empty_df"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$expr": {"r": "data.frame(given = character(0), family = character(0))", "py": "pd.DataFrame({'given': pd.Series([], dtype='string'), 'family': pd.Series([], dtype='string')})"}}
+- "id": "format_bib_authors.list"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$list": [{"$df": {"given": ["A"], "family": ["B"]}}, {"$df": {"given": ["C", "E"], "family": ["D", "F"]}}]}
+- "id": ".parse_author_string.semicolon"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "Eagly, Alice H.; Wood, Wendy; Plato"
+- "id": ".parse_author_string.and"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "Smith, John, and Jane  Q. Doe & Madonna"
+- "id": ".parse_author_string.single"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "Lakens, Daniel"
+- "id": ".parse_author_string.blank"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "   "
+- "id": ".parse_author_string.na"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": {"$NA": true}
+- "id": ".parse_author_string.empty_part"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "A, B;;C"
+- "id": ".coerce_bib_authors.mixed"
+  "r": ".coerce_bib_authors"
+  "py": "pytacheck.io.bibr_convert._coerce_bib_authors"
+  "args":
+    "col": {"$list": ["Eagly, Alice H.; Wood, Wendy", {"$NA": true}, {"$null": true}, {"$df": {"family": ["Doe"], "given": ["Jane"], "orcid": ["x"]}}, {"$chr": ["a", "b"]}]}
+- "id": ".coerce_bib_authors.null"
+  "r": ".coerce_bib_authors"
+  "py": "pytacheck.io.bibr_convert._coerce_bib_authors"
+  "args":
+    "col": {"$null": true}
+# readRDS() of corpus files --------------------------------------------------------
+- "id": "readRDS.papers_small"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/papers_small.rds"}
+- "id": "readRDS.demopaper_v2_xz"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/demopaper_v2.rds"}
+- "id": "readRDS.edge_paperlist_bzip2"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/edge_paperlist.rds"}
+- "id": "readRDS.fake_paperlist"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/fake_paperlist.rds"}
+- "id": "readRDS.misc_objects"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/misc_objects.rds"}

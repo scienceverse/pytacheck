@@ -1,0 +1,152 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.j3gcx.files.osfstorage.685a4702bac4f4236d07045f",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "685a4711bac4f4236d070463",
+          "685a475da5dd9e8e81d1ad1d"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nest-4",
+          "test-3.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "folder",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "text"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          12
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          277
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/nest-1/nest-2/nest-3/nest-4/",
+          "/nest-1/nest-2/nest-3/test-3.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/685a4711bac4f4236d070463/",
+          "https://api.osf.io/v2/files/685a475da5dd9e8e81d1ad1d/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a4711bac4f4236d070463/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://osf.io/download/zyf34/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "685a4702bac4f4236d07045f",
+          "685a4702bac4f4236d07045f"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "j3gcx",
+          "j3gcx"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

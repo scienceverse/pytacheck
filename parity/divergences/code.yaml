@@ -1,0 +1,341 @@
+# Cases in the code lane's generated case files (codecheck, mod_code, repo_check,
+# reg_check, reproducibility_check, repro_core, statout) where pytacheck fixes a
+# metacheck bug on purpose. Format (see parity/cases.py): "<area>/<id>": {kind,
+# ref, reason}; kind is one of parity.cases.DIVERGENCE_KINDS, ref the
+# docs/UPSTREAM_ISSUES.md entry.
+
+# --- codecheck (R/code_check.R) ---------------------------------------------
+"codecheck/code_abs_path.character0": &u67_abs
+  kind: r_bug_fixed
+  ref: U67
+  reason: no code gives the usual (abs_path, line) columns; R returns them in the other order
+"codecheck/code_abs_path.my_encodings_newline_only_R": *u67_abs
+"codecheck/code_line_stats.character0": &u67_stats
+  kind: r_bug_fixed
+  ref: U67
+  reason: no code gives zero counts like ""; R errors (non-character argument)
+"codecheck/code_line_stats.my_encodings_newline_only_R": *u67_stats
+"codecheck/code_lang.my_qmd_scalar_yaml_qmd":
+  kind: r_bug_fixed
+  ref: U68
+  reason: a scalar YAML front matter falls back to the chunk engine; R's `$` error escapes code_lang()
+"codecheck/code_parse_r.empty_text":
+  kind: r_bug_fixed
+  ref: U87
+  reason: empty code parses (no error); R fails with "subscript out of bounds"
+"codecheck_review/code_extract_r.review.yaml_label_number.doc0": &u153
+  kind: r_bug_fixed
+  ref: U153
+  reason: a numeric YAML chunk label is a name, not a position; knitr fails with "subscript out of bounds"
+"codecheck_review/code_extract_r.review.yaml_label_number.doc1": *u153
+
+# --- code_check module (inst/modules/code_check.R) --------------------------
+"mod_code/code_check.qmd":
+  kind: r_bug_fixed
+  ref: U86
+  reason: the language of a .qmd/.ipynb is read from its local copy (Python-engine .qmd, R notebook); R reads the file name relative to the working directory
+"mod_code/code_check.empty_files": &u87_empty
+  kind: r_bug_fixed
+  ref: U87
+  reason: empty code files are analysed (zero counts); R records "subscript out of bounds" / "non-character argument" as the file's error
+"mod_code/report_tables.empty_files": *u87_empty
+"mod_code_review/code_check.edge": *u87_empty
+"mod_code_review/errors.edge": *u87_empty
+"mod_code_review/report_tables.edge": *u87_empty
+"mod_code_review/code_check.nochunk_only": *u87_empty
+"mod_code_review/report_tables.nochunk_only": *u87_empty
+"mod_code/code_check.no_file_url":
+  kind: r_bug_fixed
+  ref: U87
+  reason: a listing without file_url shows plain file names; R's link(NULL, ...) fails the module
+"mod_code/code_check.download_file_cap":
+  kind: r_bug_fixed
+  ref: U88
+  reason: a refused repository is reported once with its full file count; R repeats it with the code-file count
+"mod_code_review/code_check.dupname": &u89
+  kind: r_bug_fixed
+  ref: U89
+  reason: every R file is scanned for groundhog/checkpoint pins; R keeps one text per file name (and per NA paper id)
+"mod_code_review/code_check.na_pid_pin": *u89
+"mod_code_review/code_check.empty_paper": &u79_cc
+  kind: r_bug_fixed
+  ref: U79
+  reason: an empty paper or paper list gives the "na" result (no code files); R's repo_check stops ("subscript out of bounds" from paper_id(paper)[[1]], or the link tables' missing href)
+"mod_code_review/code_check.empty_paperlist": *u79_cc
+
+# --- reg_check module (inst/modules/reg_check.R) ----------------------------
+"mod_reg/reg_check.odd_judgements":
+  kind: r_bug_fixed
+  ref: U120
+  reason: a missing judgement is left out of the counts; R prints "flagged NA potential deviationNA" and na_replace turns the counts into 0
+"mod_reg/reg_check.paperlist.shared_prereg": &u120_shared
+  kind: r_bug_fixed
+  ref: U120
+  reason: a preregistration linked by two papers gets a section per paper, named after it; R mixes both papers' rows in one unlabelled section
+"mod_reg/reg_check.tables.shared_prereg": *u120_shared
+"mod_reg_review/reg_check.review.na_id.first.tables": &u120_na
+  kind: r_bug_fixed
+  ref: U120
+  reason: each report section holds its own rows; R's regcheck_table[prereg_id == rid, ] adds a row of NAs per NA prereg_id
+"mod_reg_review/reg_check.review.na_id.all.tables": *u120_na
+# caused by the text lane's prereg_check() fix (U109), not by this lane
+"mod_reg/reg_check.paperlist.aspredicted":
+  kind: r_bug_fixed
+  ref: U109
+  reason: each paper's AsPredicted preregistration is compared for that paper (prereg_check fix); R pastes both into one row with an NA paper_id, so 3 comparisons instead of 4
+# caused by the report lane's module_report() fix (U128), not by this lane
+"mod_reg/reg_check.report.all_fail": &u128_err
+  kind: r_bug_fixed
+  ref: U30
+  reason: reg_check's light is "fail" where metacheck returns "error" (U30), so module_report() prints the module heading; R's sprintf() with the NULL emoji of "error" drops it (U128)
+"mod_reg_review/reg_check.review.refused.report": *u128_err
+
+# --- repo_check module (inst/modules/repo_check.R) --------------------------
+"mod_repo_check/repo_check.all_platforms": &u121
+  kind: r_bug_fixed
+  ref: U121
+  reason: files are de-duplicated per file (URL and path, or location); R's duplicated(file_url) & duplicated(file_path) also dropped a distinct DataONE readme.txt
+"mod_repo_check/repo_check.all_platforms.paperlist": *u121
+"mod_repo_check/repo_check.all_platforms.report": *u121
+"mod_repo_check/repo_check.all_platforms.tables": *u121
+"mod_repo_check_review/repo_check.local.two_folders": &u121_local
+  kind: r_bug_fixed
+  ref: U121
+  reason: same-named files in two local folders are distinct files; R drops the second folder's copies (and the folder)
+"mod_repo_check_review/repo_check.local.two_folders.report": *u121_local
+"mod_repo_check_review/repo_check.local.several_folders.paperlist": *u121_local
+"mod_repo_check/repo_check.bibr12.paperlist": &u122_osf
+  kind: r_bug_fixed
+  ref: U122
+  reason: an OSF link OSF does not know is kept and flagged "invalid or inaccessible OSF link"; R stores a dplyr match() error, or drops it silently beside valid links
+"mod_repo_check_review/repo_check.osf_license.invalid": *u122_osf
+"mod_repo_check/repo_check.osf.registration2":
+  kind: r_bug_fixed
+  ref: U122
+  reason: when following a registration to its source project fails, the registration is reported with its files and the error; R reports "no repositories found"
+"mod_repo_check/repo_check.figshare.share_link":
+  kind: r_bug_fixed
+  ref: U122
+  reason: a Figshare listing without doi/license has NA metadata; R's data.frame() error overwrites the share link's informative error
+"mod_repo_check/repo_check.dataone.nameless": &u122_nameless
+  kind: r_bug_fixed
+  ref: U122
+  reason: a listed file without a name is skipped by the naming check; R's check_file_naming() fails the module
+"mod_repo_check/repo_check.zenodo.nameless": *u122_nameless
+"mod_repo_check/repo_check.local.messy": &u123
+  kind: r_bug_fixed
+  ref: U123
+  reason: a local file file_category() cannot place takes its extension's type (when it has one) like an online file, so a local .tar.gz/.zip counts as an archive; R leaves it NA
+"mod_repo_check/repo_check.local.roster_extra": *u123
+"mod_repo_check/repo_check.local.edat_ok": *u123
+"mod_repo_check/repo_check.local.zip": *u123
+"mod_repo_check/repo_check.report.messy": *u123
+"mod_repo_check/repo_check.tables.messy": *u123
+"mod_repo_check_review/repo_check.local.edat_many": *u123
+"mod_repo_check_review/repo_check.local.unicode": *u123
+"mod_repo_check_review/repo_check.local.unicode.tables": *u123
+"mod_repo_check/repo_check.dspace.unfound": &u43_one
+  kind: r_bug_fixed
+  ref: U43
+  reason: a DSpace item its host does not know is flagged "invalid or inaccessible DSpace item" (gated_repos, and the Error column of the report's repository table); R's download function returns NULL and the repository is left unflagged
+"mod_repo_check/repo_check.dspace7.unfound": *u43_one
+"mod_repo_check/repo_check.dspace.found_and_unfound":
+  kind: r_bug_fixed
+  ref: U43
+  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); R leaves it unflagged and drops it with the repositories without files
+"mod_repo_check_review/repo_check.module.empty_paper": &u79_rc
+  kind: r_bug_fixed
+  ref: U79
+  reason: an empty paper or paper list gives the "no repositories" result; R stops ("subscript out of bounds" from paper_id(paper)[[1]], or the link tables' missing href)
+"mod_repo_check_review/repo_check.module.empty_paperlist": *u79_rc
+# data_check's structure is repo_check's local listing (this lane's U123 fix)
+"mod_data_check/data_check.local.basic":
+  kind: r_bug_fixed
+  ref: U123
+  reason: a local file file_category() cannot place takes its extension's type (stimulus.png is image) in repo_check's listing, which data_check's structure keeps; R leaves it NA
+
+# --- reproducibility check (R/reproducibility_check*.R, its module) ----------
+"repro_core/repro_run_scripts.nopkg_failed_dep": &u132
+  kind: r_bug_fixed
+  ref: U132
+  reason: R's "there is no package called ‘pkg’" (typographic quotes in UTF-8) is recognised, so a script failing on an unavailable dependency is dependency_unavailable, not errored
+"mod_repro/reproducibility_check.exec_docker": *u132
+"mod_repro_review/tables.exec_docker_exec": *u132
+"repro_core/repro_rewrite_paths.paste_sep_call":
+  kind: r_bug_fixed
+  ref: U133
+  reason: paste(wd, "x.csv", sep = "/") is a runtime-built path whose whole call is rewritten; R skips from the start of the arguments, so only the literal is rewritten and the script reads raw/<target>
+"repro_core/repro_redirect_writes.named_arg": &u134
+  kind: r_bug_fixed
+  ref: U134
+  reason: a redirected write keeps its argument name; R makes file = positional, so save(a, b, file = ...) saved the path as another object
+"repro_core/repro_redirect_writes.variable": *u134
+"repro_core/repro_redirect_writes.inline_pipe": *u134
+"repro_core/repro_redirect_writes.several": *u134
+"repro_core_review/repro_redirect_writes.variety": *u134
+"repro_core/repro_missing_inputs.withheld_missing_size_col": &u135
+  kind: r_bug_fixed
+  ref: U135
+  reason: without a file_size column the withheld file is reported without its size; R stops ("argument is of length zero")
+"repro_core/repro_rewrite_paths.mirror_tie":
+  kind: r_bug_fixed
+  ref: U135
+  reason: of byte-identical mirrors split evenly between study groups the first listed is kept, as metacheck's comment says; R's which.max(table()) keeps the alphabetically first group
+"repro_core/repro_install_deps.main_lib_skip":
+  kind: r_bug_fixed
+  ref: U135
+  reason: the already-installed row has a category (NA) like every other row; R's early row has no category column
+"mod_repro/reproducibility_check.bibr12": &u138_rep
+  kind: r_bug_fixed
+  ref: U138
+  reason: a test_id carries its source prefix once (notebook_r_ipynb_t1); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_)
+"mod_repro/reproducibility_check.jasp_with_r": *u138_rep
+"mod_repro/reproducibility_check.jasp_with_r_keep_sandbox": *u138_rep
+"mod_repro/reproducibility_check.smcl_mplus": *u138_rep
+"mod_repro/reproducibility_check.spv_notebook_py":
+  kind: r_bug_fixed
+  ref: U148
+  reason: the SPSS Notes table's template cell renders as 3, so it adds 2 statistics (38, R 36); test_ids carry the source prefix once (U138)
+
+# --- statout readers (R/spv.R, R/jasp.R, R/omv.R, R/stata.R, R/mplus.R) ------
+"statout_readers/import_spv.modern": &u148_tpl
+  kind: r_bug_fixed
+  ref: U148
+  reason: a template value is rendered ('3', 'a of 2.5, b'); R puts the raw template ('^1 of ^2') in the cell
+"statout_readers/export_spv_html.modern": *u148_tpl
+"statout_readers/spv_decode_light_table.0000000004": *u148_tpl
+"statout_readers/spv_decode_light_table.0000000005": *u148_tpl
+"statout_readers_review/import_spv.spv_strings": *u148_tpl
+"statout_readers_review/export_spv_html.spv_strings": *u148_tpl
+"statout_readers_review/spv_decode_light_table.t2": *u148_tpl
+"statout_readers/spv_table_html.trailing_empty": &u148_html
+  kind: r_bug_fixed
+  ref: U148
+  reason: a trailing empty dimension label keeps its header/stub cell; R's strsplit() drops it and the export fails or shifts the row
+"statout_readers_review/spv_table_html.empty_row_key": *u148_html
+"statout_readers_review/export_spv_html.spv_charts": &u148_chart
+  kind: r_bug_fixed
+  ref: U148
+  reason: a chart whose fitted line cannot be drawn (scalar, function, formula) or a box plot without data is drawn without it / left out; R's lines()/boxplot() fail the whole export
+"statout_readers_review/export_spv_html.spv_box_na": *u148_chart
+"statout_readers/export_omv_html.fixture": &u148_img
+  kind: r_bug_fixed
+  ref: U148
+  reason: every occurrence of a plot is inlined (R's sub() inlines only the first) and a malformed %-escape is kept (R's URLdecode() makes a NUL and fails)
+"statout_readers_review/export_omv_html.review": *u148_img
+"statout_readers_review/export_omv_html.badurl": *u148_img
+"statout_readers_review/url_decode.vector": *u148_img
+"statout_readers/import_spv.charts": &u144
+  kind: r_bug_fixed
+  ref: U144
+  reason: a box plot backed by case data decodes; R's is_na_like() calls abs() on the character categories and drops the chart
+"statout_readers/import_spv.attrs.charts": *u144
+"statout_readers/export_spv_html.charts": *u144
+"statout_readers/import_jasp.labels.sample": &u145_lab
+  kind: r_bug_fixed
+  ref: U145
+  reason: a value-labelled column without a variable label has no variable label; R's attr(x, "label") partially matches "labels" and copies the value labels there
+"statout_readers/import_jasp.labels.sqlite": *u145_lab
+"statout_readers/import_jasp.labels.binary": *u145_lab
+"statout_readers/import_omv.labels.sample": *u145_lab
+"statout_readers/import_omv.labels.fixture": *u145_lab
+"statout_readers_review/import_omv.labels.fields_object": *u145_lab
+"statout_readers_review/import_jasp.labels.review": *u145_lab
+"statout_readers_review/import_jasp.labels.sqlite_types": *u145_lab
+"statout_readers_review/import_jasp.short":
+  kind: r_bug_fixed
+  ref: U145
+  reason: a column shorter than rowCount (truncated data.bin) is padded with missing values; R stops ("arguments imply differing number of rows")
+"statout_readers_review/import_jasp.sqlite_nulltype":
+  kind: r_bug_fixed
+  ref: U145
+  reason: a column without a columnType is read as nominal; R stops ("missing value where TRUE/FALSE needed")
+"statout_readers/smcl_export_syntax.analysis": &u146
+  kind: r_bug_fixed
+  ref: U146
+  reason: SMCL {c 0xNN} is hexadecimal ({c 0x41} is A; R reads decimal, ")"), {c -(}/{c )-} render braces, and an unusable {dup} count is left out instead of NA
+"statout_readers/smcl_render.analysis": *u146
+"statout_readers/smcl_command_chunks.analysis": *u146
+"statout_readers/smcl_render_line.vector": *u146
+"statout_readers/smcl_render_line.na_col": *u146
+"statout_readers/smcl_render_line.na_hline": *u146
+"statout_readers_review/smcl_render.tricky": *u146
+"statout_readers_review/smcl_command_chunks.tricky": *u146
+"statout_readers_review/smcl_render_line.more": *u146
+"statout_readers_review/smcl_command_chunks.vector":
+  kind: r_bug_fixed
+  ref: U140
+  reason: a Stata command is its '. ' line and the echo lines right after it; R counts echo-looking lines anywhere in the chunk (as .r_echo_chunks(), U140)
+"statout_readers/mplus_sections.twolevel": &u147
+  kind: r_bug_fixed
+  ref: U147
+  reason: a section header that is the last line or followed by another header has no lines; R's (h + 1):end counts down to NA and the header
+"statout_readers/mplus_sections.adjacent": *u147
+"statout_readers/mplus_output_tables.model_modification_indices": *u147
+"statout_readers_review/import_stata_smcl.latin1": &d25_latin1
+  kind: better_logic
+  ref: D25
+  reason: 'latin1 bytes: R''s regex functions reject the invalid UTF-8 strings readLines() returns ("input string N is invalid UTF-8"), so metacheck cannot read a latin1 log at all; pytacheck decodes it with replacement characters instead of failing'
+"statout_readers_review/import_mplus_output.latin1": *d25_latin1
+
+# --- match_reported_output() (R/match-reported.R, R/match-table.R) -----------
+"statout_match/norm_value.batch": &u143_dec
+  kind: r_bug_fixed
+  ref: U143
+  reason: the decimals of a number in scientific notation count its exponent (1.5e-05 has 6); R counts the mantissa only
+"statout_match/norm_interval.batch": *u143_dec
+"statout_match_review/match_reported_output.tt.format_values":
+  kind: r_bug_fixed
+  ref: U143
+  reason: a reported 1e-300 no longer matches an output of 1.23e-05 (R's tolerance of 0.5 from the mantissa's 0 decimals)
+"statout_match_review/match_reported_output.tt.na_sentence_pos":
+  kind: r_bug_fixed
+  ref: U143
+  reason: identical components of two tests stay distinct in the regrouping (R's match(list, list) maps the second onto the first and reports an implausible split)
+"statout_match/match_reported_output.synthetic.na_test_id": &u142
+  kind: r_bug_fixed
+  ref: U142
+  reason: output rows without a test_id form no site; R adds an NA site and val_in(NULL) fails the call
+"statout_match_review/match_reported_output.tt.na_text_id_some": &u142_tid
+  kind: r_bug_fixed
+  ref: U142
+  reason: a reported test without a text_id is matched too (text_id NA); R drops it, and fails when every test lacks one or the column is missing
+"statout_match_review/match_reported_output.tt.na_text_id_some.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.na_text_id_all": *u142_tid
+"statout_match_review/match_reported_output.tt.na_text_id_all.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id.no_sites": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id.no_sites.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.empty_test_id": &u142_empty
+  kind: r_bug_fixed
+  ref: U142
+  reason: an output site named "" is a site like any other; R's used_sites[[""]] fails or the site never matches
+"statout_match_review/match_reported_output.tt.empty_test_id.censored_only": *u142_empty
+"statout_match_review/match_reported_output.eq.empty_test_id.censored_only": *u142_empty
+"statout_match_review/match_reported_output.tt.inf_value": &u142_inf
+  kind: r_bug_fixed
+  ref: U142
+  reason: an Inf value simply does not match; R's val_in() fails the call on if (NA)
+"statout_match_review/match_reported_output.tt.inf_value_hit_first": *u142_inf
+"statout_match_review/match_reported_output.table_paper.no_section_id": &u142_tab
+  kind: r_bug_fixed
+  ref: U142
+  reason: table tests are built without a section_id (no caption) or table_id (numbered by position); R drops them all or fails the call
+"statout_match_review/match_reported_output.table_paper.no_section_id.summary": *u142_tab
+"statout_match_review/match_reported_output.table_paper.no_table_id": *u142_tab
+"statout_match_review/match_reported_output.table_paper.no_table_id.summary": *u142_tab
+"statout_match_review/table_tests.no_section_id": *u142_tab
+# U143 (bibr12 cases): a table's own caption is used for any paper, not only 12.x ones
+"bibr12/.table_tests.correlation_caption.older":
+  kind: r_bug_fixed
+  ref: U143
+  reason: "a table's own caption column is used whatever the paper's schema version (R reads it only for 12.x papers)"
+"bibr12/match_reported_output.descriptive_caption.older":
+  kind: r_bug_fixed
+  ref: U143
+  reason: "a table's own caption column is used whatever the paper's schema version (R reads it only for 12.x papers)"
+"bibr12/match_reported_output.descriptive_caption.older.summary":
+  kind: r_bug_fixed
+  ref: U143
+  reason: "a table's own caption column is used whatever the paper's schema version (R reads it only for 12.x papers)"

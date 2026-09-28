@@ -1,0 +1,380 @@
+{
+  "id": "zenodo_info.custom_records",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "zenodo_url",
+      "zenodo_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "creators",
+      "keywords",
+      "resource_type",
+      "journal",
+      "owners",
+      "license",
+      "downloads",
+      "unique_downloads",
+      "views",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5550001",
+          "https://zenodo.org/records/5550003"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550001",
+          "5550003"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All good",
+          "No files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.5550001",
+          "10.5281/zenodo.5550003"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-01-01",
+          "2026-01-01"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-01-02T00:00:00+00:00",
+          "2026-01-02T00:00:00+00:00"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Doe, Jane"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Doe, Jane"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "one"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "two"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "one"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "two"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataset",
+          "dataset"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cc-by-4.0",
+          "cc-by-4.0"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          2
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550001-data.csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      9
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:5d02e4d2354eae28589766cca211477d"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550001/files/data.csv/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550001-notes.txt"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "notes.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      6
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:b1946ac92492d2347c6235b4d2611184"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550001/files/notes.txt/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

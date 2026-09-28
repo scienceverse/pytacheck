@@ -1,0 +1,58 @@
+{
+  "id": "data_read_head.xl_names.xlsx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "...1",
+      "a...2",
+      "a...3",
+      "...4",
+      "b...5",
+      "b...6"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          6
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

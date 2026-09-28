@@ -1,0 +1,39 @@
+{
+  "id": "structured.probe_truncated",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  parse error: premature EOF\n                                       {\"items\":[{\"name\":\"a\"\n                     (right here) ------^\n"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "text",
+      ".error",
+      ".error_msg"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "probe truncated"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "parse error: premature EOF\n                                       {\"items\":[{\"name\":\"a\"\n                     (right here) ------^\n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

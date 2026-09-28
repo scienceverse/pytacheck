@@ -1,0 +1,867 @@
+# codebook_check review parity cases (inst/modules/codebook_check.R), generated
+# by tests/mod_codebook/make_review_cases.py -- edit that script, not this file.
+"area": "mod_codebook_review"
+"cases":
+- "id": "codebook_check.rv_violations"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_violations')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_violations')"
+- "id": "codebook_check.tables.rv_violations"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_violations')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_violations')"
+- "id": "codebook_check.rv_sort"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_sort')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_sort')"
+- "id": "codebook_check.tables.rv_sort"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_sort')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_sort')"
+- "id": "codebook_check.rv_round_low"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_round_low')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_round_low')"
+- "id": "codebook_check.tables.rv_round_low"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_round_low')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_round_low')"
+- "id": "codebook_check.rv_round_mid"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_round_mid')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_round_mid')"
+- "id": "codebook_check.tables.rv_round_mid"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_round_mid')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_round_mid')"
+- "id": "codebook_check.rv_dupscale"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_dupscale')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_dupscale')"
+- "id": "codebook_check.tables.rv_dupscale"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_dupscale')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_dupscale')"
+- "id": "codebook_check.rv_maxitem"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_maxitem')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_maxitem')"
+- "id": "codebook_check.tables.rv_maxitem"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_maxitem')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_maxitem')"
+- "id": "codebook_check.rv_onlycb"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_onlycb')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_onlycb')"
+- "id": "codebook_check.tables.rv_onlycb"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_onlycb')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_onlycb')"
+- "id": "codebook_check.rv_qblock"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_qblock')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_qblock')"
+- "id": "codebook_check.tables.rv_qblock"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_qblock')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_qblock')"
+- "id": "codebook_check.rv_task_none"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_task_none')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_task_none')"
+- "id": "codebook_check.tables.rv_task_none"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_task_none')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_task_none')"
+- "id": "codebook_check.null_paper.empty"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(rv_prev_null('empty'), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_prev_null('empty'), 'codebook_check')"
+- "id": "codebook_check.null_paper.rv_onlycb"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(rv_prev_null('rv_onlycb'), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_prev_null('rv_onlycb'), 'codebook_check')"
+- "id": "codebook_check.null_paper.green"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(rv_prev_null('green'), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_prev_null('green'), 'codebook_check')"
+- "id": "codebook_check.pl_empty"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(cbc_prev_list(c('empty', 'empty')), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['empty', 'empty']), 'codebook_check')"
+- "id": "codebook_check.pl_onlycb"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(cbc_prev_list(c('rv_onlycb', 'rv_onlycb')), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['rv_onlycb', 'rv_onlycb']), 'codebook_check')"
+- "id": "codebook_check.pl_onlycb_green"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(cbc_prev_list(c('rv_onlycb', 'green')), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['rv_onlycb', 'green']), 'codebook_check')"
+- "id": "codebook_check.pl_samefile"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(cbc_prev_list(c('green', 'scope')), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['green', 'scope']), 'codebook_check')"
+- "id": "codebook_check.pl_scales"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); module_run(cbc_prev_list(c('rulesonly', 'panas_high')), 'codebook_check')})"
+        "py": "__import__('pytacheck.module', fromlist=['_']).module_run(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['rulesonly', 'panas_high']), 'codebook_check')"
+- "id": "codebook_check.llm.pl_scales"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run(NULL, 'scales', prev = cbc_prev_list(c('rulesonly', 'scales_mixed')))})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run(None, 'scales', prev=__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['rulesonly', 'scales_mixed']))"
+- "id": "codebook_check.llm.pl_scales.max_calls_1"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run(NULL, 'scales', prev = cbc_prev_list(c('rulesonly', 'scales_mixed')), codebook_max_calls = 1L)})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run(None, 'scales', prev=__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['rulesonly', 'scales_mixed']), codebook_max_calls=1)"
+- "id": "codebook_check.llm.loop.max_calls_1"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run('loop', 'selfgen', codebook_max_calls = 1L)})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('loop', 'selfgen', codebook_max_calls=1)"
+- "id": "codebook_check.llm.pl_scales.max_calls_2"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run(NULL, 'scales', prev = cbc_prev_list(c('rulesonly', 'scales_mixed')), codebook_max_calls = 2L)})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run(None, 'scales', prev=__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_list(['rulesonly', 'scales_mixed']), codebook_max_calls=2)"
+- "id": "codebook_check.llm.loop.max_calls_2"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run('loop', 'selfgen', codebook_max_calls = 2L)})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('loop', 'selfgen', codebook_max_calls=2)"
+- "id": "codebook_check.llm.readme_text.rv_parse_ctx"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run('readme_text', 'rv_parse_ctx')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('readme_text', 'rv_parse_ctx')"
+- "id": "codebook_check.llm.readme_text.rv_parse_noctx"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run('readme_text', 'rv_parse_noctx')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('readme_text', 'rv_parse_noctx')"
+- "id": "codebook_check.llm_odd.rv_maxitem"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('rv_maxitem', 'odd')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('rv_maxitem', 'odd')"
+- "id": "codebook_check.llm_odd.rv_dupscale"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('rv_dupscale', 'odd')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('rv_dupscale', 'odd')"
+- "id": "codebook_check.llm_odd.conflict"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('conflict', 'odd')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('conflict', 'odd')"
+- "id": "codebook_check.llm_odd.fuzzy"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('fuzzy', 'odd')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('fuzzy', 'odd')"
+- "id": "codebook_check.llm_odd.readme_text"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('readme_text', 'odd')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('readme_text', 'odd')"
+- "id": "codebook_check.llm_odd.panas_high"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('panas_high', 'odd')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('panas_high', 'odd')"
+- "id": "codebook_check.llm_odd.scales_mixed"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('scales_mixed', 'odd')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('scales_mixed', 'odd')"
+- "id": "codebook_check.llm_odd_na.rv_maxitem"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('rv_maxitem', 'odd_na')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('rv_maxitem', 'odd_na')"
+- "id": "codebook_check.llm_odd_na.rv_dupscale"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('rv_dupscale', 'odd_na')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('rv_dupscale', 'odd_na')"
+- "id": "codebook_check.llm_odd_na.conflict"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('conflict', 'odd_na')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('conflict', 'odd_na')"
+- "id": "codebook_check.llm_odd_na.fuzzy"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('fuzzy', 'odd_na')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('fuzzy', 'odd_na')"
+- "id": "codebook_check.llm_odd_na.readme_text"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('readme_text', 'odd_na')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('readme_text', 'odd_na')"
+- "id": "codebook_check.llm_odd_na.panas_high"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('panas_high', 'odd_na')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('panas_high', 'odd_na')"
+- "id": "codebook_check.llm_odd_na.scales_mixed"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('scales_mixed', 'odd_na')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('scales_mixed', 'odd_na')"
+- "id": "codebook_check.llm_odd.bibr12"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run(NULL, 'odd', prev = cbc_prev('scales_mixed', paper = read('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json')))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run(None, 'odd', prev=__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('scales_mixed', paper=__import__('pytacheck').read('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json')))"
+- "id": "codebook_check.llm_odd.demo"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run(NULL, 'odd', prev = cbc_prev('scales_mixed', paper = demopaper()))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run(None, 'odd', prev=__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('scales_mixed', paper=__import__('pytacheck').demopaper()))"
+- "id": "codebook_check.llm_odd.psychsci"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run(NULL, 'odd', prev = cbc_prev_papers(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), c('task', 'rv_maxitem', 'scales_mixed')))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run(None, 'odd', prev=__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_papers(__import__('pytacheck').read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), ['task', 'rv_maxitem', 'scales_mixed']))"
+- "id": "codebook_check.llm_odd_selfgen.psychsci"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run(NULL, 'odd_selfgen', prev = cbc_prev_papers(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), c('loop', 'rv_dupscale', 'rv_qblock')))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run(None, 'odd_selfgen', prev=__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_papers(__import__('pytacheck').read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), ['loop', 'rv_dupscale', 'rv_qblock']))"
+- "id": "codebook_check.llm_odd_selfgen.loop"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('loop', 'odd_selfgen')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('loop', 'odd_selfgen')"
+- "id": "codebook_check.llm_odd_selfgen.rv_qblock"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_llm_run('rv_qblock', 'odd_selfgen')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_llm_run('rv_qblock', 'odd_selfgen')"
+- "id": "codebook_check.osd_attrs.rv_dupscale"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_run('rv_dupscale'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run('rv_dupscale'))"
+- "id": "codebook_check.osd_attrs.rv_maxitem"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_run('rv_maxitem'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run('rv_maxitem'))"
+- "id": "codebook_check.osd_attrs.orphan"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_run('orphan'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run('orphan'))"
+- "id": "codebook_check.osd_attrs.loop"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_run('loop'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run('loop'))"
+- "id": "codebook_check.osd_attrs.scales_mixed"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_run('scales_mixed'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run('scales_mixed'))"
+- "id": "codebook_check.osd_attrs.panas_high"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_run('panas_high'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run('panas_high'))"
+- "id": "codebook_check.llm.rv_dupscale"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run('rv_dupscale', 'rv_names')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('rv_dupscale', 'rv_names')"
+- "id": "codebook_check.llm.tables.rv_dupscale"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_report_tables(cbc_llm_run('rv_dupscale', 'rv_names'))})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).report_tables(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('rv_dupscale', 'rv_names'))"
+- "id": "codebook_check.llm.osd_attrs.rv_dupscale"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_llm_run('rv_dupscale', 'rv_names'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('rv_dupscale', 'rv_names'))"
+- "id": "codebook_check.llm.rv_maxitem"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_llm_run('rv_maxitem', 'rv_names')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('rv_maxitem', 'rv_names')"
+- "id": "codebook_check.llm.tables.rv_maxitem"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_report_tables(cbc_llm_run('rv_maxitem', 'rv_names'))})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).report_tables(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('rv_maxitem', 'rv_names'))"
+- "id": "codebook_check.llm.osd_attrs.rv_maxitem"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_llm_run('rv_maxitem', 'rv_names'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('rv_maxitem', 'rv_names'))"
+- "id": "codebook_check.llm.osd_attrs.scales_mixed"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_llm_run('scales_mixed', 'scales'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('scales_mixed', 'scales'))"
+- "id": "codebook_check.llm.osd_attrs.loop"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_llm_run('loop', 'selfgen'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('loop', 'selfgen'))"
+- "id": "codebook_check.llm.osd_attrs.panas_high"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_run_osd_attrs(cbc_llm_run('panas_high', 'panas'))})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_run_osd_attrs(__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_llm_run('panas_high', 'panas'))"
+- "id": "propagate_scale_by_prefix.empty_prefix"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.propagate_scale_by_prefix(rv_propagate_df())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._propagate_scale_by_prefix(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_propagate_df())"
+- "id": "codebook_duplicate_name_warnings.collation"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.codebook_duplicate_name_warnings(list(f.csv = rv_named_frame(rv_dup_names()), g.csv = rv_named_frame(c('a', 'b')), h.csv = rv_named_frame(character(0))))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._codebook_duplicate_name_warnings({'f.csv': __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_named_frame(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_dup_names()), 'g.csv': __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_named_frame(['a', 'b']), 'h.csv': __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_named_frame([])})"
+- "id": "scale_text_report.na_fields"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_text_report(rv_text_scales(), matched = c('Personality (BFI)', 'life orientation test'))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_text_report(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_scales(), matched=['Personality (BFI)', 'life orientation test'])"
+- "id": "scale_text_report.no_match"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_text_report(rv_text_scales(), matched = character(0))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_text_report(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_scales(), matched=[])"
+- "id": "scale_text_report.name_only"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_text_report(rv_text_scales('scale_name'), matched = c('x'))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_text_report(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_scales(['scale_name']), matched=['x'])"
+- "id": "scale_text_report.no_admin"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_text_report(rv_text_scales(c('scale_name', 'acronym', 'n_items')), matched = c('grit scale'))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_text_report(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_scales(['scale_name', 'acronym', 'n_items']), matched=['grit scale'])"
+- "id": "scale_text_report.special_acronyms"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_text_report(data.frame(scale_name = c('Cognitive Anxiety Scale', 'Mixed Test'), acronym = c('C++', '(X'), n_items = c('9', ''), stringsAsFactors = FALSE), matched = c('c++ items'))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_text_report(__import__('pandas').DataFrame({'scale_name': ['Cognitive Anxiety Scale', 'Mixed Test'], 'acronym': ['C++', '(X'], 'n_items': ['9', '']}), matched=['c++ items'])"
+- "id": "scale_split_items.values"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {df <- rv_split_df(); rv_env()$.scale_split_items(names(df), df)}})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_split_items(list(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_split_df().columns), __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_split_df())"
+- "id": "scale_split_items.values_min2"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {df <- rv_split_df(); rv_env()$.scale_split_items(names(df), df, min_items = 2L)}})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_split_items(list(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_split_df().columns), __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_split_df(), min_items=2)"
+- "id": "scale_prefix_groups.mixed"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_prefix_groups(rv_named_frame(rv_prefix_names()))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_prefix_groups(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_named_frame(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_prefix_names()))"
+- "id": "scale_prefix_groups.mixed_qualtrics"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_prefix_groups(rv_named_frame(rv_prefix_names()), qualtrics = TRUE)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_prefix_groups(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_named_frame(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_prefix_names()), qualtrics=True)"
+- "id": "scale_prefix_groups.min_chars"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_prefix_groups(rv_named_frame(c('abcd1', 'abcd2', 'abce3', 'abcf4', 'xy_1', 'xy_2', 'xy_3', 'xy_4a')), min_cols = 2L, min_chars = 4L)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_prefix_groups(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_named_frame(['abcd1', 'abcd2', 'abce3', 'abcf4', 'xy_1', 'xy_2', 'xy_3', 'xy_4a']), min_cols=2, min_chars=4)"
+- "id": "osd_likert_options.codes"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.osd_likert_options(c('a1', 'a2'), 's.csv', NULL, rv_likert_labels())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._osd_likert_options(['a1', 'a2'], 's.csv', None, __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_likert_labels())"
+- "id": "osd_likert_options.drop_missing"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.osd_likert_options(c('b1', 'b2'), 's.csv', NULL, rv_likert_labels())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._osd_likert_options(['b1', 'b2'], 's.csv', None, __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_likert_labels())"
+- "id": "osd_likert_options.observed_na"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.osd_likert_options(c('c1', 'c2', 'c3'), 's.csv', rv_likert_columns(), rv_likert_labels())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._osd_likert_options(['c1', 'c2', 'c3'], 's.csv', __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_likert_columns(), __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_likert_labels())"
+- "id": "osd_likert_options.half"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.osd_likert_options(c('d1', 'd2'), 's.csv', rv_likert_columns(), rv_likert_labels())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._osd_likert_options(['d1', 'd2'], 's.csv', __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_likert_columns(), __import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_likert_labels())"
+- "id": "selfgen_merge_synonyms.files"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.selfgen_merge_synonyms(rv_synonyms())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._selfgen_merge_synonyms(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_synonyms())"
+- "id": "scales_to_osd.mixed"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_scales_to_osd()})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_scales_to_osd()"
+- "id": "scale_paper_context.basic"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_paper_context(rv_text_paper(), c('bfi', 'q.x', 'ab', 'item', NA, ''), c('I feel enthusiastic', 'Determined and enthusiastic', NA, '', 'strongly agree'), max_sent = 4L)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_paper_context(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper(), ['bfi', 'q.x', 'ab', 'item', None, ''], ['I feel enthusiastic', 'Determined and enthusiastic', None, '', 'strongly agree'], max_sent=4)"
+- "id": "scale_prefix_sentences.basic"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_prefix_sentences(rv_text_paper(), c('BFI', 'q.x', '', 'C++', 'pss', 'BFI'), max_sent = 3L)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_prefix_sentences(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper(), ['BFI', 'q.x', '', 'C++', 'pss', 'BFI'], max_sent=3)"
+- "id": "scale_description_sentences.basic"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_description_sentences(rv_text_paper(), max_sent = 2L)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_description_sentences(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper(), max_sent=2)"
+- "id": "scan_paper_for_tasks.review"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scan_paper_for_tasks(rv_text_paper())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scan_paper_for_tasks(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper())"
+- "id": "haven_labels.0"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/labelled.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/labelled.dta')"
+- "id": "haven_labels.1"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/zero_rows.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/zero_rows.dta')"
+- "id": "haven_labels.2"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/all_na_dates.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/all_na_dates.sav')"
+- "id": "haven_labels.3"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/stata_int_na.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/stata_int_na.dta')"
+- "id": "haven_labels.4"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/zero_rows.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/zero_rows.sav')"
+- "id": "haven_labels.5"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/iris.sas7bdat')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/iris.sas7bdat')"
+- "id": "haven_labels.6"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/labelled.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/labelled.sav')"
+- "id": "haven_labels.7"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_columns/fixtures/review/dup_labels.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_columns/fixtures/review/dup_labels.sav')"
+- "id": "haven_labels.8"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/tagged_na.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/tagged_na.dta')"
+- "id": "paradata_name.misc"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.paradata_name(c('Q8timing_First.Click', 'demo1time_First.Click', 'sleep_time', 'time_spent', 'RESPONSE_TIME', 'trial_index', 'response_numeric', 'item_response_time_numeric', 'response_numeric_timing', 'Timer_1', 'page submit', 'clickcount', 'q_timing'))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._paradata_name(['Q8timing_First.Click', 'demo1time_First.Click', 'sleep_time', 'time_spent', 'RESPONSE_TIME', 'trial_index', 'response_numeric', 'item_response_time_numeric', 'response_numeric_timing', 'Timer_1', 'page submit', 'clickcount', 'q_timing'])"
+- "id": "scale_stem_pair.0"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('a1', 'a1'), run = e$.scale_same_number_run('a1', 'a1'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('a1', 'a1'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('a1', 'a1')}"
+- "id": "scale_stem_pair.1"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('ab', 'abc'), run = e$.scale_same_number_run('ab', 'abc'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('ab', 'abc'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('ab', 'abc')}"
+- "id": "scale_stem_pair.2"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('x.1', 'x.2'), run = e$.scale_same_number_run('x.1', 'x.2'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('x.1', 'x.2'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('x.1', 'x.2')}"
+- "id": "scale_stem_pair.3"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('q1_a', 'q1_b'), run = e$.scale_same_number_run('q1_a', 'q1_b'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('q1_a', 'q1_b'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('q1_a', 'q1_b')}"
+- "id": "scale_stem_pair.4"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('é1', 'é2'), run = e$.scale_same_number_run('é1', 'é2'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('é1', 'é2'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('é1', 'é2')}"
+- "id": "scale_stem_pair.5"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('a-b_1', 'a-b_2'), run = e$.scale_same_number_run('a-b_1', 'a-b_2'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('a-b_1', 'a-b_2'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('a-b_1', 'a-b_2')}"
+- "id": "scale_stem_pair.6"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('', 'a'), run = e$.scale_same_number_run('', 'a'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('', 'a'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('', 'a')}"
+- "id": "scale_stem_pair.7"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); list(stem = e$.scale_shared_stem('abc_', 'abc-'), run = e$.scale_same_number_run('abc_', 'abc-'))}})"
+        "py": "{'stem': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_shared_stem('abc_', 'abc-'), 'run': __import__('pytacheck.modules._codebook', fromlist=['_'])._scale_same_number_run('abc_', 'abc-')}"
+- "id": "scale_word_helpers.misc"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); {e <- rv_env(); w <- c('PP', 'p1', 'power.PP170', 'Q3_1_', 'ab12cd34', '', 'ÄB1', '_a1', '123', 'x_y_12'); list(vapply(w, e$.scale_loop_base, ''), vapply(w, e$.scale_alpha_prefix, ''))}})"
+        "py": "[[__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_loop_base(w) for w in ['PP', 'p1', 'power.PP170', 'Q3_1_', 'ab12cd34', '', 'ÄB1', '_a1', '123', 'x_y_12']], [__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_alpha_prefix(w) for w in ['PP', 'p1', 'power.PP170', 'Q3_1_', 'ab12cd34', '', 'ÄB1', '_a1', '123', 'x_y_12']]]"

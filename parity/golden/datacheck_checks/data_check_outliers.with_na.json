@@ -1,0 +1,50 @@
+{
+  "id": "data_check_outliers.with_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values",
+      "lower",
+      "upper"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 outlier value outside [-1.5, 8.5]: 100"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          100
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          -1.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8.5
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

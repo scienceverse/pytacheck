@@ -1,0 +1,72 @@
+{
+  "id": "scale_prefix_groups.dup_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "power"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "power"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "POWER"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "POWER",
+              "POWER.1",
+              "POWER.2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

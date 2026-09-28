@@ -1,0 +1,72 @@
+{
+  "id": "file_category.edge_cases",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "name",
+      "category",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "datarelease.pdf",
+          "data.pdf",
+          "my_r_code.pdf",
+          "readme.xls",
+          "data.sas",
+          "codebook.sas",
+          "readme.sas",
+          "codebook.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "data",
+          null,
+          "project",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "text",
+          "text",
+          "text",
+          "data",
+          "stats",
+          "stats",
+          "stats",
+          "text"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "readme",
+          "code",
+          "codebook",
+          "readme",
+          "codebook"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

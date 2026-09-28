@@ -1,0 +1,23 @@
+{
+  "id": ".bibr12_doi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "10.1234/abc",
+      "10.1000/xyz",
+      null,
+      "10.5555/ab",
+      "10.5555/ab",
+      null,
+      null,
+      null,
+      "10.12345/x",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

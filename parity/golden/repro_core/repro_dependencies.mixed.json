@@ -1,0 +1,84 @@
+{
+  "id": "repro_dependencies.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "package",
+      "source",
+      "ref",
+      "base"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "tidyr",
+          "purrr",
+          "pacman",
+          "lme4",
+          "car",
+          "lattice",
+          "Matrix",
+          "devtools",
+          "mypkg",
+          "utils",
+          "tools"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cran",
+          "cran",
+          "cran",
+          "cran",
+          "cran",
+          "base",
+          "base",
+          "cran",
+          "github",
+          "base",
+          "base"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "user/mypkg@v0.1",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

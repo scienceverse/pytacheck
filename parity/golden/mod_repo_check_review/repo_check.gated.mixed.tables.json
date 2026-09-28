@@ -1,0 +1,262 @@
+{
+  "id": "repo_check.gated.mixed.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Repository https://github.com/gzorg/bigrepo was not listed: GitHub repo tree truncated (>100 000 items); too large to list."
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Repository",
+          "Platform",
+          "Error",
+          "All Files",
+          "Data Files",
+          "Code Files",
+          "READMEs",
+          "Archives"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>",
+              "<a href='https://github.com/gzorg/bigrepo' target='_blank'>github.com/gzorg/bigrepo<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osf",
+              "github"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "GitHub repo tree truncated (>100 000 items); too large to list"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "Repository",
+          "File",
+          "Size",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/download/6935bc117049c887a125cb25/' target='_blank'>bad.R<\/a>",
+              "<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>",
+              "<a href='https://osf.io/download/6935c4679ca0f02ea72a1a31/' target='_blank'>example2.csv<\/a>",
+              "<a href='https://osf.io/download/6976438ff9da155d0565c720/' target='_blank'>Archive.zip<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "172 B",
+              "413 B",
+              "5 B",
+              "6.4 kB"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "data",
+              "archive"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Rule",
+          "Severity",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.Rmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.Rmd"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "example2.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "example2.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

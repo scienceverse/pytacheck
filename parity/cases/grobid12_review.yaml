@@ -1,0 +1,205 @@
+# Adversarial review of the Grobid TEI -> bibr export schema 12.0 conversion
+# (R/import-grobid-bibr12.R; metacheck PR #423): branches the grobid12 cases do not reach.
+# Written by tests/grobid12/gen_review_cases.py (see its docstring for what each fixture covers);
+# goldens: python -m parity generate --area grobid12_review
+area: "grobid12_review"
+cases:
+- "id": ".grobid_to_bibr.review_urls"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_urls.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "written.review_urls"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_urls.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_urls.tei.xml', False)"}}
+- "id": "write_read.review_urls"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_urls.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_urls.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.review_url_na"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_url_na.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": "written.review_url_na"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_url_na.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^ *\"completed_at\": ', x)] <- '<completed_at>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_url_na.tei.xml', True)"}}
+- "id": "write_read.review_url_na"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_url_na.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_url_na.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.review_header"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_header.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": "written.review_header"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_header.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^ *\"completed_at\": ', x)] <- '<completed_at>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_header.tei.xml', True)"}}
+- "id": "write_read.review_header"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_header.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_header.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.review_noapp"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_noapp.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": "written.review_noapp"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_noapp.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^ *\"completed_at\": ', x)] <- '<completed_at>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_noapp.tei.xml', True)"}}
+- "id": "write_read.review_noapp"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_noapp.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_noapp.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter", "extraction.completed_at"]}
+- "id": ".grobid_to_bibr.review_inline"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_inline.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "written.review_inline"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_inline.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_inline.tei.xml', False)"}}
+- "id": "write_read.review_inline"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_inline.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_inline.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.review_nobody"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_nobody.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "written.review_nobody"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_nobody.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_nobody.tei.xml', False)"}}
+- "id": "write_read.review_nobody"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_nobody.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_nobody.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.review_unicode"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_unicode.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "written.review_unicode"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_unicode.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_unicode.tei.xml', False)"}}
+- "id": "write_read.review_unicode"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_unicode.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_unicode.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.review_sentences"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/grobid12/fixtures/review_sentences.tei.xml"}
+    "schema_version": "12.0"
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": "written.review_sentences"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- grobid_to_bibr('tests/grobid12/fixtures/review_sentences.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; c(basename(f), x)})", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).written_lines('tests/grobid12/fixtures/review_sentences.tei.xml', False)"}}
+- "id": "write_read.review_sentences"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(grobid_to_bibr('tests/grobid12/fixtures/review_sentences.tei.xml', local({d <- tempfile('pc_grobid12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).write_read('tests/grobid12/fixtures/review_sentences.tei.xml')"}}
+  "compare": {"ignore": ["extraction.converter"]}
+- "id": ".grobid_to_bibr.error_message.corrupt"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": ".grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', schema_version = '12.0')", "py": "__import__('pytacheck.io.grobid', fromlist=['x'])._grobid_to_bibr(str(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml')), None, '12.0')"}}
+- "id": ".grobid_to_bibr.error_message.url_empty"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": ".grobid_to_bibr('tests/io/fixtures/url_empty.tei.xml', schema_version = '12.0')", "py": "__import__('pytacheck.io.grobid', fromlist=['x'])._grobid_to_bibr(str(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('tests/io/fixtures/url_empty.tei.xml')), None, '12.0')"}}
+- "id": ".grobid_to_bibr.error_message.missing_file"
+  "r": "identity"
+  "py": "tests.grobid12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": ".grobid_to_bibr('tests/grobid12/fixtures/no_such_file.tei.xml', schema_version = '12.0')", "py": "__import__('pytacheck.io.grobid', fromlist=['x'])._grobid_to_bibr(str(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('tests/grobid12/fixtures/no_such_file.tei.xml')), None, '12.0')"}}
+- "id": "module.all_urls.review"
+  "module": "all_urls"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.all_p_values.review"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.marginal.review"
+  "module": "marginal"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.stat_check.review"
+  "module": "stat_check"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_consistency.review"
+  "module": "ref_consistency"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_miscitation.review"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_summary.review"
+  "module": "ref_summary"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_replication.review"
+  "module": "ref_replication"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_retraction.review"
+  "module": "ref_retraction"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}
+- "id": "module.ref_accuracy.review"
+  "module": "ref_accuracy"
+  "args":
+    "paper": {"$call": {"r": "grobid_to_bibr", "py": "pytacheck.io.grobid.grobid_to_bibr", "args": {"xml_path": {"$expr": {"r": "file.path(getwd(), c('tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'))", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).paths(['tests/grobid12/fixtures/review_urls.tei.xml', 'tests/grobid12/fixtures/review_url_na.tei.xml', 'tests/grobid12/fixtures/review_noapp.tei.xml', 'tests/grobid12/fixtures/review_inline.tei.xml', 'tests/grobid12/fixtures/review_sentences.tei.xml', 'tests/grobid12/fixtures/v12_edges.tei.xml'])"}}, "save_path": {"$null": true}, "schema_version": "12.0"}}}

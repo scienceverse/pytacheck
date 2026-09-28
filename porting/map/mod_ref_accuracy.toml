@@ -1,0 +1,14 @@
+# R source -> Python location for the ref_accuracy and ref_consistency modules (see docs/PORTING.md).
+[files]
+"inst/modules/ref_accuracy.R" = ["src/pytacheck/modules/ref_accuracy.py"]
+"inst/modules/ref_consistency.R" = ["src/pytacheck/modules/ref_consistency.py"]
+
+[functions]
+"module:ref_accuracy" = "pytacheck.modules.ref_accuracy:ref_accuracy"
+"module:ref_consistency" = "pytacheck.modules.ref_consistency:ref_consistency"
+# The closures defined inside ref_accuracy() are module-private helpers in
+# src/pytacheck/modules/ref_accuracy.py (not top-level R symbols, so not listed above):
+#   deaccent -> _deaccent, clean -> _clean, journal_tokens -> _journal_tokens,
+#   journal_coherent -> _journal_coherent, norm_title -> _norm_title,
+#   author_string -> _author_string, strike -> _strike, correction -> _correction,
+#   discrepancies -> _discrepancies; utils::adist -> _adist, tolower -> _tolower.

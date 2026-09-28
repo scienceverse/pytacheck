@@ -1,0 +1,76 @@
+{
+  "id": "ref_replication.multi.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "Reference",
+          "Replication"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 2. https://doi.org/10.1016/j.biopsycho.2018.08.007",
+              "Reference 4. https://doi.org/10.1037/0022-3514.71.2.230",
+              "Reference 4. https://doi.org/10.1037/0022-3514.71.2.230"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. <a href='https://doi.org/10.1037/pspa0000064' target='_blank'>doi:10.1037/pspa0000064<\/a>",
+              "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>",
+              "Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from <a href='https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf' target='_blank'>www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf<\/a>",
+              "Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144. <a href='https://doi.org/10.1080/02699931.2017.1279591' target='_blank'>doi:10.1080/02699931.2017.1279591<\/a>",
+              "Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531. <a href='https://doi.org/10.1177/1948550618775410' target='_blank'>doi:10.1177/1948550618775410<\/a>",
+              "van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1). <a href='https://doi.org/10.1525/collabra.117' target='_blank'>doi:10.1525/collabra.117<\/a>",
+              "Bischoff, M. (2024). Evaluating the reliability of relative frontal alpha asymmetry as a state-dependent correlate of the stress response in a mixed-sex sample: A replication study (Master's thesis, University of Twente). Retrieved from <a href='https://purl.utwente.nl/essays/100571' target='_blank'>purl.utwente.nl/essays/100571<\/a>",
+              "Doyen, S., Klein, O., Pichon, C.-L., & Cleeremans, A. (2012). Behavioral Priming: It’s All in the Mind, but Whose Mind? PLoS ONE, 7(1), e29081. <a href='https://doi.org/10.1371/journal.pone.0029081' target='_blank'>doi:10.1371/journal.pone.0029081<\/a>",
+              "Pashler, H., Harris, C., & Coburn, N.. Elderly-Related Words Prime Slow Walking. (2011, September 15). Retrieved September 23, 2017 from <a href='http://www.PsychFileDrawer.org/replication.php?attempt=MTU%3D' target='_blank'>www.PsychFileDrawer.org/replication.php?attempt=MTU%3D<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

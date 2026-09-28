@@ -1,0 +1,7 @@
+---
+jupyter: !expr [python]
+---
+
+```{python}
+x = 1
+```

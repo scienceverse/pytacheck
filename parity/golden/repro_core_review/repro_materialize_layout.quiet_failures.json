@@ -1,0 +1,86 @@
+{
+  "id": "repro_materialize_layout.quiet_failures",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "cannot create file '<tempdir>/<tempfile>/root/a/b.csv', reason 'Not a directory'",
+    "directories are omitted unless 'recursive = TRUE'",
+    "cannot create file '<tempdir>/<tempfile>/root/a/c/orig.csv', reason 'Not a directory'"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "files",
+      "materialised",
+      "is_root"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "d",
+          "e",
+          "e/f",
+          "e/f/g.csv",
+          "output"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "target_path",
+          "source",
+          "ok"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "a/b.csv",
+              "d/dir",
+              "m/x.csv",
+              "e/f/g.csv",
+              "a/c/orig.csv",
+              "m/orig.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>/src.csv",
+              "<root>/src.csv",
+              "<root>/adir",
+              null,
+              "<root>/src.csv",
+              "<root>/src.csv",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,12 @@
+# R source -> Python location for the coi_check and coi_check_oi modules (see docs/PORTING.md).
+[files]
+"inst/modules/coi_check.R" = ["src/pytacheck/modules/coi_check.py"]
+"inst/modules/coi_check_oi.R" = ["src/pytacheck/modules/coi_check_oi.py"]
+
+[functions]
+"module:coi_check" = "pytacheck.modules.coi_check:coi_check"
+"module:coi_check_oi" = "pytacheck.modules.coi_check_oi:coi_check_oi"
+# internal helper defined in inst/modules/coi_check.R
+rtransparent_coi = "pytacheck.modules.coi_check:rtransparent_coi"
+# (base R agrep()/agrepl(), used only by coi_check, are emulated by
+#  pytacheck.modules.coi_check:agrep / :agrepl)

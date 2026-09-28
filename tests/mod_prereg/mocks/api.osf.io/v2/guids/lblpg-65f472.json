@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "lblpg",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/lblpg/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "lblpg",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/lblpg/",
+   "html": "https://osf.io/lblpg/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

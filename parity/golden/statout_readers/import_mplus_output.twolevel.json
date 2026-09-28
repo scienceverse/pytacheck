@@ -1,0 +1,868 @@
+{
+  "id": "import_mplus_output.twolevel",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "SUMMARY OF ANALYSIS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SUMMARY OF ANALYSIS"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Number of groups",
+              "Number of observations",
+              "Number of dependent variables",
+              "Number of independent variables",
+              "Number of continuous latent variables",
+              "Maximum number of iterations",
+              "Convergence criterion"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "500"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "100"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.100D-05"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "V1",
+              "Variable/ Sample Size",
+              "Mean/ Variance",
+              "Skewness/ Kurtosis",
+              "Minimum/ Maximum",
+              "% with Min/Max",
+              "20%/60%",
+              "Percentiles 40%/80%",
+              "Median"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Y",
+                  "",
+                  "X",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "500.000",
+                  "",
+                  "500.000"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.012",
+                  "1.021",
+                  "-0.023",
+                  "0.976"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.041",
+                  "-0.112",
+                  "0.066",
+                  "0.031"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-3.101",
+                  "3.214",
+                  "-2.852",
+                  "3.120"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.20%",
+                  "0.20%",
+                  "0.20%",
+                  "0.20%"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.851",
+                  "0.282",
+                  "-0.840",
+                  "0.228"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.259",
+                  "0.862",
+                  "-0.271",
+                  "0.815"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.010",
+                  "",
+                  "-0.011",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "MODEL FIT INFORMATION"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MODEL FIT INFORMATION"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Number of Free Parameters",
+              "H0 Value",
+              "H0 Scaling Correction Factor",
+              "H1 Value",
+              "Akaike (AIC)",
+              "Bayesian (BIC)",
+              "Sample-Size Adjusted BIC",
+              "Value",
+              "Degrees of Freedom",
+              "P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1423.568"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.0123"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1423.568"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2857.136"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2878.209"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2862.338"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000*"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.0000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "MODEL RESULTS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "level",
+              "group",
+              "V1",
+              "Estimate",
+              "S.E.",
+              "Est./S.E.",
+              "Two-Tailed P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Within Level",
+                  "Within Level",
+                  "Between Level",
+                  "Between Level",
+                  "Between Level"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Y          ON",
+                  "Residual Variances",
+                  "Y          ON",
+                  "Intercepts",
+                  "Residual Variances"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "X",
+                  "Y",
+                  "W",
+                  "Y",
+                  "Y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.498",
+                  "0.742",
+                  "0.203",
+                  "0.011",
+                  "0.231"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.044",
+                  "0.049",
+                  "0.071",
+                  "0.052",
+                  "0.041"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "11.318",
+                  "15.143",
+                  "2.859",
+                  "0.212",
+                  "5.634"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000",
+                  "0.000",
+                  "0.004",
+                  "0.832",
+                  "0.000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "STANDARDIZED MODEL RESULTS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "level",
+              "group",
+              "V1",
+              "Estimate",
+              "S.E.",
+              "Est./S.E.",
+              "Two-Tailed P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Within Level"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Y          ON"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "X"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.483"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.038"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "12.711"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "R-SQUARE"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Observed Variable",
+              "Estimate",
+              "S.E.",
+              "Est./S.E.",
+              "Two-Tailed P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.233"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.037"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "6.356"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "SAMPLE STATISTICS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Means Y",
+              "X",
+              "V3"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.000"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "SAMPLE STATISTICS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "V1",
+              "Covariances Y",
+              "X",
+              "V4"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Y",
+                  "X"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.966",
+                  "0.487"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "0.978"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "TECHNICAL 1 OUTPUT"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "NU",
+              "Y",
+              "V3",
+              "X",
+              "V5"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

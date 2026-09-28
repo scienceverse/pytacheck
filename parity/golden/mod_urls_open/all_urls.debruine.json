@@ -1,0 +1,261 @@
+{
+  "id": "all_urls.debruine",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "http://www.debruine.info/childfaces.html",
+              "http://www.debruine.info/childfaces.html",
+              "study.Platek",
+              "http://www.debruine.info/childfaces.html",
+              "https://royalsocietypublishing.org",
+              "Soc.Lond",
+              "https://royalsocietypublishing.org",
+              "https://royalsocietypublishing.org",
+              "https://royalsocietypublishing.org",
+              "http://dx.doi",
+              "http://www.journals.royalsoc",
+              "ac.uk"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              46,
+              105,
+              145,
+              147,
+              95,
+              158,
+              157,
+              164,
+              77,
+              78,
+              78,
+              78
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11,
+              29,
+              44,
+              44,
+              22,
+              35,
+              44,
+              51,
+              18,
+              19,
+              19,
+              19
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              9,
+              15,
+              15,
+              6,
+              13,
+              14,
+              null,
+              8,
+              9,
+              9,
+              9
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "See <ref type=\"url\" target=\"http://www.debruine.info/childfaces.html\">http://www.debruine.info/childfaces.html<\/ref> for this image in color.",
+              "See <ref type=\"url\" target=\"http://www.debruine.info/childfaces.html\">http://www.debruine.info/childfaces.html<\/ref> for this image in color.",
+              "Comparison of the method used in<ref type=\"bibr\" target=\"#b18\">Platek et al. (2002<\/ref> <ref type=\"bibr\" target=\"#b19\">Platek et al. ( , 2003) )<\/ref> to that used in this study.Platek et al. resized   an experimental participant's face (a, b) to the same aspect ratio as a child's face (c) and blended the two faces together in a 50/50 ratio to produce a child morph (d).",
+              null,
+              "If we confine attention to the non-self morphs, there was still no signif icant difference and those faces that elicited trust were actually rated slightly less attractive than Downloaded from <ref type=\"url\" target=\"https://royalsocietypublishing.org/\">https://royalsocietypublishing.org/<\/ref> on 24 July 2025 An additional set of control subjects saw the same face stimuli as the experimental subjects.",
+              null,
+              "B (2004) Downloaded from https://royalsocietypublishing.org/ on 24 July2025<\/p> <\/note>",
+              null,
+              "B (2005) Downloaded from https://royalsocietypublishing.org/ on 24 July2025<\/p> <\/note>",
+              "<note place=\"foot\" xml:id=\"foot_1\">   <p>The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.<\/p> <\/note>",
+              "<note place=\"foot\" xml:id=\"foot_1\">   <p>The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.<\/p> <\/note>",
+              "<note place=\"foot\" xml:id=\"foot_1\">   <p>The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.<\/p> <\/note>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-fret",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-sex",
+              "debruine-tnl",
+              "debruine-tnl",
+              "debruine-tnl",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.2.1. Methodological critique",
+              "2.5. Statistical analyses",
+              "Fig 1.",
+              "Fig 1.",
+              "3. RESULTS",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "figure",
+              "figure",
+              "results",
+              "foot",
+              "foot",
+              "acknowledgement",
+              "foot",
+              "foot",
+              "foot",
+              "foot"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              2,
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

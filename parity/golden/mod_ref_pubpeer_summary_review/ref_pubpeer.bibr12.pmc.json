@@ -1,0 +1,153 @@
+{
+  "id": "ref_pubpeer.bibr12.pmc",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_pubpeer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer Comments"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "total_comments",
+          "url",
+          "users"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902",
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              9
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/nar/gkt1146",
+              "10.1371/journal.pone.0063184"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2. NCBI Resource Coordinators. Database resources of the National Center for Biotechnology Information. Nucleic Acids Res. 2014;42:D7–D17. doi: 10.1093/nar/gkt1146.",
+              "9. Kafkas Ş., Kim J.H., McEntyre J.R. Database citation in full text biomedical articles. PLoS One. 2013;8:e63184. doi: 10.1371/journal.pone.0063184."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              4,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://pubpeer.com/publications/GKT1146",
+              "https://pubpeer.com/publications/JOURNAL.PONE.0063184"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reviewer One",
+              "Reviewer Two, Statcheck"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 17 references with DOIs. You cited 2 references with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"2. NCBI Resource Coordinators. Database resources of the National Center for Biotechnology Information. Nucleic Acids Res. 2014;42:D7–D17. doi: 10.1093/nar/gkt1146.\", \n\"9. Kafkas Ş., Kim J.H., McEntyre J.R. Database citation in full text biomedical articles. PLoS One. 2013;8:e63184. doi: 10.1371/journal.pone.0063184.\"\n), Comments = c(4, 2), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/GKT1146' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/JOURNAL.PONE.0063184' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 2 references with comments in PubPeer."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

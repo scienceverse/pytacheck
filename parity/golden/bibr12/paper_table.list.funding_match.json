@@ -1,0 +1,72 @@
+{
+  "id": "paper_table.list.funding_match",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "funding_id",
+      "service",
+      "service_id",
+      "score",
+      "name",
+      "country_code",
+      "funder_doi",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ror"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://ror.org/021nxhr62"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "U.S. National Science Foundation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "US"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.13039/100000001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demo"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

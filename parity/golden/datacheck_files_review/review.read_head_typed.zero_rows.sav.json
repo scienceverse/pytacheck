@@ -1,0 +1,90 @@
+{
+  "id": "review.read_head_typed.zero_rows.sav",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "num",
+          "chr",
+          "day",
+          "when"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "character",
+              "character"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "Date"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "POSIXct",
+              "POSIXt"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "num",
+          "chr",
+          "day",
+          "when"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

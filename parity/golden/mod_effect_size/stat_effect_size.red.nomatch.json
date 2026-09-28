@@ -1,0 +1,391 @@
+{
+  "id": "stat_effect_size.red.nomatch",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t-test",
+              "t-test",
+              "F-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(20) = 1.00",
+              "t(23) = 2.73",
+              "F(1, 13) = 2.34"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 3.00",
+              "d = 0.56",
+              "ηp² = 0.35"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A was bigger than B, t(20) = 1.00, p 0.32, d = 3.00.",
+              "t(23) = 2.73, d = 0.56.",
+              "F(1, 13) = 2.34, ηp² = 0.35."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3",
+              "0.56",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 3.00",
+              "d = 0.56",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2.73",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "20",
+              "23",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.218217890235992",
+              "0.557258916483173",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.308606699924184",
+              "0.788083117443839",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.426401432711221",
+              "1.092",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.426401432711221",
+              "1.09287464971972",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.741619848709566",
+              "2.01258270151435",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "n = 24",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no_match",
+              "match_under_assumptions",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "paired_dz",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "Match under paired-samples dz assumption.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "2.34"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "F(1, 13) = 2.34"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "13"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "0.152542372881356"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "0.0820073439412485"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "no_match"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "partial_eta_squared"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "No match under partial eta-squared formula from F and dfs. Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All tests had effect sizes, but some effect sizes do not match the reported test statistic.",
+          "For t-tests with a reported d, coherence checks yielded 1 match under assumptions, 1 no match.",
+          "For F-tests with a reported eta-squared effect size, coherence checks yielded 1 no match.",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(20) = 1.00, p 0.32, d = 3.00.\", \n\"t(23) = 2.73, d = 0.56.\", \"F(1, 13) = 2.34, ηp² = 0.35.\"), \n    \"Effect Size\" = c(\"d = 3.00\", \"d = 0.56\", \"ηp² = 0.35\"), \n    \"Reported Test\" = c(\"t(20) = 1.00\", \"t(23) = 2.73\", \"F(1, 13) = 2.34\"\n    ), \"Test Type\" = c(\"t-test\", \"t-test\", \"F-test\"), \"d Coherence\" = c(\"no_match\", \n    \"match_under_assumptions\", NA), \"d Assumption\" = c(\"none\", \n    \"paired_dz\", NA), \"d Coherence Note\" = c(\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n    \"Match under paired-samples dz assumption.\", NA), \"eta Coherence\" = c(NA, \n    NA, \"no_match\"), \"eta Assumption\" = c(NA, NA, \"partial_eta_squared\"\n    ), \"eta Coherence Note\" = c(NA, NA, \"No match under partial eta-squared formula from F and dfs. Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\"\n    )), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All effect sizes were reported, but some appear inconsistent with the test statistic. This can be because the effect size is not clearly labeled (e.g., d, instead of d_rm), because the effect sizes is not reported with enough precisions (e.g., 0.3 instead of 0.32), or because the effect size is incorrectly reported."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

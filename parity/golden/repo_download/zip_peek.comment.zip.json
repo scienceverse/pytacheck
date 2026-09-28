@@ -1,0 +1,64 @@
+{
+  "id": "zip_peek.comment.zip",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "name",
+      "size",
+      "method",
+      "csize",
+      "offset",
+      "crc"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "folder/results.csv",
+          "folder/plot.png"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1440,
+          72
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          696,
+          74
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          39,
+          783
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          773114359,
+          2149987689
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

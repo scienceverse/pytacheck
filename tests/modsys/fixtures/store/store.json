@@ -1,0 +1,5 @@
+{
+  "name": "fixture",
+  "description": "A one-pack store for the tests (the real store is scienceverse/pytacheck-modules).",
+  "fields": []
+}

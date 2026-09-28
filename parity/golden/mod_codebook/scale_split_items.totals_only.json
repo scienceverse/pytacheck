@@ -1,0 +1,37 @@
+{
+  "id": "scale_split_items.totals_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "items",
+      "derived",
+      "totals_only"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "IERQ_pos",
+          "IERQ_persp",
+          "IERQ_sooth",
+          "IERQ_model"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

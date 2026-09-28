@@ -1,0 +1,66 @@
+{
+  "id": "llm.structured.empty_and_error",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Note (not fatal): 1 of 2 LLM extractions failed and was left blank; the other 1 succeeded and all checks continued.\nRow 2: reason\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text",
+      "variables.variable_name",
+      "variables.label",
+      "variables.kind",
+      ".error",
+      ".error_msg"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "none",
+          "bad schema"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

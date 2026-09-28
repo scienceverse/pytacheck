@@ -1,0 +1,56 @@
+{
+  "id": "mplus_output_tables.tricky.univariate_higher-order_",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "tables",
+      "consumed",
+      "labelvalue"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Y1                   0.100      -0.200     -2.000    1.00%      -0.500      0.000"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.100"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

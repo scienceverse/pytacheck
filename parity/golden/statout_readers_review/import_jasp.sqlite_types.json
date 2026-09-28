@@ -1,0 +1,142 @@
+{
+  "id": "import_jasp.sqlite_types",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Column `v`: mixed type, first seen values of type real, coercing other values of type string",
+    "Column `v`: mixed type, first seen values of type string, coercing other values of type real",
+    "Column `v`: mixed type, first seen values of type real, coercing other values of type string",
+    "Column `value`: mixed type, first seen values of type string, coercing other values of type integer",
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "data",
+      "columns",
+      "format",
+      "data_file_path"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "mixed",
+          "textfirst",
+          "intfirst",
+          "allnull",
+          "nom_text",
+          "untyped_null",
+          "big"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              12,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abc",
+              "2.0",
+              "1.0e-07"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              7,
+              0,
+              2.5
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3000000000,
+              1,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "name",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mixed",
+              "textfirst",
+              "intfirst",
+              "allnull",
+              "nom_text",
+              "untyped_null",
+              "big"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "scale",
+              "scale",
+              "scale",
+              "scale",
+              "nominal",
+              "scale",
+              "scale"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sqlite"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

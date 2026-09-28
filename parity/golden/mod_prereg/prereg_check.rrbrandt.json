@@ -1,0 +1,339 @@
+{
+  "id": "prereg_check.rrbrandt",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "item1",
+          "item2",
+          "item3",
+          "item4",
+          "item5",
+          "item6",
+          "item7",
+          "item8",
+          "item9",
+          "item10",
+          "item11",
+          "sample_size",
+          "sample_size_rationale",
+          "item17",
+          "item18",
+          "item19",
+          "item20",
+          "item21",
+          "item22",
+          "item23",
+          "item24",
+          "item26",
+          "item27",
+          "a_successful_replication_is_defined_as",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Replication Recipe (Brandt et al., 2013): Pre-Registration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Using RSA to compare the face 'trait space' with the group-level stereotype space across race and gender: A Replication"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "vzb48"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/vzb48"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2019-01-13T21:45:05.587829"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-08-24T01:25:21.341571"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2019-01-13T21:45:05.563874"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-vzb48-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "In a previous study, we examined whether differences in the facial 'trait space' across groups were partially explained by differences in stereotype content across these groups (as rated by an independent set of observers). We had two datasets: the face trait rating dataset consisted of 290,641 ratings (from 3,619 participants) of various faces belonging to different race/gender categories on 14 different traits (e.g., \"trustworthy\"). The group-level stereotype content dataset consisted of 4,815 meta-perceptions of each group on each of these 14 traits, rated by 344 participants independent of the previous dataset.\n\nWe used RSA to compare the similarity of (A) trait-pair correlations from face ratings (e.g., \"How trustworthy is this person?\") of faces varying along race/gender with (B) trait-pair correlations from independent meta-perceptions of each race/gender group (e.g., \"Please indicate how people in society see Black Women [on trustworthiness]\").\n\nIn our original study, we found a correlation of r = .818 between these trait spaces. In other words, across all trait-pair correlations for all 6 groups, the average correlation between any pair of traits (e.g., warm and friendly) between ratings of faces and ratings of social groups were strongly related. This is a large effect, so we wanted to replicate the results.\n\nHere, we are collecting data for a direct replication. Using the exact same data collection method on the same platform (Amazon MTurk, Qualtrics), we are collecting data on group-level meta-perceptions of the 6 groups on all 14 traits (e.g., \"Please indicate how people in society see Black Women [on trustworthiness]\") to replicate this effect. Data will be cleaned according to pre-registered cleaning procedures, [https://osf.io/65tpb/].\n\n\nDATA COLLECTION PROCEDURE &amp; PARTICIPANT INFORMATION FROM ORIGINAL STUDY:\n\nParticipants (N = 360) were recruited from MTurk across the US with monetary compensation, and rated societal perceptions of female and male White, Black, and Asian groups on the same 14 traits on 1-“Not at all” to 7-“Very much” Likert scales (e.g., “Please indicate how people in society see BLACK MEN.”). Both group and trait presentation were randomized. 10 participants were removed for no variation in their responses; and 8 participants were removed for indicating on a data quality check that we should not use their data. Participants who self-reported as non-Hispanic White (73.0%) were included in analyses, resulting in 344 participants aged 18 to 80 (Mage = 34.91, SDage = 11.28, 46.81% female)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Our initial effect size was large. Although we had a large number of face ratings (290,641 from 3,619 participants), we had a much smaller dataset of group-level trait ratings (4,815 ratings from 344 participants), so we wanted to collect more data for the latter."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "r = .818 (Spearman's rho)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "[.789, .848]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "344"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Online - MTurk, Qualtrics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "US"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MTurk"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Online, computer (Mturk)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The materials will not have changed, and we are recruiting from the same population (MTurk)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "240"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "40 ratings from different participants x 6 social groups (e.g., White men) = 240"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Different sample. We may get a different effect due to sampling variability."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data cleaning procedures are pre-registered here: [https://osf.io/65tpb/]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The exact same as the original:\n\n\"To structure the data, we first create a 14 × 14 trait correlation matrix for each of the 6 groups (i.e., ratings of female and male White, Black, and Asian faces or groups), removed all repeated trait pairs, and converted each matrix to a single column vector. These vectors were joined to create a 91 × 6 matrix with 91 trait-pair correlations for each of the 6 social groups. We do this for both the face trait space (i.e., ratings of faces) and the group-level stereotype content space (i.e., abstract evaluations of these societal groups)\n\nData will be restructured such that the 91 × 6 face trait matrix and 91 × 6 stereotype content trait matrix are converted to 2 column vectors, producing a 546 × 2 matrix representing trait-pair correlations across all groups for face ratings and meta-perceptions of social groups. To analyze, we calculate the correlation of each row across all rows.\""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A similar effect size given the confidence bands."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_vzb48"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/vzb48' target='_blank'>vzb48<\/a>\", \n    title = \"Using RSA to compare the face 'trait space' with the group-level stereotype space across race and gender: A Replication\", \n    template = \"Replication Recipe (Brandt et al., 2013): Pre-Registration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"vzb48\", sample_size = \"240\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"item1\", \"item2\", \"item3\", \"item4\", \"item5\", \"item6\", \n\"item7\", \"item8\", \"item9\", \"item10\", \"item11\", \"sample_size\", \n\"sample_size_rationale\", \"item17\", \"item18\", \"item19\", \"item20\", \n\"item21\", \"item22\", \"item23\", \"item24\", \"item26\", \"item27\", \"a_successful_replication_is_defined_as\", \n\"paper_id\"), \"Preregistration 1\" = c(\"Replication Recipe (Brandt et al., 2013): Pre-Registration\", \n\"Using RSA to compare the face 'trait space' with the group-level stereotype space across race and gender: A Replication\", \n\"vzb48\", \"https://osf.io/vzb48\", \"2019-01-13T21:45:05.587829\", \n\"2020-08-24T01:25:21.341571\", \"2019-01-13T21:45:05.563874\", \"\", \n\"https://archive.org/details/osf-registrations-vzb48-v1\", \"In a previous study, we examined whether differences in the facial 'trait space' across groups were partially explained by differences in stereotype content across these groups (as rated by an independent set of observers). We had two datasets: the face trait rating dataset consisted of 290,641 ratings (from 3,619 participants) of various faces belonging to different race/gender categories on 14 different traits (e.g., \\\"trustworthy\\\"). The group-level stereotype content dataset consisted of 4,815 meta-perceptions of each group on each of these 14 traits, rated by 344 participants independent of the previous dataset.<br><br>We used RSA to compare the similarity of (A) trait-pair correlations from face ratings (e.g., \\\"How trustworthy is this person?\\\") of faces varying along race/gender with (B) trait-pair correlations from independent meta-perceptions of each race/gender group (e.g., \\\"Please indicate how people in society see Black Women [on trustworthiness]\\\").<br><br>In our original study, we found a correlation of r = .818 between these trait spaces. In other words, across all trait-pair correlations for all 6 groups, the average correlation between any pair of traits (e.g., warm and friendly) between ratings of faces and ratings of social groups were strongly related. This is a large effect, so we wanted to replicate the results.<br><br>Here, we are collecting data for a direct replication. Using the exact same data collection method on the same platform (Amazon MTurk, Qualtrics), we are collecting data on group-level meta-perceptions of the 6 groups on all 14 traits (e.g., \\\"Please indicate how people in society see Black Women [on trustworthiness]\\\") to replicate this effect. Data will be cleaned according to pre-registered cleaning procedures, [https://osf.io/65tpb/].<br><br><br>DATA COLLECTION PROCEDURE &amp; PARTICIPANT INFORMATION FROM ORIGINAL STUDY:<br><br>Participants (N = 360) were recruited from MTurk across the US with monetary compensation, and rated societal perceptions of female and male White, Black, and Asian groups on the same 14 traits on 1-“Not at all” to 7-“Very much” Likert scales (e.g., “Please indicate how people in society see BLACK MEN.”). Both group and trait presentation were randomized. 10 participants were removed for no variation in their responses; and 8 participants were removed for indicating on a data quality check that we should not use their data. Participants who self-reported as non-Hispanic White (73.0%) were included in analyses, resulting in 344 participants aged 18 to 80 (Mage = 34.91, SDage = 11.28, 46.81% female).\", \n\"Our initial effect size was large. Although we had a large number of face ratings (290,641 from 3,619 participants), we had a much smaller dataset of group-level trait ratings (4,815 ratings from 344 participants), so we wanted to collect more data for the latter.\", \n\"r = .818 (Spearman's rho)\", \"[.789, .848]\", \"344\", \"Online - MTurk, Qualtrics\", \n\"US\", \"MTurk\", \"Online, computer (Mturk)\", \"yes\", \"The materials will not have changed, and we are recruiting from the same population (MTurk).\", \n\"240\", \"40 ratings from different participants x 6 social groups (e.g., White men) = 240\", \n\"Exact\", \"Exact\", \"Exact\", \"Exact\", \"Exact\", \"Exact\", \"Exact\", \n\"Different sample. We may get a different effect due to sampling variability.\", \n\"Data cleaning procedures are pre-registered here: [https://osf.io/65tpb/]\", \n\"The exact same as the original:<br><br>\\\"To structure the data, we first create a 14 × 14 trait correlation matrix for each of the 6 groups (i.e., ratings of female and male White, Black, and Asian faces or groups), removed all repeated trait pairs, and converted each matrix to a single column vector. These vectors were joined to create a 91 × 6 matrix with 91 trait-pair correlations for each of the 6 social groups. We do this for both the face trait space (i.e., ratings of faces) and the group-level stereotype content space (i.e., abstract evaluations of these societal groups)<br><br>Data will be restructured such that the 91 × 6 face trait matrix and 91 × 6 stereotype content trait matrix are converted to 2 column vectors, producing a 546 × 2 matrix representing trait-pair correlations across all groups for face ratings and meta-perceptions of social groups. To analyze, we calculate the correlation of each row across all rows.\\\"\", \n\"A similar effect size given the confidence bands.\", \"p_vzb48\"\n)), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \"date_created\", \n\"date_modified\", \"date_registered\", \"embargo_end_date\", \"ia_url\", \n\"item1\", \"item2\", \"item3\", \"item4\", \"item5\", \"item6\", \"item7\", \n\"item8\", \"item9\", \"item10\", \"item11\", \"sample_size\", \"sample_size_rationale\", \n\"item17\", \"item18\", \"item19\", \"item20\", \"item21\", \"item22\", \"item23\", \n\"item24\", \"item26\", \"item27\", \"a_successful_replication_is_defined_as\", \n\"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_vzb48"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

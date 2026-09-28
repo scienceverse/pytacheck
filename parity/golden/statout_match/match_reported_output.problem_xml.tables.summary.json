@@ -1,0 +1,59 @@
+{
+  "id": "match_reported_output.problem_xml.tables.summary",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Unknown or uninitialised column: `schema_version`."
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "n_tests",
+      "n_found",
+      "n_full",
+      "n_partial",
+      "n_missing",
+      "pct_found"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          53
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          52
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.9
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

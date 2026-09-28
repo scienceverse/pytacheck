@@ -1,0 +1,52 @@
+{
+  "id": "gitlab_links.review.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "href",
+      "text_id",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://gitlab.com/group/sub/project",
+          "https://GitLab.com/Upper/Case.git",
+          "my-org/my.repo_v2",
+          "foo/bar",
+          "1/2",
+          "Lab/Tool.git"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          2,
+          2,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

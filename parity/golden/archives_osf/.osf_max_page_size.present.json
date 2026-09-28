@@ -1,0 +1,14 @@
+{
+  "id": ".osf_max_page_size.present",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "https://api.osf.io/v2/x/?page=2&page[size]=50"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

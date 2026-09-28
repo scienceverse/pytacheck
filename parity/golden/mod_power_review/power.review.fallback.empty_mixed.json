@@ -1,0 +1,296 @@
+{
+  "id": "power.review.fallback.empty_mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Note (not fatal): 2 of 2 LLM extractions failed and were left blank; the other 0 succeeded and all checks continued.\nRows 1, 2: reasons\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "answer",
+          "power_type",
+          "statistical_test",
+          "statistical_test_other",
+          "sample_size",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "effect_size_metric_other",
+          "software",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A sensitivity power analysis indicated that 40 participants give 90% power for d = 0.8 with pwr."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "```json\n[\n  {\n    \"power_type\": \"sensitivity\",\n    \"statistical_test\": \"unpaired t-test\",\n    \"statistical_test_other\": null,\n    \"sample_size\": 40,\n    \"power\": 0.9,\n    \"effect_size\": 0.8,\n    \"effect_size_metric\": \"Cohen's d\",\n    \"effect_size_metric_other\": null,\n    \"software\": \"pwr\"\n  }\n]\n```"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sensitivity"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unpaired t-test"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              40
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.9
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pwr"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We used the LLM model 'groq/test-model' to check the contents of 2 paragraphs that contained words suggesting they might contain power analyses.",
+          "(The provider does not support structured outputs for this schema; used prompt-based extraction instead.)",
+          "All essential information could be detected.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_type = \"sensitivity\", statistical_test = \"unpaired t-test\", \n    sample_size = 40L, power = 0.9, effect_size = 0.8, effect_size_metric = \"Cohen's d\", \n    software = \"pwr\"), row.names = c(NA, -1L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = \"A <strong>sensitivity<\/strong> <strong>power<\/strong> analysis indicated that 40 participants give 90% <strong>power<\/strong> for d = 0.8 with pwr.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 1 potential power analysis."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete",
+          "power_statistical_test",
+          "power_sample_size",
+          "power_power",
+          "power_effect_size",
+          "power_effect_size_metric",
+          "power_software"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

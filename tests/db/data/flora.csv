@@ -1,0 +1,10 @@
+id,doi_o,apa_ref_o,doi_r,apa_ref_r,url_r,outcome,outcome_quote,type,extra
+a,10.1037/0003-066x.54.6.408,"Eagly, A. H., & Wood, W. (1999). The origins.",10.1177/rep1,"Rep, A. (2020). A replication. https://doi.org/10.1177/rep1",,successful,"We replicated
+the effect.",replication,x
+b,10.1037/0003-066x.54.6.408,"Eagly, A. H., & Wood, W. (1999). The origins.",10.1177/rep1,"Rep, A. (2020). A replication. https://doi.org/10.1177/rep1",,successful,"We replicated
+the effect.",replication,y
+c,  10.1002/acp.1376  ," Garry, M. (2007). Eyewitness. ",,"Only URL (2021).",https://osf.io/abcde,failed,"  no effect  ",replication,z
+d,,"No original DOI",10.1/x,"Rep",,failed,q,replication,z
+e,10.9/noreplication,"Orig",NA,"Rep",NA,mixed,q,reproduction,z
+f,10.9/quotedna,"Orig","NA","Rep","",mixed,"NA",reproduction,z
+g,10.1177/0956797614520714,"Gino, F. (2014). Evil genius.",10.1525/collabra.1,"Replicator, B. (2022). Evil genius replicated.",,failed,"The ""effect"" was not found",replication,w

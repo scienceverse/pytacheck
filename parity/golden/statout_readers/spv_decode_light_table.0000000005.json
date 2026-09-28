@@ -1,0 +1,76 @@
+{
+  "id": "spv_decode_light_table.0000000005",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "Gender",
+      "Statistics",
+      "Variables",
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "N",
+          "N",
+          "N",
+          "Mean",
+          "Mean",
+          "Mean",
+          "Std. Deviation",
+          "Std. Deviation",
+          "Std. Deviation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Scales / age",
+          "Scales / Score",
+          "Valid N (listwise)",
+          "Scales / age",
+          "Scales / Score",
+          "Valid N (listwise)",
+          "Scales / age",
+          "Scales / Score",
+          "Valid N (listwise)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "120",
+          "34.5678901234568",
+          "0.333333333333333",
+          "118",
+          "0",
+          null,
+          "1e+20",
+          ".",
+          "^1 of ^2"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

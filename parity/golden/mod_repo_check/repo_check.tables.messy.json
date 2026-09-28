@@ -1,0 +1,413 @@
+{
+  "id": "repo_check.tables.messy",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Repository",
+          "Platform",
+          "All Files",
+          "Data Files",
+          "Code Files",
+          "READMEs",
+          "Archives"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='tests/mod_repo_check/fixtures/messy' target='_blank'>tests/mod_repo_check/fixtures/messy<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "local"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "Repository",
+          "File",
+          "Size",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy",
+              "tests/mod_repo_check/fixtures/messy"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv",
+              "fig1.png",
+              "fig10.png",
+              "fig2.png",
+              "LICENSE.txt",
+              "task.edat",
+              "task.txt",
+              "merged.emrg2",
+              "notes (final)!.docx",
+              "results.tar.gz",
+              "raw data.csv",
+              "analysis.R",
+              "stimuli.edat2",
+              "weird.xyz123"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "32 B",
+              "4 B",
+              "4 B",
+              "4 B",
+              "10 B",
+              "5 B",
+              "17 B",
+              "5 B",
+              "6 B",
+              "4 B",
+              "12 B",
+              "30 B",
+              "5 B",
+              "5 B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "data",
+              "code",
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "File",
+          "Rule",
+          "Severity",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "notes (final)!.docx",
+              "notes (final)!.docx",
+              "raw data.csv",
+              "weird.xyz123",
+              "fig1.png",
+              "fig2.png"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "spaces",
+              "special-characters",
+              "spaces",
+              "unclassifiable",
+              "zero-padding",
+              "zero-padding"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "suggestion",
+              "suggestion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains a space",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+              "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "study2/analysis.R"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "merged.emrg2",
+              "raw data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "merged.emrg2",
+              "Study 1/raw data.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv",
+              "LICENSE.txt",
+              "notes (final)!.docx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "—",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "docs/codebook.csv",
+              "LICENSE.txt",
+              "notes (final)!.docx"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fig1.png",
+              "fig10.png",
+              "fig2.png",
+              "task.edat",
+              "task.txt",
+              "stimuli.edat2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fig1.png",
+              "fig10.png",
+              "fig2.png",
+              "materials/task.edat",
+              "materials/task.txt",
+              "study3/stimuli.edat2"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "results.tar.gz"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "results.tar.gz"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "weird.xyz123"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "weird.xyz123"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

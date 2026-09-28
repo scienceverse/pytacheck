@@ -1,0 +1,10 @@
+{
+"data_check.empty_paper": {"r": "ac5146cf65ca52a8", "py": "f6ed4c37c2d99956", "diff": ["<R error, Python value>"]},
+"data_check.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "1d3e1015eead7522", "diff": ["<R error, Python value>"]},
+"review.archives_download_none": {"r": "cf95ad127d58d201", "py": "d8b026366c8193c5", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table"]},
+"review.broken_list": {"r": "a2ba6dc1acf26e01", "py": "2a1c012b94e43c01", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_table.spreadsheet_file_n[]", "summary_table.spreadsheet_flagged_file_n[]", "summary_text", "table"]},
+"review.download_count_cap": {"r": "cc77db37984a6019", "py": "11c2ff40a36d4b04", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"review.mixed_list": {"r": "4050c61fc0dd5385", "py": "79c6054c4e52ee5b", "diff": ["summary_text[]"]},
+"review.nodata_list": {"r": "629c7a1f4c947dbf", "py": "55e8ec836086727a", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table"]},
+"review.text": {"r": "1243bc1852961f60", "py": "93063cbec636702b", "diff": ["summary_text[]"]}
+}

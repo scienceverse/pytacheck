@@ -1,0 +1,60 @@
+{
+ "data": {
+  "id": "escps",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration escps",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+   "ia_url": "https://archive.org/details/osf-registrations-escps-v1",
+   "registration_responses": {
+    "description-methods.design.question3b": [
+     [
+      "a\u0007b\bc\fd\u000be\u0001fg",
+      "hi j k"
+     ],
+     [
+      "͸￾󠇰",
+      "tab\there \"quoted\" back\\slash"
+     ],
+     "x"
+    ],
+    "description-hypothesis.question2a": [
+     [
+      "​­",
+      "😀⿼𮯰"
+     ],
+     [
+      "line\nbreak"
+     ]
+    ],
+    "84-7": "plain"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "5730e99a9ad5a102c5745a8a",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/5730e99a9ad5a102c5745a8a/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/escps/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

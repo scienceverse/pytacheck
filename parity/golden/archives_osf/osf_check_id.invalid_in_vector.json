@@ -1,0 +1,18 @@
+{
+  "id": "osf_check_id.invalid_in_vector",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "xxx is not a valid OSF ID"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "pngda",
+      null,
+      "8c3kb"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

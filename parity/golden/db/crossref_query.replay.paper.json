@@ -1,0 +1,1240 @@
+{
+  "id": "crossref_query.replay.paper",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 41,
+    "names": [
+      "DOI",
+      "score",
+      "type",
+      "title",
+      "author",
+      "publisher",
+      "container-title",
+      "year",
+      "volume",
+      "issue",
+      "page",
+      "URL",
+      "ref",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1093/brain/110.3.747",
+          "10.1046/j.1460-9568.2001.01385.x",
+          "10.1016/j.cogbrainres.2005.05.014",
+          "10.1093/cercor/bhp291",
+          "10.1152/jn.1998.80.6.2870",
+          null,
+          "10.1093/acprof:oso/9780199231447.003.0020",
+          "10.1007/bf00230027",
+          "10.1098/rstb.2008.0156",
+          "10.1093/brain/119.2.593",
+          "10.1016/j.tics.2004.07.002",
+          "10.1093/cercor/bhn181",
+          "10.1007/bf00248742",
+          "10.1093/cercor/bhm239",
+          "10.1016/0168-0102(95)00950-7",
+          "10.1093/acprof:oso/9780199231447.003.0018",
+          "10.1016/s0896-6273(03)00838-9",
+          "10.1162/jocn.2009.21189",
+          "10.1016/j.neuron.2004.12.033",
+          "10.1016/j.clinph.2009.01.003",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          111.11768,
+          136.47302,
+          130.2286,
+          130.7778,
+          105.86002,
+          null,
+          72.99166,
+          115.67183,
+          76.77081,
+          100.12454,
+          100.030396,
+          147.56873,
+          130.809,
+          169.04784,
+          130.58028,
+          65.53186,
+          113.33658,
+          89.01723,
+          96.73683,
+          121.98983,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          null,
+          "book-chapter",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "book-chapter",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RECOVERY FROM IDEOMOTOR APRAXIA",
+          "Action observation activates premotor and parietal areas in a somatotopic manner: an fMRI study",
+          "On beyond mirror neurons: Internal representations subserving imitation and recognition of skilled object-related actions in humans",
+          "State-Dependent TMS Reveals a Hierarchical Representation of Observed Acts in the Temporal, Parietal, and Premotor Cortices",
+          "Intracortical Inhibition and Facilitation in Different Representations of the Human Motor Cortex",
+          null,
+          "Action mirroring and action understanding: an alternative account",
+          "Understanding motor events: a neurophysiological study",
+          "The role of social cognition in decision making",
+          "Action recognition in the premotor cortex",
+          "A unifying view of the basis of social cognition",
+          "The Observation and Execution of Actions Share Motor and Somatosensory Voxels in all Tested Subjects: Single-Subject Analyses of Unsmoothed fMRI Data",
+          "Functional organization of inferior area 6 in the macaque monkey",
+          "Depression of Human Corticospinal Excitability Induced by Magnetic Theta-burst Stimulation: Evidence of Rapid Polarity-Reversing Metaplasticity",
+          "Somatotopy of monkey premotor cortex examined with microstimulation",
+          "The motor hierarchy: from kinematics to goals and intentions",
+          "Somatotopic Representation of Action Words in Human Motor and Premotor Cortex",
+          "Eight Problems for the Mirror Neuron Theory of Action Understanding in Monkeys and Humans",
+          "Theta Burst Stimulation of the Human Motor Cortex",
+          "The effect of continuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "ANNA",
+                  "ERMINIO",
+                  "SERGIO DELLA",
+                  "MARCELLA",
+                  "HANS"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "BASSO",
+                  "CAPITANI",
+                  "SALA",
+                  "LAIACONA",
+                  "SPINNLER"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 10,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "G.",
+                  "F.",
+                  "G. R.",
+                  "L.",
+                  "L.",
+                  "V.",
+                  "R. J.",
+                  "K.",
+                  "G.",
+                  "H.-J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Buccino",
+                  "Binkofski",
+                  "Fink",
+                  "Fadiga",
+                  "Fogassi",
+                  "Gallese",
+                  "Seitz",
+                  "Zilles",
+                  "Rizzolatti",
+                  "Freund"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Laurel J.",
+                  "Kathleen M.",
+                  "Rukmini"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Buxbaum",
+                  "Kyle",
+                  "Menon"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "L.",
+                  "M.",
+                  "J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Cattaneo",
+                  "Sandrini",
+                  "Schwarzbach"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 7,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Robert",
+                  "Alda",
+                  "Cathrin",
+                  "Brian",
+                  "Ulf",
+                  "JOHN C.",
+                  "Leonardo G."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Chen",
+                  "Tam",
+                  "Bütefisch",
+                  "Corwell",
+                  "Ziemann",
+                  "Rothwell",
+                  "Cohen"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Gergely"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Csibra"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "G.",
+                  "L.",
+                  "L.",
+                  "V.",
+                  "G."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "di Pellegrino",
+                  "Fadiga",
+                  "Fogassi",
+                  "Gallese",
+                  "Rizzolatti"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Chris D",
+                  "Tania"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Frith",
+                  "Singer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Vittorio",
+                  "Luciano",
+                  "Leonardo",
+                  "Giacomo"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gallese",
+                  "Fadiga",
+                  "Fogassi",
+                  "Rizzolatti"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "V",
+                  "C",
+                  "G"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "GALLESE",
+                  "KEYSERS",
+                  "RIZZOLATTI"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "V.",
+                  "C."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gazzola",
+                  "Keysers"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "G.",
+                  "R.",
+                  "L.",
+                  "M.",
+                  "G.",
+                  "M."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Rizzolatti",
+                  "Camarda",
+                  "Fogassi",
+                  "Gentilucci",
+                  "Luppino",
+                  "Matelli"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "R.",
+                  "K.",
+                  "C.",
+                  "D.",
+                  "J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gentner",
+                  "Wankerl",
+                  "Reinsberger",
+                  "Zeller",
+                  "Classen"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Moshe",
+                  "Andrew R",
+                  "Berber van",
+                  "Hans van der"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Godschalk",
+                  "Mitz",
+                  "Duin",
+                  "Burga"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Antonia F de C.",
+                  "Scott T."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hamilton",
+                  "Grafton"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Olaf",
+                  "Ingrid",
+                  "Friedemann"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hauk",
+                  "Johnsrude",
+                  "Pulvermüller"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Gregory"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hickok"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Ying-Zu",
+                  "Mark J.",
+                  "Elisabeth",
+                  "Kailash P.",
+                  "John C."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Huang",
+                  "Edwards",
+                  "Rounis",
+                  "Bhatia",
+                  "Rothwell"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 9,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Ying-Zu",
+                  "John C.",
+                  "Chin-Song",
+                  "JiunJie",
+                  "Yi-Hsin",
+                  "Szu-Chia",
+                  "Wen-Li",
+                  "June",
+                  "Rou-Shayn"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Huang",
+                  "Rothwell",
+                  "Lu",
+                  "Wang",
+                  "Weng",
+                  "Lai",
+                  "Chuang",
+                  "Hung",
+                  "Chen"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Oxford University Press (OUP)",
+          "Wiley",
+          "Elsevier BV",
+          "Oxford University Press (OUP)",
+          "American Physiological Society",
+          null,
+          "Oxford University Press",
+          "Springer Science and Business Media LLC",
+          "The Royal Society",
+          "Oxford University Press (OUP)",
+          "Elsevier BV",
+          "Oxford University Press (OUP)",
+          "Springer Science and Business Media LLC",
+          "Oxford University Press (OUP)",
+          "Elsevier BV",
+          "Oxford University Press",
+          "Elsevier BV",
+          "MIT Press",
+          "Elsevier BV",
+          "Elsevier BV",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Brain",
+          "European Journal of Neuroscience",
+          "Cognitive Brain Research",
+          "Cerebral Cortex",
+          "Journal of Neurophysiology",
+          null,
+          "Sensorimotor Foundations of Higher Cognition",
+          "Experimental Brain Research",
+          "Philosophical Transactions of the Royal Society B: Biological Sciences",
+          "Brain",
+          "Trends in Cognitive Sciences",
+          "Cerebral Cortex",
+          "Experimental Brain Research",
+          "Cerebral Cortex",
+          "Neuroscience Research",
+          "Sensorimotor Foundations of Higher Cognition",
+          "Neuron",
+          "Journal of Cognitive Neuroscience",
+          "Neuron",
+          "Clinical Neurophysiology",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1987,
+          2001,
+          2005,
+          2010,
+          1998,
+          null,
+          1993,
+          1992,
+          2008,
+          1996,
+          2004,
+          2009,
+          1988,
+          2008,
+          1995,
+          1993,
+          2004,
+          2009,
+          2005,
+          2009,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "110",
+          "13",
+          "25",
+          "20",
+          "80",
+          null,
+          null,
+          "91",
+          "363",
+          "119",
+          "8",
+          "19",
+          "71",
+          "18",
+          "23",
+          null,
+          "41",
+          "21",
+          "45",
+          "120",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3",
+          "2",
+          "1",
+          "9",
+          "6",
+          null,
+          null,
+          "1",
+          "1511",
+          "2",
+          "9",
+          "6",
+          "3",
+          "9",
+          "3",
+          null,
+          "2",
+          "7",
+          "2",
+          "4",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "747-760",
+          "400-404",
+          "226-239",
+          "2252-2258",
+          "2870-2881",
+          null,
+          "435-459",
+          "176-180",
+          "3875-3886",
+          "593-609",
+          "396-403",
+          "1239-1255",
+          "491-507",
+          "2046-2053",
+          "269-279",
+          "381-407",
+          "301-307",
+          "1229-1243",
+          "201-206",
+          "796-801",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1093/brain/110.3.747",
+          "https://doi.org/10.1046/j.1460-9568.2001.01385.x",
+          "https://doi.org/10.1016/j.cogbrainres.2005.05.014",
+          "https://doi.org/10.1093/cercor/bhp291",
+          "https://doi.org/10.1152/jn.1998.80.6.2870",
+          null,
+          "https://doi.org/10.1093/acprof:oso/9780199231447.003.0020",
+          "https://doi.org/10.1007/bf00230027",
+          "https://doi.org/10.1098/rstb.2008.0156",
+          "https://doi.org/10.1093/brain/119.2.593",
+          "https://doi.org/10.1016/j.tics.2004.07.002",
+          "https://doi.org/10.1093/cercor/bhn181",
+          "https://doi.org/10.1007/bf00248742",
+          "https://doi.org/10.1093/cercor/bhm239",
+          "https://doi.org/10.1016/0168-0102(95)00950-7",
+          "https://doi.org/10.1093/acprof:oso/9780199231447.003.0018",
+          "https://doi.org/10.1016/s0896-6273(03)00838-9",
+          "https://doi.org/10.1162/jocn.2009.21189",
+          "https://doi.org/10.1016/j.neuron.2004.12.033",
+          "https://doi.org/10.1016/j.clinph.2009.01.003",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Recovery from ideomotor apraxia: A study on acute stroke patients; \\nBasso, A; Capitani, E; Della Sala, S; Laiacona, M; Spinnler, H; \\nBrain",
+          "Action observation activates premotor and parietal areas in a somatotopic manner: An fMRI study; \\nBuccino, G; Binkofski, F; Fink, G R; Fadiga, L; Fogassi, L; Gallese, V; Freund, . .; , H J; \\nEuropean Journal of Neuroscience",
+          "On beyond mirror neurons: Internal representations subserving imitation and recognition of skilled object-related actions in humans; \\nBuxbaum, L J; Kyle, K M; Menon, R; \\nCognitive Brain Research",
+          "Statedependent TMS reveals a hierarchical representation of observed acts in the temporal, parietal, and premotor cortices; \\nCattaneo, L; Sandrini, M; Schwarzbach, J; \\nCerebral Cortex",
+          "Intracortical inhibition and facilitation in different representations of the human motor cortex; \\nChen, R; Tam, A; Butefisch, C; Corwell, B; Ziemann, U; Rothwell, J C; Cohen, L G; \\nJournal of Neurophysiology",
+          "Cook, R; Bird, G; Catmur, C; Press, C; Heyes, C M",
+          "Action mirroring and action understanding: An alternative account; \\nCsibra, G",
+          "Understanding motor events: A neurophysiological study; \\nDi Pellegrino, G; Fadiga, L; Fogassi, L; Gallese, V; Rizzolatti, G; \\nExperimental Brain Research",
+          "The role of social cognition in decision making; \\nFrith, C D; Singer, T; \\nPhilosophical Transactions of the Royal Society B: Biological Sciences",
+          "Action recognition in the premotor cortex; \\nGallese, V; Fadiga, L; Fogassi, L; Rizzolatti, G; \\nBrain",
+          "A unifying view of the basis of social cognition; \\nGallese, V; Keysers, C; Rizzolatti, G; \\nTrends in Cognitive Sciences",
+          "The observation and execution of actions share motor and somatosensory voxels in all tested subjects: Single-subject analyses of unsmoothed fMRI data; \\nGazzola, V; Keysers, C; \\nCerebral Cortex",
+          "Functional organization of inferior area 6 in the macaque monkey: I. Somatotopy and the control of proximal movements; \\nGentilucci, M; Fogassi, L; Luppino, G; Matelli, M; Camarda, R; Rizzolatti, G; \\nExperimental Brain Research",
+          "Depression of human corticospinal excitability induced by magnetic theta-burst stimulation: Evidence of rapid polarity-reversing metaplasticity; \\nGentner, R; Wankerl, K; Reinsberger, C; Zeller, D; Classen, J; \\nCerebral Cortex",
+          "Somatotopy of monkey premotor cortex examined with microstimulation; \\nGodschalk, M; Mitz, A R; Van Duin, B; Van Der Burg, H; \\nNeuroscience Research",
+          "The motor hierarchy: From kinematics to goals and intentions; \\nHamilton, A; Grafton, S",
+          "Somatotopic representation of action words in the motor and premotor cortex; \\nHauk, O; Johnsrude, I; Pulvermüller, F; \\nNeuron",
+          "Eight problems for the mirror neuron theory of action understanding in monkeys and humans; \\nHickok, G; \\nJournal of Cognitive Neuroscience",
+          "Theta burst stimulation of the human motor cortex; \\nHuang, Y Z; Edwards, M J; Rounis, E; Bhatia, K P; Rothwell, J C; \\nNeuron",
+          "The effect of continuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord; \\nHuang, Y Z; Rothwell, J C; Lu, C S; Wang, J; Weng, Y H; Lai, S C; Chen, R S; \\nClinical Neurophysiology",
+          "Grasping the intentions of others with one's own mirror neuron system; \\nIacoboni, M; Molnar-Szakacs, I; Gallese, V; Buccino, G; Mazziotta, J C; Rizzolatti, G; \\nPLoS Biology",
+          "Coding observed motor acts: Different organizational principles in parietal and premotor cortex of humans; \\nJastorff, J; Begliomini, C; Fabbri-Destro, M; Rizzolatti, G; Orban, G; \\nJournal of Neurophysiology",
+          "Predictive coding: An account of the mirror neuron system; \\nKilner, J; Friston, K; Frith, C; \\nCognitive Processing",
+          "Evidence of mirror neurons in human inferior frontal gyrus; \\nKilner, J; Neal, A; Weiskopf, N; Friston, K; Frith, C; \\nThe Journal of Neuroscience",
+          "Charting the excitability of premotor to motor connections while withholding or initiating a selected movement; \\nKroeger, J; Bäumer, T; Jonas, M; Rothwell, J; Siebner, H; Münchau, A; \\nEuropean Journal of Neuroscience",
+          "The elusive lesion-apraxia of speech link in Broca's aphasia; \\nMarquardt, T; Sussman, H",
+          "The neural basis of body form and body action agnosia; \\nMoro, V; Urgesi, C; Pernigo, S; Lanteri, P; Pazzaglia, M; Aglioti, S M; \\nNeuron",
+          "Single-neuron responses in humans during execution and observation of actions; \\nMukamel, R; Ekstrom, A D; Kaplan, J; Iacoboni, M; Fried, I; \\nCurrent Biology",
+          "Functional connectivity of human premotor and motor cortex explored with repetitive transcranial magnetic stimulation; \\nMünchau, A; Bloem, B R; Irlbacher, K; Trimble, M R; Rothwell, J C; \\nThe Journal of Neuroscience",
+          "Neural underpinnings of gesture discrimination in patients with limb apraxia; \\nPazzaglia, M; Smania, N; Corato, E; Aglioti, S M; \\nThe Journal of Neuroscience",
+          "Action understanding requires the left inferior frontal cortex; \\nPobric, G; Hamilton, A; \\nCurrent Biology",
+          "Progressive ideomotor apraxia: Evidence for a selective impairment of the action production system; \\nRapcsak, S Z; Ochipa, C; Anderson, K C; Poizner, H; \\nBrain and Cognition",
+          "Functional organization of inferior area 6 in the macaque monkey: II. Area F5 and the control of distal movements; \\nRizzolatti, G; Camarda, R; Fogassi, L; Gentilucci, M; Luppino, G; Matelli, M; \\nExperimental Brain Research",
+          "The mirror-neuron system; \\nRizzolatti, G; Craighero, L; \\nAnnual Review of Neuroscience",
+          "Premotor cortex and the recognition of motor actions; \\nRizzolatti, G; Fadiga, L; Gallese, V; Fogassi, L; \\nCognitive Brain Research",
+          "Action comprehension in aphasia: Linguistic and nonlinguistic deficits and their lesion correlates; \\nSaygin, A P; Wilson, S M; Dronkers, N F; Bates, E; \\nNeuropsychologia",
+          "Schneider, W; Eschman, A; Zuccolotto, A",
+          "Functional-anatomical concepts of human premotor cortex: Evidence from fMRI and PET studies; \\nSchubotz, R; Von Cramon, Y; \\nNeuroImage",
+          "Action simulation plays a critical role in deceptive action recognition; \\nTidoni, E; Borgomaneri, S; Di Pellegrino, G; Avenanti, A; \\nThe Journal of Neuroscience",
+          "Representation of body identity and body actions in extrastriate body area and ventral premotor cortex; \\nUrgesi, C; Candidi, M; Ionta, S; Aglioti, S; \\nNature Neuroscience",
+          "Prefrontal involvement in imitation learning of hand actions: Effects of practice and expertise; \\nVogt, S; Buccino, G; Wohlschlager, A M; Canessa, N; Shah, N J; Zilles, K; Fink, . .; , G R; \\nNeuroImage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed",
+          "request failed"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

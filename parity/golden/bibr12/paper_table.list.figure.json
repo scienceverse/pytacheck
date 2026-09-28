@@ -1,0 +1,176 @@
+{
+  "id": "paper_table.list.figure",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 14,
+    "names": [
+      "figure_id",
+      "label",
+      "section_id",
+      "text_id",
+      "image",
+      "caption",
+      "page_number",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          1,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "3",
+          "1",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "1",
+          "1"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          14,
+          18,
+          2,
+          35,
+          35,
+          35,
+          35,
+          35,
+          35,
+          35,
+          35,
+          3,
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          126,
+          127,
+          128,
+          3,
+          618,
+          619,
+          620,
+          621,
+          622,
+          623,
+          624,
+          625,
+          6,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Figure 1. (a) Total scope of content (abstracts and articles) available in Europe PMC. Blue columns represent abstracts; the green column represents full text. Actual numbers of records at the time of writing: PubMed: 24 174 318; Patents: 4 229 297; Agricola: 577 871; Europe PMC full-text abstract not in PubMed: 447 427; Other smaller sources of metadata: 201 988; Europe PMC full text: 2 988 235. (b) Proportion of full-text articles in Europe PMC expressed, for comparative purposes, as a proportion of abstracts available in PubMed (100%, gray bar), per publication year. Open Access full-text articles are in yellow; ‘read only’ full-text articles are in green. For publication year 2012, around 25% of PubMed is available as full text in Europe PMC, and of those, about 50% are available open access. The slight drop in read-only articles seen in 2013 is due to many articles published in 2013 still being under a 12-month embargo period at the time of writing.",
+          "Figure 2. ORCIDs in Europe PMC. ORCIDs can be used to search for authors unambiguously in Europe PMC, and are apparent in several different ways. Abstract pages: (a) If the ORCID has been matched to a specific author in an article, there is an option to use the ORCID instead of the name to search for a particular author. (b) ORCIDs that have claimed the article are listed below the abstract; the name linked to the ORCID is shown on mouse-over and clicking on the ORCID triggers a search. Search page: (c) If you know an ORCID, search for it using the syntax shown, or select ‘ORCID’ from the Bibliographic Fields menu on the Advanced Search Page. Here the results are shown ranked by citation count.",
+          "Figure 3. The BioEntities tab in Europe PMC. The BioEntities tab contains rich information on key concepts mined from the article as well as links to and from related data resources. In this example, several Uniprot records cite this article, and we have also found one data citation, to a dataset in the Dryad database (http://datadryad.org). In the case of chemical entities mined from text, we have used a BioJS module (http://www.ebi.ac.uk/Tools/biojs/registry/) to display the chemical structure of the entity (13). The same applies to mined PDB citations (not shown). In other cases, links to the database in question, or to invoke a search of Europe PMC for that concept, are provided. This figure has been modified and abbreviated from the actual screenshot to show the breadth of coverage in this example article.",
+          "Figure 1. Plot",
+          "Figure 1. Schematic display of the start of an exemplary trial for male participants in Study 1. The center constitutes a video in which the person turns with an angry, neutral, or sad expression towards either Marc or the object.",
+          "Figure 2. The effects of Emotion (anger vs. neutral vs. sadness) and Turning \r\n(towards person vs. towards object) on benign envy, malicious envy, and pain in Study 1.",
+          "Figure 3. The effects of Emotion (anger vs. neutral vs. sadness) and Turning (towards person vs. towards object) on the benign and malicious envy scales in Study 2.",
+          "Figure 4. The effects of Emotion (anger vs. neutral vs. sadness) and Turning",
+          "Figure 5. The effects of Emotion (anger vs. neutral vs. sadness) and Turning \r\n(towards person vs. towards object) on the benign and malicious envy selected items in Study \r\n2.",
+          "Figure 6. Exemplary stimuli from Study 3. Left picture: the female picture in which the target turns with a sad expression toward the bike. Right picture: the male picture in which the target turns with an angry expression toward the person.",
+          "Figure 7. The effects of Emotion (anger vs. sadness) and Turning (towards person vs. towards bike) on the benign and malicious envy scales in the within-subjects design in Study 3.",
+          "Figure 8. The effects of Emotion (anger vs. sadness) and Turning (towards person vs. towards bike) on the benign and malicious envy scales in the between-subjects design in Study 3.",
+          "Figure 1. A plot of the effect.",
+          "Figure 1 caption"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          2,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          null,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PMC4383902",
+          "PMC4383902",
+          "PMC4383902",
+          "demo",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "preprint",
+          "probe",
+          "10.1234/example.5678"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

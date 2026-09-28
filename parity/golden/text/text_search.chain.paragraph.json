@@ -1,0 +1,88 @@
+{
+  "id": "text_search.chain.paragraph",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.",
+          "Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx."
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          8,
+          9
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5,
+          5
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Availability",
+          "Data Availability"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "availability",
+          "availability"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

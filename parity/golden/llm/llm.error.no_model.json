@@ -1,0 +1,9 @@
+{
+  "id": "llm.error.no_model",
+  "ok": false,
+  "error": "No LLM model set. Use llm_model('provider/model') or pass model = 'provider/model'",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

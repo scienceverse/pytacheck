@@ -1,0 +1,195 @@
+{
+  "id": "ref_miscitation.na_doi_many",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              1,
+              0,
+              2,
+              1,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1000/x",
+              null,
+              "10.1000/x",
+              null,
+              "10.1000/a",
+              "10.1000/x",
+              "10.1000/x",
+              null,
+              "10.1000/x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 1.",
+              "Body sentence 2 cites 0.",
+              "Body sentence 3 cites 1.",
+              "Body sentence 4 cites 0.",
+              "Body sentence 5 cites 2.",
+              "Body sentence 6 cites 1.",
+              "Body sentence 7 cites 1.",
+              "Body sentence 8 cites 0.",
+              "Body sentence 9 cites 1."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ref X",
+              "Ref NA",
+              "Ref X",
+              "Ref NA",
+              "Ref A",
+              "Ref X",
+              "Ref X",
+              "Ref NA",
+              "Ref X"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warn X",
+              "Warn NA",
+              "Warn X",
+              "Warn NA",
+              "Warn A",
+              "Warn X",
+              "Warn X",
+              "Warn NA",
+              "Warn X"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1000/x**\n\nRef X\n\nWarn X\n\n*5 of 8 Instances:*\n\n> Body sentence 1 cites 1.\n\n> NA\n\n> Body sentence 3 cites 1.\n\n> NA\n\n> Body sentence 6 cites 1.",
+          "**NA**\n\nRef NA\n\nWarn NA\n\n*5 of 9 Instances:*\n\n> NA\n\n> NA\n\n> NA\n\n> NA\n\n> NA",
+          "**10.1000/a**\n\nRef A\n\nWarn A\n\n*4 Instances:*\n\n> NA\n\n> NA\n\n> Body sentence 5 cites 2.\n\n> NA"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 9 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "miscite_NA",
+          "miscite_10.1000/x",
+          "miscite_10.1000/a"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,103 @@
+{
+  "id": ".tei_bib.biblstruct_monogr",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "volume",
+      "issue",
+      "bib_id",
+      "bib_text",
+      "year_suffix"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "book"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1016/j.riob.2021.100150"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "When are organizations punished for organizational misconduct? A review and research agenda"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Mcdonnell, M H; Nurmohamed, S"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2021
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          37
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "McDonnell, M. H., & Nurmohamed, S. (2021). When are organizations punished? https://doi.org/10.1016/j .riob.2021.100150"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ],
+        "names": [
+          "2021"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,103 @@
+{
+  "id": "import_jasp.sqlite",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "data",
+      "columns",
+      "format",
+      "data_file_path"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "grp",
+          "score",
+          "rating",
+          "weight"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              2.5,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              null,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              70,
+              null,
+              80
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "name",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "grp",
+              "score",
+              "rating",
+              "weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "scale",
+              "ordinal",
+              "scale"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sqlite"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "orig.csv"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

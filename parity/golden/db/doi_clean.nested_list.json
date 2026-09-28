@@ -1,0 +1,17 @@
+{
+  "id": "doi_clean.nested_list",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "10.1038/a",
+      "10.1038/b",
+      "10.1/c",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

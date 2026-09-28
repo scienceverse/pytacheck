@@ -1,0 +1,9 @@
+{
+  "id": "data_check_constant.review.all_nan_strings",
+  "ok": false,
+  "error": "subscript out of bounds",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

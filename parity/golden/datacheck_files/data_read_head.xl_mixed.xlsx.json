@@ -1,0 +1,46 @@
+{
+  "id": "data_read_head.xl_mixed.xlsx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "a",
+      "b",
+      "c"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2.5",
+          "t",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          "3",
+          "TRUE",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          43831,
+          5,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

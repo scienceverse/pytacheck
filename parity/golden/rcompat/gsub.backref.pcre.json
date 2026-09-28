@@ -1,0 +1,25 @@
+{
+  "id": "gsub.backref.pcre",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "heT ffecte asw ignificants, t(82) = 2.02, p = .360, d = 0.08.",
+      "p<0.010 nda P = .40; lsoa p ≤ .50 nda p=0.5.",
+      "afCé réumsé anïev — Éanl italv. ÉOLEC éolec",
+      "onn reakingb paces\tnda abt\newn inel",
+      "ackb\\lashs [racketb] a.b a-b _ba",
+      "arginallym tatisticallys ignificants rendt owardst ignificances",
+      "ba bca bcda aba",
+      "x",
+      "",
+      "ultim\ninel\nextt\n",
+      "21,453 1.e5-3 −0.52 3·01^-4",
+      "ataD rea vailablea ta ttpsh://sfo.oi/bc12a/ nda sfo.oi/YZ9X"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

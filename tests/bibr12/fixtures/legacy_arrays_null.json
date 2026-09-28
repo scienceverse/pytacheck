@@ -1,0 +1,10 @@
+{
+  "paper_id": "legacy_arrays_null",
+  "bib": [],
+  "info": [{"title": "Legacy arrays", "keywords": []}],
+  "bib_match": [
+    {"bib_id": 1, "service": "crossref", "authors": []},
+    {"bib_id": 2, "service": "crossref", "authors": [{"given": "A", "family": "B"}]},
+    {"bib_id": 3, "service": "crossref", "authors": null}
+  ]
+}

@@ -1,0 +1,485 @@
+{
+  "id": "report_module_run.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "rp_validation",
+      "marginal"
+    ],
+    "v": [
+      {
+        "t": "module_output",
+        "names": [
+          "module",
+          "title",
+          "section",
+          "table",
+          "report",
+          "traffic_light",
+          "summary_text",
+          "summary_table",
+          "na_replace"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "rp_validation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Validation Demo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 19,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted",
+              "paper_id",
+              "header",
+              "section_type"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p < .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.",
+                  "More important, there was a significant interaction between TMS site and video type, F(1, 19) = 6.98, p = .016, ηp² = .27.",
+                  "No other main effects or interactions reached significance.",
+                  "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73.",
+                  "No other main effects or interactions reached significance.",
+                  "There was a main effect of judgment on fixation duration, F(1, 26) = 8.246, p = .008, ηp² = .241 (basic: M = 381 ms; subordinate: M = 300 ms), a trend for stimuli type, F(3, 78) = 2.242, p = .09, ηp² = .079 (Ms = 329, 354, 341, and 335 ms for classrooms, pools, restaurants, and roads, respectively), as well as a significant interaction, F(3, 78) = 3.207, p = .028, ηp² = .110.",
+                  "This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts > 2.370, ps < .025 (Table 1).",
+                  "In both the basic and subordinate conditions, each scene contained significantly fixated objects (ps < .05), which indicates that participants always accrued specific object information to complement the LSF gist.",
+                  "To verify that these significant objects were diagnostic, we asked 36 new participants to categorize scenes at either the basic or subordinate level using the same paradigm as in the gaze-contingent experiment, except that scenes were now masked after 150 ms, and eye movements were not recorded.",
+                  "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+                  "There was a main effect of stimuli type, F(2.084, 54.188) = 7.080, p = .002, ηp² = .214 (Ms = 1,269, 1,128, 1,273, and 998 ms for classrooms, pools, restaurants, and roads, respectively) as well as a trend for an interaction, F(3, 78) = 2.596, p = .058, ηp² = .091, which was due to restaurants taking significantly longer to categorize at the subordinate level (M = 1,471 ms) than at the basic level (M = 1,075 ms), t(26) = 3.00, p = .006.",
+                  "Similar numerical patterns were obtained for classrooms (basic: M = 1,204 ms; subordinate: M = 1,333 ms), pools (basic: M = 989 ms; subordinate: M = 1,266 ms), and roads (basic: M = 979 ms; subordinate: M = 1,016 ms), but they were not significant (ts < 1.629, ps > .115).",
+                  "There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.",
+                  "In contrast, there was a similar numerical pattern but no significant difference for classrooms (basic: M = 3.57; subordinate: M = 4.34) and roads (basic: M = 2.69; subordinate: M = 3.09), ts < 1.415, ps > .169.",
+                  "In contrast, there were similar, but not significant, numerical patterns for classrooms (basic: M = 3.81°; subordinate: M = 4.31°) and pools (basic: M = 3.04°; subordinate: M = 3.63°), ts < 1.560, ps > .131, whereas for roads, there were longer saccades in the basic condition (M = 3.61°) than in the subordinate condition (M = 3.27°), t <1.",
+                  "Blue regions indicate objects significantly fixated in the basic condition, red regions indicate objects significantly fixated in the subordinate condition, and purple areas indicate objects significantly fixated in both conditions.",
+                  "The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+                  "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+                  "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  101,
+                  102,
+                  104,
+                  105,
+                  107,
+                  74,
+                  75,
+                  91,
+                  93,
+                  100,
+                  105,
+                  106,
+                  108,
+                  109,
+                  116,
+                  158,
+                  3,
+                  16,
+                  17
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  5,
+                  6
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  8,
+                  8,
+                  8,
+                  8,
+                  8,
+                  9,
+                  9,
+                  11,
+                  12,
+                  12,
+                  13,
+                  13,
+                  13,
+                  13,
+                  13,
+                  22,
+                  0,
+                  3,
+                  3
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p &lt; .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.",
+                  null,
+                  null,
+                  "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p &lt; .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p &lt; .001, ηp² = .73.",
+                  null,
+                  null,
+                  "This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts &gt; 2.370, ps &lt; .025 (Table <ref type=\"table\" target=\"#tab_0\">1<\/ref>).",
+                  "In both the basic and subordinate conditions, each scene contained significantly fixated objects (ps &lt; .05), which indicates that participants always accrued specific object information to complement the LSF gist.",
+                  null,
+                  "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. <ref type=\"figure\" target=\"#fig_5\">6<\/ref>), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+                  null,
+                  "Similar numerical patterns were obtained for classrooms (basic: M = 1,204 ms; subordinate: M = 1,333 ms), pools (basic: M = 989 ms; subordinate: M = 1,266 ms), and roads (basic: M = 979 ms; subordinate: M = 1,016 ms), but they were not significant (ts &lt; 1.629, ps &gt; .115).",
+                  null,
+                  "In contrast, there was a similar numerical pattern but no significant difference for classrooms (basic: M = 3.57; subordinate: M = 4.34) and roads (basic: M = 2.69; subordinate: M = 3.09), ts &lt; 1.415, ps &gt; .169.",
+                  "In contrast, there were similar, but not significant, numerical patterns for classrooms (basic: M = 3.81°; subordinate: M = 4.31°) and pools (basic: M = 3.04°; subordinate: M = 3.63°), ts &lt; 1.560, ps &gt; .131, whereas for roads, there were longer saccades in the basic condition (M = 3.61°) than in the subordinate condition (M = 3.27°), t &lt;1.",
+                  null,
+                  null,
+                  null,
+                  "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_0\">2<\/ref>)."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797613520608",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "0956797614522816",
+                  "to_err_is_human",
+                  "to_err_is_human",
+                  "to_err_is_human"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Results",
+                  "Results",
+                  "Results",
+                  "Results",
+                  "Results",
+                  "Eye movement strategies",
+                  "Eye movement strategies",
+                  "Diagnostic objects",
+                  "Validation of diagnostic objects",
+                  "Validation of diagnostic objects",
+                  "Behavior verification",
+                  "Behavior verification",
+                  "Behavior verification",
+                  "Behavior verification",
+                  "Behavior verification",
+                  "Fig 5",
+                  "Abstract",
+                  "Procedure",
+                  "Procedure"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "results",
+                  "figure",
+                  "abstract",
+                  "method",
+                  "method"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This module searched every sentence for the pattern and listed the sentences where it was found. Check each of them: a mention is not necessarily a problem, but it is worth a second look before you submit the manuscript, because reviewers will often ask about it.",
+              "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p < .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.\", \n\"More important, there was a significant interaction between TMS site and video type, F(1, 19) = 6.98, p = .016, ηp² = .27.\", \n\"No other main effects or interactions reached significance.\", \n\"For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73.\", \n\"No other main effects or interactions reached significance.\", \n\"There was a main effect of judgment on fixation duration, F(1, 26) = 8.246, p = .008, ηp² = .241 (basic: M = 381 ms; subordinate: M = 300 ms), a trend for stimuli type, F(3, 78) = 2.242, p = .09, ηp² = .079 (Ms = 329, 354, 341, and 335 ms for classrooms, pools, restaurants, and roads, respectively), as well as a significant interaction, F(3, 78) = 3.207, p = .028, ηp² = .110.\", \n\"This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts > 2.370, ps < .025 (Table 1).\", \n\"In both the basic and subordinate conditions, each scene contained significantly fixated objects (ps < .05), which indicates that participants always accrued specific object information to complement the LSF gist.\", \n\"To verify that these significant objects were diagnostic, we asked 36 new participants to categorize scenes at either the basic or subordinate level using the same paradigm as in the gaze-contingent experiment, except that scenes were now masked after 150 ms, and eye movements were not recorded.\", \n\"There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.\", \n\"There was a main effect of stimuli type, F(2.084, 54.188) = 7.080, p = .002, ηp² = .214 (Ms = 1,269, 1,128, 1,273, and 998 ms for classrooms, pools, restaurants, and roads, respectively) as well as a trend for an interaction, F(3, 78) = 2.596, p = .058, ηp² = .091, which was due to restaurants taking significantly longer to categorize at the subordinate level (M = 1,471 ms) than at the basic level (M = 1,075 ms), t(26) = 3.00, p = .006.\", \n\"Similar numerical patterns were obtained for classrooms (basic: M = 1,204 ms; subordinate: M = 1,333 ms), pools (basic: M = 989 ms; subordinate: M = 1,266 ms), and roads (basic: M = 979 ms; subordinate: M = 1,016 ms), but they were not significant (ts < 1.629, ps > .115).\", \n\"There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.\", \n\"In contrast, there was a similar numerical pattern but no significant difference for classrooms (basic: M = 3.57; subordinate: M = 4.34) and roads (basic: M = 2.69; subordinate: M = 3.09), ts < 1.415, ps > .169.\", \n\"In contrast, there were similar, but not significant, numerical patterns for classrooms (basic: M = 3.81°; subordinate: M = 4.31°) and pools (basic: M = 3.04°; subordinate: M = 3.63°), ts < 1.560, ps > .131, whereas for roads, there were longer saccades in the basic condition (M = 3.61°) than in the subordinate condition (M = 3.27°), t <1.\", \n\"Blue regions indicate objects significantly fixated in the basic condition, red regions indicate objects significantly fixated in the subordinate condition, and purple areas indicate objects significantly fixated in both conditions.\", \n\"The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \\\"marginally significant\\\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.\", \n\"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.\", \n\"There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).\"\n), header = c(\"Results\", \"Results\", \"Results\", \"Results\", \"Results\", \n\"Eye movement strategies\", \"Eye movement strategies\", \"Diagnostic objects\", \n\"Validation of diagnostic objects\", \"Validation of diagnostic objects\", \n\"Behavior verification\", \"Behavior verification\", \"Behavior verification\", \n\"Behavior verification\", \"Behavior verification\", \"Fig 5\", \"Abstract\", \n\"Procedure\", \"Procedure\")), row.names = c(NA, -19L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.8, 0.2), 3, FALSE)\n```\n",
+              "::: {.callout-tip title=\"Full table\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(n = 19L, label = \"matches\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n\n\n:::\n",
+              "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nGuidance paragraph one.\n\nGuidance *two*.\n\n:::\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yellow"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Found 19 sentences."
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "paper_id",
+              "marginal",
+              "hits"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0956797613520608",
+                  "0956797614522816",
+                  "to_err_is_human"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0,
+                  0,
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  5,
+                  11,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "module_output",
+        "names": [
+          "module",
+          "title",
+          "section",
+          "table",
+          "report",
+          "traffic_light",
+          "summary_text",
+          "na_replace"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "marginal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Marginal Significance"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "results"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted",
+              "paper_id",
+              "header",
+              "section_type"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+                  "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3,
+                  16
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0,
+                  3
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "to_err_is_human",
+                  "to_err_is_human"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Abstract",
+                  "Procedure"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "abstract",
+                  "method"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "You described effects with terms related to 'marginally significant'. If *p* values above 0.05 are interpreted as an effect, you inflate the alpha level, and increase the Type 1 error rate. If a *p* value is higher than the prespecified alpha level, it should be interpreted as a non-significant result.",
+              "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \\\"marginally significant\\\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.\", \n\"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.\"\n), \"Section Header\" = c(\"Abstract\", \"Procedure\")), row.names = c(NA, \n-2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+              "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate at which non-significant p-values are interpreted as marginally significant, see:\n\nOlsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019). &ldquo;The Prevalence of Marginally Significant Results in Psychology Over Time.&rdquo; <em>Psychological Science<\/em>, <b>30<\/b>, 576&ndash;586. <a href=\"https://doi.org/10.1177/0956797619830326\">doi:10.1177/0956797619830326<\/a>.\n\nFor the list of terms used to identifify marginally significant results, see this [blog post by Matthew Hankins](https://web.archive.org/web/20251001114321/https://mchankins.wordpress.com/2013/04/21/still-not-significant-2/).\n\n:::\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "red"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "You described 2 effects with terms related to 'marginally significant'."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

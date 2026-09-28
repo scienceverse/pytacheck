@@ -1,0 +1,114 @@
+{
+  "id": "extract_eq.test_paper.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "text_id",
+      "grp_id",
+      "lhs",
+      "df",
+      "comp",
+      "rhs",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "p",
+          "F",
+          "p",
+          "peta",
+          "p",
+          "95% CI",
+          "p-value"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(10)",
+          null,
+          "(1, 23)",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          ">",
+          "=",
+          ">="
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.23",
+          "0.005",
+          "9.23",
+          ".023",
+          "2.3",
+          ".05",
+          "[2, 4]",
+          "0.2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

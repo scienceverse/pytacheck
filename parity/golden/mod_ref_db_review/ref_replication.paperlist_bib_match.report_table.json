@@ -1,0 +1,128 @@
+{
+  "id": "ref_replication.paperlist_bib_match.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "Reference",
+          "Replication/Reproduction",
+          "Outcome",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 1. https://doi.org/10.1126/science.1239918",
+              "Reference 1. https://doi.org/10.1126/science.1239918",
+              "Reference 1. https://doi.org/10.1126/science.1239918",
+              "Reference 1. https://doi.org/10.1126/science.1239918",
+              "Reference 1. https://doi.org/10.1126/science.1239918",
+              "Reference 1. https://doi.org/10.1126/science.1239918",
+              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
+              "Reference 0. https://doi.org/10.1093/qje/qjac034"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<b>[Replication]<\/b> Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. <a href='https://doi.org/10.1037/pspa0000064' target='_blank'>doi:10.1037/pspa0000064<\/a>",
+              "<b>[Replication]<\/b> Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>",
+              "<b>[Replication]<\/b> Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from <a href='https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf' target='_blank'>www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf<\/a>",
+              "<b>[Replication]<\/b> Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144. <a href='https://doi.org/10.1080/02699931.2017.1279591' target='_blank'>doi:10.1080/02699931.2017.1279591<\/a>",
+              "<b>[Replication]<\/b> Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531. <a href='https://doi.org/10.1177/1948550618775410' target='_blank'>doi:10.1177/1948550618775410<\/a>",
+              "<b>[Replication]<\/b> van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1). <a href='https://doi.org/10.1525/collabra.117' target='_blank'>doi:10.1525/collabra.117<\/a>",
+              "<b>[Replication]<\/b> Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. <a href='https://doi.org/10.1037/pspa0000064' target='_blank'>doi:10.1037/pspa0000064<\/a>",
+              "<b>[Replication]<\/b> Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>",
+              "<b>[Replication]<\/b> Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from <a href='https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf' target='_blank'>www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf<\/a>",
+              "<b>[Replication]<\/b> Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144. <a href='https://doi.org/10.1080/02699931.2017.1279591' target='_blank'>doi:10.1080/02699931.2017.1279591<\/a>",
+              "<b>[Replication]<\/b> Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531. <a href='https://doi.org/10.1177/1948550618775410' target='_blank'>doi:10.1177/1948550618775410<\/a>",
+              "<b>[Replication]<\/b> van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1). <a href='https://doi.org/10.1525/collabra.117' target='_blank'>doi:10.1525/collabra.117<\/a>",
+              "<b>[Replication]<\/b> Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2). <a href='https://doi.org/10.1177/1474704919852921' target='_blank'>doi:10.1177/1474704919852921<\/a>",
+              "<b>[Reproduction]<\/b> Hallman, A., Johannesson, M., & Kujansuu, E. (2024). Robustness Reproducibility of\" Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention\". (No. 118), I4R Discussion Paper Series. <a href='https://doi.org/10.10419/295247' target='_blank'>doi:10.10419/295247<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mixed",
+              "failed",
+              "failed",
+              "failed",
+              "mixed",
+              "successful",
+              "mixed",
+              "failed",
+              "failed",
+              "failed",
+              "mixed",
+              "successful",
+              "failed",
+              "computationally successful, robustness challenges"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "reproduction"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.3,
+          0.4,
+          0.15,
+          0.15
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

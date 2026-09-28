@@ -1,0 +1,4 @@
+{
+"data_check_outliers.iqr_nan": {"r": "ac5146cf65ca52a8", "py": "8565230ab317221e", "diff": ["<R error, Python value>"]},
+"data_check_scale_values.noninteger_range_error": {"r": "ac5146cf65ca52a8", "py": "68f70ddb3701d80a", "diff": ["<R error, Python value>"]}
+}

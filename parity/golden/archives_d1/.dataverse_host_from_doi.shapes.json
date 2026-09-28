@@ -1,0 +1,24 @@
+{
+  "id": ".dataverse_host_from_doi.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "dataverse.cirad.fr",
+      "dataverse.harvard.edu",
+      null,
+      "dataverse.no",
+      "archaeology.datastations.nl",
+      "ifj.rodbuk.pl",
+      "agh.rodbuk.pl",
+      null,
+      null,
+      null,
+      "dataverse.harvard.edu"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

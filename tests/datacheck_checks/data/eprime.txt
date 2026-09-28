@@ -1,0 +1,12 @@
+*** Header Start ***
+VersionPersist: 1
+LevelName: Session
+Experiment: stroop_task
+Subject: 12
+*** Header End ***
+	Level: 3
+	*** LogFrame Start ***
+	Procedure: TrialProc
+	Stimulus.RT: 532
+	Stimulus.ACC: 1
+	*** LogFrame End ***

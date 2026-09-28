@@ -1,0 +1,252 @@
+{
+  "id": "module.all_urls.debruine",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "http://www.debruine.info/childfaces.html",
+              "http://www.debruine.info/childfaces.html",
+              "study.Platek",
+              "http://www.debruine.info/childfaces.html",
+              "https://royalsocietypublishing.org",
+              "Soc.Lond",
+              "https://royalsocietypublishing.org",
+              "https://royalsocietypublishing.org",
+              "http://dx.doi",
+              "http://www.journals.royalsoc",
+              "ac.uk"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              46,
+              105,
+              167,
+              167,
+              95,
+              160,
+              186,
+              104,
+              105,
+              105,
+              105
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11,
+              29,
+              67,
+              67,
+              22,
+              57,
+              83,
+              50,
+              51,
+              51,
+              51
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              10,
+              null,
+              null,
+              7,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-fret",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl",
+              "debruine-tnl",
+              "debruine-tnl",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.2.1. Methodological critique",
+              "2.5. Statistical analyses",
+              null,
+              null,
+              "3. RESULTS",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              null,
+              null,
+              "results",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              2,
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

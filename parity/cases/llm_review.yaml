@@ -1,0 +1,1102 @@
+# Adversarial-review parity cases for the llm area (see
+# tests/llm/fixtures/make_review_cases.py, which generates this file).
+"area": "llm_review"
+"cases":
+- "id": "llm.input.factor_col"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(data.frame(txt = factor(c('hello', '12', 'hello'))), 'Is this a number? Answer TRUE or FALSE', text_col = 'txt', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'txt': __import__('pandas').Categorical(['hello', '12', 'hello'])}), 'Is this a number? Answer TRUE or FALSE', text_col='txt', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.column_clash"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(data.frame(text = c('hello', '12'), answer = c('x', 'y'), error = c(1L, 2L)), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'text': ['hello', '12'], 'answer': ['x', 'y'], 'error': __import__('pandas').array([1, 2], dtype='Int64')}), 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.null"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(NULL, 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(None, 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.empty_df"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(data.frame(text = character(0)), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'text': __import__('pandas').Series([], dtype='string')}), 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.empty_vector"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(character(0), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm([], 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.tibble_index"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(tibble::tibble(id = 3:1, text = c('12', 'hello', '12')), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'id': __import__('pandas').array([3, 2, 1], dtype='Int64'), 'text': ['12', 'hello', '12']}, index=[10, 5, 7]), 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.numpy"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('hello', '12'), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('numpy').array(['hello', '12']), 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.series"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('12', 'hello'), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').Series(['12', 'hello'], index=[4, 2]), 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.tuple"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('hello', '12'), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(('hello', '12'), 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.na_only"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(NA_character_, 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm([None], 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.duplicate_errors_no_warning"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('unauthorized', 'unauthorized'), 'Sys', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['unauthorized', 'unauthorized'], 'Sys', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.custom_col_vector"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('hello', '12'), 'Is this a number? Answer TRUE or FALSE', text_col = 'sentence', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['hello', '12'], 'Is this a number? Answer TRUE or FALSE', text_col='sentence', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.text_col_answer"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('hello', '12'), 'Is this a number? Answer TRUE or FALSE', text_col = 'answer', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['hello', '12'], 'Is this a number? Answer TRUE or FALSE', text_col='answer', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.logical"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c(TRUE, FALSE), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm([True, False], 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.mixed_order_1"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('unauthorized', 'hello'), 'Sys', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['unauthorized', 'hello'], 'Sys', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.mixed_order_2"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('unauthorized', 'too long', 'hello'), 'Sys', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['unauthorized', 'too long', 'hello'], 'Sys', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.mixed_order_3"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('too long', 'hello', 'unauthorized'), 'Sys', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['too long', 'hello', 'unauthorized'], 'Sys', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.sanitised_duplicates"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('hel\\x01lo', 'hello', '12'), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['hel\\x01lo', 'hello', '12'], 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.structured.column_clash"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(data.frame(text = c('two vars', 'none'), variables.label = c('in1', 'in2'), check.names = FALSE), 'Extract variables', type = ellmer::type_object(variables = ellmer::type_array(ellmer::type_object(variable_name = ellmer::type_string('Exact variable name/code in the data file'), label = ellmer::type_string('Verbatim description text from the codebook', required = FALSE), kind = ellmer::type_enum(c('a', 'b', NA), 'Kind', required = FALSE)))), model = 'groq/openai/gpt-oss-20b')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'text': ['two vars', 'none'], 'variables.label': ['in1', 'in2']}), 'Extract variables', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variables=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variable_name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Exact variable name/code in the data file'), label=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Verbatim description text from the codebook', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['a', 'b', None], 'Kind', required=False)))), model='groq/openai/gpt-oss-20b'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.structured.factor_dups"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(data.frame(id = 1:3, txt = factor(c('none', 'two vars', 'none'))), 'Extract variables', type = ellmer::type_object(variables = ellmer::type_array(ellmer::type_object(variable_name = ellmer::type_string('Exact variable name/code in the data file'), label = ellmer::type_string('Verbatim description text from the codebook', required = FALSE), kind = ellmer::type_enum(c('a', 'b', NA), 'Kind', required = FALSE)))), text_col = 'txt', model = 'groq/openai/gpt-oss-20b')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'id': __import__('pandas').array([1, 2, 3], dtype='Int64'), 'txt': __import__('pandas').Categorical(['none', 'two vars', 'none'])}), 'Extract variables', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variables=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variable_name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Exact variable name/code in the data file'), label=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Verbatim description text from the codebook', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['a', 'b', None], 'Kind', required=False)))), text_col='txt', model='groq/openai/gpt-oss-20b'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.structured.reasoning_with_error"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('two vars', 'bad schema'), 'Extract variables', type = ellmer::type_object(variables = ellmer::type_array(ellmer::type_object(variable_name = ellmer::type_string('Exact variable name/code in the data file'), label = ellmer::type_string('Verbatim description text from the codebook', required = FALSE), kind = ellmer::type_enum(c('a', 'b', NA), 'Kind', required = FALSE)))), model = 'groq/openai/gpt-oss-20b', capture_reasoning = TRUE)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['two vars', 'bad schema'], 'Extract variables', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variables=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variable_name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Exact variable name/code in the data file'), label=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Verbatim description text from the codebook', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['a', 'b', None], 'Kind', required=False)))), model='groq/openai/gpt-oss-20b', capture_reasoning=True), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.structured.only_errors"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('bad schema', 'bad schema'), 'Extract variables', type = ellmer::type_object(variables = ellmer::type_array(ellmer::type_object(variable_name = ellmer::type_string('Exact variable name/code in the data file'), label = ellmer::type_string('Verbatim description text from the codebook', required = FALSE), kind = ellmer::type_enum(c('a', 'b', NA), 'Kind', required = FALSE)))), model = 'groq/openai/gpt-oss-20b')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['bad schema', 'bad schema'], 'Extract variables', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variables=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variable_name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Exact variable name/code in the data file'), label=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Verbatim description text from the codebook', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['a', 'b', None], 'Kind', required=False)))), model='groq/openai/gpt-oss-20b'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.structured.empty_and_error"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('none', 'bad schema'), 'Extract variables', type = ellmer::type_object(variables = ellmer::type_array(ellmer::type_object(variable_name = ellmer::type_string('Exact variable name/code in the data file'), label = ellmer::type_string('Verbatim description text from the codebook', required = FALSE), kind = ellmer::type_enum(c('a', 'b', NA), 'Kind', required = FALSE)))), model = 'groq/openai/gpt-oss-20b')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['none', 'bad schema'], 'Extract variables', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variables=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(variable_name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Exact variable name/code in the data file'), label=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('Verbatim description text from the codebook', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['a', 'b', None], 'Kind', required=False)))), model='groq/openai/gpt-oss-20b'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "chat.model_trailing_slash"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer::chat('groq/')$get_model())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('groq/').model.name, {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat.model_double_slash"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer::chat('groq/a//b')$get_model())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('groq/a//b').model.name, {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat.model_slashes_end"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer::chat('groq/a//')$get_model())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('groq/a//').model.name, {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat.internal_fn"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer::chat('body/x'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('body/x'), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "llm_model_list.invalid_dups"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(), llm_model_list(c('bad', 'ollama', 'bad', 'worse')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_model_list(['bad', 'ollama', 'bad', 'worse']), {})"
+- "id": "llm_max_calls.overflow"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_max_calls = 30L), llm_max_calls(1e10))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_max_calls(1e10), {'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)})"
+- "id": "llm_max_calls.negative_fraction"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_max_calls = 30L), llm_max_calls(-0.5))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_max_calls(-0.5), {'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)})"
+- "id": "llm_max_tokens.fraction"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_max_tokens = NULL), llm_max_tokens(8191.9))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_max_tokens(8191.9), {'metacheck.llm_max_tokens': None})"
+- "id": "llm_reasoning.vector"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_reasoning = NULL), llm_reasoning(c('low', 'high')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_reasoning(['low', 'high']), {'metacheck.llm_reasoning': None})"
+- "id": "llm_reasoning.empty"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_reasoning = NULL), llm_reasoning(''))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_reasoning(''), {'metacheck.llm_reasoning': None})"
+- "id": "llm_timeout.inf"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_timeout = NULL), llm_timeout(Inf))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_timeout(float('inf')), {'metacheck.llm_timeout': None})"
+- "id": "llm_timeout.logical"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_timeout = NULL), llm_timeout(TRUE))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_timeout(True), {'metacheck.llm_timeout': None})"
+- "id": "llm_use.na"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = FALSE), llm_use(NA))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_use(float('nan')), {'metacheck.llm.use': False})"
+- "id": "llm_use.string_yes"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = FALSE), llm_use('yes'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_use('yes'), {'metacheck.llm.use': False})"
+- "id": "llm_use.string_one"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = FALSE), llm_use('1'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_use('1'), {'metacheck.llm.use': False})"
+- "id": "llm_cache.na"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(), llm_cache(NA))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_cache(None if False else float('nan')), {})"
+- "id": "llm_cache.number"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(), llm_cache(1))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_cache(1), {})"
+- "id": "llm.error.model_vector"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = c('groq/a', 'groq/b')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model=['groq/a', 'groq/b']), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+- "id": "llm.error.model_empty"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = ''))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model=''), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+- "id": "llm.error.max_tokens_zero"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = 'groq/x', params = list(max_tokens = 0)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model='groq/x', params={'max_tokens': 0}), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+- "id": "llm.error.seed_fraction"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = 'groq/x', params = list(seed = 1.5)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model='groq/x', params={'seed': 1.5}), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+- "id": "llm.error.stop_numeric"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = 'groq/x', params = list(stop_sequences = 1)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model='groq/x', params={'stop_sequences': 1}), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+- "id": "llm.error.log_probs_string"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = 'groq/x', params = list(log_probs = 'yes')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model='groq/x', params={'log_probs': 'yes'}), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+- "id": "llm.error.max_calls_boundary"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_max_calls = 2L), llm(paste('t', 1:3), 'summarise', model = 'groq/x'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['t 1', 't 2', 't 3'], 'summarise', model='groq/x'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(2)})"
+- "id": "apply_reasoning.partial_think"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_reasoning = NULL), metacheck:::.llm_apply_reasoning(list(thinking = TRUE), 'ollama/qwen3:8b'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_apply_reasoning({'thinking': True}, 'ollama/qwen3:8b'), {'metacheck.llm_reasoning': None})"
+- "id": "apply_reasoning.empty_option"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm_reasoning = ''), metacheck:::.llm_apply_reasoning(list(), 'groq/openai/gpt-oss-20b'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_apply_reasoning({}, 'groq/openai/gpt-oss-20b'), {'metacheck.llm_reasoning': ''})"
+- "id": "chat_params.groq"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('groq/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('groq/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat_params.anthropic"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('anthropic/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('anthropic/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat_params.openai"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('openai/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('openai/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat_params.mistral"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('mistral/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('mistral/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat_params.deepseek"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('deepseek/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('deepseek/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat_params.google_gemini"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('google_gemini/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('google_gemini/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat_params.anthropic_three"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('anthropic/x')$get_provider(), ellmer::params(frequency_penalty = 1, presence_penalty = 1, log_probs = TRUE)))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('anthropic/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(frequency_penalty=1.0, presence_penalty=1.0, log_probs=True)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+- "id": "chat_ollama.missing_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OLLAMA_BASE_URL = NA, OLLAMA_API_KEY = NA), ellmer::chat_ollama())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_ollama(), {}, {'OLLAMA_BASE_URL': None, 'OLLAMA_API_KEY': None})"
+  "mock_dir": "apis"
+- "id": "chat_ollama.not_installed"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OLLAMA_BASE_URL = NA, OLLAMA_API_KEY = NA), ellmer::chat_ollama(model = 'nope-model:latest-version-with-a-long-name'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_ollama(model='nope-model:latest-version-with-a-long-name'), {}, {'OLLAMA_BASE_URL': None, 'OLLAMA_API_KEY': None})"
+  "mock_dir": "apis"
+- "id": "chat_ollama.null_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OLLAMA_BASE_URL = NA, OLLAMA_API_KEY = NA), ellmer::chat('ollama'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('ollama'), {}, {'OLLAMA_BASE_URL': None, 'OLLAMA_API_KEY': None})"
+  "mock_dir": "apis"
+- "id": "llm.ollama.structured_no_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('A', 'Sys', type = ellmer::type_object(n = ellmer::type_integer('num', required = FALSE)), model = 'ollama')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('A', 'Sys', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('num', required=False)), model='ollama'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "apis"
+- "id": "chat_lmstudio.missing_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(LMSTUDIO_BASE_URL = NA, LMSTUDIO_API_KEY = NA), ellmer::chat_lmstudio())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_lmstudio(), {}, {'LMSTUDIO_BASE_URL': None, 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "chat_lmstudio.not_available"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(LMSTUDIO_BASE_URL = NA, LMSTUDIO_API_KEY = NA), ellmer::chat_lmstudio(model = 'nope'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_lmstudio(model='nope'), {}, {'LMSTUDIO_BASE_URL': None, 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "chat_lmstudio.null_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(LMSTUDIO_BASE_URL = NA, LMSTUDIO_API_KEY = NA), ellmer::chat('lmstudio'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('lmstudio'), {}, {'LMSTUDIO_BASE_URL': None, 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "chat_github.defunct"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "ellmer::chat_github()"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_github()"
+- "id": "llm.github_rows"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = 'github/gpt-4o'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model='github/gpt-4o'), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+- "id": "cache_key.null_params"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.llm_cache_key('', '', NULL, 'm', NULL)"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).C._llm_cache_key('', '', None, 'm', None)"
+- "id": "cache_key.int_params"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.llm_cache_key('t', 's', NULL, 'groq/m', ellmer::params(temperature = 0, max_tokens = 8192L, seed = 8675309L, think = FALSE))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).C._llm_cache_key('t', 's', None, 'groq/m', __import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, max_tokens=__import__('tests.llm.parity_helpers', fromlist=['_']).RInt(8192), seed=__import__('tests.llm.parity_helpers', fromlist=['_']).RInt(8675309), think=False))"
+- "id": "error_message.error_array_with_message"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({e <- simpleError('HTTP error'); e$resp <- httr2::response_json(status_code = 400L, body = list(error = list('a', 'b'), message = 'top level')); metacheck:::.llm_error_message(e)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_error_message(__import__('tests.llm.parity_helpers', fromlist=['_']).cond('HTTP error', status=400, json={'error': ['a', 'b'], 'message': 'top level'}))"
+- "id": "error_message.partial_errors"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({e <- simpleError('HTTP error'); e$resp <- httr2::response_json(status_code = 400L, body = list(errors = list(message = 'partial match'))); metacheck:::.llm_error_message(e)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_error_message(__import__('tests.llm.parity_helpers', fromlist=['_']).cond('HTTP error', status=400, json={'errors': {'message': 'partial match'}}))"
+- "id": "error_message.partial_msg"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({e <- simpleError('HTTP error'); e$resp <- httr2::response_json(status_code = 400L, body = list(error = list(messages = 'inner partial'))); metacheck:::.llm_error_message(e)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_error_message(__import__('tests.llm.parity_helpers', fromlist=['_']).cond('HTTP error', status=400, json={'error': {'messages': 'inner partial'}}))"
+- "id": "error_message.top_array"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({e <- simpleError('HTTP error'); e$resp <- httr2::response_json(status_code = 400L, body = list('x', 'y')); metacheck:::.llm_error_message(e)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_error_message(__import__('tests.llm.parity_helpers', fromlist=['_']).cond('HTTP error', status=400, json=['x', 'y']))"
+- "id": "error_message.message_number"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({e <- simpleError('HTTP error'); e$resp <- httr2::response_json(status_code = 400L, body = list(error = list(message = 42))); metacheck:::.llm_error_message(e)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_error_message(__import__('tests.llm.parity_helpers', fromlist=['_']).cond('HTTP error', status=400, json={'error': {'message': 42}}))"
+- "id": "error_message.error_null_message"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({e <- simpleError('HTTP error'); e$resp <- httr2::response_json(status_code = 400L, body = list(error = NULL, message = 'fallback')); metacheck:::.llm_error_message(e)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_error_message(__import__('tests.llm.parity_helpers', fromlist=['_']).cond('HTTP error', status=400, json={'error': None, 'message': 'fallback'}))"
+- "id": "error_message.unicode_long"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({e <- simpleError('HTTP error'); e$resp <- httr2::response_json(status_code = 400L, body = list(error = strrep('\\u00e9\\u4e2d', 260))); metacheck:::.llm_error_message(e)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_error_message(__import__('tests.llm.parity_helpers', fromlist=['_']).cond('HTTP error', status=400, json={'error': '\\u00e9\\u4e2d' * 260}))"
+- "id": "structured.probe_types"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe types', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe types', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_nulls"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe nulls', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe nulls', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_missing"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe missing', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe missing', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_overflow"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe overflow', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe overflow', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_strings"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe strings', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe strings', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_object"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe object', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe object', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_truncated"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe truncated', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe truncated', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_empty"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe empty', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe empty', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_extra"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('probe extra', 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('probe extra', 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.probe_all"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('probe types', 'probe empty', 'probe nulls', 'probe types'), 'Probe', type = ellmer::type_object(items = ellmer::type_array(ellmer::type_object(name = ellmer::type_string('n'), count = ellmer::type_integer('c', required = FALSE), score = ellmer::type_number('s', required = FALSE), flag = ellmer::type_boolean('f', required = FALSE), kind = ellmer::type_enum(c('x', 'y'), 'k', required = FALSE), tags = ellmer::type_array(ellmer::type_string(), required = FALSE)))), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['probe types', 'probe empty', 'probe nulls', 'probe types'], 'Probe', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(items=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n'), count=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('c', required=False), score=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number('s', required=False), flag=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_boolean('f', required=False), kind=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y'], 'k', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string(), required=False)))), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.single_full"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('single full', 'Single', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('single full', 'Single', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.single_nulls"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('single nulls', 'Single', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('single nulls', 'Single', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.single_missing"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('single missing', 'Single', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('single missing', 'Single', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.single_tags"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('single tags', 'Single', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('single tags', 'Single', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "structured.single_mixed"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('single full', 'single nulls', 'single tags'), 'Single', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['single full', 'single nulls', 'single tags'], 'Single', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.groq_plain"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('reply empty choices', 'reply null content', 'reply parts', 'reply no choices'), 'Reply', model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['reply empty choices', 'reply null content', 'reply parts', 'reply no choices'], 'Reply', model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.groq_structured"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('reply empty choices', 'reply null content', 'reply parts', 'reply no choices'), 'Reply', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['reply empty choices', 'reply null content', 'reply parts', 'reply no choices'], 'Reply', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.gemini_plain"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('gemini blocked', 'gemini no candidates', 'gemini two parts'), 'Reply', model = 'google_gemini/gemini-2.5-flash')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['gemini blocked', 'gemini no candidates', 'gemini two parts'], 'Reply', model='google_gemini/gemini-2.5-flash'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.gemini_structured"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('gemini blocked', 'gemini no candidates', 'gemini two parts'), 'Reply', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'google_gemini/gemini-2.5-flash')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['gemini blocked', 'gemini no candidates', 'gemini two parts'], 'Reply', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='google_gemini/gemini-2.5-flash'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.openai"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_openai())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_openai(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.anthropic"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_anthropic())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_anthropic(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.google_gemini"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_google_gemini())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_google_gemini(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.mistral"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_mistral())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_mistral(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.deepseek"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_deepseek())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_deepseek(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.portkey"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_portkey())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_portkey(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.lmstudio"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_lmstudio())"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_lmstudio(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.vllm"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_vllm('https://vllm.test'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_vllm('https://vllm.test'), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "unnest_raw.tags"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"tags\": [\"x\", \"y\"]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\", \"y\"]}')))"
+- "id": "unnest_raw.tags_one"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"tags\": [\"x\"]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\"]}')))"
+- "id": "unnest_raw.tags_empty"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": 1, \"tags\": [\"x\", \"y\"]}, {\"a\": 2, \"tags\": []}]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1, \"tags\": [\"x\", \"y\"]}, {\"a\": 2, \"tags\": []}]}')))"
+- "id": "unnest_raw.mixed_types"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": 1}, {\"a\": \"x\"}]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1}, {\"a\": \"x\"}]}')))"
+- "id": "unnest_raw.scalar_items"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [\"x\", \"y\"]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [\"x\", \"y\"]}')))"
+- "id": "unnest_raw.nested"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"b\": {\"c\": 2, \"d\": [1, 2]}}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": 2, \"d\": [1, 2]}}')))"
+- "id": "unnest_raw.nested_null"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"b\": {\"c\": null, \"d\": 2}}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": null, \"d\": 2}}')))"
+- "id": "unnest_raw.nested_all_null"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": {\"c\": null}}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": {\"c\": null}}')))"
+- "id": "unnest_raw.numbers"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"b\": [1.5, true, \"q\\\\\"x\", -2, 100000, 0.1]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1.5, true, \"q\\\\\"x\", -2, 100000, 0.1]}')))"
+- "id": "unnest_raw.dup_names"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"b\": [1, 1]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1, 1]}')))"
+- "id": "unnest_raw.items_null_field"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": null, \"b\": [1]}, {\"a\": 2, \"b\": [2]}]}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": null, \"b\": [1]}, {\"a\": 2, \"b\": [2]}]}')))"
+- "id": "unnest_raw.top_two"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": [1, 2], \"b\": \"x\"}'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": [1, 2], \"b\": \"x\"}')))"
+- "id": "structured.from_schema"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('schema two', 'schema one'), 'Schema', type = ellmer::type_from_schema('{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"integer\"},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"a\",\"tags\"]}'), model = 'groq/probe-model')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['schema two', 'schema one'], 'Schema', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_from_schema('{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"integer\"},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"a\",\"tags\"]}'), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None})"
+  "mock_dir": "tests/llm/mocks"
+- "id": "msg.cap_report.basic"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).L.cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')"
+- "id": "msg.llm_model_list.invalid"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "llm_model_list('notamodel')"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).L.llm_model_list('notamodel')"
+- "id": "msg.ollama_native.notamodel"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.llm_ollama_native('A', 'Is this a vowel? Answer only \\'TRUE\\' or \\'FALSE\\'.', model = 'notamodel')"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', \"Is this a vowel? Answer only 'TRUE' or 'FALSE'.\", model='notamodel')"
+  "mock_dir": "apis"
+- "id": "cache_key.param_order_case"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.llm_cache_key('hi', 's', NULL, 'm', list(top_p = 1, Seed = 2L, seed = 3L, max_tokens = 4L, temperature = 0.5, B = 'x', `_a` = 1, a.b = 2, a_b = 3, ab = 4))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).C._llm_cache_key('hi', 's', None, 'm', {'top_p': 1.0, 'Seed': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(2), 'seed': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(3), 'max_tokens': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(4), 'temperature': 0.5, 'B': 'x', '_a': 1.0, 'a.b': 2.0, 'a_b': 3.0, 'ab': 4.0})"
+- "id": "ollama_native.reply.no_message"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "httr2::with_mocked_responses(function(req) httr2::response_json(body = list(model = 'm', done = TRUE)), metacheck:::.llm_ollama_native('A', 'sys', 'm'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'model': 'm', 'done': True}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm'))"
+- "id": "ollama_native.reply.no_content"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "httr2::with_mocked_responses(function(req) httr2::response_json(body = list(message = list(role = 'assistant'))), metacheck:::.llm_ollama_native('A', 'sys', 'm'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'message': {'role': 'assistant'}}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm'))"
+- "id": "ollama_native.reply.number"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "httr2::with_mocked_responses(function(req) httr2::response_json(body = list(message = list(role = 'assistant', content = 5))), metacheck:::.llm_ollama_native('A', 'sys', 'm'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'message': {'role': 'assistant', 'content': 5}}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm'))"
+- "id": "ollama_native.reply.padded"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "httr2::with_mocked_responses(function(req) httr2::response_json(body = list(message = list(role = 'assistant', content = '  hi \\n'))), metacheck:::.llm_ollama_native('A', 'sys', 'm'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).ollama_reply({'message': {'role': 'assistant', 'content': '  hi \\n'}}, lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_ollama_native('A', 'sys', 'm'))"
+- "id": "llm.ollama.no_content.mixed"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('A', 'B'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['A', 'B'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.mixed_first"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('B', 'A'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['B', 'A'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.single"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm('B', 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('B', 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.repeated"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('B', 'B'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['B', 'B'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.all_empty"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('B', 'C'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['B', 'C'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.two_of_four"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(c('A', 'B', 'C', 'D'), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['A', 'B', 'C', 'D'], 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+  "mock_dir": "apis"
+- "id": "llm.ollama.no_content.frame"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), testthat::with_mocked_bindings(llm(data.frame(text = c('B', 'A'), id = 1:2), 'sys', model = 'ollama/smollm:135m'), .llm_ollama_native = function(text, ...) if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck'))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).ollama_no_content(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(__import__('pandas').DataFrame({'text': ['B', 'A'], 'id': __import__('pandas').array([1, 2], dtype='Int64')}), 'sys', model='ollama/smollm:135m')), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON)"
+  "mock_dir": "apis"

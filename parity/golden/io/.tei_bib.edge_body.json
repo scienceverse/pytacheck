@@ -1,0 +1,188 @@
+{
+  "id": ".tei_bib.edge_body",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "container",
+      "bib_id",
+      "bib_text",
+      "year_suffix"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "article",
+          "article",
+          "book",
+          "incollection",
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1000/abc",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "An article title",
+          "No year article",
+          "A Whole Book",
+          "A Chapter",
+          "Journal no year no note"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Smith, J K; van der Berg, A",
+          "",
+          "",
+          "Chapman, ",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "Ditor, E",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "Big Press",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2020,
+          2019,
+          null,
+          1999,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "45",
+          "e123",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "67",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Journal of Tests",
+          "Some Journal",
+          null,
+          "The Collection",
+          "Another Journal"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Smith, J. K., & van der Berg, A. (2020a). An article title. Journal of Tests, 12(3), 45-67.",
+          "No year article. Some Journal, e123. In press.",
+          "Anon. (n.d.). A Whole Book. Big Press.",
+          "Chapman (1999). A Chapter. In The Collection.",
+          "Journal no year no note. Another Journal."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          null,
+          "",
+          null
+        ],
+        "names": [
+          "2020a",
+          "in press 2019b",
+          "",
+          "1999",
+          "Journal no year no note. Another Journal."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

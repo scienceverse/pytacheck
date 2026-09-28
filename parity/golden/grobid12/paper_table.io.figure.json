@@ -1,0 +1,137 @@
+{
+  "id": "paper_table.io.figure",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "There were 2 errors; use lastlog(1:2)"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "figure_id",
+      "label",
+      "section_id",
+      "text_id",
+      "image",
+      "caption",
+      "page_number",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          1,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          null,
+          null,
+          null,
+          "3",
+          "4",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          30,
+          null,
+          3,
+          7,
+          18,
+          19,
+          20,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Figure 1. The design. Error bars show 95% CI.",
+          null,
+          "Figure 1: Caption undeclared element prefix.",
+          "Figure 1: A caption with a pointer.",
+          "Fig 3: A picture without its label.",
+          "plot a shows Jones (2021) twice: Jones (2021).",
+          "Figure S1. Supplementary figure.",
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          2,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_body.tei",
+          "edge_body.tei",
+          "nonfatal_errors.tei",
+          "xlink_ns.tei",
+          "v12_edges.tei",
+          "v12_edges.tei",
+          "v12_edges.tei",
+          "v12_edges.tei"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

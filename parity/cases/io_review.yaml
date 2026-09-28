@@ -1,0 +1,375 @@
+"area": "io_review"
+"cases":
+# .grobid_to_bibr(): branches found by the differential review --------------------
+# `contents[[i]] <- NULL` drops element i; a length-1 list is recycled by the tibble
+- "id": ".grobid_to_bibr.tables_empty_second"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the second table has no contents (R's contents[[2]] <- NULL recycles the first table's contents into both)"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/tables_empty_second.tei.xml"}
+- "id": ".grobid_to_bibr.tables_empty_first"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the number before the tag ending a reference keeps its space ('Ref one. 2020.', R: 'Ref one.2020.'); the table without rows has no contents in both"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/tables_empty_first.tei.xml"}
+- "id": ".grobid_to_bibr.tables_three_one_empty"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "a table without rows has no contents (R fails the paper: 'Can't recycle input of size 2 to size 3')"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/tables_three_one_empty.tei.xml"}
+# no text rows + references: sapply() over zero headers gives list(), bind_rows() fails
+- "id": ".grobid_to_bibr.refs_no_text"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "references without text rows convert (R: 'Can't combine ..1$header <list> and ..2$header <character>')"}
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/refs_no_text.tei.xml"}
+# prefixes declared on ancestors are not repeated by xmlNodeDump (formatted, html, header)
+- "id": ".grobid_to_bibr.xlink_ns"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/xlink_ns.tei.xml"}
+- "id": ".tei_text.xlink_ns"
+  "r": ".tei_text"
+  "py": "pytacheck.io.grobid._tei_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/xlink_ns.tei.xml"}}}}
+# {{ref<i>-<j>}} tokens: sub() restores only the first occurrence of each token
+- "id": ".grobid_to_bibr.ref_token_literal"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/ref_token_literal.tei.xml"}
+# duplicated xml:id / undeclared prefixes are non-fatal libxml2 errors (warnings in xml2)
+- "id": ".grobid_to_bibr.nonfatal_errors"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/nonfatal_errors.tei.xml"}
+# stringi drops one leading byte order mark per call inside tokenize_sentences()
+- "id": ".grobid_to_bibr.bom_paragraphs"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/bom_paragraphs.tei.xml"}
+# grobid_to_bibr() on a directory (successes and failures) ------------------------
+# They read tests/io/fixtures/dir_case, a copy of the XML fixtures kept apart so
+# that adding a fixture to tests/io/fixtures does not change these goldens.
+- "id": "grobid_to_bibr.dir.null_save"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the directory's TEI files metacheck fails on (no text but references, tables without rows) are converted too; numbers before a tag keep their space (U16)"}
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/dir_case"}
+    "save_path": {"$null": true}
+- "id": "grobid_to_bibr.dir.save_path"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the directory's TEI files metacheck fails on (no text but references, tables without rows) are converted and saved too"}
+  "r": "basename"
+  "py": "tests.io._parity_helpers.basename"
+  "args":
+    "path":
+      "$call":
+        "r": "grobid_to_bibr"
+        "py": "pytacheck.io.grobid.grobid_to_bibr"
+        "args":
+          "xml_path": {"$file": "tests/io/fixtures/dir_case"}
+          "save_path": {"$expr": {"r": "file.path(tempdir(), 'pc_io_review_json')", "py": "__import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_json')"}}
+- "id": "grobid_to_bibr.empty_dir.save_path"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/dotonly"}
+- "id": "grobid_to_bibr.empty_dir.null_save"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/dotonly"}
+    "save_path": {"$null": true}
+# XML utilities: xml2 registers the document's namespaces for XPath ---------------
+- "id": ".xml_find_text.ns_prefix"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<r xmlns=\"urn:d\" xmlns:a=\"urn:a\"><a:p>one</a:p><q xmlns:a=\"urn:a2\"><a:p>two</a:p></q><s xmlns=\"urn:e\"> three  four </s></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns=\"urn:d\" xmlns:a=\"urn:a\"><a:p>one</a:p><q xmlns:a=\"urn:a2\"><a:p>two</a:p></q><s xmlns=\"urn:e\"> three  four </s></r>')"}}
+    "xpath": "//a:p"
+- "id": ".xml_find_text.ns_duplicate_prefix"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<r xmlns=\"urn:d\" xmlns:a=\"urn:a\"><a:p>one</a:p><q xmlns:a=\"urn:a2\"><a:p>two</a:p></q><s xmlns=\"urn:e\"> three  four </s></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns=\"urn:d\" xmlns:a=\"urn:a\"><a:p>one</a:p><q xmlns:a=\"urn:a2\"><a:p>two</a:p></q><s xmlns=\"urn:e\"> three  four </s></r>')"}}
+    "xpath": "//a1:p"
+- "id": ".xml_find_text.ns_default_d2"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<r xmlns=\"urn:d\" xmlns:a=\"urn:a\"><a:p>one</a:p><q xmlns:a=\"urn:a2\"><a:p>two</a:p></q><s xmlns=\"urn:e\"> three  four </s></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns=\"urn:d\" xmlns:a=\"urn:a\"><a:p>one</a:p><q xmlns:a=\"urn:a2\"><a:p>two</a:p></q><s xmlns=\"urn:e\"> three  four </s></r>')"}}
+    "xpath": "//d1:q | //d2:s"
+    "join": "; "
+- "id": ".xml_find_text.undefined_prefix"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<r xmlns:a=\"urn:a\"><a:p>one</a:p></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns:a=\"urn:a\"><a:p>one</a:p></r>')"}}
+    "xpath": "//zz:p"
+- "id": ".xml_find_text.invalid_xpath"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<r><p>one</p></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r><p>one</p></r>')"}}
+    "xpath": "//p["
+- "id": ".xml_find_text.string_literal_colon"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<r xmlns:a=\"urn:a\"><p t=\"a:b\">one</p><p t=\"x\">two</p></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns:a=\"urn:a\"><p t=\"a:b\">one</p><p t=\"x\">two</p></r>')"}}
+    "xpath": "//p[@t='a:b']"
+- "id": ".xml_find1_text.ns_prefix"
+  "r": ".xml_find1_text"
+  "py": "pytacheck.io.xml._xml_find1_text"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<r xmlns:common=\"urn:c\"><common:path>0000-0002</common:path><common:path>x</common:path></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns:common=\"urn:c\"><common:path>0000-0002</common:path><common:path>x</common:path></r>')"}}
+    "xpath": "//common:path"
+- "id": "xml_ns.duplicates.names"
+  "r": "names"
+  "py": "tests.io._parity_helpers.names"
+  "args":
+    "x": {"$call": {"r": "xml2::xml_ns", "py": "pytacheck.io.xml.xml_ns", "args": {"x": {"$expr": {"r": "xml2::read_xml('<r xmlns=\"urn:z\" xmlns:b=\"urn:b\" xmlns:a=\"urn:y\"><q xmlns=\"urn:b\" xmlns:a=\"urn:a\"/><s xmlns:b=\"urn:b\" xmlns:c=\"urn:z\"/><t xmlns:a=\"urn:y\"/><u xmlns:a1=\"urn:q\"/></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns=\"urn:z\" xmlns:b=\"urn:b\" xmlns:a=\"urn:y\"><q xmlns=\"urn:b\" xmlns:a=\"urn:a\"/><s xmlns:b=\"urn:b\" xmlns:c=\"urn:z\"/><t xmlns:a=\"urn:y\"/><u xmlns:a1=\"urn:q\"/></r>')"}}}}}
+- "id": "xml_ns.duplicates.values"
+  "r": "unname"
+  "py": "tests.io._parity_helpers.unname"
+  "args":
+    "obj": {"$call": {"r": "xml2::xml_ns", "py": "pytacheck.io.xml.xml_ns", "args": {"x": {"$expr": {"r": "xml2::read_xml('<r xmlns=\"urn:z\" xmlns:b=\"urn:b\" xmlns:a=\"urn:y\"><q xmlns=\"urn:b\" xmlns:a=\"urn:a\"/><s xmlns:b=\"urn:b\" xmlns:c=\"urn:z\"/><t xmlns:a=\"urn:y\"/><u xmlns:a1=\"urn:q\"/></r>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns=\"urn:z\" xmlns:b=\"urn:b\" xmlns:a=\"urn:y\"><q xmlns=\"urn:b\" xmlns:a=\"urn:a\"/><s xmlns:b=\"urn:b\" xmlns:c=\"urn:z\"/><t xmlns:a=\"urn:y\"/><u xmlns:a1=\"urn:q\"/></r>')"}}}}}
+# read_xml(): non-fatal errors keep the document, the first fatal error fails
+- "id": "read_xml.nonfatal.as_character"
+  "r": "as.character"
+  "py": "pytacheck.io.xml.as_character"
+  "args":
+    "x": {"$expr": {"r": "xml2::read_xml('<a><b xml:id=\"x\"/><c xml:id=\"x\">t</c><ptr xlink:href=\"u\"/><p:q/></a>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<a><b xml:id=\"x\"/><c xml:id=\"x\">t</c><ptr xlink:href=\"u\"/><p:q/></a>')"}}
+- "id": "read_xml.fatal"
+  "r": "as.character"
+  "py": "pytacheck.io.xml.as_character"
+  "args":
+    "x": {"$expr": {"r": "xml2::read_xml('<a><b xml:id=\"x\"/><c xml:id=\"x\"></a>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<a><b xml:id=\"x\"/><c xml:id=\"x\"></a>')"}}
+# as.character() of nodes with inherited / own / redeclared prefixes
+- "id": "as_character.ns_nodes"
+  "r": "as.character"
+  "py": "pytacheck.io.xml.as_character"
+  "args":
+    "x": {"$expr": {"r": "xml2::xml_find_all(xml2::read_xml('<r xmlns:xlink=\"urn:x\" xmlns:a=\"urn:a\"><p xmlns:b=\"urn:b\">x <ptr xlink:href=\"h\"/> <b:q>y</b:q> <a:z a:k=\"1\">w</a:z></p><p xmlns:c=\"urn:c\">none</p><p>plain <m xmlns=\"urn:m\"><i>q</i></m></p><p><a:z xmlns:a=\"urn:other\">shadow</a:z></p></r>'), '//p')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_all(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<r xmlns:xlink=\"urn:x\" xmlns:a=\"urn:a\"><p xmlns:b=\"urn:b\">x <ptr xlink:href=\"h\"/> <b:q>y</b:q> <a:z a:k=\"1\">w</a:z></p><p xmlns:c=\"urn:c\">none</p><p>plain <m xmlns=\"urn:m\"><i>q</i></m></p><p><a:z xmlns:a=\"urn:other\">shadow</a:z></p></r>'), '//p')"}}
+# format_bib_authors(): paste() recycling and value formatting ---------------------
+- "id": "format_bib_authors.no_given"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$df": {"family": ["Eagly", "Wood"]}}
+- "id": "format_bib_authors.no_family"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$df": {"given": ["Alice", "Wendy"]}}
+- "id": "format_bib_authors.numbers_logicals"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$expr": {"r": "data.frame(family = c(1.5, 2, 1e5), given = c(TRUE, FALSE, NA))", "py": "pd.DataFrame({'family': [1.5, 2.0, 1e5], 'given': pd.array([True, False, None], dtype='boolean')})"}}
+- "id": "format_bib_authors.partial_column"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$df": {"family_name": ["Eagly", "Wood"], "given": ["Alice H.", "Wendy"]}}
+- "id": "format_bib_authors.no_columns"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$df": {"x": ["a", "b"]}}
+# paper corpora: no .rds assets ----------------------------------------------------
+- "id": ".papers_release_assets.nords"
+  "r": ".papers_release_assets"
+  "py": "pytacheck.io.corpus._papers_release_assets"
+  "mock_dir": "tests/io/fixtures/apis_papers_nords"
+  "args":
+    "repo": "scienceverse/nords"
+- "id": "papers_available.nords"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U18", "reason": "a repository without .rds assets has no corpora: an empty table (R: 'arguments imply differing number of rows: 0, 1')"}
+  "r": "papers_available"
+  "py": "pytacheck.io.corpus.papers_available"
+  "mock_dir": "tests/io/fixtures/apis_papers_nords"
+  "args":
+    "repo": "scienceverse/nords"
+- "id": "papers_available.no_releases"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U18", "reason": "a repository without releases has no corpora: an empty table (R: 'arguments imply differing number of rows: 0, 1')"}
+  "r": "papers_available"
+  "py": "pytacheck.io.corpus.papers_available"
+  "mock_dir": "apis_papers_empty"
+  "args":
+    "repo": "scienceverse/norealeases"
+- "id": "papers_available.retag"
+  "r": "papers_available"
+  "py": "pytacheck.io.corpus.papers_available"
+  "mock_dir": "apis_papers_retag"
+  "args":
+    "repo": "scienceverse/retagtest"
+- "id": "papers_load.nords"
+  "r": "papers_load"
+  "py": "pytacheck.io.corpus.papers_load"
+  "mock_dir": "tests/io/fixtures/apis_papers_nords"
+  "args":
+    "name": "misc"
+    "repo": "scienceverse/nords"
+- "id": "papers_load.no_releases"
+  "r": "papers_load"
+  "py": "pytacheck.io.corpus.papers_load"
+  "mock_dir": "apis_papers_empty"
+  "args":
+    "name": "demo"
+    "repo": "scienceverse/norealeases"
+- "id": "papers_load.download_missing"
+  "r": "papers_load"
+  "py": "pytacheck.io.corpus.papers_load"
+  "mock_dir": "apis_papers_retag"
+  "args":
+    "name": "other"
+    "repo": "scienceverse/retagtest"
+# convert(): match.arg() partial matching, list.files() without dotfiles -----------
+- "id": "convert.grobid.partial_method"
+  "r": "basename"
+  "py": "tests.io._parity_helpers.basename"
+  "mock_dir": "apis"
+  "args":
+    "path":
+      "$call":
+        "r": "convert"
+        "py": "pytacheck.io.convert.convert"
+        "args":
+          "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+          "save_path": {"$expr": {"r": "file.path(tempdir(), 'pc_io_review_convert')", "py": "__import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_convert')"}}
+          "method": "gro"
+          "api_url": "https://grobid.hti.ieis.tue.nl"
+# the JSON is named after R's random tempfile() name: normalised to TMP.json
+- "id": "convert.grobid.no_keep_xml"
+  "r": "sub"
+  "py": "pytacheck._r.regex.sub"
+  "mock_dir": "apis"
+  "args":
+    "pattern": "^file[0-9a-f]+\\.json$"
+    "replacement": "TMP.json"
+    "x":
+      "$call":
+        "r": "basename"
+        "py": "tests.io._parity_helpers.basename"
+        "args":
+          "path":
+            "$call":
+              "r": "convert"
+              "py": "pytacheck.io.convert.convert"
+              "args":
+                "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+                "save_path": {"$expr": {"r": "file.path(tempdir(), 'pc_io_review_convert2')", "py": "__import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_convert2')"}}
+                "method": "grobid"
+                "keep_xml": false
+                "api_url": "https://grobid.hti.ieis.tue.nl"
+- "id": "convert.dotfiles_only"
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": {"$file": "tests/io/fixtures/dotonly"}
+    "api_url": "unused"
+- "id": "convert.xml_dir"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U17", "reason": "the directory's TEI files metacheck fails on (no text but references, tables without rows) are converted too; numbers before a tag keep their space (U16)"}
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": {"$file": "tests/io/fixtures/dir_case"}
+    "save_path": {"$null": true}
+    "api_url": "unused"
+# convert_grobid(): a directory of PDFs ---------------------------------------------
+- "id": "convert_grobid.dir"
+  "r": "basename"
+  "py": "tests.io._parity_helpers.basename"
+  "mock_dir": "apis"
+  "args":
+    "path":
+      "$call":
+        "r": "convert_grobid"
+        "py": "pytacheck.io.grobid.convert_grobid"
+        "args":
+          "file_path": {"$file": "upstream/metacheck/inst/demos"}
+          "save_path": {"$expr": {"r": "file.path(tempdir(), 'pc_io_review_grobid')", "py": "__import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_grobid')"}}
+          "api_url": "https://grobid.hti.ieis.tue.nl"
+- "id": "convert_grobid.multiple_with_failure"
+  "r": "basename"
+  "py": "tests.io._parity_helpers.basename"
+  "mock_dir": "apis"
+  "args":
+    "path":
+      "$call":
+        "r": "unname"
+        "py": "tests.io._parity_helpers.unname"
+        "args":
+          "obj":
+            "$call":
+              "r": "convert_grobid"
+              "py": "pytacheck.io.grobid.convert_grobid"
+              "args":
+                "file_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/inst/demos/to_err_is_human.pdf', 'upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf'))", "py": "[(__import__('pathlib').Path.cwd() / p).as_posix() for p in ['upstream/metacheck/inst/demos/to_err_is_human.pdf', 'upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf']]"}}
+                "save_path": {"$expr": {"r": "file.path(tempdir(), 'pc_io_review_grobid_multi')", "py": "__import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_grobid_multi')"}}
+                "api_url": "https://grobid.hti.ieis.tue.nl"
+# convert(method = "bibr"): R calls do.call(convert_bibr, valid_args) with the argument
+# *names*, so it always fails; pytacheck passes the arguments (intentional divergence)
+- "id": "convert.bibr.arguments"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.basename"
+  "mock_dir": "tests/io/fixtures/apis_bibr_local"
+  "known_divergence": {"kind": "deliberate", "ref": "D2", "reason": "metacheck's convert() passes the argument names instead of their values to convert_bibr() (do.call(convert_bibr, valid_args)), so method = 'bibr' always fails ('second argument must be a list'); pytacheck passes the values and converts the file"}
+  "args":
+    "x": {"$expr": {"r": "basename(metacheck::convert(file.path(getwd(), 'upstream/metacheck/inst/demos/to_err_is_human.docx'), file.path(tempdir(), 'pc_io_review_bibr'), method = 'bibr', api_url = 'http://localhost:8000'))", "py": "None"}}
+  "py_args":
+    "path": {"$expr": {"r": "NULL", "py": "__import__('pytacheck.io.convert', fromlist=['x']).convert(str(__import__('pathlib').Path.cwd() / 'upstream/metacheck/inst/demos/to_err_is_human.docx'), __import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_bibr'), method='bibr', api_url='http://localhost:8000')"}}
+  "py_drop": ["x"]
+# readRDS(): real paper lists (read() of psychsci JSON / debruine XML) and matrices
+- "id": "readRDS.psychsci_paperlist_xz"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/psychsci_paperlist.rds"}
+# the fixture stores the absolute paths of the machine that saved it: compared by basename
+- "id": "readRDS.debruine_xml_paperlist_gzip_v2"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- readRDS('tests/io/fixtures/debruine_xml_paperlist.rds'); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_rds_basenames('tests/io/fixtures/debruine_xml_paperlist.rds')"}}
+- "id": "readRDS.matrices"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/matrices.rds"}
+# read(): list.files(dir, "\\.(json|xml)$", recursive, full.names = TRUE) skips hidden
+# files and directories and upper-case extensions and sorts full paths as sort() does;
+# setdiff() drops the exact XML twin of a lower-case .json and repeated paths.
+# info$file_name holds the (temporary) path of a TEI file: compared by basename
+- "id": "read.dir.listing"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); dir.create(file.path(d, 'sub')); dir.create(file.path(d, '.hid')); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('good.xml', '.hidden.xml', 'UP.XML', 'Z.xml', 'sub/c.xml', '.hid/h.xml', 'sub.xml'))); p <- read(d); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_basenames(__import__('tests.io._parity_helpers', fromlist=['x']).read_dir())"}}
+- "id": "read.dir.recursive"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); dir.create(file.path(d, 'sub')); dir.create(file.path(d, '.hid')); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('good.xml', '.hidden.xml', 'UP.XML', 'Z.xml', 'sub/c.xml', '.hid/h.xml', 'sub.xml'))); p <- read(d, recursive = TRUE); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_basenames(__import__('tests.io._parity_helpers', fromlist=['x']).read_dir(), recursive=True)"}}
+- "id": "read.list.twins_and_repeats"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('Z.xml', 'p.xml', 'q.xml'))); file.copy('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json', file.path(d, c('p.JSON', 'q.json'))); p <- read(file.path(d, c('Z.xml', 'p.JSON', 'p.xml', 'q.json', 'q.xml', 'Z.xml'))); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_basenames(__import__('tests.io._parity_helpers', fromlist=['x']).read_list())"}}
+# read() keeps each path as given: an XML paper's info$file_name is "dir//p.xml" for
+# read("dir/") and "dir/./p.xml" for read("dir/./p.xml") (the temp dir is written D)
+- "id": "read.file_name_verbatim"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('p.xml', 'q.xml'))); fn <- function(x) vapply(if (inherits(x, 'scivrs_paper')) list(x) else x, function(p) sub(d, 'D', p$info$file_name, fixed = TRUE), ''); list(dir_slash = fn(read(paste0(d, '/'))), dot = fn(read(file.path(d, '.', 'p.xml'))), double = fn(read(c(paste0(d, '//q.xml'), file.path(d, 'p.xml')))))})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_file_names()"}}

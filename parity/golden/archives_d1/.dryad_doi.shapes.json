@@ -1,0 +1,53 @@
+{
+  "id": ".dryad_doi.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "out-of-range values treated as 0 in coercion to raw"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "10.5061/dryad.j1fd7",
+      "10.5061/dryad.j1fd7",
+      "10.5061/dryad.j1fd7",
+      "10.5061/dryad.abc",
+      "10.25338/b8n33j",
+      "10.5068/d14671",
+      "10.6075/j0w37ttw",
+      "10.7941/d18907",
+      "10.15146/r3xq19",
+      null,
+      null,
+      null,
+      null,
+      "10.5061/dryad.x1y2z3",
+      null,
+      "10.5061/dryad.q1",
+      "10.5061/dryad.q2",
+      "10.5061/dryad.second"
+    ],
+    "names": [
+      "https://doi.org/10.5061/dryad.j1fd7",
+      "http://datadryad.org/stash/dataset/doi:10.5061/dryad.j1fd7",
+      "https://datadryad.org/stash/dataset/doi%3A10.5061%2Fdryad.J1FD7",
+      "10.5061/DRYAD.ABC",
+      "  10.25338/B8N33J  ",
+      "https://doi.org/10.5068/D14671",
+      "https://doi.org/10.6075/j0w37ttw",
+      "https://doi.org/10.7941/d18907",
+      "doi:10.15146/R3XQ19",
+      "https://doi.org/10.9999/unrelated123",
+      "",
+      null,
+      "10.5061/dryad",
+      "datadryad.org/dataset/doi:10.5061/dryad.x1y2z3/",
+      "10.253380/xyz",
+      "see abc%4gdef 10.5061/dryad.q1",
+      "10.5061/dryad.q2%zz",
+      "https://doi.org/10.25349/D9WP4K and 10.5061/dryad.second"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

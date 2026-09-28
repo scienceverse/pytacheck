@@ -1,0 +1,419 @@
+{
+  "id": "read_stat_tables.omv.structured",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ttestOneS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "One Sample T-Test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "var[stud]",
+              "name[stud]",
+              "stat[stud]",
+              "err[stud]",
+              "df[stud]",
+              "p[stud]",
+              "md[stud]",
+              "cil[stud]",
+              "ciu[stud]",
+              "es[stud]",
+              "var[bf]",
+              "name[bf]",
+              "stat[bf]",
+              "err[bf]",
+              "df[bf]",
+              "p[bf]",
+              "md[bf]",
+              "sed[bf]",
+              "cil[bf]",
+              "ciu[bf]",
+              "es[bf]",
+              "var[wilc]",
+              "name[wilc]",
+              "stat[wilc]",
+              "err[wilc]",
+              "p[wilc]",
+              "md[wilc]",
+              "cil[wilc]",
+              "ciu[wilc]",
+              "es[wilc]"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "H4 test"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Student's t"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.74627189026507"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "67"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000187879807141863"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.632352941176471"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.350816605511086"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Inf"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.454302197230741"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "H4 test"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Bayes factor₁₀"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "H4 test"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Wilcoxon W"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ttestOneS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test of Normality (Shapiro-Wilk)"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "name",
+              "w",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "H4 test"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.938269121128085"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.00220590179992331"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ttestOneS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "name",
+              "num",
+              "mean",
+              "median",
+              "sd",
+              "se"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "H4 test"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "68"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.632352941176471"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.3919213797139"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.168795260915173"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

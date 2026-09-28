@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://api.github.com/repos/gzorg/fallrepo", status_code = 404L, headers = structure(list(`content-type` = "application/json; charset=utf-8"), class = "httr2_headers"), body = charToRaw("{\"message\":\"Not Found\"}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

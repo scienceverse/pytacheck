@@ -1,0 +1,1242 @@
+# Parity cases for the coi_check and coi_check_oi modules (inst/modules/coi_check*.R).
+"area": "mod_coi"
+"cases":
+- "id": "coi_check.demo"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$paper": "demo"
+- "id": "coi_check.psychsci"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+      - "upstream/metacheck/inst/demos/to_err_is_human.json"
+- "id": "coi_check.problems"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
+      - "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
+- "id": "coi_check.no_coi"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "There is a conflict between X and Y."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.has_coi"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The researchers state no conflict of interest."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.paperlist"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"The researchers state no conflict of interest.\")), test_paper(c(\"\
+          There is a conflict between X and Y.\")))"
+        "py": "pc.PaperList([pc.test_paper(['The researchers state no conflict of interest.']), pc.test_paper(['There\
+          \ is a conflict between X and Y.'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.empty"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": []
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.single_sentence_none"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Nothing here."
+        - "Or here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.demo"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$paper": "demo"
+- "id": "coi_check_oi.psychsci"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+      - "upstream/metacheck/inst/demos/to_err_is_human.json"
+- "id": "coi_check_oi.problems"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
+      - "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
+- "id": "coi_check_oi.no_coi"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "There is a conflict between X and Y."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.has_coi"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The researchers state no conflict of interest."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.paperlist"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"The researchers state no conflict of interest.\")), test_paper(c(\"\
+          There is a conflict between X and Y.\")))"
+        "py": "pc.PaperList([pc.test_paper(['The researchers state no conflict of interest.']), pc.test_paper(['There\
+          \ is a conflict between X and Y.'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.empty"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": []
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.single_sentence_none"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Nothing here."
+        - "Or here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_last_sentence"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U97", "reason": "A COI heading that is the last sentence is returned as the statement; metacheck stops on if (nchar(NA) == 0)."}
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "Conflict of interest"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_blank_next"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of Interest"
+        - ""
+        - "None."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_no_period"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Competing interests"
+        - "The authors declare"
+        - "no competing interests exist"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_none_extract"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflicts of interest"
+        - "Some text here. None of the authors has any"
+        - "Next sentence."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_next_is_last"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U97", "reason": "No literal 'NA' is appended for a sentence past the end of the paper."}
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Results were clear."
+        - "Conflicts of interest"
+        - "The authors declare none"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_with_no"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Competing interests: no"
+        - "None."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.disclosure_false_positive"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Patient information disclosure was handled by the hospital."
+        - "Results were significant."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.disclosure_true"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Methods were standard."
+        - "Disclosure: The authors have nothing to disclose."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.disclosure_none"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Disclosures"
+        - "None."
+        - "We thank everyone."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.author_disclosure"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The results are robust."
+        - "Author disclosures are listed online."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.financial_disclosure"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Financial disclosure: The study was funded by X."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.repeated_sentences"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflicts of interest. Conflicts of interest."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.nil_dropped"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U95", "reason": "'Conflict of interest: Nil.' is kept; metacheck's replacement keeps only groups 1-4 and empties matches of alternatives 5-11."}
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest: Nil. Other text follows."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.none_stop"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest: None. Other text follows here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.none_declared"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Competing interests: None declared. The data are on OSF."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.authors_cut"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The authors declare no competing interests. We thank the reviewers."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.authors_single_title"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Some intro text."
+        - "Conflict of interest"
+        - "The authors declare that there is no conflict of interest regarding this paper."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.authors_twice"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The authors declare no conflict of interest. The author contributions are listed. Both authors\
+          \ approved it."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.none_of_the_authors"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "None of the authors has no competing interest in this work. Thanks to all."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.no_conflicts_cut"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "No conflicts of interest were reported. Funding was from the NIH."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.point_form"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest:"
+        - "Author A has received fees."
+        - "Author B holds shares."
+        - "Disclosure: none."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.point_form_far"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest: none."
+        - "Filler sentence 0."
+        - "Filler sentence 1."
+        - "Filler sentence 2."
+        - "Filler sentence 3."
+        - "Filler sentence 4."
+        - "Filler sentence 5."
+        - "Filler sentence 6."
+        - "Filler sentence 7."
+        - "Filler sentence 8."
+        - "Filler sentence 9."
+        - "Filler sentence 10."
+        - "Filler sentence 11."
+        - "Disclosure: none."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.interest_colon_cut"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "We examined conflict of interest effects in teams."
+        - "Teams were small."
+        - "Competing interests: none."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.misspelled_dropped"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "A confict of interest arises here"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.declaration"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Declaration of interest: The authors report no conflicts of interest. The authors alone are\
+          \ responsible."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.duality"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Duality of Interest: no duality of interest declared."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.competing_financial"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Competing financial interests: The authors declare none."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.potential_conflicts"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Background text."
+        - "Potential conflicts of interest: none declared."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.declaration_conflicting"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Declaration of Conflicting Interests The author(s) declared no potential conflicts of interest\
+          \ with respect to the research, authorship, and/or publication of this article."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.preceding_text_removed"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Blah blah Competing X then Conflict of interest statement here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.reported_lowercase"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "no competing interest was reported by the authors."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.authors_extract"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Acknowledgements We thank X. The authors declare no competing interests."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.authors_extract_cut"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "We thank X. The authors declare no conflict of interest. Funding was provided by Y."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.no_conflicts_first"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "No conflicts of interest. Also the note: The authors declare no conflict of interest"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.authors_minimal_end"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Competing Interests: The authors have declared that no competing interests exist."
+        - "No conflicts of interest were reported. Funding was from the NIH."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.unicode"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflit d’intérêts: aucun."
+        - "Conflicts of interest: none — the authors déclarent aucun."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.fuzz_paperlist"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"Disclosure statement: None.\", \"Ethics approval was obtained.\"\
+          )), test_paper(c(\"CONFLICT OF INTEREST\", \"Authors disclose no conflicts.\", \"The effect\
+          \ was significant, p = .03.\", \"None declared.\", \"No conflicting financial interests. Data\
+          \ are available.\", \"Financial disclosure: The study was funded by X.\", \"Funding This work\
+          \ was supported by grant 123.\", \"Disclosures\")), test_paper(c(\"disclosed. Funding. Nil.\
+          \ declare: Conflicts. the competing. Funding. declared no.\", \"interest: financial disclosure.\
+          \ none None of the authors: Competing: Nil. conflicting. with respect to the research.\", \"\
+          Funding. Author author, The author potential; and: Disclosure: nil:\", \"COMPETING NONE Conflict;\
+          \ Conflicts conflicting; The authors:\", \"Duality declare.\")), test_paper(c(\"Disclosure statement:\
+          \ None.\")), test_paper(c(\"Interest. a.\", \"Y. NO, financial p = .03: Disclosure; COMPETING:\
+          \ interest, data. conflict;.\", \"COMPETING, nil, data financial data interests. No; Financial\
+          \ Disclosure None:.\", \"thank; to declare declared. none No; Declaration of Interest Disclosure\
+          \ Y. conflicting. Funding. duality;\")), test_paper(c(\"interests. Disclosure declare nil COI,.\"\
+          , \"potential. declare; None of the authors. Author a with respect to the research with respect\
+          \ to the research.\")), test_paper(c(\"exist p = .03; potential: with respect to the research:\
+          \ data; with respect to the research None of the authors. thank; none Potential Nil;\")), test_paper(c(\"\
+          declare. Author no Competing Y. Conflicts: DISCLOSURE:.\")), test_paper(c(\"conflicting. Declaration\
+          \ duality; None of the authors, or: study Funding potential. Author; We; Potential; nil\", \"\
+          X conflicting. The author: or Potential;\")), test_paper(c(\"Nothing to declare; interests Nothing\
+          \ to declare: Conflicts: duality and, Declaration of Interest. have: disclosure, conflicting;\
+          \ NONE.\", \"The authors NONE, to declare disclosed: Interest The author. have. DISCLOSURE\"\
+          , \"statement: interests, Author, None;.\", \"Competing. Funding thank, interest: declared.\"\
+          , \"We; Interest, NONE; or; COMPETING. No. Nil declared.\", \"Declaration declared: conflict.\
+          \ interest.\", \"the; duality.\", \"COMPETING. Disclosures conflict: conflicting COMPETING.\
+          \ potential; conflict, Funding. conflicting:\")), test_paper(c(\"conflict\", \"No: exist, Declaration\
+          \ of Interest. Interest, Author, financial.\")), test_paper(c(\"interests:.\", \"Declaration\
+          \ of Interest: The authors conflicting Y.\", \"Potential. Competing, None disclosure. Financial\
+          \ Disclosure. competing no: and; DISCLOSURE: disclosed interest,.\", \"data Potential, Conflicts\
+          \ Conflicts. Interest The author; the The authors: or: COI: interest;.\", \"None of the authors.\
+          \ no: The author\", \"potential; have No. reported. None: interest thank; p = .03 COMPETING:\
+          \ NO. Potential: All authors:.\", \"Declaration. financial disclosure conflicting, a, COMPETING\
+          \ Y Potential: None; author.\", \"Y: COI declare: reported. author, p = .03.\", \"conflict Author.\
+          \ declare. The authors; potential, study No\", \"None: potential; duality We Potential, disclosed\
+          \ NONE.\", \"financial disclosure:\", \"Nil The author thank: Potential: of author Y. interests:\
+          \ Nil,\")), test_paper(c(\"We declare:\", \"Interest,.\", \"COMPETING; statement, declare:.\"\
+          , \"or: disclosure. p = .03 with respect to the research; financial disclosure: Declaration\
+          \ of Interest. disclosed NONE; Declaration of Interest Nothing to declare: X:\", \"Author: data\
+          \ study: thank; disclosure. We:\")), test_paper(c(\"author. Nothing to declare: Author. or financial\
+          \ disclosure none. interests Competing Interest Disclosures. Interest: Nothing to declare\"\
+          , \"Conflicts p = .03: conflicting;\", \"disclosed: None of the authors. potential: COMPETING:\
+          \ conflicting; Disclosures The authors, study: NO: None of the authors; of Disclosures,.\")),\
+          \ test_paper(c(\"COI exist; The authors; data. duality and. No; duality. study. to declare.\"\
+          , \"COI DISCLOSURE;.\", \"Declaration of Interest. Disclosures; The authors: conflicts financial\
+          \ disclosure: the declared: of: declared Disclosure;.\", \"Nil: No. Y p = .03.\", \"financial\
+          \ disclosure Funding duality, conflicting DISCLOSURE: Interest. Disclosures Author, NO\", \"\
+          NO: conflicting: study. interest. We statement financial disclosure; exist,\", \"conflicting,\
+          \ no study reported interest financial Disclosure, conflict; competing: p = .03. Declaration\
+          \ of Conflict:.\", \"interest: The authors. Nothing to declare. Nothing to declare.\", \"conflicts;\
+          \ with respect to the research: disclosed. a the; financial disclosure, duality COI. Conflicts\
+          \ None. COI. Y\", \"COMPETING. conflicts.\", \"Declaration of Conflict: NO; The authors: with\
+          \ respect to the research. financial: Interest Interest, interest: Funding; COI, Author: study.\"\
+          , \"Y conflicting reported DISCLOSURE:\")), test_paper(c(\"Disclosures\", \"Disclosure\", \"\
+          None of the authors have any conflict of interest to declare.\", \"\", \"Competing interests\"\
+          )), test_paper(c(\"Potential conflicts of interest: none declared.\", \"Duality of Interest:\
+          \ no duality of interest declared.\", \"The authors declare no conflict of interest.\", \"Authors\
+          \ disclose no conflicts.\", \"Declaration of interest: The authors report no conflicts of interest.\
+          \ The authors alone are responsible.\")), test_paper(c(\"None of the authors.\")), test_paper(c(\"\
+          have\", \"Duality Declaration of Conflict: data: Nil: Declaration of Conflict. have.\", \"p\
+          \ = .03 disclosed; X. none: exist;.\", \"disclosure. No disclosure,\", \"NONE, Both authors\
+          \ disclosure; of: statement. have, NONE. reported. Interest. of: and, financial,.\", \"financial\
+          \ Funding, Disclosure, thank: interest. The authors; Funding: interest Potential,.\", \"Interest.\
+          \ Nothing to declare; The author. to declare; potential, thank: interest: NONE.\", \"Nothing\
+          \ to declare. conflicting to declare. financial, conflict Nil COMPETING, study X Potential:\
+          \ to declare:\")), test_paper(c(\"nil nil; the We data financial: interest.\", \"COI; Nil; Conflict:\
+          \ nil.\", \"conflict. Duality. All authors:.\", \"none: Declaration of Conflict: and Financial\
+          \ Disclosure financial disclosure. the: none: no, p = .03, DISCLOSURE. financial: NONE.\")),\
+          \ test_paper(c(\"conflicting; Declaration: potential; The author; disclosed:.\", \"interest.\
+          \ data, All authors thank interest COI. COMPETING. Financial Disclosure; with respect to the\
+          \ research: statement statement: data\", \"\", \"p = .03. No. COMPETING: conflict: None of the\
+          \ authors We. declare: with respect to the research; Conflicts thank;\")), test_paper(c(\"Y;\
+          \ financial disclosure, No DISCLOSURE, duality declared: competing, p = .03.\")), test_paper(c(\"\
+          of The author conflict: Duality none; study, competing study Both authors: conflict: none: nil.\"\
+          , \"author No Disclosure; exist X, conflicting. competing; financial,.\")), test_paper(c(\"\
+          conflicting Duality: Both authors. No Both authors. Disclosure. have. Both authors.\", \"conflict.\
+          \ Competing Nothing to declare: Declaration of Interest. disclosed: Author:\", \"Interest; We:.\"\
+          )), test_paper(c(\"COMPETING of duality; Competing: study disclosed: DISCLOSURE;.\", \"the a.\
+          \ none: All authors: Declaration. None; None of the authors. Potential;.\", \"NO. Author Nil.\
+          \ No: or: All authors; potential, to declare: financial disclosure, author have None.\", \"\
+          Financial Disclosure: no; have: of NO. The authors. disclosure statement. or, Disclosures. interests.\"\
+          )), test_paper(c(\"Declaration of interest: The authors report no conflicts of interest. The\
+          \ authors alone are responsible.\", \"Competing financial interests: The authors declare none.\"\
+          , \"Duality of interest\", \"Competing interests\", \"None of the authors have any conflict\
+          \ of interest to declare.\", \"Competing Interests:\", \"The researchers state no conflict of\
+          \ interest.\", \"No competing interests exist. We thank the reviewers.\")), test_paper(c(\"\
+          None declared.\", \"Conflict of Interest\", \"None declared.\")), test_paper(c(\"financial disclosure.\
+          \ exist; competing. statement: declare Author: p = .03 The author, X.\", \"reported No. Conflict;\
+          \ potential; the data: conflict: Both authors COMPETING:\", \"NONE. statement. Conflict; We\
+          \ Duality Funding. or; nil DISCLOSURE.\", \"The author No of. thank:\", \"Both authors; reported:\
+          \ disclosed. X Disclosures. of\", \"Declaration of Interest financial disclosure: study, financial;\
+          \ Y, a: declared Duality of; Funding\", \"disclosed Potential, Duality;.\", \"X\")), test_paper(c(\"\
+          \")), test_paper(c(\"Financial Disclosure. Potential; NONE. Disclosure: no: Conflicts. Both\
+          \ authors; thank, The authors. Duality:\", \"NO Competing Nil. duality.\", \"Y.\", \"Nothing\
+          \ to declare,.\", \"conflicts.\", \"duality. X\", \"statement the: COMPETING; Y: NONE nil: Both\
+          \ authors, none. no; thank. COMPETING NO:\", \"Declaration of Conflict: Both authors Author:\
+          \ exist conflict declare interests.\", \"COMPETING. We potential: COI. Declaration of Conflict.\
+          \ reported, nil statement. conflict. nil none.\", \"thank Nil:.\", \"Declaration of Conflict\
+          \ The authors. data, have, X X thank, no.\", \"\")), test_paper(c(\"Nil.\", \"Authors disclose\
+          \ no conflicts.\", \"Conflict of interest none\")), test_paper(c(\"\", \"Conflicts. Interest,\
+          \ Disclosures: data: None of the authors NONE.\", \"conflicts; Declaration. and,\", \"\", \"\
+          We: with respect to the research. NONE disclosed, Nil conflicts or. Declaration of Interest\
+          \ Y Duality interests.\")), test_paper(c(\"potential Disclosure: author: Conflict; a. Y; conflicting.\
+          \ or: Both authors, NONE reported, reported\")), test_paper(c(\"data: declare conflicts.\")),\
+          \ test_paper(c(\"Declaration of Interest,.\", \"Author financial disclosure None of the authors:\
+          \ financial: None of the authors. the: to declare X. Declaration:.\")), test_paper(c(\"None.\"\
+          , \"The author declares no conflict of interest. Author contributions: X did Y.\", \"Declaration\
+          \ of Conflicting Interests The author(s) declared no potential conflicts of interest.\", \"\
+          None declared.\", \"Nothing to declare.\")), test_paper(c(\"duality; None. Financial Disclosure\
+          \ have. COMPETING disclosed: disclosed. No, nil. Both authors We,\", \"Conflicts; potential\
+          \ no X\")), test_paper(c(\"NO Conflict and X Interest DISCLOSURE: Y. duality: financial. Competing.\"\
+          , \"Conflicts; None. X: DISCLOSURE, COMPETING;.\", \"no None of the authors. Declaration of\
+          \ Conflict: None declare: The author potential: Competing: Interest NONE. Y:\", \"financial\
+          \ disclosure; Competing: conflicts: COI reported Nothing to declare; The authors; the;.\", \"\
+          None of the authors.\", \"conflict of; duality Declaration of Interest: NONE.\", \"Interest.\
+          \ interests Funding none, duality; competing, Nothing to declare; thank Conflict a to declare:\"\
+          , \"The author COI: All authors; Funding; to declare a; conflict; the All authors. conflict.\
+          \ NO interest.\", \"declare: None and. no to declare. Both authors, author; conflict: We, Disclosure;\"\
+          , \"Financial Disclosure:.\", \"statement. Funding; All authors\", \"exist, Interest financial\
+          \ disclosure Declaration of Conflict COMPETING: NO COMPETING; Disclosure.\")), test_paper(c(\"\
+          declared. No. We: competing study, NONE;\", \"a interests: Financial Disclosure; None.\", \"\
+          duality potential. of potential no; reported, We;.\", \"Interest. thank COMPETING.\", \"Disclosures\
+          \ conflicts; exist; disclosure Conflict, exist.\", \"declared nil interests: declare; and:.\"\
+          , \"conflict: to declare; financial disclosure, conflicting.\", \"Author,\", \"No. Author: no\
+          \ of: and: Interest conflict; Interest: Declaration Nothing to declare have disclosed.\", \"\
+          Disclosures to declare. DISCLOSURE conflict: thank no: Declaration of Interest No; Nil: interests.\"\
+          , \"Nil; to declare Disclosure: with respect to the research. COMPETING. conflict; COI: disclosure.\"\
+          , \"nil, and The author: Nil: Declaration of Conflict disclosed.\")), test_paper(c(\"No conflicting\
+          \ financial interests. Data are available.\", \"Both authors declare no conflicts of interest.\"\
+          , \"The authors have no competing interests to declare. All authors contributed equally.\",\
+          \ \"Conflict of Interest\", \"Acknowledgements We thank our participants.\", \"Declaration of\
+          \ interest\", \"Disclosure. \", \"NONE\", \"None.\", \"interest:\", \"Declaration of interest\"\
+          , \"Disclosure: The authors have nothing to disclose.\", \"N/A\", \"Acknowledgements We thank\
+          \ our participants.\", \"Declaration of interest: The authors report no conflicts of interest.\
+          \ The authors alone are responsible.\", \"The authors declare no conflict of interest.\", \"\
+          conflict of interest: none reported. The authors thank Y.\", \"The authors declare no conflict\
+          \ of interest.\", \"Disclosure statement: None.\", \"N/A\")))"
+        "py": "pc.PaperList([pc.test_paper(['Disclosure statement: None.', 'Ethics approval was obtained.']),\
+          \ pc.test_paper(['CONFLICT OF INTEREST', 'Authors disclose no conflicts.', 'The effect was significant,\
+          \ p = .03.', 'None declared.', 'No conflicting financial interests. Data are available.', 'Financial\
+          \ disclosure: The study was funded by X.', 'Funding This work was supported by grant 123.',\
+          \ 'Disclosures']), pc.test_paper(['disclosed. Funding. Nil. declare: Conflicts. the competing.\
+          \ Funding. declared no.', 'interest: financial disclosure. none None of the authors: Competing:\
+          \ Nil. conflicting. with respect to the research.', 'Funding. Author author, The author potential;\
+          \ and: Disclosure: nil:', 'COMPETING NONE Conflict; Conflicts conflicting; The authors:', 'Duality\
+          \ declare.']), pc.test_paper(['Disclosure statement: None.']), pc.test_paper(['Interest. a.',\
+          \ 'Y. NO, financial p = .03: Disclosure; COMPETING: interest, data. conflict;.', 'COMPETING,\
+          \ nil, data financial data interests. No; Financial Disclosure None:.', 'thank; to declare declared.\
+          \ none No; Declaration of Interest Disclosure Y. conflicting. Funding. duality;']), pc.test_paper(['interests.\
+          \ Disclosure declare nil COI,.', 'potential. declare; None of the authors. Author a with respect\
+          \ to the research with respect to the research.']), pc.test_paper(['exist p = .03; potential:\
+          \ with respect to the research: data; with respect to the research None of the authors. thank;\
+          \ none Potential Nil;']), pc.test_paper(['declare. Author no Competing Y. Conflicts: DISCLOSURE:.']),\
+          \ pc.test_paper(['conflicting. Declaration duality; None of the authors, or: study Funding potential.\
+          \ Author; We; Potential; nil', 'X conflicting. The author: or Potential;']), pc.test_paper(['Nothing\
+          \ to declare; interests Nothing to declare: Conflicts: duality and, Declaration of Interest.\
+          \ have: disclosure, conflicting; NONE.', 'The authors NONE, to declare disclosed: Interest The\
+          \ author. have. DISCLOSURE', 'statement: interests, Author, None;.', 'Competing. Funding thank,\
+          \ interest: declared.', 'We; Interest, NONE; or; COMPETING. No. Nil declared.', 'Declaration\
+          \ declared: conflict. interest.', 'the; duality.', 'COMPETING. Disclosures conflict: conflicting\
+          \ COMPETING. potential; conflict, Funding. conflicting:']), pc.test_paper(['conflict', 'No:\
+          \ exist, Declaration of Interest. Interest, Author, financial.']), pc.test_paper(['interests:.',\
+          \ 'Declaration of Interest: The authors conflicting Y.', 'Potential. Competing, None disclosure.\
+          \ Financial Disclosure. competing no: and; DISCLOSURE: disclosed interest,.', 'data Potential,\
+          \ Conflicts Conflicts. Interest The author; the The authors: or: COI: interest;.', 'None of\
+          \ the authors. no: The author', 'potential; have No. reported. None: interest thank; p = .03\
+          \ COMPETING: NO. Potential: All authors:.', 'Declaration. financial disclosure conflicting,\
+          \ a, COMPETING Y Potential: None; author.', 'Y: COI declare: reported. author, p = .03.', 'conflict\
+          \ Author. declare. The authors; potential, study No', 'None: potential; duality We Potential,\
+          \ disclosed NONE.', 'financial disclosure:', 'Nil The author thank: Potential: of author Y.\
+          \ interests: Nil,']), pc.test_paper(['We declare:', 'Interest,.', 'COMPETING; statement, declare:.',\
+          \ 'or: disclosure. p = .03 with respect to the research; financial disclosure: Declaration of\
+          \ Interest. disclosed NONE; Declaration of Interest Nothing to declare: X:', 'Author: data study:\
+          \ thank; disclosure. We:']), pc.test_paper(['author. Nothing to declare: Author. or financial\
+          \ disclosure none. interests Competing Interest Disclosures. Interest: Nothing to declare',\
+          \ 'Conflicts p = .03: conflicting;', 'disclosed: None of the authors. potential: COMPETING:\
+          \ conflicting; Disclosures The authors, study: NO: None of the authors; of Disclosures,.']),\
+          \ pc.test_paper(['COI exist; The authors; data. duality and. No; duality. study. to declare.',\
+          \ 'COI DISCLOSURE;.', 'Declaration of Interest. Disclosures; The authors: conflicts financial\
+          \ disclosure: the declared: of: declared Disclosure;.', 'Nil: No. Y p = .03.', 'financial disclosure\
+          \ Funding duality, conflicting DISCLOSURE: Interest. Disclosures Author, NO', 'NO: conflicting:\
+          \ study. interest. We statement financial disclosure; exist,', 'conflicting, no study reported\
+          \ interest financial Disclosure, conflict; competing: p = .03. Declaration of Conflict:.', 'interest:\
+          \ The authors. Nothing to declare. Nothing to declare.', 'conflicts; with respect to the research:\
+          \ disclosed. a the; financial disclosure, duality COI. Conflicts None. COI. Y', 'COMPETING.\
+          \ conflicts.', 'Declaration of Conflict: NO; The authors: with respect to the research. financial:\
+          \ Interest Interest, interest: Funding; COI, Author: study.', 'Y conflicting reported DISCLOSURE:']),\
+          \ pc.test_paper(['Disclosures', 'Disclosure', 'None of the authors have any conflict of interest\
+          \ to declare.', '', 'Competing interests']), pc.test_paper(['Potential conflicts of interest:\
+          \ none declared.', 'Duality of Interest: no duality of interest declared.', 'The authors declare\
+          \ no conflict of interest.', 'Authors disclose no conflicts.', 'Declaration of interest: The\
+          \ authors report no conflicts of interest. The authors alone are responsible.']), pc.test_paper(['None\
+          \ of the authors.']), pc.test_paper(['have', 'Duality Declaration of Conflict: data: Nil: Declaration\
+          \ of Conflict. have.', 'p = .03 disclosed; X. none: exist;.', 'disclosure. No disclosure,',\
+          \ 'NONE, Both authors disclosure; of: statement. have, NONE. reported. Interest. of: and, financial,.',\
+          \ 'financial Funding, Disclosure, thank: interest. The authors; Funding: interest Potential,.',\
+          \ 'Interest. Nothing to declare; The author. to declare; potential, thank: interest: NONE.',\
+          \ 'Nothing to declare. conflicting to declare. financial, conflict Nil COMPETING, study X Potential:\
+          \ to declare:']), pc.test_paper(['nil nil; the We data financial: interest.', 'COI; Nil; Conflict:\
+          \ nil.', 'conflict. Duality. All authors:.', 'none: Declaration of Conflict: and Financial Disclosure\
+          \ financial disclosure. the: none: no, p = .03, DISCLOSURE. financial: NONE.']), pc.test_paper(['conflicting;\
+          \ Declaration: potential; The author; disclosed:.', 'interest. data, All authors thank interest\
+          \ COI. COMPETING. Financial Disclosure; with respect to the research: statement statement: data',\
+          \ '', 'p = .03. No. COMPETING: conflict: None of the authors We. declare: with respect to the\
+          \ research; Conflicts thank;']), pc.test_paper(['Y; financial disclosure, No DISCLOSURE, duality\
+          \ declared: competing, p = .03.']), pc.test_paper(['of The author conflict: Duality none; study,\
+          \ competing study Both authors: conflict: none: nil.', 'author No Disclosure; exist X, conflicting.\
+          \ competing; financial,.']), pc.test_paper(['conflicting Duality: Both authors. No Both authors.\
+          \ Disclosure. have. Both authors.', 'conflict. Competing Nothing to declare: Declaration of\
+          \ Interest. disclosed: Author:', 'Interest; We:.']), pc.test_paper(['COMPETING of duality; Competing:\
+          \ study disclosed: DISCLOSURE;.', 'the a. none: All authors: Declaration. None; None of the\
+          \ authors. Potential;.', 'NO. Author Nil. No: or: All authors; potential, to declare: financial\
+          \ disclosure, author have None.', 'Financial Disclosure: no; have: of NO. The authors. disclosure\
+          \ statement. or, Disclosures. interests.']), pc.test_paper(['Declaration of interest: The authors\
+          \ report no conflicts of interest. The authors alone are responsible.', 'Competing financial\
+          \ interests: The authors declare none.', 'Duality of interest', 'Competing interests', 'None\
+          \ of the authors have any conflict of interest to declare.', 'Competing Interests:', 'The researchers\
+          \ state no conflict of interest.', 'No competing interests exist. We thank the reviewers.']),\
+          \ pc.test_paper(['None declared.', 'Conflict of Interest', 'None declared.']), pc.test_paper(['financial\
+          \ disclosure. exist; competing. statement: declare Author: p = .03 The author, X.', 'reported\
+          \ No. Conflict; potential; the data: conflict: Both authors COMPETING:', 'NONE. statement. Conflict;\
+          \ We Duality Funding. or; nil DISCLOSURE.', 'The author No of. thank:', 'Both authors; reported:\
+          \ disclosed. X Disclosures. of', 'Declaration of Interest financial disclosure: study, financial;\
+          \ Y, a: declared Duality of; Funding', 'disclosed Potential, Duality;.', 'X']), pc.test_paper(['']),\
+          \ pc.test_paper(['Financial Disclosure. Potential; NONE. Disclosure: no: Conflicts. Both authors;\
+          \ thank, The authors. Duality:', 'NO Competing Nil. duality.', 'Y.', 'Nothing to declare,.',\
+          \ 'conflicts.', 'duality. X', 'statement the: COMPETING; Y: NONE nil: Both authors, none. no;\
+          \ thank. COMPETING NO:', 'Declaration of Conflict: Both authors Author: exist conflict declare\
+          \ interests.', 'COMPETING. We potential: COI. Declaration of Conflict. reported, nil statement.\
+          \ conflict. nil none.', 'thank Nil:.', 'Declaration of Conflict The authors. data, have, X X\
+          \ thank, no.', '']), pc.test_paper(['Nil.', 'Authors disclose no conflicts.', 'Conflict of interest\
+          \ none']), pc.test_paper(['', 'Conflicts. Interest, Disclosures: data: None of the authors NONE.',\
+          \ 'conflicts; Declaration. and,', '', 'We: with respect to the research. NONE disclosed, Nil\
+          \ conflicts or. Declaration of Interest Y Duality interests.']), pc.test_paper(['potential Disclosure:\
+          \ author: Conflict; a. Y; conflicting. or: Both authors, NONE reported, reported']), pc.test_paper(['data:\
+          \ declare conflicts.']), pc.test_paper(['Declaration of Interest,.', 'Author financial disclosure\
+          \ None of the authors: financial: None of the authors. the: to declare X. Declaration:.']),\
+          \ pc.test_paper(['None.', 'The author declares no conflict of interest. Author contributions:\
+          \ X did Y.', 'Declaration of Conflicting Interests The author(s) declared no potential conflicts\
+          \ of interest.', 'None declared.', 'Nothing to declare.']), pc.test_paper(['duality; None. Financial\
+          \ Disclosure have. COMPETING disclosed: disclosed. No, nil. Both authors We,', 'Conflicts; potential\
+          \ no X']), pc.test_paper(['NO Conflict and X Interest DISCLOSURE: Y. duality: financial. Competing.',\
+          \ 'Conflicts; None. X: DISCLOSURE, COMPETING;.', 'no None of the authors. Declaration of Conflict:\
+          \ None declare: The author potential: Competing: Interest NONE. Y:', 'financial disclosure;\
+          \ Competing: conflicts: COI reported Nothing to declare; The authors; the;.', 'None of the authors.',\
+          \ 'conflict of; duality Declaration of Interest: NONE.', 'Interest. interests Funding none,\
+          \ duality; competing, Nothing to declare; thank Conflict a to declare:', 'The author COI: All\
+          \ authors; Funding; to declare a; conflict; the All authors. conflict. NO interest.', 'declare:\
+          \ None and. no to declare. Both authors, author; conflict: We, Disclosure;', 'Financial Disclosure:.',\
+          \ 'statement. Funding; All authors', 'exist, Interest financial disclosure Declaration of Conflict\
+          \ COMPETING: NO COMPETING; Disclosure.']), pc.test_paper(['declared. No. We: competing study,\
+          \ NONE;', 'a interests: Financial Disclosure; None.', 'duality potential. of potential no; reported,\
+          \ We;.', 'Interest. thank COMPETING.', 'Disclosures conflicts; exist; disclosure Conflict, exist.',\
+          \ 'declared nil interests: declare; and:.', 'conflict: to declare; financial disclosure, conflicting.',\
+          \ 'Author,', 'No. Author: no of: and: Interest conflict; Interest: Declaration Nothing to declare\
+          \ have disclosed.', 'Disclosures to declare. DISCLOSURE conflict: thank no: Declaration of Interest\
+          \ No; Nil: interests.', 'Nil; to declare Disclosure: with respect to the research. COMPETING.\
+          \ conflict; COI: disclosure.', 'nil, and The author: Nil: Declaration of Conflict disclosed.']),\
+          \ pc.test_paper(['No conflicting financial interests. Data are available.', 'Both authors declare\
+          \ no conflicts of interest.', 'The authors have no competing interests to declare. All authors\
+          \ contributed equally.', 'Conflict of Interest', 'Acknowledgements We thank our participants.',\
+          \ 'Declaration of interest', 'Disclosure. ', 'NONE', 'None.', 'interest:', 'Declaration of interest',\
+          \ 'Disclosure: The authors have nothing to disclose.', 'N/A', 'Acknowledgements We thank our\
+          \ participants.', 'Declaration of interest: The authors report no conflicts of interest. The\
+          \ authors alone are responsible.', 'The authors declare no conflict of interest.', 'conflict\
+          \ of interest: none reported. The authors thank Y.', 'The authors declare no conflict of interest.',\
+          \ 'Disclosure statement: None.', 'N/A'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.financial_excluded"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Financial disclosure: the conflict of interest was nil."
+        - "Competing interests: none."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.interest_words"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "This is an interesting conflict."
+        - "Our interests compete."
+        - "COI declaration: none."
+        - "COI: none."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.merged_section"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The authors declare no competing interests."
+        - "Other text."
+        - "Disclosure of interests: none."
+        - "More text."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.fuzz_paperlist"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"Disclosure statement: None.\", \"Ethics approval was obtained.\"\
+          )), test_paper(c(\"CONFLICT OF INTEREST\", \"Authors disclose no conflicts.\", \"The effect\
+          \ was significant, p = .03.\", \"None declared.\", \"No conflicting financial interests. Data\
+          \ are available.\", \"Financial disclosure: The study was funded by X.\", \"Funding This work\
+          \ was supported by grant 123.\", \"Disclosures\")), test_paper(c(\"disclosed. Funding. Nil.\
+          \ declare: Conflicts. the competing. Funding. declared no.\", \"interest: financial disclosure.\
+          \ none None of the authors: Competing: Nil. conflicting. with respect to the research.\", \"\
+          Funding. Author author, The author potential; and: Disclosure: nil:\", \"COMPETING NONE Conflict;\
+          \ Conflicts conflicting; The authors:\", \"Duality declare.\")), test_paper(c(\"Disclosure statement:\
+          \ None.\")), test_paper(c(\"Interest. a.\", \"Y. NO, financial p = .03: Disclosure; COMPETING:\
+          \ interest, data. conflict;.\", \"COMPETING, nil, data financial data interests. No; Financial\
+          \ Disclosure None:.\", \"thank; to declare declared. none No; Declaration of Interest Disclosure\
+          \ Y. conflicting. Funding. duality;\")), test_paper(c(\"interests. Disclosure declare nil COI,.\"\
+          , \"potential. declare; None of the authors. Author a with respect to the research with respect\
+          \ to the research.\")), test_paper(c(\"exist p = .03; potential: with respect to the research:\
+          \ data; with respect to the research None of the authors. thank; none Potential Nil;\")), test_paper(c(\"\
+          declare. Author no Competing Y. Conflicts: DISCLOSURE:.\")), test_paper(c(\"conflicting. Declaration\
+          \ duality; None of the authors, or: study Funding potential. Author; We; Potential; nil\", \"\
+          X conflicting. The author: or Potential;\")), test_paper(c(\"Nothing to declare; interests Nothing\
+          \ to declare: Conflicts: duality and, Declaration of Interest. have: disclosure, conflicting;\
+          \ NONE.\", \"The authors NONE, to declare disclosed: Interest The author. have. DISCLOSURE\"\
+          , \"statement: interests, Author, None;.\", \"Competing. Funding thank, interest: declared.\"\
+          , \"We; Interest, NONE; or; COMPETING. No. Nil declared.\", \"Declaration declared: conflict.\
+          \ interest.\", \"the; duality.\", \"COMPETING. Disclosures conflict: conflicting COMPETING.\
+          \ potential; conflict, Funding. conflicting:\")), test_paper(c(\"conflict\", \"No: exist, Declaration\
+          \ of Interest. Interest, Author, financial.\")), test_paper(c(\"interests:.\", \"Declaration\
+          \ of Interest: The authors conflicting Y.\", \"Potential. Competing, None disclosure. Financial\
+          \ Disclosure. competing no: and; DISCLOSURE: disclosed interest,.\", \"data Potential, Conflicts\
+          \ Conflicts. Interest The author; the The authors: or: COI: interest;.\", \"None of the authors.\
+          \ no: The author\", \"potential; have No. reported. None: interest thank; p = .03 COMPETING:\
+          \ NO. Potential: All authors:.\", \"Declaration. financial disclosure conflicting, a, COMPETING\
+          \ Y Potential: None; author.\", \"Y: COI declare: reported. author, p = .03.\", \"conflict Author.\
+          \ declare. The authors; potential, study No\", \"None: potential; duality We Potential, disclosed\
+          \ NONE.\", \"financial disclosure:\", \"Nil The author thank: Potential: of author Y. interests:\
+          \ Nil,\")), test_paper(c(\"We declare:\", \"Interest,.\", \"COMPETING; statement, declare:.\"\
+          , \"or: disclosure. p = .03 with respect to the research; financial disclosure: Declaration\
+          \ of Interest. disclosed NONE; Declaration of Interest Nothing to declare: X:\", \"Author: data\
+          \ study: thank; disclosure. We:\")), test_paper(c(\"author. Nothing to declare: Author. or financial\
+          \ disclosure none. interests Competing Interest Disclosures. Interest: Nothing to declare\"\
+          , \"Conflicts p = .03: conflicting;\", \"disclosed: None of the authors. potential: COMPETING:\
+          \ conflicting; Disclosures The authors, study: NO: None of the authors; of Disclosures,.\")),\
+          \ test_paper(c(\"COI exist; The authors; data. duality and. No; duality. study. to declare.\"\
+          , \"COI DISCLOSURE;.\", \"Declaration of Interest. Disclosures; The authors: conflicts financial\
+          \ disclosure: the declared: of: declared Disclosure;.\", \"Nil: No. Y p = .03.\", \"financial\
+          \ disclosure Funding duality, conflicting DISCLOSURE: Interest. Disclosures Author, NO\", \"\
+          NO: conflicting: study. interest. We statement financial disclosure; exist,\", \"conflicting,\
+          \ no study reported interest financial Disclosure, conflict; competing: p = .03. Declaration\
+          \ of Conflict:.\", \"interest: The authors. Nothing to declare. Nothing to declare.\", \"conflicts;\
+          \ with respect to the research: disclosed. a the; financial disclosure, duality COI. Conflicts\
+          \ None. COI. Y\", \"COMPETING. conflicts.\", \"Declaration of Conflict: NO; The authors: with\
+          \ respect to the research. financial: Interest Interest, interest: Funding; COI, Author: study.\"\
+          , \"Y conflicting reported DISCLOSURE:\")), test_paper(c(\"Disclosures\", \"Disclosure\", \"\
+          None of the authors have any conflict of interest to declare.\", \"\", \"Competing interests\"\
+          )), test_paper(c(\"Potential conflicts of interest: none declared.\", \"Duality of Interest:\
+          \ no duality of interest declared.\", \"The authors declare no conflict of interest.\", \"Authors\
+          \ disclose no conflicts.\", \"Declaration of interest: The authors report no conflicts of interest.\
+          \ The authors alone are responsible.\")), test_paper(c(\"None of the authors.\")), test_paper(c(\"\
+          have\", \"Duality Declaration of Conflict: data: Nil: Declaration of Conflict. have.\", \"p\
+          \ = .03 disclosed; X. none: exist;.\", \"disclosure. No disclosure,\", \"NONE, Both authors\
+          \ disclosure; of: statement. have, NONE. reported. Interest. of: and, financial,.\", \"financial\
+          \ Funding, Disclosure, thank: interest. The authors; Funding: interest Potential,.\", \"Interest.\
+          \ Nothing to declare; The author. to declare; potential, thank: interest: NONE.\", \"Nothing\
+          \ to declare. conflicting to declare. financial, conflict Nil COMPETING, study X Potential:\
+          \ to declare:\")), test_paper(c(\"nil nil; the We data financial: interest.\", \"COI; Nil; Conflict:\
+          \ nil.\", \"conflict. Duality. All authors:.\", \"none: Declaration of Conflict: and Financial\
+          \ Disclosure financial disclosure. the: none: no, p = .03, DISCLOSURE. financial: NONE.\")),\
+          \ test_paper(c(\"conflicting; Declaration: potential; The author; disclosed:.\", \"interest.\
+          \ data, All authors thank interest COI. COMPETING. Financial Disclosure; with respect to the\
+          \ research: statement statement: data\", \"\", \"p = .03. No. COMPETING: conflict: None of the\
+          \ authors We. declare: with respect to the research; Conflicts thank;\")), test_paper(c(\"Y;\
+          \ financial disclosure, No DISCLOSURE, duality declared: competing, p = .03.\")), test_paper(c(\"\
+          of The author conflict: Duality none; study, competing study Both authors: conflict: none: nil.\"\
+          , \"author No Disclosure; exist X, conflicting. competing; financial,.\")), test_paper(c(\"\
+          conflicting Duality: Both authors. No Both authors. Disclosure. have. Both authors.\", \"conflict.\
+          \ Competing Nothing to declare: Declaration of Interest. disclosed: Author:\", \"Interest; We:.\"\
+          )), test_paper(c(\"COMPETING of duality; Competing: study disclosed: DISCLOSURE;.\", \"the a.\
+          \ none: All authors: Declaration. None; None of the authors. Potential;.\", \"NO. Author Nil.\
+          \ No: or: All authors; potential, to declare: financial disclosure, author have None.\", \"\
+          Financial Disclosure: no; have: of NO. The authors. disclosure statement. or, Disclosures. interests.\"\
+          )), test_paper(c(\"Declaration of interest: The authors report no conflicts of interest. The\
+          \ authors alone are responsible.\", \"Competing financial interests: The authors declare none.\"\
+          , \"Duality of interest\", \"Competing interests\", \"None of the authors have any conflict\
+          \ of interest to declare.\", \"Competing Interests:\", \"The researchers state no conflict of\
+          \ interest.\", \"No competing interests exist. We thank the reviewers.\")), test_paper(c(\"\
+          None declared.\", \"Conflict of Interest\", \"None declared.\")), test_paper(c(\"financial disclosure.\
+          \ exist; competing. statement: declare Author: p = .03 The author, X.\", \"reported No. Conflict;\
+          \ potential; the data: conflict: Both authors COMPETING:\", \"NONE. statement. Conflict; We\
+          \ Duality Funding. or; nil DISCLOSURE.\", \"The author No of. thank:\", \"Both authors; reported:\
+          \ disclosed. X Disclosures. of\", \"Declaration of Interest financial disclosure: study, financial;\
+          \ Y, a: declared Duality of; Funding\", \"disclosed Potential, Duality;.\", \"X\")), test_paper(c(\"\
+          \")), test_paper(c(\"Financial Disclosure. Potential; NONE. Disclosure: no: Conflicts. Both\
+          \ authors; thank, The authors. Duality:\", \"NO Competing Nil. duality.\", \"Y.\", \"Nothing\
+          \ to declare,.\", \"conflicts.\", \"duality. X\", \"statement the: COMPETING; Y: NONE nil: Both\
+          \ authors, none. no; thank. COMPETING NO:\", \"Declaration of Conflict: Both authors Author:\
+          \ exist conflict declare interests.\", \"COMPETING. We potential: COI. Declaration of Conflict.\
+          \ reported, nil statement. conflict. nil none.\", \"thank Nil:.\", \"Declaration of Conflict\
+          \ The authors. data, have, X X thank, no.\", \"\")), test_paper(c(\"Nil.\", \"Authors disclose\
+          \ no conflicts.\", \"Conflict of interest none\")), test_paper(c(\"\", \"Conflicts. Interest,\
+          \ Disclosures: data: None of the authors NONE.\", \"conflicts; Declaration. and,\", \"\", \"\
+          We: with respect to the research. NONE disclosed, Nil conflicts or. Declaration of Interest\
+          \ Y Duality interests.\")), test_paper(c(\"potential Disclosure: author: Conflict; a. Y; conflicting.\
+          \ or: Both authors, NONE reported, reported\")), test_paper(c(\"data: declare conflicts.\")),\
+          \ test_paper(c(\"Declaration of Interest,.\", \"Author financial disclosure None of the authors:\
+          \ financial: None of the authors. the: to declare X. Declaration:.\")), test_paper(c(\"None.\"\
+          , \"The author declares no conflict of interest. Author contributions: X did Y.\", \"Declaration\
+          \ of Conflicting Interests The author(s) declared no potential conflicts of interest.\", \"\
+          None declared.\", \"Nothing to declare.\")), test_paper(c(\"duality; None. Financial Disclosure\
+          \ have. COMPETING disclosed: disclosed. No, nil. Both authors We,\", \"Conflicts; potential\
+          \ no X\")), test_paper(c(\"NO Conflict and X Interest DISCLOSURE: Y. duality: financial. Competing.\"\
+          , \"Conflicts; None. X: DISCLOSURE, COMPETING;.\", \"no None of the authors. Declaration of\
+          \ Conflict: None declare: The author potential: Competing: Interest NONE. Y:\", \"financial\
+          \ disclosure; Competing: conflicts: COI reported Nothing to declare; The authors; the;.\", \"\
+          None of the authors.\", \"conflict of; duality Declaration of Interest: NONE.\", \"Interest.\
+          \ interests Funding none, duality; competing, Nothing to declare; thank Conflict a to declare:\"\
+          , \"The author COI: All authors; Funding; to declare a; conflict; the All authors. conflict.\
+          \ NO interest.\", \"declare: None and. no to declare. Both authors, author; conflict: We, Disclosure;\"\
+          , \"Financial Disclosure:.\", \"statement. Funding; All authors\", \"exist, Interest financial\
+          \ disclosure Declaration of Conflict COMPETING: NO COMPETING; Disclosure.\")), test_paper(c(\"\
+          declared. No. We: competing study, NONE;\", \"a interests: Financial Disclosure; None.\", \"\
+          duality potential. of potential no; reported, We;.\", \"Interest. thank COMPETING.\", \"Disclosures\
+          \ conflicts; exist; disclosure Conflict, exist.\", \"declared nil interests: declare; and:.\"\
+          , \"conflict: to declare; financial disclosure, conflicting.\", \"Author,\", \"No. Author: no\
+          \ of: and: Interest conflict; Interest: Declaration Nothing to declare have disclosed.\", \"\
+          Disclosures to declare. DISCLOSURE conflict: thank no: Declaration of Interest No; Nil: interests.\"\
+          , \"Nil; to declare Disclosure: with respect to the research. COMPETING. conflict; COI: disclosure.\"\
+          , \"nil, and The author: Nil: Declaration of Conflict disclosed.\")), test_paper(c(\"No conflicting\
+          \ financial interests. Data are available.\", \"Both authors declare no conflicts of interest.\"\
+          , \"The authors have no competing interests to declare. All authors contributed equally.\",\
+          \ \"Conflict of Interest\", \"Acknowledgements We thank our participants.\", \"Declaration of\
+          \ interest\", \"Disclosure. \", \"NONE\", \"None.\", \"interest:\", \"Declaration of interest\"\
+          , \"Disclosure: The authors have nothing to disclose.\", \"N/A\", \"Acknowledgements We thank\
+          \ our participants.\", \"Declaration of interest: The authors report no conflicts of interest.\
+          \ The authors alone are responsible.\", \"The authors declare no conflict of interest.\", \"\
+          conflict of interest: none reported. The authors thank Y.\", \"The authors declare no conflict\
+          \ of interest.\", \"Disclosure statement: None.\", \"N/A\")))"
+        "py": "pc.PaperList([pc.test_paper(['Disclosure statement: None.', 'Ethics approval was obtained.']),\
+          \ pc.test_paper(['CONFLICT OF INTEREST', 'Authors disclose no conflicts.', 'The effect was significant,\
+          \ p = .03.', 'None declared.', 'No conflicting financial interests. Data are available.', 'Financial\
+          \ disclosure: The study was funded by X.', 'Funding This work was supported by grant 123.',\
+          \ 'Disclosures']), pc.test_paper(['disclosed. Funding. Nil. declare: Conflicts. the competing.\
+          \ Funding. declared no.', 'interest: financial disclosure. none None of the authors: Competing:\
+          \ Nil. conflicting. with respect to the research.', 'Funding. Author author, The author potential;\
+          \ and: Disclosure: nil:', 'COMPETING NONE Conflict; Conflicts conflicting; The authors:', 'Duality\
+          \ declare.']), pc.test_paper(['Disclosure statement: None.']), pc.test_paper(['Interest. a.',\
+          \ 'Y. NO, financial p = .03: Disclosure; COMPETING: interest, data. conflict;.', 'COMPETING,\
+          \ nil, data financial data interests. No; Financial Disclosure None:.', 'thank; to declare declared.\
+          \ none No; Declaration of Interest Disclosure Y. conflicting. Funding. duality;']), pc.test_paper(['interests.\
+          \ Disclosure declare nil COI,.', 'potential. declare; None of the authors. Author a with respect\
+          \ to the research with respect to the research.']), pc.test_paper(['exist p = .03; potential:\
+          \ with respect to the research: data; with respect to the research None of the authors. thank;\
+          \ none Potential Nil;']), pc.test_paper(['declare. Author no Competing Y. Conflicts: DISCLOSURE:.']),\
+          \ pc.test_paper(['conflicting. Declaration duality; None of the authors, or: study Funding potential.\
+          \ Author; We; Potential; nil', 'X conflicting. The author: or Potential;']), pc.test_paper(['Nothing\
+          \ to declare; interests Nothing to declare: Conflicts: duality and, Declaration of Interest.\
+          \ have: disclosure, conflicting; NONE.', 'The authors NONE, to declare disclosed: Interest The\
+          \ author. have. DISCLOSURE', 'statement: interests, Author, None;.', 'Competing. Funding thank,\
+          \ interest: declared.', 'We; Interest, NONE; or; COMPETING. No. Nil declared.', 'Declaration\
+          \ declared: conflict. interest.', 'the; duality.', 'COMPETING. Disclosures conflict: conflicting\
+          \ COMPETING. potential; conflict, Funding. conflicting:']), pc.test_paper(['conflict', 'No:\
+          \ exist, Declaration of Interest. Interest, Author, financial.']), pc.test_paper(['interests:.',\
+          \ 'Declaration of Interest: The authors conflicting Y.', 'Potential. Competing, None disclosure.\
+          \ Financial Disclosure. competing no: and; DISCLOSURE: disclosed interest,.', 'data Potential,\
+          \ Conflicts Conflicts. Interest The author; the The authors: or: COI: interest;.', 'None of\
+          \ the authors. no: The author', 'potential; have No. reported. None: interest thank; p = .03\
+          \ COMPETING: NO. Potential: All authors:.', 'Declaration. financial disclosure conflicting,\
+          \ a, COMPETING Y Potential: None; author.', 'Y: COI declare: reported. author, p = .03.', 'conflict\
+          \ Author. declare. The authors; potential, study No', 'None: potential; duality We Potential,\
+          \ disclosed NONE.', 'financial disclosure:', 'Nil The author thank: Potential: of author Y.\
+          \ interests: Nil,']), pc.test_paper(['We declare:', 'Interest,.', 'COMPETING; statement, declare:.',\
+          \ 'or: disclosure. p = .03 with respect to the research; financial disclosure: Declaration of\
+          \ Interest. disclosed NONE; Declaration of Interest Nothing to declare: X:', 'Author: data study:\
+          \ thank; disclosure. We:']), pc.test_paper(['author. Nothing to declare: Author. or financial\
+          \ disclosure none. interests Competing Interest Disclosures. Interest: Nothing to declare',\
+          \ 'Conflicts p = .03: conflicting;', 'disclosed: None of the authors. potential: COMPETING:\
+          \ conflicting; Disclosures The authors, study: NO: None of the authors; of Disclosures,.']),\
+          \ pc.test_paper(['COI exist; The authors; data. duality and. No; duality. study. to declare.',\
+          \ 'COI DISCLOSURE;.', 'Declaration of Interest. Disclosures; The authors: conflicts financial\
+          \ disclosure: the declared: of: declared Disclosure;.', 'Nil: No. Y p = .03.', 'financial disclosure\
+          \ Funding duality, conflicting DISCLOSURE: Interest. Disclosures Author, NO', 'NO: conflicting:\
+          \ study. interest. We statement financial disclosure; exist,', 'conflicting, no study reported\
+          \ interest financial Disclosure, conflict; competing: p = .03. Declaration of Conflict:.', 'interest:\
+          \ The authors. Nothing to declare. Nothing to declare.', 'conflicts; with respect to the research:\
+          \ disclosed. a the; financial disclosure, duality COI. Conflicts None. COI. Y', 'COMPETING.\
+          \ conflicts.', 'Declaration of Conflict: NO; The authors: with respect to the research. financial:\
+          \ Interest Interest, interest: Funding; COI, Author: study.', 'Y conflicting reported DISCLOSURE:']),\
+          \ pc.test_paper(['Disclosures', 'Disclosure', 'None of the authors have any conflict of interest\
+          \ to declare.', '', 'Competing interests']), pc.test_paper(['Potential conflicts of interest:\
+          \ none declared.', 'Duality of Interest: no duality of interest declared.', 'The authors declare\
+          \ no conflict of interest.', 'Authors disclose no conflicts.', 'Declaration of interest: The\
+          \ authors report no conflicts of interest. The authors alone are responsible.']), pc.test_paper(['None\
+          \ of the authors.']), pc.test_paper(['have', 'Duality Declaration of Conflict: data: Nil: Declaration\
+          \ of Conflict. have.', 'p = .03 disclosed; X. none: exist;.', 'disclosure. No disclosure,',\
+          \ 'NONE, Both authors disclosure; of: statement. have, NONE. reported. Interest. of: and, financial,.',\
+          \ 'financial Funding, Disclosure, thank: interest. The authors; Funding: interest Potential,.',\
+          \ 'Interest. Nothing to declare; The author. to declare; potential, thank: interest: NONE.',\
+          \ 'Nothing to declare. conflicting to declare. financial, conflict Nil COMPETING, study X Potential:\
+          \ to declare:']), pc.test_paper(['nil nil; the We data financial: interest.', 'COI; Nil; Conflict:\
+          \ nil.', 'conflict. Duality. All authors:.', 'none: Declaration of Conflict: and Financial Disclosure\
+          \ financial disclosure. the: none: no, p = .03, DISCLOSURE. financial: NONE.']), pc.test_paper(['conflicting;\
+          \ Declaration: potential; The author; disclosed:.', 'interest. data, All authors thank interest\
+          \ COI. COMPETING. Financial Disclosure; with respect to the research: statement statement: data',\
+          \ '', 'p = .03. No. COMPETING: conflict: None of the authors We. declare: with respect to the\
+          \ research; Conflicts thank;']), pc.test_paper(['Y; financial disclosure, No DISCLOSURE, duality\
+          \ declared: competing, p = .03.']), pc.test_paper(['of The author conflict: Duality none; study,\
+          \ competing study Both authors: conflict: none: nil.', 'author No Disclosure; exist X, conflicting.\
+          \ competing; financial,.']), pc.test_paper(['conflicting Duality: Both authors. No Both authors.\
+          \ Disclosure. have. Both authors.', 'conflict. Competing Nothing to declare: Declaration of\
+          \ Interest. disclosed: Author:', 'Interest; We:.']), pc.test_paper(['COMPETING of duality; Competing:\
+          \ study disclosed: DISCLOSURE;.', 'the a. none: All authors: Declaration. None; None of the\
+          \ authors. Potential;.', 'NO. Author Nil. No: or: All authors; potential, to declare: financial\
+          \ disclosure, author have None.', 'Financial Disclosure: no; have: of NO. The authors. disclosure\
+          \ statement. or, Disclosures. interests.']), pc.test_paper(['Declaration of interest: The authors\
+          \ report no conflicts of interest. The authors alone are responsible.', 'Competing financial\
+          \ interests: The authors declare none.', 'Duality of interest', 'Competing interests', 'None\
+          \ of the authors have any conflict of interest to declare.', 'Competing Interests:', 'The researchers\
+          \ state no conflict of interest.', 'No competing interests exist. We thank the reviewers.']),\
+          \ pc.test_paper(['None declared.', 'Conflict of Interest', 'None declared.']), pc.test_paper(['financial\
+          \ disclosure. exist; competing. statement: declare Author: p = .03 The author, X.', 'reported\
+          \ No. Conflict; potential; the data: conflict: Both authors COMPETING:', 'NONE. statement. Conflict;\
+          \ We Duality Funding. or; nil DISCLOSURE.', 'The author No of. thank:', 'Both authors; reported:\
+          \ disclosed. X Disclosures. of', 'Declaration of Interest financial disclosure: study, financial;\
+          \ Y, a: declared Duality of; Funding', 'disclosed Potential, Duality;.', 'X']), pc.test_paper(['']),\
+          \ pc.test_paper(['Financial Disclosure. Potential; NONE. Disclosure: no: Conflicts. Both authors;\
+          \ thank, The authors. Duality:', 'NO Competing Nil. duality.', 'Y.', 'Nothing to declare,.',\
+          \ 'conflicts.', 'duality. X', 'statement the: COMPETING; Y: NONE nil: Both authors, none. no;\
+          \ thank. COMPETING NO:', 'Declaration of Conflict: Both authors Author: exist conflict declare\
+          \ interests.', 'COMPETING. We potential: COI. Declaration of Conflict. reported, nil statement.\
+          \ conflict. nil none.', 'thank Nil:.', 'Declaration of Conflict The authors. data, have, X X\
+          \ thank, no.', '']), pc.test_paper(['Nil.', 'Authors disclose no conflicts.', 'Conflict of interest\
+          \ none']), pc.test_paper(['', 'Conflicts. Interest, Disclosures: data: None of the authors NONE.',\
+          \ 'conflicts; Declaration. and,', '', 'We: with respect to the research. NONE disclosed, Nil\
+          \ conflicts or. Declaration of Interest Y Duality interests.']), pc.test_paper(['potential Disclosure:\
+          \ author: Conflict; a. Y; conflicting. or: Both authors, NONE reported, reported']), pc.test_paper(['data:\
+          \ declare conflicts.']), pc.test_paper(['Declaration of Interest,.', 'Author financial disclosure\
+          \ None of the authors: financial: None of the authors. the: to declare X. Declaration:.']),\
+          \ pc.test_paper(['None.', 'The author declares no conflict of interest. Author contributions:\
+          \ X did Y.', 'Declaration of Conflicting Interests The author(s) declared no potential conflicts\
+          \ of interest.', 'None declared.', 'Nothing to declare.']), pc.test_paper(['duality; None. Financial\
+          \ Disclosure have. COMPETING disclosed: disclosed. No, nil. Both authors We,', 'Conflicts; potential\
+          \ no X']), pc.test_paper(['NO Conflict and X Interest DISCLOSURE: Y. duality: financial. Competing.',\
+          \ 'Conflicts; None. X: DISCLOSURE, COMPETING;.', 'no None of the authors. Declaration of Conflict:\
+          \ None declare: The author potential: Competing: Interest NONE. Y:', 'financial disclosure;\
+          \ Competing: conflicts: COI reported Nothing to declare; The authors; the;.', 'None of the authors.',\
+          \ 'conflict of; duality Declaration of Interest: NONE.', 'Interest. interests Funding none,\
+          \ duality; competing, Nothing to declare; thank Conflict a to declare:', 'The author COI: All\
+          \ authors; Funding; to declare a; conflict; the All authors. conflict. NO interest.', 'declare:\
+          \ None and. no to declare. Both authors, author; conflict: We, Disclosure;', 'Financial Disclosure:.',\
+          \ 'statement. Funding; All authors', 'exist, Interest financial disclosure Declaration of Conflict\
+          \ COMPETING: NO COMPETING; Disclosure.']), pc.test_paper(['declared. No. We: competing study,\
+          \ NONE;', 'a interests: Financial Disclosure; None.', 'duality potential. of potential no; reported,\
+          \ We;.', 'Interest. thank COMPETING.', 'Disclosures conflicts; exist; disclosure Conflict, exist.',\
+          \ 'declared nil interests: declare; and:.', 'conflict: to declare; financial disclosure, conflicting.',\
+          \ 'Author,', 'No. Author: no of: and: Interest conflict; Interest: Declaration Nothing to declare\
+          \ have disclosed.', 'Disclosures to declare. DISCLOSURE conflict: thank no: Declaration of Interest\
+          \ No; Nil: interests.', 'Nil; to declare Disclosure: with respect to the research. COMPETING.\
+          \ conflict; COI: disclosure.', 'nil, and The author: Nil: Declaration of Conflict disclosed.']),\
+          \ pc.test_paper(['No conflicting financial interests. Data are available.', 'Both authors declare\
+          \ no conflicts of interest.', 'The authors have no competing interests to declare. All authors\
+          \ contributed equally.', 'Conflict of Interest', 'Acknowledgements We thank our participants.',\
+          \ 'Declaration of interest', 'Disclosure. ', 'NONE', 'None.', 'interest:', 'Declaration of interest',\
+          \ 'Disclosure: The authors have nothing to disclose.', 'N/A', 'Acknowledgements We thank our\
+          \ participants.', 'Declaration of interest: The authors report no conflicts of interest. The\
+          \ authors alone are responsible.', 'The authors declare no conflict of interest.', 'conflict\
+          \ of interest: none reported. The authors thank Y.', 'The authors declare no conflict of interest.',\
+          \ 'Disclosure statement: None.', 'N/A'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"

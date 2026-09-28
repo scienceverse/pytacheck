@@ -1,0 +1,36 @@
+{
+ "data": {
+  "id": "ccccccccccccccccccccccc3",
+  "type": "registration-schemas",
+  "attributes": {
+   "name": "Synthetic Paper ID",
+   "schema_version": 3,
+   "schema": {
+    "blocks": [
+     {
+      "block_type": "question-label",
+      "display_text": "Paper ID"
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Link"
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Hypotheses"
+     },
+     {
+      "block_type": "long-text-input"
+     }
+    ],
+    "version": 3
+   }
+  }
+ }
+}

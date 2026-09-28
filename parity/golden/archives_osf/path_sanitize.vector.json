@@ -1,0 +1,21 @@
+{
+  "id": "path_sanitize.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "/My_Files/x_y.pdf",
+      "abc",
+      "C_Users_me_file_name.txt",
+      "_lead_",
+      null,
+      "",
+      "tabbell",
+      "multi_space"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

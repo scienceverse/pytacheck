@@ -1,0 +1,291 @@
+{
+  "id": "osf_file_download.select.max_download_size",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Repository yt32c was not downloaded: its 15 files total 1 MB, over the 0.0 MB per-repository limit. Set `max_download_size >= 1` to download it."
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "folder",
+          "osf_id",
+          "name",
+          "filetype",
+          "size",
+          "downloads",
+          "provider",
+          "downloaded",
+          "download_path",
+          "osf_project",
+          "osf_url",
+          "size_on_disk",
+          "attempted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6846f857136a141c72ab8099",
+              "6846f858b1ced6859685b2ab",
+              "6846f85a132445250f85b2d8",
+              "6846f85b3ad87b0279d6a316",
+              "6846f85cdbcc454e6c85b318",
+              "6846f85edbaaa9e686ab815d",
+              "6846f85fdbaaa9e686ab8161",
+              "6846f85f132445250f85b2db",
+              "6846f86215a2e0cddf85b3df",
+              "6846f862f9e4f6c17ea4d9a8",
+              "6846f865419d0402c953936a",
+              "6846f86581fd750491d6a31e",
+              "6846f867b1ced6859685b2b1",
+              "6846f86815a2e0cddf85b3e1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data-13.csv",
+              "data-12.csv",
+              "data-11.csv",
+              "data-10.csv",
+              "data-09.csv",
+              "data-08.csv",
+              "data-07.csv",
+              "data-06.csv",
+              "data-04.csv",
+              "data-05.csv",
+              "data-02.csv",
+              "data-03.csv",
+              "data-14.csv",
+              "data-01.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185,
+              185
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              16,
+              17,
+              18,
+              19,
+              14,
+              15,
+              18,
+              18,
+              17,
+              18,
+              18,
+              14,
+              14,
+              18
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c",
+              "yt32c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c",
+              "https://osf.io/yt32c"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

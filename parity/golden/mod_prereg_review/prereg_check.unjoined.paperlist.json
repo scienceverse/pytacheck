@@ -1,0 +1,327 @@
+{
+  "id": "prereg_check.unjoined.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "randomization",
+          "existing_data",
+          "data_collection_procedures",
+          "sample_size",
+          "sample_size_rationale",
+          "stopping_rule",
+          "manipulated_variables",
+          "measured_variables",
+          "statistical_tests",
+          "inference_criteria",
+          "data_exclusion_criteria",
+          "missing_data_handling",
+          "exploratory_analyses",
+          "description",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration",
+              "Open-Ended Registration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Papercheck Test",
+              "Should Governments Invest More in Nudges?"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "48ncu",
+              "5xysn"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/48ncu",
+              "https://osf.io/5xysn"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-11-28T19:14:24.639665",
+              "2017-02-28T18:22:56.738000"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-08-05T11:55:35.267689",
+              "2017-02-28T19:47:12.367000"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-11-28T19:14:24.608826",
+              "2017-02-28T18:25:34.318000"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-48ncu-v1",
+              "https://archive.org/details/osf-registrations-5xysn-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No blinding is involved in this study.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We randomly assign to conditions",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Registration prior to creation of data",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will include all scientists who are willing to participate.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will stop after data from 100 researchers has been collected.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will perform an independent t-test on the number of mistakes in each group.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will interpret effects as significant if p &lt; .05",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No exclusions are expected.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No missing data is expected.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "With many “nudge units” already established and more in the planning stages, governments must decide on the appropriate amount of resources to invest in them. An important question, then, is to determine how efficiently nudge initiatives achieve their objectives. To be maximally impactful, future policy-oriented behavioral science research will need to measure the relative effectiveness of behavioral interventions in comparison to more traditional interventions for influencing behavior, such as tax incentives and subsidies. We make this point in our paper and note that past studies of nudges designed to encourage behavior change have typically measured only the extent to which the intended behavior was changed (if at all). In the absence of relative effectiveness calculations determining whether a given nudge is more effective than, say, a tax break, policymakers lack the evidence needed to design optimal policies and to decide on the level of resources to allocate to testing and deploying behaviorally-informed interventions as either supplements to or replacements for traditional interventions.  In addition to raising these important issues, in this paper, we zoom in on four major policy areas where high-profile nudge units have focused attention to date—financial security in retirement, education, energy, and health. Within each area, we focus on one well-studied behavior that government agencies have sought to change through numerous policy interventions, and we provide relative effectiveness calculations using available evidence from published research in leading journals. In the process, we also share new results from one of the first experiments conducted by the recently-formed U.S. White House Social and Behavioral Sciences Team, which included nearly a million active duty members of the U.S. military.  We conclude that compared to traditional policy tools, recent nudge interventions have had especially favorable ratios of impact to cost, but more relative effectiveness calculations are urgently needed."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "paper_b"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 2 preregistrations.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"<a href='https://osf.io/48ncu' target='_blank'>48ncu<\/a>\", \n\"<a href='https://osf.io/5xysn' target='_blank'>5xysn<\/a>\"), \n    title = c(\"Papercheck Test\", \"Should Governments Invest More in Nudges?\"\n    ), template = c(\"OSF Preregistration\", \"Open-Ended Registration\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the links above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"48ncu\", \"5xysn\"), sample_size = c(\"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\", \nNA)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"existing_data\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"inference_criteria\", \n\"data_exclusion_criteria\", \"missing_data_handling\", \"exploratory_analyses\", \n\"description\", \"paper_id\"), \"Preregistration 1\" = c(\"OSF Preregistration\", \n\"Papercheck Test\", \"48ncu\", \"https://osf.io/48ncu\", \"2025-11-28T19:14:24.639665\", \n\"2025-08-05T11:55:35.267689\", \"2025-11-28T19:14:24.608826\", \"\", \n\"https://archive.org/details/osf-registrations-48ncu-v1\", \"Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.\", \n\"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n\"No blinding is involved in this study.\", \"Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\", \n\"We randomly assign to conditions\", \"Registration prior to creation of data\", \n\"We will include all scientists who are willing to participate.\", \n\"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\", \n\"Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.\", \n\"We will stop after data from 100 researchers has been collected.\", \n\"Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\", \n\"We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.\", \n\"We will perform an independent t-test on the number of mistakes in each group.\", \n\"We will interpret effects as significant if p &lt; .05\", \"No exclusions are expected.\", \n\"No missing data is expected.\", \"We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).\", \nNA, NA), \"Preregistration 2\" = c(\"Open-Ended Registration\", \"Should Governments Invest More in Nudges?\", \n\"5xysn\", \"https://osf.io/5xysn\", \"2017-02-28T18:22:56.738000\", \n\"2017-02-28T19:47:12.367000\", \"2017-02-28T18:25:34.318000\", \"\", \n\"https://archive.org/details/osf-registrations-5xysn-v1\", NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \n\"With many “nudge units” already established and more in the planning stages, governments must decide on the appropriate amount of resources to invest in them. An important question, then, is to determine how efficiently nudge initiatives achieve their objectives. To be maximally impactful, future policy-oriented behavioral science research will need to measure the relative effectiveness of behavioral interventions in comparison to more traditional interventions for influencing behavior, such as tax incentives and subsidies. We make this point in our paper and note that past studies of nudges designed to encourage behavior change have typically measured only the extent to which the intended behavior was changed (if at all). In the absence of relative effectiveness calculations determining whether a given nudge is more effective than, say, a tax break, policymakers lack the evidence needed to design optimal policies and to decide on the level of resources to allocate to testing and deploying behaviorally-informed interventions as either supplements to or replacements for traditional interventions.  In addition to raising these important issues, in this paper, we zoom in on four major policy areas where high-profile nudge units have focused attention to date—financial security in retirement, education, energy, and health. Within each area, we focus on one well-studied behavior that government agencies have sought to change through numerous policy interventions, and we provide relative effectiveness calculations using available evidence from published research in leading journals. In the process, we also share new results from one of the first experiments conducted by the recently-formed U.S. White House Social and Behavioral Sciences Team, which included nearly a million active duty members of the U.S. military.  We conclude that compared to traditional policy tools, recent nudge interventions have had especially favorable ratios of impact to cost, but more relative effectiveness calculations are urgently needed.\", \n\"paper_b\")), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"existing_data\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"inference_criteria\", \n\"data_exclusion_criteria\", \"missing_data_handling\", \"exploratory_analyses\", \n\"description\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 2 preregistrations."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "paper_a",
+              "paper_b"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

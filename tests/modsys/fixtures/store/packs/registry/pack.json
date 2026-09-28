@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "registry",
+  "version": "0.1.0",
+  "title": "Trial registry numbers",
+  "description": "A tiny test pack: finds ClinicalTrials.gov numbers.",
+  "authors": ["pytacheck tests"],
+  "license": "MIT",
+  "fields": ["medicine"],
+  "keywords": ["clinical trials"],
+  "requires": {"pytacheck": ">=0.3"},
+  "dependencies": [],
+  "presets": {
+    "default": {
+      "description": "metacheck's default report plus ClinicalTrials.gov numbers",
+      "extends": ["metacheck::default"],
+      "modules": ["nct_ids"]
+    },
+    "only": {
+      "description": "Only the ClinicalTrials.gov numbers",
+      "modules": ["nct_ids"]
+    }
+  }
+}

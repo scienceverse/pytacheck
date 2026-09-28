@@ -1,0 +1,2007 @@
+{
+ "scenarios": {
+  "no_code": {
+   "text": [
+    "no code here"
+   ],
+   "real": true
+  },
+  "project": {
+   "real": true
+  },
+  "ok_noplan": {
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "ok.R",
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   }
+  },
+  "ok_plan": {
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "pipeline": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "writes_then_reads.R",
+     "reads_written.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/writes_then_reads.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/reads_written.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "missing_input": {
+   "code": {
+    "file_name": [
+     "missing_input.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/missing_input.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "missing_input.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/missing_input.R"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "some_other_file.csv"
+    ],
+    "target_path": [
+     "study-ex1/data/some_other_file.csv"
+    ]
+   }
+  },
+  "missing_mixed": {
+   "code": {
+    "file_name": [
+     "missing_mixed.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/missing_mixed.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "listed.csv",
+     "results.csv"
+    ],
+    "file_location": [
+     null,
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "results.csv"
+    ],
+    "target_path": [
+     "data/results.csv"
+    ]
+   }
+  },
+  "parse_error": {
+   "code": {
+    "file_name": [
+     "parse_error.R",
+     "ok.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/parse_error.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     true,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "sniffed": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "json_dump.R",
+     "jags_model.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "tests/mod_repro/fixtures/scripts/json_dump.R",
+     "tests/mod_repro/fixtures/scripts/jags_model.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     true,
+     true
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "cycle": {
+   "code": {
+    "file_name": [
+     "cycle_a.R",
+     "cycle_b.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/cycle_a.R",
+     "tests/mod_repro/fixtures/scripts/cycle_b.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "ambiguous_order": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "undefined_var.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/undefined_var.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "fuzzy_source": {
+   "code": {
+    "file_name": [
+     "02_analysis.R",
+     "01_clean.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/02_analysis.R",
+     "tests/mod_repro/fixtures/scripts/01_clean.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "ambiguous_path": {
+   "code": {
+    "file_name": [
+     "amb_path.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/amb_path.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "amb_path.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/amb_path.R"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv",
+     "data.csv"
+    ],
+    "target_path": [
+     "study-a/data/data.csv",
+     "study-b/data/data.csv"
+    ]
+   }
+  },
+  "call_paths": {
+   "code": {
+    "file_name": [
+     "sprintf_paths.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/sprintf_paths.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data/data.csv"
+    ]
+   }
+  },
+  "rmd": {
+   "code": {
+    "file_name": [
+     "analysis.Rmd"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/analysis.Rmd"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "renv_only": {
+   "code": {
+    "file_name": [
+     "renv/activate.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/renv/activate.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "renv/activate.R",
+     "analysis.py",
+     "data.mat"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/renv/activate.R",
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "duplicates": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "ok.R",
+     "errors.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/errors.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "mirrors_differ": {
+   "code": {
+    "file_name": [
+     "analysis.R",
+     "analysis.R",
+     "analysis.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/mirror_a/analysis.R",
+     "tests/mod_repro/fixtures/scripts/mirror_b/analysis.R",
+     "tests/mod_repro/fixtures/scripts/mirror_a/analysis.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "deps": {
+   "code": {
+    "file_name": [
+     "deps.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/deps.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     "dplyr, ggplot2, lme4, utils"
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "no_language": {
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "url_fallback": {
+   "code": {
+    "file_name": [
+     "url_only.R"
+    ],
+    "file_location": [
+     null
+    ],
+    "file_url": [
+     "tests/mod_repro/fixtures/scripts/url_only.R"
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "structure_lookup": {
+   "code": {
+    "file_name": [
+     "ok_nested.R",
+     "ok.R"
+    ],
+    "file_location": [
+     null,
+     null
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "code/ok_nested.R",
+     "ok.R",
+     "data.csv"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/code/ok_nested.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "stata_no_data": {
+   "code": {
+    "file_name": [
+     "analysis.do"
+    ],
+    "file_location": [
+     null
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "Stata"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "analysis.do"
+    ],
+    "file_location": [
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "spss_no_syntax": {
+   "structure": {
+    "file_name": [
+     "data.sav"
+    ],
+    "file_location": [
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "spss_with_syntax": {
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "data.sav",
+     "syntax.sps"
+    ],
+    "file_location": [
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "spss_selfcontained": {
+   "text": [
+    "The effect was significant, t(67) = 3.75, p < .001."
+   ],
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "data.sav",
+     "sample.omv"
+    ],
+    "file_location": [
+     null,
+     "tests/mod_repro/fixtures/outputs/sample.omv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "stata_red": {
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "data.dta"
+    ],
+    "file_location": [
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "stata_with_do": {
+   "code": {
+    "file_name": [
+     "analysis.do"
+    ],
+    "file_location": [
+     null
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "Stata"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.dta",
+     "analysis.do"
+    ],
+    "file_location": [
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "nonr_only": {
+   "code": {
+    "file_name": [
+     "model.sas",
+     "analysis.m",
+     "script.py",
+     "syntax.sps",
+     "helper.py"
+    ],
+    "file_location": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "SAS",
+     "MATLAB",
+     "Python",
+     "SPSS",
+     "Python"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "model.sas",
+     "analysis.m",
+     "script.py",
+     "syntax.sps",
+     "helper.py",
+     "data.mat"
+    ],
+    "file_location": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "nonr_with_r": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "model.sas",
+     "analysis.m",
+     "run.jl"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     null,
+     null,
+     null
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "SAS",
+     "MATLAB",
+     "Julia"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv",
+     "model.sas",
+     "analysis.m",
+     "run.jl"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
+     null,
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "jasp_only": {
+   "text": [
+    "The effect was significant, t(67) = 3.75, p < .001."
+   ],
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "sample.jasp",
+     "sample.omv"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/outputs/sample.jasp",
+     "tests/mod_repro/fixtures/outputs/sample.omv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "jasp_with_r": {
+   "text": [
+    "Participants improved, t(47.2) = 2.81, p = .007."
+   ],
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv",
+     "sample.jasp",
+     "notebook_r.ipynb"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
+     "tests/mod_repro/fixtures/outputs/sample.jasp",
+     "tests/mod_repro/fixtures/outputs/notebook_r.ipynb"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "smcl_mplus": {
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "analysis.smcl",
+     "twolevel.out",
+     "compiler.out"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/outputs/analysis.smcl",
+     "tests/mod_repro/fixtures/outputs/twolevel.out",
+     "tests/mod_repro/fixtures/outputs/compiler.out"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "spv_notebook_py": {
+   "text": [
+    "Massed practice helped, t(48) = 3.41, p = .001."
+   ],
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv",
+     "modern.spv",
+     "notebook_python.ipynb"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
+     "tests/mod_repro/fixtures/outputs/modern.spv",
+     "tests/mod_repro/fixtures/outputs/notebook_python.ipynb"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "demo": {
+   "paper": "demo",
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "psychsci": {
+   "paper": "psychsci",
+   "code": {
+    "file_name": [
+     "ok.R",
+     "errors.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/errors.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ],
+    "paper_id": [
+     "0956797613520608",
+     "0956797614522816"
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "bibr12": {
+   "paper": "bibr12",
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv",
+     "sample.omv",
+     "notebook_r.ipynb"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
+     "tests/mod_repro/fixtures/outputs/sample.omv",
+     "tests/mod_repro/fixtures/outputs/notebook_r.ipynb"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "bibr12_nocode": {
+   "paper": "bibr12",
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "data.sav"
+    ],
+    "file_location": [
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_ok": {
+   "text": [
+    "t(4.96) = -4.04, p = .010."
+   ],
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_errors": {
+   "code": {
+    "file_name": [
+     "errors.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/errors.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_setwd": {
+   "code": {
+    "file_name": [
+     "bad_setwd.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/bad_setwd.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_undefined": {
+   "code": {
+    "file_name": [
+     "undef_user.R",
+     "undef_definer.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/undef_user.R",
+     "tests/mod_repro/fixtures/scripts/undef_definer.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_library": {
+   "code": {
+    "file_name": [
+     "needs_stringr.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/needs_stringr.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_mixed": {
+   "code": {
+    "file_name": [
+     "writes_then_reads.R",
+     "reads_written.R",
+     "missing_input.R",
+     "parse_error.R",
+     "json_dump.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/writes_then_reads.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/reads_written.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/missing_input.R",
+     "tests/mod_repro/fixtures/scripts/parse_error.R",
+     "tests/mod_repro/fixtures/scripts/json_dump.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     true,
+     true
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_font": {
+   "code": {
+    "file_name": [
+     "font.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/font.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_model_object": {
+   "code": {
+    "file_name": [
+     "model_object.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/model_object.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_timeout": {
+   "code": {
+    "file_name": [
+     "sleep.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/sleep.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_install": {
+   "code": {
+    "file_name": [
+     "fake_dep.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/fake_dep.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     "notapkg123"
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_docker": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "needs_missing_pkg.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "tests/mod_repro/fixtures/scripts/needs_missing_pkg.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   },
+   "version_pin": [
+    "4.1.2"
+   ]
+  },
+  "exec_chatty": {
+   "code": {
+    "file_name": [
+     "chatty.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/chatty.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_jasp": {
+   "code": {
+    "file_name": [
+     "ok.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv",
+     "sample.jasp"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
+     "tests/mod_repro/fixtures/outputs/sample.jasp"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  }
+ }
+}

@@ -1,0 +1,120 @@
+{
+  "id": "doi_lookup.replay.two",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "doi",
+      "type",
+      "title",
+      "container",
+      "year",
+      "author",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "editor",
+      "publisher",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1177/2515245920970949",
+          "10.1037/0003-066x.54.6.408"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article",
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Improving Transparency, Falsifiability, and Rigor by Making Hypothesis Tests Machine-Readable",
+          "The origins of sex differences in human behavior: Evolved dispositions versus social roles."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Advances in Methods and Practices in Psychological Science",
+          "American Psychologist"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2021,
+          1999
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Lakens, Daniël; DeBruine, Lisa M.",
+          "Eagly, Alice H.; Wood, Wendy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4",
+          "54"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2",
+          "6"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "408"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "423"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "SAGE Publications",
+          "American Psychological Association (APA)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://dx.doi.org/10.1177/2515245920970949",
+          "http://dx.doi.org/10.1037/0003-066x.54.6.408"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

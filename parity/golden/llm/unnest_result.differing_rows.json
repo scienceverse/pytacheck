@@ -1,0 +1,9 @@
+{
+  "id": "unnest_result.differing_rows",
+  "ok": false,
+  "error": "arguments imply differing number of rows: 2, 3",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

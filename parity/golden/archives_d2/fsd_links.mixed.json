@@ -1,0 +1,72 @@
+{
+  "id": "fsd_links.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://services.fsd.tuni.fi/catalogue/FSD2653?lang=en",
+          "https://doi.org/10.60686/t-fsd2653",
+          "http://urn.fi/urn:nbn:fi:fsd:T-FSD3136",
+          "https://www.fsd.tuni.fi/en",
+          "FSD2653",
+          "fsd3136",
+          "FSD3136",
+          "FSD123456"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          1,
+          1,
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

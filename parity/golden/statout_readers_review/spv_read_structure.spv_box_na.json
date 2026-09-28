@@ -1,0 +1,65 @@
+{
+  "id": "spv_read_structure.spv_box_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "command_name",
+      "syntax",
+      "subtype",
+      "bin_member",
+      "xml_member",
+      "is_legacy",
+      "is_graph"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Graph"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "c_chartData.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "c.xml"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

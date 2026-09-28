@@ -1,0 +1,184 @@
+{
+  "id": "osf_info.recursive.y6a34",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "provider",
+      "kind",
+      "filetype",
+      "size",
+      "downloads",
+      "path",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "y6a34",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "y6a34",
+          "684ad5a887dfec5b67199757"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Empty",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This component is empty and uncategorised",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "files"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/y6a34/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/y6a34/children/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/y6a34/files/",
+          "https://api.osf.io/v2/nodes/y6a34/files/osfstorage/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "y6a34"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "y6a34"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "folder"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

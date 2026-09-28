@@ -1,0 +1,16 @@
+{
+  "id": ".extract_rich_text.latin1.rtf",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "unable to translate '{\\rtf1\\ansi age:\\tab Alter in Jahren\\par caf<e9> = coffee shop\\par}' to a wide string"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

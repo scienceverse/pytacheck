@@ -1,0 +1,164 @@
+{
+  "id": "report_tables.parse_errors",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "File Name",
+          "% Comments",
+          "Missing Files",
+          "Absolute Paths",
+          "Code Between Libraries"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "20%",
+              "33%",
+              "33%",
+              "50%",
+              "50%",
+              "22%",
+              "80%",
+              "80%"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              5,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "Missing Files"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "error.qmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "file.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "Absolute paths found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "error.qmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/User/lisa/file.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "File name",
+          "Error Message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "error-ok.qmd",
+              "error.R",
+              "error.Rmd",
+              "error.qmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "line:5:1: unexpected symbol<br>4: <br>5: a<br>   ^",
+              "line:4:1: unexpected symbol<br>3: <br>4: a<br>   ^",
+              "line:4:1: unexpected symbol<br>3: <br>4: a<br>   ^",
+              "line:4:1: unexpected symbol<br>3: <br>4: a<br>   ^"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

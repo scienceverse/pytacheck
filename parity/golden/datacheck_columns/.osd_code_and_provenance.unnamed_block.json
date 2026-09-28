@@ -1,0 +1,43 @@
+{
+  "id": ".osd_code_and_provenance.unnamed_block",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "code",
+      "ref_code",
+      "source",
+      "provenance"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "resp"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unnamed_block"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A coherent block of same-prefix rating columns detected in the data, but NOT named: neither a known instrument nor a construct metacheck could infer from the available text. Recorded for its structure (items + response scale) only."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

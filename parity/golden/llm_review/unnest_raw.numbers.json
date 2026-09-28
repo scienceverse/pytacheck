@@ -1,0 +1,58 @@
+{
+  "id": "unnest_raw.numbers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "b.1.5",
+      "b.TRUE",
+      "b..q..x.",
+      "b..2L",
+      "b.100000L",
+      "b.0.1"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          1.5
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "q\"x"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          -2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          100000
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,669 @@
+{
+  "id": ".grobid_to_bibr.grobid.pfd-479883",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "paper",
+    "names": [
+      "paper_id",
+      "info",
+      "author",
+      "text",
+      "section",
+      "url",
+      "bib",
+      "xref",
+      "figure",
+      "table",
+      "eq"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "processFulltextDocument-479883-POST"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "title",
+          "keywords",
+          "doi",
+          "file_hash",
+          "input_format",
+          "file_name",
+          "bibr_version",
+          "paper_type",
+          "paper_type_confidence",
+          "oecd_l1",
+          "oecd_l2",
+          "oecd_confidence"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2f6afb2a59fd1b00"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "grobid 0.8.2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<repo>/upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had.",
+              "We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              "Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.",
+              "Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx.",
+              "We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power.",
+              "We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).",
+              "2 The code we used for this analysis is as follows. pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
+              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+              "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
+              "Since our data are simulated for demonstration purposes, of course they confirm our hypotheses.",
+              "It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app",
+              "Figure 1: The simulated data.",
+              "Figure 2: The effect of experience on the reduction in errors.",
+              "The average number of mistakes and usefulness score for the control and experimental conditions."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2,
+              3,
+              4,
+              5,
+              5,
+              6,
+              7,
+              8,
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2,
+              2,
+              3,
+              4,
+              4,
+              4,
+              4,
+              5,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              null,
+              "We simulated the data using Faux (DeBruine 2025) (Table <ref type=\"table\" target=\"#tab_0\">1<\/ref>, Figure <ref type=\"figure\" target=\"#fig_0\">1<\/ref>).",
+              null,
+              null,
+              "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_1\">2<\/ref>).",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "section_id",
+          "header",
+          "parent_section_id",
+          "section_type",
+          "classification_score"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "[div-01]",
+              "Data Availability",
+              "Power Analysis",
+              "Results",
+              "Discussion",
+              "Figure 1 :",
+              "Figure 2 :",
+              "Table 1 :"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "intro",
+              "intro",
+              "results",
+              "discussion",
+              "figure",
+              "figure",
+              "table"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "href",
+          "link_text",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/Lak-",
+              "https://researchbox.org/4377",
+              "https://osf.io/5tbm9",
+              "https://osf.io/629bx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              4,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "bib_id"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "xref_id",
+          "xref_type",
+          "contents",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "table",
+              "figure",
+              "figure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "1",
+              "2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              6,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "figure_id",
+          "section_id",
+          "image",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "table_id",
+          "section_id",
+          "html",
+          "contents",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<table>\n  <row>\n    <cell>Condition<\/cell>\n    <cell cols=\"2\">Mistakes Usefulness<\/cell>\n  <\/row>\n  <row>\n    <cell>control<\/cell>\n    <cell>10.90<\/cell>\n    <cell>4.50<\/cell>\n  <\/row>\n  <row>\n    <cell>experimental<\/cell>\n    <cell>9.12<\/cell>\n    <cell>5.06<\/cell>\n  <\/row>\n<\/table>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Condition",
+                      "Mistakes Usefulness",
+                      "Mistakes Usefulness"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "control",
+                      "10.90",
+                      "4.50"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "experimental",
+                      "9.12",
+                      "5.06"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 13,
+        "names": [
+          "text_id",
+          "grp_id",
+          "lhs",
+          "df",
+          "comp",
+          "rhs"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              5,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7,
+              8,
+              8,
+              8,
+              8,
+              9
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              3,
+              3,
+              3,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N",
+              "n",
+              "power",
+              "M",
+              "M",
+              "t",
+              "p",
+              "d",
+              "M",
+              "M",
+              "t",
+              "p",
+              "p"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "(97.7)",
+              null,
+              null,
+              null,
+              null,
+              "(97.2)",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              ">"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "50",
+              "50",
+              "0.8",
+              "9.12",
+              "10.9",
+              "2.9",
+              "0.005",
+              "0.59",
+              "5.06",
+              "4.5",
+              "-1.96",
+              "0.152",
+              ".05"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

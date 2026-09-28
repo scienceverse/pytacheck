@@ -1,0 +1,91 @@
+{
+  "id": "reg_check.review.http.401_groq",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RegCheck Preregistration Comparison"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration, but the RegCheck comparison failed: The RegCheck server rejected your API token (401 Unauthorized).\nCheck that REGCHECK_API_TOKEN in your .Renviron is correct.\nSee http://www.scienceverse.org/metacheck_book/ for details.."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "error"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration, but the RegCheck comparison failed: The RegCheck server rejected your API token (401 Unauthorized).\nCheck that REGCHECK_API_TOKEN in your .Renviron is correct.\nSee http://www.scienceverse.org/metacheck_book/ for details.."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration",
+          "regcheck_deviations"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_oer"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

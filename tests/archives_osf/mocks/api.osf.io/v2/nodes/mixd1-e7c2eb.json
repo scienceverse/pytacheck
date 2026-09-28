@@ -1,0 +1,54 @@
+{
+ "data": {
+  "id": "mixd1",
+  "type": "nodes",
+  "attributes": {
+   "title": "Mixed mixd1",
+   "description": "",
+   "category": "project",
+   "public": true,
+   "date_created": "2020-01-02T03:04:05.000000",
+   "date_modified": "2021-01-02T03:04:05.000000",
+   "tags": [
+    1,
+    null,
+    2.5
+   ],
+   "node_license": {
+    "copyright_holders": [
+     "A",
+     null,
+     3
+    ],
+    "year": 2020.0
+   }
+  },
+  "embeds": {
+   "license": {
+    "data": {
+     "attributes": {
+      "name": "CC-By Attribution 4.0 International"
+     }
+    }
+   },
+   "bibliographic_contributors": {
+    "data": [
+     {
+      "embeds": {
+       "users": {
+        "data": {
+         "attributes": {
+          "full_name": "Ann Other",
+          "given_name": "Ann",
+          "family_name": "Other",
+          "social": {}
+         }
+        }
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

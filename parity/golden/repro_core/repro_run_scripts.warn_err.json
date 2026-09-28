@@ -1,0 +1,94 @@
+{
+  "id": "repro_run_scripts.warn_err",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "file_name",
+      "outcome",
+      "error",
+      "error_type",
+      "undefined_var",
+      "stdout",
+      "stderr",
+      "script_lines",
+      "captures"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "warn_err.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "errored"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "! in callr subprocess.\nCaused by error in `f(\"a very long argument string that makes the error line long enough to wrap around\")`:\n! inner boom: a very long argument string that makes the error line long enough to wrap around"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "runtime"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "> warning(\"w1\")\n> message(\"m1\")\n> cat(\"out\\n\")\nout\n> f <- function(a) stop(\"inner boom: \", a)\n> f(\"a very long argument string that makes the error line long enough to wrap around\")"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "m1\nError in f(\"a very long argument string that makes the error line long enough to wrap around\") : \n  inner boom: a very long argument string that makes the error line long enough to wrap around\nIn addition: Warning message:\nIn eval(e, envir = env) : w1"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "warning(\"w1\")",
+              "message(\"m1\")",
+              "cat(\"out\\n\")",
+              "f <- function(a) stop(\"inner boom: \", a)",
+              "f(\"a very long argument string that makes the error line long enough to wrap around\")"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

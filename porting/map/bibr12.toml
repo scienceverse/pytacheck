@@ -1,0 +1,29 @@
+# R source -> Python location for bibr export schema 12.x (metacheck PR #423;
+# see docs/PORTING.md). bibr export schema 12.0 is the schema pytacheck targets.
+[files]
+"R/import-bibr12.R" = ["src/pytacheck/io/bibr12.py", "src/pytacheck/papers/schema.py"]
+"inst/schema/paper-bibr12.json" = ["src/pytacheck/resources/schema/paper-bibr12.json"]
+# the 12.x parts of shared files
+"R/import-read.R" = ["src/pytacheck/papers/io.py", "src/pytacheck/io/read.py"]
+"R/paper.R" = ["src/pytacheck/papers/io.py", "src/pytacheck/papers/validate.py", "src/pytacheck/papers/schema.py"]
+"R/match-table.R" = ["src/pytacheck/statout/match_table.py"]
+"inst/modules/ref_accuracy.R" = ["src/pytacheck/modules/ref_accuracy.py"]
+"inst/modules/ref_consistency.R" = ["src/pytacheck/modules/ref_consistency.py"]
+"inst/modules/ref_miscitation.R" = ["src/pytacheck/modules/ref_miscitation.py"]
+"tests/testthat/test-import-bibr12.R" = ["tests/bibr12/test_import_bibr12.py"]
+"tests/testthat/helper-bibr12.R" = ["tests/bibr12/test_import_bibr12.py"]
+
+[functions]
+# R/import-bibr12.R
+".paper_schema_bibr12" = "pytacheck.papers.schema:load_schema_bibr12"
+".is_bibr12" = "pytacheck.io.bibr12:is_bibr12"
+".bibr12_paper_ids" = "pytacheck.io.bibr12:_bibr12_paper_ids"
+".bibr12_df" = "pytacheck.io.bibr12:_bibr12_df"
+".bibr12_rows" = "pytacheck.io.bibr12:_bibr12_rows"
+".bibr12_info" = "pytacheck.io.bibr12:_bibr12_info"
+".bibr12_paper" = "pytacheck.io.bibr12:_bibr12_paper"
+".read_bibr12" = "pytacheck.io.bibr12:read_bibr12"
+".paper_to_bibr12" = "pytacheck.io.bibr12:paper_to_bibr12"
+".bibr12_doi" = "pytacheck.io.bibr12:_bibr12_doi"
+".bibr12_bib_type" = "pytacheck.io.bibr12:_bibr12_bib_type"
+".bibr12_sha256" = "pytacheck.io.bibr12:_bibr12_sha256"

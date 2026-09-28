@@ -1,0 +1,12 @@
+{
+    "status": "good",
+    "feedbacks": [
+        {
+            "id": "10.9999/pp.one",
+            "title": "A paper (10.9999/pp.one)",
+            "total_comments": 2,
+            "url": "https://pubpeer.com/publications/PP.ONE",
+            "users": "Jane Doe, John Roe"
+        }
+    ]
+}

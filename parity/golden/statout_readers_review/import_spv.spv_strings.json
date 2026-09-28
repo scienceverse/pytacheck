@@ -1,0 +1,292 @@
+{
+  "id": "import_spv.spv_strings",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode light-binary table: embedded nul in string: 'x\\0y'"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Tie"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "one"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Statistic",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "one"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "NoLog"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Five"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Statistic",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "five"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Nul Strings"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "Statistic",
+              "Variable",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Mean",
+                  "Mean",
+                  "SD",
+                  "SD"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Group / x",
+                  "Group / y",
+                  "Group / x",
+                  "Group / y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.5",
+                  "n/a",
+                  "^1",
+                  "0.25"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "COMPUTE x = 1."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "After"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "four"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Statistic",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "four"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "4"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "COMPUTE x = 1."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,189 @@
+{
+ "paper_id": "coi_headers",
+ "info": [
+  {
+   "title": "coi_headers",
+   "keywords": null,
+   "doi": null
+  }
+ ],
+ "author": [],
+ "text": [
+  {
+   "text": "We studied how people learn.",
+   "text_id": 1,
+   "paragraph_id": 1,
+   "section_id": 0,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Interest in the task was high.",
+   "text_id": 2,
+   "paragraph_id": 1,
+   "section_id": 0,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Participants were recruited online.",
+   "text_id": 3,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": null,
+   "text_id": 4,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "",
+   "text_id": 5,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "None.",
+   "text_id": 6,
+   "paragraph_id": 3,
+   "section_id": 2,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "The authors declare none.",
+   "text_id": 7,
+   "paragraph_id": 4,
+   "section_id": 3,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Funding was provided by X.",
+   "text_id": 8,
+   "paragraph_id": 4,
+   "section_id": 3,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Second paragraph here.",
+   "text_id": 9,
+   "paragraph_id": 5,
+   "section_id": 3,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Disclosure: none reported.",
+   "text_id": 10,
+   "paragraph_id": 6,
+   "section_id": 4,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Financial disclosure of interests: none.",
+   "text_id": 11,
+   "paragraph_id": 7,
+   "section_id": 5,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Conflict of interest was absent.",
+   "text_id": 12,
+   "paragraph_id": 7,
+   "section_id": 5,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "None declared.",
+   "text_id": 13,
+   "paragraph_id": 8,
+   "section_id": 6,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Smith, J. (2020). Conflict of interest in science. Journal of Interest, 1, 1-2.",
+   "text_id": 14,
+   "paragraph_id": 9,
+   "section_id": 7,
+   "page_number": null,
+   "formatted": null
+  }
+ ],
+ "section": [
+  {
+   "section_id": 0,
+   "header": "Abstract",
+   "parent_section_id": null,
+   "section_type": "abstract",
+   "classification_score": null
+  },
+  {
+   "section_id": 1,
+   "header": "Method",
+   "parent_section_id": null,
+   "section_type": "method",
+   "classification_score": null
+  },
+  {
+   "section_id": 2,
+   "header": "Conflict of Interest",
+   "parent_section_id": null,
+   "section_type": "unknown",
+   "classification_score": null
+  },
+  {
+   "section_id": 3,
+   "header": "Competing Interests",
+   "parent_section_id": null,
+   "section_type": "unknown",
+   "classification_score": null
+  },
+  {
+   "section_id": 4,
+   "header": "COI",
+   "parent_section_id": null,
+   "section_type": "unknown",
+   "classification_score": null
+  },
+  {
+   "section_id": 5,
+   "header": "Financial Disclosure",
+   "parent_section_id": null,
+   "section_type": "funding",
+   "classification_score": null
+  },
+  {
+   "section_id": 6,
+   "header": "Declaration of interests",
+   "parent_section_id": null,
+   "section_type": "unknown",
+   "classification_score": null
+  },
+  {
+   "section_id": 7,
+   "header": "References",
+   "parent_section_id": null,
+   "section_type": "references",
+   "classification_score": null
+  }
+ ],
+ "url": [],
+ "bib": [],
+ "xref": [],
+ "figure": [],
+ "table": [],
+ "eq": []
+}

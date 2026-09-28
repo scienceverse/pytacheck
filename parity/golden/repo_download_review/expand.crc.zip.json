@@ -1,0 +1,81 @@
+{
+  "id": "expand.crc.zip",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "zip file is corrupt"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "good.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "crc.zip/good.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/crc.zip.contents/good.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          817
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tabular"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,107 @@
+{
+  "id": ".rbox_info.mock.6018",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "rb_url",
+      "files",
+      "box_id",
+      "reference",
+      "RB_target",
+      "RB_license",
+      "RB_public",
+      "RB_authors",
+      "RB_abstract"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://researchbox.org/6018"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "name",
+              "file_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "  n=40d=0.5sim=100000.rds",
+                  "  README.md",
+                  "  references.bib",
+                  "  rethinking_type_s_and_m_errors.qmd"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2",
+                  "3",
+                  "1",
+                  "4"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6018"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "c_Ns8lSNA9X7ovf0lQqcrIzHxhsufKQylak1a1JmacY"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Daniël Lakens, Cristian Mesquida, Gabriela Xavier-Quintais, Sajedeh Rasti, Enrico Toffalini, Gianmarco Altoè, 'Rethinking Type S and M Errors'\nhttps://osf.io/preprints/psyarxiv/2phzb_v1\n\nCITING THIS RESEARCHBOX\nLakens, D. (2026). ResearchBox 6018, 'Rethinking Type S and M Errors', https://ResearchBox.org/6018. Zenodo. https://doi.org/10.5281/zenodo.18685716"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All content posted to ResearchBox is under aCC By 4.0 License(all use is allowed as long as authorship of the content is attributed). When using content from ResearchBox please cite the original work, and provide a link to the URL for this box (https://researchbox.org/6018)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "February 15, 2026"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Daniel Lakens (d.lakens@tue.nl)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Gelman and Carlin (2014) introduced Type S (sign) and Type M (magnitude) errors to highlight the possibility that statistically significant results in published articles are misleading. While these concepts have been proposed for both when designing a study (prospective) and when evaluating results in a published paper (retroactive), we argue that these statistics do not facilitate the proper design of studies, nor the meaningful interpretation of results. Type S errors are a response to the criticism of testing against a point null of exactly zero in contexts where true zero effects are implausible. Testing against a minimum effect size, while controlling the Type 1 error rate, provides a more coherent and practically useful alternative. Type M errors are primarily a tool to warn against effect size inflation after selectively reporting significant results, but we argue that statistical indices such as the critical effect size or bias adjusted effect size are preferable approaches. We do believe that Type S and M errors can be valuable pedagogically as part of statistics education where the principles of error control are explained, and consequences of bad research practices are explained. Type S and M errors could be used in the discussion section of studies that fail to follow good research practices. Overall, we argue their use-cases are more limited than is currently recognized, and alternative solutions deserve greater attention."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

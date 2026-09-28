@@ -1,0 +1,52 @@
+{
+  "id": "validate.na_text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "paper_id",
+      "text",
+      "flag",
+      "n"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "zzz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "It was significant.",
+          null,
+          "an extra row"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          19,
+          null,
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

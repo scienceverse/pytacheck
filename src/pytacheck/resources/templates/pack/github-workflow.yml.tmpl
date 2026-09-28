@@ -1,0 +1,22 @@
+# Checks the pack the way the pytacheck-modules store does.
+name: pytacheck
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytacheck
+        # the same pytacheck the store's CI uses (until pytacheck is on PyPI)
+        run: pip install "{{install_spec}}" pytest
+      - name: pytacheck pack check
+        run: pytacheck pack check .
+      - name: Tests
+        run: pytest -q tests

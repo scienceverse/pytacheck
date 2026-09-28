@@ -1,0 +1,24 @@
+{
+  "status": "OK",
+  "data": {
+    "persistentUrl": "https://doi.org/10.7910/DVN/EMPTY",
+    "latestVersion": {
+      "files": [
+        {
+          "label": "a.csv",
+          "dataFile": {
+            "id": 2004,
+            "filesize": 8
+          }
+        },
+        {
+          "label": "empty.txt",
+          "dataFile": {
+            "id": 2003,
+            "filesize": 0
+          }
+        }
+      ]
+    }
+  }
+}

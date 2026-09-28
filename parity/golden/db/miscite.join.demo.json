@@ -1,0 +1,41 @@
+{
+  "id": "miscite.join.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "bib_id",
+      "doi",
+      "paper_id",
+      "reftext",
+      "warning"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

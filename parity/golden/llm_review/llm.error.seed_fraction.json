@@ -1,0 +1,9 @@
+{
+  "id": "llm.error.seed_fraction",
+  "ok": false,
+  "error": "Misspecified params argument:\n`seed` must be a whole number or `NULL`, not the number 1.5.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

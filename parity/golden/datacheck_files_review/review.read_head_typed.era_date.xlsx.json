@@ -1,0 +1,102 @@
+{
+  "id": "review.read_head_typed.era_date.xlsx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "date_jp",
+          "date_iso",
+          "weight"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "POSIXct",
+              "POSIXt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "numeric"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "id",
+          "date_jp",
+          "date_iso",
+          "weight"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              43586,
+              43845
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2019-05-01T00:00:00",
+              "2020-01-15T00:00:00"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              2.5
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

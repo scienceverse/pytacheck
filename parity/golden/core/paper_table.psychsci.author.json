@@ -1,0 +1,331 @@
+{
+  "id": "paper_table.psychsci.author",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 20,
+    "names": [
+      "author_id",
+      "given",
+      "family",
+      "affiliation",
+      "email",
+      "corresponding",
+      "orcid",
+      "role",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "John",
+          "Kristian",
+          "Joshua",
+          "Thomas",
+          "Jakob",
+          "Morten",
+          "Chris",
+          "George",
+          "Antje",
+          "Philippe",
+          "Robert",
+          "Amy",
+          "Gordon",
+          "Judi",
+          "Mark",
+          "Phillip",
+          "Tim",
+          "Daniel",
+          "Lisa",
+          "Jakub"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Michael",
+          "Sandberg",
+          "Skewes",
+          "Wolf",
+          "Blicher",
+          "Overgaard",
+          "Frith",
+          "Malcolm",
+          "Nuthmann",
+          "Schyns",
+          "Rogers",
+          "Bilderbeck",
+          "Brown",
+          "Read",
+          "Woolrich",
+          "Cowen",
+          "Behrens",
+          "Lakens",
+          "Debruine",
+          "Werner"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Center for Subjectivity Research Copenhagen University",
+          "Cognitive Neuroscience Research Unit Hammel Neurorehabilitation and Research Centre Aarhus University",
+          "Interacting Minds Centre Aarhus University",
+          "Program in Cognitive Science University of Vienna",
+          "Cognitive Neuroscience Research Unit Hammel Neurorehabilitation and Research Centre Aarhus University",
+          "Center of Functionally Integrative Neuroscience/MindLab Cognitive Neuroscience Research Unit Aarhus University 7 Centre for Cognitive Neuroscience",
+          "Department of Communication and Psychology Aalborg University Wellcome Trust Centre for Neuroimaging London England",
+          "The George Washington University",
+          "University of Edinburgh",
+          "University of Glasgow",
+          "School of Psychology Bangor University",
+          "Department of Psychiatry University of Oxford",
+          "Department of Psychology University of Warwick",
+          "Nuffield Department of Primary Healthcare Sciences University of Oxford",
+          "Oxford Centre for Human Brain Activity University of Oxford",
+          "Department of Psychiatry University of Oxford",
+          "Oxford Centre for Functional MRI of the Brain University of Oxford",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "johnmichaelaarhus@gmail.com",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "glmalcolm@gwu.edu",
+          "",
+          "",
+          "r.rogers@bangor.ac.uk",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797614522816",
+          "0956797614522816",
+          "0956797614522816",
+          "0956797614527830",
+          "0956797614527830",
+          "0956797614527830",
+          "0956797614527830",
+          "0956797614527830",
+          "0956797614527830",
+          "0956797614527830",
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

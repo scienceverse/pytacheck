@@ -1,0 +1,25 @@
+{
+  "id": "data_group_normalize.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "ex1",
+      "ex2a",
+      "pilot1",
+      "pilot3",
+      "ex1",
+      null,
+      "ex4",
+      "ex10b",
+      "ex2",
+      null,
+      null,
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

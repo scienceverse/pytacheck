@@ -1,0 +1,100 @@
+{
+  "id": "match_reported_output.table_paper.include_tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          -1000001
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=2.1 df=20 p=0.048"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=2.1, df=20, p=0.048"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.omv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T-Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

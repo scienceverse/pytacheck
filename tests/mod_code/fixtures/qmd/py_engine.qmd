@@ -1,0 +1,8 @@
+---
+title: P
+jupyter: python3
+---
+
+```{python}
+import pandas as pd
+```

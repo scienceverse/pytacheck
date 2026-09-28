@@ -1,0 +1,11 @@
+# The metacheck commit pytacheck is verified against. Updated by the
+# upstream-sync workflow together with the upstream/metacheck submodule.
+[upstream]
+repository = "https://github.com/scienceverse/metacheck"
+branch = "dev"
+commit = "b239264f6b80a967636d0a1bc0ed294f0df93bb3"
+# dev plus pull request #423 (bibr export schema 12.0: read, write, Grobid TEI -> 12.0),
+# which pytacheck targets ahead of its merge. Move back to dev once it is merged.
+pull_request = 423
+base_commit = "85c8c872cf71ab5a70c10008bd41bf563352a396"
+version = "0.3.1"

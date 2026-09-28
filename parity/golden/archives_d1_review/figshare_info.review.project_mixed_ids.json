@@ -1,0 +1,181 @@
+{
+  "id": "figshare_info.review.project_mixed_ids",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1234 could not be found on api.figshare.com"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "u",
+      "n",
+      "figshare_url",
+      "figshare_id",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.com/projects/Mixed/700500",
+          "https://figshare.com/projects/Mixed/700500",
+          "https://figshare.com/projects/Mixed/700500",
+          "https://figshare.com/projects/Mixed/700500",
+          "700004"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.com/projects/Mixed/700500",
+          "https://figshare.com/projects/Mixed/700500",
+          "https://figshare.com/projects/Mixed/700500",
+          "https://figshare.com/projects/Mixed/700500",
+          "700004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "700004",
+          "1234",
+          "700004",
+          "1234",
+          "700004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "unfound",
+          null,
+          "unfound",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

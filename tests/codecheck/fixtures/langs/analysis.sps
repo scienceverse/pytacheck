@@ -1,0 +1,7 @@
+* Load.
+GET FILE='data/example.sav'.
+COMMENT BEGIN
+ignored
+COMMENT END.
+GET DATA /TYPE=TXT /FILE=raw.txt.
+DESCRIPTIVES VARIABLES=age.

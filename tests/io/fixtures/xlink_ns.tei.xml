@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<teiHeader><fileDesc><titleStmt><title level="a" type="main">Namespaces <ptr xlink:href="https://x.org"/> in text</title></titleStmt></fileDesc>
+<profileDesc><abstract><div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract with a <ptr xlink:href="https://osf.io/abc"/> pointer. And <mml:math><mml:mi>x</mml:mi></mml:math> maths.</p></div></abstract></profileDesc></teiHeader>
+<text xml:lang="en"><body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method <ptr xlink:href="#h"/></head><p>We used <ref type="url" target="https://osf.io/48ncu">https://osf.io/48ncu</ref> and <ptr xlink:href="https://github.com/x"/> here.</p><p xmlns:b="urn:b">Own prefix <b:q>kept</b:q> and <ptr xlink:href="h"/> inherited.</p><p xmlns:c="urn:c">Unused own prefix.</p><p>Foreign default <m xmlns="urn:m"><i>q</i></m> namespace.</p></div>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><figDesc>A caption <ptr xlink:href="https://img.org"/> with a pointer.</figDesc><graphic xlink:href="img.png"/></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><figDesc>Table caption.</figDesc><table><row><cell>Name <ptr xlink:href="#c"/></cell><cell>M</cell></row><row><cell>a</cell><cell>1.2</cell></row></table></figure>
+<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>A footnote <ptr xlink:href="https://f.org"/> pointer.</p></note>
+</body></text></TEI>

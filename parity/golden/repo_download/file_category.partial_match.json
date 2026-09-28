@@ -1,0 +1,68 @@
+{
+  "id": "file_category.partial_match",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "names",
+      "category_x",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.R",
+          "codebook.csv",
+          "x.jasp"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "codebook",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "codebook",
+          "data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,107 @@
+{
+  "id": "openalex_query.mock.title_only_loose",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "id",
+      "doi",
+      "relevance_score",
+      "display_name",
+      "publication_year",
+      "type",
+      "biblio.volume",
+      "biblio.first_page",
+      "biblio.last_page",
+      "source",
+      "authors",
+      "title_match",
+      "source_match"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://openalex.org/W6"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.9999/w6"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Only Title Match"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Some Journal"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A B"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

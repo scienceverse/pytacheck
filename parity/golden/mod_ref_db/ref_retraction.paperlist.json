@@ -1,0 +1,146 @@
+{
+  "id": "ref_retraction.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_retraction"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RetractionWatch"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b",
+              "a",
+              "a"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.3390/nano14090769",
+              "10.1371/journal.ppat.1000066",
+              "10.1016/j.ejogrb.2018.03.041"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.3390/nano14090769",
+              "Reference 0. https://doi.org/10.1371/journal.ppat.1000066",
+              "Reference 1. https://doi.org/10.1016/j.ejogrb.2018.03.041"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Correction",
+              "Retraction;Expression of concern",
+              "Expression of concern"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 4 references with DOIs. You cited 3 articles in the RetractionWatch database.\n\nCheck if you are aware of the retraction, correction, or expression of concern for each reference, and consider whether it still supports your claims.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 0. https://doi.org/10.3390/nano14090769\", \n\"Reference 0. https://doi.org/10.1371/journal.ppat.1000066\", \n\"Reference 1. https://doi.org/10.1016/j.ejogrb.2018.03.041\"), \n    \"RW Type\" = c(\"Correction\", \"Retraction;Expression of concern\", \n    \"Expression of concern\")), row.names = c(NA, -3L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 3 articles in the RetractionWatch database."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b",
+              "c",
+              "a"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

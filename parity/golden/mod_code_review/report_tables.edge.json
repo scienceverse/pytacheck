@@ -1,0 +1,163 @@
+{
+  "id": "report_tables.edge",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`."
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "File Name",
+          "% Comments",
+          "Missing Files",
+          "Absolute Paths",
+          "Code Between Libraries"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "0%",
+              "33%",
+              "",
+              "50%",
+              "",
+              "",
+              "",
+              "",
+              "100%"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0,
+              null,
+              null,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              2,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "Missing Files"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "crlf.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File name",
+          "Absolute paths found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "chdir.py",
+              "crlf.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/home/me/project",
+              "C:/Users/me/data.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

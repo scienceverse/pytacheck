@@ -1,0 +1,150 @@
+{
+  "id": "zenodo_file_download.review.odd_files",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1 of 5 files from Zenodo record 5559101 did not arrive intact (e.g. noself.txt). The returned table marks it downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "folder",
+      "zenodo_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5559101",
+          "5559101",
+          "5559101",
+          "5559101",
+          "5559101"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5559101",
+          "5559101",
+          "5559101",
+          "5559101",
+          "5559101"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "f-nosize",
+          "f-nokey",
+          "f-noself",
+          "f-upper",
+          "f-hexupper"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nosize.txt",
+          null,
+          "noself.txt",
+          "UPPER.CSV",
+          "hexupper.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nosize.txt",
+          "f-nokey",
+          null,
+          "UPPER.CSV",
+          "hexupper.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          4,
+          2,
+          4,
+          4
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4,
+          4,
+          null,
+          4,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "md5:0bee89b07a248e27c83fc3d5951213c1",
+          null,
+          "MD5:0BEE89B07A248E27C83FC3D5951213C1",
+          "md5:0BEE89B07A248E27C83FC3D5951213C1"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          true,
+          null,
+          null,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/api/records/5559101/files/nosize.txt/content",
+          "https://zenodo.org/api/records/5559101/files/nokey/content",
+          null,
+          "https://zenodo.org/api/records/5559101/files/UPPER.CSV/content",
+          "https://zenodo.org/api/records/5559101/files/hexupper.csv/content"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

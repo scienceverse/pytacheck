@@ -1,0 +1,19 @@
+{
+    "status": "good",
+    "feedbacks": [
+        {
+            "id": "10.1093/brain/110.3.747",
+            "title": "A paper (10.1093/brain/110.3.747)",
+            "total_comments": 2,
+            "url": "https://pubpeer.com/publications/110.3.747",
+            "users": "Reviewer One"
+        },
+        {
+            "id": "10.1093/cercor/bhp291",
+            "title": "A paper (10.1093/cercor/bhp291)",
+            "total_comments": 2,
+            "url": "https://pubpeer.com/publications/BHP291",
+            "users": "Reviewer One"
+        }
+    ]
+}

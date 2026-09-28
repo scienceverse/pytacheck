@@ -1,0 +1,65 @@
+# R source -> Python location for the data_check module (see docs/PORTING.md).
+# Parity: parity/cases/mod_data_check.yaml (written by tests/mod_data_check/make_cases.py),
+# goldens parity/golden/mod_data_check/. The module cases chain data_check onto a
+# repo_check output listing fixture repositories (tests/mod_data_check/fixtures/
+# make_fixtures.R -> fixtures/repos/, scenarios.json; built by
+# tests/mod_data_check/dc_helpers.R and helpers.py), a few run the real pipeline
+# (local_path -> repo_check). Downloads are parity-tested with file:// URLs; the
+# LLM passes with a deterministic llm() mock (fixtures/llm_mock.json); the
+# careless-responding path with the vendored longstring()/irv() of the careless
+# package (fixtures/careless, loaded with pkgload in R).
+# Review cases: parity/cases/mod_data_check_review.yaml (area mod_data_check_review,
+# also written by make_cases.py; goldens parity/golden/mod_data_check_review/):
+# reader column types (integer64, POSIXct, IDate, ...), copies of the
+# tests/datacheck_files reader fixtures, one-header Qualtrics exports, empty()
+# returns on paper lists, hand-built workbooks (fixtures/make_review_xlsx.py) and
+# R's format() display widths in the data tree.
+[files]
+"inst/modules/data_check.R" = ["src/pytacheck/modules/data_check.py", "src/pytacheck/modules/_data_check.py"]
+
+[functions]
+"module:data_check" = "pytacheck.modules.data_check:data_check"
+# closures inside data_check() (the generic ones -- .pid, pad, getf, empty,
+# label_of, utf8_repaired_of -- are private helpers of data_check.py:
+# _pid, _pad, _file_columns, _validate, _label_lookup, _utf8_lookup)
+".tree_type_icon" = "pytacheck.modules._data_check:_tree_type_icon"
+".tree_type_label" = "pytacheck.modules._data_check:_tree_type_label"
+"repo_tree_rows" = "pytacheck.modules._data_check:repo_tree_rows"
+"repo_tree_block" = "pytacheck.modules._data_check:repo_tree_block"
+"file_tabset" = "pytacheck.modules._data_check:file_tabset"
+"desc_file_tabset" = "pytacheck.modules._data_check:desc_file_tabset"
+"data_file_tabset" = "pytacheck.modules._data_check:data_file_tabset"
+".pids_all" = "pytacheck.modules.data_check:_pids_all"
+# module-local helpers defined in inst/modules/data_check.R
+".dv_careless_min_items" = "pytacheck.modules._data_check:DV_CARELESS_MIN_ITEMS"
+".dv_careless_min_rows" = "pytacheck.modules._data_check:DV_CARELESS_MIN_ROWS"
+".dv_careless_block" = "pytacheck.modules._data_check:dv_careless_block"
+".dv_careless_coverage_text" = "pytacheck.modules._data_check:dv_careless_coverage_text"
+".dv_careless_threshold_text" = "pytacheck.modules._data_check:dv_careless_threshold_text"
+".dv_scale_n_items" = "pytacheck.modules._data_check:dv_scale_n_items"
+".dv_short_scale_max" = "pytacheck.modules._data_check:DV_SHORT_SCALE_MAX"
+".dv_careless_by_respondent" = "pytacheck.modules._data_check:dv_careless_by_respondent"
+".dv_q_col" = "pytacheck.modules._data_check:dv_q_col"
+".dv_q_datetime" = "pytacheck.modules._data_check:dv_q_datetime"
+".dv_qualtrics_summary" = "pytacheck.modules._data_check:dv_qualtrics_summary"
+".dv_qualtrics_report" = "pytacheck.modules._data_check:dv_qualtrics_report"
+".dv_issue_icon" = "pytacheck.modules._data_check:DV_ISSUE_ICON"
+".dv_issue_merge_label" = "pytacheck.modules._data_check:DV_ISSUE_MERGE_LABEL"
+".dv_issue_cell" = "pytacheck.modules._data_check:dv_issue_cell"
+".dv_max_facets" = "pytacheck.modules._data_check:DV_MAX_FACETS"
+"data_validate_dist_facets" = "pytacheck.modules._data_check:data_validate_dist_facets"
+".dv_spreadsheet_exts" = "pytacheck.modules._data_check:DV_SPREADSHEET_EXTS"
+".dv_spreadsheet_findings" = "pytacheck.modules._data_check:dv_spreadsheet_findings"
+".dv_spreadsheet_summary_text" = "pytacheck.modules._data_check:dv_spreadsheet_summary_text"
+".dv_spreadsheet_report" = "pytacheck.modules._data_check:dv_spreadsheet_report"
+".dv_spreadsheet_offset_header" = "pytacheck.modules._data_check:dv_spreadsheet_offset_header"
+".dv_excel_inspect" = "pytacheck.modules._data_check:dv_excel_inspect"
+".dv_excel_colored_styles" = "pytacheck.modules._data_check:dv_excel_colored_styles"
+".dv_excel_inspect_sheet" = "pytacheck.modules._data_check:dv_excel_inspect_sheet"
+".dv_ods_inspect" = "pytacheck.modules._data_check:dv_ods_inspect"
+".dv_ods_colored_styles" = "pytacheck.modules._data_check:dv_ods_colored_styles"
+".dv_ods_col_letter" = "pytacheck.modules._data_check:dv_ods_col_letter"
+".dv_ods_inspect_sheet" = "pytacheck.modules._data_check:dv_ods_inspect_sheet"
+# careless::longstring() / careless::irv() (a suggested package; ported natively)
+"careless::longstring" = "pytacheck.modules._data_check:_longstring"
+"careless::irv" = "pytacheck.modules._data_check:_irv"

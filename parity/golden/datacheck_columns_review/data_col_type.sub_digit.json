@@ -1,0 +1,47 @@
+{
+  "id": "data_col_type.sub_digit",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "col_type",
+      "ambiguous",
+      "numeric_values",
+      "n_coerced",
+      "is_numeric"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

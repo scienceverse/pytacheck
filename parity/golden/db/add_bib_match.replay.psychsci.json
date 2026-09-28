@@ -1,0 +1,1362 @@
+{
+  "id": "add_bib_match.replay.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 19,
+    "names": [
+      "bib_id",
+      "service",
+      "service_id",
+      "score",
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "date",
+      "container",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "edition",
+      "version",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref",
+          "crossref"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          111.11768,
+          136.47302,
+          130.2286,
+          130.7778,
+          105.86002,
+          72.99166,
+          115.67183,
+          76.77081,
+          100.12454,
+          100.030396,
+          147.56873,
+          130.809,
+          169.04784,
+          130.58028,
+          65.53186,
+          113.33658,
+          89.01723,
+          96.73683,
+          121.98983
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article",
+          "article",
+          "article",
+          "article",
+          "article",
+          "incollection",
+          "article",
+          "article",
+          "article",
+          "article",
+          "article",
+          "article",
+          "article",
+          "article",
+          "incollection",
+          "article",
+          "article",
+          "article",
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1093/brain/110.3.747",
+          "10.1046/j.1460-9568.2001.01385.x",
+          "10.1016/j.cogbrainres.2005.05.014",
+          "10.1093/cercor/bhp291",
+          "10.1152/jn.1998.80.6.2870",
+          "10.1093/acprof:oso/9780199231447.003.0020",
+          "10.1007/bf00230027",
+          "10.1098/rstb.2008.0156",
+          "10.1093/brain/119.2.593",
+          "10.1016/j.tics.2004.07.002",
+          "10.1093/cercor/bhn181",
+          "10.1007/bf00248742",
+          "10.1093/cercor/bhm239",
+          "10.1016/0168-0102(95)00950-7",
+          "10.1093/acprof:oso/9780199231447.003.0018",
+          "10.1016/s0896-6273(03)00838-9",
+          "10.1162/jocn.2009.21189",
+          "10.1016/j.neuron.2004.12.033",
+          "10.1016/j.clinph.2009.01.003"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RECOVERY FROM IDEOMOTOR APRAXIA",
+          "Action observation activates premotor and parietal areas in a somatotopic manner: an fMRI study",
+          "On beyond mirror neurons: Internal representations subserving imitation and recognition of skilled object-related actions in humans",
+          "State-Dependent TMS Reveals a Hierarchical Representation of Observed Acts in the Temporal, Parietal, and Premotor Cortices",
+          "Intracortical Inhibition and Facilitation in Different Representations of the Human Motor Cortex",
+          "Action mirroring and action understanding: an alternative account",
+          "Understanding motor events: a neurophysiological study",
+          "The role of social cognition in decision making",
+          "Action recognition in the premotor cortex",
+          "A unifying view of the basis of social cognition",
+          "The Observation and Execution of Actions Share Motor and Somatosensory Voxels in all Tested Subjects: Single-Subject Analyses of Unsmoothed fMRI Data",
+          "Functional organization of inferior area 6 in the macaque monkey",
+          "Depression of Human Corticospinal Excitability Induced by Magnetic Theta-burst Stimulation: Evidence of Rapid Polarity-Reversing Metaplasticity",
+          "Somatotopy of monkey premotor cortex examined with microstimulation",
+          "The motor hierarchy: from kinematics to goals and intentions",
+          "Somatotopic Representation of Action Words in Human Motor and Premotor Cortex",
+          "Eight Problems for the Mirror Neuron Theory of Action Understanding in Monkeys and Humans",
+          "Theta Burst Stimulation of the Human Motor Cortex",
+          "The effect of continuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "ANNA",
+                  "ERMINIO",
+                  "SERGIO DELLA",
+                  "MARCELLA",
+                  "HANS"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "BASSO",
+                  "CAPITANI",
+                  "SALA",
+                  "LAIACONA",
+                  "SPINNLER"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 10,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "G.",
+                  "F.",
+                  "G. R.",
+                  "L.",
+                  "L.",
+                  "V.",
+                  "R. J.",
+                  "K.",
+                  "G.",
+                  "H.-J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Buccino",
+                  "Binkofski",
+                  "Fink",
+                  "Fadiga",
+                  "Fogassi",
+                  "Gallese",
+                  "Seitz",
+                  "Zilles",
+                  "Rizzolatti",
+                  "Freund"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Laurel J.",
+                  "Kathleen M.",
+                  "Rukmini"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Buxbaum",
+                  "Kyle",
+                  "Menon"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "L.",
+                  "M.",
+                  "J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Cattaneo",
+                  "Sandrini",
+                  "Schwarzbach"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 7,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Robert",
+                  "Alda",
+                  "Cathrin",
+                  "Brian",
+                  "Ulf",
+                  "JOHN C.",
+                  "Leonardo G."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Chen",
+                  "Tam",
+                  "Bütefisch",
+                  "Corwell",
+                  "Ziemann",
+                  "Rothwell",
+                  "Cohen"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Gergely"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Csibra"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "G.",
+                  "L.",
+                  "L.",
+                  "V.",
+                  "G."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "di Pellegrino",
+                  "Fadiga",
+                  "Fogassi",
+                  "Gallese",
+                  "Rizzolatti"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Chris D",
+                  "Tania"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Frith",
+                  "Singer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Vittorio",
+                  "Luciano",
+                  "Leonardo",
+                  "Giacomo"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gallese",
+                  "Fadiga",
+                  "Fogassi",
+                  "Rizzolatti"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "V",
+                  "C",
+                  "G"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "GALLESE",
+                  "KEYSERS",
+                  "RIZZOLATTI"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "V.",
+                  "C."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gazzola",
+                  "Keysers"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "G.",
+                  "R.",
+                  "L.",
+                  "M.",
+                  "G.",
+                  "M."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Rizzolatti",
+                  "Camarda",
+                  "Fogassi",
+                  "Gentilucci",
+                  "Luppino",
+                  "Matelli"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "R.",
+                  "K.",
+                  "C.",
+                  "D.",
+                  "J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gentner",
+                  "Wankerl",
+                  "Reinsberger",
+                  "Zeller",
+                  "Classen"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Moshe",
+                  "Andrew R",
+                  "Berber van",
+                  "Hans van der"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Godschalk",
+                  "Mitz",
+                  "Duin",
+                  "Burga"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Antonia F de C.",
+                  "Scott T."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hamilton",
+                  "Grafton"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Olaf",
+                  "Ingrid",
+                  "Friedemann"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hauk",
+                  "Johnsrude",
+                  "Pulvermüller"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Gregory"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hickok"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Ying-Zu",
+                  "Mark J.",
+                  "Elisabeth",
+                  "Kailash P.",
+                  "John C."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Huang",
+                  "Edwards",
+                  "Rounis",
+                  "Bhatia",
+                  "Rothwell"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 9,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Ying-Zu",
+                  "John C.",
+                  "Chin-Song",
+                  "JiunJie",
+                  "Yi-Hsin",
+                  "Szu-Chia",
+                  "Wen-Li",
+                  "June",
+                  "Rou-Shayn"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Huang",
+                  "Rothwell",
+                  "Lu",
+                  "Wang",
+                  "Weng",
+                  "Lai",
+                  "Chuang",
+                  "Hung",
+                  "Chen"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Oxford University Press (OUP)",
+          "Wiley",
+          "Elsevier BV",
+          "Oxford University Press (OUP)",
+          "American Physiological Society",
+          "Oxford University Press",
+          "Springer Science and Business Media LLC",
+          "The Royal Society",
+          "Oxford University Press (OUP)",
+          "Elsevier BV",
+          "Oxford University Press (OUP)",
+          "Springer Science and Business Media LLC",
+          "Oxford University Press (OUP)",
+          "Elsevier BV",
+          "Oxford University Press",
+          "Elsevier BV",
+          "MIT Press",
+          "Elsevier BV",
+          "Elsevier BV"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1987,
+          2001,
+          2005,
+          2010,
+          1998,
+          1993,
+          1992,
+          2008,
+          1996,
+          2004,
+          2009,
+          1988,
+          2008,
+          1995,
+          1993,
+          2004,
+          2009,
+          2005,
+          2009
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Brain",
+          "European Journal of Neuroscience",
+          "Cognitive Brain Research",
+          "Cerebral Cortex",
+          "Journal of Neurophysiology",
+          "Sensorimotor Foundations of Higher Cognition",
+          "Experimental Brain Research",
+          "Philosophical Transactions of the Royal Society B: Biological Sciences",
+          "Brain",
+          "Trends in Cognitive Sciences",
+          "Cerebral Cortex",
+          "Experimental Brain Research",
+          "Cerebral Cortex",
+          "Neuroscience Research",
+          "Sensorimotor Foundations of Higher Cognition",
+          "Neuron",
+          "Journal of Cognitive Neuroscience",
+          "Neuron",
+          "Clinical Neurophysiology"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "110",
+          "13",
+          "25",
+          "20",
+          "80",
+          null,
+          "91",
+          "363",
+          "119",
+          "8",
+          "19",
+          "71",
+          "18",
+          "23",
+          null,
+          "41",
+          "21",
+          "45",
+          "120"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3",
+          "2",
+          "1",
+          "9",
+          "6",
+          null,
+          "1",
+          "1511",
+          "2",
+          "9",
+          "6",
+          "3",
+          "9",
+          "3",
+          null,
+          "2",
+          "7",
+          "2",
+          "4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "747",
+          "400",
+          "226",
+          "2252",
+          "2870",
+          "435",
+          "176",
+          "3875",
+          "593",
+          "396",
+          "1239",
+          "491",
+          "2046",
+          "269",
+          "381",
+          "301",
+          "1229",
+          "201",
+          "796"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "760",
+          "404",
+          "239",
+          "2258",
+          "2881",
+          "459",
+          "180",
+          "3886",
+          "609",
+          "403",
+          "1255",
+          "507",
+          "2053",
+          "279",
+          "407",
+          "307",
+          "1243",
+          "206",
+          "801"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1093/brain/110.3.747",
+          "https://doi.org/10.1046/j.1460-9568.2001.01385.x",
+          "https://doi.org/10.1016/j.cogbrainres.2005.05.014",
+          "https://doi.org/10.1093/cercor/bhp291",
+          "https://doi.org/10.1152/jn.1998.80.6.2870",
+          "https://doi.org/10.1093/acprof:oso/9780199231447.003.0020",
+          "https://doi.org/10.1007/bf00230027",
+          "https://doi.org/10.1098/rstb.2008.0156",
+          "https://doi.org/10.1093/brain/119.2.593",
+          "https://doi.org/10.1016/j.tics.2004.07.002",
+          "https://doi.org/10.1093/cercor/bhn181",
+          "https://doi.org/10.1007/bf00248742",
+          "https://doi.org/10.1093/cercor/bhm239",
+          "https://doi.org/10.1016/0168-0102(95)00950-7",
+          "https://doi.org/10.1093/acprof:oso/9780199231447.003.0018",
+          "https://doi.org/10.1016/s0896-6273(03)00838-9",
+          "https://doi.org/10.1162/jocn.2009.21189",
+          "https://doi.org/10.1016/j.neuron.2004.12.033",
+          "https://doi.org/10.1016/j.clinph.2009.01.003"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

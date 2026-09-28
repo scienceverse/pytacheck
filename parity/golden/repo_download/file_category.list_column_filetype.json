@@ -1,0 +1,107 @@
+{
+  "id": "file_category.list_column_filetype",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "name",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "study1.csv",
+          "README.md",
+          "code/analysis.R",
+          "stats.sps",
+          "x.jasp",
+          "codebook.xlsx",
+          "figure.png",
+          "data.fq.gz",
+          "notes"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "readme",
+          "code",
+          "code",
+          "data",
+          "codebook",
+          null,
+          "data",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

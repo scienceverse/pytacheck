@@ -1,0 +1,485 @@
+{
+  "id": "repo_check.tables.osf_github",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Repository",
+          "Platform",
+          "All Files",
+          "Data Files",
+          "Code Files",
+          "READMEs",
+          "Archives"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='osf.io/629bx' target='_blank'>osf.io/629bx<\/a>",
+              "<a href='github.com/scienceverse/demo' target='_blank'>github.com/scienceverse/demo<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osf",
+              "github"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              29
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              26
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 33,
+        "names": [
+          "Repository",
+          "File",
+          "Size",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "osf.io/629bx",
+              "osf.io/629bx",
+              "osf.io/629bx",
+              "osf.io/629bx",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo",
+              "github.com/scienceverse/demo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/download/6935bc117049c887a125cb25/' target='_blank'>bad.R<\/a>",
+              "<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>",
+              "<a href='https://osf.io/download/6935c4679ca0f02ea72a1a31/' target='_blank'>example2.csv<\/a>",
+              "<a href='https://osf.io/download/6976438ff9da155d0565c720/' target='_blank'>Archive.zip<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/good-example.R' target='_blank'>good-example.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/README.md' target='_blank'>README.md<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/01.R' target='_blank'>01.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/02.R' target='_blank'>02.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/03.R' target='_blank'>03.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/04.R' target='_blank'>04.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/05.R' target='_blank'>05.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/06.R' target='_blank'>06.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/07.R' target='_blank'>07.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/08.R' target='_blank'>08.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/09.R' target='_blank'>09.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/10.R' target='_blank'>10.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/11.R' target='_blank'>11.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/12.R' target='_blank'>12.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/13.R' target='_blank'>13.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/14.R' target='_blank'>14.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/15.R' target='_blank'>15.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/16.R' target='_blank'>16.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/17.R' target='_blank'>17.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/18.R' target='_blank'>18.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/19.R' target='_blank'>19.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/20.R' target='_blank'>20.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/21.R' target='_blank'>21.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/22.R' target='_blank'>22.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/23.R' target='_blank'>23.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/24.R' target='_blank'>24.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/code/25.R' target='_blank'>25.R<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/folder/Archive.zip' target='_blank'>Archive.zip<\/a>",
+              "<a href='https://raw.githubusercontent.com/scienceverse/demo/main/folder/file.txt' target='_blank'>file.txt<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "172 B",
+              "413 B",
+              "5 B",
+              "6.4 kB",
+              "227 B",
+              "36 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "33 B",
+              "31.3 kB",
+              "17 B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "data",
+              "archive",
+              "code",
+              "readme",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "archive",
+              "text"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Rule",
+          "Severity",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable",
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 28,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.Rmd",
+              "good-example.R",
+              "01.R",
+              "02.R",
+              "03.R",
+              "04.R",
+              "05.R",
+              "06.R",
+              "07.R",
+              "08.R",
+              "09.R",
+              "10.R",
+              "11.R",
+              "12.R",
+              "13.R",
+              "14.R",
+              "15.R",
+              "16.R",
+              "17.R",
+              "18.R",
+              "19.R",
+              "20.R",
+              "21.R",
+              "22.R",
+              "23.R",
+              "24.R",
+              "25.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.Rmd",
+              "good-example.R",
+              "code/01.R",
+              "code/02.R",
+              "code/03.R",
+              "code/04.R",
+              "code/05.R",
+              "code/06.R",
+              "code/07.R",
+              "code/08.R",
+              "code/09.R",
+              "code/10.R",
+              "code/11.R",
+              "code/12.R",
+              "code/13.R",
+              "code/14.R",
+              "code/15.R",
+              "code/16.R",
+              "code/17.R",
+              "code/18.R",
+              "code/19.R",
+              "code/20.R",
+              "code/21.R",
+              "code/22.R",
+              "code/23.R",
+              "code/24.R",
+              "code/25.R"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "example2.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "example2.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "file.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "folder/file.txt"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip",
+              "folder/Archive.zip"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

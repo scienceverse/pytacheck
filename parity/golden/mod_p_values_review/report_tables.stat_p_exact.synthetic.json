@@ -1,0 +1,120 @@
+{
+  "id": "report_tables.stat_p_exact.synthetic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "table",
+          "colwidths",
+          "maxrows",
+          "escape"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "P-Value",
+              "Text"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p < .05 ",
+                  "p > .1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Bad p < .05 and p < .05 again.",
+                  "Zero p = .000 line two p > .1."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.1,
+              0.9
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "table",
+          "colwidths",
+          "maxrows",
+          "escape"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "P-Value",
+              "Text"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p = .000<br>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Zero p = .000 line two p > .1."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.1,
+              0.9
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,499 @@
+{
+  "id": "repo_check.osf.reg_closed_plural",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_name",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/parc1",
+              "https://osf.io/parc1",
+              "https://osf.io/parc1",
+              "https://osf.io/parc1",
+              "https://osf.io/parc5",
+              "https://osf.io/parc5",
+              "https://osf.io/parc5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.Rmd",
+              "example2.csv",
+              "Archive.zip",
+              "bad.R",
+              "example2.csv",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.Rmd",
+              "example2.csv",
+              "Archive.zip",
+              "bad.R",
+              "example2.csv",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/download/6306c5dabe75ef9b1a42a497/",
+              "https://osf.io/download/uq347/",
+              "https://osf.io/download/728f26dcbf00a4dc6ff74eaf/",
+              "https://osf.io/download/390168dd09634c23320ee85c/",
+              "https://osf.io/download/8a76814440779ebed75d130b/",
+              "https://osf.io/download/ae2daf1211c0a557c3533194/",
+              "https://osf.io/download/b2c7e93fef909bfd2dcaa2c2/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              172,
+              413,
+              5,
+              6410,
+              172,
+              5,
+              6410
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "data",
+              "archive",
+              "code",
+              "data",
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "parc1",
+              "parc1",
+              "parc1",
+              "parc1",
+              "parc5",
+              "parc5",
+              "parc5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "data",
+              "unknown",
+              "code",
+              "data",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex2",
+              "ex2",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Double-check permissions on repositories with no detectable files.",
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/parc1' target='_blank'>osf.io/parc1<\/a>\", \n\"<a href='https://osf.io/parc2' target='_blank'>osf.io/parc2<\/a>\", \n\"<a href='https://osf.io/parc5' target='_blank'>osf.io/parc5<\/a>\", \n\"<a href='https://osf.io/parc6' target='_blank'>osf.io/parc6<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"osf\"), Error = c(\"closed registration source (files retrieved from registration: https://osf.io/regc1)\", \n\"closed registration source\", \"closed registration source (files retrieved from registration: https://osf.io/regc5)\", \n\"closed registration source\"), \"All Files\" = c(4L, 0L, 3L, 0L\n), \"Data Files\" = c(1L, 0L, 1L, 0L), \"Code Files\" = c(2L, 0L, \n1L, 0L), READMEs = c(0L, 0L, 0L, 0L), Archives = c(1L, 0L, 1L, \n0L)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/parc1\", \"https://osf.io/parc1\", \n\"https://osf.io/parc1\", \"https://osf.io/parc1\", \"https://osf.io/parc5\", \n\"https://osf.io/parc5\", \"https://osf.io/parc5\"), File = c(\"<a href='https://osf.io/download/6306c5dabe75ef9b1a42a497/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/728f26dcbf00a4dc6ff74eaf/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/390168dd09634c23320ee85c/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/8a76814440779ebed75d130b/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/ae2daf1211c0a557c3533194/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/b2c7e93fef909bfd2dcaa2c2/' target='_blank'>Archive.zip<\/a>\"\n), Size = c(\"172 B\", \"413 B\", \"5 B\", \"6.4 kB\", \"172 B\", \"5 B\", \n\"6.4 kB\"), Type = c(\"code\", \"code\", \"data\", \"archive\", \"code\", \n\"data\", \"archive\")), row.names = c(NA, -7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "#### Registration Points to a Closed Project\n\n2 OSF projects (https://osf.io/parc2, https://osf.io/parc6) are referenced by a registration in this manuscript, but they are closed or inaccessible, and no copy of their files could be found anywhere else. Some OSF registrations only describe what was shared, while the actual files live in the project they were registered from — if that project is closed and the registration holds no copy, metacheck cannot list or download its files, and other researchers cannot access them either. Consider making the source project openly available, or re-uploading its files directly into the registration.",
+          "#### Registration's Source Project Is Closed\n\n2 OSF source projects are closed. The files metacheck lists below were not read from them — they were retrieved from the OSF registration's own copy, which is separate from and unaffected by the project's access setting. Nothing is currently lost, but this is still worth fixing: a closed source project means the files only survive for as long as the registration's copy does, and anyone who follows the project link itself (rather than the registration) will find it inaccessible.\n\n- **https://osf.io/parc1** is closed; its files were retrieved from the OSF registration https://osf.io/regc1.\n- **https://osf.io/parc5** is closed; its files were retrieved from the OSF registration https://osf.io/regc5.\n\nConsider making the source project openly available.",
+          "#### Unclassified Files\n\nWe could not classify 2 files by name or extension: Archive.zip, Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 2 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\"), Rule = c(\"unclassifiable\", \n\"unclassifiable\"), Severity = c(\"bad\", \"bad\"), Detail = c(\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.Rmd\", \"bad.R\"), Group = c(\"ex1\", \n\"ex1\", \"ex2\"), Path = c(\"bad.R\", \"bad.Rmd\", \"bad.R\")), row.names = c(NA, \n-3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"example2.csv\", \"example2.csv\"), Group = c(\"ex1\", \n\"ex2\"), Path = c(\"example2.csv\", \"example2.csv\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\"), Group = c(\"ex1\", \n\"ex2\"), Path = c(\"Archive.zip\", \"Archive.zip\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 2 empty repositories.\n-  We found 7 files in 4 repositories.\n-  We found 0 README files and 4 repositories without READMEs.\n-  We found 2 archive files.\n-  We found 2 registration-linked OSF projects that are closed with no files reachable anywhere.\n-  We found 2 registration-linked OSF projects that are closed; their files were retrieved from the OSF registration instead.\n-  We could not classify 2 files.\n-  We found 2 file naming problems to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_osf_reg_closed_plural"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/parc1",
+              "https://osf.io/parc2",
+              "https://osf.io/parc5",
+              "https://osf.io/parc6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osf",
+              "osf",
+              "osf",
+              "osf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "closed registration source (files retrieved from registration: https://osf.io/regc1)",
+              "closed registration source",
+              "closed registration source (files retrieved from registration: https://osf.io/regc5)",
+              "closed registration source"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable",
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

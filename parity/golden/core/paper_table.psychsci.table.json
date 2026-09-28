@@ -1,0 +1,93 @@
+{
+  "id": "paper_table.psychsci.table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "table_id",
+      "section_id",
+      "html",
+      "contents",
+      "page_number",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          2,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          17,
+          24,
+          18,
+          19,
+          10
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<table>\n  <row>\n    <cell>Action video and<\/cell>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>block<\/cell>\n    <cell>Context image<\/cell>\n    <cell>Response options<\/cell>\n  <\/row>\n  <row>\n    <cell/>\n    <cell cols=\"2\">Hand action<\/cell>\n  <\/row>\n  <row>\n    <cell>Turning<\/cell>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Intermediate<\/cell>\n    <cell>House entrance<\/cell>\n    <cell>Newspaper, key, envelope,<\/cell>\n  <\/row>\n  <row>\n    <cell>Complex<\/cell>\n    <cell>Workbench<\/cell>\n    <cell>Key, hammer, screwdriver<\/cell>\n  <\/row>\n  <row>\n    <cell>Pouring<\/cell>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Intermediate<\/cell>\n    <cell>Tea party<\/cell>\n    <cell>Teapot, sugar bowl, spoon<\/cell>\n  <\/row>\n  <row>\n    <cell>Complex<\/cell>\n    <cell>Plants in garden<\/cell>\n    <cell>Watering can, hedge clippers, teapot<\/cell>\n  <\/row>\n  <row>\n    <cell/>\n    <cell cols=\"2\">Mouth action<\/cell>\n  <\/row>\n  <row>\n    <cell>Licking<\/cell>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Intermediate<\/cell>\n    <cell>Beach<\/cell>\n    <cell>Ice cream cone, soda can, burger<\/cell>\n  <\/row>\n  <row>\n    <cell>Complex<\/cell>\n    <cell>Desk with papers<\/cell>\n    <cell>Ice cream cone, eraser, stamp<\/cell>\n  <\/row>\n  <row>\n    <cell>Blowing<\/cell>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Intermediate<\/cell>\n    <cell>Birthday party<\/cell>\n    <cell>Cake on fork, candles on cake, presents<\/cell>\n  <\/row>\n  <row>\n    <cell>Complex<\/cell>\n    <cell>Romantic dinner<\/cell>\n    <cell>Wine glass, one candle, candles on cake<\/cell>\n  <\/row>\n<\/table>",
+          "<table>\n  <row>\n    <cell/>\n    <cell cols=\"2\">Classroom<\/cell>\n    <cell cols=\"2\">Pool<\/cell>\n    <cell cols=\"2\">Restaurant<\/cell>\n    <cell cols=\"2\">Road<\/cell>\n  <\/row>\n  <row>\n    <cell/>\n    <cell>Basic<\/cell>\n    <cell>Subordinate<\/cell>\n    <cell>Basic<\/cell>\n    <cell>Subordinate<\/cell>\n    <cell>Basic<\/cell>\n    <cell>Subordinate<\/cell>\n    <cell>Basic<\/cell>\n    <cell>Subordinate<\/cell>\n  <\/row>\n  <row>\n    <cell>Measure<\/cell>\n    <cell>condition<\/cell>\n    <cell>condition<\/cell>\n    <cell>condition<\/cell>\n    <cell>condition<\/cell>\n    <cell>condition<\/cell>\n    <cell>condition<\/cell>\n    <cell>condition<\/cell>\n    <cell>condition<\/cell>\n  <\/row>\n  <row>\n    <cell>Response time<\/cell>\n    <cell cols=\"8\">2,402 (252) 3,262 (352) 2,428 (269) 2,990 (245) 2,676 (212) 4,162 (366) 1,715 (170) 2,598 (331)<\/cell>\n  <\/row>\n  <row>\n    <cell>(ms)<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Number of<\/cell>\n    <cell>5.74 (0.72)<\/cell>\n    <cell>9.77 (1.12)<\/cell>\n    <cell>5.64 (0.60)<\/cell>\n    <cell>8.82 (0.93)<\/cell>\n    <cell cols=\"3\">6.54 (0.64) 12.17 (1.27) 3.66 (0.32)<\/cell>\n    <cell>8.11 (1.27)<\/cell>\n  <\/row>\n  <row>\n    <cell>fixations<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Initial saccade<\/cell>\n    <cell cols=\"8\">419 (26.61) 371 (22.97) 418 (32.26) 327 (16.98) 437 (37.34) 357 (19.09) 411 (25.33) 351 (17.61)<\/cell>\n  <\/row>\n  <row>\n    <cell>latency (ms)<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Fixation<\/cell>\n    <cell cols=\"8\">369 (21.14) 290 (18.93) 383 (24.07) 325 (27.00) 377 (22.80) 306 (19.40) 394 (23.17) 277 (15.47)<\/cell>\n  <\/row>\n  <row>\n    <cell>duration (ms)<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Saccade<\/cell>\n    <cell>2.55 (0.25)<\/cell>\n    <cell>2.96 (0.24)<\/cell>\n    <cell>2.14 (0.17)<\/cell>\n    <cell>2.47 (0.24)<\/cell>\n    <cell>2.70 (0.24)<\/cell>\n    <cell>2.73 (0.26)<\/cell>\n    <cell>2.50 (0.28)<\/cell>\n    <cell>2.52 (0.25)<\/cell>\n  <\/row>\n  <row>\n    <cell>amplitude<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>(degrees)<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n<\/table>",
+          "<table>\n  <row>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell cols=\"2\">Mean PANAS trait score<\/cell>\n  <\/row>\n  <row>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell>Mean Raven's<\/cell>\n    <cell>Mean BIS-11<\/cell>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Treatment group<\/cell>\n    <cell>Gender<\/cell>\n    <cell>Mean age (years)<\/cell>\n    <cell>matrices score<\/cell>\n    <cell>score<\/cell>\n    <cell>Positive affect<\/cell>\n    <cell>Negative affect<\/cell>\n  <\/row>\n  <row>\n    <cell>T+<\/cell>\n    <cell>7 male,<\/cell>\n    <cell>24.44 (1.65)<\/cell>\n    <cell>55.53 (1.17)<\/cell>\n    <cell>58.00 (2.22)<\/cell>\n    <cell>34.44 (0.96)<\/cell>\n    <cell>13.94 (0.91)<\/cell>\n  <\/row>\n  <row>\n    <cell/>\n    <cell>9 female<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>T-<\/cell>\n    <cell>9 male,<\/cell>\n    <cell>23.56 (0.92)<\/cell>\n    <cell>56.63 (0.80)<\/cell>\n    <cell>62.56 (1.86)<\/cell>\n    <cell>37.00 (1.22)<\/cell>\n    <cell>14.56 (1.06)<\/cell>\n  <\/row>\n  <row>\n    <cell/>\n    <cell>7 female<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell cols=\"7\">Note: Standard errors are given in parentheses. Participants completed measures of cognitive ability (Raven's Standard Progressive Matrices Sets A,<\/cell>\n  <\/row>\n  <row>\n    <cell cols=\"7\">B, C, D, &amp; E; Raven, 1996), impulsivity (Barratt Impulsiveness Scale, or BIS-11; Patton, Stanford, &amp; Barratt, 1995), and positive and negative state<\/cell>\n  <\/row>\n  <row>\n    <cell cols=\"5\">affect (Positive and Negative Affect Schedule, or PANAS; Watson, Clark, &amp; Tellegen, 1988).<\/cell>\n    <cell/>\n    <cell/>\n  <\/row>\n<\/table>",
+          "<table>\n  <row>\n    <cell/>\n    <cell>Model 1<\/cell>\n    <cell/>\n    <cell cols=\"2\">Model 2<\/cell>\n  <\/row>\n  <row>\n    <cell/>\n    <cell cols=\"2\">T+ treatment vs.<\/cell>\n    <cell/>\n    <cell>T+ treatment vs.<\/cell>\n  <\/row>\n  <row>\n    <cell>Predictor<\/cell>\n    <cell>T+ treatment only<\/cell>\n    <cell>T-treatment<\/cell>\n    <cell>T+ treatment only<\/cell>\n    <cell>T-treatment<\/cell>\n  <\/row>\n  <row>\n    <cell>Intercept<\/cell>\n    <cell>0.75 (0.26)**<\/cell>\n    <cell>-<\/cell>\n    <cell>0.79 (0.53)<\/cell>\n    <cell>-<\/cell>\n  <\/row>\n  <row>\n    <cell>Treatment group<\/cell>\n    <cell>-<\/cell>\n    <cell>-0.29 (0.38)<\/cell>\n    <cell>-<\/cell>\n    <cell>-0.71 (0.56)<\/cell>\n  <\/row>\n  <row>\n    <cell>Value of participant's own<\/cell>\n    <cell>-0.69 (0.03)****<\/cell>\n    <cell>0.07 (0.03)*<\/cell>\n    <cell>-0.66 (0.04)****<\/cell>\n    <cell>-<\/cell>\n  <\/row>\n  <row>\n    <cell>immediately preceding harvest<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Current value of available resource<\/cell>\n    <cell>0.02 (0.001)****<\/cell>\n    <cell>0.001 (0.002)<\/cell>\n    <cell>0.03 (0.002)<\/cell>\n    <cell>-<\/cell>\n  <\/row>\n  <row>\n    <cell>Presence of one or two other<\/cell>\n    <cell>0.88 (0.15)****<\/cell>\n    <cell>-0.39 (0.22)<\/cell>\n    <cell>0.80 (0.20)****<\/cell>\n    <cell>-<\/cell>\n  <\/row>\n  <row>\n    <cell>players who were overharvesting<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>Rank of participants' last harvest<\/cell>\n    <cell>-<\/cell>\n    <cell>-<\/cell>\n    <cell>-6.56 (3.33)*<\/cell>\n    <cell>10.14 (4.66)*<\/cell>\n  <\/row>\n  <row>\n    <cell>within the distribution of all four<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>players' last harvests (Rank n-1 )<\/cell>\n    <cell/>\n    <cell/>\n    <cell/>\n    <cell/>\n  <\/row>\n  <row>\n    <cell>(Rank n-1 ) 2<\/cell>\n    <cell>-<\/cell>\n    <cell>-<\/cell>\n    <cell>18.28 (7.35)*<\/cell>\n    <cell>-23.73 (10.39)*<\/cell>\n  <\/row>\n  <row>\n    <cell>(Rank n-1 ) 3<\/cell>\n    <cell>-<\/cell>\n    <cell>-<\/cell>\n    <cell>-13.11 (4.83)**<\/cell>\n    <cell>15.66 (6.68)*<\/cell>\n  <\/row>\n<\/table>",
+          "<table>\n  <row>\n    <cell>Condition<\/cell>\n    <cell cols=\"2\">Mistakes Usefulness<\/cell>\n  <\/row>\n  <row>\n    <cell>control<\/cell>\n    <cell>10.90<\/cell>\n    <cell>4.50<\/cell>\n  <\/row>\n  <row>\n    <cell>experimental<\/cell>\n    <cell>9.12<\/cell>\n    <cell>5.06<\/cell>\n  <\/row>\n<\/table>"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0956797613520608",
+          "0956797614522816",
+          "0956797614527830",
+          "0956797614527830",
+          "to_err_is_human"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

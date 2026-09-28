@@ -1,0 +1,40 @@
+{
+  "id": "json_expand.numeric_input",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "id",
+      "answer",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.5,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "not a list",
+          "not a list"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

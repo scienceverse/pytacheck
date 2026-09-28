@@ -1,0 +1,43 @@
+{
+  "id": "github_languages.review.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "repo",
+      "language",
+      "bytes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "rv/langmix",
+          "rv/langmix",
+          "rv/langmix"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "R",
+          "Big",
+          "C++"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          12345,
+          3000000000,
+          7
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,82 @@
+{
+  "id": "report_tables.all_p_values.synthetic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "table",
+          "colwidths",
+          "maxrows",
+          "escape"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 9,
+            "names": [
+              "Text",
+              "Sentence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p < .05 ",
+                  "p < .05 ",
+                  "p < .05 ",
+                  "p < .05 ",
+                  "p = .000<br>",
+                  "p > .1",
+                  "p = .012",
+                  "p < .05",
+                  "p < .01"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Bad p < .05 and p < .05 again.",
+                  "Bad p < .05 and p < .05 again.",
+                  "Bad p < .05 and p < .05 again.",
+                  "Bad p < .05 and p < .05 again.",
+                  "Zero p = .000 line two p > .1.",
+                  "Zero p = .000 line two p > .1.",
+                  "Fine p = .012.",
+                  "Note * p < .05, p < .01.",
+                  "Note * p < .05, p < .01."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5em",
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

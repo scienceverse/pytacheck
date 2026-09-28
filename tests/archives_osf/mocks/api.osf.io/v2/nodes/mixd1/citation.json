@@ -1,0 +1,35 @@
+{
+ "data": {
+  "id": "mixd1",
+  "type": "node-citation",
+  "attributes": {
+   "title": "Mixed",
+   "author": [
+    {
+     "given": "A",
+     "family": "B"
+    },
+    {
+     "given": null,
+     "family": 3
+    },
+    {
+     "family": true
+    }
+   ],
+   "issued": {
+    "date-parts": [
+     [
+      2020,
+      1.5,
+      null
+     ]
+    ]
+   },
+   "number": 1.2345e-05,
+   "volume": 1e-05,
+   "page": 123456.789012,
+   "big": 1e+300
+  }
+ }
+}

@@ -1,0 +1,51 @@
+{
+  "status": "OK",
+  "data": {
+    "persistentUrl": "https://doi.org/10.7910/DVN/REV2",
+    "latestVersion": {
+      "lastUpdateTime": "2022-02-02",
+      "metadataBlocks": {
+        "citation": {
+          "fields": [
+            {
+              "typeName": "author",
+              "value": []
+            },
+            {
+              "typeName": "title",
+              "value": "Second"
+            },
+            {
+              "typeName": "title",
+              "value": "Ignored duplicate"
+            }
+          ]
+        }
+      },
+      "files": [
+        {
+          "label": "",
+          "dataFile": {
+            "id": "2001",
+            "filename": "real_name.csv",
+            "filesize": 8,
+            "checksum": {
+              "type": "md5",
+              "value": "344fd2323dd33d5c058b7cf27de029e8"
+            }
+          }
+        },
+        {
+          "dataFile": {
+            "id": 2002,
+            "filesize": 5,
+            "checksum": {
+              "type": "MD5",
+              "value": "4358B5009C67D0E31D7FBF1663FCD3BF"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,361 @@
+{
+  "id": "paper_table.mixed.info",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "title",
+      "keywords",
+      "doi",
+      "file_hash",
+      "input_format",
+      "file_name",
+      "bibr_version",
+      "paper_type",
+      "paper_type_confidence",
+      "oecd_l1",
+      "oecd_l2",
+      "oecd_confidence",
+      "paper_id",
+      "abstract",
+      "pmid",
+      "pmcid",
+      "arxiv",
+      "language",
+      "journal",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "issn",
+      "publisher",
+      "published",
+      "published_date",
+      "license",
+      "license_url",
+      "license_spdx",
+      "funding_statement",
+      "coi_statement",
+      "ethics_statement",
+      "data_availability",
+      "sha256",
+      "schema_version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "To Err is Human: An Empirical Investigation",
+          "A Demonstration Paper",
+          "\"You're Just Envious\": Inferring Benign and Malicious Envy from Facial Expressions and Contextual Information"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "schema",
+              "export"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "benign and malicious envy",
+              "social perception",
+              "facial expression",
+              "bodily expression",
+              "social context"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.32614/10.5281/zenodo.2669586",
+          "10.1234/demo",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "62ede2964b174f6d",
+          "3a6eb0790f39ac87",
+          "77a0e6a09ee1aec5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "grobid 0.9.0",
+          "pdf",
+          "pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/Users/debruine/rproj/scienceverse/metacheck/inst/demos/to_err_is_human.xml",
+          "demo.pdf",
+          "preprint.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.0",
+          "0.0.0-test",
+          "0.5.1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          "empirical",
+          "empirical"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Social Sciences",
+          "Social Sciences"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Psychology and Cognitive Sciences",
+          "Psychology and Cognitive Sciences"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "demo",
+          "preprint"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "We demonstrate the export schema.",
+          "Envy shapes social hierarchies. To protect their rank, envied persons react to the threat posed by enviers. Doing so requires that envied persons initially perceive who envies them. However, a common perspective is that envy lacks a unique expression and that enviers disguise their experience, preventing the social perception of envy. In contrast to this perspective, recent evidence indicates that observers perceive benign and malicious forms of envy accurately when they can integrate information about targets. These findings suggest that observers infer envy based on multiple, contextual cues. We hypothesized that observers infer envy from facial and bodily expressions in comparison situations. Specifically, observers should infer benign envy when a target, who encounters an advantaged person, turns with disappointment toward the advantage. Conversely, observers should infer malicious envy when the target turns with anger toward the advantaged person. Three preregistered studies tested these hypotheses (total N = 693). In Studies 1 and 2, targets turned with an emotional or neutral expression either toward a person silhouette or a valuable object, and participants rated targets' envy. In Study 3, participants performed the same task with more realistic stimuli. Across studies, emotional display and head turning had independent effects on inferences of benign and malicious envy. Furthermore, observers inferred envy more when the target expressed an emotion instead of remaining neutral. We discuss how the results inform research on the social perception of envy."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Journal of Demonstrations",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "12",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "3",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "100",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "115",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "1234-5678",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Example Press",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2026-01-15",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2026-01-15",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "CC-BY-4.0",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://creativecommons.org/licenses/by/4.0/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "CC-BY-4.0",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Funded by the NSF under award 12345.",
+          "The research reported in this article was supported by \r\ngrants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1). We thank the members of the Department of Social Psychology at the \r\nUniversity of Amsterdam for valuable feedback."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "The authors declare no conflict of interest.",
+          "We have no known conflicts of interest. We report all studies we ever conducted in \r\nthis line of research. We report how we determined our sample size, all data exclusions (if \r\nany), all manipulations, and all measures in the study."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Approved by the IRB.",
+          "The studies were conducted in accordance with the \r\nDeclaration of Helsinki and received ethics approval from the Institutional Review Board of \r\nthe University of Amsterdam (2018-SP-8824, 2018-SP-9418)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Data are available on OSF.",
+          "The anonymized data, analysis scripts, \r\nand materials are available on the Open Science Framework (https://osf.io/n9uvj/). All studies \r\nwere preregistered (see https://aspredicted.org/3tq2y.pdf, https://aspredicted.org/i9vw6.pdf, \r\nhttps://aspredicted.org/ej26f.pdf)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+          "77a0e6a09ee1aec5e05ecd61143bed608ad2c967782d4fc3a646028a754ec296"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "12.0",
+          "12.0"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

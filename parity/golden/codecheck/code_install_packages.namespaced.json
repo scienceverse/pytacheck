@@ -1,0 +1,30 @@
+{
+  "id": "code_install_packages.namespaced",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "install_packages_call",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "utils::install.packages('a', repos = 'x')"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

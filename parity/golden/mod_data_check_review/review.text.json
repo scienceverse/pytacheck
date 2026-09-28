@@ -1,0 +1,1960 @@
+{
+  "id": "review.text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 26,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "big_int.csv",
+              "big_int.csv",
+              "bom.csv",
+              "bom.csv",
+              "dates.csv",
+              "dates.csv",
+              "dates.csv",
+              "na_strings.csv",
+              "na_strings.csv",
+              "na_strings.csv",
+              "pipe.txt",
+              "pipe.txt",
+              "pipe.txt",
+              "semicolon.csv",
+              "semicolon.csv",
+              "semicolon.csv",
+              "single_col.csv",
+              "tabbed.tsv",
+              "tabbed.tsv",
+              "tabbed.tsv",
+              "table.txt",
+              "table.txt",
+              "table.txt",
+              "title_line.csv",
+              "title_line.csv",
+              "title_line.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "big",
+              "a",
+              "b",
+              "id",
+              "day",
+              "stamp",
+              "a",
+              "b",
+              "c",
+              "x",
+              "y",
+              "z",
+              "id",
+              "score",
+              "grp",
+              "score",
+              "id",
+              "val",
+              "label",
+              "subject",
+              "trial",
+              "rt",
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric",
+              "numeric",
+              "text",
+              "text",
+              "text",
+              "text",
+              "empty",
+              "text",
+              "empty",
+              "numeric",
+              "numeric",
+              "numeric",
+              "text",
+              "numeric",
+              "text",
+              "numeric",
+              "text",
+              "numeric",
+              "text",
+              "text",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              null,
+              "nominal",
+              null,
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "ratio",
+              "nominal",
+              "ratio",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              null,
+              null,
+              null,
+              "id",
+              "date",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "id",
+              null,
+              null,
+              null,
+              "id",
+              null,
+              null,
+              "id",
+              null,
+              "reaction_time",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "milliseconds",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "empty",
+              "constant",
+              "empty",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "constant",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 | 2 | 3",
+              "12345678901 | -5",
+              "1 | 2",
+              "x | y",
+              "1 | 2",
+              "2020-01-01 | 2020-02-29",
+              "2020-01-01 10:00:00 | 2020-01-02 11:30:00",
+              "",
+              "x",
+              "",
+              "1 | 4",
+              "2 | 5",
+              "3 | 6",
+              "1 | 2 | 3",
+              "1.5 | 2.25 | 3",
+              "a | b | a",
+              "0.5 | -1.25 | 3 | 2.75 | 0",
+              "1 | 2 | 3",
+              "10 | 20",
+              "x y |  | z",
+              "1 | 1",
+              "1 | 2",
+              "500 | 612",
+              "1 | 4",
+              "2 | 5",
+              "3 | 6"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              0,
+              1,
+              0,
+              2,
+              2,
+              2,
+              3,
+              3,
+              3,
+              5,
+              3,
+              2,
+              3,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2,
+              1,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              0,
+              1,
+              0,
+              2,
+              2,
+              2,
+              3,
+              3,
+              2,
+              5,
+              3,
+              2,
+              3,
+              1,
+              2,
+              2,
+              2,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              2.25,
+              null,
+              1,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              0.75,
+              null,
+              1.82859235479097,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              0.433012701892219,
+              null,
+              0.817771361689806,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              2.25,
+              null,
+              0.5,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.5,
+              null,
+              -1.25,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              3,
+              null,
+              3,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.5,
+              null,
+              4.25,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.875,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              2.625,
+              null,
+              2.75,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              0.75,
+              null,
+              2.75,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              0,
+              null,
+              0.0275989832219303,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              -2.06856494016945,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://osf.io/textf**",
+          "```\n├── big_int.csv      📊 data          ex1\n├── bom.csv          📊 data          ex1\n├── dates.csv        📊 data          ex1\n├── eprime_utf8.txt  📊 data          ex1\n├── na_strings.csv   📊 data          ex1\n├── pipe.txt         📊 data          ex1\n├── semicolon.csv    📊 data          ex1\n├── single_col.csv   📊 data          ex1\n├── tabbed.tsv       📊 data          ex1\n├── table.txt        📊 data          ex1\n├── title_line.csv   📊 data          ex1\n├── utf16_table.txt  📖 documentation ex1\n└── whitespace.csv   📊 data          ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## big_int.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:3, big = structure(c(6.09957581957122e-314, \n0, NaN), class = \"integer64\")), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## bom.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = 1:2, b = c(\"x\", \"y\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## dates.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:2, day = structure(c(18262L, 18321L), class = c(\"IDate\", \n\"Date\")), stamp = structure(c(1577872800, 1577964600), class = c(\"POSIXct\", \n\"POSIXt\"), tzone = \"UTC\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## na_strings.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = c(NA, NA), b = c(NA, \"x\"), c = c(NA, NA)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## pipe.txt\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(x = c(1L, 4L), y = c(2L, 5L), z = c(3L, 6L)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## semicolon.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:3, score = c(1.5, 2.25, 3), grp = c(\"a\", \n\"b\", \"a\")), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## single_col.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(score = c(0.5, -1.25, 3, 2.75, 0)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## tabbed.tsv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:3, val = c(10L, 20L, NA), label = c(\"x y\", \n\"\", \"z\")), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## table.txt\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(subject = c(1L, 1L), trial = 1:2, rt = c(500L, \n612L)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## title_line.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 5 columns with at least one missing value. 2 columns are empty (no values in any row); store data without empty columns.",
+          "::: {.panel-tabset}\n\n## na_strings.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"a\", \"c\", \"b\"), Representation = c(\"empty\", \n\"empty\", \"text\"), Level = c(\"\", \"\", \"nominal\"), Concept = c(\"\", \n\"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\"), Unit = c(\"\", \n\"\", \"\"), Rows = c(2L, 2L, 2L), \"% Missing\" = c(100, 100, 50), \n    \"N Unique\" = c(0L, 0L, 1L), Mean = c(NA_real_, NA_real_, \n    NA_real_), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \n    NA_real_, NA_real_), Max = c(NA_real_, NA_real_, NA_real_\n    )), row.names = c(\"a...1\", \"c...2\", \"b...3\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## big_int.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"big\", \"id\"), Representation = c(\"numeric\", \n\"text\"), Level = c(\"nominal\", \"nominal\"), Concept = c(\"\", \"id\"\n), Role = c(\"measure\", \"identifier\"), Unit = c(\"\", \"\"), Rows = c(3L, \n3L), \"% Missing\" = c(33.3, 0), \"N Unique\" = 2:3, Mean = c(NA_real_, \nNA_real_), SD = c(NA_real_, NA_real_), Min = c(NA_real_, NA_real_\n), Max = c(NA_real_, NA_real_)), row.names = c(\"big\", \"id...13\"\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## tabbed.tsv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"val\", \"id\", \"label\"), Representation = c(\"numeric\", \n\"text\", \"text\"), Level = c(\"nominal\", \"nominal\", \"nominal\"), \n    Concept = c(\"\", \"id\", \"\"), Role = c(\"measure\", \"identifier\", \n    \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(3L, 3L, 3L), \"% Missing\" = c(33.3, \n    0, 0), \"N Unique\" = c(2L, 3L, 3L), Mean = c(NA_real_, NA_real_, \n    NA_real_), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \n    NA_real_, NA_real_), Max = c(NA_real_, NA_real_, NA_real_\n    )), row.names = c(\"val\", \"id...16\", \"label\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## bom.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"a\", \"b\"), Representation = c(\"numeric\", \n\"text\"), Level = c(\"nominal\", \"nominal\"), Concept = c(\"\", \"\"), \n    Role = c(\"measure\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(2L, \n    2L), \"% Missing\" = c(0, 0), \"N Unique\" = c(2L, 2L), Mean = c(NA_real_, \n    NA_real_), SD = c(NA_real_, NA_real_), Min = c(NA_real_, \n    NA_real_), Max = c(NA_real_, NA_real_)), row.names = c(\"a...6\", \n\"b...8\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## title_line.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"a\", \"b\", \"c\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"nominal\"\n), Concept = c(\"\", \"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\"\n), Unit = c(\"\", \"\", \"\"), Rows = c(2L, 2L, 2L), \"% Missing\" = c(0, \n0, 0), \"N Unique\" = c(2L, 2L, 2L), Mean = c(NA_real_, NA_real_, \nNA_real_), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \nNA_real_, NA_real_), Max = c(NA_real_, NA_real_, NA_real_)), row.names = c(\"a...7\", \n\"b...9\", \"c...10\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## dates.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"day\", \"id\", \"stamp\"), Representation = c(\"text\", \n\"text\", \"text\"), Level = c(\"nominal\", \"nominal\", \"nominal\"), \n    Concept = c(\"date\", \"id\", \"\"), Role = c(\"measure\", \"identifier\", \n    \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(2L, 2L, 2L), \"% Missing\" = c(0, \n    0, 0), \"N Unique\" = c(2L, 2L, 2L), Mean = c(NA_real_, NA_real_, \n    NA_real_), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \n    NA_real_, NA_real_), Max = c(NA_real_, NA_real_, NA_real_\n    )), row.names = c(\"day\", \"id...14\", \"stamp\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## semicolon.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"grp\", \"id\", \"score\"), Representation = c(\"text\", \n\"text\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"ratio\"), \n    Concept = c(\"\", \"id\", \"\"), Role = c(\"measure\", \"identifier\", \n    \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(3L, 3L, 3L), \"% Missing\" = c(0, \n    0, 0), \"N Unique\" = c(2L, 3L, 3L), Mean = c(NA, NA, 2.25), \n    SD = c(NA, NA, 0.75), Min = c(NA, NA, 1.5), Max = c(NA, NA, \n    3)), row.names = c(\"grp\", \"id...15\", \"score...19\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## table.txt\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"rt\", \"subject\", \"trial\"), Representation = c(\"numeric\", \n\"text\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"nominal\"\n), Concept = c(\"reaction_time\", \"id\", \"\"), Role = c(\"measure\", \n\"identifier\", \"measure\"), Unit = c(\"milliseconds\", \"\", \"\"), Rows = c(2L, \n2L, 2L), \"% Missing\" = c(0, 0, 0), \"N Unique\" = c(2L, 1L, 2L), \n    Mean = c(NA_real_, NA_real_, NA_real_), SD = c(NA_real_, \n    NA_real_, NA_real_), Min = c(NA_real_, NA_real_, NA_real_\n    ), Max = c(NA_real_, NA_real_, NA_real_)), row.names = c(\"rt\", \n\"subject\", \"trial\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## single_col.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = \"score\", Representation = \"numeric\", \n    Level = \"ratio\", Concept = \"\", Role = \"measure\", Unit = \"\", \n    Rows = 5L, \"% Missing\" = 0, \"N Unique\" = 5L, Mean = 1, SD = 1.829, \n    Min = -1.25, Max = 3), row.names = \"score...20\", class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## pipe.txt\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"x\", \"y\", \"z\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"nominal\"\n), Concept = c(\"\", \"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\"\n), Unit = c(\"\", \"\", \"\"), Rows = c(2L, 2L, 2L), \"% Missing\" = c(0, \n0, 0), \"N Unique\" = c(2L, 2L, 2L), Mean = c(NA_real_, NA_real_, \nNA_real_), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \nNA_real_, NA_real_), Max = c(NA_real_, NA_real_, NA_real_)), row.names = c(\"x\", \n\"y\", \"z\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 26 columns across 10 data files.",
+          "#### Issues Identified",
+          "2 file/column combinations have at least one issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"na_strings.csv\", \"na_strings.csv\"), \n    Column = c(\"a\", \"c\"), Issues = c(\"<span title='Column is empty: all 2 values are missing.'>⬜ Empty column — Column is empty: all 2 values are missing<\/span>\", \n    \"<span title='Column is empty: all 2 values are missing.'>⬜ Empty column — Column is empty: all 2 values are missing<\/span>\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "#### Careless Responding",
+          "No file could be screened for careless responding.",
+          "**What this does not cover.** Only 0 of 10 data files could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 13 files: 12 data, 1 documentation.\n-  We found 11 tabular data files and extracted 26 columns from 11 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 13 files (the model request failed); they were grouped by the fallback rules instead.\n-  1 trial-level data file (E-Prime / Inquisit / jsPsych / Behaverse) was recognised. These are per-participant records of a behavioural task, so they are not listed as separate datasets — convert_psychds() merges them per instrument into Behaverse `paradata/<instrument>.json` (one file per instrument, all participants). Nothing is deleted. We ran automated data-quality checks on 26 columns; 2 columns have at least one potential issue (2 columns with no observed values (entirely empty))."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_empty",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              26
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              13
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "na_strings.csv",
+              "na_strings.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Empty column",
+              "Empty column"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is empty: all 2 values are missing.",
+              "Column is empty: all 2 values are missing."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 13,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text",
+              "review_text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf",
+              "https://osf.io/textf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "big_int.csv",
+              "bom.csv",
+              "dates.csv",
+              "eprime_utf8.txt",
+              "na_strings.csv",
+              "pipe.txt",
+              "semicolon.csv",
+              "single_col.csv",
+              "tabbed.tsv",
+              "table.txt",
+              "title_line.csv",
+              "utf16_table.txt",
+              "whitespace.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "big_int.csv",
+              "bom.csv",
+              "dates.csv",
+              "eprime_utf8.txt",
+              "na_strings.csv",
+              "pipe.txt",
+              "semicolon.csv",
+              "single_col.csv",
+              "tabbed.tsv",
+              "table.txt",
+              "title_line.csv",
+              "utf16_table.txt",
+              "whitespace.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/review_text/big_int.csv",
+              "tests/mod_data_check/fixtures/repos/review_text/bom.csv",
+              "tests/mod_data_check/fixtures/repos/review_text/dates.csv",
+              "tests/mod_data_check/fixtures/repos/review_text/eprime_utf8.txt",
+              "tests/mod_data_check/fixtures/repos/review_text/na_strings.csv",
+              "tests/mod_data_check/fixtures/repos/review_text/pipe.txt",
+              "tests/mod_data_check/fixtures/repos/review_text/semicolon.csv",
+              "tests/mod_data_check/fixtures/repos/review_text/single_col.csv",
+              "tests/mod_data_check/fixtures/repos/review_text/tabbed.tsv",
+              "tests/mod_data_check/fixtures/repos/review_text/table.txt",
+              "tests/mod_data_check/fixtures/repos/review_text/title_line.csv",
+              "tests/mod_data_check/fixtures/repos/review_text/utf16_table.txt",
+              "tests/mod_data_check/fixtures/repos/review_text/whitespace.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              29,
+              15,
+              80,
+              47,
+              17,
+              18,
+              36,
+              25,
+              33,
+              33,
+              33,
+              68,
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "documentation",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "supplemental",
+              null,
+              "supplemental",
+              null,
+              null,
+              null,
+              "supplemental",
+              null,
+              "supplemental",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular",
+              "tabular",
+              "tabular",
+              "trial_level",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              null,
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "big_int.csv",
+          "bom.csv",
+          "dates.csv",
+          "na_strings.csv",
+          "pipe.txt",
+          "semicolon.csv",
+          "single_col.csv",
+          "tabbed.tsv",
+          "table.txt",
+          "title_line.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "id",
+              "big"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  12345678901,
+                  null,
+                  -5
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "a",
+              "b"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x",
+                  "y"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "id",
+              "day",
+              "stamp"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2020-01-01",
+                  "2020-02-29"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2020-01-01T10:00:00",
+                  "2020-01-02T11:30:00"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "a",
+              "b",
+              "c"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  "x"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2,
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3,
+                  6
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "id",
+              "score",
+              "grp"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1.5,
+                  2.25,
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b",
+                  "a"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "score"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  0.5,
+                  -1.25,
+                  3,
+                  2.75,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "id",
+              "val",
+              "label"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  10,
+                  20,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x y",
+                  "",
+                  "z"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "subject",
+              "trial",
+              "rt"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  500,
+                  612
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "a",
+              "b",
+              "c"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2,
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3,
+                  6
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,525 @@
+{
+  "id": "module.stat_effect_size.debruine",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              109,
+              109,
+              113,
+              114,
+              114,
+              115,
+              116
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F-test",
+              "F-test",
+              "t-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F(1,51) = 7.24",
+              "F(1,51) = 0.52",
+              "t(17) > 5.2",
+              "F(1,16) = 4.16",
+              "F(1,16) = 2.60",
+              "F(1,16) = 3.12",
+              "F(1,16) < 2.9"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              12,
+              13,
+              13,
+              13,
+              13,
+              13
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              32,
+              32,
+              33,
+              34,
+              34,
+              34,
+              34
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).",
+              "Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).",
+              "Morphs were made using either the method used by Platek et al. or the method used in the current study. Platek et al.'s method. Participants matched faces within each group at levels greater than chance (all t(17) > 5.2, P < .001).",
+              "Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].",
+              "Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].",
+              "Judges were slightly, but not significantly, better at matching participants to self-morphs made using my morphing method than those made using Platek et al.'s method [ F(1,16) = 3.12, P < .10].",
+              "No interactions were significant (all F(1,16) < 2.9, all P > .10)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "indeterminate",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "none",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "No parseable t(df)=value found.",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7.24",
+              "0.52",
+              null,
+              "4.16",
+              "2.6",
+              "3.12",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F(1,51) = 7.24",
+              "F(1,51) = 0.52",
+              null,
+              "F(1,16) = 4.16",
+              "F(1,16) = 2.60",
+              "F(1,16) = 3.12",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "1",
+              null,
+              "1",
+              "1",
+              "1",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "51",
+              "51",
+              null,
+              "16",
+              "16",
+              "16",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.124313186813187",
+              "0.0100931677018634",
+              null,
+              "0.206349206349206",
+              "0.139784946236559",
+              "0.163179916317992",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.105334233625928",
+              "-0.00913937547600914",
+              null,
+              "0.149338374291115",
+              "0.0816326530612245",
+              "0.105367793240557",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "indeterminate",
+              "indeterminate",
+              null,
+              "indeterminate",
+              "indeterminate",
+              "indeterminate",
+              "indeterminate"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              null,
+              "none",
+              "none",
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No parseable eta-squared effect size found.",
+              "No parseable eta-squared effect size found.",
+              null,
+              "No parseable eta-squared effect size found.",
+              "No parseable eta-squared effect size found.",
+              "No parseable eta-squared effect size found.",
+              "No parseable F(df1,df2)=value found."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We recommend checking the sentences below, and add any missing effect sizes.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).\", \n\"Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).\", \n\"Morphs were made using either the method used by Platek et al. or the method used in the current study. Platek et al.'s method. Participants matched faces within each group at levels greater than chance (all t(17) > 5.2, P < .001).\", \n\"Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].\", \n\"Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].\", \n\"Judges were slightly, but not significantly, better at matching participants to self-morphs made using my morphing method than those made using Platek et al.'s method [ F(1,16) = 3.12, P < .10].\", \n\"No interactions were significant (all F(1,16) < 2.9, all P > .10).\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -7L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).\", \n\"Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).\", \n\"Morphs were made using either the method used by Platek et al. or the method used in the current study. Platek et al.'s method. Participants matched faces within each group at levels greater than chance (all t(17) > 5.2, P < .001).\", \n\"Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].\", \n\"Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].\", \n\"Judges were slightly, but not significantly, better at matching participants to self-morphs made using my morphing method than those made using Platek et al.'s method [ F(1,16) = 3.12, P < .10].\", \n\"No interactions were significant (all F(1,16) < 2.9, all P > .10).\"\n), \"Effect Size\" = c(NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"Reported Test\" = c(\"F(1,51) = 7.24\", \"F(1,51) = 0.52\", \"t(17) > 5.2\", \n    \"F(1,16) = 4.16\", \"F(1,16) = 2.60\", \"F(1,16) = 3.12\", \"F(1,16) < 2.9\"\n    ), \"Test Type\" = c(\"F-test\", \"F-test\", \"t-test\", \"F-test\", \n    \"F-test\", \"F-test\", \"F-test\"), \"d Coherence\" = c(NA, NA, \n    \"indeterminate\", NA, NA, NA, NA), \"d Assumption\" = c(NA, \n    NA, \"none\", NA, NA, NA, NA), \"d Coherence Note\" = c(NA, NA, \n    \"No parseable t(df)=value found.\", NA, NA, NA, NA), \"eta Coherence\" = c(\"indeterminate\", \n    \"indeterminate\", NA, \"indeterminate\", \"indeterminate\", \"indeterminate\", \n    \"indeterminate\"), \"eta Assumption\" = c(\"none\", \"none\", NA, \n    \"none\", \"none\", \"none\", \"none\"), \"eta Coherence Note\" = c(\"No parseable eta-squared effect size found.\", \n    \"No parseable eta-squared effect size found.\", NA, \"No parseable eta-squared effect size found.\", \n    \"No parseable eta-squared effect size found.\", \"No parseable eta-squared effect size found.\", \n    \"No parseable F(df1,df2)=value found.\")), row.names = c(NA, \n-7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 7 t-tests and/or F-tests where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              6,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

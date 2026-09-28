@@ -1,0 +1,88 @@
+{
+  "id": "parse_codebook.schema.json",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "q1",
+          "q2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "First question",
+          "Second question"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "schema.json",
+          "schema.json"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Yes\",\"-9\":\"Refused\"}",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"-9\":\"Refused\"}",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "structured",
+          "structured"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

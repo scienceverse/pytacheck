@@ -1,0 +1,7 @@
+{
+"review.data_classify_files.invalid_utf8.glibc_valid": {"r": "fa97bfa2889213b6", "py": "d9233ceee22a42b4", "diff": ["[]"]},
+"review.read_head_typed.era_date.xlsx": {"r": "e66b8c805317f287", "py": "7485c47209a8263b", "diff": ["data.date_jp", "types[]"]},
+"review.read_head_typed.rt_fallback_latin1.csv": {"r": "e2ee1b877bf58b95", "py": "62f04ac5a97aed33", "diff": ["data.v[]"]},
+"review.write_manifest.no_repo_url": {"r": "2902b4a1861f5af4", "py": "22a27bc30c635a37", "diff": ["not_downloaded.unintentional_files"]},
+"review.write_manifest.no_repo_url_gated": {"r": "ac5146cf65ca52a8", "py": "58ddefd0e4ddb7a2", "diff": ["<R error, Python value>"]}
+}

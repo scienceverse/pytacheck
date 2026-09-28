@@ -1,0 +1,20 @@
+{
+  "id": "dv_q_datetime",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "2021-05-01 10:00:00",
+      "2021-05-02 00:00:00",
+      null,
+      null,
+      null,
+      "2021-05-03 07:05:09",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

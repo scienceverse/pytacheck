@@ -1,0 +1,14 @@
+{
+  "id": "link.doi_default_text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<a href='https://doi.org/10.1234/abc' target='_blank'>doi.org/10.1234/abc<\/a>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

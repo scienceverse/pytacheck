@@ -1,0 +1,60 @@
+{
+  "id": "data_read_head.rwrite.csv.n5",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "id",
+      "score",
+      "group",
+      "flag"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.5,
+          2,
+          null,
+          4.25,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "a",
+          null,
+          "c"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

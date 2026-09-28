@@ -1,0 +1,559 @@
+{
+  "id": "repo_check.zenodo.peek_rich",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "archive_url",
+          "archive_member",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "5559101",
+              "5559101",
+              "5559101",
+              "5559101",
+              "5559101",
+              "5559101",
+              "5559101",
+              "5559101",
+              "5559101",
+              "5559101"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "README.md",
+              "raw data.csv",
+              "participant_01.csv",
+              "participant_2.csv",
+              "analysis.R",
+              "données.csv",
+              "inner.zip",
+              "results.tar.gz",
+              "task.edat2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "deposit.zip/README.md",
+              "deposit.zip/data/raw data.csv",
+              "deposit.zip/data/participant_01.csv",
+              "deposit.zip/data/participant_2.csv",
+              "deposit.zip/Study 1/analysis.R",
+              "deposit.zip/données.csv",
+              "deposit.zip/inner.zip",
+              "deposit.zip/results.tar.gz",
+              "deposit.zip/task.edat2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/api/records/5559101/files/analysis.R/content",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              300,
+              10,
+              18,
+              24,
+              23,
+              19,
+              13,
+              10,
+              15,
+              11
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "text",
+              "data",
+              "data",
+              "data",
+              "code",
+              "data",
+              "archive",
+              "archive",
+              "file"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip",
+              "https://mock.example.org/review/deposit.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "README.md",
+              "data/raw data.csv",
+              "data/participant_01.csv",
+              "data/participant_2.csv",
+              "Study 1/analysis.R",
+              "données.csv",
+              "inner.zip",
+              "results.tar.gz",
+              "task.edat2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "documentation",
+              "data",
+              "data",
+              "data",
+              "code",
+              "data",
+              "unknown",
+              "output",
+              "materials"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "readme",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              null,
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              null,
+              null,
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>\", \n    Platform = \"zenodo\", \"All Files\" = 10L, \"Data Files\" = 4L, \n    \"Code Files\" = 2L, READMEs = 0L, Archives = 2L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\"), File = c(\"<a href='https://zenodo.org/api/records/5559101/files/analysis.R/content' target='_blank'>analysis.R<\/a>\", \n\"README.md\", \"raw data.csv\", \"participant_01.csv\", \"participant_2.csv\", \n\"analysis.R\", \"données.csv\", \"inner.zip\", \"results.tar.gz\", \n\"task.edat2\"), Size = c(\"300 B\", \"10 B\", \"18 B\", \"24 B\", \"23 B\", \n\"19 B\", \"13 B\", \"10 B\", \"15 B\", \"11 B\"), Type = c(\"code\", \"text\", \n\"data\", \"data\", \"data\", \"code\", \"data\", \"archive\", \"archive\", \n\"file\")), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "#### Archive Files\n\nThe following files are not ZIP archives: results.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, or `.tar.gz`.",
+          "#### Proprietary E-Prime Files\n\nThe repository contains 1 E-Prime file (task.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. 1 of them has no matching plain-text export. Please also upload the E-Prime **.txt export** (File → Export in E-Prime) for each, so the trial-level data is readable without the proprietary software.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: inner.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 4 naming problems that should be fixed, and 1 file with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"données.csv\", \"données.csv\", \n\"inner.zip\", \"participant_2.csv\"), Rule = c(\"spaces\", \"special-characters\", \n\"diacritics\", \"unclassifiable\", \"zero-padding\"), Severity = c(\"bad\", \n\"bad\", \"bad\", \"bad\", \"suggestion\"), Detail = c(\"contains a space\", \n\"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"analysis.R\", \"analysis.R\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"analysis.R\", \"deposit.zip/Study 1/analysis.R\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (4 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"participant_01.csv\", \n\"participant_2.csv\", \"données.csv\"), Group = c(\"ex1\", \"ex1\", \n\"ex1\", \"ex1\"), Path = c(\"deposit.zip/data/raw data.csv\", \"deposit.zip/data/participant_01.csv\", \n\"deposit.zip/data/participant_2.csv\", \"deposit.zip/données.csv\"\n)), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"deposit.zip/README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"task.edat2\", Group = \"ex1\", Path = \"deposit.zip/task.edat2\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**output** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"results.tar.gz\", Group = \"—\", Path = \"deposit.zip/results.tar.gz\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"inner.zip\", Group = \"—\", Path = \"deposit.zip/inner.zip\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 10 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs.\n-  We found 2 archive files.\n-  We found 1 proprietary E-Prime file.\n-  We could not classify 1 file.\n-  We found 4 file naming problems to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_peek_rich"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "raw data.csv",
+              "données.csv",
+              "données.csv",
+              "inner.zip",
+              "participant_2.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "spaces",
+              "special-characters",
+              "diacritics",
+              "unclassifiable",
+              "zero-padding"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "suggestion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich",
+              "p_peek_rich"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/records/5559101"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.5281/zenodo.5559101"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cc-by-4.0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_peek_rich"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

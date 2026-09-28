@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "{{name}}",
+  "version": "0.1.0",
+  "title": "{{title}}",
+  "description": "Describe what this pack checks, and for which field.",
+  "authors": ["Your Name <you@example.org>"],
+  "license": "MIT",
+  "homepage": "",
+  "fields": ["general"],
+  "keywords": [],
+  "requires": {"pytacheck": ">={{pytacheck_version}}"},
+  "dependencies": [],
+  "presets": {
+    "default": {
+      "description": "metacheck's default report plus this pack's checks",
+      "extends": ["metacheck::default"],
+      "modules": ["{{module}}"]
+    },
+    "only": {
+      "description": "Only this pack's checks",
+      "modules": ["{{module}}"]
+    }
+  }
+}

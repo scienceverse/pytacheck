@@ -1,0 +1,455 @@
+{
+  "id": "repo_check.osf.green",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_name",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.xlsx",
+              "README",
+              "test-1.txt",
+              "README",
+              "test-2.txt",
+              "test-3.txt",
+              "test-4.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.xlsx",
+              "README",
+              "nest-1/test-1.txt",
+              "nest-1/README",
+              "nest-1/nest-2/test-2.txt",
+              "nest-1/nest-2/nest-3/test-3.txt",
+              "nest-1/nest-2/nest-3/nest-4/test-4.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/download/k6gbt/",
+              "https://osf.io/download/ez87j/",
+              "https://osf.io/download/hn9fs/",
+              "https://osf.io/download/qfvpy/",
+              "https://osf.io/download/b7eds/",
+              "https://osf.io/download/zyf34/",
+              "https://osf.io/download/3wv7h/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9113,
+              52,
+              12,
+              58,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "readme",
+              "text",
+              "readme",
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "documentation",
+              "documentation",
+              "documentation",
+              "documentation",
+              "documentation",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "readme",
+              "supplemental",
+              "readme",
+              "supplemental",
+              "supplemental",
+              "supplemental"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              null,
+              "ex1",
+              null,
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_j3gcx",
+              "p_j3gcx",
+              "p_j3gcx",
+              "p_j3gcx",
+              "p_j3gcx",
+              "p_j3gcx",
+              "p_j3gcx"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/j3gcx' target='_blank'>osf.io/j3gcx<\/a>\", \n    Platform = \"osf\", \"All Files\" = 7L, \"Data Files\" = 1L, \"Code Files\" = 0L, \n    READMEs = 2L, Archives = 0L), row.names = c(NA, -1L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \n\"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \n\"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\"), File = c(\"<a href='https://osf.io/download/k6gbt/' target='_blank'>data.xlsx<\/a>\", \n\"<a href='https://osf.io/download/ez87j/' target='_blank'>README<\/a>\", \n\"<a href='https://osf.io/download/hn9fs/' target='_blank'>test-1.txt<\/a>\", \n\"<a href='https://osf.io/download/qfvpy/' target='_blank'>README<\/a>\", \n\"<a href='https://osf.io/download/b7eds/' target='_blank'>test-2.txt<\/a>\", \n\"<a href='https://osf.io/download/zyf34/' target='_blank'>test-3.txt<\/a>\", \n\"<a href='https://osf.io/download/3wv7h/' target='_blank'>test-4.txt<\/a>\"\n), Size = c(\"9.1 kB\", \"52 B\", \"12 B\", \"58 B\", \"12 B\", \"12 B\", \n\"12 B\"), Type = c(\"data\", \"readme\", \"text\", \"readme\", \"text\", \n\"text\", \"text\")), row.names = c(NA, -7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"data.xlsx\", Group = \"ex1\", Path = \"data.xlsx\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (6 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README\", \"test-1.txt\", \"README\", \"test-2.txt\", \n\"test-3.txt\", \"test-4.txt\"), Group = c(\"—\", \"ex1\", \"—\", \"ex1\", \n\"ex1\", \"ex1\"), Path = c(\"README\", \"nest-1/test-1.txt\", \"nest-1/README\", \n\"nest-1/nest-2/test-2.txt\", \"nest-1/nest-2/nest-3/test-3.txt\", \n\"nest-1/nest-2/nest-3/nest-4/test-4.txt\")), row.names = c(NA, \n-6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 7 files in 1 repository.\n-  We found 2 README files and 0 repositories without READMEs."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_j3gcx"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

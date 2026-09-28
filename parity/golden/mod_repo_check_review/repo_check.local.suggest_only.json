@@ -1,0 +1,441 @@
+{
+  "id": "repo_check.local.suggest_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "suggest_only",
+              "suggest_only",
+              "suggest_only",
+              "suggest_only",
+              "suggest_only"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_repo_check/fixtures/review/suggest_only",
+              "tests/mod_repo_check/fixtures/review/suggest_only",
+              "tests/mod_repo_check/fixtures/review/suggest_only",
+              "tests/mod_repo_check/fixtures/review/suggest_only",
+              "tests/mod_repo_check/fixtures/review/suggest_only"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "data_1.csv",
+              "data_10.csv",
+              "data_2.csv",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/analysis.R",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/data_1.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/data_10.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/data_2.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/README.md"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              7,
+              4,
+              5,
+              4,
+              14
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "data",
+              "data",
+              "data",
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "data_1.csv",
+              "data_10.csv",
+              "data_2.csv",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "data",
+              "data",
+              "data",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='tests/mod_repo_check/fixtures/review/suggest_only' target='_blank'>tests/mod_repo_check/fixtures/review/suggest_only<\/a>\", \n    Platform = \"local\", \"All Files\" = 5L, \"Data Files\" = 3L, \n    \"Code Files\" = 1L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/suggest_only\", \n\"tests/mod_repo_check/fixtures/review/suggest_only\", \"tests/mod_repo_check/fixtures/review/suggest_only\", \n\"tests/mod_repo_check/fixtures/review/suggest_only\", \"tests/mod_repo_check/fixtures/review/suggest_only\"\n), File = c(\"analysis.R\", \"data_1.csv\", \"data_10.csv\", \"data_2.csv\", \n\"README.md\"), Size = c(\"7 B\", \"4 B\", \"5 B\", \"4 B\", \"14 B\"), Type = c(\"code\", \n\"data\", \"data\", \"data\", \"readme\")), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### File Naming",
+          "File names are broadly machine-parseable. We found 0 naming problems that should be fixed, and 2 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data_1.csv\", \"data_2.csv\"), Rule = c(\"zero-padding\", \n\"zero-padding\"), Severity = c(\"suggestion\", \"suggestion\"), Detail = c(\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"analysis.R\", Group = \"ex1\", Path = \"analysis.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data_1.csv\", \"data_10.csv\", \"data_2.csv\"\n), Group = c(\"ex1\", \"ex1\", \"ex1\"), Path = c(\"data_1.csv\", \"data_10.csv\", \n\"data_2.csv\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 5 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 2 files with a naming suggestion."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_local"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data_1.csv",
+              "data_2.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "zero-padding",
+              "zero-padding"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "suggestion",
+              "suggestion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+              "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_local",
+              "p_local"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

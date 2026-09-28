@@ -1,0 +1,17 @@
+{
+  "id": "code_remove_comments.code_files_analysis_R",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "library(dplyr)",
+      "library(ggplot2)",
+      "dat <- read.csv(\"data.csv\")",
+      "result <- dat |> dplyr::summarise(mean_x = mean(x))"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,145 @@
+{
+ "data": {
+  "id": "prspz",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration prspz",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+   "ia_url": "https://archive.org/details/osf-registrations-prspz-v1",
+   "registration_responses": {
+    "description-hypothesis.question1a": [
+     [
+      100000,
+      2
+     ],
+     [
+      3,
+      4
+     ]
+    ],
+    "84-5": 2.5,
+    "description-hypothesis.question2a": [
+     [],
+     [
+      "a"
+     ],
+     [
+      "b",
+      "c"
+     ]
+    ],
+    "description-hypothesis.question3a": [
+     [
+      3,
+      2,
+      1
+     ],
+     [
+      "x"
+     ],
+     [
+      -1,
+      0,
+      1
+     ]
+    ],
+    "description-methods.design.question3b": [
+     [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ],
+     [
+      [
+       5,
+       6
+      ],
+      [
+       7,
+       8
+      ]
+     ]
+    ],
+    "recommended-methods.procedure.question9b": [
+     {
+      "k": []
+     },
+     {
+      "k": [
+       "z"
+      ]
+     },
+     {
+      "k": [
+       1.5
+      ]
+     }
+    ],
+    "84-38": [
+     [],
+     [
+      1,
+      2
+     ]
+    ],
+    "description-methods.planned-sample.question7b": [
+     [],
+     [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ]
+    ],
+    "84-140": [
+     {
+      "a": null,
+      "b": [
+       null,
+       null
+      ]
+     },
+     [
+      null,
+      1
+     ]
+    ]
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "5730e99a9ad5a102c5745a8a",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/5730e99a9ad5a102c5745a8a/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/prspz/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

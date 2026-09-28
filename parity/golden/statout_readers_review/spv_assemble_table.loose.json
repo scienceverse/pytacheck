@@ -1,0 +1,40 @@
+{
+  "id": "spv_assemble_table.loose",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "A",
+      "dim",
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "a"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "z",
+          "z"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0",
+          "^1"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

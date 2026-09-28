@@ -1,0 +1,367 @@
+{
+  "id": "module.all_urls.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 24,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/48ncu",
+              "https://aspredicted.org/by8i8v.pdf",
+              "https://github.com/Lak-ens/to_err_is_human",
+              "https://researchbox.org/4377",
+              "https://osf.io/5tbm9",
+              "https://osf.io/629bx",
+              "pwr.t.test",
+              "https://orcid.org/0000-0002-5375-3247",
+              "https://orcid.org/0000-0001-6939-8174",
+              "https://orcid.org/0000-0003-0823-7654",
+              "https://osf.io/n9uvj",
+              "https://aspredicted.org/3tq2y.pdf",
+              "https://aspredicted.org/i9vw6.pdf",
+              "https://aspredicted.org/ej26f.pdf",
+              "lange.jens",
+              "outlook.com",
+              "https://osf.io/n9uvj",
+              "AsPredicted.org",
+              "https://aspredicted.org/3tq2y.pdf",
+              "1.9.12.31",
+              "AsPredicted.org",
+              "https://aspredicted.org/i9vw6.pdf",
+              "AsPredicted.org",
+              "https://aspredicted.org/ej26f.pdf"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9,
+              9,
+              20,
+              20,
+              21,
+              21,
+              27,
+              2,
+              3,
+              4,
+              8,
+              9,
+              9,
+              9,
+              14,
+              14,
+              135,
+              146,
+              146,
+              176,
+              248,
+              248,
+              353,
+              353
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              8,
+              8,
+              9,
+              9,
+              14,
+              1,
+              1,
+              1,
+              2,
+              2,
+              2,
+              2,
+              4,
+              4,
+              25,
+              26,
+              26,
+              33,
+              45,
+              45,
+              61,
+              61
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              5,
+              5,
+              5,
+              5,
+              8,
+              5,
+              5,
+              5,
+              6,
+              6,
+              6,
+              6,
+              6,
+              6,
+              10,
+              11,
+              11,
+              14,
+              17,
+              17,
+              25,
+              25
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              2,
+              2,
+              11,
+              12,
+              12,
+              14,
+              19,
+              19,
+              26,
+              26
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This study was preregistered at <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and on AsPredicted at <ref type=\"url\" target=\"https://aspredicted.org/by8i8v.pdf\">https://aspredicted.org/by8i8v.pdf<\/ref>.",
+              "This study was preregistered at <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and on AsPredicted at <ref type=\"url\" target=\"https://aspredicted.org/by8i8v.pdf\">https://aspredicted.org/by8i8v.pdf<\/ref>.",
+              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Method",
+              "Method",
+              "Data Availability",
+              "Data Availability",
+              "Data Availability",
+              "Data Availability",
+              "Results",
+              "manuscript before copyediting in press at Emotion",
+              "manuscript before copyediting in press at Emotion",
+              "manuscript before copyediting in press at Emotion",
+              "Abstract",
+              "Abstract",
+              "Abstract",
+              "Abstract",
+              "Abstract",
+              "Abstract",
+              "The Current Research",
+              "Study 1",
+              "Study 1",
+              "Materials and Procedure",
+              "Discussion",
+              "Discussion",
+              "Study 3",
+              "Study 3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "availability",
+              "availability",
+              "availability",
+              "availability",
+              "annex",
+              "unknown",
+              "unknown",
+              "unknown",
+              "abstract",
+              "abstract",
+              "abstract",
+              "abstract",
+              "abstract",
+              "abstract",
+              "intro",
+              "method",
+              "method",
+              "method",
+              "discussion",
+              "discussion",
+              "method",
+              "method"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "demo",
+              "preprint"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              7,
+              0,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "Example dataset",
+  "description": "A small Psych-DS example",
+  "variableMeasured": ["id", "score", "age"]
+}

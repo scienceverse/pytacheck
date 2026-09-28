@@ -1,0 +1,70 @@
+{
+  "id": "zip_peek.stored.zip",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "name",
+      "size",
+      "method",
+      "csize",
+      "offset",
+      "crc"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "notes.txt",
+          "empty.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1440,
+          6,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1440,
+          6,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          1478,
+          1523
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          773114359,
+          909783072,
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

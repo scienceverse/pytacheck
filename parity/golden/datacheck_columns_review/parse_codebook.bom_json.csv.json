@@ -1,0 +1,90 @@
+{
+  "id": "parse_codebook.bom_json.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "JSON string contains (illegal) UTF8 byte-order-mark!"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "B"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bom_json.csv",
+          "bom_json.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "structured",
+          "structured"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

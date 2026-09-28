@@ -1,0 +1,15 @@
+Package: careless
+Type: Package
+Title: Procedures for Computing Indices of Careless Responding
+Version: 1.2.2
+Authors@R: c(
+    person("Richard", "Yentes", email = "ryentes@gmail.com", role = c("cre", "aut")),
+    person("Francisco", "Wilhelm", email = "franciscowilhelm@gmail.com", role = c("aut")))
+Description: The two indices of the CRAN package 'careless' 1.2.2 that
+    metacheck's data_check module uses (longstring() and irv()), vendored
+    unchanged for the parity tests: the R reference environment cannot
+    install 'careless' (it is not on conda-forge), so the test helpers load
+    this copy with pkgload::load_all() to exercise the careless-responding
+    path. See tests/mod_data_check/dc_helpers.R.
+License: MIT + file LICENSE
+Encoding: UTF-8

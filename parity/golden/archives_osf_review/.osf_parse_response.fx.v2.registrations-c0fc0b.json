@@ -1,0 +1,93 @@
+{
+  "id": ".osf_parse_response.fx.v2.registrations-c0fc0b",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "z2bsa"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "On the limited generality of air pollution and anxiety as causal determinants of unethical behavior: Commentary on Lu, Lee, Gino, &amp; Galinsky (2018)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/z2bsa/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/z2bsa/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/z2bsa/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "k76b2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "z2bsa"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

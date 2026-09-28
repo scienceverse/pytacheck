@@ -1,0 +1,112 @@
+"""module_name: a pytacheck module.
+
+Run it with ``module_run(paper, "path/to/module_name.py")``, or, inside a pack,
+``module_run(paper, "yourpack::module_name")``. See docs/MODULES.md
+("Write a module") in the pytacheck repository.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from pytacheck.module import module
+from pytacheck.report import collapse_section, scroll_table
+from pytacheck.text import text_search
+
+
+@module(
+    title="Module Title",
+    description="A short description of the module.",
+    details="""
+        This text will show when you use module_info()
+        and in the "How It Works" collapse box after the module report.
+        It can be multiple paragraphs and is styled with markdown.
+
+        <validation>
+        In a sample of P papers with I instances of {thing you are checking},
+        TP were correctly detected (true positives),
+        FN were missed (false negatives) and
+        FP were incorrectly detected (false positives).
+        Overall, among all instances flagged as {thing},
+        (TP/(TP+FP))% were correct (positive predictive value) and
+        (TP/I)% of true instances were detected (sensitivity).
+        </validation>
+    """,
+    # the report section: general, intro, method, results, discussion or reference
+    keywords=["general"],
+    author=["Author Name <name@email.com>"],
+    # declare what the module needs ("network", "llm"); offline runs skip it
+    requires=[],
+    # once validated, also give the numbers (tools show PPV and sensitivity):
+    # validation={"papers": 0, "instances": 0, "tp": 0, "fp": 0, "fn": 0, "reference": ""},
+)
+def module_name(paper: Any) -> dict[str, Any]:
+    # module code ----
+    pattern = "significant"
+
+    # create return items ----
+
+    ## table ----
+    # detail your results in a format like the result of text_search();
+    # it is stored for later modules in a report or pipeline
+    table = text_search(paper, pattern)
+
+    ## summary_table ----
+    # one row per paper: a paper_id column plus the columns to add
+    # to the master summary table
+    summary_table = (
+        table.groupby("paper_id", sort=False).size().rename("n_significant").reset_index()
+    )
+
+    ## traffic light ----
+    # displayed in reports, possible values:
+    #   green: no problems detected
+    #   yellow: something to check
+    #   red: possible problems detected
+    #   info: informational only
+    #   na: not applicable
+    #   fail: check failed
+    tl = "info" if len(table) else "na"
+
+    ## summary_text ----
+    # short text to be displayed at the top of reports;
+    # may be different for each possible traffic light
+    summary_text_options = {
+        "na": "Not applicable",
+        "info": "This table is provided for your information",
+        "red": "This is a potential problem",
+        "yellow": "There may be a problem",
+        "green": "No problems found",
+        "fail": "The check failed, sorry",
+    }
+    summary_text = summary_text_options[tl]
+
+    ## report ----
+    # longer text to be displayed in the module section;
+    # use quarto / markdown for styling
+    # https://quarto.org/docs/authoring/markdown-basics.html
+    report_text = (
+        "This table shows all of the sentences where the paper used the word *significant*. "
+    )
+    report_table = table.loc[:, ["header", "text"]]
+    further_info = [
+        "For more opinions on the use of the word *significant*:",
+        "* Motulsky, H. (2014). Opinion: Never use the word ‘significant’ in a scientific "
+        "paper. Advances in regenerative biology, 1(1), 25155. doi: "
+        "[10.3402/arb.v1.25155](https://doi.org/10.3402/arb.v1.25155)",
+    ]
+    report = [
+        report_text,
+        scroll_table(report_table, colwidths=[0.2, 0.8]),
+        collapse_section(further_info, title="Further Info"),
+    ]
+
+    # return a dict ----
+    return {
+        "table": table,
+        "summary_table": summary_table,
+        "na_replace": 0,
+        "traffic_light": tl,
+        "summary_text": summary_text,
+        "report": report,
+    }

@@ -1,0 +1,38 @@
+{
+  "id": "errors.edge",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `abs_path`.",
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`."
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      null,
+      null,
+      null,
+      "non-character argument",
+      null,
+      "non-character argument",
+      "non-character argument",
+      "subscript out of bounds",
+      "subscript out of bounds",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

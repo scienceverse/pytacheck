@@ -1,0 +1,37 @@
+{
+  "id": "dataone_info.mock.none_valid",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dataone_url",
+      "dataone_host",
+      "dataone_pid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://example.org"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

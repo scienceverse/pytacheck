@@ -1,0 +1,3888 @@
+{
+  "id": "crossref_query_parse.fixtures.each_default",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/cercor/bhn181"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              147.56873
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Observation and Execution of Actions Share Motor and Somatosensory Voxels in all Tested Subjects: Single-Subject Analyses of Unsmoothed fMRI Data"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "V.",
+                      "C."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gazzola",
+                      "Keysers"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press (OUP)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cerebral Cortex"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2009
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "19"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1239-1255"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/cercor/bhn181"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1007/bf00248742"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              130.809
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Functional organization of inferior area 6 in the macaque monkey"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 6,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "G.",
+                      "R.",
+                      "L.",
+                      "M.",
+                      "G.",
+                      "M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rizzolatti",
+                      "Camarda",
+                      "Fogassi",
+                      "Gentilucci",
+                      "Luppino",
+                      "Matelli"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Springer Science and Business Media LLC"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experimental Brain Research"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1988
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "71"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "491-507"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1007/bf00248742"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1016/j.clinph.2009.01.003"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              121.98983
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The effect of continuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 9,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ying-Zu",
+                      "John C.",
+                      "Chin-Song",
+                      "JiunJie",
+                      "Yi-Hsin",
+                      "Szu-Chia",
+                      "Wen-Li",
+                      "June",
+                      "Rou-Shayn"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Huang",
+                      "Rothwell",
+                      "Lu",
+                      "Wang",
+                      "Weng",
+                      "Lai",
+                      "Chuang",
+                      "Hung",
+                      "Chen"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Elsevier BV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Clinical Neurophysiology"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2009
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "120"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "796-801"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1016/j.clinph.2009.01.003"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1016/j.tics.2004.07.002"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              100.030396
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A unifying view of the basis of social cognition"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "V",
+                      "C",
+                      "G"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "GALLESE",
+                      "KEYSERS",
+                      "RIZZOLATTI"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Elsevier BV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Trends in Cognitive Sciences"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2004
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "8"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "9"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "396-403"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1016/j.tics.2004.07.002"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1016/j.neuron.2004.12.033"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              96.73683
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Theta Burst Stimulation of the Human Motor Cortex"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ying-Zu",
+                      "Mark J.",
+                      "Elisabeth",
+                      "Kailash P.",
+                      "John C."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Huang",
+                      "Edwards",
+                      "Rounis",
+                      "Bhatia",
+                      "Rothwell"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Elsevier BV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Neuron"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2005
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "45"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "201-206"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1016/j.neuron.2004.12.033"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1016/0168-0102(95)00950-7"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              130.58028
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Somatotopy of monkey premotor cortex examined with microstimulation"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Moshe",
+                      "Andrew R",
+                      "Berber van",
+                      "Hans van der"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Godschalk",
+                      "Mitz",
+                      "Duin",
+                      "Burga"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Elsevier BV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Neuroscience Research"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1995
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "23"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "269-279"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1016/0168-0102(95)00950-7"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/acprof:oso/9780199231447.003.0020"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              100.602165
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book-chapter"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Action mirroring and action understanding: an alternative account"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gergely"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Csibra"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Sensorimotor Foundations of Higher Cognition"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1993
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "435-459"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/acprof:oso/9780199231447.003.0020"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/1948550617697177"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              71.0658
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Equivalence Tests"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SAGE Publications"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Social Psychological and Personality Science"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2017
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "8"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "355-362"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/1948550617697177"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1080/2833373x.2024.2376046"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              114.67317
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The benefits of preregistration and Registered Reports"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family",
+                  "ORCID"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël",
+                      "Cristian",
+                      "Sajedeh",
+                      "Massimiliano"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Mesquida",
+                      "Rasti",
+                      "Ditroilo"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://orcid.org/0000-0002-0247-239X",
+                      "https://orcid.org/0000-0002-1542-8355",
+                      "https://orcid.org/0009-0007-3416-7692",
+                      "https://orcid.org/0000-0003-1021-0362"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Informa UK Limited"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Evidence-Based Toxicology"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2024
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1080/2833373x.2024.2376046"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1098/rstb.2008.0156"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              76.77081
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The role of social cognition in decision making"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Chris D",
+                      "Tania"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Frith",
+                      "Singer"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Royal Society"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Philosophical Transactions of the Royal Society B: Biological Sciences"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2008
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "363"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1511"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3875-3886"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1098/rstb.2008.0156"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1007/bf00230027"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              115.67183
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Understanding motor events: a neurophysiological study"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "G.",
+                      "L.",
+                      "L.",
+                      "V.",
+                      "G."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "di Pellegrino",
+                      "Fadiga",
+                      "Fogassi",
+                      "Gallese",
+                      "Rizzolatti"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Springer Science and Business Media LLC"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experimental Brain Research"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1992
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "91"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "176-180"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1007/bf00230027"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              124.133194
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Francesca",
+                      "Scott S."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gino",
+                      "Wiltermuth"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SAGE Publications"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Psychological Science"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2014
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "25"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "973-981"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/0956797614520714"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1016/s0896-6273(03)00838-9"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              113.33658
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Somatotopic Representation of Action Words in Human Motor and Premotor Cortex"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Olaf",
+                      "Ingrid",
+                      "Friedemann"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Hauk",
+                      "Johnsrude",
+                      "Pulvermüller"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Elsevier BV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Neuron"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2004
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "41"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "301-307"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1016/s0896-6273(03)00838-9"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1046/j.1460-9568.2001.01385.x"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              136.47302
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Action observation activates premotor and parietal areas in a somatotopic manner: an fMRI study"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 10,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "G.",
+                      "F.",
+                      "G. R.",
+                      "L.",
+                      "L.",
+                      "V.",
+                      "R. J.",
+                      "K.",
+                      "G.",
+                      "H.-J."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Buccino",
+                      "Binkofski",
+                      "Fink",
+                      "Fadiga",
+                      "Fogassi",
+                      "Gallese",
+                      "Seitz",
+                      "Zilles",
+                      "Rizzolatti",
+                      "Freund"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Wiley"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "European Journal of Neuroscience"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2001
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "13"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "400-404"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1046/j.1460-9568.2001.01385.x"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/cercor/bhp291"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              130.7778
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "State-Dependent TMS Reveals a Hierarchical Representation of Observed Acts in the Temporal, Parietal, and Premotor Cortices"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "L.",
+                      "M.",
+                      "J."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Cattaneo",
+                      "Sandrini",
+                      "Schwarzbach"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press (OUP)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cerebral Cortex"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2010
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "20"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "9"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2252-2258"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/cercor/bhp291"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/cercor/bhm239"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              169.04784
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Depression of Human Corticospinal Excitability Induced by Magnetic Theta-burst Stimulation: Evidence of Rapid Polarity-Reversing Metaplasticity"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "R.",
+                      "K.",
+                      "C.",
+                      "D.",
+                      "J."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gentner",
+                      "Wankerl",
+                      "Reinsberger",
+                      "Zeller",
+                      "Classen"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press (OUP)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cerebral Cortex"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2008
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "18"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "9"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2046-2053"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/cercor/bhm239"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1152/jn.1998.80.6.2870"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              105.86002
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Intracortical Inhibition and Facilitation in Different Representations of the Human Motor Cortex"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 7,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Robert",
+                      "Alda",
+                      "Cathrin",
+                      "Brian",
+                      "Ulf",
+                      "JOHN C.",
+                      "Leonardo G."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Chen",
+                      "Tam",
+                      "Bütefisch",
+                      "Corwell",
+                      "Ziemann",
+                      "Rothwell",
+                      "Cohen"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "American Physiological Society"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Journal of Neurophysiology"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1998
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "80"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2870-2881"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1152/jn.1998.80.6.2870"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/2515245918770963"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              62.074394
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Equivalence Testing for Psychological Research: A Tutorial"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family",
+                  "ORCID"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël",
+                      "Anne M.",
+                      "Peder M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Scheel",
+                      "Isager"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://orcid.org/0000-0002-0247-239X",
+                      "https://orcid.org/0000-0002-6627-0746",
+                      "https://orcid.org/0000-0002-6922-3590"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SAGE Publications"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Advances in Methods and Practices in Psychological Science"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2018
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "259-269"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/2515245918770963"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1098/rspb.2002.2034"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              80.36001
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Facial resemblance enhances trust"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DeBruine"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Royal Society"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Proceedings of the Royal Society of London. Series B: Biological Sciences"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2002
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "269"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1498"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1307-1312"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1098/rspb.2002.2034"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.32614/cran.package.faux"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              70.38829
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dataset"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "faux: Simulation for Factorial Designs"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family",
+                  "ORCID"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DeBruine"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://orcid.org/0000-0002-7523-5539"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The R Foundation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "CRAN: Contributed Packages"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.32614/cran.package.faux"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/2515245918770963"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              75.73313
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Equivalence Testing for Psychological Research: A Tutorial"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family",
+                  "ORCID"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël",
+                      "Anne M.",
+                      "Peder M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Scheel",
+                      "Isager"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://orcid.org/0000-0002-0247-239X",
+                      "https://orcid.org/0000-0002-6627-0746",
+                      "https://orcid.org/0000-0002-6922-3590"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SAGE Publications"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Advances in Methods and Practices in Psychological Science"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2018
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "259-269"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/2515245918770963"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/2515245918770963"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              64.75775
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Equivalence Testing for Psychological Research: A Tutorial"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family",
+                  "ORCID"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël",
+                      "Anne M.",
+                      "Peder M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Scheel",
+                      "Isager"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://orcid.org/0000-0002-0247-239X",
+                      "https://orcid.org/0000-0002-6627-0746",
+                      "https://orcid.org/0000-0002-6922-3590"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SAGE Publications"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Advances in Methods and Practices in Psychological Science"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2018
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "259-269"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/2515245918770963"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/brain/119.2.593"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              100.12454
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Action recognition in the premotor cortex"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Vittorio",
+                      "Luciano",
+                      "Leonardo",
+                      "Giacomo"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gallese",
+                      "Fadiga",
+                      "Fogassi",
+                      "Rizzolatti"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press (OUP)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Brain"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1996
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "119"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "593-609"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/brain/119.2.593"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1162/jocn.2009.21189"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              89.01723
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Eight Problems for the Mirror Neuron Theory of Action Understanding in Monkeys and Humans"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gregory"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Hickok"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MIT Press"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Journal of Cognitive Neuroscience"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2009
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "21"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1229-1243"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1162/jocn.2009.21189"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/acprof:oso/9780199231447.003.0020"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              72.99166
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book-chapter"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Action mirroring and action understanding: an alternative account"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gergely"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Csibra"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Sensorimotor Foundations of Higher Cognition"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1993
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "435-459"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/acprof:oso/9780199231447.003.0020"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/acprof:oso/9780199231447.003.0018"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              65.53186
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book-chapter"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The motor hierarchy: from kinematics to goals and intentions"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Antonia F de C.",
+                      "Scott T."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Hamilton",
+                      "Grafton"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Sensorimotor Foundations of Higher Cognition"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1993
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "381-407"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/acprof:oso/9780199231447.003.0018"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/brain/110.3.747"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              111.11768
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "RECOVERY FROM IDEOMOTOR APRAXIA"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ANNA",
+                      "ERMINIO",
+                      "SERGIO DELLA",
+                      "MARCELLA",
+                      "HANS"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "BASSO",
+                      "CAPITANI",
+                      "SALA",
+                      "LAIACONA",
+                      "SPINNLER"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Oxford University Press (OUP)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Brain"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1987
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "110"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "747-760"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1093/brain/110.3.747"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1037/0003-066x.54.6.408"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              120.075745
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The origins of sex differences in human behavior: Evolved dispositions versus social roles."
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Alice H.",
+                      "Wendy"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Eagly",
+                      "Wood"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "American Psychological Association (APA)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "American Psychologist"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1999
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "54"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "408-423"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1037/0003-066x.54.6.408"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.32614/cran.package.faux"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              70.38829
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dataset"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "faux: Simulation for Factorial Designs"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family",
+                  "ORCID"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DeBruine"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://orcid.org/0000-0002-7523-5539"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The R Foundation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "CRAN: Contributed Packages"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.32614/cran.package.faux"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1016/j.cogbrainres.2005.05.014"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              130.2286
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "On beyond mirror neurons: Internal representations subserving imitation and recognition of skilled object-related actions in humans"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Laurel J.",
+                      "Kathleen M.",
+                      "Rukmini"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Buxbaum",
+                      "Kyle",
+                      "Menon"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Elsevier BV"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cognitive Brain Research"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2005
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "25"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "226-239"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1016/j.cogbrainres.2005.05.014"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "page",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1098/rspb.1998.0266"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              116.52006
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Improving vision: neural compensation for optical defocus"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mark",
+                      "James R",
+                      "Niall C",
+                      "Puja",
+                      "John P"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mon-Williams",
+                      "Tresilian",
+                      "Strang",
+                      "Kochhar",
+                      "Wann"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Royal Society"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Proceedings of the Royal Society of London. Series B: Biological Sciences"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1998
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "265"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1390"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "71-77"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1098/rspb.1998.0266"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "type",
+          "title",
+          "author",
+          "publisher",
+          "container-title",
+          "year",
+          "volume",
+          "issue",
+          "URL"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1080/2833373x.2024.2376046"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              118.05617
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The benefits of preregistration and Registered Reports"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family",
+                  "ORCID"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël",
+                      "Cristian",
+                      "Sajedeh",
+                      "Massimiliano"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Mesquida",
+                      "Rasti",
+                      "Ditroilo"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://orcid.org/0000-0002-0247-239X",
+                      "https://orcid.org/0000-0002-1542-8355",
+                      "https://orcid.org/0009-0007-3416-7692",
+                      "https://orcid.org/0000-0003-1021-0362"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Informa UK Limited"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Evidence-Based Toxicology"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2024
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1080/2833373x.2024.2376046"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,70 @@
+{
+  "id": "local_files.dir",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_url",
+      "file_location",
+      "file_size",
+      "file_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file.html",
+          "spv-test-corpus.md",
+          "study_1_script.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/file.html",
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/spv-test-corpus.md",
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/study_1_script.do"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3709737,
+          4511,
+          12274
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "code"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

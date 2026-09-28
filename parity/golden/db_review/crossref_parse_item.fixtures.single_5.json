@@ -1,0 +1,7884 @@
+{
+  "id": "crossref_parse_item.fixtures.single_5",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1002/crossmark_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1007/springer_crossmark_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "http://dx.doi.org/10.1007/springer_crossmark_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/elsevier_cm_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/elsevier_cm_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/elsevier_cm_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/elsevier_cm_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1073/pnas.cm10313"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1080/tandf_crossmark_01"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1080/tandf_crossmark_01"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1002/crossmark_policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "update-policy"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/sage-journals-update-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:title>Abstract<\/jats:title><jats:p>Existing work on the effects of social comparison on envy and generosity typically involves manipulation of social comparison with respect to dimensions that carry personal meaning and reflect upon the self, for example, performance, ability, or achievement. In the current work, we examine the effects of social comparison based on a purely arbitrary, manipulated situation. We measure malicious envy via monetary decisions that have real consequences for the target of comparison, in place of a self‐reported questionnaire. In addition, we test the effects of the preliminary social comparison on generosity in a subsequent and ostensibly unrelated situation. In Experiment 1 we demonstrate the effect of randomly manipulated upward social comparison on a monetary allocation decision, and we establish the link between this allocation decision and malicious envy. In Experiment 2 we show that upward comparison affects not only malicious envy towards the target of the comparison but also decreases generosity towards a third party in a subsequent, ostensibly unrelated situation. Experiment 3 shows the effect of this type of social comparison, beyond a specific direction, on reducing generosity towards a third party.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:title>Abstract<\/jats:title>\n                  <jats:p>Running studies with high statistical power, while effect size estimates in psychology are often inaccurate, leads to a practical challenge when designing an experiment. This challenge can be addressed by performing sequential analyses while the data collection is still in progress. At an interim analysis, data collection can be stopped whenever the results are convincing enough to conclude that an effect is present, more data can be collected, or the study can be terminated whenever it is extremely unlikely that the predicted effect will be observed if data collection would be continued. Such interim analyses can be performed while controlling the Type 1 error rate. Sequential analyses can greatly improve the efficiency with which data are collected. Additional flexibility is provided by adaptive designs where sample sizes are increased on the basis of the observed effect size. The need for pre‐registration, ways to prevent experimenter bias, and a comparison between Bayesian approaches and null‐hypothesis significance testing (NHST) are discussed. Sequential analyses, which are widely used in large‐scale medical trials, provide an efficient way to perform high‐powered informative experiments. I hope this introduction will provide a practical primer that allows researchers to incorporate sequential analyses in their research. Copyright © 2014 John Wiley &amp; Sons, Ltd.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>It is widely assumed that narcissists are envious. Nevertheless, evidence supporting this claim has remained elusive. In five studies (N = 1,225), we disentangle how grandiose narcissism predicts divergent envious inclinations. Specific facets of narcissism and forms of envy shared the same underlying motivational orientations (Study 1) and distinctively related to each other (Studies 1 to 5) via differences in emotional appraisal (Study 4). Moreover, envy was linked to opposing social consequences of different narcissism facets (Study 5). Specifically, hope for success related to narcissistic admiration, predicting benign envy, which entails the motivation to improve performance, translating into the ascription of social potency by the self and others. In contrast, fear of failure related to narcissistic rivalry, predicting malicious envy, which entails hostility, translating into the ascription of a proneness for social conflict by others. These results converged with envy measured as a trait (Studies 1 and 5) or state in recall tasks (Studies 2 and 4) and as response to an upward standard in the situation (Study 3). The findings provide important insights into narcissists‘ emotional complexities, integrate prior isolated and conflicting evidence, and open up new avenues for research on narcissism and envy. Copyright © 2016 European Association of Personality Psychology<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>Based on a new theoretical framework—the Social Relations Lens Model—this study examined the influence of personality on real–life attraction at zero acquaintance. A group of psychology freshmen ( N = 73) was investigated upon encountering one another for the first time. Personality traits, attraction ratings and metaperceptions were assessed using a large round–robin design (2628 dyads). In line with our model, personality differentially predicted who was a liker and who expected to be liked (perceiver effects), who was popular and who was seen as a liker (target effects), as well as who liked whom and who expected to be liked by whom (relationship effects). Moreover, the influence of personality on attraction was mediated by observable physical, nonverbal and audible cues. Results allowed a closer look at first sight and underline the importance of combining componential and process approaches in understanding the interplay of personality and social phenomena. Copyright © 2010 John Wiley &amp; Sons, Ltd.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>Emotional signals are crucial for sharing important information, with conspecifics, for example, to warn humans of danger. Humans use a range of different cues to communicate to others how they feel, including facial, vocal, and gestural signals. We examined the recognition of nonverbal emotional vocalizations, such as screams and laughs, across two dramatically different cultural groups. Western participants were compared to individuals from remote, culturally isolated Namibian villages. Vocalizations communicating the so-called “basic emotions” (anger, disgust, fear, joy, sadness, and surprise) were bidirectionally recognized. In contrast, a set of additional emotions was only recognized within, but not across, cultural boundaries. Our findings indicate that a number of primarily negative emotions have vocalizations that can be recognized across cultures, while most positive emotions are communicated with culture-specific signals.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:title>Abstract<\/jats:title>\n               <jats:p>Usually, people’s emotions arise from their perceptions of their circumstances—immediate, imagined, or remembered. This idea has been implicit in many philosophical treatments of emotions (e.g., in Aristotle, Spinoza, and even Descartes and James; see Ellsworth 1994a; Gardiner, Clark-Metcalf, &amp; Beebe-Centa, 1980; Scherer, 2000) and explicit in some (e.g., Hume and Hobbes), and it is the central emphasis of current appraisal theories of emotion. Thinking and feeling are inextricably interrelated most of the time: Certain ways of interpreting one’s environment are inherently emotional, few thoughts are entirely free of feelings, and emotions influence thinking. Reason and passion are not independent domains, or are rarely so. Of course there are exceptions: Brain stimulation, hormones, and drugs can produce emotions without external environmental circumstances, just as they can produce sensations, cognitions, and ideas without external environmental circumstances (Penfield, 1975). The fact that exceptions exist does not mean that there is no rule. The general rule suggested by appraisal theorists is that emotions consist of patterns of perception, or rather interpretation, and their correlates in the central and peripheral nervous systems (see Ellsworth, 1994c; Roseman &amp; Smith, 2001; Scherer, 2001a, 2001b). A further assumption is that emotions are fundamentally adaptive, rather than maladaptive. In order to survive, an organism cannot simply understand its situation; it has to be motivated to do something about it. Many species have solved this problem with a mechanism that triggers fixed action patterns in response to appropriate stimuli. Emotions provide a more flexible alternative. They imply action tendencies (Frijda, 1986) without complete rigidity. Lower organisms respond to stimulus patterns with behavior. Emotions, although they still motivate behavior, “decouple” it from the perception of the stimulus so that reconsideration is possible (Scherer, 1984). Fear creates a tendency to flee, but a person may quickly realize that the threat is directed at someone else (reinterpretation of the event) or that an aggressive stance will intimidate the attacker (reinterpretation of response alternatives). Emotions allow flexibility both in event interpretation and in response choice. Emotions, from this point of view, represent an important evolutionary alternative. The phylogenetic expansion of the cerebral cortex enabled an increasing variety of interpretations, emotions, and behavioral options (see Hebb, 1949).<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:title>Abstract<\/jats:title>\n                  <jats:p>Envy is the pain that arises from the good fortune of others. Recent research identified two subtypes of envy, benign and malicious envy. Malicious envy is the envy subtype with action tendencies aimed to pull down the envied person from their superior position. Benign envy is also a frustrating experience, but activates action tendencies aimed at improving oneself. This article provides an overview of the empirical support for making this distinction in envy subtypes. It then discusses the benefits of a subtype approach to envy, with the main advantages of distinguishing benign and malicious envy being that it (a) provides researchers with the language to be clear in how they conceptualize envy and (b) allows novel predictions. A next section provides a response to some criticism on making this distinction. Finally, I conclude with a section on how envy in general, and benign and malicious envy in particular, could be measured.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:title>Joy or Pain?<\/jats:title>\n          <jats:p>\n            Face recognition and processing are so completely central to human social interactions that these functions are supported by specialized regions in the brain. One of the fundamental aspects being processed is emotion, particularly whether the emotion being expressed is positive or negative. Nevertheless, neuroimaging studies have documented that perceiving opposite emotions often activates the same or overlapping regions.\n            <jats:bold>\n              Aviezer\n              <jats:italic>et al.<\/jats:italic>\n            <\/jats:bold>\n            (p.\n            <jats:related-article xmlns:xlink=\"http://www.w3.org/1999/xlink\" ext-link-type=\"doi\" page=\"1225\" related-article-type=\"in-this-issue\" vol=\"338\" xlink:href=\"10.1126/science.1224313\">1225<\/jats:related-article>\n            ) report that the recognition of positive versus negative emotions actually relies on information communicated by the body—the extent to which perceivers identified joy versus grief in composite figures was driven by whether the body came from a joyous (versus grievous) image rather than the face.\n          <\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>We review the burgeoning literature on the social effects of emotions, documenting the impact of emotional expressions on observers’ affect, cognition, and behavior. We find convergent evidence that emotional expressions influence observers’ affective reactions, inferential processes, and behaviors across various domains, including close relationships, group decision making, customer service, negotiation, and leadership. Affective reactions and inferential processes mediate the effects of emotional expressions on observers’ behaviors, and the relative potency of these mediators depends on the observers’ information processing and the perceived appropriateness of the emotional expressions. The social effects of emotions are similar across expressive modalities (face, voice, body, text, symbols). We discuss the findings in relation to emotional contagion, emotional intelligence, emotion regulation, emotions as social information (EASI) theory, and the functionality of emotions in engendering social influence. Finally, we identify gaps in our current understanding of the topic and call for interdisciplinary collaboration and methodological diversification.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>Traditional methods of analyzing data from psychological experiments are based on the assumption that there is a single random factor (normally participants) to which generalization is sought. However, many studies involve at least two random factors (e.g., participants and the targets to which they respond, such as words, pictures, or individuals). The application of traditional analytic methods to the data from such studies can result in serious bias in testing experimental effects. In this review, we develop a comprehensive typology of designs involving two random factors, which may be either crossed or nested, and one fixed factor, condition. We present appropriate linear mixed models for all designs and develop effect size measures. We provide the tools for power estimation for all designs. We then discuss issues of design choice, highlighting power and feasibility considerations. Our goal is to encourage appropriate analytic methods that produce replicable results for studies involving new samples of both participants and targets.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>Four studies tested the hypothesis that the emotion of benign envy, but not the emotions of admiration or malicious envy, motivates people to improve themselves. Studies 1 to 3 found that only benign envy was related to the motivation to study more (Study 1) and to actual performance on the Remote Associates Task (which measures intelligence and creativity; Studies 2 and 3). Study 4 found that an upward social comparison triggered benign envy and subsequent better performance only when people thought self-improvement was attainable. When participants thought self-improvement was hard, an upward social comparison led to more admiration and no motivation to do better. Implications of these findings for theories of social emotions such as envy, social comparisons, and for understanding the influence of role models are discussed.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>In the present study, we investigated whether context is routinely encoded during emotion perception. For the first time, we show that people remember the context more often when asked to label an emotion in a facial expression than when asked to judge the expression’s simple affective significance (which can be done on the basis of the structural features of the face alone). Our findings are consistent with an emerging literature showing that facial muscle actions (i.e., structural features of the face), when viewed in isolation, might be insufficient for perceiving emotion.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>The current research is the first investigation of how the effects of expressing discrete emotions in negotiations vary across cultures. In a hypothetical negotiation scenario (Study 1) and a computer-mediated negotiation simulation (Study 2), expressing anger (relative to not expressing anger) elicited larger concessions from European American negotiators, but smaller concessions from Asian and Asian American negotiators. A third study provided evidence that this effect is due to different cultural norms about the appropriateness of anger expressions in negotiations: When we explicitly manipulated anger expressions to be appropriate, Asian and Asian American negotiators made larger concessions to the angry opponent, and their concessions were as large as was typical for European American negotiators; when we explicitly manipulated anger expressions to be inappropriate, European American negotiators made smaller concessions to the angry opponent, and their concessions were as small as was typical for Asian and Asian American negotiators. Implications for current understanding of culture, emotions, and negotiations are discussed.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>Although it is well established that regions of premotor cortex (PMC) are active during action observation, it remains controversial whether they play a causal role in action understanding. In the experiment reported here, we used off-line continuous theta-burst stimulation (cTBS) to investigate this question. Participants received cTBS over the hand and lip areas of left PMC, in separate sessions, before completing a pantomime-recognition task in which half of the trials contained pantomimed hand actions, and half contained pantomimed mouth actions. The results reveal a double dissociation: Participants were less accurate in recognizing pantomimed hand actions after receiving cTBS over the hand area than over the lip area and less accurate in recognizing pantomimed mouth actions after receiving cTBS over the lip area than over the hand area. This finding constrains theories of action understanding by showing that somatotopically organized regions of PMC contribute causally to action understanding and, thus, that the mechanisms underpinning action understanding and action performance overlap.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>Research on scene categorization generally concentrates on gist processing, particularly the speed and minimal features with which the “story” of a scene can be extracted. However, this focus has led to a paucity of research into how scenes are categorized at specific hierarchical levels (e.g., a scene could be a road or more specifically a highway); consequently, research has disregarded a potential diagnostically driven feedback process. We presented participants with scenes that were low-pass filtered so only their gist was revealed, while a gaze-contingent window provided the fovea with full-resolution details. By recording where in a scene participants fixated prior to making a basic- or subordinate-level judgment, we identified the scene information accrued when participants made either categorization. We observed a feedback process, dependent on categorization level, that systematically accrues sufficient and detailed diagnostic information from the same scene. Our results demonstrate that during scene processing, a diagnostically driven bidirectional interplay between top-down and bottom-up information facilitates relevant category processing.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>Although scientists dating back to Darwin have noted the importance of the body in communicating emotion, current research on emotion communication tends to emphasize the face. In this article we review the evidence for bodily expressions of emotions—that is, the handful of emotions that are displayed and recognized from certain bodily behaviors (i.e., pride, joy, sadness, shame, embarrassment, anger, fear, and disgust). We also review the previously developed coding systems available for identifying emotions from bodily behaviors. Although no extant coding system provides an exhaustive list of bodily behaviors known to communicate a panoply of emotions, our review provides the foundation for developing such a system.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>The nature of envy has recently been the subject of a heated debate. Some researchers see envy as a complex, yet unitary construct that despite being hostile in nature can lead to both hostile and nonhostile reactions. Others offer a dual approach to envy, in which envy’s outcomes reflect two types of envy: benign envy, involving upward motivation, and malicious envy, involving hostility against superior others. We compare these competing conceptualizations of envy in an adversarial (yet collaborative) review. Our goal is to aid the consumers of envy research in navigating the intricacies of this debate. We identify agreements and disagreements and describe implications for theory, methodology, and measurement, as well as challenges and opportunities for future work.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "abstract"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<jats:p>We conducted 2 studies to investigate whether or not benign envy prompts risk taking, suggesting that, compared to malicious envy, benign envy would motivate individuals to improve themselves and to be less sensitive to potential losses in risk taking. In Study 1 (<jats:italic>N<\/jats:italic> = 111), we\n found that individuals who experienced benign, as opposed to malicious, envy were more likely to engage in risk taking, even when the risky behavior was not directly related to the envy-eliciting situation. In Study 2 (<jats:italic>N<\/jats:italic> = 57), we replicated in a different domain this risk-taking tendency\n of benignly envious individuals, examined the process by which benign envy increases risk taking, and demonstrated that individuals who feel benign, compared to malicious, envy perceive less threat in risk taking. Our findings suggest that benign envy can lead to risk taking and self-improving\n behavior, owing to the motivation to improve oneself.<\/jats:p>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2018-12-27"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2019-12-17"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2020-01-14"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "7 February 2019"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "first_online"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "First Online"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ArticleHistory"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Article History"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Elsevier"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This article is maintained by"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Reading emotions, reading people: Emotion perception and inferences drawn from perceived emotions"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articletitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Article Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Current Opinion in Psychology"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "journaltitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Journal Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/j.copsyc.2021.06.008"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articlelink"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CrossRef DOI link to publisher maintained version"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "article"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "content_type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Content Type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "© 2021 Elsevier Ltd. All rights reserved."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "copyright"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Copyright"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Elsevier"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This article is maintained by"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Emotion Recognition from Physiological Signal Analysis: A Review"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articletitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Article Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Electronic Notes in Theoretical Computer Science"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "journaltitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Journal Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/j.entcs.2019.04.009"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articlelink"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CrossRef DOI link to publisher maintained version"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "article"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "content_type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Content Type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "© 2019 Published by Elsevier B.V."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "copyright"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Copyright"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Elsevier"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This article is maintained by"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "What catches the envious eye? Attentional biases within malicious and benign envy"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articletitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Article Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Journal of Experimental Social Psychology"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "journaltitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Journal Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/j.jesp.2014.05.007"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articlelink"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CrossRef DOI link to publisher maintained version"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "article"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "content_type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Content Type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Copyright © 2014 Elsevier Inc. All rights reserved."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "copyright"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Copyright"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.name",
+              "assertion.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Elsevier"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This article is maintained by"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Envy mediates the relation between low academic self-esteem and hostile tendencies"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articletitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Article Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Journal of Research in Personality"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "journaltitle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Journal Title"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1016/j.jrp.2015.08.001"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "articlelink"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CrossRef DOI link to publisher maintained version"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "article"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "content_type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Content Type"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Copyright © 2015 Elsevier Inc. All rights reserved."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "copyright"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Copyright"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2010-01-25"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.URL",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The publishing and review policy for this title is described in its Aims & Scope."
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "peerreview_statement"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Peer Review Statement"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "http://www.tandfonline.com/action/journalInformation?show=aimsScope&journalCode=pcem20"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "http://www.tandfonline.com/action/journalInformation?show=aimsScope&journalCode=pcem20"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "aims_and_scope_url"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Aim & Scope"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2016-08-31"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2017-04-06"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "revised"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Revised"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2017-04-06"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2017-04-27"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.URL",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The publishing and review policy for this title is described in its Aims & Scope."
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "peerreview_statement"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Peer Review Statement"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "http://www.tandfonline.com/action/journalInformation?show=aimsScope&journalCode=pcem20"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "http://www.tandfonline.com/action/journalInformation?show=aimsScope&journalCode=pcem20"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "aims_and_scope_url"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Aim & Scope"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2018-09-11"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2019-04-04"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "revised"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Revised"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2019-04-05"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2019-05-13"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label",
+              "assertion.value",
+              "assertion.order",
+              "assertion.name",
+              "assertion.label",
+              "assertion.group.name",
+              "assertion.group.label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2015-08-10"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Received"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2016-02-17"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Accepted"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2016-06-07"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Published"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publication_history"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Publication History"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"CR 489/1-1\"",
+              "funder.\"CR 489/1-1\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "German Research Foundation"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CR 489/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CR 489/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "name"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "German Science Foundation"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"PTA-026-27-0980; ECF/2006/0205\"",
+              "funder.\"PTA-026-27-0980; ECF/2006/0205\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by",
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"RES-000-23-0429\"",
+              "funder.\"RES-000-23-0429\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by",
+              "funder.name"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100000269"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Economic and Social Research Council"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "PTA-026-27-0980; ECF/2006/0205"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "PTA-026-27-0980; ECF/2006/0205"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100000269"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100000269"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Economic and Social Research Council"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "RES-000-23-0429"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "RES-000-23-0429"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100000269"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Wellcome Trust"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"461-04-650\"",
+              "funder.\"461-04-650\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100000782"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "European Science Foundation"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "461-04-650"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "461-04-650"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100000782"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.name",
+              "funder.name"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "University of Leuven"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Research Foundation—Flanders"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"LA 4029/1-1\"",
+              "funder.\"LA 4029/1-1\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by",
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"RE 3718/3-1\"",
+              "funder.\"RE 3718/3-1\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Deutsche Forschungsgemeinschaft"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "LA 4029/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "LA 4029/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Deutsche Forschungsgemeinschaft"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "RE 3718/3-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "RE 3718/3-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.name",
+              "funder.\"CR 489/1-1 and MU 1500/5-1\"",
+              "funder.\"CR 489/1-1 and MU 1500/5-1\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "German Science Foundation"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CR 489/1-1 and MU 1500/5-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CR 489/1-1 and MU 1500/5-1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by",
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"CR489/1-1\"",
+              "funder.\"CR489/1-1\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by",
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"LA 4029/1-1\"",
+              "funder.\"LA 4029/1-1\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by",
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001655"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "German Academic Exchange Service"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001655"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Deutsche Forschungsgemeinschaft"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CR489/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CR489/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Deutsche Forschungsgemeinschaft"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "LA 4029/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "LA 4029/1-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100001659"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100008001"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "University of Cologne"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100008001"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.DOI",
+              "funder.name",
+              "funder.doi-asserted-by",
+              "funder.\"259/18\"",
+              "funder.\"259/18\"",
+              "funder.id.id",
+              "funder.id.id-type",
+              "funder.id.asserted-by"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100003977"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Israel Science Foundation"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "259/18"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "259/18"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.13039/501100003977"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DOI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "funder.name",
+              "funder.\"275-70-033\"",
+              "funder.\"275-70-033\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Netherlands Organization for Scientific Research"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "275-70-033"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "275-70-033"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0003-066x.48.4.384\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0003-066x.48.4.384"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0003-066x.54.6.408\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0003-066x.54.6.408"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0022-3514.52.6.1061\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0022-3514.52.6.1061"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0022-3514.64.6.906\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0022-3514.64.6.906"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0022-3514.70.2.205\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0022-3514.70.2.205"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0033-2909.115.1.102\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0033-2909.115.1.102"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0033-2909.128.2.203\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0033-2909.128.2.203"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"10.1037//0096-3445.113.3.464\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1037//0096-3445.113.3.464"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-created.date-parts.2012L",
+              "content-created.date-parts.8L",
+              "content-created.date-parts.9L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  8
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  9
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-created.date-parts.2014L",
+              "content-created.date-parts.1L",
+              "content-created.date-parts.16L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2014
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  16
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-created.date-parts.2017L",
+              "content-created.date-parts.10L",
+              "content-created.date-parts.20L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2017
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  10
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  20
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-created.date-parts.2009L",
+              "content-created.date-parts.4L",
+              "content-created.date-parts.26L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2009
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  26
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-created.date-parts.2009L",
+              "content-created.date-parts.7L",
+              "content-created.date-parts.1L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2009
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  7
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-created.date-parts.2007L",
+              "content-created.date-parts.5L",
+              "content-created.date-parts.6L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2007
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  6
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-created.date-parts.2000L",
+              "content-created.date-parts.2L",
+              "content-created.date-parts.29L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2000
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  29
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "institution.name",
+              "institution.\"CRAN\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Comprehensive R Archive Network"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CRAN"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "institution.name",
+              "institution.\"CRAN\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Comprehensive R Archive Network"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CRAN"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "institution.name",
+              "institution.\"CRAN\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Comprehensive R Archive Network"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CRAN"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "institution.name",
+              "institution.\"CRAN\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Comprehensive R Archive Network"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CRAN"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "institution.name",
+              "institution.\"CRAN\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Comprehensive R Archive Network"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CRAN"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "institution.name",
+              "institution.\"CRAN\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Comprehensive R Archive Network"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "CRAN"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "description"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Convenience functions for analyzing factorial experiments using ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow specification of between, within (i.e., repeated-measures), or mixed (i.e., split-plot)  ANOVAs for data in long format (i.e., one observation per row), automatically aggregating multiple observations per individual and cell  of the design. mixed() fits mixed models using lme4::lmer() and computes  p-values for all fixed effects using either Kenward-Roger or Satterthwaite  approximation for degrees of freedom (LMM only), parametric bootstrap  (LMMs and GLMMs), or likelihood ratio tests (LMMs and GLMMs).  afex_plot() provides a high-level interface for interaction or one-way  plots using ggplot2, combining raw data and model estimates. afex uses  type 3 sums of squares as default (imitating commercial statistical software)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "description"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A fast, consistent tool for working with data frame like objects, both in memory and out of memory."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "description"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Obtain estimated marginal means (EMMs) for many linear, generalized  linear, and mixed models. Compute contrasts or linear functions of EMMs, trends, and comparisons of slopes. Plots and other displays. Least-squares means are discussed, and the term \"estimated marginal means\" is suggested, in Searle, Speed, and Milliken (1980) Population marginal means  in the linear model: An alternative to least squares means, The American  Statistician 34(4), 216-221 <doi:10.1080/00031305.1980.10483031>."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "description"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Facilitates easy analysis of factorial experiments, including purely within-Ss designs (a.k.a. \"repeated measures\"), purely between-Ss designs, and mixed within-and-between-Ss designs. The functions in this package aim to provide simple, intuitive and consistent specification of data analysis and visualization. Visualization functions also include design visualization for pre-analysis data auditing, and correlation matrix visualization. Finally, this package includes functions for non-parametric analysis, including permutation tests and bootstrap resampling. The bootstrap function obtains predictions either by cell means or by more advanced/powerful mixed effects models, yielding predictions and confidence intervals that may be easily visualized at any level of the experiment's design."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "description"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Derives group sequential clinical trial designs and describes their properties. Particular focus on time-to-event, binary, and continuous outcomes. Largely based on methods described in Jennison, Christopher and Turnbull, Bruce W., 2000, \"Group Sequential Methods with Applications to Clinical Trials\" ISBN: 0-8493-0316-8."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "description"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A general purpose toolbox developed originally for personality, psychometric theory and experimental psychology.  Functions are primarily for multivariate analysis and scale construction using factor analysis, principal component analysis, cluster analysis and reliability analysis, although others provide basic descriptive statistics. Item Response Theory is done using  factor analysis of tetrachoric and polychoric correlations. Functions for analyzing data at multiple levels include within and between group statistics, including correlations and factor analysis.  Validation and cross validation of scales developed using basic machine learning algorithms are provided, as are functions for simulating and testing particular item and test structures. Several functions  serve as a useful front end for structural equation modeling.  Graphical displays of path diagrams, including mediation models, factor analysis and structural equation models are created using basic graphics. Some of the functions are written to support a book on psychometric theory as well as publications in personality research. For more information, see the <https://personality-project.org/r/> web page."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-updated.date-parts.2025L",
+              "content-updated.date-parts.12L",
+              "content-updated.date-parts.14L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2025
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  12
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  14
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-updated.date-parts.2026L",
+              "content-updated.date-parts.4L",
+              "content-updated.date-parts.3L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2026
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-updated.date-parts.2026L",
+              "content-updated.date-parts.4L",
+              "content-updated.date-parts.9L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2026
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  9
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-updated.date-parts.2026L",
+              "content-updated.date-parts.2L",
+              "content-updated.date-parts.16L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2026
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  16
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-updated.date-parts.2026L",
+              "content-updated.date-parts.2L",
+              "content-updated.date-parts.15L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2026
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "content-updated.date-parts.2026L",
+              "content-updated.date-parts.3L",
+              "content-updated.date-parts.25L"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2026
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  25
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "special_numbering"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "special_numbering"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "special_numbering"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "special_numbering"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

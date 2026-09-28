@@ -1,0 +1,54 @@
+{
+ "id": 5550005,
+ "doi": "10.5281/zenodo.5550005",
+ "metadata": {
+  "title": "A zip",
+  "publication_date": "2026-01-01",
+  "resource_type": {
+   "type": "dataset"
+  },
+  "license": {
+   "id": "cc-by-4.0"
+  },
+  "creators": [
+   {
+    "name": "Doe, Jane"
+   }
+  ],
+  "keywords": [
+   "one",
+   "two"
+  ]
+ },
+ "updated": "2026-01-02T00:00:00+00:00",
+ "owners": [
+  {
+   "id": "1"
+  }
+ ],
+ "stats": {
+  "downloads": 1,
+  "unique_downloads": 1,
+  "views": 2
+ },
+ "files": [
+  {
+   "id": "5550005-bundle.zip",
+   "key": "bundle.zip",
+   "size": 136314880,
+   "checksum": "md5:zzz",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550005/files/bundle.zip/content"
+   }
+  },
+  {
+   "id": "5550005-readme.txt",
+   "key": "readme.txt",
+   "size": 8,
+   "checksum": "md5:2eb6f3d85c8037648139f3ae51ee5274",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550005/files/readme.txt/content"
+   }
+  }
+ ]
+}

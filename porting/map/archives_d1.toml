@@ -1,0 +1,103 @@
+# R source -> Python location for archives_d1 (Dryad, Figshare, Dataverse; see docs/PORTING.md).
+#
+# The three R files each carry a copy of the same file-by-file download,
+# size-cap and verification code; the Python port keeps that logic once, in
+# dataverse.py (_download_file_table, _verify_file_table, _zip_members,
+# _info_table, ...), so a change to that shared shape in any of the three R
+# files lands there.
+[files]
+"R/archive-dryad.R" = ["src/pytacheck/archives/dryad.py", "src/pytacheck/archives/dataverse.py"]
+"R/archive-figshare.R" = ["src/pytacheck/archives/figshare.py", "src/pytacheck/archives/dataverse.py"]
+"R/archive-dataverse.R" = ["src/pytacheck/archives/dataverse.py"]
+
+[functions]
+# R/archive-dryad.R
+".dryad_doi_prefixes" = "pytacheck.archives.dryad:_dryad_doi_prefixes"
+"dryad_links" = "pytacheck.archives.dryad:dryad_links"
+".dryad_doi" = "pytacheck.archives.dryad:_dryad_doi"
+"dryad_info" = "pytacheck.archives.dryad:dryad_info"
+".dryad_info" = "pytacheck.archives.dryad:_dryad_info"
+".dryad_headers" = "pytacheck.archives.dryad:_dryad_headers"
+"dryad_pat" = "pytacheck.archives.dryad:dryad_pat"
+".dryad_pat" = "pytacheck.archives.dryad:_dryad_pat"
+"dryad_auth" = "pytacheck.archives.dryad:dryad_auth"
+".dryad_auth" = "pytacheck.archives.dryad:_dryad_auth"
+".dryad_oauth_client" = "pytacheck.archives.dryad:_dryad_oauth_client"
+"dryad_file_download" = "pytacheck.archives.dryad:dryad_file_download"
+".dryad_zip_members" = "pytacheck.archives.dryad:_dryad_zip_members"
+".dryad_verify_downloads" = "pytacheck.archives.dryad:_dryad_verify_downloads"
+# R/archive-figshare.R
+".figshare_vanity_hosts" = "pytacheck.archives.figshare:_figshare_vanity_hosts"
+".figshare_doi_prefix_hosts" = "pytacheck.archives.figshare:_figshare_doi_prefix_hosts"
+".figshare_host_regex" = "pytacheck.archives.figshare:_figshare_host_regex"
+"figshare_links" = "pytacheck.archives.figshare:figshare_links"
+".figshare_id" = "pytacheck.archives.figshare:_figshare_id"
+".figshare_project_id" = "pytacheck.archives.figshare:_figshare_project_id"
+".figshare_project_articles" = "pytacheck.archives.figshare:_figshare_project_articles"
+"figshare_info" = "pytacheck.archives.figshare:figshare_info"
+".figshare_info" = "pytacheck.archives.figshare:_figshare_info"
+".figshare_headers" = "pytacheck.archives.figshare:_figshare_headers"
+"figshare_pat" = "pytacheck.archives.figshare:figshare_pat"
+".figshare_pat" = "pytacheck.archives.figshare:_figshare_pat"
+"figshare_file_download" = "pytacheck.archives.figshare:figshare_file_download"
+".figshare_zip_members" = "pytacheck.archives.figshare:_figshare_zip_members"
+".figshare_verify_downloads" = "pytacheck.archives.figshare:_figshare_verify_downloads"
+# R/archive-dataverse.R
+".dataverse_hosts" = "pytacheck.archives.dataverse:_dataverse_hosts"
+".dataverse_host_regex" = "pytacheck.archives.dataverse:_dataverse_host_regex"
+".dataverse_doi_prefix_hosts" = "pytacheck.archives.dataverse:_dataverse_doi_prefix_hosts"
+".dataverse_doi_prefix_regex" = "pytacheck.archives.dataverse:_dataverse_doi_prefix_regex"
+".dataverse_host_from_doi" = "pytacheck.archives.dataverse:_dataverse_host_from_doi"
+"dataverse_links" = "pytacheck.archives.dataverse:dataverse_links"
+".dataverse_parse" = "pytacheck.archives.dataverse:_dataverse_parse"
+"dataverse_info" = "pytacheck.archives.dataverse:dataverse_info"
+".dataverse_info" = "pytacheck.archives.dataverse:_dataverse_info"
+".dataverse_headers" = "pytacheck.archives.dataverse:_dataverse_headers"
+"dataverse_pat" = "pytacheck.archives.dataverse:dataverse_pat"
+".dataverse_pat" = "pytacheck.archives.dataverse:_dataverse_pat"
+"dataverse_file_download" = "pytacheck.archives.dataverse:dataverse_file_download"
+".dataverse_zip_members" = "pytacheck.archives.dataverse:_dataverse_zip_members"
+".dataverse_verify_downloads" = "pytacheck.archives.dataverse:_dataverse_verify_downloads"
+
+# data: the allowlists as module-level constants (R returns them from functions)
+[data]
+".dryad_doi_prefixes()" = "pytacheck.archives.dryad:DRYAD_DOI_PREFIXES"
+".figshare_vanity_hosts()" = "pytacheck.archives.figshare:FIGSHARE_VANITY_HOSTS"
+".figshare_doi_prefix_hosts()" = "pytacheck.archives.figshare:FIGSHARE_DOI_PREFIX_HOSTS"
+".dataverse_hosts()" = "pytacheck.archives.dataverse:DATAVERSE_HOSTS"
+".dataverse_doi_prefix_hosts()" = "pytacheck.archives.dataverse:DATAVERSE_DOI_PREFIX_HOSTS"
+
+# helpers standing in for R/package functions and for the code the three R
+# files duplicate
+[helpers]
+"base::$ on parsed JSON (partial matching; error on atomic)" = "pytacheck.archives.dataverse:_dollar"
+"%empty_or%" = "pytacheck.archives.dataverse:_empty_or"
+"utils::URLdecode" = "pytacheck.archives.dataverse:_url_decode"
+"utils::URLencode(reserved = TRUE)" = "pytacheck.archives.dataverse:_url_encode_reserved"
+"as.character() of a jsonlite scalar" = "pytacheck.archives.dataverse:_json_chr"
+"vapply(..., character(1)) element check" = "pytacheck.archives.dataverse:_chr_elt"
+"tryCatch(httr2::resp_body_json(resp), error = NULL)" = "pytacheck.archives.dataverse:_resp_json"
+".batch_query(url, msg = NULL, req_func)[[1]]" = "pytacheck.archives.dataverse:_query"
+"data.frame(url, id = <named vapply>) row-name error" = "pytacheck.archives.dataverse:_check_named_ids"
+"*_info() table/vector input handling" = "pytacheck.archives.dataverse:_info_table"
+"*_links() url-table filter" = "pytacheck.archives.dataverse:_url_rows"
+"*_links() text_search(return = 'match') part" = "pytacheck.archives.dataverse:_link_matches"
+"*_links() bind_rows + sub('/+$') + unique" = "pytacheck.archives.dataverse:_collect_links"
+"*_file_download() size caps, folder, download loop, copy, verify, warning" = "pytacheck.archives.dataverse:_download_file_table"
+"*_file_download() multi-id branch" = "pytacheck.archives.dataverse:_download_many"
+"*_file_download() return columns" = "pytacheck.archives.dataverse:_finish_file_table"
+"*_zip_members() body" = "pytacheck.archives.dataverse:_zip_members"
+"*_verify_downloads() body" = "pytacheck.archives.dataverse:_verify_file_table"
+"req_perform() of a file download (streamed to disk)" = "pytacheck.archives.dataverse:_fetch_file"
+"httr2::oauth_client() / req_oauth_client_credentials()" = "pytacheck.archives.dryad:DryadOAuthClient"
+# added by the adversarial review
+"httr2 req_perform_sequential(): errors that are not httr2_error abort the caller" = "pytacheck.archives.dataverse:RequestAbort"
+"vapply() names on *_links() id columns (URL-named vectors in R)" = "pytacheck.archives.dataverse:_mark_named_ids"
+"httr2 oauth_flow_parse() + oauth_token() (client-credentials token response)" = "pytacheck.archives.dryad:_token_from_body"
+"httr2 httr2_oauth* errors" = "pytacheck.archives.dryad:OAuthError"
+"httr2 req_perform() re-authentication after an OAuth invalid_token 401" = "pytacheck.archives.dryad:_dryad_reauth"
+# added by the adversarial review (round 2)
+"obj$<field> <- value on a one-row table (list column / 'replacement has n rows' error)" = "pytacheck.archives.dataverse:_field_cell"
+"URLdecode() result that is invalid UTF-8 (R regex functions refuse it)" = "pytacheck.archives.dataverse:_invalid_utf8"
+"httr2::resp_body_raw() on an empty body (aborts *_file_download())" = "pytacheck.archives.dataverse:EmptyBodyError"
+"text_search()'s sentence table, built once per *_links() call" = "pytacheck.archives.dataverse:_search_frame"

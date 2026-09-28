@@ -1,0 +1,70 @@
+{
+  "id": "repro_materialize_layout.copies",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "files",
+      "materialised",
+      "is_root"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data/scores_data.csv",
+          "output",
+          "study-ex1",
+          "study-ex1/data",
+          "study-ex1/data/study-demographics_data.csv"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "target_path",
+          "source",
+          "ok"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "study-ex1/data/study-demographics_data.csv",
+              "data/scores_data.csv",
+              "data/missing.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/repro_core/fixtures/layout/demographics.csv",
+              "tests/repro_core/fixtures/layout/scores.csv",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

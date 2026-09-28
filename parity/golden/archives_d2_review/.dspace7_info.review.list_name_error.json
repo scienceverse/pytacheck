@@ -1,0 +1,9 @@
+{
+  "id": ".dspace7_info.review.list_name_error",
+  "ok": false,
+  "error": "values must be type 'character',\n but FUN(X[[1]]) result is type 'list'",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,39 @@
+{
+ "data": {
+  "id": "fffffffffffffffffffffff7",
+  "type": "registration-schemas",
+  "attributes": {
+   "name": "Synthetic Scalar Titles",
+   "schema_version": 2,
+   "schema": {
+    "pages": [
+     {
+      "id": "p1",
+      "questions": [
+       {
+        "qid": "qa",
+        "title": 5
+       },
+       {
+        "qid": "qb",
+        "title": false
+       },
+       {
+        "qid": "qc",
+        "title": 100000.0
+       },
+       {
+        "qid": "qd",
+        "title": 12345678901234567890123456789012345678901234567890
+       },
+       {
+        "qid": "qe",
+        "title": null
+       }
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

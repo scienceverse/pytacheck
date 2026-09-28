@@ -1,0 +1,96 @@
+{
+  "id": "github_files.html_json_types",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "repo",
+      "clean_repo",
+      "name",
+      "path",
+      "download_url",
+      "size",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://github.com/gzorg/fallrepo",
+          "https://github.com/gzorg/fallrepo",
+          "https://github.com/gzorg/fallrepo",
+          "https://github.com/gzorg/fallrepo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "gzorg/fallrepo",
+          "gzorg/fallrepo",
+          "gzorg/fallrepo",
+          "gzorg/fallrepo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A.csv",
+          "b.txt",
+          "page.html",
+          "page.html"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A.csv",
+          "b.txt",
+          "page.html",
+          "page.html"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://raw.githubusercontent.com/gzorg/fallrepo/main/A.csv",
+          "https://raw.githubusercontent.com/gzorg/fallrepo/main/b.txt",
+          "https://raw.githubusercontent.com/gzorg/fallrepo/main/page.html",
+          "https://raw.githubusercontent.com/gzorg/fallrepo/main/page.html"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          10,
+          5,
+          99,
+          99
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "csv",
+          "txt",
+          "html",
+          "html"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "text",
+          "code",
+          "web"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

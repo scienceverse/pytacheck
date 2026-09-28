@@ -1,0 +1,126 @@
+{
+  "id": "stats.df.AllPValues",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "p_comp",
+      "reported_p",
+      "p_decimals",
+      "text",
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "<",
+          "<",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.002,
+          0.0004,
+          0.05,
+          0.05,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3,
+          4,
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t(20) = 4.23, p = .002",
+          "t(20) = 4.23, p = 0.0004",
+          "(z = 1.4, p < .05)",
+          "z = 1.4, p < .05",
+          "H = 2.2, p = .000"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

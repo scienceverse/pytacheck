@@ -1,0 +1,50 @@
+{
+    "status": "good",
+    "feedbacks": [
+        {
+            "id": "10.9999/pp.upper",
+            "title": "A paper (10.9999/pp.upper)",
+            "total_comments": 4,
+            "url": "https://pubpeer.com/publications/PP.UPPER",
+            "users": "A. Person"
+        },
+        {
+            "id": "10.9999/pp.zero",
+            "title": "A paper (10.9999/pp.zero)",
+            "total_comments": 0,
+            "url": "https://pubpeer.com/publications/PP.ZERO",
+            "users": "Nobody"
+        },
+        {
+            "id": "10.9999/pp.dup",
+            "title": "A paper (10.9999/pp.dup)",
+            "total_comments": 1,
+            "url": "https://pubpeer.com/publications/PP.DUP",
+            "users": "Dup Checker"
+        },
+        {
+            "id": "10.9999/pp.nourl",
+            "title": "A paper (10.9999/pp.nourl)",
+            "total_comments": 3,
+            "users": "No Url"
+        },
+        {
+            "id": "10.9999/pp.stat",
+            "title": "A paper (10.9999/pp.stat)",
+            "total_comments": 1,
+            "url": "https://pubpeer.com/publications/PP.STAT",
+            "users": "Statcheck "
+        },
+        {
+            "id": "10.9999/pp.many",
+            "title": "A paper (10.9999/pp.many)",
+            "total_comments": 12,
+            "url": "https://pubpeer.com/publications/PP.MANY",
+            "users": [
+                "Alpha",
+                " Beta ",
+                "Gamma"
+            ]
+        }
+    ]
+}

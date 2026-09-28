@@ -1,0 +1,42 @@
+{
+ "data": {
+  "id": "pidsl",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration pidsl",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-pidsl-v1",
+   "registration_responses": {
+    "400-1": "P-123",
+    "400-3": "https://example.org",
+    "400-5": "H1"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "ccccccccccccccccccccccc3",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/ccccccccccccccccccccccc3/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/pidsl/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

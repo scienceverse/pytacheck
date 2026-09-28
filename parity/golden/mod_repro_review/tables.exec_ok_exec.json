@@ -1,0 +1,150 @@
+{
+  "id": "tables.exec_ok_exec",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Outcome",
+          "Detail",
+          "Time (s)"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Reported",
+          "Found",
+          "Confidence",
+          "Plausible",
+          "Matched values",
+          "Not matched",
+          "Source file",
+          "Analysis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t=-4.04 df=4.96 p=0.01"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "full"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t=-4.04, df=4.96, p=0.01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Welch Two Sample t-test"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

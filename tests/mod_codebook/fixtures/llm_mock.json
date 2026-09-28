@@ -1,0 +1,77 @@
+{
+  "merge": {
+    "merge": {"equivalent": true, "canonical": "first"}
+  },
+  "merge_no": {
+    "merge": {"equivalent": false, "canonical": ""}
+  },
+  "match": {
+    "merge": {"equivalent": true, "canonical": "Mood rating"},
+    "match_prefix": 3
+  },
+  "parse": {
+    "match_prefix": 3
+  },
+  "scales": {
+    "text_scales": {
+      "scale_name": ["Perceived Stress Scale", "Aggression Questionnaire", "grit scale", "Perceived stress scale", "  "],
+      "acronym": ["PSS", "AQ", "", "PSS", ""],
+      "n_items": ["10", "", "12", "", ""],
+      "administered": ["yes", "unclear", "no", "yes", "no"],
+      "confidence": ["high", "low", "medium", "high", "low"]
+    },
+    "prefix_names": {
+      "AQ": ["Autism Spectrum Quotient", "HIGH"],
+      "SWLS": ["unknown", "high"],
+      "PSS": ["Perceived Stress Scale", "weird"]
+    },
+    "constructs": {
+      "bfi_1": ["Personality traits", "HIGH"]
+    }
+  },
+  "selfgen": {
+    "constructs": {
+      "POWER.PP1_1": ["slider ratings of power", "high"],
+      "slider_1": ["Slider ratings", "medium"],
+      "prob_a": ["none", "high"]
+    }
+  },
+  "panas": {
+    "text_scales": {
+      "scale_name": ["Positive and Negative Affect Schedule", "Beck Depression Inventory"],
+      "acronym": ["PANAS", "BDI"],
+      "n_items": ["10", "21"],
+      "administered": ["yes", "unclear"],
+      "confidence": ["high", "low"]
+    },
+    "prefix_names": {
+      "PANAS": ["Positive and Negative Affect Schedule", "medium"]
+    }
+  },
+  "errors": {
+    "error_phases": ["Matching scales to text", "Identifying scales in the manuscript", "Labelling scales"],
+    "merge": {"equivalent": true, "canonical": "first"}
+  },
+  "rv_names": {
+    "text_scales": {
+      "scale_name": ["Big Five Inventory", "job satisfaction scale", "Alphabet Test"],
+      "acronym": ["BFI", "", "ABC"],
+      "n_items": ["44", "4", ""],
+      "administered": ["yes", "yes", "unclear"],
+      "confidence": ["high", "medium", "low"]
+    },
+    "prefix_names": {
+      "BFI": ["Big Five Inventory", "high"],
+      "ABC": ["Alphabet Scale", "medium"],
+      "SAT": ["Job Satisfaction Scale", "LOW"]
+    }
+  },
+  "rv_parse_ctx": {
+    "parse_context": "Experiment 2",
+    "match_prefix": 3
+  },
+  "rv_parse_noctx": {
+    "parse_no_context": true,
+    "match_prefix": 3
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "id": "osf_preprint_list.page_start",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "provider",
+      "public",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "self",
+      "parent",
+      "project",
+      "primary_file"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r3nbd_v1",
+          "zu8aq_v1",
+          "deu2p_v1",
+          "g9wmx_v2",
+          "aysze_v1",
+          "us5d3_v2",
+          "ngb5p_v1",
+          "8wtqx_v1",
+          "usf97_v1",
+          "mbcu6_v3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Within- and cross-task cued congruency effects: evidence that control adaptation strategies can transfer between stimuli and tasks",
+          "A Meta-analysis of Heart Rate Variability (HRV) and Psychopathology: An Investigation Guided by the Hierarchical Taxonomy of Psychopathology (HiTOP) Framework",
+          "Estimating Network Temperature Through Multi-Group Ising Modeling",
+          "Epistemic disadvantage in open science practices",
+          "Statistical Reasoning regarding Possible Adverse Outcomes of Vaccination",
+          "Standardizing Predictors for Computing Effect Sizes in Multilevel Modeling with Random Slopes",
+          "Daily symptom associations in prolonged grief: a dynamic network approach",
+          "Empirically derived phenotypes can reduce diagnostic heterogeneity",
+          "Metacontingency Analysis of Practices Associated to Mental Health",
+          "Attitudes Toward Open Science Practices Among German Psychologists"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Research suggests that people can adjust cognitive control in anticipation of conflict on the basis of arbitrary cues signalling situations where responses linked to goal-relevant and goal-irrelevant stimulus dimensions conflict (i.e., congruency cues). However, findings are mixed and several questions remain. First, can control adaptation be implemented solely based on the expectation of conflict (or its absence)? Second, what is the nature of such proactive control adaptation? Specifically, does it involve the implementation of apposite adjustments of control processes tailored to the expected level of conflict, or does it instead reflect task-specific strategies, such as an attentional shift to the task-irrelevant dimension, or even just the general recruitment of additional attentional resources? Finally, can this control preparation transfer and affect performance in other conflict tasks? Across three experiments, we used a cued-congruency task-switching paradigm and found that people can benefit from congruency cues (Experiment 1, n=40), and that this proactive control generalizes from a flanker task to a similar flanker task involving different stimuli (Experiment 2, n=51) and even to a completely different (i.e., Simon) conflict task (Experiment 3, n=50). Overall, our findings are consistent with a domain-general view of proactive cognitive control.",
+          "While low resting heart rate variability (HRV) is associated with various forms of psychopathology, patterns of specificity and non-specificity in the apparent transdiagnostic nature of resting HRV have not been systematically investigated. Existing research is dominated by disorder-specific studies, limiting conclusions about whether HRV reductions reflect mechanisms unique to particular diagnoses or a broader transdiagnostic vulnerability. Using the Hierarchical Taxonomy of Psychopathology (HiTOP) framework, this Stage 2 Registered Report synthesized evidence from 430 studies and 732 effect sizes (N = 62,264) to quantify associations between resting HRV and psychopathology at multiple levels of specificity—from individual disorders to higher-order spectra and superspectra. Across the hierarchy, lower resting HRV emerged as a robust correlate of most domains of psychopathology. For example, at the disorder level, lower resting HRV was significantly associated with schizophrenia, bipolar disorder, autism, generalized anxiety, panic disorder, borderline personality, posttraumatic stress disorder, and major depression, but not with obsessive-compulsive disorder, social anxiety, and attention-deficit/hyperactivity disorder. Psychotic conditions showed the strongest associations across all levels of the hierarchy, but sensitivity analyses indicated that these associations are likely influenced by study design and sample characteristics. Together with consistent moderator effects showing stronger HRV–psychopathology associations in samples with higher symptom severity, we conclude that decrements in resting HRV represent a transdiagnostic marker of systemic dysregulation reflecting illness severity rather than disorder-specific autonomic signatures.",
+          "The inverse-temperature parameter β in the Ising model captures system-level properties such as stability, polarization, and susceptibility to change, but it is underidentified in a single group and therefore cannot be estimated directly. We evaluate a multi-group Ising approach for estimating and testing between-group differences in β. Across two simulations, we compare four estimators under structural equivalence  nd structural heterogeneity. When the network structure is equal across groups, all four estimators recover β accurately and the BIC equality test controls false positives well. When network structure differs across groups, equal-network estimators yield biased point estimates and confidence intervals with undercoverage, whereas partial pruning remains unbiased but also shows confidence-interval undercoverage in smaller samples. Across conditions, BIC is more reliable than the chi-square likelihood-ratio test and AIC for testing β equality, and SEM fit indices (RMSEA and CFI) distinguish correctly specified from misspecified models. We illustrate the workflow with a USA–Brazil climate-emotion comparison and a tutorial. The methods are implemented in psychonetrics (Epskamp, 2020; Epskamp et al., 2022).",
+          "Open science advocates aim to address epistemic injustice and global power asymmetries in research infrastructures yet underestimate structural vulnerabilities and risks embedded in data sharing practices. Drawing on an ethnographic study of the GCRF South–South Migration Inequality and Development Hub (MIDEQ), we argue that even well-intentioned systems, such as the MIDEQ hub, do not reach these vulnerabilities. To capture these overlooked harms, we employ the concept of epistemic disadvantage, a category coextensive with, but separate from epistemic injustice. Epistemic disadvantage includes ethically justified data withholding and misappropriation within consensual systems, which is not captured by existing notions of extractivism as those focus on the monetization of epistemic resources without regard for the loss incurred by the originating community. To better account for these harms, we draw on two recent epistemic attitudes: the Book of Truths (BoT), which sees scientific truths as emerging through peer review, and the Book of Conversations (BoC), which values data for the interactions and reflections it provokes. Even when epistemic values recognize knowledge as relational and situated, extractivist harms persist. We offer an ameliorated concept of extractivism to include subtler, systemic harms rooted in epistemic disadvantage.",
+          "Reports of adverse events following vaccination can heighten concerns about vaccine safety. Across two experiments (N = 602 U.S residents), we examine how individuals evaluate evidence for a causal link between a vaccine and an adverse outcome, focusing on two key statistical considerations: the background incidence (or base rate) of the outcome in the absence of vaccination and the number of adverse outcomes assessed. Participants repeatedly judged the strength of evidence that a vaccine had caused an adverse outcome as information about a vaccine trial accumulated. Providing base rate information reduced perceived evidence strength and concerns about vaccine safety, particularly when the frequency of adverse outcomes aligned with population expectations, with these effects being more pronounced among more numerate individuals. Explicitly translating base rate information into expected case counts further reduced perceived risk, including among less numerate participants. Conversely, explaining how monitoring many outcomes increases the likelihood of false positives had little impact on participants’ judgments, regardless of their level of numeracy. Together, these findings show how individuals’ numerical abilities interact with the presentation of statistical information to shape vaccine-related judgments, highlighting both effective strategies for improving risk assessment and persistent challenges in communicating complex statistical principles.",
+          "Reporting effect sizes has become standard practice in the social and behavioral sciences, and multilevel modeling is widely used for analyzing hierarchically structured data. However, calculating effect sizes for multilevel modeling with random slopes remains challenging because the variance of the random effects depends on the values of the predictor, resulting in heteroscedasticity. Existing solutions address this issue by treating the random effects variance as a mixture of individual variances, which can be computationally complex and difficult to interpret. This study addresses this gap by proposing a simple and practical alternative: standardizing predictors associated with random slopes to yield a straightforward variance decomposition that facilitates effect size calculation. We evaluate this approach using both an empirical data example and a simulation study. Results show that the predictor standardization approach is easy to implement and produces effect size estimates comparable to those obtained using the mixture distribution approach. This work provides a practical solution for effect size reporting in multilevel modeling with random slopes and supports broader adoption of effect size measures in applied multilevel research.",
+          "Background: Prolonged grief disorder (PGD) is characterized by fluctuating, wave-like reactions that unfold over hours, yet little is known about the short-term temporal dynamics among daily grief symptoms. \nObjective: This study examined within-person temporal and contemporaneous symptom networks using intensive longitudinal data. \nMethod: Thirty bereaved adults who lost a loved one on average 19.5 months ago completed a daily sampling protocol for 2 weeks (5 prompts/day; 3-hour intervals). The assessment adapted 14 items from the International Prolonged Grief Disorder Scale (IPGDS) (e.g., “In the past three hours, I have felt a longing or yearning for the deceased”). Multilevel vector autoregressive models estimated a lagged temporal network and a contemporaneous network (within-time partial correlations). \nResults: In the temporal network, difficulties accepting the loss showed the highest out-strength and predicted subsequent avoidance, difficulties engaging in social activities, and guilt. Preoccupation predicted later yearning. Emotional numbness and difficulties feeling joy predicted each other at subsequent time points, suggesting a short-term feedback process. Highest in-strength was observed for difficulties engaging in social activities, avoidance, and yearning. In the contemporaneous network, symptoms were densely interconnected; identity disruption, yearning, and sadness were most central. The strongest within-time association linked emotional numbness with difficulties feeling joy, and social-activity difficulties co-occurred strongly with guilt and blame. Acceptance-related unrealness emerged as a key short-term predictor of downstream avoidance and withdrawal, while a numbing–anhedonia loop may sustain affective constriction throughout the day. \nConclusion: This study contributes to the understanding of the daily lives of bereaved individuals, highlighting grief as an interactive, mutually reinforcing dynamic system over time. Findings then suggest candidate mechanisms for exposure and behavioral activation interventions but should be considered hypothesis-generating for larger replications.",
+          "Diagnostic heterogeneity is a longstanding challenge for the classification of mental illness because people who receive the same diagnosis can differ markedly in their symptom presentations as well as in the mechanisms underlying those symptoms. High heterogeneity undermines both the clinical utility of diagnostic labels and the scientific accuracy of research that treats disorders as coherent constructs. In this study, we examined heterogeneity across six internalizing disorders (specific phobia, social anxiety disorder, agoraphobia, generalized anxiety disorder [GAD], major depressive disorder [MDD], and posttraumatic stress disorder [PTSD]) using three complementary approaches to quantifying heterogeneity: 1) descriptive heterogeneity (how many symptom profiles can theoretically satisfy the diagnostic criteria, and how many are observed in practice), 2) person-focused heterogeneity (whether diagnostic labels capture people with similar symptom presentations), and 3) construct-focused heterogeneity (whether diagnostic labels group symptoms with similar patterns of association with external validators). Analyses drew on subsamples from a large convenience sample with elevated psychopathology, predominantly from Australia and the USA (n = 14,762, mean [SD] age = 38.0 [18.0]; 55% women). Results showed that specific phobia was consistently the least heterogeneous; social anxiety disorder, agoraphobia, and GAD had mixed results; and MDD and PTSD were highly heterogeneous across all metrics. Notably, empirically derived phenotypes nested within each disorder substantively reduced heterogeneity relative to the DSM diagnoses. The study provides both a systematic multi-method approach to characterising different types of diagnostic heterogeneity, and a practical path toward more precise and informative constructs that can be implemented by rescoring existing data.",
+          "This article proposes an analysis of mental health and psychotherapy as a result of cultural practices, based on contextual behavioral science, which combines behavioral analysis and cultural analysis. Similarly, it proposes complementing the analysis of public policy and other regulatory instruments with analytical tools from this scientific perspective, such as metacontingencies and macrocontingencies, which allow us to understand a policy or any regulatory instrument as a metacontingency system capable of constructing cultural practices related to mental health and facilitate the analysis of molar and molecular factors in psychotherapy. Reference is made to the case of Colombia as a country with particular conditions that could be addressed with an integrated model. Finally, methodological challenges and implications are addressed.\nKeywords: metacontingencies; macrocontingencies; cultural practices; psychotherapy; public policy and mental health.",
+          "The wide adoption of Open Science (OS) practices is influencing psychological science positively by increasing openness, transparency, reproducibility, and replicability. Researchers are encouraged to openly share their data, materials, and reproducible code, and to pre-register their hypotheses, design, sample size, and analysis plans whenever possible. On the one hand, these OS practices incur objective and/or perceived benefits, thereby raising hopes among researchers. On the other hand, these practices may also incur objective and/or perceived costs, thereby potentially inducing worries, especially among early career researchers. To investigate researchers’ attitudes toward the application of OS practices in their research and teaching, we conducted a survey among members of the German Psychological Society (N = 596) in 2021. Across status groups, researchers agreed that psychological science generally profits from the application of OS practices and that OS practices will become commonplace in the future. Furthermore, researchers indicated increased trust in studies adopting OS practices. However, researchers of all status groups reported to mainly have experience with pre-registration but less or even no experience with other OS practices. Researchers, especially those early in their career, believed to profit from OS, but also reported worries of making errors, especially when it comes to openly sharing analysis scripts. We discuss the current state of OS implementation and propose interventions to facilitate the broader adoption of OS practices, thereby supporting the career progression of early career researchers."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "10.1080/02691728.2026.2669557",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          2,
+          1,
+          2,
+          1,
+          1,
+          1,
+          3
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-05-12T08:37:03.101397",
+          "2026-05-12T06:51:28.545297",
+          "2026-05-12T06:46:33.273691",
+          "2026-05-12T06:02:14.134139",
+          "2026-05-12T04:34:56.547810",
+          "2026-05-12T04:11:49.029222",
+          "2026-05-12T03:23:27.418080",
+          "2026-05-12T02:38:11.625075",
+          "2026-05-11T22:17:43.473573",
+          "2026-05-11T21:41:08.641247"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-05-12T14:44:48.289413",
+          "2026-05-12T14:10:22.542342",
+          "2026-05-12T14:09:52.332092",
+          "2026-05-12T13:49:15.336466",
+          "2026-05-12T14:16:26.138350",
+          "2026-05-12T14:44:19.603330",
+          "2026-05-12T14:11:35.282864",
+          "2026-05-12T14:18:26.662170",
+          "2026-05-12T18:47:18.416407",
+          "2026-05-12T14:19:56.689140"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/preprints/r3nbd_v1/",
+          "https://api.osf.io/v2/preprints/zu8aq_v1/",
+          "https://api.osf.io/v2/preprints/deu2p_v1/",
+          "https://api.osf.io/v2/preprints/g9wmx_v2/",
+          "https://api.osf.io/v2/preprints/aysze_v1/",
+          "https://api.osf.io/v2/preprints/us5d3_v2/",
+          "https://api.osf.io/v2/preprints/ngb5p_v1/",
+          "https://api.osf.io/v2/preprints/8wtqx_v1/",
+          "https://api.osf.io/v2/preprints/usf97_v1/",
+          "https://api.osf.io/v2/preprints/mbcu6_v3/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rdx7b",
+          "eus6v",
+          "kmd4u",
+          null,
+          "4jw3m",
+          "hj6yr",
+          null,
+          "6v8ke",
+          null,
+          "2df76"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6a02e6ebe066e9287080d371/",
+          "https://api.osf.io/v2/files/6a02ce0380c23d90a780d542/",
+          "https://api.osf.io/v2/files/6a02cce395807b6cb280d34d/",
+          "https://api.osf.io/v2/files/6a02c278f802bbe99d167062/",
+          "https://api.osf.io/v2/files/6a02ae09ab7655870480d573/",
+          "https://api.osf.io/v2/files/6a02a896246b4bba238bc3ff/",
+          "https://api.osf.io/v2/files/6a029dce087d4c1efd8bbeb4/",
+          "https://api.osf.io/v2/files/6a0292a39f9269978f8bc730/",
+          "https://api.osf.io/v2/files/6a0255b0c3b256167e201e17/",
+          "https://api.osf.io/v2/files/6a024d7bd5980c4af1ec75d6/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

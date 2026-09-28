@@ -1,0 +1,18 @@
+---
+title: "Report"
+output: html_document
+---
+
+Some prose.
+
+```{r setup}
+# packages
+library(tidyr)
+dat <- readr::read_csv("DATA.CSV")
+```
+
+More prose.
+
+```{r}
+summary(dat)
+```

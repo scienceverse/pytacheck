@@ -1,0 +1,14 @@
+{
+  "id": ".extract_rich_text.codebook.docx.docx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Codebook for study 1\nage: participant age in years\nsex\t1 = male; 2 = female\nsecond line\ncond = condition & group <x>\nvariable\nlabel\nid\nParticipant ID\nscore\nTotal score"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

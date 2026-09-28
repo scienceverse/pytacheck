@@ -1,0 +1,209 @@
+{
+  "id": "paper_table.list.affiliation",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "affiliation_id",
+      "text",
+      "institution",
+      "department",
+      "city",
+      "country",
+      "author_ids",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          1,
+          1,
+          2,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "European Molecular Biology Laboratory, European Bioinformatics Institute (EMBL-EBI), Wellcome Trust Genome Campus, Hinxton, Cambridge CB10 1SD, UK",
+          "The British Library, 96 Euston Road, London NW1 2DB, UK",
+          "Mimas, Roscoe Building, The University of Manchester, Oxford Road, Manchester M13 9PL, UK",
+          "National Centre for Text Mining, School of Computer Science, University of Manchester, 131 Princess Street, Manchester M1 7DN, UK",
+          "Department of Things, Example University",
+          "University of Hamburg",
+          "University of Amsterdam",
+          "Uni A",
+          "Uni B",
+          "Uni C",
+          "Uni D"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "European Molecular Biology Laboratory, European Bioinformatics Institute (EMBL-EBI)",
+          "The British Library",
+          "The University of Manchester",
+          "University of Manchester",
+          "Example University",
+          "University of Hamburg",
+          "University of Amsterdam",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "Mimas",
+          "National Centre for Text Mining, School of Computer Science",
+          "Department of Things",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Cambridge",
+          "London",
+          "Manchester",
+          "Manchester",
+          "Exampleville",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "UK",
+          "UK",
+          "UK",
+          "UK",
+          "Netherlands",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PMC4383902",
+          "PMC4383902",
+          "PMC4383902",
+          "PMC4383902",
+          "demo",
+          "preprint",
+          "preprint",
+          "10.1234/example.5678",
+          "10.1234/example.5678",
+          "10.1234/example.5678",
+          "10.1234/example.5678"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

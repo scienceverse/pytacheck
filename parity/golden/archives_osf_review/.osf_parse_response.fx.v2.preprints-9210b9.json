@@ -1,0 +1,121 @@
+{
+  "id": ".osf_parse_response.fx.v2.preprints-9210b9",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "provider",
+      "public",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "self",
+      "parent",
+      "project",
+      "primary_file"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "8xutg_v3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Modeling the Vigilance Decrement in a Two-Boundary Signal Detection Task"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Objective: We fit a generative model to data from a sensory monitoring task to isolate mechanisms of the vigilance decrement. Background: Although the vigilance decrement has been studied for decades, analytic constraints have impeded a theoretical agreement on the causes of the effect. Generative models offer a technique to disentangle sources of vigilance failure that are conflated by traditional performance measures. Method: Participants performed a signal detection task that required them to judge whether the position of a visual probe each trial was sampled from a narrow or a wide probability distribution, where both distributions shared the same midpoint. Data were fit with a generative cognitive model that assumed the observers could make each judgment in either an attentive or inattentive state. Attentive observers made judgments by comparing the estimated probe position to a pair of decision cutoffs on either side of the display midpoint. Inattentive observers guessed their responses. Parameters corresponding to sensitivity, response bias, attentional lapse rate, and positive guessing rate were allowed to vary across blocks of trials. Results: Target detection rates dropped over time on task, showing a clear vigilance decrement. Model fits ascribed the effect to conservative bias shifts, attention lapses, and a change in response guessing strategy. Conclusion: Generative cognitive models offer a technique to better understand the mechanisms and test theories of the vigilance decrement. Application: Theory-based computational models can improve efforts to predict and mitigate vigilance failures."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "preprints"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "psyarxiv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-05-12T21:38:06.871623"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-05-12T21:50:21.236454"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/preprints/8xutg_v3/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "hxdyu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6a039dde30a60c3ac96f30ea/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

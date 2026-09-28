@@ -1,0 +1,48 @@
+{
+  "id": "pubpeer_comments.replay.both",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "doi",
+      "total_comments",
+      "url",
+      "users"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1038/s41598-025-24662-9",
+          "10.1177/0146167211398138"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          19,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://pubpeer.com/publications/E1A0A9AC672336E92673154575091E",
+          "https://pubpeer.com/publications/3B7C004A1663E5D1D7FAAA8AF889D8"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Actinopolyspora Biskrensis, Rhipidura Albiventris, Nerita Vitiensis, Desmococcus Antarctica, Phanerotoma Behriae, Matt Spick, Castanopsis Indica, Hymenoptychis Sordida, Pandanus Alveolatus, Cosmozosteria Musgravei, Felicia Namaquana, Yucca Louisianensis, Catasetum Purum, Hecatesia Thyridion, Ascorhynchus Japonicus, Cortinarius Austrolimonius",
+          "Gyliotrachela Transitans"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

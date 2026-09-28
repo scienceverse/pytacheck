@@ -1,0 +1,21 @@
+{
+  "id": "code_file_refs.full",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "file1.txt",
+      "file7.txt",
+      "file9.txt",
+      "file10.txt",
+      "file27.txt",
+      "v.tsv",
+      "f.ods",
+      "a.csv"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "llm.input.text_col_answer",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "answer"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "hello",
+          "12"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

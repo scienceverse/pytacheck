@@ -1,0 +1,72 @@
+{
+  "id": "repro_rewrite_paths.original_target_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "ref",
+      "basename",
+      "matched",
+      "target",
+      "ambiguous",
+      "n_candidates",
+      "is_call"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "survey.sav",
+          "MATH.DTA"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "survey.sav",
+          "math.dta"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data/survey_data.csv",
+          "study-ex1/data/math.dta"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,10 @@
+{
+  "_embedded": {
+    "bundles": [
+      {
+        "name": "ORIGINAL",
+        "uuid": "bb-2"
+      }
+    ]
+  }
+}

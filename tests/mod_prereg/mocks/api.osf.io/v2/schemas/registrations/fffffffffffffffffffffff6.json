@@ -1,0 +1,71 @@
+{
+ "data": {
+  "id": "fffffffffffffffffffffff6",
+  "type": "registration-schemas",
+  "attributes": {
+   "name": "Synthetic Scalar Labels",
+   "schema_version": 3,
+   "schema": {
+    "blocks": [
+     {
+      "block_type": "question-label",
+      "display_text": 2024
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": true
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": 1.5
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": 100000.0
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": 3000000000
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": null
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": false
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Sample size"
+     },
+     {
+      "block_type": "short-text-input"
+     }
+    ],
+    "version": 3
+   }
+  }
+ }
+}

@@ -1,0 +1,186 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.yt32c.files.osfstorage-4293bc",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6846f865419d0402c953936a",
+          "6846f86581fd750491d6a31e",
+          "6846f867b1ced6859685b2b1",
+          "6846f86815a2e0cddf85b3e1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data-02.csv",
+          "data-03.csv",
+          "data-14.csv",
+          "data-01.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          185,
+          185,
+          185,
+          185
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          18,
+          14,
+          14,
+          18
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/data-02.csv",
+          "/data-03.csv",
+          "/data-14.csv",
+          "/data-01.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6846f865419d0402c953936a/",
+          "https://api.osf.io/v2/files/6846f86581fd750491d6a31e/",
+          "https://api.osf.io/v2/files/6846f867b1ced6859685b2b1/",
+          "https://api.osf.io/v2/files/6846f86815a2e0cddf85b3e1/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/b7pr2/",
+          "https://osf.io/download/e3phu/",
+          "https://osf.io/download/48mgp/",
+          "https://osf.io/download/5vk7y/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,114 @@
+{
+  "id": "zenodo_file_download.total_cap",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1 of 2 files from Zenodo record 5550004 did not arrive intact (e.g. a.bin). The returned table marks it downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "folder",
+      "zenodo_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5550004",
+          "5550004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550004",
+          "5550004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550004-a.bin",
+          "5550004-c.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.bin",
+          "c.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "c.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          5242880,
+          100
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          100
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5:d41d8cd98f00b204e9800998ecf8427e",
+          "md5:ca69c3acc86e56b995aa27bba6f2acdc"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/api/records/5550004/files/a.bin/content",
+          "https://zenodo.org/api/records/5550004/files/c.txt/content"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,24 @@
+name: Size pytest -n auto to the job's CPUs
+description: >-
+  Sets PYTEST_XDIST_AUTO_NUM_WORKERS for the later steps to the CPUs the job
+  can use: the tightest cgroup v2 cpu.max quota above it, else nproc. xdist's
+  `-n auto` counts the host's cores instead (16 on the fridge runner, whose
+  jobs share a 6-CPU quota), and starting more workers than CPUs slows every
+  test that times itself. Does nothing off Linux.
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        [[ $RUNNER_OS == Linux ]] || exit 0
+        n=$(nproc) cg=/sys/fs/cgroup$(sed -n 's/^0:://p' /proc/self/cgroup)
+        while [[ $cg == /sys/fs/cgroup* ]]; do
+          if [[ -r $cg/cpu.max ]] && read -r quota period < "$cg/cpu.max" && [[ $quota != max ]]; then
+            cpus=$(( (quota + period - 1) / period ))
+            if (( cpus < n )); then n=$cpus; fi
+          fi
+          cg=${cg%/*}
+        done
+        echo "pytest -n auto: $n workers ($(nproc) CPUs online)"
+        echo "PYTEST_XDIST_AUTO_NUM_WORKERS=$n" >> "$GITHUB_ENV"

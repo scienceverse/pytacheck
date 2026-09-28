@@ -1,0 +1,44 @@
+{
+  "id": "cap_gate_count.cases",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5 files for repo X exceed the `max_calls` cap of 3. Set `max_calls >= 5` to analyse them; repo X was skipped."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 item exceeds the `max_calls` cap of 0. Set `max_calls >= 1` to process them; this unit was skipped."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2 items exceed the `p` cap of 0. Set `p >= 2` to process them; this unit was skipped."
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4 MBs exceed the `max_mb` cap of 2.2. Set `max_mb >= 4` to process them; this unit was skipped."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,11 @@
+{
+  "paper_id": "legacy_arrays",
+  "bib": [],
+  "info": [{"title": "Legacy arrays", "keywords": ["a", "b"], "doi": null, "file_hash": "x", "input_format": "pdf"}],
+  "text": [{"text": "One.", "text_id": 1, "paragraph_id": 1, "section_id": 1}],
+  "bib_match": [
+    {"bib_id": 1, "service": "crossref", "doi": "10.1234/a", "authors": [], "editors": []},
+    {"bib_id": 2, "service": "crossref", "doi": "10.1234/b", "authors": [{"given": "A", "family": "B"}], "editors": []},
+    {"bib_id": 3, "service": "crossref", "doi": "10.1234/c", "authors": [], "editors": [{"given": "E", "family": "F"}]}
+  ]
+}

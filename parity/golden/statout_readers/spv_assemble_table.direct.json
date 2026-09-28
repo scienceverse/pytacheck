@@ -1,0 +1,60 @@
+{
+  "id": "spv_assemble_table.direct",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "Stat",
+      "dim",
+      "Stat.1",
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "Grp / df",
+          "Grp / df",
+          "t",
+          "t"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "a",
+          "a",
+          "a",
+          "a"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.5",
+          "x",
+          null,
+          null,
+          "1e+15"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "xml_ns.duplicates.names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "d1",
+      "d2",
+      "a",
+      "a2",
+      "a3",
+      "a1",
+      "b",
+      "b1",
+      "c"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

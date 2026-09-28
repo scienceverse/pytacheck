@@ -1,0 +1,21 @@
+{
+"funding_check.paperlist_empty": {"r": "ac5146cf65ca52a8", "py": "440fc6a0ec3ba3c8", "diff": ["<R error, Python value>"]},
+"funding_check.tre_caseless": {"r": "1b733855682a0064", "py": "073f6a2a6bdc1f77", "diff": ["report[]", "summary_table.funding_found[]", "summary_text[]", "table", "traffic_light[]"]},
+"funding_check.unicode_acknow_financial_aid": {"r": "1b733855682a0064", "py": "959b1e1a408bb025", "diff": ["report[]", "summary_table.funding_found[]", "summary_text[]", "table", "traffic_light[]"]},
+"funding_check_oi.paperlist_empty": {"r": "ac5146cf65ca52a8", "py": "eb9547e8aaf28680", "diff": ["<R error, Python value>"]},
+"funding_check_oi.sectioned_acknowledgement": {"r": "17e03b316e0601bd", "py": "88f877083c31f994", "diff": ["table"]},
+"funding_check_oi.tre_caseless": {"r": "f72db2837475b95a", "py": "30cb279626429d09", "diff": ["table"]},
+"funding_check_oi.unicode_fund_acknow_dotted": {"r": "4cb7cb6ad795dd4c", "py": "0b73d8dde8170c3a", "diff": ["report[]", "summary_table.funding_found[]", "summary_text[]", "table", "traffic_light[]"]},
+"locate.boundary.acknow_1_blank_na": {"r": "7d255ac666350e86", "py": "3def624a103b6ecf", "diff": ["get_acknow_1"]},
+"negate_absence_1.match_limit": {"r": "2d3dc6937cbe6a8b", "py": "5b69a120cb4ea023", "diff": ["[]"]},
+"rtransparent_funding.boundaries": {"r": "05d39e923f61abb9", "py": "a69a0bcb9f2e69be", "diff": ["[]"]},
+"unicode.classes.ignore_case": {"r": "fbb275d886df63da", "py": "e8727d3fdd46d17e", "diff": ["[][]"]},
+"unicode.classes.inline": {"r": "2726d6198dda4699", "py": "b0ae2c1e9417e447", "diff": ["[][]"]},
+"unicode.column.case": {"r": "20be7732c12f6107", "py": "07ae041807d7af2e", "diff": ["[][]"]},
+"unicode.column.ignore_case": {"r": "f38013557e162266", "py": "b72de44524031c4c", "diff": ["[][]"]},
+"unicode.funding": {"r": "962dcd185d186964", "py": "6ad41e1dca1597b8", "diff": ["[]"]},
+"unicode.locate.acknow_financial_aid": {"r": "b6ca846754baf5ee", "py": "a9b72e065e808628", "diff": ["get_financial_1", "get_fund_acknow"]},
+"unicode.locate.financial_title_dotted": {"r": "ed7fc19671aab323", "py": "68d32137e16bc5d9", "diff": ["get_financial_1", "get_fund_acknow", "where_acknows_txt"]},
+"unicode.locate.fund_acknow_dotted": {"r": "e00ca1cb4b7f293d", "py": "a20c68237c9aa77e", "diff": ["get_fund_acknow"]},
+"unicode.locate.fund_title_dotted": {"r": "5f41dc2198780d41", "py": "dfcc55dc57f85d68", "diff": ["get_fund_2", "where_acknows_txt"]}
+}

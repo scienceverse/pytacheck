@@ -1,0 +1,248 @@
+"area": "mod_effect_size"
+"cases":
+# ---------------------------------------------------------------- real papers
+- "id": "stat_effect_size.demo"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "stat_effect_size.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
+# paper order is the paper list's, not extract_eq()'s (sorted by paper_id)
+- "id": "stat_effect_size.xml_unsorted"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop; the sentences read from the TEI also differ (io fix U16: numbers before a tag keep their space, URL link texts are not replaced in other sentences)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"]}
+- "id": "stat_effect_size.green_paper"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "Only the sentence text read from the TEI differs ('ηp² = .114', metacheck 'ηp² =.114'; io fix of the number-before-tag clean-up)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}
+- "id": "stat_effect_size.preprint_tei"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop; the sentences read from the TEI also differ (io fix U16: numbers before a tag keep their space, URL link texts are not replaced in other sentences)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}
+- "id": "stat_effect_size.published_tei"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop; the sentences read from the TEI also differ (io fix U16: numbers before a tag keep their space, URL link texts are not replaced in other sentences)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}
+- "id": "stat_effect_size.paper_no_tests"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"}
+# ---------------------------------------------------------------- traffic lights (test-module-stat_effect_size.R)
+- "id": "stat_effect_size.na.no_stats"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["There are no stats."]}}
+  "compare": {"ignore": ["paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.na.es_only"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["The effect was large, d = 0.80.", "The correlation was r = .30, p = .01.", "Nothing here."]}}
+  "compare": {"ignore": ["paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.na.no_test_eq"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["The mean was M = 3.2, SD = 1.1.", "An F = 4.50 without df and F(2.5, 30) = 4.50, ηp² = .23 with non-integer df."]}}
+  "compare": {"ignore": ["paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.red.missing"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["A was bigger than B, t(124) = 1.23, p 0.013.", "We also ran an ANOVA, F(1, 13) = 2.34, p = .23."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.red.missing_one"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["A was bigger than B, t(124) = 1.23, p 0.013."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.yellow"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.", "We also ran an ANOVA, F(1, 13) = 2.34, p = .23."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.green"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.", "We also ran an ANOVA, F(1, 13) = 2.34, p = .23, ηp² = 0.15."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.green.plural"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["t(23) = 2.73, d = 0.56.", "t(48) = 2.00, d = 0.57.", "t(97.7) = 2.9, d = 0.59.", "t(30) = 2.5, η2 = .17.", "F(1, 13) = 2.34, ηp² = 0.15.", "F(1, 20) = 4.10, η2p = .17.", "F(1, 48) = 5.23, f = 0.37.", "F(5, 120) = 91.32, η² = .79."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.red.nomatch"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["A was bigger than B, t(20) = 1.00, p 0.32, d = 3.00.", "t(23) = 2.73, d = 0.56.", "F(1, 13) = 2.34, ηp² = 0.35."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.red.nomatch_single"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["F(1, 13) = 2.34, ηp² = 0.35."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.red.missing_and_nomatch"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["t(20) = 1.00, d = 3.00.", "t(20) = 1.00, d = 3.00, and F(1, 13) = 2.34, ηp² = 0.35.", "t(12) = 2.2, p = .04.", "F(2, 30) = 4.50."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- paper lists
+- "id": "stat_effect_size.paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(\"A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.\"), test_paper(\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), test_paper(\"No stats here.\"))"
+        "py": "pc.PaperList([pc.test_paper(\"A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.\"), pc.test_paper(\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), pc.test_paper(\"No stats here.\")])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.paperlist_none"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(\"No stats here.\"), test_paper(\"The effect was d = 0.5.\"))"
+        "py": "pc.PaperList([pc.test_paper(\"No stats here.\"), pc.test_paper(\"The effect was d = 0.5.\")])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- d coherence branches
+- "id": "stat_effect_size.d_branches"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "A was bigger than B, t(124) = 1.23, p = .013, d = 0.34."
+        - "A was bigger than B, t(20) = 1.00, p = .32, d = 3.00."
+        - "Paired, t(23) = 2.73, d = 0.56."
+        - "Equal n, t(48) = 2.00, d = 0.57."
+        - "Unequal n, t(38) = 2.10, d = 0.68."
+        - "Odd df, t(47) = 2.00, d = 0.57."
+        - "Welch, t(97.7) = 2.9, d = 0.59."
+        - "No df, t = 2.10, d = 0.40."
+        - "Inequality, t(30) < 1, d = 0.1."
+        - "No d, t(30) = 2.5, η2 = .17."
+        - "Negative, t(30) = -2.5, d = -0.9."
+        - "Tiny df, t(1) = 3.0, d = 5.0."
+        - "Four, t(2) = 5.0, d = 5.0."
+        - "Zero df, t(0) = 1.5, d = 1.0."
+        - "Large df, t(1000) = 2.00, d = 0.20."
+        - "Cohen's d = 0.45, t(40) = 2.9."
+        - "Curly, t(40) = 2.9, Cohen’s d = 0.45."
+        - "Dz, t(40) = 2.9, dz = 0.45."
+        - "Underscore, t(40) = 2.9, d_z = 0.45."
+        - "Upper, t(40) = 2.9, D = 0.45."
+        - "Hedges, t(40) = 2.9, g = 0.45."
+        - "Hedges long, t(40) = 2.9, Hedges' g = 0.45."
+        - "Drm, t(40) = 2.9, drm = 0.45."
+        - "Two d, t(40) = 2.9, d = 0.95; d = 0.45."
+        - "Two tests one d, t(40) = 2.9, t(40) = 3.1, d = 0.45."
+        - "A was bigger than B, t(23) = 2.73; t(23) = 2.98; t(23) = 4.74, d = 0.56; d = 0.61; d = 0.97."
+        - "Leading dot, t(40) = 2.9, p < .01, d = .453."
+        - "Exponent, t(12) = 5e-1, d = 0.14."
+        - "Comma, t(10) = 1,234, d = 0.3."
+        - "Sample size df, t(n = 24) = 2.1, d = 0.4."
+        - "Two dfs, t(1, 20) = 2.1, d = 0.4."
+        - "Border, t(99) = 1.00, d = 0.11."
+        - "Border2, t(99) = 1.00, d = 0.2."
+        - "Mixed, t(20) = 2.1, F(1, 20) = 4.41, d = 0.94, ηp² = .18."
+        - "Mixed unpaired, t(20) = 2.1, F(1, 20) = 4.41, ηp² = .18."
+        - "Precise, t(15) = 3.162, d = 0.7906."
+        - "r family, t(40) = 2.9, r = .41."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- F / eta coherence branches
+- "id": "stat_effect_size.f_branches"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "'partial η2' is a partial eta-squared (match), d/r/beta next to an F-test are 'not verifiable' rather than 'Eta-squared reported', and the 'Both eta-squared and partial eta-squared' note is kept (U125)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The model was significant, F(1, 13) = 2.34, p = .23, ηp² = 0.15."
+        - "No match, F(1, 13) = 2.34, ηp² = 0.35."
+        - "The model was significant, F(5, 120) = 91.32; F(5, 120) = 74.45; F(5, 120) = 388.16, η² = .79; η² = .67; η² = .94."
+        - "The model was significant, F(1, 48) = 5.23, p = .026, f = 0.37."
+        - "The model was significant, F(1, 13) = 2.34, p = .23, ηp² = 0.15, f = 0.42."
+        - "The model was significant, F(2, 151) = 1.00, p = .37, ωp² = 0.00."
+        - "Xi, F(2, 151) = 1.00, ξ = 0.20."
+        - "Both, F(2, 30) = 4.50, η² = .23, ηp² = .23."
+        - "No es, F(2, 30) = 4.50."
+        - "Inequality, F(2, 30) < 1, ηp² = .02."
+        - "Partial word, F(1, 20) = 0.50, partial η2 = .02."
+        - "Suffix p, F(1, 20) = 4.10, η2p = .17."
+        - "Latin eta, F(1, 20) = 4.10, eta2 = .17."
+        - "Latin partial eta, F(1, 20) = 4.10, etap2 = .17."
+        - "Words, F(1, 20) = 4.10, partial eta squared = .17."
+        - "d with F, F(1, 20) = 4.10, d = 0.9."
+        - "Bayes, F(1, 20) = 4.10, BF10 = 3.2."
+        - "Omega and eta, F(1, 20) = 0.50, ω² = 0.00, ηp² = .02."
+        - "Omega latin, F(1, 20) = 4.10, omega2 = .12."
+        - "Cohen f, F(1, 20) = 4.10, Cohen's f = 0.45."
+        - "f squared, F(1, 20) = 4.10, f2 = 0.2."
+        - "Spaced df, F( 3 , 60 ) = 2.80, ηp² = .12."
+        - "Large F, F(2, 57) = 1200.5, ηp² = .98."
+        - "Negative F, F(1, 20) = -4.10, ηp² = .17."
+        - "Beta, F(1, 20) = 4.10, β = .41."
+        - "Two F one eta, F(1, 20) = 4.10, F(1, 20) = 6.20, ηp² = .17."
+        - "Two eta, F(1, 20) = 4.10, ηp² = .30; ηp² = .17."
+        - "Upper partial, F(1, 20) = 4.10, ΗP² = .17."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# eta_implied is NaN (0/0): R's any(NA) inside if() errors
+- "id": "stat_effect_size.f_zero_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "F(0, 0) gives an undefined implied effect size (indeterminate); metacheck stops on if (NA)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["Zero, F(0, 0) = 1.00, ηp² = 0.50."]}}
+- "id": "stat_effect_size.f_zero_df_no_es"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["Zero, F(0, 0) = 1.00, p = .5."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- tricky text
+- "id": "stat_effect_size.tricky"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "'d > 0.4' is checked as a bound (implied dz .45 > .4: match), not as d = 0.4 (no match)."}
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Bracket, t(40) = 2.9, d = [0.1, 0.5]."
+        - "NS, t(40) = 2.9, p = n.s., d = 0.45."
+        - "Tight, t(40)=2.9,d=0.45."
+        - "Spaced, t (40) = 2.9, d = 0.45."
+        - "Tight F, F(1,20)=4.1, ηp2=.17."
+        - "Approx, t(40) = 2.9, d ≈ 0.45."
+        - "Greater, t(40) = 2.9, d > 0.4."
+        - "Leq, t(40) ≤ 2.9, d = 0.45."
+        - "Approx eta, F(1, 20) = 4.10, ηp² ≈ .17."
+        - "Pairs, t(40) = 2.9, d = 0.45, t(40) = 3.3, d = 0.52."
+        - "Unicode minus, t(40) = −2.9, d = 0.45."
+        - "CI, t(40) = 2.9, 95% CI [0.1, 0.9], d = 0.45."
+        - "Dav, t(40) = 2.9, dav = 0.45."
+        - "Alpha, Cronbach's α = .8, t(40) = 2.9."
+        - "Chi, χ2(1) = 3.8, t(40) = 2.9, d = 0.45."
+        - "Upper T, T(40) = 2.9, d = 0.45."
+        - "R squared, t(40) = 2.9, R² = .3."
+        - "b, t(40) = 2.9, b = 0.3."
+        - "CI after, t(40) = 2.90, p = .006, d = 0.45 [0.1, 0.8]."
+        - "BF, t(40) = 2.90, p = .006, d = 0.45, BF10 = 5.2."
+        - "Hedges and d, t(40) = 2.9, g = 0.44, d = 0.45."
+        - "Eta for t, t(40) = 2.9, ηp² = .17, d = 0.9."
+        - "Scientific, t(40) = 2.9, p = 1.2e-5, d = 0.45."
+        - "Two sentences apart, t(40) = 2.9."
+        - "d = 0.45 for the previous test."
+        - "Welch match, t(38.5) = 2.9, d = 0.92."
+        - "n df, t(N = 40) = 2.9, d = 0.45."
+        - "Zero t, t(40) = 0, d = 0."
+        - "Negative d only, t(40) = 2.9, d = -0.45."
+        - "Semi, F(2, 40) = 3.1; ηp² = .13."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}

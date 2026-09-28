@@ -1,0 +1,23 @@
+{
+  "id": ".scale_name_prefix.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "bfi",
+      "rse",
+      "panas",
+      "x",
+      "item",
+      "a1b",
+      "q1_2",
+      "",
+      "scale",
+      "été"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

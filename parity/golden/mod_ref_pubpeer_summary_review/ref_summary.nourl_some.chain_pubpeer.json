@@ -1,0 +1,130 @@
+{
+  "id": "ref_summary.nourl_some.chain_pubpeer",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_summary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summarise References"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "pubpeer"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "nourl_some",
+              "nourl_some"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/pp.nourl",
+              "10.9999/pp.zero"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.9999/pp.nourl",
+              "Reference 1. https://doi.org/10.9999/pp.zero"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See the specific reports above for details.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"Reference 0. https://doi.org/10.9999/pp.nourl\", \n\"Reference 1. https://doi.org/10.9999/pp.zero\"), pubpeer = c(NA_character_, \nNA_character_)), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.75, NA), 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summary information provided for 2 references"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "nourl_some"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

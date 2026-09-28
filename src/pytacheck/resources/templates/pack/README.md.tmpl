@@ -1,0 +1,40 @@
+# {{name}}
+
+{{title}}: a [pytacheck](https://github.com/scienceverse/pytacheck) pack.
+
+## Use it
+
+```bash
+pytacheck pack install ./{{name}}         # while developing (a live path pack)
+pytacheck modules --pack {{name}}
+pytacheck run paper.json --preset {{name}}  # this pack's "default" preset
+```
+
+In Python:
+
+```python
+import pytacheck as pc
+
+out = pc.module_run(paper, "{{name}}::{{module}}")
+```
+
+## Develop it
+
+* Modules are the `*.py` files in this folder (helpers start with `_`).
+* `pytacheck pack check .` checks the pack the way the store's CI does.
+* `pytest` runs the tests in `tests/`.
+* Fill in the `<validation>` block of each module once you have validated it
+  (and the `validation=` numbers), so users can see how well it works.
+
+## Publish it
+
+See "Publish to the store" in pytacheck's `docs/MODULES.md`: open a pull
+request adding this folder to
+[pytacheck-modules](https://github.com/scienceverse/pytacheck-modules),
+or list your own repository there with a `packs/{{name}}.json` entry.
+
+## Licence
+
+This template uses the MIT licence (see `LICENSE`). Any OSI-approved licence
+is accepted by the official store. Note that packs run inside pytacheck,
+which is AGPL-3.0-or-later.
