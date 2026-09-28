@@ -420,6 +420,13 @@ def test_a_long_whole_number_keeps_every_digit_in_a_digest() -> None:
     assert canon.form(_chr("1234567890")) == _dbl(1234567890.0)
 
 
+def test_a_number_near_zero_keeps_its_digits_in_a_digest() -> None:
+    # a digest holds a double this close to 0 as 0
+    _flagged(_df(k=_chr("x"), p=_chr("2.2e-16")), _df(k=_chr("x"), p=_chr("1e-13")))
+    _flagged(_chr("1e-13"), _chr("-1e-13"))
+    assert canon.form(_chr("2.2e-16")) == _chr("2.2e-16")
+
+
 def test_cells_are_formed_as_a_column() -> None:
     # a cell that is only a number stays text when its column is text
     records = _list(

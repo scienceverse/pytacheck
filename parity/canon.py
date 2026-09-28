@@ -82,7 +82,7 @@ from parity.compare import (
     _presence_view,
     _records_as_frame,
 )
-from parity.lockfile import _DIGITS, _rounded, digest
+from parity.lockfile import _DIGITS, _ZERO, _rounded, digest
 
 CANON_TOML = Path(__file__).resolve().parent / "canon.toml"
 
@@ -374,8 +374,13 @@ def number_only(s: str, whitespace: bool = True, number_text: bool = True) -> Nu
 
 def _as_double(n: Number | None) -> bool:
     """Whether a form may hold the number *n* as a double: a lock digest keeps 10
-    significant digits of a double, and every digit of a whole number (an ISBN)."""
-    return n is not None and not (n.whole and abs(n.value) >= 10**_DIGITS)
+    significant digits of a double and holds one this close to 0 as 0, but a whole
+    number (an ISBN) needs every digit, and 2.2e-16 is no 0."""
+    return (
+        n is not None
+        and not (n.whole and abs(n.value) >= 10**_DIGITS)
+        and not 0 < abs(n.value) < _ZERO
+    )
 
 
 # -- helpers on the encoding -----------------------------------------------------------
