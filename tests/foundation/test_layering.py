@@ -25,10 +25,13 @@ imports (``text``, ``modules``, ``report``, ``api``, ``cli``, ``archives``,
 ``datacheck``, ``codecheck``), ``pytacheck.doc``, and the permanent façades of
 §2.10, because the façades import the core, never the reverse. The façades in
 ``pytacheck.module`` are banned as names (``module``, ``module_run`` and
-``get_prev_outputs``), so run.py can still reach the resolver there. The
-top-level package is a façade too, so ``from pytacheck import x`` counts as an
-import of where ``x`` is defined, or of the top level if nothing re-exports it.
-A package's ``__init__`` is not an import edge of its submodules.
+``get_prev_outputs``), so run.py can still reach the resolver there. A name
+that is a module is always that module, never a name some ``__init__``
+re-exports under it, so ``import pytacheck.module`` is the module, not the
+``module()`` decorator. The top-level package is a façade too, so ``from
+pytacheck import x`` counts as an import of where ``x`` is defined, or of the
+top level if nothing re-exports it. A package's ``__init__`` is not an import
+edge of its submodules.
 
 **Migrated modules.** A check module (a file under ``modules/``) that imports
 ``pytacheck.doc`` counts as migrated. It may not use ``text.search``,
@@ -163,8 +166,10 @@ class _Visitor(ast.NodeVisitor):
             if alias.name != "*":
                 bound = alias.asname or alias.name
                 self.bindings[bound] = symbol
-                if f"{self.package}.{bound}" != symbol:
-                    self.reexports[f"{self.package}.{bound}"] = symbol
+                name = f"{self.package}.{bound}"
+                # a name that is a module stays that module
+                if name != symbol and name not in self.known:
+                    self.reexports[name] = symbol
 
     def visit_Call(self, node: ast.Call) -> None:
         func = node.func
@@ -345,6 +350,8 @@ def test_graph_sees_the_real_imports() -> None:
     assert (f"{PKG}.papers.model", f"{PKG}.papers.schema") in seen
     assert any(e.note == "importlib" for e in edges)
     assert reexports[f"{PKG}._r.grepl"] == f"{PKG}._r.regex.grepl"
+    # the root imports the module() decorator, but pytacheck.module stays the module
+    assert f"{PKG}.module" not in reexports
     # function-level imports are in the graph
     assert any(e.path == "papers/io.py" and e.target == f"{PKG}.io.bibr12" for e in edges)
 
@@ -390,7 +397,8 @@ BASE = {
         "from typing import TYPE_CHECKING\n"
         "if TYPE_CHECKING:\n"
         "    from pytacheck.text import text_search\n"
-        "    from pytacheck.module import module_run\n"
+        # as in the real package: the decorator has the name of its module
+        "    from pytacheck.module import module, module_run\n"
         "    from pytacheck.io.read import read\n"
         "    from pytacheck.papers.io import demopaper, test_paper\n"
     ),
@@ -512,6 +520,23 @@ def test_core_may_import_what_the_run_context_needs(tmp_path: Path) -> None:
         "from pytacheck.core.output import Result\n"
     )
     assert found_in(tmp_path, {"core/run.py": source}) == set()
+
+
+# the root re-exports the module() decorator under the name of its module
+MODULE_SPELLINGS = [
+    "import pytacheck.module\n",
+    "import pytacheck.module as m\nspec = m.module_find('x')\n",
+    "import pytacheck.config\nspec = pytacheck.module.module_find('x')\n",
+    "from pytacheck import module\nspec = module.module_find('x')\n",
+]
+
+
+@pytest.mark.parametrize("source", MODULE_SPELLINGS)
+def test_a_module_name_is_the_module_not_a_reexport(tmp_path: Path, source: str) -> None:
+    assert found_in(tmp_path / "run", {"core/run.py": source}) == set()
+    found = found_in(tmp_path / "other", {"core/facets.py": source})
+    assert ("core", "core/facets.py", f"{PKG}.module") in found
+    assert ("core", "core/facets.py", f"{PKG}.module.module") not in found
 
 
 def test_layer_names_match_whole_components(tmp_path: Path) -> None:
