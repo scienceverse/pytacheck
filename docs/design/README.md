@@ -40,5 +40,5 @@ changed to (c), the recommendation, on 2026-09-28.
 `patches/` keeps the prototype the plan builds on:
 
 - `spike-1.patch`: the spike of the new core (`src/pytacheck/core/`) and
-  four modules rewritten on it, against commit fd5e6f3; SPIKE-2 and
-  CORE-1b build on it.
+  four modules rewritten on it, rebased onto commit d8a42458 (main after
+  PR #1; the original was against fd5e6f3); SPIKE-2 and CORE-1b build on it.

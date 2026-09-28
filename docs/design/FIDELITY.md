@@ -94,6 +94,7 @@
 1. **Every Band A or Band C change needs a deviation row** (§3). A Band A change in a validated module, on any tier, also needs a validator's sign-off. Band B needs nothing.
    - The sign-off is a required code-owner review, not a typed name. HARNESS-v2 adds CODEOWNERS entries that give the validator group the validated modules' deviation files (§3.1), `parity/canon.toml` and the validated modules' source. The lint checks that an approver of the PR is in that group, not only that `signoff` is filled in.
    - The maintainer adds the group once the metacheck team names it (ECOSYSTEM.md §8.1). Until then the entries name the maintainer, and such a change does not merge without the team's written approval on the PR.
+   - **Old marks are grandfathered** (decided by the maintainer, 2026-09-28). The "R bug fixed" marks that validated modules already carry, which the mark migration turns into rows (§3.2), are approved once by the maintainer and flagged as grandfathered, for validators to review later. New Band A changes still need a validator.
    - A re-validation (ECOSYSTEM.md §2.5) can stand in for the sign-off only when it reruns full-paper ground truth held by the team. `validate()` on single sentences cannot measure paper-level false positives.
 2. **Column names are an API.** Adding a column is free. Renaming or removing one is Band C and needs a deprecation cycle of one minor release, because users' code reads columns by name.
 3. **Band B freedom is not permission to be random.** Row order must be deterministic and documented. The default is document order: the order in which the located text appears in the paper. No module may emit set or hash order. A test runs the accuracy inputs under two `PYTHONHASHSEED` values and requires identical raw outputs (H0-19).
@@ -150,7 +151,7 @@ signoff  = "@validator"                    # required for Band A in a validated 
 | `deliberate` 8, `better_logic` 3 | rows |
 | `docs/UPSTREAM_ISSUES.md` (158 U + 30 D, 155 KB) | a short list of metacheck bugs that touch Band A, about 20 KB (E), each linked from its rows. The archive stays in git history |
 
-The migration is a script (`scripts/migrate_marks.py`). It groups marks by U-entry and area, runs the canonical comparison, drops the marks whose difference vanishes after canonicalisation, and writes one row for each remaining group. A reviewer checks the rows it writes for the validated modules first. The 5 modules carry 230 cases: 149 `module:` cases and power's 81 test-wrapper cases; 63 are on tier 1 and 80 are marked **(M)**. The reviewer then checks stat_check (pending; 20 cases, 12 on tier 1, 6 marked) and ref_accuracy (candidate; 84 cases, 17 on tier 1, 66 marked) **(M)**.
+The migration is a script (`scripts/migrate_marks.py`). It groups marks by U-entry and area, runs the canonical comparison, drops the marks whose difference vanishes after canonicalisation, and writes one row for each remaining group. A reviewer checks the rows it writes for the validated modules first; the maintainer approves those rows once, flagged as grandfathered, and validators review them later (§2.2, rule 1). The 5 modules carry 230 cases: 149 `module:` cases and power's 81 test-wrapper cases; 63 are on tier 1 and 80 are marked **(M)**. The reviewer then checks stat_check (pending; 20 cases, 12 on tier 1, 6 marked) and ref_accuracy (candidate; 84 cases, 17 on tier 1, 66 marked) **(M)**.
 
 ---
 
@@ -314,7 +315,7 @@ HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbol
 6. **Users read columns by name.** Renames are Band C with a deprecation (§2.2, rule 2), and `pc.check` (ARCHITECTURE.md §2.10) reports which columns a store module reads.
 7. **Order changes surprise users** even when they are free. Each PR that changes a module's default order adds a line to the CHANGELOG's unreleased section in the same PR, so the release notes list every such module. The order is documented per module.
 8. **No corpus for re-certification is in hand.** Upstream ships no validation data, and the Psychological Science papers may not be shareable. Without the team's full-paper ground truth, a Band A change in a validated module can only be signed off, never re-measured (§2.2, rule 1), and the validated label cannot be re-checked at a release (ECOSYSTEM.md §2.5).
-9. **The sign-off depends on the metacheck team.** The validator group, the corpus and the certifications are theirs (ECOSYSTEM.md §8.1). If they decline or do not answer, the CODEOWNERS entries stay with the maintainer, and Band A changes in validated modules wait (§2.2, rule 1).
+9. **The sign-off depends on the metacheck team.** The validator group, the corpus and the certifications are theirs (ECOSYSTEM.md §8.1). If they decline or do not answer, the CODEOWNERS entries stay with the maintainer, and new Band A changes in validated modules wait (§2.2, rule 1). The migrated old marks do not wait: they are grandfathered.
 
 ---
 
