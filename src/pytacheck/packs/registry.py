@@ -259,7 +259,9 @@ def _installed_pack(name: str, pin: Mapping[str, Any], origin: str) -> Pack:
         )
     if rev:
         source.setdefault("rev", rev)
-    store = pin.get("store") or record.get("store")
+    # the label comes from the install record, which `pack install` wrote after it checked
+    # the store index; a pin is only a claim (a project config can carry anyone's)
+    store = record.get("store")
     return Pack.from_manifest(
         manifest,
         root=root,
@@ -267,7 +269,7 @@ def _installed_pack(name: str, pin: Mapping[str, Any], origin: str) -> Pack:
         trust="store" if store else "unlisted",
         version=manifest.get("version") or pin.get("version"),
         source=source,
-        reviewed=record.get("reviewed") or pin.get("reviewed"),
+        reviewed=record.get("reviewed") if store else None,
         rev=rev,
         tree_sha256=pin.get("tree_sha256") or record.get("tree_sha256"),
         store=store,

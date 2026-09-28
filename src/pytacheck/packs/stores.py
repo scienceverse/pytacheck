@@ -58,6 +58,7 @@ if TYPE_CHECKING:
 __all__ = [
     "INDEX_SCHEMA",
     "INDEX_TTL",
+    "NotListedError",
     "StoreError",
     "check_store_url",
     "find_entry",
@@ -84,6 +85,10 @@ _RAW_GITLAB = re.compile(r"^(https://gitlab\.com/[^?#]+?)/-/raw/([^/?#]+)/([^?#]
 
 class StoreError(PackError):
     """A store is unknown, unreachable or has a malformed index."""
+
+
+class NotListedError(StoreError):
+    """A store was read, and it does not list the pack."""
 
 
 # ---------------------------------------------------------------------------
@@ -645,7 +650,7 @@ def _find_entry(name: str, store: str | None, *, refresh: bool) -> tuple[str, di
         for entry in index.get("packs", []):
             if entry.get("name") == name:
                 return store, _with_location(dict(entry), index)
-        raise StoreError(f"The store '{store}' does not list a pack named '{name}'")
+        raise NotListedError(f"The store '{store}' does not list a pack named '{name}'")
     indexes, problems = store_indexes(refresh=refresh)
     hits = [
         (s, _with_location(dict(e), idx))
