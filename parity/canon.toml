@@ -1,0 +1,76 @@
+# What the canonicaliser (parity/canon.py) needs to know per module and façade
+# (docs/design/FIDELITY.md §4.2). This is declared data, reviewed like code: the
+# validator group owns this file (CODEOWNERS), and canon never infers a key at run time.
+#
+# [module.<name>] row_key: the columns that identify a row of the module's `table`.
+#   Rows are paired by their key and then compared; rows that share a key are
+#   compared as full-row multisets. A key never hides a difference: every row is
+#   compared with its partner or reported as missing or extra. It only decides
+#   how rows pair up, and so which path a difference is reported at.
+#   The default key is the columns that are numeric on neither side. A module
+#   needs its own key only where that default is wrong: where the default holds a
+#   result (a flag, a classification), a changed result shows up as one dropped
+#   and one added row instead of as the changed value.
+#
+# [facade.<R function>] ordered, na_strict: the permanent façades
+#   (ARCHITECTURE.md §2.10; FIDELITY.md §2.2, rule 4) keep their row order and
+#   their NA spelling, because store modules rely on them. The name is matched
+#   against a case's `r:` function, without a `pkg::` prefix; `*` matches anything.
+
+# FIDELITY.md §4.2. The same as the default today; pinned because its rows may
+# move to document order (decision 1 (b)), which the known-difference tests check.
+[module.funding_check_oi]
+row_key = ["paper_id", "text"]
+
+# FIDELITY.md §4.2 (pending validation). The default would hold the results
+# error, decision_error and one_tailed_in_txt.
+[module.stat_check]
+row_key = ["paper_id", "raw"]
+
+# The validated modules and ref_accuracy (a candidate), whose Band A rows name a
+# narrow field path (FIDELITY.md §3.1). marginal's default key holds no result.
+
+# The default would hold the model's answers (power_type, statistical_test, ...).
+[module.power]
+row_key = ["paper_id", "text_id", "power_id"]
+
+# The default would hold the flags imprecise and zero, and expanded.
+[module.stat_p_exact]
+row_key = ["paper_id", "text_id", "text"]
+
+# The default would hold significance and expanded.
+[module.stat_p_nonsig]
+row_key = ["paper_id", "text_id", "text"]
+
+# The default would hold the coherence verdicts and notes.
+[module.stat_effect_size]
+row_key = ["paper_id", "text_id", "test_text"]
+
+# The default would hold the mismatch flags and the match tier.
+[module.ref_accuracy]
+row_key = ["paper_id", "bib_id"]
+
+# The permanent façades.
+[facade.text_search]
+ordered = true
+na_strict = true
+
+[facade.paper_table]
+ordered = true
+na_strict = true
+
+[facade.json_expand]
+ordered = true
+na_strict = true
+
+[facade."extract_*"]
+ordered = true
+na_strict = true
+
+[facade.bind_rows]
+ordered = true
+na_strict = true
+
+[facade.count]
+ordered = true
+na_strict = true
