@@ -790,9 +790,14 @@ class _Comparator(Comparator):
         return len(ta) == len(tb) and all(map(self._token_eq, ta, tb))
 
     def _text_number_eq(self, s: Any, x: Any) -> bool:
-        """Whether the text *s* is only the number *x*."""
+        """Whether the text *s* is only the number *x* (*s* may be a number: a list of
+        text and numbers reads as text, ``parity.compare._as_vector``)."""
+        if isinstance(s, bool) or isinstance(x, str | bool):
+            return False
+        if isinstance(s, int | float):
+            return self._num_eq(s, x)
         n = number_only(s, self.ws, self.nt) if isinstance(s, str) else None
-        if n is None or isinstance(x, str | bool):
+        if n is None:
             return False
         return self._number_eq(n.value, float(x), n.half if self.nt else 0.0)
 

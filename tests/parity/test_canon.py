@@ -357,6 +357,12 @@ def test_dtypes_and_list_shapes_are_free() -> None:
     assert canon.form(records) == canon.form(frame)
     matrix = {"t": "matrix", "dim": [1, 2], "v": _dbl(1, 2)}
     assert canon.compare(matrix, _dbl(1, 2)).equal
+    # parity.compare reads a list of text and numbers as text
+    mixed = _list(_chr("0.050"), _int(3))
+    assert canon.form(mixed) == _dbl(0.05, 3.0)
+    assert canon.compare(mixed, _dbl(0.05, 3.0)).equal
+    assert not canon.compare(mixed, _dbl(0.05, 4.0)).equal
+    assert not canon.compare(_list(_chr("0.050"), _lgl(True)), _dbl(0.05, 1.0)).equal
 
 
 def test_whitespace_is_free_but_numbers_stay_apart() -> None:
