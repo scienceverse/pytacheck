@@ -219,7 +219,9 @@ instead:
   search for it stops at your home folder. Local code it names (a path pack
   `{"path": ...}` or a `.py` module in a preset) stays inactive until you trust
   it: `pytacheck pack install` in the project shows it and asks. Store packs it
-  pins run only once installed, which also asks.
+  pins run only once installed, which also asks. It cannot add, change or
+  remove stores, since a store decides where packs come from: its `stores` are
+  ignored with a warning. Stores go in your user config.
 
 Each pack has a trust label: `builtin`, `store` (listed and pinned by a store),
 `unlisted` (installed from a URL or at a commit the store does not list), `local`
@@ -272,8 +274,9 @@ Config is JSON, in two scopes: the **user** file
 (`platformdirs.user_config_dir("pytacheck")/config.json`, e.g.
 `~/.config/pytacheck/config.json` on Linux) and the **project** file (the nearest
 `pytacheck.json` in the working directory or above it). The project wins over
-the user file; `stores`, `packs` and `presets` merge by key, and `null` removes an
-entry.
+the user file; `packs` and `presets` merge by key, and `null` removes an entry.
+`stores` are read from the user file only, or from the file `PYTACHECK_CONFIG`
+names (see "Project files" above).
 
 ```json
 {
@@ -299,7 +302,8 @@ config at all), `PYTACHECK_DATA_DIR` (installed packs and store caches),
 below) and, for the API, `PYTACHECK_API_MAX_CHECKS` (how many uploads are checked at
 once; default: the number of CPUs).
 
-**Stores.** The store `pytacheck` is built in. Add your lab's or institute's:
+**Stores.** The store `pytacheck` is built in. Add your lab's or institute's to
+your user config (a project's `pytacheck.json` cannot hold stores):
 
 ```bash
 pytacheck store add mylab https://github.com/mylab/pytacheck-store

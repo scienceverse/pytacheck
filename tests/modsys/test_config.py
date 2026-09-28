@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import warnings
 from pathlib import Path
 
 import pytest
@@ -75,7 +76,11 @@ def test_merge_rules(scopes, tmp_path) -> None:
         {
             "preset": "psych::default",
             "color": "blue",
-            "stores": {"mylab": "https://gitlab.example/lab/store", "local": "../stores/here"},
+            "stores": {
+                "pytacheck": None,  # null removes the built-in store
+                "mylab": "https://gitlab.example/lab/store",
+                "local": "../stores/here",
+            },
             "packs": {
                 "psych": {"source": {"github": "j/p"}, "rev": "a" * 40},
                 "labmods": {"path": "../lab-modules"},
@@ -89,7 +94,6 @@ def test_merge_rules(scopes, tmp_path) -> None:
         {
             "preset": "thesis",
             "color": None,  # null removes a scalar too
-            "stores": {"pytacheck": None},
             "packs": {"psych": None, "other": {"path": "vendored"}},
             "presets": {"proj": {"modules": ["stat_check"]}},
         },
@@ -114,6 +118,47 @@ def test_merge_rules(scopes, tmp_path) -> None:
     assert cfg.source("packs.other") == ("project", str(project))
     assert cfg.presets["thesis"]["modules"] == ["marginal", str(user.parent / "mine.py")]
     assert set(cfg.presets) == {"thesis", "proj"}
+
+
+def test_a_project_config_cannot_set_stores(scopes, monkeypatch) -> None:
+    # a cloned repository must not add a store, nor replace or hide the official one
+    from pytacheck.packs.stores import store_list
+
+    user, project = scopes
+    _write(user, {"stores": {"mylab": "https://github.com/mylab/store"}})
+    shadow = {"pytacheck": "./shadow-store", "evil": "https://evil.example/s", "mylab": None}
+    _write(project, {"preset": "p", "stores": shadow})
+    with pytest.warns(UserWarning, match="Ignoring the stores in the project config") as info:
+        cfg = load_config()
+    assert str(project) in str(info[0].message) and "user config" in str(info[0].message)
+    assert cfg.stores == {"pytacheck": BUILTIN_STORE_URL, "mylab": "https://github.com/mylab/store"}
+    assert cfg.source("stores.pytacheck") == ("builtin", "builtin")
+    assert cfg.source("stores.mylab") == ("user", str(user))
+    assert cfg.preset == "p"  # the rest of the file still counts
+    assert store_list()["defined_in"].tolist() == ["builtin", str(user)]
+
+    _write(project, {"preset": "q", "stores": {"evil": "https://evil.example/s"}})
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # warned once per file
+        assert load_config().preset == "q" and "evil" not in load_config().stores
+
+    # named with PYTACHECK_CONFIG, the same file is the user's own choice
+    monkeypatch.setenv("PYTACHECK_CONFIG", str(project))
+    assert load_config().stores["evil"] == "https://evil.example/s"
+
+
+def test_stores_cannot_be_written_to_a_project_config(scopes) -> None:
+    from pytacheck.packs.stores import StoreError, store_add, store_remove
+
+    user, project = scopes
+    _write(project, {})
+    with pytest.raises(StoreError, match="Stores go in your user config"):
+        store_add("lab", "https://github.com/lab/store", scope="project")
+    with pytest.raises(StoreError, match="Stores go in your user config"):
+        store_remove("pytacheck", scope="project")
+    assert json.loads(project.read_text()) == {}
+    assert store_add("lab", "https://github.com/lab/store") == user
+    assert json.loads(user.read_text()) == {"stores": {"lab": "https://github.com/lab/store"}}
 
 
 def test_builtin_store_and_env_override(scopes, monkeypatch) -> None:
