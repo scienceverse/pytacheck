@@ -718,6 +718,7 @@ def _sync(*, yes: bool) -> list[Pack]:
     config = load_config()
     done: list[Pack] = []
     problems: list[str] = []
+    fresh: set[str] = set()  # stores whose index was fetched again during this sync
     todo = _trust_project_code(config, yes=yes)
     for name, pin in config.packs.items():
         if not isinstance(pin, Mapping) or "path" in pin:
@@ -733,6 +734,8 @@ def _sync(*, yes: bool) -> list[Pack]:
                 )
                 if not recheck:
                     continue
+            else:
+                todo += 1
             source = _source_without_rev(pin.get("source"))
             if not source:
                 if recheck:
@@ -746,11 +749,20 @@ def _sync(*, yes: bool) -> list[Pack]:
                 version=pin.get("version"),
                 store=pin.get("store"),
             )
-            _enrich_from_store(cand)
-            if recheck and not cand.store:
-                continue
-            todo += 1
-            done.append(_install(cand, scope=None, yes=yes))
+            _enrich_from_store(cand, fresh)
+            if recheck:
+                if not cand.store:
+                    continue
+                todo += 1
+            try:
+                done.append(_install(cand, scope=None, yes=yes))
+            except Cancelled:
+                if not recheck:
+                    raise
+                ui.console().print(
+                    f"'{name}' stays unlisted until you accept the reinstall "
+                    "(run `pytacheck pack install`)."
+                )
         except PackError as exc:
             problems.append(f"{name}: {exc}")
     if not todo:
@@ -760,26 +772,33 @@ def _sync(*, yes: bool) -> list[Pack]:
     return done
 
 
-def _enrich_from_store(cand: _Candidate) -> None:
+def _enrich_from_store(cand: _Candidate, fresh: set[str] | None = None) -> None:
     """Keep the pin's store only if it lists exactly this pin; then add its review and yank.
 
     A pin is a claim, and a project config can carry anyone's. The store index has
     the say: the pack keeps ``store`` (and so trust ``store``) only when the named
     store lists this name, revision, source and tree hash. Otherwise, or when the
     store cannot be asked, the pack is installed as the unlisted source it is.
+    *fresh* holds the stores already fetched again, so a sync does that once per store.
     """
+    from pytacheck.packs.stores import NotListedError
+
     if not cand.store or not cand.name:
         return
     store, cand.store = cand.store, None
+    fresh = set() if fresh is None else fresh
     try:
         entry, listed = _listing(cand, store, refresh=False)
-        if not listed:  # the cached index may predate the listing
+        if not listed and store not in fresh:  # the cached index may predate the listing
+            fresh.add(store)
             entry, listed = _listing(cand, store, refresh=True)
+    except NotListedError:
+        listed = False
     except PackError as exc:
         cand.notes.append(
             f"The store '{store}' could not confirm the pin ({exc}): it is installed as an "
-            f"unlisted, unreviewed pack. Run `pytacheck pack install {cand.name}` when the "
-            "store can be reached."
+            "unlisted, unreviewed pack. Run `pytacheck pack install` when the store is set "
+            "up and can be reached."
         )
         return
     if not listed:
