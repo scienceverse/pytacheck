@@ -226,7 +226,7 @@ def test_compiles_and_recompiles(monitoring: bool) -> None:
 
 
 def test_readers_count_per_file(monitoring: bool, tmp_path: Path) -> None:
-    # through their modules: a function imported before the probe is not rebound
+    # through their modules: a function imported into a local before the probe is not rebound
     from pytacheck.codecheck import core
     from pytacheck.datacheck import _files_fread, _files_readtable
 

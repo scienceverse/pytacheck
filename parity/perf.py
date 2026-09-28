@@ -12,7 +12,8 @@ docs/design/ARCHITECTURE.md §5.1, without touching ``src/``::
 
 Each top-level ``module_run`` call is timed with ``time.process_time()``. A run
 inside it (``codebook_check`` running ``data_check``) counts towards the outer
-one. The input is ``probe.input``, or the paper's id when that is ``None``.
+one. The input is ``probe.input``, or the paper's id when that is ``None``. Set
+it when the paper does not tell inputs apart: repository runs on the demo paper.
 
 The counters count calls of the functions in :data:`TARGETS`, and go to the
 top-level run in progress (outside any run, to module ``None``). A probe takes
@@ -34,27 +35,38 @@ other targets too (``doc_builds``, once ``core/`` exists):
 A compile is a recompile when a probe in this process saw the pattern compiled
 before, or found it in its engine's cache when it started. ``regex_recompiles``
 varies from run to run once a run uses more than 500 patterns: the ``regex``
-package then drops a random fifth of its cache. Every other count is
-deterministic, so two warm runs of the same work give the same numbers. Files
-are keyed by their path, relative to the tree's root when they are in it.
-Temporary files have random names, so compare their counts, not their keys.
+package then drops a random fifth of its cache. Report it, but do not gate on
+it: gate on ``regex_compiles``. Every other count is deterministic, so two warm
+runs of the same work give the same numbers. Files are keyed by their path,
+relative to the tree's root when they are in it. Temporary files have random
+names, so compare their counts, not their keys.
 
 ``file_opens`` comes from an audit hook (``sys.addaudithook``). It does not see
 ``os.open()`` or files that C libraries open themselves (lxml parsing a path).
-Imports inside the probe open ``.pyc`` files, so measure a warm run.
+Imports inside the probe open ``.pyc`` files, so measure a warm run. Python
+cannot remove an audit hook, so the first probe's stays until the process ends.
+Idle, it counts nothing, but every audited event still calls it, each ``id()``
+among them.
 
 On Python 3.12 and later the calls are counted with ``sys.monitoring``: every
 call, however the function was imported, and ``copy.deepcopy`` stays the
 stdlib's own. On 3.11 each function is rebound in every loaded module while the
 probe is active, which misses a reference taken before (a local variable, a
 default argument). ``module_run`` is always rebound, since timing it needs its
-return and its exceptions: call it through a module, or import it after the
-probe starts. A target that does not resolve (in a tree from
-before or after a refactor) is listed in ``Probe.missing``, and its counter is
-left out, also from the targets that did resolve, so a 0 is always a measured 0.
+return and its exceptions, so it has that gap on every version. A target that
+does not resolve (in a tree from before or after a refactor) is listed in
+``Probe.missing``, and its counter is left out, also from the targets that did
+resolve, so a 0 is always a measured 0.
 
-The probe assumes that one thread runs modules at a time, and
-``process_time()`` is the CPU of the whole process.
+The times include what the counting costs: about 1% on the accuracy matrix, but
+more for code that calls a target very often. A deep copy of a large nested
+object, one ``deepcopy()`` call per level, takes up to 6x as long under
+``sys.monitoring`` and 1.7x when rebinding. To time without that cost, use
+``Probe((), opens=False)`` in a process where no probe has counted file opens,
+and count in another run.
+
+The probe assumes that one thread runs modules at a time. ``process_time()`` is
+the CPU of the whole process (all its threads), not of the processes it starts.
 """
 
 from __future__ import annotations
@@ -245,7 +257,7 @@ def _cached(hook: _Hook) -> Iterator[Hashable]:
 
 
 _ACTIVE: Probe | None = None
-_AUDITING = False  # an audit hook cannot be removed: it is added once, and does nothing idle
+_AUDITING = False  # an audit hook cannot be removed: it is added once, and counts nothing idle
 _COMPILED: set[Hashable] = set()  # the patterns probes in this process saw compiled or cached
 
 
