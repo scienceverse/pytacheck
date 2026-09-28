@@ -165,7 +165,7 @@ def parse_config(data: Mapping[str, Any], where: str = "canon.toml") -> Config:
             isinstance(entry, dict)
             and set(entry) == {"row_key"}
             and isinstance(key, list)
-            and key
+            and bool(key)
             and all(isinstance(c, str) and c for c in key)
             and len(set(key)) == len(key)
         )
@@ -179,7 +179,7 @@ def parse_config(data: Mapping[str, Any], where: str = "canon.toml") -> Config:
     for name, entry in data.get("facade", {}).items():
         ok = (
             isinstance(entry, dict)
-            and entry
+            and bool(entry)
             and set(entry) <= {"ordered", "na_strict"}
             and all(isinstance(v, bool) for v in entry.values())
         )
