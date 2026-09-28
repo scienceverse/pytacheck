@@ -268,5 +268,6 @@ def _encode(x: Any) -> dict[str, Any]:
             return frame
         return {"t": "list", "names": None, "v": [_encode(v) for v in items]}
     if hasattr(x, "to_canonical"):
-        return x.to_canonical()  # type: ignore[no-any-return]
+        # the object encodes itself, and its parts with the encoder it is given
+        return x.to_canonical(_encode)  # type: ignore[no-any-return]
     return {"t": "other", "class": [type(x).__name__], "repr": repr(x)}

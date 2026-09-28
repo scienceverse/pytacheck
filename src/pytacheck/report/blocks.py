@@ -11,7 +11,7 @@ pytacheck keeps the table as data and renders it itself (see
 from __future__ import annotations
 
 import math
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -42,9 +42,11 @@ class ReportTable:
     column: str = "body"
     options: dict[str, Any] = field(default_factory=dict)
 
-    def to_canonical(self) -> dict[str, Any]:
-        """Parity encoding: report prose comparison skips table widgets."""
-        return {"t": "report_table", "nrow": len(self.data)}
+    def to_canonical(self, encode: Callable[[Any], dict[str, Any]]) -> dict[str, Any]:
+        """Parity encoding: the table's column names and rows, as *encode* (the
+        parity encoder) writes a data frame. Widths, page length, escaping and
+        placement only change how the table looks, so they are left out."""
+        return {"t": "report_table", "table": encode(self.data)}
 
     def column_defs(self) -> list[dict[str, Any]]:
         """DataTables ``columnDefs`` for the widths (``report_table()``)."""

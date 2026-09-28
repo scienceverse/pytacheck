@@ -625,11 +625,16 @@ def comparable(x: Any, options: Options, path: str = "") -> Any:
     """The canonical value *x* as the comparison sees it (what the divergence lock
     fingerprints): elements ``ignore`` names dropped, ``presence`` elements as
     whether each value is there, a module output's report as its prose blocks
-    (or dropped, with ``report: ignore``), and the rows of ``unordered`` data
-    frames sorted."""
+    (or dropped, with ``report: ignore``), the rows of ``unordered`` data
+    frames sorted, and a report table as its row count."""
     if not isinstance(x, dict):
         return x
     t = x.get("t")
+    if t == "report_table":
+        # R's goldens hold no report tables yet (run_cases.R writes them as
+        # code chunks), so the lock sees only the row count, as it did before
+        # the table's names and rows were encoded
+        return {"t": "report_table", "nrow": x["table"]["nrow"]}
     if t == "df":
         names, cols = [], []
         for n, col in zip(x.get("names", []), x.get("v", []), strict=False):
@@ -663,6 +668,8 @@ def comparable(x: Any, options: Options, path: str = "") -> Any:
                     continue
                 if options.report == "prose":
                     el = {"t": "prose", "v": Comparator._prose(el)}
+                else:  # exact: as any other value, so its tables are row counts too
+                    el = comparable(el, options, sub)
             elif n and options.is_presence(n, sub):
                 el = _presence_view(el)
             else:
