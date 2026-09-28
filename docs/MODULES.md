@@ -275,7 +275,8 @@ Config is JSON, in two scopes: the **user** file
 `~/.config/pytacheck/config.json` on Linux) and the **project** file (the nearest
 `pytacheck.json` in the working directory or above it). The project wins over
 the user file; `packs` and `presets` merge by key, and `null` removes an entry.
-`stores` are read from the user file only (see "Project files" above).
+`stores` are read from the user file only, or from the file `PYTACHECK_CONFIG`
+names (see "Project files" above).
 
 ```json
 {
