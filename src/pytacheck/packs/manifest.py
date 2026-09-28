@@ -25,6 +25,7 @@ __all__ = [
     "PACK_NAME_RE",
     "PRESET_KEYS",
     "RESERVED_PACK_NAMES",
+    "RESERVED_PACK_PREFIXES",
     "Pack",
     "PackError",
     "read_manifest",
@@ -39,6 +40,8 @@ PACK_NAME_RE = re.compile(r"^[a-z][a-z0-9_-]{1,39}$")
 MODULE_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
 PRESET_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]*$")
 RESERVED_PACK_NAMES = frozenset({"metacheck", "local", "pytacheck", "modules"})
+#: No pack name may start with these (ignoring ``-`` and ``_``), so none looks official.
+RESERVED_PACK_PREFIXES = ("official", "scienceverse")
 #: Controlled vocabulary for ``fields`` (the store may extend it).
 FIELDS = (
     "general",
@@ -66,14 +69,23 @@ class PackError(ModuleError):
 
 
 def validate_pack_name(name: Any, *, allow_reserved: bool = False) -> str:
-    """Check a pack name against ``^[a-z][a-z0-9_-]{1,39}$`` and the reserved names."""
+    """Check a pack name against ``^[a-z][a-z0-9_-]{1,39}$`` and the reserved names and prefixes."""
     if not isinstance(name, str) or not PACK_NAME_RE.match(name):
         raise PackError(
             f"Invalid pack name {name!r}: use 2-40 lowercase letters, digits, '_' or '-', "
             "starting with a letter"
         )
-    if name in RESERVED_PACK_NAMES and not allow_reserved:
+    if allow_reserved:
+        return name
+    if name in RESERVED_PACK_NAMES:
         raise PackError(f"The pack name '{name}' is reserved")
+    bare = name.replace("-", "").replace("_", "")
+    for prefix in RESERVED_PACK_PREFIXES:
+        if bare.startswith(prefix):
+            raise PackError(
+                f"The pack name '{name}' is reserved: names starting with '{prefix}' "
+                "are kept for official packs"
+            )
     return name
 
 
