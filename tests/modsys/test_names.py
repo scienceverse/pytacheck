@@ -50,6 +50,12 @@ def test_names_that_only_contain_a_reserved_word_are_fine(name) -> None:
     assert validate_pack_name(name) == name
 
 
+@pytest.mark.parametrize("name", ["metacheck\n", "local\n", "lab\n"])
+def test_a_trailing_newline_does_not_dodge_the_name_rules(name) -> None:
+    with pytest.raises(PackError, match="Invalid pack name"):
+        validate_pack_name(name)
+
+
 def test_store_build_refuses_a_reserved_prefix(ms) -> None:
     root = ms.root / "store"
     ms.pack(root / "packs" / "official-stats", "official-stats")

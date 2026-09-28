@@ -70,7 +70,7 @@ class PackError(ModuleError):
 
 def validate_pack_name(name: Any, *, allow_reserved: bool = False) -> str:
     """Check a pack name against ``^[a-z][a-z0-9_-]{1,39}$`` and the reserved names and prefixes."""
-    if not isinstance(name, str) or not PACK_NAME_RE.match(name):
+    if not isinstance(name, str) or not PACK_NAME_RE.fullmatch(name):
         raise PackError(
             f"Invalid pack name {name!r}: use 2-40 lowercase letters, digits, '_' or '-', "
             "starting with a letter"
