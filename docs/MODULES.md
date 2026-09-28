@@ -511,6 +511,15 @@ pytacheck pack install ./my-pack    # use it live while developing (edits apply 
 pytacheck modules --pack my-pack
 ```
 
+**Names.** A pack name is 2 to 40 lowercase letters, digits, `_` or `-`, and
+starts with a letter. It may not start with `official` or `scienceverse`
+(ignoring `-` and `_`), and `metacheck`, `pytacheck`, `local` and `modules` are
+taken. A module name is letters, digits and `_`, and starts with a letter.
+In a store, a new pack or module name may not be the same as, or one
+typo (one character added, removed or changed, or two swapped; case, `-` and
+`_` do not count) from, a name already in use, so a typo cannot pick up
+someone else's code.
+
 `pack.json`:
 
 ```json
@@ -534,8 +543,8 @@ pytacheck modules --pack my-pack
 }
 ```
 
-* Names: packs `^[a-z][a-z0-9_-]{1,39}$` (not `metacheck`, `local`, `pytacheck`
-  or `modules`); modules `^[A-Za-z][A-Za-z0-9_]*$`.
+* Names: see "Names" above (packs `^[a-z][a-z0-9_-]{1,39}$`, modules
+  `^[A-Za-z][A-Za-z0-9_]*$`, plus the reserved names and prefixes).
 * `fields`: `general`, `psychology`, `medicine`, `neuroscience`, `economics`,
   `education`, `biology`, `ecology`, `sociology`, `political-science`,
   `computer-science`, `physics`.

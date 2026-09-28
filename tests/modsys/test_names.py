@@ -9,6 +9,7 @@ one typo from a name already in use (``clinical_trial`` next to
 from __future__ import annotations
 
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -224,3 +225,98 @@ def test_an_entry_file_one_typo_from_a_listed_pack(ms) -> None:
         router.get(codeload("jane/fieldz", REV_C)).respond(content=tarball(dir_files(own)))
         _, issues = store_build(root, check=True)
     assert "one typo from the pack 'fields'" in _name_issues(issues)["packs/fieldz"]
+
+
+# --- a trailing newline never passes a name check ---------------------------------------
+
+
+def _stray_file(folder: Path) -> None:
+    """Add a module file whose stem ends in a newline (not possible on Windows)."""
+    if os.name == "nt":
+        pytest.skip("a newline cannot be part of a file name on Windows")
+    (folder / "check_b\n.py").write_text("x = 1\n")
+
+
+def test_a_module_file_with_a_trailing_newline_is_not_a_module(tmp_path, monkeypatch) -> None:
+    from pytacheck.packs import manifest
+    from pytacheck.packs.manifest import Pack
+
+    (tmp_path / "check_a.py").write_text("x = 1\n")
+    monkeypatch.setattr(manifest.os, "listdir", lambda _: ["check_a.py", "check_b\n.py"])
+    pack = Pack(name="lab", root=tmp_path, kind="path", trust="local")
+    assert pack.modules() == ["check_a"]
+    assert pack.has_module("check_a")
+    assert not pack.has_module("check_b\n")
+
+
+def test_pack_check_warns_about_a_module_file_with_a_trailing_newline(ms) -> None:
+    from pytacheck.packs.check import pack_check
+
+    folder = ms.pack(ms.root / "lab", "lab", {"check_a": mod_src("check_a")})
+    _stray_file(folder)
+    issues = pack_check(folder, run=False)
+    assert [i.where for i in issues if i.code == "name"] == ["check_b\n.py"]
+
+
+def test_store_build_lists_no_module_file_with_a_trailing_newline(ms) -> None:
+    from pytacheck.packs.build import _pack_fields
+    from pytacheck.packs.manifest import read_manifest
+
+    folder = ms.pack(ms.root / "lab", "lab", {"check_a": mod_src("check_a")})
+    _stray_file(folder)
+    entry = _pack_fields(folder, read_manifest(folder))
+    assert [m["name"] for m in entry["modules"]] == ["check_a"]
+
+
+def test_a_reference_with_a_trailing_newline_is_not_a_reference() -> None:
+    from pytacheck.module import split_ref
+    from pytacheck.packs.registry import find_module
+
+    assert split_ref("lab::mod") == ("lab", "mod")
+    assert split_ref("lab::mod\n") is None
+    assert find_module("mod\n") == []
+
+
+def test_a_preset_name_with_a_trailing_newline_is_refused() -> None:
+    from pytacheck.packs.manifest import validate_preset
+
+    validate_preset("fast", {})
+    with pytest.raises(PackError, match="Invalid preset name"):
+        validate_preset("fast\n", {})
+
+
+def test_a_store_name_with_a_trailing_newline_is_refused() -> None:
+    from pytacheck.packs.stores import StoreError, _validate_store_name
+
+    assert _validate_store_name("lab") == "lab"
+    with pytest.raises(StoreError, match="Invalid store name"):
+        _validate_store_name("lab\n")
+
+
+def test_scaffold_names_with_a_trailing_newline_are_refused(tmp_path) -> None:
+    from pytacheck.packs.scaffold import module_template, pack_new
+
+    with pytest.raises(ValueError, match="only letters"):
+        module_template("my_check\n", tmp_path)
+    with pytest.raises(PackError, match="Invalid module name"):
+        pack_new("lab", tmp_path, module="my_check\n")
+
+
+def test_a_source_slug_or_git_ref_with_a_trailing_newline_is_refused() -> None:
+    from pytacheck.packs.fetch import _slug, git_read_file
+
+    assert _slug({"github": "jane/my-pack"}, "github") == "jane/my-pack"
+    with pytest.raises(PackError, match="Invalid github source"):
+        _slug({"github": "jane/my-pack\n"}, "github")
+    with pytest.raises(PackError, match="Invalid git ref"):
+        git_read_file("https://example.org/r.git", "main\n", "pack.json", limit=10)
+
+
+def test_a_store_entry_rev_with_a_trailing_newline_is_refused(ms) -> None:
+    root = _store(ms)
+    entry = {"name": "fieldz", "source": {"github": "jane/fieldz", "rev": REV_C + "\n"}}
+    (root / "packs" / "fieldz.json").write_text(json.dumps(entry))
+    _, issues = store_build(root, check=True)
+    assert any(
+        i.where == "packs/fieldz.json" and "full 40-hex commit SHA" in i.message for i in issues
+    )

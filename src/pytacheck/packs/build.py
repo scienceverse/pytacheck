@@ -54,7 +54,7 @@ from pytacheck.packs.tree import tree_sha256
 
 __all__ = ["check_entry_file", "store_build"]
 
-_SHA = re.compile(r"^[0-9a-f]{40}$")
+_SHA = re.compile(r"[0-9a-f]{40}")
 _ENTRY_KEYS = frozenset({"name", "source", "reviewed", "reviewed_tree_sha256", "yanked", "version"})
 _GITHUB_REMOTE = re.compile(
     r"^(?:https://(?:[^@/]+@)?github\.com/|git@github\.com:|ssh://git@github\.com/)"
@@ -105,7 +105,7 @@ def _pack_fields(folder: Path, manifest: Mapping[str, Any]) -> dict[str, Any]:
     names = sorted(
         p.stem
         for p in folder.glob("*.py")
-        if not p.name.startswith("_") and MODULE_NAME_RE.match(p.stem)
+        if not p.name.startswith("_") and MODULE_NAME_RE.fullmatch(p.stem)
     )
     modules = []
     for n in names:
@@ -299,7 +299,7 @@ def _external_source(data: Mapping[str, Any], where: str, issues: list[CheckIssu
         issues.append(_err(where, "the source needs exactly one of github, gitlab, codeberg, git"))
         return None
     rev = source.get("rev")
-    if not isinstance(rev, str) or not _SHA.match(rev):
+    if not isinstance(rev, str) or not _SHA.fullmatch(rev):
         issues.append(_err(where, f"source.rev must be a full 40-hex commit SHA, not {rev!r}"))
         return None
     return dict(source)

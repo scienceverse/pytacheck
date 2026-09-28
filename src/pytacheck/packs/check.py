@@ -403,7 +403,7 @@ def pack_check(
     issues += _manifest_issues(manifest)
     for p in sorted(root.glob("*.py")):
         stem = p.stem
-        if not p.name.startswith("_") and not MODULE_NAME_RE.match(stem):
+        if not p.name.startswith("_") and not MODULE_NAME_RE.fullmatch(stem):
             issues.append(
                 _warn("name", p.name, "not a valid module name, so the loader ignores this file")
             )

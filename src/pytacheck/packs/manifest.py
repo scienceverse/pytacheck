@@ -105,7 +105,7 @@ def validate_preset(name: str, preset: Any, *, where: str = "preset") -> dict[st
     ``replace`` (label -> ref) and ``args`` (module -> dict of arguments).
     """
     what = f"{where} '{name}'"
-    if not isinstance(name, str) or not PRESET_NAME_RE.match(name):
+    if not isinstance(name, str) or not PRESET_NAME_RE.fullmatch(name):
         raise PackError(f"Invalid preset name {name!r} in {where}")
     if not isinstance(preset, Mapping):
         raise PackError(f"{what} must be an object")
@@ -263,13 +263,13 @@ class Pack:
         return sorted(
             n[:-3]
             for n in names
-            if n.endswith(".py") and not n.startswith("_") and MODULE_NAME_RE.match(n[:-3])
+            if n.endswith(".py") and not n.startswith("_") and MODULE_NAME_RE.fullmatch(n[:-3])
         )
 
     def has_module(self, name: str) -> bool:
         if self.kind == "builtin":
             return name in self.modules()
-        return MODULE_NAME_RE.match(name) is not None and (self.root / f"{name}.py").is_file()
+        return MODULE_NAME_RE.fullmatch(name) is not None and (self.root / f"{name}.py").is_file()
 
     def module_path(self, name: str) -> Path:
         return self.root / f"{name}.py"
