@@ -23,8 +23,9 @@ or on the command line: `pytacheck run paper.pdf -m marginal -m all_p_values`.
 
 bibr's result is read straight into a `Paper` (`pc.from_bibr(result)`), with no
 JSON written to disk: a native bibr export schema 12.x paper, the same object
-`pc.read()` returns for bibr's JSON export. Save it with `pc.paper_write(paper)` (a
-bibr 12.0 file, see below) to skip extraction next time.
+`pc.read()` returns for bibr's JSON export. To skip extraction next time, save the
+paper (see below for what `pc.paper_write()` does with each schema version) or keep
+bibr's own JSON export, which holds every key bibr wrote.
 
 ## 2. From bibr JSON
 
@@ -41,13 +42,26 @@ as metacheck reads it (`pytacheck.io.bibr12`, the port of metacheck's
 footnotes are text rows with no section), and the `extraction` block is kept as
 `paper["extraction"]`. Files without a root `schema_version` (bibr v10.x and older,
 metacheck's demo and fixture papers) read exactly as before; any other root
-`schema_version` (bibr 11.x, 13.x) is refused with metacheck's error.
+`schema_version` (bibr 11.x, 13.x) is refused with metacheck's error, which names
+the schema found and what to do: extract the paper again with a bibr version that
+writes 12.x, or update pytacheck for a newer schema.
 
-`pc.paper_write(paper)` saves a 12.x paper as a bibr 12.0 file, byte for byte as
-metacheck's `paper_write(schema_version = "12.0")` writes it, keeping bibr as the
-producer and naming pytacheck as the converter (`schema_version="auto"`, the
-default; `None` saves the paper object as metacheck's default does; see
-[UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) D1 and D4).
+Within 12.x the schema only grows: a later minor version may add keys and enum values
+(a new section type, say). pytacheck ignores a key it does not know, keeps an enum
+value it does not know as it is, and logs each new value once (`pytacheck.lastlog()`,
+label `bibr12_new_value`).
+
+`pc.paper_write(paper)` saves a paper read from a 12.0 export (or converted from
+Grobid) as a bibr 12.0 file, byte for byte as metacheck's
+`paper_write(schema_version = "12.0")` writes it, keeping bibr as the producer and
+naming pytacheck as the converter (`schema_version="auto"`, the default; see
+[UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) D1 and D4). It refuses a paper read from
+a later 12.x such as 12.1, because a rewrite would drop keys it does not know. For such
+a paper:
+
+* keep bibr's own export (`bibr chew papers/ -o json/`) and read that next time; or
+* pass `schema_version=None` to save the paper object, as metacheck's default does.
+  `pc.read()` reads it back.
 
 Grobid TEI is converted to 12.x as well (`pc.read("paper.tei.xml")`,
 `pc.grobid_to_bibr(...)`, `convert()`), with Grobid as the producer; pass
