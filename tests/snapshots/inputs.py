@@ -236,7 +236,9 @@ def _module_cases() -> list[Case]:
     for m in REPOSITORY_MODULES:
         for path in REPOSITORY_INPUTS:
             case_id = A.Output(m, path, "repository").id
-            call = module_call(m, _demo, local_path=str(ROOT / path), local_only=True)
+            # with "/" on Windows too, as parity's $file arguments: the outputs repeat it
+            local_path = (ROOT / path).as_posix()
+            call = module_call(m, _demo, local_path=local_path, local_only=True)
             cases.append(Case(case_id, m, call, None, m))
     extras = {"demo": _demo, "psychsci_list": _psychsci_list, "list3": _list3}
     for m in PAPER_MODULES:

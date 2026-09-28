@@ -20,6 +20,7 @@ import pandas as pd
 import pytest
 
 from parity import accuracy as A
+from parity.canonical import portable
 from tests.snapshots import inputs, oracle, store
 
 SCRIPT = store.ROOT / "scripts" / "record_snapshots.py"
@@ -267,6 +268,24 @@ def test_a_case_that_tries_the_network_is_marked_as_a_problem() -> None:
     assert record["problem"].startswith("used the network")
 
 
+def _with_slashes(record: store.Record, path: str) -> store.Record:
+    """*record* with the repository *path* written with "/", as the cases pass it: the
+    accuracy report passes it as the OS writes it (with "\\" on Windows)."""
+    as_given = json.dumps(portable(str(store.ROOT / path)))[1:-1]
+    with_slashes = json.dumps(portable((store.ROOT / path).as_posix()))[1:-1]
+    mapped: store.Record = json.loads(json.dumps(record).replace(as_given, with_slashes))
+    return mapped
+
+
+def test_repository_cases_pass_the_folder_with_slashes() -> None:
+    case = inputs.find("modules", "data_check.repos--basic")
+    assert isinstance(case.call, functools.partial)
+    _module, _make, args = case.call.args
+    assert (
+        args["local_path"] == (store.ROOT / "tests/mod_data_check/fixtures/repos/basic").as_posix()
+    )
+
+
 @pytest.mark.slow
 @pytest.mark.parametrize("module", [*inputs.PAPER_MODULES, *inputs.REPOSITORY_MODULES])
 def test_the_matrix_cases_equal_the_accuracy_reports_outputs(
@@ -282,6 +301,8 @@ def test_the_matrix_cases_equal_the_accuracy_reports_outputs(
     for o in outputs:
         mine = inputs.record(inputs.find("modules", o.id))
         expected = theirs[o]
+        if o.kind == "repository":
+            expected = _with_slashes(expected, o.input)
         assert mine["ok"] == expected["ok"], o.id
         assert mine.get("value") == expected.get("value"), o.id
         assert mine.get("error") == expected.get("error"), o.id
