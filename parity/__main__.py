@@ -44,7 +44,11 @@ result changed since it was locked: a failure for a tier-1 case, a warning for a
 tier-2 one unless a value became an exception or ``--strict`` is given);
 ``unlocked`` (marked, no lock entry); ``fail`` / ``error`` (unmarked, differs
 from R / Python raised where R returned); ``skip`` (needs the reference R);
-``missing`` (no golden).
+``missing`` (no golden); ``quarantined`` (would fail, but parity/quarantine.yaml
+lists it with a reason: never a failure, ``--strict`` included).
+
+``check`` and ``lock`` stop with a hint, before running anything, when the
+checkout lacks its ``upstream/metacheck`` submodule or the ``data`` extra's readers.
 
 ``lock`` prints each entry it adds, changes or removes: the case, its tier and
 mark, the old and new fingerprints, and how Python differs from R. It adds new
@@ -57,6 +61,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import importlib.util
 import multiprocessing
 import os
 import re
@@ -86,6 +91,7 @@ from parity.cases import (
     expected_to_fail,
     iter_case_files,
     load_cases,
+    load_quarantine,
     parse_areas,
     r_text,
     run_python,
@@ -161,8 +167,23 @@ def cmd_generate(ns: argparse.Namespace) -> int:
 PASS, XFAIL, XPASS = "pass", "xfail", "xpass"
 PY_CHANGED, R_CHANGED, UNLOCKED = "py_changed", "r_changed", "unlocked"
 FAIL, ERROR, SKIP, MISSING = "fail", "error", "skip", "missing"
+QUARANTINED = "quarantined"
 #: the order statuses are listed in
-STATUSES = (PASS, XFAIL, SKIP, XPASS, R_CHANGED, PY_CHANGED, UNLOCKED, FAIL, ERROR, MISSING)
+STATUSES = (
+    PASS,
+    XFAIL,
+    SKIP,
+    QUARANTINED,
+    XPASS,
+    R_CHANGED,
+    PY_CHANGED,
+    UNLOCKED,
+    FAIL,
+    ERROR,
+    MISSING,
+)
+#: the statuses that parity/quarantine.yaml turns into ``quarantined``
+_QUARANTINABLE = (R_CHANGED, PY_CHANGED, FAIL, ERROR)
 
 
 @dataclass
@@ -251,6 +272,22 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
 
 
 def run_case(
+    case: Case, lock: Mapping[str, Fingerprint] | None = None, strict: bool = False
+) -> CaseResult:
+    """:func:`_run_case`, with a quarantined case that would fail reported as such.
+
+    A case listed in parity/quarantine.yaml is ``quarantined`` instead of ``fail``,
+    ``error``, ``r_changed`` or ``py_changed``, and never fails the run, strict or
+    not; the reason comes first among its problems. One that passes stays a pass.
+    """
+    res = _run_case(case, lock, strict)
+    reason = load_quarantine().get(case.key)
+    if reason is not None and res.status in _QUARANTINABLE:
+        res.done(QUARANTINED, [f"quarantined: {reason}", *res.problems], failing=False)
+    return res
+
+
+def _run_case(
     case: Case, lock: Mapping[str, Fingerprint] | None = None, strict: bool = False
 ) -> CaseResult:
     """Run *case*'s Python side and compare it with R's golden.
@@ -558,6 +595,46 @@ def stale_lock_entries(cases: list[Case], areas: list[str] | None = None) -> lis
     ]
 
 
+def stale_quarantine_entries(cases: list[Case], areas: list[str] | None = None) -> list[str]:
+    """Quarantined cases (``area/id``) that are not among *cases*, which must be
+    every case of their areas; with *areas*, only those of these areas are judged."""
+    known = {c.key for c in cases}
+    return [
+        key
+        for key in load_quarantine()
+        if key not in known and (areas is None or key.partition("/")[0] in areas)
+    ]
+
+
+#: modules the goldens of the data-reading areas need (the ``data`` extra's readers)
+_EXTRA_MODULES = ("pyreadstat", "xlrd")
+
+
+def environment_problems() -> list[str]:
+    """What a fresh checkout still lacks to run the cases, with the command that
+    supplies it. Without it, hundreds of cases fail for one missing piece."""
+    problems = []
+    if not (ROOT / "upstream" / "metacheck" / "DESCRIPTION").is_file():
+        problems.append(
+            "upstream/metacheck is empty (the cases read its fixtures and recorded "
+            "responses): run `git submodule update --init`"
+        )
+    lacking = [m for m in _EXTRA_MODULES if importlib.util.find_spec(m) is None]
+    if lacking:
+        problems.append(
+            f"{', '.join(lacking)} not installed (the data-reading cases need them): "
+            "run `uv sync --locked --all-extras`"
+        )
+    return problems
+
+
+def _environment_ok() -> bool:
+    problems = environment_problems()
+    for problem in problems:
+        print(f"parity: {problem}", file=sys.stderr)
+    return not problems
+
+
 def _root_entries() -> set[str]:
     return {p.name for p in ROOT.iterdir()}
 
@@ -592,6 +669,8 @@ def _default_report() -> Path:
 
 
 def cmd_check(ns: argparse.Namespace) -> int:
+    if not _environment_ok():
+        return 2
     root_before = _root_entries()
     started = time.perf_counter()
     cases = _select(ns)
@@ -599,6 +678,7 @@ def cmd_check(ns: argparse.Namespace) -> int:
     results = run_cases(cases, ns.jobs, progress=progress, strict=ns.strict)
     elapsed = time.perf_counter() - started
     stale = [] if _partial(ns) else stale_lock_entries(cases, ns.area)
+    unknown = [] if _partial(ns) else stale_quarantine_entries(cases, ns.area)
 
     report = Path(ns.report) if ns.report else _default_report()
     report.parent.mkdir(parents=True, exist_ok=True)
@@ -607,6 +687,8 @@ def cmd_check(ns: argparse.Namespace) -> int:
     for line in _summary_lines(results, stale, elapsed):
         print(line)
     print(f"report: {report}")
+    if unknown:
+        print(f"{len(unknown)} quarantine entries name no case: {', '.join(unknown)}")
     if ns.md:
         text = markdown_summary(results, stale, elapsed)
         if ns.md == "-":
@@ -620,7 +702,7 @@ def cmd_check(ns: argparse.Namespace) -> int:
     if left:
         print(f"cases left {', '.join(left)} in the repository root {ROOT}: give them a save_path")
     failing = [r for r in results if r.failing and not (r.status == MISSING and ns.allow_missing)]
-    return 0 if not failing and not stale and not left else 1
+    return 0 if not failing and not stale and not unknown and not left else 1
 
 
 def _count(results: list[CaseResult]) -> Counter[str]:
@@ -655,6 +737,10 @@ def _summary_lines(results: list[CaseResult], stale: list[str], elapsed: float) 
             f"{len(warnings)} tier-2 marked cases changed since they were locked (warnings): "
             "review them and re-lock"
         )
+    quarantined = [r for r in results if r.status == QUARANTINED]
+    if quarantined:
+        lines.append(f"{len(quarantined)} quarantined (parity/quarantine.yaml; not failures):")
+        lines += [f"  {r.key}: {r.problems[0].removeprefix('quarantined: ')}" for r in quarantined]
     failing = [r for r in results if r.failing]
     if failing:
         lines.append(f"{len(failing)} failing:")
@@ -856,6 +942,8 @@ def lock_markdown(changes: list[LockChange]) -> str:
 
 
 def cmd_lock(ns: argparse.Namespace) -> int:
+    if not _environment_ok():
+        return 2
     started = time.perf_counter()
     cases = _select(ns)
     targets = cases if ns.suggest else [c for c in cases if c.spec.get("known_divergence")]

@@ -1,0 +1,13 @@
+# Cases that fail in some environments for a reason outside pytacheck: a tool
+# they need that cannot be installed there, say. `python -m parity check` reports
+# such a case as `quarantined` instead of `fail`, and that never fails the run,
+# with --strict either. A quarantined case that passes is a pass.
+#
+# Nothing is quarantined today. Before adding a case, fix its environment. Each
+# case gets a reason. max_cases must equal the number of cases listed: it only
+# goes down, and tests/test_parity_cli.py pins the highest it may be.
+#
+#   - case: <area>/<id>
+#     reason: "what it needs and why it cannot be had here"
+max_cases: 0
+cases: []

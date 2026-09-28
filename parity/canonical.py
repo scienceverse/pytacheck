@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import datetime as dt
 import math
+import os
 import struct
 from collections.abc import Mapping
 from pathlib import Path
@@ -23,9 +24,22 @@ import numpy as np
 import orjson
 import pandas as pd
 
+
+def checkout_spellings(checkout: Path, *others: str | Path) -> tuple[str, ...]:
+    """The ways *checkout* is written in a result, longest first: its real path
+    (as R's ``normalizePath()`` writes it) and each of *others* that reaches it
+    through a symlink, each also with "/" (as R writes it on Windows)."""
+    real = os.path.realpath(checkout)
+    found = [real] + [os.path.abspath(o) for o in others if o and os.path.realpath(o) == real]
+    both = dict.fromkeys(s for f in found for s in (f, Path(f).as_posix()))
+    return tuple(sorted(both, key=len, reverse=True))
+
+
 _CHECKOUT = Path(__file__).resolve().parent.parent
-#: the checkout, as the OS writes it and (on Windows) with "/" as R writes it
-_ROOTS = tuple(dict.fromkeys((str(_CHECKOUT), _CHECKOUT.as_posix())))
+#: the checkout, as the OS writes it, and through the symlink it was reached by
+_ROOTS = checkout_spellings(
+    _CHECKOUT, Path(__file__).absolute().parent.parent, os.environ.get("PWD", "")
+)
 _ROOTS_JSON = tuple(orjson.dumps(r)[1:-1] for r in _ROOTS)
 _SCALAR_TYPES = (str, bool, int, float, complex, np.generic)
 

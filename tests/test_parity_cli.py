@@ -6,14 +6,16 @@ from __future__ import annotations
 
 import json
 import multiprocessing
+import os
 from pathlib import Path
 
 import pytest
 
 from parity import __main__ as parity_main
+from parity import canonical as pcanonical
 from parity import cases as pcases
 from parity import lockfile
-from parity.cases import UnknownAreaError, load_cases, parse_areas
+from parity.cases import UnknownAreaError, case_path, load_cases, load_quarantine, parse_areas
 from parity.lockfile import Fingerprint, entry_diff
 
 _MARK = "known_divergence: {kind: r_bug_fixed, ref: U1, reason: fixed}"
@@ -146,6 +148,170 @@ def test_strict_fails_a_changed_tier_2_case(tree, tmp_path, monkeypatch, capsys)
     many = parity_main.run_cases(cases, jobs=2, strict=True)
     assert [(r.status, r.failing) for r in many] == [("pass", False), ("py_changed", True)]
     assert not parity_main.run_cases(cases, jobs=2)[1].failing
+
+
+# -- quarantine -------------------------------------------------------------------------
+
+#: the most cases parity/quarantine.yaml may list; lower it with the list, never raise it
+QUARANTINE_CEILING = 0
+_WHY = "needs a tool that cannot be installed here"
+
+
+def _quarantine(tmp_path: Path, monkeypatch, *keys: str) -> Path:
+    path = tmp_path / "quarantine.yaml"
+    listed = "".join(f"  - {{case: {k}, reason: {_WHY!r}}}\n" for k in keys)
+    path.write_text(
+        f"max_cases: {len(keys)}\ncases:\n{listed}" if keys else "max_cases: 0\ncases: []\n"
+    )
+    monkeypatch.setattr(pcases, "QUARANTINE_FILE", path)
+    return path
+
+
+def test_the_quarantine_file_stays_within_its_ratchet() -> None:
+    quarantined = load_quarantine()
+    assert len(quarantined) <= QUARANTINE_CEILING
+    assert not set(quarantined) - {c.key for c in load_cases()}
+
+
+def test_a_quarantined_case_never_fails_the_run(tree, tmp_path, monkeypatch, capsys) -> None:
+    tree.area("beta", _case("same", "b"))  # differs from R's golden
+    status, by_case = _report(tmp_path, "--area", "beta")
+    assert (status, by_case["beta/same"]["status"]) == (1, "fail")
+    _quarantine(tmp_path, monkeypatch, "beta/same")
+    for extra in ([], ["--strict"]):
+        capsys.readouterr()
+        status, by_case = _report(tmp_path, "--area", "beta", *extra)
+        got = by_case["beta/same"]
+        assert (status, got["status"], got["failing"]) == (0, "quarantined", False)
+        assert got["problems"][0] == f"quarantined: {_WHY}"
+        assert len(got["problems"]) > 1  # how it differs from R is kept
+        out = capsys.readouterr().out
+        assert f"1 quarantined (parity/quarantine.yaml; not failures):\n  beta/same: {_WHY}" in out
+    # in worker processes too
+    if "fork" in multiprocessing.get_all_start_methods():
+        monkeypatch.setattr(parity_main.sys, "platform", "linux")
+        many = parity_main.run_cases(load_cases("beta"), jobs=2, strict=True)
+        assert [(r.status, r.failing) for r in many] == [("quarantined", False)]
+
+
+def test_a_quarantined_change_does_not_fail_under_strict(tree, tmp_path, monkeypatch) -> None:
+    assert parity_main.main(["lock"]) == 0
+    tree.area("alpha", _case("same", "a"), _case("marked", "c", mark=True))
+    status, by_case = _report(tmp_path, "--area", "alpha", "--strict")
+    assert (status, by_case["alpha/marked"]["status"]) == (1, "py_changed")
+    _quarantine(tmp_path, monkeypatch, "alpha/marked")
+    status, by_case = _report(tmp_path, "--area", "alpha", "--strict")
+    assert (status, by_case["alpha/marked"]["status"]) == (0, "quarantined")
+    assert by_case["alpha/marked"]["failing"] is False
+
+
+def test_a_quarantined_case_that_passes_is_a_pass(tree, tmp_path, monkeypatch) -> None:
+    _quarantine(tmp_path, monkeypatch, "beta/same")
+    status, by_case = _report(tmp_path, "--area", "beta")
+    assert (status, by_case["beta/same"]["status"]) == (0, "pass")
+
+
+def test_a_quarantine_entry_naming_no_case_fails_check(tree, tmp_path, monkeypatch, capsys) -> None:
+    _quarantine(tmp_path, monkeypatch, "beta/gone")
+    assert _report(tmp_path)[0] == 1
+    assert "1 quarantine entries name no case: beta/gone" in capsys.readouterr().out
+    # a selection that may leave out cases cannot tell
+    assert _report(tmp_path, "--area", "beta", "-k", "same")[0] == 0
+    # the entries of areas that were not selected are not judged
+    assert _report(tmp_path, "--area", "alpha_review")[0] == 0
+    assert _report(tmp_path, "--area", "beta")[0] == 1
+
+
+def test_the_quarantine_file_is_checked(tmp_path) -> None:
+    def load(text: str) -> dict[str, str]:
+        path = tmp_path / "q.yaml"
+        path.write_text(text)
+        return load_quarantine(path)
+
+    good = "max_cases: 1\ncases:\n  - {case: a/b, reason: why}\n"
+    assert load(good) == {"a/b": "why"}
+    assert load("max_cases: 0\ncases: []\n") == {}
+    # the ratchet: the count is the number of cases listed, so it goes down with them
+    with pytest.raises(ValueError, match=r"max_cases is 2 but 1 cases are listed"):
+        load(good.replace("max_cases: 1", "max_cases: 2"))
+    with pytest.raises(ValueError, match=r"max_cases is 0 but 1 cases are listed"):
+        load(good.replace("max_cases: 1", "max_cases: 0"))
+    with pytest.raises(ValueError, match="no reason"):
+        load("max_cases: 1\ncases:\n  - {case: a/b, reason: ' '}\n")
+    with pytest.raises(ValueError, match="listed twice"):
+        load("max_cases: 2\ncases:\n  - {case: a/b, reason: x}\n  - {case: a/b, reason: y}\n")
+    with pytest.raises(ValueError, match="keys max_cases and cases"):
+        load("cases: []\n")
+    with pytest.raises(ValueError, match=r"a case \(area/id\) and a reason"):
+        load("max_cases: 1\ncases:\n  - {case: a/b}\n")
+    # no file, no quarantine
+    assert load_quarantine(tmp_path / "none.yaml") == {}
+
+
+# -- a fresh worktree -------------------------------------------------------------------
+
+
+def test_check_and_lock_stop_when_the_checkout_lacks_its_setup(
+    tree, tmp_path, monkeypatch, capsys
+) -> None:
+    monkeypatch.setattr(parity_main, "ROOT", tmp_path)  # no upstream/metacheck here
+    monkeypatch.setattr(parity_main.importlib.util, "find_spec", lambda name: None)
+    for command in ("check", "lock"):
+        assert parity_main.main([command]) == 2
+        err = capsys.readouterr().err
+        assert "upstream/metacheck is empty" in err
+        assert "git submodule update --init" in err
+        assert "pyreadstat, xlrd not installed" in err
+        assert "uv sync --locked --all-extras" in err
+    assert not (tmp_path / "parity").exists()  # nothing ran
+    (tmp_path / "upstream" / "metacheck").mkdir(parents=True)
+    (tmp_path / "upstream" / "metacheck" / "DESCRIPTION").write_text("Package: metacheck\n")
+    monkeypatch.undo()
+    assert parity_main.environment_problems() == []
+
+
+def test_the_checkout_is_repo_however_it_is_reached(tmp_path, monkeypatch) -> None:
+    real = tmp_path / "real"
+    real.mkdir()
+    link = tmp_path / "link"
+    try:
+        link.symlink_to(real, target_is_directory=True)
+    except OSError:
+        pytest.skip("no symlinks here")
+    spellings = pcanonical.checkout_spellings(real, link, tmp_path / "elsewhere", "")
+    assert {os.path.realpath(real), str(link)} <= set(spellings)
+    assert str(tmp_path / "elsewhere") not in spellings
+    assert spellings == tuple(sorted(spellings, key=len, reverse=True))
+    monkeypatch.setattr(pcanonical, "_ROOTS", spellings)
+    monkeypatch.setattr(pcanonical, "_ROOTS_JSON", tuple(s.encode() for s in spellings))
+    value = {"t": "chr", "v": [f"{link}/a.csv", f"{os.path.realpath(real)}/b.csv"]}
+    assert pcanonical.portable(value) == {"t": "chr", "v": ["<repo>/a.csv", "<repo>/b.csv"]}
+    assert pcanonical.portable(f"{link}/a.csv") == "<repo>/a.csv"
+
+
+def test_case_paths_stay_inside_the_checkout(tmp_path, monkeypatch) -> None:
+    root, outside = tmp_path / "root", tmp_path / "outside"
+    (root / "fixtures").mkdir(parents=True)
+    outside.mkdir()
+    (root / "fixtures" / "a.txt").write_text("a")
+    try:
+        (root / "inside").symlink_to(root / "fixtures", target_is_directory=True)
+        (root / "leak").symlink_to(outside, target_is_directory=True)
+    except OSError:
+        pytest.skip("no symlinks here")
+    monkeypatch.setattr(pcases, "ROOT", root)
+    assert case_path("fixtures/a.txt") == root / "fixtures" / "a.txt"
+    # a symlink to somewhere else in the checkout keeps the spelling the case gave
+    assert case_path("inside/a.txt") == root / "inside" / "a.txt"
+    for bad in ("leak/a.txt", "../outside/a.txt", str(outside / "a.txt")):
+        with pytest.raises(ValueError, match="only files inside the checkout"):
+            case_path(bad)
+    assert pcases.decode({"$file": "fixtures/a.txt"}) == (root / "fixtures" / "a.txt").as_posix()
+    for key in ("$paper", "$file"):
+        with pytest.raises(ValueError, match="inside the checkout"):
+            pcases.decode({key: "leak/paper.json"})
+    with pytest.raises(ValueError, match="inside the checkout"):
+        pcases.decode({"$read": ["fixtures/a.txt", "leak/paper.json"]})
 
 
 # -- lock -------------------------------------------------------------------------------

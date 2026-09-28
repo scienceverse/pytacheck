@@ -796,6 +796,20 @@ def py_name(r_name: str) -> str:
     return f"{name}_" if keyword.iskeyword(name) else name
 
 
+def case_path(rel: str) -> Path:
+    """The file *rel* (relative to the checkout) that a case reads.
+
+    ROOT is a real path, so the result is spelled the way R's ``normalizePath()``
+    spells it, whatever symlink the checkout was reached by. A symlink inside the
+    checkout must not lead out of it: a case would read a file that only exists
+    here, and its result would not be the same in another worktree.
+    """
+    path = ROOT / rel
+    if not Path(os.path.realpath(path)).is_relative_to(ROOT):
+        raise ValueError(f"{rel}: a case reads only files inside the checkout")
+    return path
+
+
 def decode(x: Any) -> Any:
     """Decode a YAML argument spec into a Python value."""
     import numpy as np
@@ -806,10 +820,10 @@ def decode(x: Any) -> Any:
     if isinstance(x, dict) and len(x) == 1 and next(iter(x)).startswith("$"):
         key, val = next(iter(x.items()))
         if key == "$paper":
-            return pc.demopaper() if val == "demo" else pc.read(ROOT / val)
+            return pc.demopaper() if val == "demo" else pc.read(case_path(val))
         if key == "$read":
             vals = val if isinstance(val, list) else [val]
-            papers = pc.read([ROOT / v for v in vals])
+            papers = pc.read([case_path(v) for v in vals])
             return papers if isinstance(papers, pc.PaperList) else pc.PaperList([papers])
         if key == "$test_paper":
             val = val or {}
@@ -829,7 +843,7 @@ def decode(x: Any) -> Any:
         if key == "$NA":
             return None
         if key == "$file":
-            return (ROOT / val).as_posix()  # R's file.path(): "/" on Windows too
+            return case_path(val).as_posix()  # R's file.path(): "/" on Windows too
         if key == "$expr":
             _import_named_modules(val["py"])
             return eval(val["py"], {"pc": pc, "pd": pd, "np": np})
@@ -1081,6 +1095,55 @@ NEEDS_R_REASON = (
     "its Python side runs R: set PYTACHECK_RSCRIPT to the reference R (>= 4.5 with "
     "metacheck) to check it"
 )
+
+
+# -- parity/quarantine.yaml -----------------------------------------------------------
+
+QUARANTINE_FILE = ROOT / "parity" / "quarantine.yaml"
+_QUARANTINE_CACHE: dict[Path, tuple[int, dict[str, str]]] = {}
+
+
+def load_quarantine(path: Path | None = None) -> dict[str, str]:
+    """The quarantined cases (``area/id`` -> reason) of the quarantine file.
+
+    A quarantined case fails here for a reason outside pytacheck (an environment
+    that cannot be fixed, a tool it needs): ``check`` reports it as
+    ``quarantined``, which never fails the run, ``--strict`` included. The file
+    also holds the ratchet ``max_cases``, which must equal the number of cases
+    listed: adding a case means raising it, which a reviewer sees. Re-read when the
+    file changes, so a long-lived process (pytest) sees a new file.
+    """
+    path = QUARANTINE_FILE if path is None else path
+    try:
+        mtime = path.stat().st_mtime_ns
+    except FileNotFoundError:
+        return {}
+    cached = _QUARANTINE_CACHE.get(path)
+    if cached is not None and cached[0] == mtime:
+        return cached[1]
+    data = load_yaml(path)
+    if not isinstance(data, dict) or set(data) != {"max_cases", "cases"}:
+        raise ValueError(f"{path.name}: expected the keys max_cases and cases")
+    listed = data["cases"] or []
+    if not isinstance(listed, list) or not isinstance(data["max_cases"], int):
+        raise ValueError(f"{path.name}: max_cases is a number and cases a list")
+    found: dict[str, str] = {}
+    for entry in listed:
+        if not isinstance(entry, dict) or set(entry) != {"case", "reason"}:
+            raise ValueError(f"{path.name}: each case has a case (area/id) and a reason")
+        key, reason = str(entry["case"]), str(entry["reason"]).strip()
+        if not reason:
+            raise ValueError(f"{path.name}: {key} has no reason")
+        if key in found:
+            raise ValueError(f"{path.name}: {key} is listed twice")
+        found[key] = reason
+    if len(found) != data["max_cases"]:
+        raise ValueError(
+            f"{path.name}: max_cases is {data['max_cases']} but {len(found)} cases are "
+            "listed; the count may only go down, so set max_cases to the number of cases left"
+        )
+    _QUARANTINE_CACHE[path] = (mtime, found)
+    return found
 
 
 def run_python(case: Case) -> Any:

@@ -17,6 +17,7 @@ parity/
   golden/<area>/*.json   R's results, canonically encoded (committed)
   divergences/*.yaml     the marks of generated cases (one file per lane or topic)
   lock/<area>.json       the divergence lock: one line per marked case
+  quarantine.yaml        cases that fail for a reason outside pytacheck (none today)
   r/run_cases.R          R runner: evaluates cases, writes goldens
   r/canonical.R          R -> canonical JSON encoder
   r/helpers.R            R helpers for cases (pc_catch(), base-R idioms)
@@ -62,7 +63,40 @@ one per CPU), writes a per-case JSON report (`--report PATH`; by default a new
 other) and, with `--md [PATH]`, a Markdown summary: statuses by tier and the marked
 cases grouped by tier, kind and ref. It prints only the cases that fail or warn
 (`-v` prints every case, with what it printed) and exits non-zero on any failing
-status, a stale lock entry, or a file left in the repository root.
+status, a stale lock entry, a quarantine entry that names no case, or a file left
+in the repository root.
+
+### A fresh worktree
+
+A fresh clone or `git worktree` runs `check` to zero failures once it has what the
+cases read:
+
+```bash
+git submodule update --init      # upstream/metacheck: fixtures and recorded responses
+uv sync --locked --all-extras    # the data extra's readers (pyreadstat, xlrd)
+```
+
+Without the submodule some 1,800 cases fail, and without the extra some 60, all for
+that one reason. So `check` and `lock` look first and stop with exit status 2 and
+the command that fixes it, before running anything. The cases that need the reference
+R are `skip`ped without it, in a worktree as anywhere.
+
+Paths do not depend on where the checkout is. Goldens and results write it as
+`<repo>`, in its real path (as R's `normalizePath()` gives it) and in the symlinked
+spelling it was reached by. A case reads its files through `case_path()`, which
+refuses a path that leaves the checkout through a symlink, so a case cannot depend
+on a file that only exists in one worktree.
+
+### Quarantine
+
+`parity/quarantine.yaml` lists cases that fail in some environment for a reason
+that is not pytacheck's, each with its reason. `check` reports such a case as
+`quarantined` instead of `fail`, `error`, `r_changed` or `py_changed`. A quarantined
+case never fails the run, and `check --strict` does not fail it either; the
+tests pin both. One that passes is a `pass`. The file is a last resort: fix the
+environment first. `max_cases` must equal the number of cases listed, so the count
+only goes down, and `QUARANTINE_CEILING` in `tests/test_parity_cli.py` is the most
+it may ever be. Nothing is quarantined today.
 
 ## What is compared
 
@@ -286,6 +320,7 @@ What `check` reports:
 | `unlocked` | marked, without a lock entry | yes |
 | `fail` / `error` | unmarked, and differs from R / Python raised where R returned | yes |
 | `skip` | needs the reference R (see below) | no |
+| `quarantined` | would fail, but `parity/quarantine.yaml` lists it with a reason | no, `--strict` included |
 | `missing` | no golden: run `generate` | yes |
 
 A tier-2 warning is a `LockWarning` under pytest and is listed in the summary;
