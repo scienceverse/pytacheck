@@ -1,16 +1,21 @@
-"""The accuracy report's scorer, expectations and matrix (parity/accuracy.py).
+"""The accuracy report's scorer, expectations and matrix (parity/accuracy.py), and
+the wrapper that runs the reference R in its Docker image (parity/r/docker).
 
 The report itself runs in CI as ``python -m parity accuracy --gate``.
 """
 
 from __future__ import annotations
 
+import os
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
 
 from parity import accuracy as acc
 from parity.canonical import canonical
+from parity.cases import ROOT
 
 
 def _chr(*v: str | None) -> dict:
@@ -265,6 +270,28 @@ def test_left_over_goldens_are_problems(tmp_path: Path, monkeypatch: pytest.Monk
     assert len(partial.problems) == 1  # -m runs check only the modules they run
 
 
+def test_an_unchanged_golden_keeps_its_bytes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """gzip's bytes depend on the Python (3.13 writes another OS byte in the header)
+    and on its zlib, so regenerating the same outputs leaves the file as it is."""
+    monkeypatch.setattr(acc, "GOLDEN_DIR", tmp_path)
+    data = {"module": "m", "outputs": {"a.xml": {"ok": False, "error": "x"}}}
+    acc.write_golden("m", data)
+    path = acc.golden_path("m")
+    other = bytearray(path.read_bytes())
+    other[9] = 7 if other[9] != 7 else 3  # the OS byte
+    path.write_bytes(other)
+    acc.write_golden("m", data)
+    assert path.read_bytes() == other
+    changed = {"module": "m", "outputs": {}}
+    acc.write_golden("m", changed)
+    assert acc.read_golden("m") == changed
+    path.write_bytes(b"not gzip")
+    acc.write_golden("m", data)
+    assert acc.read_golden("m") == data
+
+
 def test_matrix_inputs_must_be_in_the_corpus(tmp_path: Path) -> None:
     path = tmp_path / "matrix.toml"
     path.write_text('[papers]\nmodules = ["marginal"]\ninputs = ["tests/nope.xml"]\n')
@@ -300,6 +327,149 @@ def test_run_cases_reads_a_paper_once_and_keeps_its_warnings(tmp_path: Path) -> 
     a, b = (json.loads((tmp_path / "out" / "once" / f"{i}.json").read_text()) for i in "ab")
     assert a["warnings"] and a["warnings"] == b["warnings"]
     assert a["value"] == b["value"]
+
+
+def _r_prints(
+    monkeypatch: pytest.MonkeyPatch, stdout: str, status: int = 0, stderr: str = ""
+) -> list[list[str]]:
+    """R, as ``subprocess.run`` in parity.accuracy sees it: the commands it was given."""
+    calls: list[list[str]] = []
+
+    def run(args: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+        calls.append(list(args))
+        return subprocess.CompletedProcess(args, status, stdout, stderr)
+
+    monkeypatch.setattr(acc.subprocess, "run", run)
+    return calls
+
+
+def test_suggests_library_is_checked_in_r(monkeypatch: pytest.MonkeyPatch) -> None:
+    """R reports the library and whether careless loads from it: R's paths need not
+    be the host's (parity/r/docker runs R in a container)."""
+    calls = _r_prints(monkeypatch, "/opt/r/lib/R/suggests\nTRUE")
+    assert acc.suggests_library("Rscript") == "/opt/r/lib/R/suggests"
+    assert 'requireNamespace("careless", lib.loc = lib' in calls[0][-1]
+    _r_prints(monkeypatch, "/opt/r/lib/R/suggests\nFALSE")
+    with pytest.raises(SystemExit, match="careless does not load from /opt/r/lib/R/suggests"):
+        acc.suggests_library("Rscript")
+    _r_prints(monkeypatch, "", status=2, stderr="Error: no R here\n")
+    with pytest.raises(SystemExit, match=r"exit status 2\): Error: no R here$"):
+        acc.suggests_library("Rscript")
+
+
+def test_suggests_library_of_the_reference_r() -> None:
+    from parity.cases import reference_r
+
+    rscript = reference_r()
+    if rscript is None:
+        pytest.skip("needs the reference R (PYTACHECK_RSCRIPT, R >= 4.5)")
+    assert Path(acc.suggests_library(rscript)).name == "suggests"
+
+
+# -- the R image's wrapper (parity/r/docker/Rscript), with a docker that prints its arguments
+
+_WRAPPER = ROOT / "parity" / "r" / "docker" / "Rscript"
+needs_bash = pytest.mark.skipif(
+    os.name == "nt"
+    or not (shutil.which("bash") and shutil.which("git"))
+    or not (ROOT / ".git").exists(),
+    reason="the wrapper is a bash script that asks git about the checkout",
+)
+
+
+def _git(cwd: Path, *args: str) -> str:
+    return subprocess.run(
+        ["git", *args], cwd=cwd, capture_output=True, text=True, check=True
+    ).stdout.strip()
+
+
+def _wrapper(
+    tmp_path: Path, cwd: Path, image_exists: bool = True, **env: str
+) -> subprocess.CompletedProcess[str]:
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(exist_ok=True)
+    docker = bin_dir / "docker"
+    exists = 0 if image_exists else 1
+    docker.write_text(f'#!/bin/sh\n[ "$1" = image ] && exit {exists}\nprintf "%s\\n" "$@"\n')
+    docker.chmod(0o755)
+    base = {k: v for k, v in os.environ.items() if k not in ("PYTACHECK_R_IMAGE", "PWD")}
+    # git must not find a repository above tmp_path
+    base.update(PATH=f"{bin_dir}{os.pathsep}{base['PATH']}", GIT_CEILING_DIRECTORIES=str(tmp_path))
+    return subprocess.run(
+        [str(_WRAPPER), "--vanilla", "-e", "1"],
+        cwd=cwd,
+        env={**base, **env},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def _after(args: list[str], flag: str) -> set[str]:
+    return {args[i + 1] for i, a in enumerate(args[:-1]) if a == flag}
+
+
+@needs_bash
+def test_r_image_wrapper_mounts_the_checkout_and_keeps_r_libs(tmp_path: Path) -> None:
+    run = _wrapper(tmp_path, ROOT, R_LIBS="/opt/r/lib/R/suggests", R_LIBS_USER="/home/u/R")
+    assert run.returncode == 0, run.stderr
+    args = run.stdout.splitlines()
+    top = _git(ROOT, "rev-parse", "--show-toplevel")
+    common = _git(ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir")
+    assert {f"{p}:{p}" for p in ("/tmp", top, common)} <= _after(args, "-v")
+    assert args[args.index("-w") + 1] == str(ROOT)
+    assert "--rm" in args and _after(args, "--pull") == {"never"}
+    assert _after(args, "--network") == {"host"}
+    assert _after(args, "--user") == {f"{os.getuid()}:{os.getgid()}"}
+    env = _after(args, "-e")
+    assert {"R_LIBS", "HOME=/home/r"} <= env
+    assert not env & {"R_LIBS_USER", "PATH", "HOME", "PWD"}
+    # HOME is private to the run (/tmp is shared, and anyone can write there)
+    uid, gid = os.getuid(), os.getgid()
+    assert _after(args, "--tmpfs") == {f"/home/r:uid={uid},gid={gid},mode=0700"}
+    # the image of the metacheck commit the checkout has
+    sub = ROOT / "upstream" / "metacheck"
+    if (sub / ".git").exists():
+        rev = _git(sub, "rev-parse", "HEAD")
+    else:
+        rev = _git(ROOT, "rev-parse", ":upstream/metacheck")
+    assert args[-5:] == [f"pytacheck-r-reference:{rev[:8]}", "Rscript", "--vanilla", "-e", "1"]
+
+
+@needs_bash
+def test_r_image_wrapper_outside_a_checkout(tmp_path: Path) -> None:
+    """Called from elsewhere, it mounts that folder and its own checkout."""
+    work = tmp_path / "work"
+    work.mkdir()
+    run = _wrapper(tmp_path, work, PYTACHECK_R_IMAGE="r:test")
+    assert run.returncode == 0, run.stderr
+    args = run.stdout.splitlines()
+    top = _git(ROOT, "rev-parse", "--show-toplevel")
+    assert {f"{work}:{work}", f"{top}:{top}"} <= _after(args, "-v")
+    assert args[-5] == "r:test"
+
+
+@needs_bash
+def test_r_image_wrapper_mounts_tmpdir(tmp_path: Path) -> None:
+    """Python's temporary files (the accuracy report's cases) are in $TMPDIR."""
+    tmp = tmp_path / "tmp"
+    tmp.mkdir()
+    run = _wrapper(tmp_path, ROOT, TMPDIR=f"{tmp}/", PYTACHECK_R_IMAGE="r:test")
+    assert run.returncode == 0, run.stderr
+    assert f"{tmp}:{tmp}" in _after(run.stdout.splitlines(), "-v")
+    # docker would make a missing folder, as root
+    run = _wrapper(tmp_path, ROOT, TMPDIR=str(tmp_path / "gone"), PYTACHECK_R_IMAGE="r:test")
+    assert run.returncode == 0, run.stderr
+    assert not [v for v in _after(run.stdout.splitlines(), "-v") if "gone" in v]
+
+
+@needs_bash
+def test_r_image_wrapper_without_the_image(tmp_path: Path) -> None:
+    run = _wrapper(tmp_path, ROOT, image_exists=False, PYTACHECK_R_IMAGE="r:missing")
+    assert run.returncode == 125
+    assert "no Docker image r:missing: build it with" in run.stderr
+    assert run.stderr.strip().endswith("parity/r/docker/build.sh")
+    assert not run.stdout
 
 
 def _set_cell(p) -> None:

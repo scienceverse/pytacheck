@@ -63,6 +63,7 @@ import tempfile
 import time
 import tomllib
 import warnings
+import zlib
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import asdict, dataclass, field
@@ -199,9 +200,15 @@ def read_golden(module: str) -> dict[str, Any] | None:
 
 def write_golden(module: str, data: dict[str, Any]) -> None:
     raw = orjson.dumps(data, option=orjson.OPT_SORT_KEYS)
+    path = golden_path(module)
+    # unchanged outputs leave the file alone, so `git diff` shows only real drift:
+    # gzip's bytes also depend on the Python (3.13 writes another header byte) and
+    # on its zlib; mtime 0 keeps the time out of new files
+    with contextlib.suppress(OSError, EOFError, zlib.error):
+        if gzip.decompress(path.read_bytes()) == raw:
+            return
     GOLDEN_DIR.mkdir(parents=True, exist_ok=True)
-    # mtime 0: the same outputs give the same bytes, so drift shows in `git diff`
-    golden_path(module).write_bytes(gzip.compress(raw, compresslevel=9, mtime=0))
+    path.write_bytes(gzip.compress(raw, compresslevel=9, mtime=0))
 
 
 #: R runs with its network disabled: a module of the matrix must not need it,
@@ -209,21 +216,31 @@ def write_golden(module: str, data: dict[str, Any]) -> None:
 _NO_PROXY = "http://127.0.0.1:9"
 
 
+#: prints the suggests library, then whether careless loads from it: R checks, as
+#: its paths need not be the host's (parity/r/docker runs R in a container)
+_SUGGESTS = (
+    'lib <- file.path(R.home(), "suggests"); '
+    'cat(lib, requireNamespace("careless", lib.loc = lib, quietly = TRUE), sep = "\\n")'
+)
+
+
 def suggests_library(rscript: str) -> str:
     """The reference R's library of metacheck's suggested packages (``careless``),
     which parity/r/install-suggests.R fills. Only this report loads it: metacheck
     runs as users install it, while the parity cases switch ``careless`` on and
     off themselves."""
-    lib = subprocess.run(
-        [rscript, "--vanilla", "-e", 'cat(file.path(R.home(), "suggests"))'],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-    if not (Path(lib) / "careless" / "DESCRIPTION").exists():
+    run = subprocess.run(
+        [rscript, "--vanilla", "-e", _SUGGESTS], capture_output=True, text=True, check=False
+    )
+    lines = run.stdout.splitlines()
+    if run.returncode or len(lines) < 2:
+        raise SystemExit(f"{rscript} failed (exit status {run.returncode}): {run.stderr.strip()}")
+    lib = lines[-2].strip()
+    if lines[-1].strip() != "TRUE":
         raise SystemExit(
-            f"the R package careless is not installed in {lib}: run "
-            "`Rscript parity/r/install-suggests.R` (see parity/r/setup-reference.sh)"
+            f"the R package careless does not load from {lib}: run "
+            "`Rscript parity/r/install-suggests.R` (see parity/r/setup-reference.sh), "
+            "or rebuild the R image (parity/r/docker/README.md)"
         )
     return lib
 

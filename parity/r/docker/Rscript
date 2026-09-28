@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Rscript in the R reference image that build.sh beside this file builds, for
+# PYTACHECK_RSCRIPT. R sees the host's paths: /tmp ($TMPDIR too), the caller's
+# checkout and this file's are mounted at the same places, each with its git
+# common dir (which worktrees and submodules point into). It runs as the
+# caller's user on the host's network, with an empty HOME of its own and the
+# caller's environment minus host-only variables.
+# R_LIBS is kept: the accuracy report puts the suggests library on it.
+#
+# The image is $PYTACHECK_R_IMAGE, else pytacheck-r-reference:<the first 8 hex
+# digits of the metacheck commit in upstream/metacheck>, from the caller's
+# checkout, or from this file's when the caller is not in one.
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# the metacheck commit a checkout has in upstream/metacheck (its pin when the
+# submodule is not checked out)
+metacheck_rev() {
+  if [ -e "$1/upstream/metacheck/.git" ]; then
+    git -C "$1/upstream/metacheck" rev-parse HEAD
+  else
+    git -C "$1" rev-parse --verify --quiet :upstream/metacheck
+  fi
+}
+
+mounts=(/tmp)
+# Python's and pytest's temporary files are in $TMPDIR when it is set
+if [ -n "${TMPDIR:-}" ] && tmp=$(cd -- "$TMPDIR" 2>/dev/null && pwd); then
+  mounts+=("$tmp")
+fi
+rev=
+seen=
+for dir in "$PWD" "$here"; do
+  if ! top=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null); then
+    mounts+=("$dir")
+    continue
+  fi
+  [ "$top" = "$seen" ] && continue
+  seen=$top
+  mounts+=("$top" "$(git -C "$top" rev-parse --path-format=absolute --git-common-dir)")
+  [ -n "$rev" ] || rev=$(metacheck_rev "$top" 2>/dev/null)
+done
+volumes=()
+for m in "${mounts[@]}"; do
+  for v in "${volumes[@]}"; do [ "$v" = "$m:$m" ] && continue 2; done
+  volumes+=(-v "$m:$m")
+done
+
+envs=()
+for v in $(compgen -e); do
+  case "$v" in
+    PATH|HOME|USER|LOGNAME|SHELL|PWD|OLDPWD|SHLVL|_|HOSTNAME|TERM|TERM_*|COLORTERM|DISPLAY|WAYLAND_*|XDG_*|DBUS_*|SSH_*|GPG_*|LS_COLORS|MAIL|R_HOME|R_LIBS_USER|R_LIBS_SITE|CONDA_*|MAMBA_*|LD_*|VIRTUAL_ENV|PYTHON*) continue ;;
+  esac
+  envs+=(-e "$v")
+done
+
+image=${PYTACHECK_R_IMAGE:-}
+if [ -z "$image" ]; then
+  if [ -z "$rev" ]; then
+    echo "Rscript: no upstream/metacheck to name the image by: set PYTACHECK_R_IMAGE" >&2
+    exit 125
+  fi
+  image=pytacheck-r-reference:${rev:0:8}
+fi
+if ! docker image inspect "$image" > /dev/null 2>&1; then
+  echo "Rscript: no Docker image $image: build it with $here/build.sh" >&2
+  exit 125
+fi
+uid=$(id -u) gid=$(id -g)
+# HOME is a fresh, private tmpfs: what one run leaves in ~ (metacheck's data
+# folder, a user library, .Rprofile, .Renviron) never reaches the next, and no
+# other user can plant it, as they could in /tmp
+exec docker run --rm -i --init --pull never --network host --user "$uid:$gid" \
+  --tmpfs "/home/r:uid=$uid,gid=$gid,mode=0700" \
+  "${volumes[@]}" -w "$PWD" "${envs[@]}" -e HOME=/home/r "$image" Rscript "$@"
