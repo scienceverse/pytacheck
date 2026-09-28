@@ -15,23 +15,28 @@ access counts as an import, so ``pytacheck.text_search(...)``, which loads
 ``text`` through the top-level lazy ``__getattr__``, is an upward edge.
 
 **Core.** Once ``core/**`` exists it keeps the positive list of §2.1: it imports
-only the foundation above and the core itself. §2.6 adds a few modules for
-``core/run.py`` alone: ``config``, ``llm``, the cache store (``cache``),
-``repository``, the module resolver (``module``) and ``packs``. Where the two
-sections collide, §2.6 wins, but only for that file and only for those names.
-Every other core file that needs more gets a named entry in ``ALLOWED``. In any
-core file, run.py too, the lint also names the layers §2.1 says the core never
-imports (``text``, ``modules``, ``report``, ``api``, ``cli``, ``archives``,
+only the foundation above and the core itself. §2.6 adds what ``core/run.py``
+needs for settings and caches: ``config``, ``llm``, the cache store (``cache``),
+``repository``, the options overlay in ``utils`` (L6-1), the packs overlay in
+``packs.registry``, and from ``pytacheck.module`` the resolver and ``use()``
+(L5-7). From ``utils`` and ``pytacheck.module`` only those names are allowed,
+and from ``packs`` only ``registry``, so run.py may not import a runner built on
+``execute()``, such as ``run_session`` or ``pack check``. It may import
+``pytacheck.module`` or ``pytacheck.utils`` as a namespace; each name it then
+uses is judged on its own. Where §2.1 and §2.6 collide, §2.6 wins, but only
+for run.py and only for those names. The positive list judges a name as it is
+written. The top level is a façade: ``from pytacheck import x`` is reported
+under x's layer when that layer is banned below, and as an import of the top
+level otherwise, even when x is defined in the foundation. In any core file,
+run.py too, the lint also names the layers §2.1 says the core never imports
+(``text``, ``modules``, ``report``, ``api``, ``cli``, ``archives``,
 ``datacheck``, ``codecheck``), ``pytacheck.doc``, and the permanent façades of
-§2.10, because the façades import the core, never the reverse. The façades in
-``pytacheck.module`` are banned as names (``module``, ``module_run`` and
-``get_prev_outputs``), so run.py can still reach the resolver there. A name
-that is a module is always that module, never a name some ``__init__``
-re-exports under it, so ``import pytacheck.module`` is the module, not the
-``module()`` decorator. The top-level package is a façade too, so ``from
-pytacheck import x`` counts as an import of where ``x`` is defined, or of the
-top level if nothing re-exports it. A package's ``__init__`` is not an import
-edge of its submodules.
+§2.10, because the façades import the core, never the reverse. These are found
+through re-exports too. The façades in ``pytacheck.module`` are banned as names
+(``module``, ``module_run`` and ``get_prev_outputs``). A name that is a module
+is always that module, never a name some ``__init__`` re-exports under it, so
+``import pytacheck.module`` is the module, not the ``module()`` decorator. A
+package's ``__init__`` is not an import edge of its submodules.
 
 **Migrated modules.** A check module (a file under ``modules/``) that imports
 ``pytacheck.doc`` counts as migrated. It may not use ``text.search``,
@@ -49,7 +54,9 @@ There is no rule for YAML modules (decision 2 is (c)).
 **The allow-list is a ratchet.** ``ALLOWED`` holds the violations that exist
 today, one line each with a reason. A violation that is not in it fails, and an
 entry with no matching violation fails too, so the list only shrinks. The
-mapping above finds no violation on the current tree, so the list is empty.
+mapping above finds no violation on the current tree, so the list is empty. A
+new need does not go in ``ALLOWED``: change the lists in ARCHITECTURE.md §2.1 or
+§2.6 first, then the lists here.
 """
 
 from __future__ import annotations
@@ -73,9 +80,33 @@ CORE = _names("core")
 LOWER = FOUNDATION + CORE
 UPPER = _names("text", "modules", "report", "api", "cli", "archives", "datacheck", "codecheck")
 DOC = f"{PKG}.doc"
-# §2.6: what core/run.py may import on top of the positive list
+# §2.6: what core/run.py may import on top of the positive list; a name inside a
+# module allows that name alone
 RUN = f"{PKG}.core.run"
-RUN_CONTEXT = _names("config", "llm", "cache", "repository", "module", "packs")
+RUN_CONTEXT = _names(
+    "config",
+    "llm",
+    "cache",  # the CacheStore, not written yet
+    "repository",  # RepoIndex, not written yet
+    # the options overlay (L6-1); the snapshot pair is not written yet
+    "utils.get_option",
+    "utils.options",
+    "utils.local_options",
+    "utils.options_snapshot",
+    "utils.options_restore",
+    # the packs overlay and the pack loader, not pack check
+    "packs.registry",
+    # the resolver and use() (L5-7); the snapshot pair is not written yet
+    "module.ModuleSpec",
+    "module.ModuleError",
+    "module.module_find",
+    "module.use",
+    "module.use_setting",
+    "module.use_snapshot",
+    "module.use_restore",
+)
+# modules run.py may import whole, for the names above that live in them
+RUN_NAMESPACES = _names("utils", "module")
 # the permanent façades (§2.10); the ones in pytacheck.module are banned as names
 FACADES = _names(
     "papers.tables",
@@ -94,7 +125,8 @@ BANNED = _names("text.search", "papers.tables", "_r.frames", "_r.regex.grepl")
 # named by §2.1 but not written yet
 NOT_YET = frozenset(_names("core", "doc", "papers.ids", "compat"))
 
-# (rule, file under src/pytacheck, banned target) -> why it is still there
+# (rule, file under src/pytacheck, banned target) -> why it is still there. It
+# holds today's violations and only shrinks; a new need changes the design first.
 ALLOWED: dict[tuple[str, str, str], str] = {}
 
 
@@ -253,9 +285,18 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
             ]
             for layer in layers:
                 found.setdefault(("core", edge.path, layer), edge)
-            allowed = LOWER + RUN_CONTEXT if edge.module == RUN else LOWER
-            if not layers and _under(target, PKG) and not _under(target, allowed):
-                found.setdefault(("core", edge.path, target), edge)
+            # the positive list judges the name as written, not where it resolves
+            run = edge.module == RUN
+            allowed = LOWER + RUN_CONTEXT if run else LOWER
+            name = edge.symbol
+            if (
+                not layers
+                and _under(name, PKG)
+                and not _under(name, allowed)
+                and not (run and name in RUN_NAMESPACES)
+            ):
+                key = name if edge.note == "attribute" else edge.target
+                found.setdefault(("core", edge.path, key), edge)
         if edge.path in migrated:
             for banned in BANNED:
                 if _under(symbol, banned):
@@ -284,7 +325,8 @@ def ratchet(
 def test_layers_hold_on_the_package() -> None:
     new, stale = ratchet(violations(SRC), ALLOWED)
     assert not new, (
-        "new layering violations (fix the import, do not extend ALLOWED):\n" + "\n".join(new)
+        "new layering violations (fix the import; a new need changes ARCHITECTURE.md §2.1"
+        " or §2.6 first, not ALLOWED):\n" + "\n".join(new)
     )
     assert not stale, "remove these from ALLOWED, the violation is gone:\n" + "\n".join(stale)
 
@@ -401,6 +443,7 @@ BASE = {
         "    from pytacheck.module import module, module_run\n"
         "    from pytacheck.io.read import read\n"
         "    from pytacheck.papers.io import demopaper, test_paper\n"
+        "    from pytacheck.papers.model import Paper\n"
     ),
     "io/read.py": "def read(): ...\n",
 }
@@ -453,9 +496,15 @@ def found_in(tmp_path: Path, files: dict[str, str]) -> set[tuple[str, str, str]]
         ("from pytacheck.provenance import module_provenance\n", "provenance"),
         ("from pytacheck import not_reexported\n", ""),
         ("import pytacheck\n", ""),
+        # the top level is a façade, even for a name defined in the foundation
+        ("from pytacheck import Paper\n", ""),
+        ("import pytacheck._r\nx = pytacheck.Paper\n", "Paper"),
         # the run context is for core/run.py alone
         ("from pytacheck.config import email\n", "config"),
         ("from pytacheck.module import module_find\n", "module"),
+        ("import pytacheck.module\n", "module"),
+        ("from pytacheck.utils import local_options\n", "utils"),
+        ("from pytacheck.packs.registry import overlay\n", "packs.registry"),
     ],
 )
 def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
@@ -476,13 +525,64 @@ def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
         ("import pytacheck.db\n", "db"),
         ("from pytacheck.presets import preset\n", "presets"),
         ("from pytacheck.archives import osf_pat\n", "archives"),
-        # a new package built on execute() is not in the run context
+        ("import pytacheck\n", ""),
+        # runners built on execute() are not in the run context
         ("from pytacheck.batch import run_batch\n", "batch"),
+        ("from pytacheck.packs.check import pack_check\n", "packs.check"),
+        ("from pytacheck.packs import check\n", "packs"),
+        ("from pytacheck.packs import pack_check\n", "packs"),
+        ("from pytacheck.module import run_session\n", "module"),
+        ("from pytacheck.module import module_run_each\n", "module"),
+        ("import pytacheck.module as m\nm.run_session()\n", "module.run_session"),
+        # utils is there for the options overlay alone
+        ("from pytacheck.utils import left_join\n", "utils"),
+        ("import pytacheck.utils as u\nu.online()\n", "utils.online"),
     ],
 )
 def test_run_py_may_not_go_beyond_the_run_context(tmp_path: Path, source: str, layer: str) -> None:
     found = found_in(tmp_path, {"core/run.py": source})
-    assert ("core", "core/run.py", f"{PKG}.{layer}") in found
+    assert ("core", "core/run.py", f"{PKG}.{layer}" if layer else PKG) in found
+
+
+@pytest.mark.parametrize(
+    "layer",
+    [
+        "text",
+        "modules",
+        "report",
+        "api",
+        "cli",
+        "archives",
+        "datacheck",
+        "codecheck",
+        "doc",
+        "papers.tables",
+        "papers.io.test_paper",
+        "papers.io.demopaper",
+        "stats",
+        "io.read",
+        "compat",
+        "module.module",
+        "module.module_run",
+        "module.get_prev_outputs",
+    ],
+)
+def test_run_py_may_not_reach_a_banned_layer_through_a_reexport(tmp_path: Path, layer: str) -> None:
+    package, _, name = f"{PKG}.{layer}".rpartition(".")
+    files = {
+        "llm/__init__.py": f"from {package} import {name} as thing\n",
+        "core/run.py": "from pytacheck.llm import thing\n",
+    }
+    assert found_in(tmp_path, files) == {("core", "core/run.py", f"{PKG}.{layer}")}
+
+
+def test_only_an_init_file_reexports_names(tmp_path: Path) -> None:
+    files = {
+        "llm/__init__.py": "def render(): ...\n",
+        "llm/providers.py": "from pytacheck.report import render\n",
+        "core/run.py": "from pytacheck.llm import render\n",
+    }
+    assert found_in(tmp_path, files) == set()
 
 
 def test_core_may_import_the_foundation(tmp_path: Path) -> None:
@@ -512,10 +612,14 @@ def test_core_may_import_what_the_run_context_needs(tmp_path: Path) -> None:
         "from pytacheck.config import email\n"
         "from pytacheck.cache import CacheStore\n"
         "from pytacheck.repository import RepoIndex\n"
-        "from pytacheck.module import ModuleSpec, module_find\n"
-        "import pytacheck.module as m\n"
-        "spec = m.module_find('x')\n"
+        "from pytacheck.utils import get_option, options, local_options\n"
+        "from pytacheck.utils import options_snapshot, options_restore\n"
+        "import pytacheck.utils as u\n"
+        "u.local_options({})\n"
         "from pytacheck.packs import registry\n"
+        "from pytacheck.packs.registry import overlay\n"
+        "from pytacheck.module import ModuleSpec, ModuleError, module_find\n"
+        "from pytacheck.module import use, use_setting, use_snapshot, use_restore\n"
         "from pytacheck._r.regex import detector\n"
         "from pytacheck.core.output import Result\n"
     )
