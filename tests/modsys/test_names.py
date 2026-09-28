@@ -37,7 +37,7 @@ from tests.modsys.storekit import REV_C, codeload, dir_files, tarball
     ],
 )
 def test_reserved_prefixes(name) -> None:
-    with pytest.raises(PackError, match="reserved: names starting with"):
+    with pytest.raises(PackError, match="reserved: no pack name may start with"):
         validate_pack_name(name)
     assert validate_pack_name(name, allow_reserved=True) == name
     with pytest.raises(PackError, match="reserved"):

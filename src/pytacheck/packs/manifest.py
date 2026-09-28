@@ -83,8 +83,8 @@ def validate_pack_name(name: Any, *, allow_reserved: bool = False) -> str:
     for prefix in RESERVED_PACK_PREFIXES:
         if bare.startswith(prefix):
             raise PackError(
-                f"The pack name '{name}' is reserved: names starting with '{prefix}' "
-                "are kept for official packs"
+                f"The pack name '{name}' is reserved: no pack name may start with '{prefix}' "
+                "(ignoring '-' and '_'), so that none looks official"
             )
     return name
 
