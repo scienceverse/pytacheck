@@ -38,7 +38,12 @@ a marked case whose fingerprints still match as ``xfail``, and otherwise as
 changed), ``py_changed`` (Python's result or the differing paths changed) or
 ``unlocked`` (no entry). ``r_changed`` and ``py_changed`` fail a tier-1 case;
 for a tier-2 case they are warnings (:class:`LockWarning` under pytest), unless
-Python now raises where it returned a value. See docs/PARITY.md.
+Python now raises where it returned a value or ``check --strict`` runs. See
+docs/PARITY.md.
+
+A digest alone says nothing a reviewer can check, so ``lock`` prints each
+entry it adds, changes or removes (:func:`entry_diff`, with how Python differs
+from R), and changes an existing entry only with ``--reviewed``.
 """
 
 from __future__ import annotations
@@ -210,6 +215,27 @@ def r_digest(golden: dict[str, Any]) -> str:
 def raised(exc: BaseException) -> str:
     """The ``py`` fingerprint of a Python side that raised *exc*."""
     return f"raises:{type(exc).__name__}"
+
+
+def entry_diff(old: Fingerprint | None, new: Fingerprint | None) -> list[tuple[str, str]]:
+    """What a lock changes in one entry, as ``(fingerprint, text)`` pairs for ``r``,
+    ``py`` and ``diff``: a changed digest as ``old -> new``, the differing paths
+    that came (``+path``) and went (``-path``). A new or removed entry is shown
+    as it is."""
+    if old is None or new is None:
+        fp = new if new is not None else old
+        if fp is None:
+            return []
+        return [("r", fp.r), ("py", fp.py), ("diff", ", ".join(fp.diff))]
+    out = [
+        (name, f"{a} -> {b}" if a != b else f"{a} (same)")
+        for name, a, b in (("r", old.r, new.r), ("py", old.py, new.py))
+    ]
+    if old.diff == new.diff:
+        return [*out, ("diff", f"{', '.join(new.diff)} (same)")]
+    moved = [f"+{p}" for p in new.diff if p not in old.diff]
+    moved += [f"-{p}" for p in old.diff if p not in new.diff]
+    return [*out, ("diff", ", ".join(moved))]
 
 
 # -- the files ------------------------------------------------------------------------------

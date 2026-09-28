@@ -169,10 +169,41 @@ class Case:
         return f"{self.area}/{self.id}"
 
 
-def iter_case_files(area: str | None = None) -> Iterator[Path]:
-    for f in sorted(CASES_DIR.glob("*.yaml")):
-        if area is None or f.stem == area:
-            yield f
+class UnknownAreaError(ValueError):
+    """An area named on the command line that has no case file."""
+
+
+def parse_areas(value: str) -> list[str]:
+    """The areas one ``--area`` value names: one area or several separated by
+    commas, where ``<area>+review`` names ``<area>`` and ``<area>_review``."""
+    out: list[str] = []
+    for name in (n.strip() for n in value.split(",")):
+        if not name:
+            continue
+        base, plus, suffix = name.partition("+")
+        if not base or (plus and suffix != "review"):
+            raise ValueError(f"{name!r} is not an area (only +review may follow one)")
+        out += [base, f"{base}_review"] if plus else [base]
+    if not out:
+        raise ValueError(f"{value!r} names no area")
+    return out
+
+
+def iter_case_files(areas: str | Iterable[str] | None = None) -> Iterator[Path]:
+    """The case files of *areas* (one area or several; ``None``: every area).
+
+    An area without a case file raises :class:`UnknownAreaError`, so a typo in a
+    list does not quietly check fewer cases.
+    """
+    files = sorted(CASES_DIR.glob("*.yaml"))
+    if areas is None:
+        yield from files
+        return
+    wanted = {areas} if isinstance(areas, str) else set(areas)
+    unknown = sorted(wanted - {f.stem for f in files})
+    if unknown:
+        raise UnknownAreaError(f"no case file parity/cases/<area>.yaml for {', '.join(unknown)}")
+    yield from (f for f in files if f.stem in wanted)
 
 
 #: why a case may differ from R (docs/PORTING.md, section 1)
@@ -659,27 +690,28 @@ def classify_tier(
 # -- loading ------------------------------------------------------------------------------
 
 
-def load_cases(area: str | None = None, tier: int | None = None) -> list[Case]:
-    """The parity cases (of one *area*, of one *tier*), marks applied and validated."""
+def load_cases(areas: str | Iterable[str] | None = None, tier: int | None = None) -> list[Case]:
+    """The parity cases (of *areas*, one area or several; of one *tier*), marks
+    applied and validated."""
     # the case files build some 200,000 objects, none of them garbage: the
     # collector's passes over them would add a fifth to the time
     enabled = gc.isenabled()
     gc.disable()
     try:
-        return _load_cases(area, tier)
+        return _load_cases(areas, tier)
     finally:
         if enabled:
             gc.enable()
 
 
-def _load_cases(area: str | None, tier: int | None) -> list[Case]:
+def _load_cases(areas: str | Iterable[str] | None, tier: int | None) -> list[Case]:
     cases: list[Case] = []
     seen: set[str] = set()
     errors: list[str] = []
     divergences = read_divergences(errors=errors)
     corpus = load_corpus()
     refs = upstream_refs()
-    for f in iter_case_files(area):
+    for f in iter_case_files(areas):
         data = load_yaml(f) or {}
         a = data.get("area", f.stem)
         file_tier = explicit_tier(f.name, data["tier"]) if "tier" in data else None

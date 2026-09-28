@@ -66,8 +66,9 @@ Every difference from R's goldens is marked, never hidden:
 - Every marked case is locked (`parity/lock/<area>.json`, see `docs/PARITY.md`). When
   `check` reports `r_changed`, `py_changed` or `unlocked`, first check that the mark still
   holds for the new outputs, then re-lock the case with
-  `uv run python -m parity lock -k <case>`. Never re-lock to silence a difference you
-  have not explained.
+  `uv run python -m parity lock -k <case>` (add `--reviewed` to change an existing
+  entry, once you have read the change it prints). Never re-lock to silence a difference
+  you have not explained.
 - Nothing may be invented: no references, statistics, links or LLM-derived claims that are
   not grounded in the paper or its materials.
 
