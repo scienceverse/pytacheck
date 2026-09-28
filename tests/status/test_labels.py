@@ -100,6 +100,8 @@ def test_a_provisional_entry_counts_as_validated_without_a_binding() -> None:
     entry = {**_certified(), "provisional": True}
     st = status("power", registry=_registry({"metacheck::power": entry}))
     assert (st.label, st.stale_note, st.note) == ("validated", None, PROVISIONAL_NOTE)
+    noted = _registry({"metacheck::power": {**entry, "note": "The team may drop it (Q1)."}})
+    assert status("power", registry=noted).note == f"{PROVISIONAL_NOTE}. The team may drop it (Q1)."
 
 
 def test_no_entry_or_no_evidence_is_experimental() -> None:
