@@ -412,6 +412,16 @@ def test_a_list_keeps_the_printed_precision_of_its_text() -> None:
     assert canon.compare(_list(_chr("p = 0.05")), _chr("p = 0.054")).equal
 
 
+def test_lists_of_records_compare_as_data_frames() -> None:
+    def records(*rows: tuple[str, str]) -> dict:
+        return _list(*(_list(_chr(k), _chr(v), names=["k", "v"]) for k, v in rows))
+
+    # as a data frame of them: numbers to the relative tolerance, rows a multiset
+    r = records(("a", "12"), ("b", "x"))
+    _flagged(r, records(("a", "12.4"), ("b", "x")))
+    assert canon.compare(r, records(("b", "x"), ("a", "12"))).equal
+
+
 def test_a_traffic_light_is_compared_exactly() -> None:
     # FIDELITY.md §2.3: no Band B for traffic lights
     r = _output("m", _TABLE, light="green")

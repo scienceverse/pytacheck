@@ -1028,9 +1028,11 @@ class _Comparator(Comparator):
                 return
             r, p = self._nulled(r), self._nulled(p)
         kinds = {r.get("t"), p.get("t")}
-        if self.dtype and "list" in kinds and len(kinds & {"df", *_VECTOR_TYPES}) == 1:
-            # a list against a vector or data frame: both reshaped alike, their text
-            # left as it is for the comparison to read its printed precision
+        records = kinds == {"list"} and all(_records_as_frame(x) is not None for x in (r, p))
+        if self.dtype and "list" in kinds and (records or len(kinds & {"df", *_VECTOR_TYPES}) == 1):
+            # a list against a vector or data frame, or two lists of records (data
+            # frames, as in a form): both reshaped alike, their text left as it is
+            # for the comparison to read its printed precision
             r, p = self.shapes.value(r, path), self.shapes.value(p, path)
         key = self.p.module_keys.get(_module_name(r) or _module_name(p) or "")
         if key:
