@@ -1379,9 +1379,9 @@ Tree `arch/wt-spike`: 46 files, +6,561/−1,020 lines. Scripts in `arch/spike/`.
 
 Per-Doc reference joins (§2.5); F6 repeated-id resolution (§2.2, decision 6); V7 duplicate rows; opaque scope token and memo-only `run_session` (§2.2, §2.6); no chain-step memo; `.tolist()` backing; thread-safe stages; `Result` returns a dict on direct calls; dplyr suffix rule; the word index, YAML modules and `module_api` enforcement dropped; the `requires` dev-version fix; snapshot oracles (F5); replayed network rows and split behaviour PRs; the coverage ratchet; fresh-worktree zero; import-derived layering; I3 fuzz and the kill switch; re-based budgets, size and schedule; lane acceptance items restored.
 
-### 7.3 SPIKE-2 (2 days; before CORE-1b; scratch tree `arch/spike2`, never `/home/user/pytacheck`)
+### 7.3 SPIKE-2 (2 days; before CORE-1b; scratch branch `arch/spike2` in its own worktree, never the main checkout)
 
-**Build** on top of `arch/wt-spike`:
+**Build** on the spike-1 tree rebased onto main (d8a42458). The original `docs/design/patches/spike-1.patch`, against fd5e6f3, no longer applied to main (`git apply --check` failed on 8 files), so SP-1 rebased it onto the local branch `arch/spike2` and made its scripts run from any clone. `docs/design/patches/spike-1.patch` now holds that rebase (46 files, +6,734/−1,085), and it applies to d8a42458. Then:
 1. `Doc.groups(level)` and `Hits.paragraphs()`/`sections()`, behind the façade's `return_="paragraph"|"section"` modes, replacing `_paste_groups`, `_semi_join` and `_section_headers` in the spike tree.
 2. power (LLM off) and coi_check_oi on the core: the only paragraph chain in the default preset, and the section-scope module.
 3. `Doc.from_records` at read time and the lazy `eq` table.
@@ -1389,7 +1389,7 @@ Per-Doc reference joins (§2.5); F6 repeated-id resolution (§2.2, decision 6); 
 5. `detect_many` on the 94K-character paper, with the literal scan and with the word index.
 6. A per-output profile of the boundary floor (`Schema.frame`, `sentence_table`, `Summary.frame`, `_assemble`) on the six spiked modules, with one prototype cut.
 
-**Pass:** V5 holds, with 0 differences on `diff_text_search`'s return-mode cases; power and coi_check_oi are A/B-equal on the 24 inputs × 6 elements, including critic §3.7's hazard (later stages run on the joined, cleaned paragraph text); `read(xml)` is measured and its target re-set; a materialised paper gives 1 Doc build per run and ≤ 3 ms; the index-or-scan answer for `detect_many`; the boundary-floor breakdown; **a re-estimate of CORE-1b's days**.
+**Pass:** V5 holds, with 0 differences on `diff_text_search`'s return-mode cases; power and coi_check_oi are A/B-equal on the 21 accuracy papers (plus `spike/ab_outputs.py`'s demo paper and paper lists) × 6 elements, including critic §3.7's hazard (later stages run on the joined, cleaned paragraph text); `read(xml)` is measured and its target re-set; a materialised paper gives 1 Doc build per run and ≤ 3 ms; the index-or-scan answer for `detect_many`; the boundary-floor breakdown; **a re-estimate of CORE-1b's days**.
 
 **If V5 fails** in a way the timebox cannot fix, CORE-1b keeps the pandas grouped path behind the façade, PATTERNS migrates power on it, and the plan is re-estimated before the waves.
 

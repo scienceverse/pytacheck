@@ -1,9 +1,9 @@
 diff --git a/spike/ab_outputs.py b/spike/ab_outputs.py
 new file mode 100644
-index 0000000..0404af0
+index 00000000..aeb66511
 --- /dev/null
 +++ b/spike/ab_outputs.py
-@@ -0,0 +1,187 @@
+@@ -0,0 +1,190 @@
 +"""The four rewritten modules against their frozen legacy versions (tests/_legacy/modules).
 +
 +25 inputs (the 21 accuracy papers, the demo paper, the psychsci list, the 21-paper
@@ -13,7 +13,7 @@ index 0000000..0404af0
 +dict summary merge against DataFrame.merge, with a clashing column suffix) and the
 +duplicate-id list quantified per module.
 +
-+usage (tree root): PYTHONPATH=src:. python spike/ab_outputs.py [--json out.json]
++usage: PYTHONPATH=<tree>/src:<tree> python spike/ab_outputs.py [--json out.json]
 +"""
 +
 +from __future__ import annotations
@@ -26,7 +26,7 @@ index 0000000..0404af0
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 +
 +import pandas as pd  # noqa: E402
 +
@@ -51,7 +51,9 @@ index 0000000..0404af0
 +def inputs() -> tuple[list[tuple[str, object]], tuple[str, object]]:
 +    paths = list(dict.fromkeys(o.input for o in A.load_matrix() if o.kind == "paper"))
 +    papers = [pc.read(A.ROOT / p) for p in paths]
-+    out: list[tuple[str, object]] = [(os.path.basename(p), q) for p, q in zip(paths, papers)]
++    out: list[tuple[str, object]] = [
++        (os.path.basename(p), q) for p, q in zip(paths, papers, strict=True)
++    ]
 +    out.append(("demo", pc.demopaper()))
 +    out.append(
 +        ("psychsci_list", pc.read(A.ROOT / "upstream/metacheck/tests/testthat/fixtures/psychsci"))
@@ -190,34 +192,36 @@ index 0000000..0404af0
 +    out = main()
 +    print(json.dumps(out, indent=1, default=str))
 +    if "--json" in sys.argv:
-+        json.dump(out, open(sys.argv[sys.argv.index("--json") + 1], "w"), indent=1, default=str)
++        with open(sys.argv[sys.argv.index("--json") + 1], "w") as f:
++            json.dump(out, f, indent=1, default=str)
 diff --git a/spike/accuracy_ab.sh b/spike/accuracy_ab.sh
 new file mode 100755
-index 0000000..4b126ce
+index 00000000..7a028a60
 --- /dev/null
 +++ b/spike/accuracy_ab.sh
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +#!/bin/bash
 +# The accuracy gate on the base tree and the spike tree, interleaved, CPU-timed (user+sys).
 +# usage: spike/accuracy_ab.sh BASE TREE OUTDIR ROUNDS [-m module ...]
-+B=$1; T=$2; O=$3; N=$4; shift 4
-+mkdir -p $O
-+export PYTACHECK_RSCRIPT=/opt/mamba/envs/mcref/bin/Rscript
-+TIMEFORMAT="%U %S %R"
-+for r in $(seq 1 $N); do
++# The Python is $PY (default: this tree's .venv). R is whatever PYTACHECK_RSCRIPT or PATH gives.
++B=$(cd "$1" && pwd); T=$(cd "$2" && pwd); O=$3; N=$4; shift 4
++PY=${PY:-$(cd "$(dirname "$0")/.." && pwd)/.venv/bin/python}
++mkdir -p "$O"; O=$(cd "$O" && pwd)
++TIMEFORMAT="%U %S %R"; export LC_NUMERIC=C  # "1.843", not "1,843", whatever the locale
++for r in $(seq 1 "$N"); do
 +  for side in base tree; do
 +    D=$B; [ $side = tree ] && D=$T
-+    cd $D
-+    { time env PYTHONPATH=$D/src:$D /home/user/pytacheck/.venv/bin/python -m parity accuracy --gate "$@" --report $O/$side.$r.json > $O/$side.$r.log 2>&1 ; } 2> $O/$side.$r.time
-+    echo "$side round $r user/sys/wall $(cat $O/$side.$r.time) load=$(cut -d' ' -f1-3 /proc/loadavg)" >> $O/summary.txt
++    cd "$D" || exit 1
++    { time env PYTHONPATH="$D/src:$D" "$PY" -m parity accuracy --gate "$@" --report "$O/$side.$r.json" > "$O/$side.$r.log" 2>&1 ; } 2> "$O/$side.$r.time"
++    echo "$side round $r user/sys/wall $(cat "$O/$side.$r.time") load=$(cut -d' ' -f1-3 /proc/loadavg)" >> "$O/summary.txt"
 +  done
 +done
 diff --git a/spike/bench.py b/spike/bench.py
 new file mode 100644
-index 0000000..3432415
+index 00000000..851a5f56
 --- /dev/null
 +++ b/spike/bench.py
-@@ -0,0 +1,235 @@
+@@ -0,0 +1,237 @@
 +"""CPU per module per paper, old (tests/_legacy/modules) against new, on the 21 accuracy papers.
 +
 +Minimum of ROUNDS interleaved rounds (old and new alternate, their order flips each
@@ -231,7 +235,7 @@ index 0000000..3432415
 +literal index, a full projection), module_run overhead, work counters, retained
 +bytes per Doc (tracemalloc), the index-vs-scan choice (a), and the load average.
 +
-+usage (tree root): PYTHONPATH=src:. python spike/bench.py [--rounds 5] [--json out.json]
++usage: PYTHONPATH=<tree>/src:<tree> python spike/bench.py [--rounds 5] [--json out.json]
 +"""
 +
 +from __future__ import annotations
@@ -246,7 +250,7 @@ index 0000000..3432415
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 +
 +import pytacheck as pc  # noqa: E402
 +from parity import accuracy as A  # noqa: E402
@@ -291,7 +295,9 @@ index 0000000..3432415
 +                for v in order:
 +                    q = fresh(p)
 +                    target = OLD[m] if v == "old" else m
-+                    best[(v, m, k)] = min(best[(v, m, k)], clock(lambda: module_run(q, target)))
++                    best[(v, m, k)] = min(
++                        best[(v, m, k)], clock(lambda q=q, target=target: module_run(q, target))
++                    )
 +    return {
 +        m: {v: 1000 * sum(best[(v, m, k)] for k in range(N)) / N for v in ("old", "new")}
 +        for m in MODS
@@ -308,11 +314,11 @@ index 0000000..3432415
 +                with run_session():
 +                    if v == "new":
 +                        best[("new", "doc", k)] = min(
-+                            best[("new", "doc", k)], clock(lambda: D.Doc.of(q))
++                            best[("new", "doc", k)], clock(lambda q=q: D.Doc.of(q))
 +                        )
 +                    for m in MODS:
 +                        target = OLD[m] if v == "old" else m
-+                        t = clock(lambda: module_run(q, target))
++                        t = clock(lambda q=q, target=target: module_run(q, target))
 +                        best[(v, m, k)] = min(best[(v, m, k)], t)
 +    out = {
 +        m: {v: 1000 * sum(best[(v, m, k)] for k in range(N)) / N for v in ("old", "new")}
@@ -328,18 +334,17 @@ index 0000000..3432415
 +    for _ in range(ROUNDS):
 +        for k, p in enumerate(PAPERS):
 +            q = fresh(p)
-+            d = None
++            built: list[D.Doc] = []
 +
-+            def build():
-+                nonlocal d
-+                d = D.Doc._records(q) or D.Doc._fallback(q)
++            def build(q=q, built=built):
++                built.append(D.Doc._records(q) or D.Doc._fallback(q))
 +
 +            steps = {
 +                "columns_join": build,
-+                "fold": lambda: d.fold(),
-+                "clean": lambda: d.field(1),
-+                "index": lambda: d._literal_rows("the"),
-+                "projection": lambda: d.rows(list(D.bits(d.body))),
++                "fold": lambda built=built: built[0].fold(),
++                "clean": lambda built=built: built[0].field(1),
++                "index": lambda built=built: built[0]._literal_rows("the"),
++                "projection": lambda built=built: built[0].rows(list(D.bits(built[0].body))),
 +            }
 +            for name, fn in steps.items():
 +                best[k][name] = min(best[k][name], clock(fn))
@@ -356,7 +361,7 @@ index 0000000..3432415
 +            for k, p in enumerate(PAPERS):
 +                q = fresh(p)
 +                with run_session():
-+                    t = clock(lambda: [D.Doc.of(q), *[module_run(q, m) for m in MODS]])
++                    t = clock(lambda q=q: [D.Doc.of(q), *[module_run(q, m) for m in MODS]])
 +                best[k] = min(best[k], t)
 +        out[mode] = 1000 * sum(best) / N
 +    D.LITERALS = "index"
@@ -364,7 +369,7 @@ index 0000000..3432415
 +
 +
 +@module(title="Noop", description="nothing")
-+def noop(paper):
++def noop(paper):  # noqa: ARG001 (a module takes its paper)
 +    return {}
 +
 +
@@ -452,19 +457,27 @@ index 0000000..3432415
 +            out[mode][m]["ratio"] = o / n if n else None
 +    print(json.dumps(out, indent=1))
 +    if "--json" in sys.argv:
-+        json.dump(out, open(sys.argv[sys.argv.index("--json") + 1], "w"), indent=1)
++        with open(sys.argv[sys.argv.index("--json") + 1], "w") as f:
++            json.dump(out, f, indent=1)
 diff --git a/spike/cmp_reports.py b/spike/cmp_reports.py
 new file mode 100644
-index 0000000..69dca15
+index 00000000..f6194efd
 --- /dev/null
 +++ b/spike/cmp_reports.py
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,25 @@
 +"""Compare two parity check reports: every case whose status differs."""
-+import json, sys
++
++import json
++import sys
++
++
 +def load(p):
-+    return {c["case"]: c for c in json.load(open(p))}
++    with open(p) as f:
++        return {c["case"]: c for c in json.load(f)}
++
++
 +b, t = load(sys.argv[1]), load(sys.argv[2])
-+only = sys.argv[3:] 
++only = sys.argv[3:]
 +diff = []
 +for k in sorted(set(b) | set(t)):
 +    if only and not any(k.startswith(o + "/") for o in only):
@@ -479,7 +492,7 @@ index 0000000..69dca15
 +        print("    ", str(p)[:300])
 diff --git a/spike/diff_paper_id.py b/spike/diff_paper_id.py
 new file mode 100644
-index 0000000..9b57024
+index 00000000..d78fc852
 --- /dev/null
 +++ b/spike/diff_paper_id.py
 @@ -0,0 +1,127 @@
@@ -491,15 +504,15 @@ index 0000000..9b57024
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
-+import pandas as pd
++sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++import pandas as pd  # noqa: E402
 +
-+import pytacheck as pc
-+from parity import accuracy as A
-+from parity.cases import metacheck_defaults
-+from pytacheck.core.doc import Docs
-+from pytacheck.papers import tables as T
-+from pytacheck.papers.model import Paper, PaperList
++import pytacheck as pc  # noqa: E402
++from parity import accuracy as A  # noqa: E402
++from parity.cases import metacheck_defaults  # noqa: E402
++from pytacheck.core.doc import Docs  # noqa: E402
++from pytacheck.papers import tables as T  # noqa: E402
++from pytacheck.papers.model import Paper, PaperList  # noqa: E402
 +
 +
 +class L:  # the legacy paper_id() against the Doc core's info_ids()
@@ -552,7 +565,7 @@ index 0000000..9b57024
 +    check(i, lambda p=p: copy.deepcopy(p))
 +
 +    def mat(q):
-+        q.info
++        _ = q.info
 +        return q
 +
 +    check(f"{i}/mat", lambda p=p: mat(copy.deepcopy(p)))
@@ -612,24 +625,24 @@ index 0000000..9b57024
 +    print("DIFF", b)
 diff --git a/spike/diff_suites.sh b/spike/diff_suites.sh
 new file mode 100755
-index 0000000..c66f954
+index 00000000..29877a0b
 --- /dev/null
 +++ b/spike/diff_suites.sh
 @@ -0,0 +1,11 @@
 +#!/bin/bash
 +# The four differential suites of the spike plan, old (tests/_legacy) against new.
-+# usage: spike/diff_suites.sh   (from the tree root)
++# usage: spike/diff_suites.sh   (from anywhere; T= picks another tree, PY= another Python)
 +T=${T:-$(cd "$(dirname "$0")/.." && pwd)}
-+cd $T
-+PY="/home/user/pytacheck/.venv/bin/python"
++cd "$T" || exit 1
++PY=${PY:-$T/.venv/bin/python}
 +export PYTHONPATH=$T/src:$T PYTHONDONTWRITEBYTECODE=1
 +for s in diff_text_search diff_text_frame diff_paper_id diff_text_expand; do
 +  echo "== $s"
-+  $PY spike/$s.py 2>&1 | tail -15
++  "$PY" "spike/$s.py" 2>&1 | tail -15
 +done
 diff --git a/spike/diff_text_expand.py b/spike/diff_text_expand.py
 new file mode 100644
-index 0000000..8eb8327
+index 00000000..69c6c203
 --- /dev/null
 +++ b/spike/diff_text_expand.py
 @@ -0,0 +1,90 @@
@@ -641,7 +654,7 @@ index 0000000..8eb8327
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 +import pandas as pd  # noqa: E402
 +
 +import pytacheck as pc  # noqa: E402
@@ -725,10 +738,10 @@ index 0000000..8eb8327
 +    print("DIFF", b)
 diff --git a/spike/diff_text_frame.py b/spike/diff_text_frame.py
 new file mode 100644
-index 0000000..c635641
+index 00000000..c475ffc7
 --- /dev/null
 +++ b/spike/diff_text_frame.py
-@@ -0,0 +1,226 @@
+@@ -0,0 +1,231 @@
 +"""Differential test of _text_frame(): the worktree's (P2) against perf base's.
 +
 +Also checks the per-paper cache: a hit returns the same table, and every change
@@ -742,7 +755,8 @@ index 0000000..c635641
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
++sys.path.insert(0, ROOT)
 +import pandas as pd  # noqa: E402
 +
 +import pytacheck as pc  # noqa: E402
@@ -750,7 +764,9 @@ index 0000000..c635641
 +from pytacheck.papers.model import PaperList  # noqa: E402
 +from pytacheck.text import search as S  # noqa: E402
 +
-+spec = importlib.util.spec_from_file_location("legacy_search", "tests/_legacy/search.py")
++spec = importlib.util.spec_from_file_location(
++    "legacy_search", os.path.join(ROOT, "tests/_legacy/search.py")
++)
 +L = importlib.util.module_from_spec(spec)
 +spec.loader.exec_module(L)
 +
@@ -863,18 +879,20 @@ index 0000000..c635641
 +            variant(p, fedit("section", lambda d: d.astype({"header": object}))),
 +        )
 +        continue
-+    check(name + "/dup-section", variant(p, raw_edit("section", lambda r, c: r.append(dict(r[0])))))
++    check(
++        name + "/dup-section", variant(p, raw_edit("section", lambda r, _c: r.append(dict(r[0]))))
++    )
 +    check(
 +        name + "/na-section-id",
-+        variant(p, raw_edit("section", lambda r, c: r[0].update(section_id=None))),
++        variant(p, raw_edit("section", lambda r, _c: r[0].update(section_id=None))),
 +    )
 +    check(
 +        name + "/na-text-section-id",
-+        variant(p, raw_edit("text", lambda r, c: [x.update(section_id=None) for x in r[:3]])),
++        variant(p, raw_edit("text", lambda r, _c: [x.update(section_id=None) for x in r[:3]])),
 +    )
 +    check(
 +        name + "/unknown-section",
-+        variant(p, raw_edit("text", lambda r, c: r[0].update(section_id=99999))),
++        variant(p, raw_edit("text", lambda r, _c: r[0].update(section_id=99999))),
 +    )
 +    check(
 +        name + "/text-has-header",
@@ -913,15 +931,15 @@ index 0000000..c635641
 +        variant(
 +            p,
 +            raw_edit(
-+                "section", lambda r, c: [x.update(section_id=str(x.get("section_id"))) for x in r]
++                "section", lambda r, _c: [x.update(section_id=str(x.get("section_id"))) for x in r]
 +            ),
 +        ),
 +    )
 +    check(
-+        name + "/num-header", variant(p, raw_edit("section", lambda r, c: r[0].update(header=3.5)))
++        name + "/num-header", variant(p, raw_edit("section", lambda r, _c: r[0].update(header=3.5)))
 +    )
-+    check(name + "/empty-text", variant(p, raw_edit("text", lambda r, c: r.clear())))
-+    check(name + "/empty-section", variant(p, raw_edit("section", lambda r, c: r.clear())))
++    check(name + "/empty-text", variant(p, raw_edit("text", lambda r, _c: r.clear())))
++    check(name + "/empty-section", variant(p, raw_edit("section", lambda r, _c: r.clear())))
 +    check(name + "/pid-none", variant(p, lambda q: setattr(q, "paper_id", None)))
 +check("list", lambda: PaperList([copy.deepcopy(p) for p in papers[:4]]))
 +check("empty-list", lambda: PaperList([]))
@@ -937,7 +955,7 @@ index 0000000..c635641
 +nv = 0
 +bad4 = []
 +for p, name in zip(papers, inputs, strict=True):
-+    for label, make in (("plain", lambda p=p: copy.deepcopy(p)),):
++    for _label, make in (("plain", lambda p=p: copy.deepcopy(p)),):
 +        q = make()
 +        legacy = L._text_frame(q)[0]
 +        d = Doc.of(q)
@@ -957,29 +975,45 @@ index 0000000..c635641
 +    print("DIFF4", b)
 diff --git a/spike/diff_text_search.py b/spike/diff_text_search.py
 new file mode 100644
-index 0000000..61512f3
+index 00000000..feb89aff
 --- /dev/null
 +++ b/spike/diff_text_search.py
-@@ -0,0 +1,208 @@
-+"""Differential test: the worktree's text_search() against perf base's (legacy) one.
+@@ -0,0 +1,297 @@
++"""Differential test: the worktree's text_search() against an oracle.
 +
-+Usage: PYTHONPATH=<wt>/src:<wt> python diff_text_search.py [LEGACY_SEARCH_PY]
++Usage: PYTHONPATH=<wt>/src:<wt> python spike/diff_text_search.py [LEGACY_SEARCH_PY]
++           [--record FILE | --against FILE] [--json OUT]
 +
-+Loads the legacy text/search.py as a separate module (it imports the rest of
-+pytacheck from the worktree, so only text_search differs), then runs both on
-+papers, paper lists, tables (odd ones too) and strings, over many patterns and
-+all flag/return combinations, and compares results exactly (dtypes, index,
-+column order) or the exceptions (type and message).
++Runs text_search() on papers, paper lists, tables (odd ones too) and strings, over
++many patterns and all flag/return combinations, and compares results exactly
++(dtypes, index, column order) or the exceptions (type and message). The oracle is
++one of:
++
++* by default, the frozen tests/_legacy/search.py (or LEGACY_SEARCH_PY), loaded as a
++  separate module in this process (it imports the rest of pytacheck from the
++  worktree, so only text_search differs);
++* --record FILE: no comparison; this process's text_search() (main's, say, with
++  PYTHONPATH=<main>/src:<wt>) records every result, and the tables that the
++  chained and odd-table cases search, to FILE;
++* --against FILE: the results recorded by --record in another process, so no code
++  of the oracle is loaded here (Review B-4). The tables come from FILE too, so only
++  text_search() differs.
++
++The return-mode cases (paragraph, section, header, paper_id) are counted apart:
++they are what invariant V5 is pinned by.
 +"""
 +
 +import importlib.util
++import json
 +import os
++import pickle
 +import random
 +import sys
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
++sys.path.insert(0, ROOT)
 +import pandas as pd  # noqa: E402
 +
 +import pytacheck as pc  # noqa: E402
@@ -992,15 +1026,35 @@ index 0000000..61512f3
 +from pytacheck.text.search import _text_frame  # noqa: E402
 +from pytacheck.text.search import text_search as new  # noqa: E402
 +
-+legacy_path = sys.argv[1] if len(sys.argv) > 1 else "tests/_legacy/search.py"
-+spec = importlib.util.spec_from_file_location("legacy_search", legacy_path)
-+L = importlib.util.module_from_spec(spec)
-+spec.loader.exec_module(L)
-+old = L.text_search
++
++def _arg(flag):
++    return sys.argv[sys.argv.index(flag) + 1] if flag in sys.argv else None
++
++
++RECORD, AGAINST = _arg("--record"), _arg("--against")
++_FLAGS = {"--record", "--against", "--json"}
++_values = {sys.argv[i + 1] for i, a in enumerate(sys.argv[:-1]) if a in _FLAGS}
++_positional = [a for a in sys.argv[1:] if a not in _FLAGS and a not in _values]
++if RECORD is not None and AGAINST is not None:
++    sys.exit("--record and --against exclude each other")
++if AGAINST is not None:
++    with open(AGAINST, "rb") as fh:
++        recorded = pickle.load(fh)  # noqa: S301 (a file this script wrote)
++    ORACLE = f"recorded in another process ({AGAINST})"
++elif RECORD is not None:
++    recorded = {"cases": [], "results": [], "tables": {}}
++    ORACLE = None
++else:
++    legacy_path = _positional[0] if _positional else os.path.join(ROOT, "tests/_legacy/search.py")
++    spec = importlib.util.spec_from_file_location("legacy_search", legacy_path)
++    L = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(L)
++    old = L.text_search
++    ORACLE = f"{legacy_path}, in this process"
 +
 +inputs = list(dict.fromkeys(o.input for o in A.load_matrix() if o.kind == "paper"))
 +papers = [pc.read(A.ROOT / i) for i in inputs]
-+rng = random.Random(1)
++rng = random.Random(1)  # noqa: S311 (a fixed sample, not a secret)
 +
 +
 +def run(fn, *a, **k):
@@ -1012,6 +1066,8 @@ index 0000000..61512f3
 +
 +n_cases = 0
 +failures = []
++GROUPED = ("paragraph", "section", "header", "paper_id")
++by_return: dict[str, list[int]] = {}  # return mode -> [cases, differences]
 +
 +
 +def same(a, b):
@@ -1036,9 +1092,22 @@ index 0000000..61512f3
 +def check(label, paper, *a, **k):
 +    global n_cases
 +    n_cases += 1
-+    r_old = run(old, paper, *a, **k)
++    tally = by_return.setdefault(str(k.get("return_", "sentence")), [0, 0])
++    tally[0] += 1
++    case = repr((label, a, sorted(k.items())))
++    if RECORD is not None:
++        recorded["cases"].append(case)
++        recorded["results"].append(run(new, paper, *a, **k))
++        return
++    if AGAINST is not None:
++        if recorded["cases"][n_cases - 1] != case:
++            sys.exit(f"case {n_cases} is {case}, but {recorded['cases'][n_cases - 1]} was recorded")
++        r_old = recorded["results"][n_cases - 1]
++    else:
++        r_old = run(old, paper, *a, **k)
 +    r_new = run(new, paper, *a, **k)
 +    if not same(r_old, r_new):
++        tally[1] += 1
 +        failures.append(
 +            (
 +                label,
@@ -1048,6 +1117,16 @@ index 0000000..61512f3
 +                r_new if r_new[0] == "err" else "frame",
 +            )
 +        )
++
++
++def table(key, make):
++    """A table that table cases search: made here (and recorded), or read from the record."""
++    if AGAINST is not None:
++        return recorded["tables"][key]
++    t = make()
++    if RECORD is not None:
++        recorded["tables"][key] = t
++    return t
 +
 +
 +PATTERNS = [
@@ -1120,9 +1199,9 @@ index 0000000..61512f3
 +check("bad-input-badpat", 42, ["[", "x"])
 +
 +# tables: chains and odd tables
-+frames = [_text_frame(p)[0] for p in papers]
++frames = [table(f"frame/{i}", lambda p=p: _text_frame(p)[0]) for i, p in enumerate(papers)]
 +for f, name in zip(frames, inputs, strict=True):
-+    sub = old(f, "the")
++    sub = table(f"sub/{name}", lambda f=f: (new if RECORD is not None else old)(f, "the"))
 +    for pat in PATTERNS[:10] + LISTS[:8]:
 +        check(name + "/chain", sub, pat)
 +        check(name + "/chain-excl", sub, pat, exclude=True)
@@ -1166,15 +1245,43 @@ index 0000000..61512f3
 +check("badret", strings, "a", return_="nope")
 +check("emptypat", strings, [])
 +
++if RECORD is not None:
++    with open(RECORD, "wb") as fh:
++        pickle.dump(recorded, fh)
++    print(f"{n_cases} cases recorded to {RECORD} (text_search from {pc.__file__})")
++    sys.exit(0)
++
++grouped = [sum(by_return.get(r, [0, 0])[i] for r in GROUPED) for i in (0, 1)]
++print(f"oracle: {ORACLE}")
 +print(f"{n_cases} cases, {len(failures)} differ")
++print(f"V5 (return-mode cases: {', '.join(GROUPED)}): {grouped[0]} cases, {grouped[1]} differ")
++for ret, (n, bad) in by_return.items():
++    print(f"  return_={ret}: {n} cases, {bad} differ")
 +for f in failures[:30]:
 +    print("DIFF", f[0], str(f[1])[:80], f[2], str(f[3])[:200], "|", str(f[4])[:200])
++if (out := _arg("--json")) is not None:
++    with open(out, "w") as fh:
++        json.dump(
++            {
++                "oracle": ORACLE,
++                "text_search": pc.__file__,
++                "cases": n_cases,
++                "differences": len(failures),
++                "v5_cases": grouped[0],
++                "v5_differences": grouped[1],
++                "by_return": by_return,
++                "first": [[str(x)[:300] for x in f] for f in failures[:30]],
++            },
++            fh,
++            indent=1,
++        )
++sys.exit(1 if failures else 0)
 diff --git a/spike/invariants.py b/spike/invariants.py
 new file mode 100644
-index 0000000..0c3e5d3
+index 00000000..b59f8de2
 --- /dev/null
 +++ b/spike/invariants.py
-@@ -0,0 +1,164 @@
+@@ -0,0 +1,218 @@
 +"""I1 and I2: the Doc engine finds exactly what grepl() finds (no false negatives).
 +
 +I1: every built-in (pattern, icase, perl) triple of the text modules (the census
@@ -1186,20 +1293,26 @@ index 0000000..0c3e5d3
 +every call that recorded a match, every clause of required_literals() has a piece
 +in the casefolded string.
 +
-+usage (tree root): PYTHONPATH=src:. python spike/invariants.py [--json out.json]
++The spike's census bank (census/bank.json) is lost with its scratchpad. Without
++--bank, the bank is rebuilt: every non-fixed pattern the Doc engine is asked about,
++or grepl() is called with, while the accuracy matrix's paper modules run (offline,
++as the accuracy gate runs them). --save-bank keeps it for the next run.
++
++usage: PYTHONPATH=<tree>/src:<tree> python spike/invariants.py
++           [--bank bank.json] [--save-bank bank.json] [--json out.json]
 +"""
 +
 +from __future__ import annotations
 +
 +import inspect
 +import json
-+import os
 +import sys
 +import time
 +import warnings
++from pathlib import Path
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 +
 +import pytacheck as pc  # noqa: E402
 +from parity import accuracy as A  # noqa: E402
@@ -1208,10 +1321,6 @@ index 0000000..0c3e5d3
 +from pytacheck.core import doc as D  # noqa: E402
 +from pytacheck.core.patterns import Pat, required_literals  # noqa: E402
 +
-+BANK = os.path.join(
-+    "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/arch",
-+    "census/bank.json",
-+)
 +PROBES = [
 +    ("Figure", False, False),
 +    ("OSF", False, False),
@@ -1221,8 +1330,56 @@ index 0000000..0c3e5d3
 +]
 +
 +
++def _arg(flag: str) -> str | None:
++    return sys.argv[sys.argv.index(flag) + 1] if flag in sys.argv else None
++
++
++def build_bank() -> list[tuple[str, bool, bool]]:
++    """The (pattern, icase, perl) triples the accuracy matrix's paper modules search for:
++    what the Doc engine is asked about, and what they pass to grepl()."""
++    seen: dict[tuple[str, bool, bool], None] = {}
++    mask, header_mask, detector = D.Doc.mask, D.Doc.header_mask, rx.detector
++
++    def note(p: Pat) -> None:
++        if not p.fixed:
++            seen.setdefault((p.src, p.icase, p.perl))
++
++    def mask_noted(self, p, *args, **kwargs):
++        note(p)
++        return mask(self, p, *args, **kwargs)
++
++    def header_noted(self, p, *args, **kwargs):
++        note(p)
++        return header_mask(self, p, *args, **kwargs)
++
++    def detector_noted(pattern, ignore_case=False, perl=False, fixed=False):
++        if not fixed and isinstance(pattern, str):
++            seen.setdefault((pattern, bool(ignore_case), bool(perl)))
++        return detector(pattern, ignore_case, perl, fixed)
++
++    D.Doc.mask, D.Doc.header_mask, rx.detector = mask_noted, header_noted, detector_noted
++    try:
++        A.run_python([o for o in A.load_matrix() if o.kind == "paper"])
++    finally:
++        D.Doc.mask, D.Doc.header_mask, rx.detector = mask, header_mask, detector
++    return list(seen)
++
++
++def load_bank() -> tuple[list[tuple[str, bool, bool]], str]:
++    path = _arg("--bank")
++    if path is not None:
++        with open(path) as f:
++            return [tuple(x[:3]) for x in json.load(f)["patterns"]], path
++    bank = build_bank()
++    save = _arg("--save-bank")
++    if save is not None:
++        with open(save, "w") as f:
++            json.dump({"patterns": [list(t) for t in bank]}, f, indent=0)
++    return bank, "rebuilt from the accuracy matrix"
++
++
 +def i1() -> dict:
-+    bank = [tuple(x[:3]) for x in json.load(open(BANK))["patterns"]]
++    bank, source = load_bank()
 +    triples = list(dict.fromkeys([*bank, *PROBES]))
 +    inputs = list(dict.fromkeys(o.input for o in A.load_matrix() if o.kind == "paper"))
 +    paths = [*inputs, "demopaper()"]
@@ -1250,6 +1407,7 @@ index 0000000..0c3e5d3
 +                if [bool(got_h >> i & 1) for i in range(d.n)] != list(want_h):
 +                    mismatches.append((mode, path, src, icase, perl, "header"))
 +    return {
++        "bank": source,
 +        "triples": len(triples),
 +        "with_literals": covered,
 +        "papers": len(paths),
@@ -1275,7 +1433,7 @@ index 0000000..0c3e5d3
 +        matched: list[str] = []
 +        try:
 +            if spec is not None:
-+                pattern, icase, perl, fixed = spec[0], spec[1], spec[2], spec[3]
++                pattern, perl, fixed = spec[0], spec[2], spec[3]
 +                method = name.split(".", 1)[1]
 +                s = (
 +                    args[0]
@@ -1284,17 +1442,17 @@ index 0000000..0c3e5d3
 +                )
 +                if not isinstance(s, str):
 +                    continue
-+                if (method in ("search", "fullmatch", "match") and expected is not None) or (method in ("finditer", "findall") and expected) or (method in ("sub", "subn") and expected != s):
++                if (
++                    (method in ("search", "fullmatch", "match") and expected is not None)
++                    or (method in ("finditer", "findall") and expected)
++                    or (method in ("sub", "subn") and expected != s)
++                ):
 +                    matched = [s]
 +            else:
 +                fn = getattr(rx, name)
 +                a = _bind(fn, args, kwargs)
 +                pattern = a["pattern"] if "pattern" in a else a.get("split")
-+                icase, perl, fixed = (
-+                    a.get("ignore_case", False),
-+                    a.get("perl", False),
-+                    a.get("fixed", False),
-+                )
++                perl, fixed = a.get("perl", False), a.get("fixed", False)
 +                if name == "strsplit":
 +                    continue
 +                x = a["x"]
@@ -1306,9 +1464,11 @@ index 0000000..0c3e5d3
 +                    else:
 +                        matched = [xs[i] for i in res] if not a.get("invert") else []
 +                elif name == "grepl" or name in ("regextract", "regexec", "regextract_all"):
-+                    matched = [v for v, r in zip(xs, res) if r and isinstance(v, str)]
++                    matched = [v for v, r in zip(xs, res, strict=False) if r and isinstance(v, str)]
 +                elif name in ("sub", "gsub"):
-+                    matched = [v for v, r in zip(xs, res) if isinstance(v, str) and r != v]
++                    matched = [
++                        v for v, r in zip(xs, res, strict=False) if isinstance(v, str) and r != v
++                    ]
 +        except (TypeError, KeyError, IndexError):
 +            continue
 +        if fixed or not matched:
@@ -1336,15 +1496,16 @@ index 0000000..0c3e5d3
 +if __name__ == "__main__":
 +    out = {"I1": i1(), "I2": i2()}
 +    print(json.dumps(out, indent=1, default=str))
-+    if "--json" in sys.argv:
-+        json.dump(out, open(sys.argv[sys.argv.index("--json") + 1], "w"), indent=1, default=str)
++    if (path := _arg("--json")) is not None:
++        with open(path, "w") as f:
++            json.dump(out, f, indent=1, default=str)
 +    sys.exit(1 if out["I1"]["mismatches"] or out["I2"]["violations"] else 0)
 diff --git a/spike/loc.py b/spike/loc.py
 new file mode 100644
-index 0000000..154ebdd
+index 00000000..a88e8704
 --- /dev/null
 +++ b/spike/loc.py
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,66 @@
 +"""Lines of code, old against new: total lines, and logic lines (non-blank, non-comment
 +lines inside function bodies, docstrings excluded)."""
 +
@@ -1358,29 +1519,46 @@ index 0000000..154ebdd
 +
 +
 +def logic_lines(path: str) -> int:
-+    src = open(path).read()
++    with open(path) as f:
++        src = f.read()
 +    tree = ast.parse(src)
 +    doc: set[int] = set()
 +    for node in ast.walk(tree):
 +        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
 +            body = node.body
-+            if body and isinstance(body[0], ast.Expr) and isinstance(getattr(body[0], "value", None), ast.Constant) and isinstance(body[0].value.value, str):
++            if (
++                body
++                and isinstance(body[0], ast.Expr)
++                and isinstance(getattr(body[0], "value", None), ast.Constant)
++                and isinstance(body[0].value.value, str)
++            ):
 +                doc.update(range(body[0].lineno, body[0].end_lineno + 1))
 +    code: set[int] = set()
 +    for tok in tokenize.generate_tokens(io.StringIO(src).readline):
-+        if tok.type in (tokenize.COMMENT, tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT, tokenize.ENDMARKER):
++        if tok.type in (
++            tokenize.COMMENT,
++            tokenize.NL,
++            tokenize.NEWLINE,
++            tokenize.INDENT,
++            tokenize.DEDENT,
++            tokenize.ENDMARKER,
++        ):
 +            continue
 +        for ln in range(tok.start[0], tok.end[0] + 1):
 +            code.add(ln)
 +    inside: set[int] = set()
 +    for node in ast.walk(tree):
-+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.col_offset == 0 or isinstance(node, ast.ClassDef) and node.col_offset == 0:
++        if (
++            isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef)
++            and node.col_offset == 0
++        ):
 +            inside.update(range(node.body[0].lineno, node.end_lineno + 1))
 +    return len((code & inside) - doc)
 +
 +
 +def total(path: str) -> int:
-+    return sum(1 for _ in open(path))
++    with open(path) as f:
++        return sum(1 for _ in f)
 +
 +
 +if __name__ == "__main__":
@@ -1388,16 +1566,18 @@ index 0000000..154ebdd
 +    out = {}
 +    for name, (old, new) in pairs.items():
 +        out[name] = {
-+            "old_lines": sum(total(p) for p in old), "new_lines": sum(total(p) for p in new),
-+            "old_logic": sum(logic_lines(p) for p in old), "new_logic": sum(logic_lines(p) for p in new),
++            "old_lines": sum(total(p) for p in old),
++            "new_lines": sum(total(p) for p in new),
++            "old_logic": sum(logic_lines(p) for p in old),
++            "new_logic": sum(logic_lines(p) for p in new),
 +        }
 +    print(json.dumps(out, indent=1))
 diff --git a/spike/mutation.py b/spike/mutation.py
 new file mode 100644
-index 0000000..13c4baa
+index 00000000..98578c80
 --- /dev/null
 +++ b/spike/mutation.py
-@@ -0,0 +1,116 @@
+@@ -0,0 +1,117 @@
 +"""The Doc cache never serves a stale paper where it could matter (ARCHITECTURE.md 2.2, V6).
 +
 +1. An in-place edit of ``p.text`` between two ``module_run`` calls gives fresh results
@@ -1407,7 +1587,7 @@ index 0000000..13c4baa
 +3. A raw-record paper keeps one Doc across modules outside any context (no rebuild),
 +   and pickle, ``copy`` and ``deepcopy`` never carry the cache.
 +
-+usage (tree root): PYTHONPATH=src:. python spike/mutation.py
++usage: PYTHONPATH=<tree>/src:<tree> python spike/mutation.py
 +"""
 +
 +from __future__ import annotations
@@ -1419,15 +1599,16 @@ index 0000000..13c4baa
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 +
 +import pytacheck as pc  # noqa: E402
++from parity import accuracy as A  # noqa: E402
 +from parity.cases import metacheck_defaults  # noqa: E402
 +from pytacheck.core import run as R  # noqa: E402
 +from pytacheck.core.doc import Doc  # noqa: E402
 +from pytacheck.module import module_run, run_session  # noqa: E402
 +
-+XML = "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
++XML = A.ROOT / "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
 +NEW = "This study was approved by the institutional review board zzqq."
 +checks = []
 +
@@ -1470,7 +1651,7 @@ index 0000000..13c4baa
 +# 2. the guard inside an explicit context
 +R.set_flags(check_mutation=True)
 +p = pc.read(XML)
-+p.text  # materialise: an in-place edit is possible
++_ = p.text  # materialise: an in-place edit is possible
 +raised = False
 +try:
 +    with run_session():
@@ -1483,7 +1664,7 @@ index 0000000..13c4baa
 +    "run context + PYTACHECK_CHECK_MUTATION=1: an in-place edit raises StaleDocumentError", raised
 +)
 +p = pc.read(XML)
-+p.text
++_ = p.text
 +ok = True
 +try:
 +    with run_session():
@@ -1504,7 +1685,7 @@ index 0000000..13c4baa
 +check(f"raw paper, 4 modules without a context: {builds} Doc build(s)", builds == 1)
 +R.set_flags(counting=False)
 +d = Doc.of(p)
-+check("pickle drops the cache", not pickle.loads(pickle.dumps(p))._derived)
++check("pickle drops the cache", not pickle.loads(pickle.dumps(p))._derived)  # noqa: S301
 +check("deepcopy drops the cache", not copy.deepcopy(p)._derived)
 +check("copy drops the cache", not copy.copy(p)._derived)
 +check("the cache is reused while unchanged", Doc.of(p) is d)
@@ -1516,48 +1697,52 @@ index 0000000..13c4baa
 +sys.exit(1 if bad else 0)
 diff --git a/spike/pytest_run.sh b/spike/pytest_run.sh
 new file mode 100755
-index 0000000..6c945a5
+index 00000000..8b4d6bfb
 --- /dev/null
 +++ b/spike/pytest_run.sh
-@@ -0,0 +1,8 @@
-+#!/bin/bash
-+# usage: pytest_run.sh TREE OUT   (all non-parity tests, the reference R available)
-+T=$1; O=$2
-+export PYTACHECK_RSCRIPT=/opt/mamba/envs/mcref/bin/Rscript
-+cd $T
-+s=$(date +%s)
-+PYTHONPATH=$T/src:$T timeout 5400 /home/user/pytacheck/.venv/bin/python -m pytest -q --no-header -p no:cacheprovider -m "not parity" -n 2 tests > $O 2>&1 || true
-+echo "wall $(( $(date +%s) - s ))s" >> $O
-diff --git a/spike/run_areas.sh b/spike/run_areas.sh
-new file mode 100755
-index 0000000..d47c8d4
---- /dev/null
-+++ b/spike/run_areas.sh
 @@ -0,0 +1,11 @@
 +#!/bin/bash
++# usage: pytest_run.sh TREE OUT [PYTEST_ARGS...]   (default: all non-parity tests)
++# The Python is $PY (default: this tree's .venv). R is whatever PYTACHECK_RSCRIPT or PATH gives.
++T=$(cd "$1" && pwd); O=$2; shift 2
++PY=${PY:-$(cd "$(dirname "$0")/.." && pwd)/.venv/bin/python}
++[ $# -eq 0 ] && set -- tests
++mkdir -p "$(dirname "$O")"; O=$(cd "$(dirname "$O")" && pwd)/$(basename "$O")
++cd "$T" || exit 1
++s=$(date +%s)
++PYTHONPATH=$T/src:$T timeout 5400 "$PY" -m pytest -q --no-header -p no:cacheprovider -m "not parity" -n "${JOBS:-2}" "$@" > "$O" 2>&1 || true
++echo "wall $(( $(date +%s) - s ))s" >> "$O"
+diff --git a/spike/run_areas.sh b/spike/run_areas.sh
+new file mode 100755
+index 00000000..6f193951
+--- /dev/null
++++ b/spike/run_areas.sh
+@@ -0,0 +1,12 @@
++#!/bin/bash
 +# usage: run_areas.sh <tree> <outdir> area...   (parity check per area, JSON report + log per area)
-+T=$1; O=$2; shift 2
-+mkdir -p $O
-+export PYTACHECK_RSCRIPT=/opt/mamba/envs/mcref/bin/Rscript
-+cd $T
++# The Python is $PY (default: this tree's .venv). R is whatever PYTACHECK_RSCRIPT or PATH gives.
++T=$(cd "$1" && pwd); O=$2; shift 2
++PY=${PY:-$(cd "$(dirname "$0")/.." && pwd)/.venv/bin/python}
++mkdir -p "$O"; O=$(cd "$O" && pwd)
++cd "$T" || exit 1
 +for a in "$@"; do
 +  s=$(date +%s)
-+  PYTHONPATH=$T/src:$T /home/user/pytacheck/.venv/bin/python -m parity check --allow-missing --jobs ${JOBS:-2} --area $a --report $O/$a.json > $O/$a.log 2>&1
-+  echo "$a rc=$? $(( $(date +%s) - s ))s $(grep -E 'cases in' $O/$a.log | tail -1)" >> $O/summary.txt
++  PYTHONPATH=$T/src:$T "$PY" -m parity check --allow-missing --jobs "${JOBS:-2}" --area "$a" --report "$O/$a.json" > "$O/$a.log" 2>&1
++  echo "$a rc=$? $(( $(date +%s) - s ))s $(grep -E 'cases in' "$O/$a.log" | tail -1)" >> "$O/summary.txt"
 +done
 diff --git a/spike/shared.py b/spike/shared.py
 new file mode 100644
-index 0000000..1bd1991
+index 00000000..e3938e53
 --- /dev/null
 +++ b/spike/shared.py
-@@ -0,0 +1,71 @@
+@@ -0,0 +1,72 @@
 +"""The batch-equality ``shared`` level: all 19 matrix modules on one shared paper in one run
 +context give exactly what isolated runs (a fresh copy per module, no context) give.
 +
 +With the façade in place every unmigrated module shares the paper's Doc and masks
 +with the four migrated ones, so this pins that sharing changes nothing.
 +
-+usage (tree root): PYTHONPATH=src:. python spike/shared.py [--json out.json]
++usage: PYTHONPATH=<tree>/src:<tree> python spike/shared.py [--json out.json]
 +"""
 +
 +from __future__ import annotations
@@ -1569,7 +1754,7 @@ index 0000000..1bd1991
 +import warnings
 +
 +warnings.filterwarnings("ignore")
-+sys.path.insert(0, os.getcwd())
++sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 +
 +import pytacheck as pc  # noqa: E402
 +from parity import accuracy as A  # noqa: E402
@@ -1620,11 +1805,12 @@ index 0000000..1bd1991
 +    out = main()
 +    print(json.dumps(out, indent=1))
 +    if "--json" in sys.argv:
-+        json.dump(out, open(sys.argv[sys.argv.index("--json") + 1], "w"), indent=1)
++        with open(sys.argv[sys.argv.index("--json") + 1], "w") as f:
++            json.dump(out, f, indent=1)
 +    sys.exit(1 if out["differences"] else 0)
 diff --git a/src/pytacheck/core/__init__.py b/src/pytacheck/core/__init__.py
 new file mode 100644
-index 0000000..02f04c3
+index 00000000..02f04c38
 --- /dev/null
 +++ b/src/pytacheck/core/__init__.py
 @@ -0,0 +1,6 @@
@@ -1636,7 +1822,7 @@ index 0000000..02f04c3
 +"""
 diff --git a/src/pytacheck/core/doc.py b/src/pytacheck/core/doc.py
 new file mode 100644
-index 0000000..8425fe1
+index 00000000..8425fe11
 --- /dev/null
 +++ b/src/pytacheck/core/doc.py
 @@ -0,0 +1,702 @@
@@ -2344,7 +2530,7 @@ index 0000000..8425fe1
 +            yield k, i
 diff --git a/src/pytacheck/core/facets.py b/src/pytacheck/core/facets.py
 new file mode 100644
-index 0000000..95a5f9a
+index 00000000..95a5f9ae
 --- /dev/null
 +++ b/src/pytacheck/core/facets.py
 @@ -0,0 +1,115 @@
@@ -2465,7 +2651,7 @@ index 0000000..95a5f9a
 +    ]
 diff --git a/src/pytacheck/core/hits.py b/src/pytacheck/core/hits.py
 new file mode 100644
-index 0000000..bbd57f7
+index 00000000..bbd57f7f
 --- /dev/null
 +++ b/src/pytacheck/core/hits.py
 @@ -0,0 +1,184 @@
@@ -2655,7 +2841,7 @@ index 0000000..bbd57f7
 +        return {k: list(v) for k, v in out.items()}
 diff --git a/src/pytacheck/core/index.py b/src/pytacheck/core/index.py
 new file mode 100644
-index 0000000..9627fc7
+index 00000000..9627fc7b
 --- /dev/null
 +++ b/src/pytacheck/core/index.py
 @@ -0,0 +1,80 @@
@@ -2741,7 +2927,7 @@ index 0000000..9627fc7
 +        return out
 diff --git a/src/pytacheck/core/output.py b/src/pytacheck/core/output.py
 new file mode 100644
-index 0000000..a6c279f
+index 00000000..a6c279f0
 --- /dev/null
 +++ b/src/pytacheck/core/output.py
 @@ -0,0 +1,173 @@
@@ -2920,16 +3106,17 @@ index 0000000..a6c279f
 +    return bind_rows(frames)
 diff --git a/src/pytacheck/core/patterns.py b/src/pytacheck/core/patterns.py
 new file mode 100644
-index 0000000..d072bf3
+index 00000000..ac347ae1
 --- /dev/null
 +++ b/src/pytacheck/core/patterns.py
-@@ -0,0 +1,330 @@
+@@ -0,0 +1,327 @@
 +"""Patterns as values: :class:`Pat`, :class:`PatternSet`, required literals.
 +
 +A pattern is metacheck's R pattern, verbatim, with its dialect: ``"tre"`` (R's
 +default engine), ``"pcre"`` (``perl = TRUE``) or ``"fixed"``. Compilation goes
-+through lane 2's translator (:mod:`pytacheck._r.regex`) and nowhere else, so
-+a detector gives exactly ``grepl()``'s truth value.
++through lane 2's translator (:mod:`pytacheck._r.regex`) and nowhere else, and
++detection uses ``grepl()``'s own detector (``_r.regex.detector()``), so a mask
++gives exactly ``grepl()``'s truth value.
 +
 +:func:`required_literals` derives, from the translated pattern, a CNF of
 +casefolded ASCII pieces: every match contains, for every clause, one of its
@@ -2948,7 +3135,7 @@ index 0000000..d072bf3
 +
 +import regex
 +
-+from pytacheck._r.regex import _compile, casefold, translate_pcre, translate_tre
++from pytacheck._r.regex import _compile, casefold, detector, translate_pcre, translate_tre
 +
 +__all__ = ["Pat", "PatternSet", "patterns", "required_literals"]
 +
@@ -3040,13 +3227,9 @@ index 0000000..d072bf3
 +# ---------------------------------------------------------------------------
 +
 +
-+@functools.lru_cache(maxsize=8192)
 +def _detector(p: Pat) -> Callable[[str], bool]:
-+    if p.fixed:
-+        src = p.src
-+        return lambda s: src in s
-+    search = _compile(p.src, p.icase, p.perl, False, False).search  # posix off: same truth
-+    return lambda s: search(s) is not None
++    # grepl()'s own detector (made once per pattern, compiled on its first candidate)
++    return detector(p.src, p.icase, p.perl, p.fixed)
 +
 +
 +# ---------------------------------------------------------------------------
@@ -3256,7 +3439,7 @@ index 0000000..d072bf3
 +    return conj
 diff --git a/src/pytacheck/core/refs.py b/src/pytacheck/core/refs.py
 new file mode 100644
-index 0000000..e0e7654
+index 00000000..e0e7654e
 --- /dev/null
 +++ b/src/pytacheck/core/refs.py
 @@ -0,0 +1,227 @@
@@ -3489,7 +3672,7 @@ index 0000000..e0e7654
 +    return pd.concat([pd.Series([], dtype=a), pd.Series([], dtype=b)]).dtype
 diff --git a/src/pytacheck/core/run.py b/src/pytacheck/core/run.py
 new file mode 100644
-index 0000000..7fe78c9
+index 00000000..7fe78c90
 --- /dev/null
 +++ b/src/pytacheck/core/run.py
 @@ -0,0 +1,118 @@
@@ -3613,7 +3796,7 @@ index 0000000..7fe78c9
 +        _CHECK_MUTATION = check_mutation
 diff --git a/src/pytacheck/doc/__init__.py b/src/pytacheck/doc/__init__.py
 new file mode 100644
-index 0000000..178bc85
+index 00000000..178bc85d
 --- /dev/null
 +++ b/src/pytacheck/doc/__init__.py
 @@ -0,0 +1,40 @@
@@ -3658,7 +3841,7 @@ index 0000000..178bc85
 +    "stack",
 +]
 diff --git a/src/pytacheck/module.py b/src/pytacheck/module.py
-index 081aa1a..8d0b4ea 100644
+index bdd82c9c..1c09fb11 100644
 --- a/src/pytacheck/module.py
 +++ b/src/pytacheck/module.py
 @@ -286,6 +286,8 @@ def run_session() -> Iterator[RunSession]:
@@ -3680,7 +3863,7 @@ index 081aa1a..8d0b4ea 100644
      finally:
          _SESSION.reset(token)
  
-@@ -950,10 +953,29 @@ def module_run(
+@@ -980,10 +983,29 @@ def module_run(
              {"paper_id": pd.Series([getattr(paper, "paper_id", None)], dtype="string")}
          )
  
@@ -3711,7 +3894,7 @@ index 081aa1a..8d0b4ea 100644
      except Exception as exc:
          from pytacheck.log import logger
  
-@@ -963,9 +985,30 @@ def module_run(
+@@ -993,9 +1015,30 @@ def module_run(
      finally:
          _PREV_OUTPUTS.reset(token)
  
@@ -3745,7 +3928,7 @@ index 081aa1a..8d0b4ea 100644
  
      traffic_light = results.pop("traffic_light", None) or "info"
      summary_text = results.pop("summary_text", None)
-@@ -975,11 +1018,19 @@ def module_run(
+@@ -1005,11 +1048,19 @@ def module_run(
  
      mod_summary = results.pop("summary_table", None)
      na_replace = results.get("na_replace")
@@ -3767,7 +3950,7 @@ index 081aa1a..8d0b4ea 100644
          mod_summary = mod_summary.copy()
          mod_summary["paper_id"] = mod_summary["paper_id"].astype("string")
          before = set(summary_table.columns)
-@@ -991,8 +1042,8 @@ def module_run(
+@@ -1021,8 +1072,8 @@ def module_run(
              summary_table = _apply_na_replace(summary_table, na_replace, own, suffix)
  
      table = results.pop("table", None)
@@ -3778,7 +3961,7 @@ index 081aa1a..8d0b4ea 100644
          title=spec.title,
          section=spec.section,
          table=table,
-@@ -1003,14 +1054,32 @@ def module_run(
+@@ -1033,14 +1084,32 @@ def module_run(
          paper=paper,
          prev_outputs=prev_outputs,
          extras=results,
@@ -3819,7 +4002,7 @@ index 081aa1a..8d0b4ea 100644
  
  
 diff --git a/src/pytacheck/modules/ethics_check.py b/src/pytacheck/modules/ethics_check.py
-index 651d39f..711e962 100644
+index 651d39f9..711e9624 100644
 --- a/src/pytacheck/modules/ethics_check.py
 +++ b/src/pytacheck/modules/ethics_check.py
 @@ -1,23 +1,19 @@
@@ -4231,7 +4414,7 @@ index 651d39f..711e962 100644
 -    return "NA" if x is None or pd.isna(x) else str(x)
 +    return "NA" if x is None else str(x)
 diff --git a/src/pytacheck/modules/open_practices.py b/src/pytacheck/modules/open_practices.py
-index 638f228..ccee91d 100644
+index e5ece561..ccee91d0 100644
 --- a/src/pytacheck/modules/open_practices.py
 +++ b/src/pytacheck/modules/open_practices.py
 @@ -1,18 +1,19 @@
@@ -4262,56 +4445,18 @@ index 638f228..ccee91d 100644
  
  # patterns ----
  # R string literals translated to regexes (``"\\bavailab"`` is ``\bavailab``).
-@@ -74,23 +75,6 @@ _PREREG_WORDS = ("pre-?regist", "aspredicted")
- #: ``setdiff(repo_words, on_request) |> paste(collapse = "|")``
- _IN_REPO = "|".join(w for w in _REPO_WORDS if w != _ON_REQUEST)
- 
--# Row prefilters (a performance device, not in R). Every search chain below
--# starts with one of the first-stage word lists and requires a repository word,
--# so a row that matches neither can never reach the table. text_search() only
--# cleans whitespace (``\s+`` -> " ", " , " -> ", ", "<~p~>" -> blank line)
--# between stages, so a repository word in cleaned text is still matched in the
--# raw text when its literal spaces may be any whitespace run; rows holding the
--# paragraph marker are always kept. Filtering the table first therefore
--# changes no result, but saves running ~30 patterns over the whole corpus.
--_FIRST_STAGE_ANY = "|".join((*_DATA_WORDS, *_CODE_WORDS, *_MATERIALS_WORDS, *_PREREG_WORDS))
--_REPO_ANY = "|".join(
--    (
--        *(w.replace(" ", r"\s+") for w in _REPO_WORDS if w != _ON_REQUEST),
--        "request",  # every on_request match contains it (and it is a fast literal)
--        "<~p~>",
--    )
--)
--
- _FLAGS = ("data", "code", "materials", "prereg")
- 
- _NO_DATA_REPORT = (
-@@ -112,139 +96,29 @@ _ON_REQUEST_REPORT = (
+@@ -95,125 +96,29 @@ _ON_REQUEST_REPORT = (
  )
  
  
 -def _search_frame(paper: Any) -> Any:
--    """What the searches run on: the paper's sentence table, prefiltered.
--
--    ``text_search()`` on this table returns exactly what it returns on
--    *paper* for every search chain of the module (see ``_REPO_ANY``), but the
--    text and section tables are joined only once. Other inputs are passed
--    through unchanged.
--    """
+-    """What the searches run on: the sentence table of a paper (:func:`_code_rows` needs a
+-    table); other inputs are passed through."""
 -    if not isinstance(paper, Paper | PaperList):
 -        return paper
 -    from pytacheck.text.search import _text_frame
 -
--    frame = _text_frame(paper)[0]
--    if "text" not in frame.columns or len(frame) == 0:
--        return frame
--    texts = frame["text"].tolist()
--    keep = pd.Series(grepl(_REPO_ANY, texts, ignore_case=True), index=frame.index, dtype=bool)
--    if "section_type" in frame.columns:
--        keep &= ~frame["section_type"].isin(["references"]).fillna(False).astype(bool)
--    frame = frame.loc[keep.to_numpy()]
--    first = grepl(_FIRST_STAGE_ANY, frame["text"].tolist(), ignore_case=True)
--    return frame.loc[first]
+-    return _text_frame(paper)[0]
 -
 -
 -def _code_rows(frame: Any) -> Any:
@@ -4326,7 +4471,7 @@ index 638f228..ccee91d 100644
 -
 -def _chain(frame: Any, *steps: tuple[str | Sequence[str], bool]) -> pd.DataFrame:
 -    """Successive ``text_search(pattern, exclude = ...)`` calls."""
--    out = frame
+-    out: pd.DataFrame = frame
 -    for pattern, exclude in steps:
 -        out = text_search(out, pattern, exclude=exclude)
 -    return out
@@ -4449,7 +4594,7 @@ index 638f228..ccee91d 100644
  
  
  @module(
-@@ -259,151 +133,199 @@ def _summarise(table: pd.DataFrame, in_repo: list[bool]) -> pd.DataFrame:
+@@ -228,151 +133,199 @@ def _summarise(table: pd.DataFrame, in_repo: list[bool]) -> pd.DataFrame:
      author=["Lisa DeBruine <lisa.debruine@glasgow.ac.uk>"],
      params={"paper": "a paper object or paperlist object"},
  )
@@ -4678,17 +4823,6 @@ index 638f228..ccee91d 100644
 -                ),
 -                strict=True,
 -            )
--        )
--        # papers without a flagged sentence shared neither
--        opened = [found.get(pid, (False, False)) for pid in paper_ids]
--        both = sum(bool(d) and bool(c) for d, c in opened)
--        only_data = sum(bool(d) and not c for d, c in opened)
--        only_code = sum(not d and bool(c) for d, c in opened)
--        neither = sum(not d and not c for d, c in opened)
--        # "1 paper shared" (metacheck: "1 papers", U82)
--        summary_text = (
--            f"{both:d} paper{plural(both)} shared both data and code, {only_data:d} only data, "
--            f"{only_code:d} only code, and {neither:d} neither."
 +def _no_text_column(docs: Docs) -> None:
 +    """R's errors for a text table without ``text``: ``text_search()`` searches its first
 +    column and drops ``text``, so the module then fails either way."""
@@ -4706,6 +4840,17 @@ index 638f228..ccee91d 100644
 +        raise ValueError(
 +            "Assigned data `grepl(on_request, table$text)` must be compatible with existing data."
          )
+-        # papers without a flagged sentence shared neither
+-        opened = [found.get(pid, (False, False)) for pid in paper_ids]
+-        both = sum(bool(d) and bool(c) for d, c in opened)
+-        only_data = sum(bool(d) and not c for d, c in opened)
+-        only_code = sum(not d and bool(c) for d, c in opened)
+-        neither = sum(not d and not c for d, c in opened)
+-        # "1 paper shared" (metacheck: "1 papers", U82)
+-        summary_text = (
+-            f"{both:d} paper{plural(both)} shared both data and code, {only_data:d} only data, "
+-            f"{only_code:d} only code, and {neither:d} neither."
+-        )
 -    elif not single:
 -        summary_text = "Neither shared data nor code detected."
 -        tl = "red"
@@ -4780,10 +4925,10 @@ index 638f228..ccee91d 100644
 +    shared = [t for t, f, r in zip(texts, flag, in_repo, strict=True) if f and r]
 +    return found.format("\n\n> ".join(shared))
 diff --git a/src/pytacheck/modules/ref_consistency.py b/src/pytacheck/modules/ref_consistency.py
-index a84f8a8..0d73211 100644
+index 885398e5..0d73211c 100644
 --- a/src/pytacheck/modules/ref_consistency.py
 +++ b/src/pytacheck/modules/ref_consistency.py
-@@ -1,4 +1,10 @@
+@@ -1,19 +1,25 @@
 -"""Reference Consistency (port of ``inst/modules/ref_consistency.R``)."""
 +"""Reference Consistency (port of ``inst/modules/ref_consistency.R``), on the indexed core.
 +
@@ -4795,7 +4940,10 @@ index a84f8a8..0d73211 100644
  
  from __future__ import annotations
  
-@@ -8,12 +14,12 @@ from typing import Any
+ import numbers
+-from typing import Any, Literal
++from typing import Any
+ 
  import numpy as np
  import pandas as pd
  
@@ -4826,7 +4974,7 @@ index a84f8a8..0d73211 100644
      dt = s.dtype
      if pd.api.types.is_object_dtype(dt):
          kinds = {
-@@ -59,65 +60,25 @@ def _key_kind(s: pd.Series) -> str:
+@@ -59,66 +60,25 @@ def _key_kind(s: pd.Series) -> str:
          and not s.notna().any()
          and (pd.api.types.is_bool_dtype(dt) or (isinstance(dt, np.dtype) and dt.kind == "f"))
      ):
@@ -4857,6 +5005,7 @@ index a84f8a8..0d73211 100644
 -        return x, y
 +        return dx
      num = pd.api.types.is_numeric_dtype
+-    target: Literal["Float64", "Int64", "string"]
      if num(dx) and num(dy):
 -        target = "Float64" if "float" in str(dx).lower() or "float" in str(dy).lower() else "Int64"
 -    else:
@@ -4901,7 +5050,7 @@ index a84f8a8..0d73211 100644
  
  
  @module(
-@@ -131,107 +92,117 @@ def _flag_counts(table: pd.DataFrame, flag: pd.Series, papers: pd.Series) -> pd.
+@@ -132,107 +92,117 @@ def _flag_counts(table: pd.DataFrame, flag: pd.Series, papers: pd.Series) -> pd.
      params={"paper": "a paper object or paperlist object"},
  )
  def ref_consistency(paper: Any) -> dict[str, Any]:
@@ -5102,7 +5251,7 @@ index a84f8a8..0d73211 100644
          "summary_text": _REPORT[tl],
      }
 diff --git a/src/pytacheck/modules/stat_p_exact.py b/src/pytacheck/modules/stat_p_exact.py
-index c175579..0ac8f5b 100644
+index c1755790..0ac8f5bc 100644
 --- a/src/pytacheck/modules/stat_p_exact.py
 +++ b/src/pytacheck/modules/stat_p_exact.py
 @@ -1,14 +1,22 @@
@@ -5471,7 +5620,7 @@ index c175579..0ac8f5b 100644
 +        }
 +    )
 diff --git a/src/pytacheck/packs/check.py b/src/pytacheck/packs/check.py
-index 0b19733..84eae78 100644
+index 0b197337..84eae786 100644
 --- a/src/pytacheck/packs/check.py
 +++ b/src/pytacheck/packs/check.py
 @@ -198,6 +198,10 @@ def run_issues(spec: ModuleSpec, papers: Sequence[tuple[str, Any]]) -> list[Chec
@@ -5486,33 +5635,42 @@ index 0b19733..84eae78 100644
              out.append(
                  _err("return", where, f"returns a {type(raw).__name__}, not a dict ({desc})")
 diff --git a/src/pytacheck/papers/model.py b/src/pytacheck/papers/model.py
-index 545cb78..22c589a 100644
+index d412a2a7..ae71f6f4 100644
 --- a/src/pytacheck/papers/model.py
 +++ b/src/pytacheck/papers/model.py
 @@ -31,7 +31,9 @@ from pytacheck.papers.schema import empty_table, records_to_frame, required_tabl
  
  __all__ = ["Paper", "PaperList", "is_paper", "is_paper_list"]
  
--_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation"})
+-_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy"})
 +_RESERVED = frozenset(
-+    {"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_derived"}
++    {"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy", "_derived"}
 +)
  # Process-wide mutation counter: ``Paper._generation`` changes whenever a paper is
  # modified through its API, which invalidates ``run_session()`` memo entries.
  _GENERATION = itertools.count(1)
-@@ -61,7 +63,7 @@ class Paper:
+@@ -72,7 +74,16 @@ class Paper:
          not given starts as an empty, fully-typed table.
      """
  
--    __slots__ = ("_columns", "_generation", "_raw", "_tables", "extra", "paper_id")
-+    __slots__ = ("_columns", "_derived", "_generation", "_raw", "_tables", "extra", "paper_id")
+-    __slots__ = ("_columns", "_generation", "_lazy", "_raw", "_tables", "extra", "paper_id")
++    __slots__ = (
++        "_columns",
++        "_derived",
++        "_generation",
++        "_lazy",
++        "_raw",
++        "_tables",
++        "extra",
++        "paper_id",
++    )
  
      paper_id: str | None
      extra: dict[str, Any]
-@@ -72,12 +74,20 @@ class Paper:
-         object.__setattr__(self, "_raw", {})
+@@ -84,12 +95,20 @@ class Paper:
          object.__setattr__(self, "_columns", {})
          object.__setattr__(self, "_generation", next(_GENERATION))
+         object.__setattr__(self, "_lazy", {})  # a _Lazy per table read from JSON records
 +        # what is derived from the tables (the indexed Doc, see pytacheck.core.doc):
 +        # never pickled or copied, keyed on the generation and the source tables
 +        object.__setattr__(self, "_derived", {})
@@ -5531,7 +5689,7 @@ index 545cb78..22c589a 100644
  
      def _set_raw(self, name: str, records: list[dict[str, Any]], columns: Sequence[str]) -> None:
 diff --git a/src/pytacheck/papers/tables.py b/src/pytacheck/papers/tables.py
-index 4afec0d..57058ab 100644
+index eb758b66..d141a815 100644
 --- a/src/pytacheck/papers/tables.py
 +++ b/src/pytacheck/papers/tables.py
 @@ -54,6 +54,9 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
@@ -5543,9 +5701,9 @@ index 4afec0d..57058ab 100644
 +    count("paper_table")
      papers = as_paper_list(paper)
  
-     fast = table in table_names() and all(
+     fast = (
 diff --git a/src/pytacheck/text/extract.py b/src/pytacheck/text/extract.py
-index d7c1066..b6595de 100644
+index 7ad079c8..4e127d84 100644
 --- a/src/pytacheck/text/extract.py
 +++ b/src/pytacheck/text/extract.py
 @@ -16,6 +16,7 @@ import pandas as pd
@@ -5612,9 +5770,9 @@ index d7c1066..b6595de 100644
 +_LIVE_WORDS = LIVE_WORDS  # the patterns live with the facet (core/facets.py)
  
  
- #: Literals one of which every match of a :data:`_LIVE_WORDS` pattern contains
+ def _search_table(paper: Any, any_of: str | None = None, perl: bool = False) -> Any:
 diff --git a/src/pytacheck/text/search.py b/src/pytacheck/text/search.py
-index 2583643..9d0daf1 100644
+index 92e779ee..66f79d0e 100644
 --- a/src/pytacheck/text/search.py
 +++ b/src/pytacheck/text/search.py
 @@ -1,6 +1,12 @@
@@ -5631,20 +5789,28 @@ index 2583643..9d0daf1 100644
  """
  
  from __future__ import annotations
-@@ -11,7 +17,11 @@ from typing import Any, Literal
+@@ -11,16 +17,11 @@ from typing import Any, Literal
  import pandas as pd
  
  from pytacheck._r.frames import bind_rows
--from pytacheck._r.regex import RegexError, compile_r, grepl, gsub, regextract_all
+-from pytacheck._r.regex import (
+-    RegexError,
+-    _as_str,
+-    compile_r,
+-    detector,
+-    fold,
+-    gsub,
+-    regextract_all,
+-)
 +from pytacheck._r.regex import RegexError, compile_r, regextract_all
-+from pytacheck._values import is_missing
+ from pytacheck._values import is_missing
 +from pytacheck.core.doc import Doc, bits
 +from pytacheck.core.patterns import Pat
 +from pytacheck.core.run import count
  from pytacheck.papers.model import Paper, PaperList, is_paper_list
+ from pytacheck.papers.schema import records_to_frame
  from pytacheck.papers.tables import paper_table
- 
-@@ -31,6 +41,13 @@ _GROUPS = {
+@@ -41,6 +42,13 @@ _GROUPS = {
  
  def _text_frame(paper: Any) -> tuple[pd.DataFrame, bool]:
      """The table to search, and whether the input was a plain character vector."""
@@ -5658,7 +5824,7 @@ index 2583643..9d0daf1 100644
      if isinstance(paper, pd.DataFrame):
          return paper.copy(deep=False), False
      if isinstance(paper, Paper | PaperList) or (
-@@ -74,6 +91,17 @@ def _empty_text_frame() -> pd.DataFrame:
+@@ -155,6 +163,17 @@ def _empty_text_frame() -> pd.DataFrame:
      )
  
  
@@ -5676,7 +5842,7 @@ index 2583643..9d0daf1 100644
  def _paste_groups(df: pd.DataFrame, by: list[str], sep: str) -> pd.DataFrame:
      """``summarise(text = paste(text, collapse = sep), .by = by)``."""
      if len(df) == 0:
-@@ -97,12 +125,7 @@ def _paste_groups(df: pd.DataFrame, by: list[str], sep: str) -> pd.DataFrame:
+@@ -178,12 +197,7 @@ def _paste_groups(df: pd.DataFrame, by: list[str], sep: str) -> pd.DataFrame:
  
  
  def _section_headers(kept: pd.DataFrame, result: pd.DataFrame, groups: list[str]) -> pd.Series:
@@ -5690,25 +5856,99 @@ index 2583643..9d0daf1 100644
  
      def key(row: tuple[Any, ...]) -> tuple[Any, ...]:
          return tuple(None if pd.isna(k) else k for k in row)
-@@ -136,6 +159,115 @@ def _semi_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> pd.DataFrame:
+@@ -217,192 +231,108 @@ def _semi_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> pd.DataFrame:
      return x.loc[mask].reset_index(drop=True)
  
  
+-class _Table:
+-    """What one :func:`text_search` call searches: its table, and the columns it scans as lists.
 +def _clean_all(texts: list[Any]) -> list[Any]:
 +    from pytacheck._r.regex import _as_str
 +    from pytacheck.core.doc import clean
-+
+ 
+-    Built once per call, however many patterns are searched: every pattern is
+-    matched against the same lists, and a DataFrame is built once, for the
+-    result rows only (metacheck, and the old port, ran a full search per
+-    pattern and row-bound the results).
+-    """
 +    return [clean(_as_str(t)) for t in texts]
-+
-+
+ 
+-    __slots__ = (
+-        "_cleaned",
+-        "_folded",
+-        "_ft",
+-        "_paragraphs",
+-        "_strings",
+-        "frame",
+-        "header",
+-        "is_vector",
+-        "missing",
+-        "rows",
+-        "text",
+-    )
+ 
+-    @classmethod
+-    def of(cls, paper: Any, include_refs: bool) -> _Table:
+-        """The table for *paper*."""
+-        return cls(*_text_frame(paper), include_refs)
 +class _Search:
 +    """One ``text_search()`` call's view of a Doc: the searched rows and R's result shapes."""
 +
 +    __slots__ = ("doc", "include_refs", "is_vector", "rows", "within")
-+
+ 
+-    def __init__(self, frame: pd.DataFrame, is_vector: bool, include_refs: bool) -> None:
 +    def __init__(self, doc: Doc, is_vector: bool, include_refs: bool) -> None:
 +        self.doc = doc
-+        self.is_vector = is_vector
+         self.is_vector = is_vector
+-        self.missing = [c for c in _REQUIRED if c not in frame.columns]
+-        if self.missing:
+-            frame = frame.copy(deep=False)
+-            for m in self.missing:
+-                frame[m] = pd.Series([pd.NA] * len(frame), index=frame.index, dtype=object)
+-            if "text" in self.missing:
+-                frame["text"] = frame.iloc[:, 0]
+-        self.frame = frame
+-        if include_refs:
+-            self.rows: list[int] | None = None
+-        else:
+-            types = frame["section_type"].tolist()
+-            refs = [i for i, t in enumerate(types) if isinstance(t, str) and t == "references"]
+-            self.rows = None if not refs else sorted(set(range(len(frame))) - set(refs))
+-        text = frame["text"].tolist()
+-        header = frame["header"].tolist()
+-        if self.rows is not None:
+-            text = [text[i] for i in self.rows]
+-            header = [header[i] for i in self.rows]
+-        self.text = text
+-        self.header = header
+-        self._strings: dict[str, list[str | None]] = {}
+-        self._cleaned: dict[int, Any] = {}
+-        self._folded: dict[str, list[str | None]] = {}
+-        self._ft: pd.DataFrame | None = None
+-        self._paragraphs: pd.DataFrame | None = None
+-
+-    @property
+-    def ft(self) -> pd.DataFrame:
+-        """The searched rows (references dropped) as a frame, index reset."""
+-        if self._ft is None:
+-            self._ft = self.take(None)
+-        return self._ft
+-
+-    def take(self, positions: list[int] | None) -> pd.DataFrame:
+-        """Rows *positions* of the searched rows (all of them for ``None``), index reset."""
+-        if positions is None:
+-            positions = self.rows
+-        elif self.rows is not None:
+-            positions = [self.rows[i] for i in positions]
+-        if positions is None:
+-            return self.frame.reset_index(drop=True)
+-        return self.frame.take(positions).reset_index(drop=True)
+-
+-    def matches(
+-        self, pattern: str, ignore_case: bool, perl: bool, fixed: bool, exclude: bool, header: bool
+-    ) -> list[int]:
+-        """Positions of the searched rows whose text (or header) matches *pattern*."""
+-        hits = self._scan("text", pattern, ignore_case, perl, fixed)
 +        self.include_refs = include_refs
 +        self.within = doc.all if include_refs else doc.body
 +        self.rows: list[int] | None = None  # searched rows, in order (built on demand)
@@ -5721,7 +5961,38 @@ index 2583643..9d0daf1 100644
 +    def matches(self, p: Pat, exclude: bool, header: bool) -> int:
 +        d = self.doc
 +        m = d.mask(p, 0, self.within)
-+        if header:
+         if header:
+-            in_header = self._scan("header", pattern, ignore_case, perl, fixed)
+-            hits = [a or b for a, b in zip(hits, in_header, strict=True)]
+-        return [i for i, h in enumerate(hits) if h != exclude]
+-
+-    def _scan(
+-        self, column: str, pattern: str, ignore_case: bool, perl: bool, fixed: bool
+-    ) -> list[bool]:
+-        """``grepl(pattern, column)``, with the column's strings and their folding made once."""
+-        strings = self._strings.get(column)
+-        if strings is None:
+-            values = self.text if column == "text" else self.header
+-            strings = self._strings[column] = [_as_str(v) for v in values]
+-        match = detector(pattern, ignore_case, perl, fixed)
+-        if not match.folds:
+-            return [match(s) for s in strings]
+-        folded = self._folded.get(column)
+-        if folded is None:
+-            folded = self._folded[column] = [None if s is None else fold(s) for s in strings]
+-        return [match(s, f) for s, f in zip(strings, folded, strict=True)]
+-
+-    def sentences(self, positions: list[int]) -> pd.DataFrame:
+-        """The result of a sentence search that found *positions* (in result order)."""
+-        if not positions:
+-            return self.take([])
+-        result = self.take(positions)
+-        cleaned = self._cleaned
+-        todo = [i for i in dict.fromkeys(positions) if i not in cleaned]
+-        cleaned.update(zip(todo, _clean([self.text[i] for i in todo]), strict=True))
+-        result["text"] = pd.Series([cleaned[i] for i in positions], dtype="string")
+-        if self._distinct(positions):
+-            return result  # distinct() has nothing to drop
 +            m |= d.header_mask(p, self.within)
 +        return self.within & ~m if exclude else m
 +
@@ -5730,22 +6001,39 @@ index 2583643..9d0daf1 100644
 +        result = d.rows(rows, 1)
 +        if not rows or self._distinct(rows):
 +            return result
-+        return result.drop_duplicates().reset_index(drop=True)
-+
+         return result.drop_duplicates().reset_index(drop=True)
+ 
+-    def _distinct(self, positions: list[int]) -> bool:
+-        """Whether the rows at *positions* have distinct, known ``(paper_id, text_id)``."""
+-        rows = positions if self.rows is None else [self.rows[i] for i in positions]
+-        pids = self.frame["paper_id"].tolist()
+-        tids = self.frame["text_id"].tolist()
 +    def _distinct(self, rows: list[int]) -> bool:
 +        d = self.doc
-+        keys = set()
-+        for i in rows:
+         keys = set()
+         for i in rows:
+-            pid, tid = pids[i], tids[i]
 +            pid = d.paper_id if d.pids is None else d.pids[i]
 +            tid = d.text_id[i]
-+            if is_missing(pid) or is_missing(tid):
-+                return False
-+            try:
-+                keys.add((pid, tid))
+             if is_missing(pid) or is_missing(tid):
+                 return False
+             try:
+                 keys.add((pid, tid))
+-            except TypeError:  # an unhashable cell: let drop_duplicates() decide
 +            except TypeError:
-+                return False
-+        return len(keys) == len(rows)
-+
+                 return False
+         return len(keys) == len(rows)
+ 
+-    def search(
+-        self,
+-        pattern: str,
+-        return_: str,
+-        ignore_case: bool,
+-        fixed: bool,
+-        perl: bool,
+-        exclude: bool,
+-        search_header: bool,
+-    ) -> pd.DataFrame:
 +    def ft(self) -> pd.DataFrame:
 +        """The searched rows as a frame (references dropped), index reset."""
 +        key = ("ft", self.include_refs)
@@ -5762,51 +6050,68 @@ index 2583643..9d0daf1 100644
 +        return frame
 +
 +    def search(self, p: Pat, return_: str, exclude: bool, header: bool) -> pd.DataFrame:
-+        """One pattern's result table (before a dropped ``text`` column is removed)."""
+         """One pattern's result table (before a dropped ``text`` column is removed)."""
+-        found = self.matches(pattern, ignore_case, perl, fixed, exclude, search_header)
 +        found = list(bits(self.matches(p, exclude, header)))
-+        if return_ == "sentence":
-+            return self.sentences(found)
+         if return_ == "sentence":
+             return self.sentences(found)
 +        d = self.doc
-+        if return_ == "match":
+         if return_ == "match":
+-            hits = regextract_all(pattern, [self.text[i] for i in found], ignore_case, perl, fixed)
+-            result = self.take([i for i, h in zip(found, hits, strict=True) for _ in h])
+-            result["text"] = pd.Series([h for each in hits for h in each], dtype="string")
+-            return result
+-        ft = self.ft
 +            texts = d.field(0)
 +            hits = regextract_all(p.src, [texts[i] for i in found], p.icase, p.perl, p.fixed)
 +            rows = [i for i, h in zip(found, hits, strict=True) for _ in h]
 +            return d.rows(rows, text=[h for each in hits for h in each], force_text=True)
 +        ft = self.ft()
-+        all_cols = list(ft.columns)
+         all_cols = list(ft.columns)
 +        pos = {r: k for k, r in enumerate(self.searched())}
-+        groups = _GROUPS[return_]
+         groups = _GROUPS[return_]
+-        kept = _semi_join(self.paragraphs(), ft.iloc[found], groups)
 +        kept = _semi_join(self.paragraphs(), ft.iloc[[pos[i] for i in found]], groups)
-+        result = _paste_groups(kept, groups, _PARAGRAPH_MARKER)
-+        if len(result) == 0:
-+            return ft.iloc[0:0].reset_index(drop=True)
-+        if return_ == "section":
-+            result["header"] = _section_headers(kept, result, groups)
+         result = _paste_groups(kept, groups, _PARAGRAPH_MARKER)
+         if len(result) == 0:
+             return ft.iloc[0:0].reset_index(drop=True)
+         if return_ == "section":
+             result["header"] = _section_headers(kept, result, groups)
+-        result["text"] = pd.Series(_clean(result["text"].tolist()), dtype="string")
 +        result["text"] = pd.Series(_clean_all(result["text"].tolist()), dtype="string")
-+        for col in all_cols:
-+            if col not in result.columns:
-+                result[col] = pd.Series([pd.NA] * len(result), index=result.index, dtype=object)
-+        return result.loc[:, all_cols].drop_duplicates().reset_index(drop=True)
-+
-+    def finish(self, result: pd.DataFrame) -> Any:
+         for col in all_cols:
+             if col not in result.columns:
+                 result[col] = pd.Series([pd.NA] * len(result), index=result.index, dtype=object)
+         return result.loc[:, all_cols].drop_duplicates().reset_index(drop=True)
+ 
+-    def paragraphs(self) -> pd.DataFrame:
+-        """The searched rows' text pasted by paragraph (the same for every pattern)."""
+-        if self._paragraphs is None:
+-            self._paragraphs = _paste_groups(self.ft, _GROUPS["paragraph"], " ")
+-        return self._paragraphs
+-
+     def finish(self, result: pd.DataFrame) -> Any:
+-        """*result* as text_search() returns it: without an added ``text``, or as strings."""
+-        if "text" in self.missing:
 +        if "text" in self.doc.missing:
-+            result = result.drop(columns="text")
-+        if self.is_vector:
-+            return [None if pd.isna(t) else str(t) for t in result["text"].tolist()]
-+        return result
-+
-+
-+def _check_pattern(pattern: str, ignore_case: bool, perl: bool, fixed: bool) -> None:
-+    try:
-+        compile_r(pattern, ignore_case, perl, fixed)
-+    except RegexError as exc:
-+        raise ValueError(f"Check the pattern argument in '{pattern}':\n{exc}") from exc
-+
-+
- def text_search(
-     paper: Any,
-     pattern: str | Sequence[str] = ".*",
-@@ -159,116 +291,48 @@ def text_search(
+             result = result.drop(columns="text")
+         if self.is_vector:
+             return [None if pd.isna(t) else str(t) for t in result["text"].tolist()]
+         return result
+ 
+ 
+-def _clean(texts: list[Any]) -> list[Any]:
+-    """Whitespace runs as one space, " , " as ", " and paragraph markers as blank lines."""
+-    cleaned: list[Any] = gsub(r"\s+", " ", texts)
+-    cleaned = gsub(" , ", ", ", cleaned, fixed=True)
+-    cleaned = gsub(_PARAGRAPH_MARKER, "\n\n", cleaned, fixed=True)
+-    return cleaned
+-
+-
+ def _check_pattern(pattern: str, ignore_case: bool, perl: bool, fixed: bool) -> None:
+     try:
+         compile_r(pattern, ignore_case, perl, fixed)
+@@ -433,6 +363,7 @@ def text_search(
      Returns a DataFrame, or a list of strings when *paper* is a string or a
      sequence of strings.
      """
@@ -5814,157 +6119,56 @@ index 2583643..9d0daf1 100644
      if return_ not in _RETURN_TYPES:
          raise ValueError(f"'arg' should be one of {', '.join(repr(r) for r in _RETURN_TYPES)}")
      if fixed:
-         ignore_case = False
--
--    if not isinstance(pattern, str):
--        patterns = list(pattern)
--        if len(patterns) > 1:
--            parts = [
--                text_search(
--                    paper,
--                    p,
--                    return_,
--                    ignore_case,
--                    fixed,
--                    perl,
--                    exclude,
--                    search_header,
--                    include_refs,
--                )
--                for p in patterns
--            ]
--            if isinstance(parts[0], list):
--                return _combine_vectors(parts, exclude)
--            if exclude and len(parts) > 2:
--                # dplyr::intersect(x, y, ...) on data frames: the dots must be empty
--                extra = "\n".join(
--                    f"• ..{i} = <tibble[,{part.shape[1]}]>"
--                    for i, part in enumerate(parts[2:], start=1)
--                )
--                raise ValueError(
--                    f"`...` must be empty.\n✖ Problematic argument{'s' if len(parts) > 3 else ''}:"
--                    f"\n{extra}\nℹ Did you forget to name an argument?"
--                )
--            if exclude:
--                result = parts[0]
--                for part in parts[1:]:
--                    result = result.merge(part, how="inner")
--                return result.drop_duplicates().reset_index(drop=True)
--            return bind_rows(parts).drop_duplicates().reset_index(drop=True)
--        pattern = patterns[0]
--
--    try:
--        compile_r(pattern, ignore_case, perl, fixed)
--    except RegexError as exc:
--        raise ValueError(f"Check the pattern argument in '{pattern}':\n{exc}") from exc
--
--    text, is_vector = _text_frame(paper)
--    missing = [c for c in _REQUIRED if c not in text.columns]
--    for m in missing:
--        text[m] = pd.Series([pd.NA] * len(text), index=text.index, dtype=object)
--    if "text" in missing:
--        text["text"] = text.iloc[:, 0]
--
--    if include_refs:
--        ft = text
--    else:
--        ft = text.loc[~text["section_type"].isin(["references"]).fillna(False).astype(bool)]
--    ft = ft.reset_index(drop=True)
--
--    match_rows = pd.Series(
--        grepl(pattern, ft["text"].tolist(), ignore_case, perl, fixed), dtype=bool
--    )
--    if search_header:
--        header_rows = pd.Series(
--            grepl(pattern, ft["header"].tolist(), ignore_case, perl, fixed), dtype=bool
-+    patterns = [pattern] if isinstance(pattern, str) else list(pattern)
-+    # R checks each pattern before it builds the table to search for it
-+    _check_pattern(patterns[0], ignore_case, perl, fixed)
+@@ -440,28 +371,24 @@ def text_search(
+     patterns = [pattern] if isinstance(pattern, str) else list(pattern)
+     # R checks each pattern before it builds the table to search for it
+     _check_pattern(patterns[0], ignore_case, perl, fixed)
+-    table = _Table.of(paper, include_refs)
+-    for p in patterns[1:]:
+-        _check_pattern(p, ignore_case, perl, fixed)
 +    doc, is_vector = _source(paper)
 +    for src in patterns[1:]:
 +        _check_pattern(src, ignore_case, perl, fixed)
 +    s = _Search(doc, is_vector, include_refs)
 +    pats = [Pat.from_r(src, perl=perl, fixed=fixed, ignore_case=ignore_case) for src in patterns]
-+
+ 
+-    if len(patterns) == 1:
+-        found = table.search(patterns[0], return_, ignore_case, fixed, perl, exclude, search_header)
+-        return table.finish(found)
 +    if len(pats) == 1:
 +        return s.finish(s.search(pats[0], return_, exclude, search_header))
-+
+ 
+-    if return_ == "sentence" and not exclude and not table.is_vector:
+-        # bind_rows() of each pattern's rows, then distinct(): one pass over the rows
 +    if return_ == "sentence" and not exclude and not is_vector:
 +        # bind_rows() of each pattern's rows, then distinct(): pattern-major, first seen
-+        order: dict[int, None] = {}
+         order: dict[int, None] = {}
+-        for p in patterns:
+-            order.update(
+-                dict.fromkeys(table.matches(p, ignore_case, perl, fixed, False, search_header))
+-            )
+-        return table.finish(table.sentences(list(order)))
+-
+-    parts = [
+-        table.finish(table.search(p, return_, ignore_case, fixed, perl, exclude, search_header))
+-        for p in patterns
+-    ]
+-    if table.is_vector:
 +        for p in pats:
 +            order.update(dict.fromkeys(bits(s.matches(p, False, search_header))))
 +        return s.finish(s.sentences(list(order)))
 +
 +    parts = [s.finish(s.search(p, return_, exclude, search_header)) for p in pats]
 +    if isinstance(parts[0], list):
-+        return _combine_vectors(parts, exclude)
-+    if exclude and len(parts) > 2:
-+        # dplyr::intersect(x, y, ...) on data frames: the dots must be empty
-+        extra = "\n".join(
-+            f"• ..{i} = <tibble[,{part.shape[1]}]>" for i, part in enumerate(parts[2:], start=1)
-+        )
-+        raise ValueError(
-+            f"`...` must be empty.\n✖ Problematic argument{'s' if len(parts) > 3 else ''}:"
-+            f"\n{extra}\nℹ Did you forget to name an argument?"
-         )
--        match_rows = match_rows | header_rows
-     if exclude:
--        match_rows = ~match_rows
--    ft_match = ft.loc[match_rows.to_numpy()].reset_index(drop=True)
--
--    all_cols = list(ft.columns)
--    if return_ == "sentence":
--        result = ft_match
--    elif return_ == "match":
--        found = regextract_all(pattern, ft_match["text"].tolist(), ignore_case, perl, fixed)
--        rows = [i for i, hits in enumerate(found) for _ in hits]
--        result = ft_match.iloc[rows].reset_index(drop=True)
--        result["text"] = pd.Series([h for hits in found for h in hits], dtype="string")
--        result = result.loc[:, all_cols]
--    else:
--        pgroups = _GROUPS["paragraph"]
--        ft_p = _paste_groups(ft, pgroups, " ")
--        groups = _GROUPS[return_]
--        kept = _semi_join(ft_p, ft_match, groups)
--        result = _paste_groups(kept, groups, _PARAGRAPH_MARKER)
--        if return_ == "section" and len(result) > 0:
--            result["header"] = _section_headers(kept, result, groups)
--
--    if return_ != "match":
--        if len(result) > 0:
--            cleaned = gsub(r"\s+", " ", result["text"].tolist())
--            cleaned = gsub(" , ", ", ", cleaned, fixed=True)
--            cleaned = gsub(_PARAGRAPH_MARKER, "\n\n", cleaned, fixed=True)
--            result = result.copy()
--            result["text"] = pd.Series(cleaned, index=result.index, dtype="string")
--            for col in all_cols:
--                if col not in result.columns:
--                    result[col] = pd.Series([pd.NA] * len(result), index=result.index, dtype=object)
--            result = result.loc[:, all_cols]
--            result = result.drop_duplicates().reset_index(drop=True)
--        else:
--            result = ft.iloc[0:0].reset_index(drop=True)
--
--    if "text" in missing:
--        result = result.drop(columns="text")
--    if is_vector:
--        return [None if pd.isna(t) else str(t) for t in result["text"].tolist()]
--    return result
-+        result = parts[0]
-+        for part in parts[1:]:
-+            result = result.merge(part, how="inner")
-+        return result.drop_duplicates().reset_index(drop=True)
-+    return bind_rows(parts).drop_duplicates().reset_index(drop=True)
- 
- 
- search_text = text_search
+         return _combine_vectors(parts, exclude)
+     if exclude and len(parts) > 2:
+         # dplyr::intersect(x, y, ...) on data frames: the dots must be empty
 diff --git a/tests/_legacy/__init__.py b/tests/_legacy/__init__.py
 new file mode 100644
-index 0000000..e69de29
+index 00000000..e69de29b
 diff --git a/tests/_legacy/expand.py b/tests/_legacy/expand.py
 new file mode 100644
-index 0000000..67fbc13
+index 00000000..67fbc133
 --- /dev/null
 +++ b/tests/_legacy/expand.py
 @@ -0,0 +1,125 @@
@@ -6095,7 +6299,7 @@ index 0000000..67fbc13
 +expand_text = text_expand
 diff --git a/tests/_legacy/extract.py b/tests/_legacy/extract.py
 new file mode 100644
-index 0000000..884a792
+index 00000000..884a7920
 --- /dev/null
 +++ b/tests/_legacy/extract.py
 @@ -0,0 +1,366 @@
@@ -6467,10 +6671,10 @@ index 0000000..884a792
 +    return text_search(_search_table(paper, _LIVE_ANY), list(_LIVE_WORDS))
 diff --git a/tests/_legacy/modules/__init__.py b/tests/_legacy/modules/__init__.py
 new file mode 100644
-index 0000000..e69de29
+index 00000000..e69de29b
 diff --git a/tests/_legacy/modules/ethics_check.py b/tests/_legacy/modules/ethics_check.py
 new file mode 100644
-index 0000000..5fbdd0b
+index 00000000..5fbdd0bd
 --- /dev/null
 +++ b/tests/_legacy/modules/ethics_check.py
 @@ -0,0 +1,466 @@
@@ -6942,7 +7146,7 @@ index 0000000..5fbdd0b
 +    return "NA" if x is None or pd.isna(x) else str(x)
 diff --git a/tests/_legacy/modules/open_practices.py b/tests/_legacy/modules/open_practices.py
 new file mode 100644
-index 0000000..3f77423
+index 00000000..3f77423c
 --- /dev/null
 +++ b/tests/_legacy/modules/open_practices.py
 @@ -0,0 +1,409 @@
@@ -7357,7 +7561,7 @@ index 0000000..3f77423
 +    }
 diff --git a/tests/_legacy/modules/ref_consistency.py b/tests/_legacy/modules/ref_consistency.py
 new file mode 100644
-index 0000000..a84f8a8
+index 00000000..a84f8a88
 --- /dev/null
 +++ b/tests/_legacy/modules/ref_consistency.py
 @@ -0,0 +1,237 @@
@@ -7600,7 +7804,7 @@ index 0000000..a84f8a8
 +    }
 diff --git a/tests/_legacy/modules/stat_p_exact.py b/tests/_legacy/modules/stat_p_exact.py
 new file mode 100644
-index 0000000..3222bae
+index 00000000..3222bae0
 --- /dev/null
 +++ b/tests/_legacy/modules/stat_p_exact.py
 @@ -0,0 +1,255 @@
@@ -7861,7 +8065,7 @@ index 0000000..3222bae
 +    }
 diff --git a/tests/_legacy/search.py b/tests/_legacy/search.py
 new file mode 100644
-index 0000000..2583643
+index 00000000..25836430
 --- /dev/null
 +++ b/tests/_legacy/search.py
 @@ -0,0 +1,293 @@
@@ -8159,36 +8363,65 @@ index 0000000..2583643
 +    second = set(parts[1])
 +    return [t for t in dict.fromkeys(parts[0]) if t in second]
 diff --git a/tests/mod_ethics/test_ethics_check.py b/tests/mod_ethics/test_ethics_check.py
-index 45de6f0..793c041 100644
+index d8039715..c32ca25f 100644
 --- a/tests/mod_ethics/test_ethics_check.py
 +++ b/tests/mod_ethics/test_ethics_check.py
-@@ -17,7 +17,7 @@ import pytest
+@@ -8,7 +8,6 @@ measured with R 4.5.3 / metacheck, and of the Python-only sentence prefilter.
+ from __future__ import annotations
+ 
+ import re
+-import re._parser as sre_parse  # type: ignore[import-not-found]
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -17,7 +16,7 @@ import pytest
  
  import pytacheck as pc
  from pytacheck._r import grepl
 -from pytacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
 +from pytacheck.modules.ethics_check import _ETHICS_WORDS
- from pytacheck.text.extract import _LIVE_ANY, _LIVE_WORDS, _detect_live_data
  from tests.mod_ethics.make_parity_cases import SWEEP
  from tests.mod_ethics.parity_support import ec_paper, ec_papers
-@@ -471,12 +471,12 @@ def test_rows_sorted_by_text_id_with_missing_last() -> None:
+ 
+@@ -470,44 +469,22 @@ def test_rows_sorted_by_text_id_with_missing_last() -> None:
      assert ethics["text"].tolist() == ["Ethics approval was obtained.", "The IRB approved it."]
  
  
 -# -- the Python-only prefilter ---------------------------------------------------
+-
+-_LITERALS = _ETHICS_ANY.split("|")
+-
+-
+-def _covered(items: Any, literals: list[str] = _LITERALS) -> bool:
+-    """Does every match of the parsed sequence *items* contain a prefilter literal?
+-
+-    True when a run of literal characters contains one of the literals, or a
+-    group, alternation (all branches) or repeat (at least once) is covered.
+-    """
+-    run_chars: list[str] = []
+-
+-    def flush() -> bool:
+-        s = "".join(run_chars).lower()
+-        run_chars.clear()
+-        return any(lit in s for lit in literals)
+-
+-    for op, av in items:
+-        name = str(op)
+-        if name == "LITERAL":
+-            run_chars.append(chr(av))
+-            continue
+-        if flush():
+-            return True
+-        if name == "SUBPATTERN" and _covered(av[-1], literals):
+-            return True
+-        if name == "BRANCH" and all(_covered(b, literals) for b in av[1]):
+-            return True
+-        if name in ("MAX_REPEAT", "MIN_REPEAT") and av[0] >= 1 and _covered(av[2], literals):
+-            return True
+-    return flush()
 +# -- the prefilter: literals derived from the patterns (pytacheck.core.patterns) ------
 +# (the hand-kept _ETHICS_ANY list and its sre_parse coverage test were retired with it;
 +# spike/invariants.py I1/I2 check the derived literals against grepl and the replay)
- 
--_LITERALS = _ETHICS_ANY.split("|")
- 
--
--def _covered(items: Any, literals: list[str] = _LITERALS) -> bool:
-+def _covered(items: Any, literals: list[str]) -> bool:
-     """Does every match of the parsed sequence *items* contain a prefilter literal?
- 
-     True when a run of literal characters contains one of the literals, or a
-@@ -506,9 +506,16 @@ def _covered(items: Any, literals: list[str] = _LITERALS) -> bool:
  
  
  @pytest.mark.parametrize("pattern", _ETHICS_WORDS)
@@ -8208,7 +8441,7 @@ index 45de6f0..793c041 100644
  
  
  def test_sweep_sentences_match_their_patterns() -> None:
-@@ -516,7 +523,10 @@ def test_sweep_sentences_match_their_patterns() -> None:
+@@ -515,7 +492,10 @@ def test_sweep_sentences_match_their_patterns() -> None:
          assert grepl(pattern, [sentence], ignore_case=True) == [True], pattern
  
  
@@ -8220,7 +8453,7 @@ index 45de6f0..793c041 100644
      papers = pc.read(
          [
              *sorted((fixtures_dir / "psychsci").glob("*.json")),
-@@ -524,11 +534,12 @@ def test_prefilter_keeps_every_matching_sentence(fixtures_dir: Path) -> None:
+@@ -523,11 +503,12 @@ def test_prefilter_keeps_every_matching_sentence(fixtures_dir: Path) -> None:
              fixtures_dir / "problems" / "0956797615569889.xml",
          ]
      )
@@ -8239,28 +8472,73 @@ index 45de6f0..793c041 100644
  
  def test_prefiltered_search_equals_plain_search() -> None:
 diff --git a/tests/mod_urls_open/test_open_practices.py b/tests/mod_urls_open/test_open_practices.py
-index 139a883..4e8d6d2 100644
+index 7ad539b4..4e8d6d22 100644
 --- a/tests/mod_urls_open/test_open_practices.py
 +++ b/tests/mod_urls_open/test_open_practices.py
-@@ -14,7 +14,6 @@ import pytest
+@@ -7,6 +7,8 @@ must never change the result of the R search chains.
  
- import pytacheck as pc
- from pytacheck.module import SECTION_LEVELS, ModuleError
--from pytacheck.modules import open_practices as op
+ from __future__ import annotations
  
- MODULE = "open_practices"
++import copy
++
+ import pandas as pd
+ import pytest
  
-@@ -320,9 +319,10 @@ ADVERSARIAL = [
+@@ -298,6 +300,57 @@ def test_does_not_mutate_paper(demo: pc.Paper) -> None:
+     pd.testing.assert_frame_equal(demo.text, before)
  
  
- def _naive(paper: object, monkeypatch: pytest.MonkeyPatch) -> pc.ModuleOutput:
--    with monkeypatch.context() as m:
--        m.setattr(op, "_search_frame", lambda p: p)
--        return run(paper)
++# the prefilter is a pure optimisation ---------------------------------------
++
++ADVERSARIAL = [
++    "Data   are available on the Open\nScience\tFramework.",
++    "Code is available on<~p~>request.",
++    "Data , , are available , , at https://osf.io/x.",
++    "Our R\ncode is available at\tgithub.",
++    "Materials were shared by\n  reasonable\trequest.",
++    "The study was not pre-registered, see https://osf.io/abc.",
++    "Non-preregistered analyses: the data are on OSF, see the archive.",
++    "All r code is on GITHUB, see the online archive.",
++    "Python software is archived at Zenodo; find it there.",
++    "Plots are available at http://kaggle.com.",
++    "Figures can be found in the repository.",
++    "Nothing to see here.",
++]
++
++
++def _naive(paper: object, monkeypatch: pytest.MonkeyPatch) -> pc.ModuleOutput:
 +    # the frozen pre-core implementation (chained text_search() calls) is the oracle
 +    from tests._legacy.modules.open_practices import open_practices as legacy
 +
 +    return pc.module_run(copy.deepcopy(paper), legacy)
++
++
++@pytest.mark.parametrize("which", ["demo", "psychsci", "adversarial", "corpus"])
++def test_prefilter_matches_plain_text_search(
++    which: str, demo: pc.Paper, psychsci: pc.PaperList, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    if which == "demo":
++        paper: object = demo
++    elif which == "psychsci":
++        paper = psychsci
++    elif which == "adversarial":
++        paper = pc.test_paper(ADVERSARIAL)
++    else:
++        papers = []
++        for i, p in enumerate([*psychsci, demo, pc.test_paper(ADVERSARIAL)]):
++            q = copy.deepcopy(p)
++            q.paper_id = f"p{i}"
++            papers.append(q)
++        paper = pc.PaperList(papers)
++    fast = run(paper)
++    slow = _naive(paper, monkeypatch)
++    pd.testing.assert_frame_equal(fast.table, slow.table)
++    pd.testing.assert_frame_equal(fast.summary_table, slow.summary_table)
++    assert fast.traffic_light == slow.traffic_light
++    assert fast.summary_text == slow.summary_text
++    assert fast.report == slow.report
++
++
+ # review: paper order and chained summary tables -----------------------------
  
  
- @pytest.mark.parametrize("which", ["demo", "psychsci", "adversarial", "corpus"])
