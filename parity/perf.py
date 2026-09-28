@@ -61,6 +61,7 @@ from __future__ import annotations
 
 import functools
 import importlib
+import inspect
 import os
 import sys
 import time
@@ -156,7 +157,8 @@ class _Hook:
     raw: Any  # the attribute as the owner holds it (maybe a classmethod)
     func: types.FunctionType
     arg: str | None
-    index: int | None  # the argument's position
+    index: int | None  # the argument's position (None: keyword-only)
+    default: Any  # its value when a call leaves it out
     front: types.CodeType | None
     engine: Any  # the front's module, which holds the engine's caches
 
@@ -177,17 +179,21 @@ def _function(where: str) -> tuple[Any, str, Any, types.FunctionType]:
 def _resolve(target: Target) -> _Hook:
     owner, name, raw, func = _function(target.where)
     arg = target.per_file or target.top_level
-    index = None
+    index, default = None, None
     if arg is not None:
-        code = func.__code__
-        index = code.co_varnames.index(arg)
-        if index >= code.co_argcount + code.co_kwonlyargcount:
+        params = inspect.signature(func, follow_wrapped=False).parameters
+        param = params.get(arg)
+        if param is None or param.kind in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
             raise ValueError(f"{target.where} has no argument {arg!r}")
+        if param.kind is not param.KEYWORD_ONLY:
+            index = list(params).index(arg)
+        if param.default is not param.empty:
+            default = param.default
     front, engine = None, None
     if target.front:
         engine, _, _, compile_ = _function(target.front)
         front = compile_.__code__
-    return _Hook(target, owner, name, raw, func, arg, index, front, engine)
+    return _Hook(target, owner, name, raw, func, arg, index, default, front, engine)
 
 
 def _path(value: Any) -> str:
@@ -410,7 +416,7 @@ class Probe:
             self._count(hook, value)
 
     def _counted(self, hook: _Hook) -> Callable[..., Any]:
-        func, index, arg = hook.func, hook.index, hook.arg
+        func, index, arg, default = hook.func, hook.index, hook.arg, hook.default
 
         @functools.wraps(func)
         def counted(*args: Any, **kwargs: Any) -> Any:
@@ -418,7 +424,7 @@ class Probe:
                 if index is not None and index < len(args):
                     value = args[index]
                 else:
-                    value = kwargs.get(arg) if arg else None
+                    value = kwargs.get(arg, default) if arg else None
                 self._count(hook, value)
             return func(*args, **kwargs)
 

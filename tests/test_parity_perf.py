@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import copy
+import heapq
 import itertools
 import json
 import os
 import re
 import sys
+import textwrap
 import time
 import types
 from pathlib import Path
@@ -248,6 +250,20 @@ def test_readers_count_per_file(monitoring: bool, tmp_path: Path) -> None:
     }
     assert total.files["file_opens"][str(csv)] == 2
     assert total.files["file_opens"][f"{spreadsheets}/clean.xlsx"] >= 1
+
+
+def test_both_ways_read_an_argument_alike(monitoring: bool) -> None:
+    targets = [
+        perf.Target("wrap", "textwrap:wrap", per_file="width"),
+        perf.Target("merge", "heapq:merge", per_file="reverse"),  # keyword-only, after *args
+    ]
+    with perf.Probe(targets, opens=False, monitoring=monitoring) as probe:
+        textwrap.wrap("a b", 5)
+        textwrap.wrap("a b")  # left out: its default
+        list(heapq.merge([1], [2], [3]))
+    files = probe.total().files
+    assert dict(files["wrap"]) == {"5": 1, "70": 1}
+    assert dict(files["merge"]) == {"False": 1}
 
 
 def test_file_opens_come_from_the_audit_hook(tmp_path: Path) -> None:
