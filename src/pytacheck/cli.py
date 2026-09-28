@@ -444,6 +444,25 @@ def cmd_serve(ns: argparse.Namespace) -> int:
     except ImportError:
         print('The API needs the api extra: pip install "pytacheck[api]"', file=sys.stderr)
         return 2
+    from pytacheck.api.app import API_KEY_ENV, ApiConfigError, api_key, is_loopback
+
+    try:
+        key = api_key()
+    except ApiConfigError as exc:
+        raise _Failure(str(exc)) from exc
+    if key is None and not is_loopback(ns.host):
+        if not ns.behind_authenticating_proxy:
+            raise _Failure(
+                f"Refusing to serve on {ns.host} without an API key: anyone who can reach the "
+                f"port could run checks. Set {API_KEY_ENV} to a random string of 32 or more "
+                "characters, or serve on 127.0.0.1. If something in front of this server "
+                "already authenticates every request, pass --behind-authenticating-proxy."
+            )
+        print(
+            f"warning: serving on {ns.host} without an API key; "
+            "every request must be authenticated in front of this server.",
+            file=sys.stderr,
+        )
     uvicorn.run("pytacheck.api.app:create_app", factory=True, host=ns.host, port=ns.port)
     return 0
 
@@ -947,9 +966,23 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("-o", "--output", default=None, help="output file or directory")
     p.set_defaults(func=cmd_read)
 
-    p = sub.add_parser("serve", help="run the REST API")
-    p.add_argument("--host", default="127.0.0.1")
+    p = sub.add_parser(
+        "serve",
+        help="run the REST API",
+        description=(
+            "Run the REST API. Set PYTACHECK_API_KEY (32 or more characters) and every "
+            "route except /health needs 'Authorization: Bearer <key>'. Without a key the "
+            "server only binds to a loopback address."
+        ),
+    )
+    p.add_argument("--host", default="127.0.0.1", help="address to bind (default: 127.0.0.1)")
     p.add_argument("--port", type=int, default=8000)
+    p.add_argument(
+        "--behind-authenticating-proxy",
+        action="store_true",
+        help="allow a non-loopback --host without an API key, because a proxy or gateway "
+        "in front of the server authenticates every request",
+    )
     p.set_defaults(func=cmd_serve)
 
     p = sub.add_parser("version", help="show versions")

@@ -30,6 +30,15 @@ does. Parsing uploads and running modules happen off the event loop, at
 most ``PYTACHECK_API_MAX_CHECKS`` (default: the CPU count) at a time, each
 request inside a run session.
 
+Access (pytacheck extension): plumber has no authentication. Set
+``PYTACHECK_API_KEY`` (at least 32 characters; a shorter one stops the server
+from starting) and every route except ``GET /health`` needs the header
+``Authorization: Bearer <key>``. Without a key the API is open, and
+``pytacheck serve`` then binds only to a loopback address unless
+``--behind-authenticating-proxy`` says something in front of it authenticates.
+That bind check belongs to ``pytacheck serve``; ``uvicorn`` starts the app with
+whatever host it is given.
+
 Run with ``pytacheck serve`` or ``uvicorn pytacheck.api.app:create_app --factory``.
 LLM configuration follows the plumber API: when ``GEMINI_API_KEY`` is set,
 LLM use is switched on with ``METACHECK_LLM_MODEL`` (default
@@ -41,6 +50,8 @@ from __future__ import annotations
 
 import asyncio
 import contextvars
+import hmac
+import ipaddress
 import logging
 import os
 import tempfile
@@ -52,14 +63,26 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from pytacheck.api.jsonlite import to_json
 
-__all__ = ["MAX_UPLOAD_BYTES", "create_app"]
+__all__ = [
+    "API_KEY_ENV",
+    "MAX_UPLOAD_BYTES",
+    "MIN_API_KEY_LENGTH",
+    "ApiConfigError",
+    "api_key",
+    "create_app",
+    "is_loopback",
+]
 
 LOG = logging.getLogger("pytacheck.api")
 MAX_UPLOAD_BYTES = 50 * 1024 * 1024
 _SOURCE_SUFFIXES = (".pdf", ".docx", ".doc", ".html", ".htm", ".epub")
+API_KEY_ENV = "PYTACHECK_API_KEY"
+MIN_API_KEY_LENGTH = 32
+_OPEN_PATH = "/health"
 
 
 class ApiError(Exception):
@@ -67,6 +90,37 @@ class ApiError(Exception):
         super().__init__(message)
         self.status = status
         self.message = message
+
+
+class ApiConfigError(ValueError):
+    """The server is set up in a way it refuses to run with."""
+
+
+def api_key() -> str | None:
+    """The API key from ``PYTACHECK_API_KEY`` (surrounding whitespace dropped), or ``None``.
+
+    A key shorter than 32 characters is an error, not a reason to run open.
+    """
+    key = (os.environ.get(API_KEY_ENV) or "").strip()
+    if not key:
+        return None
+    if len(key) < MIN_API_KEY_LENGTH:
+        raise ApiConfigError(
+            f"{API_KEY_ENV} has {len(key)} characters; it needs at least "
+            f"{MIN_API_KEY_LENGTH}. Make one with: "
+            "python -c 'import secrets; print(secrets.token_urlsafe(32))'"
+        )
+    return key
+
+
+def is_loopback(host: str) -> bool:
+    """Whether a ``--host`` value only accepts connections from this machine."""
+    if host.lower() == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:  # any other name could resolve to a public address
+        return False
 
 
 def available_modules() -> list[str]:
@@ -159,6 +213,40 @@ def _error(status: int, message: str) -> Any:
     return _json({"error": message}, status=status, unboxed=True)
 
 
+class _BearerAuth:
+    """ASGI middleware: every route but ``/health`` needs ``Authorization: Bearer <key>``."""
+
+    def __init__(self, app: ASGIApp, key: str) -> None:
+        self.app = app
+        self.key = key.encode()
+
+    def allowed(self, scope: Scope) -> bool:
+        for name, value in scope["headers"]:
+            if name == b"authorization":
+                scheme, _, token = value.strip().partition(b" ")
+                # compare_digest takes the same time wherever a guess differs
+                return scheme.lower() == b"bearer" and hmac.compare_digest(token.strip(), self.key)
+        return False
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        kind = scope["type"]
+        if (
+            kind == "lifespan"
+            or (kind == "http" and scope["path"] == _OPEN_PATH)
+            or self.allowed(scope)
+        ):
+            await self.app(scope, receive, send)
+        elif kind == "http":
+            LOG.warning("Rejected %s %s: missing or wrong API key", scope["method"], scope["path"])
+            response = _error(
+                401, "Missing or invalid API key. Send 'Authorization: Bearer <key>'."
+            )
+            response.headers["WWW-Authenticate"] = "Bearer"
+            await response(scope, receive, send)
+        else:  # a websocket: refuse the handshake
+            await send({"type": "websocket.close", "code": 1008})
+
+
 def _read_upload(data: bytes, filename: str, request_id: str) -> Any:
     """``read_paper()``: parse an uploaded bibr JSON (or a document via bibr)."""
     import orjson
@@ -203,6 +291,7 @@ def create_app() -> FastAPI:
     from pytacheck._version import __version__
     from pytacheck.module import run_session, use
 
+    key = api_key()
     _configure_llm()
     limit = max_checks()
     semaphores: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore] = (
@@ -225,6 +314,10 @@ def create_app() -> FastAPI:
         version=__version__,
     )
     app.state.max_checks = limit
+    if key is None:
+        LOG.warning("%s is not set: the API accepts requests without a key", API_KEY_ENV)
+    else:
+        app.add_middleware(_BearerAuth, key=key)
 
     async def with_uploaded_paper(
         request: Request,
