@@ -1,12 +1,13 @@
 """An in-place edit of ``p.text`` is seen by the next run (ARCHITECTURE.md §2.2, H0-9).
 
 No cache may serve a paper's old text after an in-place edit, so a user who
-edits a table in place and runs again gets fresh results. Inside ``run_session()`` the same holds
-for ``text_search`` and for a module not run yet, while a repeated
-``module_run`` returns its memo: edits made inside a table are not seen, as
-``run_session``'s docstring and docs/MODULES.md say. The paper comes in three
-forms: raw JSON records that the edit builds, a table built before the first
-run, and the DataFrames that metacheck's older TEI conversion reads.
+edits a table in place and runs again gets fresh results. Inside
+``run_session()`` the same holds for ``text_search`` and for a module not run
+yet, while a repeated ``module_run`` returns its memo: edits made inside a table
+are not seen, as ``run_session``'s docstring and docs/MODULES.md say. The paper
+comes in three forms: raw JSON records that the edit builds, a table built
+before the first run, and the DataFrames that metacheck's older TEI conversion
+reads.
 """
 
 from __future__ import annotations
