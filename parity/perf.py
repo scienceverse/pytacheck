@@ -50,8 +50,8 @@ probe is active, which misses a reference taken before (a local variable, a
 default argument). ``module_run`` is always rebound, since timing it needs its
 return and its exceptions: call it through a module, or import it after the
 probe starts. A target that does not resolve (in a tree from
-before or after a refactor) is listed in ``Probe.missing`` and its counter is
-left out, so a 0 is always a measured 0.
+before or after a refactor) is listed in ``Probe.missing``, and its counter is
+left out, also from the targets that did resolve, so a 0 is always a measured 0.
 
 The probe assumes that one thread runs modules at a time, and
 ``process_time()`` is the CPU of the whole process.
@@ -86,6 +86,10 @@ class Target:
     # counter of a pattern compiled before
     front: str | None = None
     again: str = "regex_recompiles"
+
+    def adds_to(self) -> set[str]:
+        """The counters its calls count towards."""
+        return {self.counter, self.again} if self.front else {self.counter}
 
 
 TARGETS: tuple[Target, ...] = (
@@ -314,18 +318,21 @@ class Probe:
             raise RuntimeError("another Probe is active")
         hooks: list[_Hook] = []
         self.missing = []
+        partial: set[str] = set()  # counters that would count only part of the work
         rebind: dict[int, tuple[Any, Any]] = {}
         for target in (Target("", RUN), *self.targets):
             try:
                 hook = _resolve(target)
             except Exception:
                 self.missing.append(target.where)
+                partial |= target.adds_to()
                 continue
             if target.where == RUN:
                 rebind[id(hook.func)] = (hook.func, self._timed(hook.func))
             else:
                 hooks.append(hook)
-        counters = {h.target.counter for h in hooks} | {h.target.again for h in hooks if h.front}
+        hooks = [h for h in hooks if not h.target.adds_to() & partial]
+        counters = {c for h in hooks for c in h.target.adds_to()}
         for h in hooks:
             if h.front is not None:  # a pattern cached now was compiled before
                 _COMPILED.update(_cached(h))

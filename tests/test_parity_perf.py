@@ -306,17 +306,20 @@ def test_monitoring_frees_its_tool_and_falls_back_when_none_is_free() -> None:
             mon.free_tool_id(i)
 
 
-def test_targets_that_do_not_resolve_are_listed() -> None:
+def test_targets_that_do_not_resolve_are_listed_and_their_counters_left_out() -> None:
     targets = [
         perf.Target("a", "no_such_module_here:f"),
         perf.Target("b", "copy:no_such_function"),
         perf.Target("c", "copy:deepcopy", per_file="no_such_argument"),
+        perf.Target("b", "copy:copy"),  # resolves, but "b" would count part of its work
         perf.Target("d", "copy:deepcopy"),
     ]
     with perf.Probe(targets, opens=False) as probe:
+        copy.copy([1])
         copy.deepcopy([1])
     assert probe.missing == [t.where for t in targets[:3]]
     assert probe.counters == ("d",)
+    assert "b" not in probe.total().counts
     assert probe.total().counts["d"] >= 1
 
 
