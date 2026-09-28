@@ -123,6 +123,38 @@ def test_each_new_value_is_logged(tmp_path: Path, log_entries) -> None:
     }
 
 
+def test_a_file_full_of_new_values_writes_a_small_log_entry(tmp_path: Path, log_entries) -> None:
+    data = orjson.loads(V12_1.read_bytes())
+    row = data["section"][0]
+    data["section"] = [{**row, "section_type": f"type_{i}_" + "x" * 5000} for i in range(100)]
+    path = tmp_path / "many_values.json"
+    path.write_bytes(orjson.dumps(data))
+
+    pc.read(path)
+    (entry,) = log_entries()
+    listed = entry["values"]["section.section_type"]
+    assert len(listed) == 10
+    assert all(len(v) == 64 for v in listed)
+    assert entry["left_out"] == 100 - 10
+    assert len(bibr12._LOGGED_VALUES) == 100
+
+    # the memory is capped: a process remembers at most 500 values
+    data["section"] = [{**row, "section_type": f"other_{i}"} for i in range(2000)]
+    path.write_bytes(orjson.dumps(data))
+    pc.read(path)
+    assert len(bibr12._LOGGED_VALUES) == 500
+
+
+def test_a_log_that_cannot_be_written_does_not_stop_the_read(monkeypatch) -> None:
+    def no_log_dir() -> Path:
+        raise PermissionError(13, "Permission denied")
+
+    monkeypatch.setattr(bibr12, "_LOGGED_VALUES", set())
+    monkeypatch.setattr("pytacheck.log.logpath", no_log_dir)
+    paper = pc.read(V12_3)
+    assert paper.section["section_type"].tolist() == ["preregistration"]
+
+
 def test_values_12x_lists_are_not_logged(log_entries, fixtures_dir: Path) -> None:
     for name in ("full", "probe_html", "probe_docx", "PMC4383902", "preprint"):
         pc.read(fixtures_dir / "bibr12" / f"{name}.json")
@@ -141,3 +173,8 @@ def test_a_12_1_paper_is_saved_as_a_paper_object(tmp_path: Path) -> None:
     again = pc.read(path)
     assert again.text.equals(paper.text)
     assert again.info["schema_version"].tolist() == ["12.1"]
+    # what docs/BIBR.md says is lost on the way back
+    assert paper.extraction is not None
+    assert again.get("extraction") is None
+    assert "abstract" in paper.info.columns
+    assert "abstract" not in again.info.columns
