@@ -186,6 +186,14 @@ def test_a_team_pack_derives_team_labels(lab) -> None:
 def test_a_loaded_pack_spec_resolves_to_its_pack(lab) -> None:
     spec = load_module(lab, "apa")
     assert status(spec, registry=_registry({})).ref == "lab::apa"
+    (lab.root / "wordy.py").write_text(
+        "from pytacheck.module import module\n\n"
+        '@module(title="Wordy")\n'
+        "def count_words(paper):\n"
+        "    return {}\n"
+    )
+    spec = load_module(lab, "wordy")  # the ref names the file, not the function
+    assert (spec.name, status(spec, registry=_registry({})).ref) == ("count_words", "lab::wordy")
 
 
 def test_modules_outside_packs_are_unvalidated(tmp_path: Path) -> None:
