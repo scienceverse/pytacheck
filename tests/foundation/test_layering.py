@@ -14,19 +14,21 @@ they import only each other, and nothing else in ``pytacheck``. Attribute
 access counts as an import, so ``pytacheck.text_search(...)``, which loads
 ``text`` through the top-level lazy ``__getattr__``, is an upward edge.
 
-**Core.** Once ``core/**`` exists it may not import the layers §2.1 says it never
+**Core.** Once ``core/**`` exists it keeps the positive list of §2.1: it imports
+only the foundation above and the core itself. §2.6 adds a few modules for
+``core/run.py`` alone: ``config``, ``llm``, the cache store (``cache``),
+``repository``, the module resolver (``module``) and ``packs``. Where the two
+sections collide, §2.6 wins, but only for that file and only for those names.
+Every other core file that needs more gets a named entry in ``ALLOWED``. In any
+core file, run.py too, the lint also names the layers §2.1 says the core never
 imports (``text``, ``modules``, ``report``, ``api``, ``cli``, ``archives``,
-``datacheck``, ``codecheck``), nor ``pytacheck.doc``. The rule is the never-list
-and not the positive list, because §2.6 puts ``LLMSettings``, the config
-setters, ``RepoIndex`` and ``CacheStore`` in ``core/run.py``, and the positive
-list forbids them. The two sections disagree, so the lint enforces what both
-accept. §2.1 also says the façades import the core, never the reverse. So the
-core may not import the permanent façades (§2.10) that §2.6 and §2.7 do not
-need either: ``papers.tables``, ``stats``, ``io.read`` and ``compat``, and the
-runners ``module_run`` and ``get_prev_outputs``, which sit on ``execute()``. Those
-two are banned as names, so the core can still reach the module resolver in
-``pytacheck.module``. A package's ``__init__`` is not an import edge of its
-submodules.
+``datacheck``, ``codecheck``), ``pytacheck.doc``, and the permanent façades of
+§2.10, because the façades import the core, never the reverse. The façades in
+``pytacheck.module`` are banned as names (``module``, ``module_run`` and
+``get_prev_outputs``), so run.py can still reach the resolver there. The
+top-level package is a façade too, so ``from pytacheck import x`` counts as an
+import of where ``x`` is defined, or of the top level if nothing re-exports it.
+A package's ``__init__`` is not an import edge of its submodules.
 
 **Migrated modules.** A check module (a file under ``modules/``) that imports
 ``pytacheck.doc`` counts as migrated. It may not use ``text.search``,
@@ -68,9 +70,20 @@ CORE = _names("core")
 LOWER = FOUNDATION + CORE
 UPPER = _names("text", "modules", "report", "api", "cli", "archives", "datacheck", "codecheck")
 DOC = f"{PKG}.doc"
-# permanent façades (§2.10) the core does not need; the runners are banned as names
+# §2.6: what core/run.py may import on top of the positive list
+RUN = f"{PKG}.core.run"
+RUN_CONTEXT = _names("config", "llm", "cache", "repository", "module", "packs")
+# the permanent façades (§2.10); the ones in pytacheck.module are banned as names
 FACADES = _names(
-    "papers.tables", "stats", "io.read", "compat", "module.module_run", "module.get_prev_outputs"
+    "papers.tables",
+    "papers.io.test_paper",
+    "papers.io.demopaper",
+    "stats",
+    "io.read",
+    "compat",
+    "module.module",
+    "module.module_run",
+    "module.get_prev_outputs",
 )
 CHECK_MODULES = f"{PKG}.modules"
 # what a migrated module may not use; a name is banned along with everything under it
@@ -223,15 +236,21 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
     found: dict[tuple[str, str, str], Edge] = {}
     for edge in edges:
         symbol = _resolve(edge.symbol, reexports)
-        if _under(edge.module, FOUNDATION):
-            # a name reached by attribute is judged where it is defined
-            target = symbol if edge.note == "attribute" else edge.target
-            if _under(target, PKG) and not _under(target, LOWER):
-                found.setdefault(("lower", edge.path, target), edge)
+        # a name reached by attribute is judged where it is defined
+        target = symbol if edge.note == "attribute" else edge.target
+        if _under(edge.module, FOUNDATION) and _under(target, PKG) and not _under(target, LOWER):
+            found.setdefault(("lower", edge.path, target), edge)
         if _under(edge.module, CORE):
-            for layer in (*UPPER, *FACADES, DOC):
-                if _under(edge.target, layer) or _under(symbol, layer):
-                    found.setdefault(("core", edge.path, layer), edge)
+            layers = [
+                layer
+                for layer in (*UPPER, *FACADES, DOC)
+                if _under(edge.target, layer) or _under(symbol, layer)
+            ]
+            for layer in layers:
+                found.setdefault(("core", edge.path, layer), edge)
+            allowed = LOWER + RUN_CONTEXT if edge.module == RUN else LOWER
+            if not layers and _under(target, PKG) and not _under(target, allowed):
+                found.setdefault(("core", edge.path, target), edge)
         if edge.path in migrated:
             for banned in BANNED:
                 if _under(symbol, banned):
@@ -273,27 +292,51 @@ def test_allow_list_is_well_formed() -> None:
         assert reason.strip(), f"{path} -> {target} needs a reason"
 
 
-def test_named_layers_exist() -> None:
-    """A rename must not turn a rule into one that checks nothing."""
-    for name in (*LOWER, *UPPER, *FACADES, *BANNED, CHECK_MODULES):
+# the names a rule matches on; a rename must not turn a rule into one that checks nothing
+LAYERS = (*LOWER, *UPPER, *FACADES, *BANNED, CHECK_MODULES, DOC)
+
+
+def layer_problems(root: Path) -> list[str]:
+    """Named layers that are gone, and names in ``NOT_YET`` that exist now."""
+    problems = []
+    for name in LAYERS:
         if name in NOT_YET:
-            assert not _exists(name), f"{name} exists now: remove it from NOT_YET"
-        else:
-            assert _exists(name), f"{name} is gone: update the layer lists"
+            if _exists(root, name):
+                problems.append(f"{name} exists now: remove it from NOT_YET")
+        elif not _exists(root, name):
+            problems.append(f"{name} is gone: update the layer lists")
+    return problems
 
 
-def _exists(name: str) -> bool:
+def test_named_layers_exist() -> None:
+    assert set(LAYERS) >= NOT_YET, "every NOT_YET name must be checked"
+    assert layer_problems(SRC) == []
+
+
+def _exists(root: Path, name: str) -> bool:
     rel = Path(*name.split(".")[1:])
-    return (SRC / rel).is_dir() or (SRC / rel.with_suffix(".py")).is_file() or _is_symbol(name)
+    return (
+        (root / rel).is_dir() or (root / rel.with_suffix(".py")).is_file() or _is_symbol(root, name)
+    )
 
 
-def _is_symbol(name: str) -> bool:
+def _is_symbol(root: Path, name: str) -> bool:
     """Whether *name* is a function defined in the module above it."""
     module, _, func = name.rpartition(".")
     if module == PKG:
         return False
-    path = SRC / Path(*module.split(".")[1:]).with_suffix(".py")
+    path = root / Path(*module.split(".")[1:]).with_suffix(".py")
     return path.is_file() and f"def {func}(" in path.read_text(encoding="utf-8")
+
+
+def test_layer_problems_are_seen_in_both_directions(tmp_path: Path) -> None:
+    root = tree(tmp_path, {**BASE, "doc/__init__.py": "", "compat.py": ""})
+    problems = layer_problems(root)
+    for name in sorted(NOT_YET):
+        assert f"{name} exists now: remove it from NOT_YET" in problems
+    assert f"{PKG}.stats is gone: update the layer lists" in problems
+    assert f"{PKG}.module.get_prev_outputs is gone: update the layer lists" in problems
+    assert not any(p.startswith(f"{PKG}.module.module_run ") for p in problems)
 
 
 def test_graph_sees_the_real_imports() -> None:
@@ -340,7 +383,8 @@ BASE = {
     ),
     "config.py": "",
     "log.py": "",
-    "module.py": "def module_run(): ...\n",
+    "module.py": "def module(): ...\ndef module_run(): ...\n",
+    "papers/io.py": "def test_paper(): ...\ndef demopaper(): ...\n",
     "core/doc.py": "",
     "__init__.py": (
         "from typing import TYPE_CHECKING\n"
@@ -348,6 +392,7 @@ BASE = {
         "    from pytacheck.text import text_search\n"
         "    from pytacheck.module import module_run\n"
         "    from pytacheck.io.read import read\n"
+        "    from pytacheck.papers.io import demopaper, test_paper\n"
     ),
     "io/read.py": "def read(): ...\n",
 }
@@ -390,11 +435,46 @@ def found_in(tmp_path: Path, files: dict[str, str]) -> set[tuple[str, str, str]]
         ("from pytacheck.module import module_run\n", "module.module_run"),
         ("from pytacheck import module_run as run\n", "module.module_run"),
         ("import pytacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
+        ("from pytacheck.module import module\n", "module.module"),
+        ("from pytacheck import test_paper\n", "papers.io.test_paper"),
+        ("from pytacheck.papers.io import demopaper\n", "papers.io.demopaper"),
+        # anything not on the positive list
+        ("from pytacheck.presets import preset\n", "presets"),
+        ("import pytacheck.fileinfo\n", "fileinfo"),
+        ("from pytacheck.io.grobid import x\n", "io.grobid"),
+        ("from pytacheck.provenance import module_provenance\n", "provenance"),
+        ("from pytacheck import not_reexported\n", ""),
+        ("import pytacheck\n", ""),
+        # the run context is for core/run.py alone
+        ("from pytacheck.config import email\n", "config"),
+        ("from pytacheck.module import module_find\n", "module"),
     ],
 )
 def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
     found = found_in(tmp_path, {"core/facets.py": source})
-    assert ("core", "core/facets.py", f"{PKG}.{layer}") in found
+    assert ("core", "core/facets.py", f"{PKG}.{layer}" if layer else PKG) in found
+
+
+@pytest.mark.parametrize(
+    ("source", "layer"),
+    [
+        ("from pytacheck.text.search import text_search\n", "text"),
+        ("from pytacheck.module import module_run\n", "module.module_run"),
+        ("from pytacheck.module import module\n", "module.module"),
+        ("import pytacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
+        ("from pytacheck import test_paper\n", "papers.io.test_paper"),
+        ("from pytacheck import demopaper\n", "papers.io.demopaper"),
+        ("from pytacheck.stats import stats\n", "stats"),
+        ("import pytacheck.db\n", "db"),
+        ("from pytacheck.presets import preset\n", "presets"),
+        ("from pytacheck.archives import osf_pat\n", "archives"),
+        # a new package built on execute() is not in the run context
+        ("from pytacheck.batch import run_batch\n", "batch"),
+    ],
+)
+def test_run_py_may_not_go_beyond_the_run_context(tmp_path: Path, source: str, layer: str) -> None:
+    found = found_in(tmp_path, {"core/run.py": source})
+    assert ("core", "core/run.py", f"{PKG}.{layer}") in found
 
 
 def test_core_may_import_the_foundation(tmp_path: Path) -> None:
@@ -428,7 +508,8 @@ def test_core_may_import_what_the_run_context_needs(tmp_path: Path) -> None:
         "import pytacheck.module as m\n"
         "spec = m.module_find('x')\n"
         "from pytacheck.packs import registry\n"
-        "import pytacheck.db\n"
+        "from pytacheck._r.regex import detector\n"
+        "from pytacheck.core.output import Result\n"
     )
     assert found_in(tmp_path, {"core/run.py": source}) == set()
 
@@ -440,7 +521,12 @@ def test_layer_names_match_whole_components(tmp_path: Path) -> None:
         "_json.py": "from pytacheck._values_extra import x\n",
         "core_helpers.py": "from pytacheck.text.search import text_search\n",
     }
-    assert found_in(tmp_path, files) == {("lower", "_json.py", f"{PKG}._values_extra")}
+    # the positive list flags them under their own names, not as text or _values
+    assert found_in(tmp_path, files) == {
+        ("lower", "_json.py", f"{PKG}._values_extra"),
+        ("core", "core/facets.py", f"{PKG}.textual"),
+        ("core", "core/facets.py", f"{PKG}._values_extra"),
+    }
 
 
 def test_type_checking_else_branch_is_runtime(tmp_path: Path) -> None:
