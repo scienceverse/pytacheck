@@ -360,10 +360,10 @@ Keep the trust core, about 720 lines: the consent card, SHA and tree pins, read-
 - Without it, running pytacheck inside a cloned repository (a colleague's analysis repo, a downloaded replication package) imports whatever path pack its config names: the VS Code workspace-trust problem. Its UI may be simplified; the check stays.
 
 Add:
-- **Reserved names:** extend `RESERVED_PACK_NAMES` (`manifest.py:41`, today `metacheck`, `local`, `pytacheck`, `modules`) with `official*` and `scienceverse*`. `PACK_NAME_RE` is already ASCII-only. Store CI rejects a new pack or module name within edit distance 1 of an existing pack or built-in module name (`clinical_trial` against `clinical_trials`).
+- **Reserved names:** extend `RESERVED_PACK_NAMES` (`manifest.py:41`, today `metacheck`, `local`, `pytacheck`, `modules`) with `official*` and `scienceverse*`. `PACK_NAME_RE` is already ASCII-only. Store CI rejects a new pack or module name within edit distance 1 of an existing pack or built-in module name (`clinical_trial` against `clinical_trials`). S-4 (pytacheck #11) does both.
 - **A rescan on every re-pin.**
 - **Per-store trust:** adding a store is explicit. No store sets status (§2.3).
-- **Project config cannot widen trust.** A project config may not set `stores`, `validation_registry` or `status: all`. These are the keys a hostile checked-out repository could use.
+- **Project config cannot widen trust.** A project config may not set `stores`, `validation_registry` or `status: all`. These are the keys a hostile checked-out repository could use. C-S1 (pytacheck #7) does this for `stores`.
 - **CI that runs pack code holds no credentials.** Jobs that import or test pack code run with `permissions: {}`, no secrets and no persisted credentials. A read token, while one is needed, is set only on the install step, never in workflow-level `env`. Issue creation, index commits and catalog publishing run in a separate job on main that reads the test job's artifact. Fork PRs get no secrets anyway, so a token never fixes CI for community PRs. The same rule applies to G7 in pytacheck's own CI (ARCHITECTURE.md §2.11).
 - **No hosted install.** The API never installs packs and runs with `use(allow_local=False)`, as today.
 
@@ -444,7 +444,7 @@ Five resumable subcommands, with their state in `port.json`.
 4. Run on the demo paper and feed tracebacks back, for at most 3 rounds (E). The brief can also be written out for a coding agent instead.
 
 **`port diff`: faithful or not.** R runs as one `Rscript` process per diff: the shipped copy of `run_cases.R` and `canonical.R` reads a JSON case file. The port runs through the canonicaliser (FIDELITY.md §4). The corpus is the demo paper, the 21 matrix papers, and `--corpus DIR` for the author's validation set.
-- **Reproducible for a pip-installed porter.** The matrix papers are upstream metacheck test fixtures (`parity/accuracy/matrix.toml:32-54`), which the wheel does not contain, so `port diff` fetches them from metacheck at the pinned rev through `packs/fetch.py`. R needs a pinned metacheck, httptest2 and the module's own R dependencies: The conda lock that pins them, `parity/r/conda-linux-64.lock`, is not in the wheel, so `port diff` fetches it from pytacheck's repository at the installed version's tag (once the repository is public, decision 13 (decided 2026-09-27: (a))) or uses a published container image with them.
+- **Reproducible for a pip-installed porter.** The matrix papers are upstream metacheck test fixtures (`parity/accuracy/matrix.toml:32-54`), which the wheel does not contain, so `port diff` fetches them from metacheck at the pinned rev through `packs/fetch.py`. R needs a pinned metacheck, httptest2 and the module's own R dependencies: The conda lock that pins them, `parity/r/conda-linux-64.lock`, is not in the wheel, so `port diff` fetches it from pytacheck's repository at the installed version's tag (once the repository is public, decision 13 (decided 2026-09-27: (a))) or uses a published container image with them. `parity/r/docker/` (R-LOCAL, pytacheck #13) is the recipe for such an image. An R installed on the host, for example with `parity/r/setup-reference.sh` (which needs micromamba), reproduces CI's goldens byte for byte only on CI's glibc (2.39); glibc 2.44 escapes some characters differently.
 - **Scope.** The corpus is paper-only and offline. Ports of repository modules and LLM modules (ellmer is called 54 times) get "diff: n/a, manual review" in `port.json`.
 
 | Output | Rule |
@@ -574,7 +574,7 @@ Status on 2026-09-28: rows 1, 2, 3 and 5 are partly done, through pytacheck-modu
 | 6 | **Drop the other forges from the docs:** remove "gitlab and codeberg sources work the same way" | `CONTRIBUTING.md:61` |
 | 7 | **A validation section in REVIEW.md:** reviewers check code, not accuracy. Status requests go to the registry repository | `REVIEW.md` |
 | 8 | **Three PR templates:** add or update a pack, port an R module (consent, licence verdict, `port diff` table), request a status (evidence record, corpus link) | `.github/PULL_REQUEST_TEMPLATE/` |
-| 9 | **The fields pack:** `fields` keys on each preset; `"depends": ["clinical_trials"]` on the pack once §4.10 lands | `packs/fields/pack.json` |
+| 9 | **The fields pack:** `fields` keys on each preset; `"depends": ["clinical_trials"]` on the pack once §4.10 lands. The `fields` keys wait until a pytacheck that knows the key is on main: `manifest.py:100-102` rejects unknown preset keys with an error. Unknown keys pass through only in pack.json (§4.10) | `packs/fields/pack.json` |
 | 10 | **Store CI additions:** the nightly job (§4.6), tests for `.json` packs at their rev (§4.3), `CATALOG.md` from `store build` (§4.7), the DCO step for in-repo packs (§5.6) | `.github/workflows/` |
 
 Items 1-6 are fixes and can land now; 7-10 follow the pytacheck changes they depend on.
@@ -601,7 +601,7 @@ What metacheck needs so both packages read the same registry, in about 150 lines
 | Package | Days (E) | Content | Depends on |
 |---|---:|---|---|
 | **TIERS** | 2.5 | the provisional `validation.json` snapshot at `src/pytacheck/resources/status/validation.json` (§2.3), labels, policies, `status=` everywhere, `dropped_reasons`, `init`, report badges and box, the `metacheck::validated` alias and its five test files (§3.2), removal of `DEFAULT_MODULES`. Gate: the snapshot's schema, a built-in entry for each module, `select(preset="metacheck::default", status="validated")` returns the 5 modules, and an installed store module named by a preset still runs by default | none; phase A. Owns `presets.py` before CORE-1d. The §8.1 asks are sent before it closes |
-| **STORE-2a** | 1.5 | §4.3 (without the bot), §4.4, §4.5, §4.7 `CATALOG.md`, §4.8 additions, §4.10; the store fixes 1-6 of §6. Files: `packs/**` except the §4.11 rows | TIERS |
+| **STORE-2a** | 1.5 | §4.3 (without the bot), §4.4, §4.5, §4.7 `CATALOG.md`, §4.8 additions, §4.10; the store fixes 1-6 of §6. Files: `packs/**` except the §4.11 rows | TIERS, only for the preset `fields` key, `status` in the index, the lifecycle's withdrawn list and pack `depends`; the rest can start at once (ARCHITECTURE.md §4.3) |
 | **STORE-2b** | 1.5-2 | the deletions of §4.11. The `module.py`, `config.py` and `registry.py` rows go as a change request to the core agent | decision 13 (decided 2026-09-27: (a)); both repositories public and index.json rebuilt (§4.11 precondition); CORE-1d closed |
 | **PORT** | 5 | §5.2-§5.6, with the round-trip pilot of §5.2 | HARNESS-v2 (the canonicaliser), STORE-2a |
 
