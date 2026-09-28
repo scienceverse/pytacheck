@@ -9,6 +9,7 @@ one typo from a name already in use (``clinical_trial`` next to
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -198,6 +199,18 @@ def test_close_names_already_listed_are_not_checked_again(ms) -> None:
     ms.pack(root / "packs" / "labs", "labs")
     _, issues = store_build(root)  # a maintainer builds the index anyway
     assert set(_name_issues(issues, "warning")) == {"packs/lab", "packs/labs"}
+    _, issues = store_build(root, check=True)
+    assert not _name_issues(issues)
+
+
+def test_a_renamed_pack_is_not_compared_with_its_old_name(ms) -> None:
+    root = _store(ms)
+    shutil.rmtree(root / "packs" / "clinical_trials")
+    ms.pack(
+        root / "packs" / "clinical_trial",
+        "clinical_trial",
+        {"trial_registration": mod_src("trial_registration")},
+    )
     _, issues = store_build(root, check=True)
     assert not _name_issues(issues)
 
