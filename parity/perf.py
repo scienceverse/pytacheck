@@ -60,7 +60,7 @@ resolve, so a 0 is always a measured 0.
 
 The times include what the counting costs: about 1% on the accuracy matrix, but
 more for code that calls a target very often. A deep copy of a large nested
-object, one ``deepcopy()`` call per level, takes up to 6x as long under
+object, one ``deepcopy()`` call per level, takes 6-7x as long under
 ``sys.monitoring`` and 1.7x when rebinding. To time without that cost, use
 ``Probe((), opens=False)`` in a process where no probe has counted file opens,
 and count in another run.
