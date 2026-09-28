@@ -63,7 +63,7 @@
     "metacheck::psychds_check": {"provisional": true},
     "metacheck::ref_accuracy": {
       "provisional": true,
-      "note": "Candidate. metacheck's <validation> block gives rates only, from 10 papers. It can be certified through metrics once the team says how (question Q6)."
+      "note": "Candidate. metacheck's <validation> block gives rates only, measured on psychology references with a DOI, and a hand-review of the flags in 10 papers from 5 fields. It can be certified through metrics once the team says how (question Q6)."
     },
     "metacheck::ref_consistency": {"provisional": true},
     "metacheck::ref_miscitation": {"provisional": true},
