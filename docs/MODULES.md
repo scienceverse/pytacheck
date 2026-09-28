@@ -512,9 +512,10 @@ pytacheck modules --pack my-pack
 starts with a letter. It may not start with `official` or `scienceverse`
 (ignoring `-` and `_`), and `metacheck`, `pytacheck`, `local` and `modules` are
 taken. A module name is letters, digits and `_`, and starts with a letter.
-In the official store, a new pack or module name may not be the same as, or one
-typo (one letter added, removed or changed, or two swapped) from, a name
-already in use, so a typo cannot pick up someone else's code.
+In a store, a new pack or module name may not be the same as, or one
+typo (one character added, removed or changed, or two swapped; case, `-` and
+`_` do not count) from, a name already in use, so a typo cannot pick up
+someone else's code.
 
 `pack.json`:
 
@@ -539,8 +540,8 @@ already in use, so a typo cannot pick up someone else's code.
 }
 ```
 
-* Names: packs `^[a-z][a-z0-9_-]{1,39}$` (not `metacheck`, `local`, `pytacheck`
-  or `modules`); modules `^[A-Za-z][A-Za-z0-9_]*$`.
+* Names: see "Names" above (packs `^[a-z][a-z0-9_-]{1,39}$`, modules
+  `^[A-Za-z][A-Za-z0-9_]*$`, plus the reserved names and prefixes).
 * `fields`: `general`, `psychology`, `medicine`, `neuroscience`, `economics`,
   `education`, `biology`, `ecology`, `sociology`, `political-science`,
   `computer-science`, `physics`.

@@ -83,7 +83,7 @@ def _refuse_native(rel: str) -> None:
 
 def _slug(source: Mapping[str, Any], host: str) -> str:
     slug = str(source.get(host) or "").strip("/")
-    if not re.match(r"^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+$", slug) or ".." in slug.split("/"):
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+", slug) or ".." in slug.split("/"):
         raise PackError(f"Invalid {host} source {redact(slug)!r}: expected 'owner/repo'")
     return slug
 
@@ -431,7 +431,7 @@ def git_read_file(url: str, ref: str, path: str, *, limit: int) -> bytes:
     *path* (the file is missing, not the access).
     """
     _check_git_url(url)
-    if not ref or ref.startswith("-") or not re.match(r"^[\w./+-]+$", ref):
+    if not ref or ref.startswith("-") or not re.fullmatch(r"[\w./+-]+", ref):
         raise PackError(f"Invalid git ref {ref!r}")
     rel = str(PurePosixPath(path))
     if not path or rel.startswith(("/", "-")) or ".." in PurePosixPath(rel).parts:
