@@ -68,6 +68,23 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
   `needs-human-review` when tier-1 marks, a tier-1 case's tier,
   `parity/corpus.toml`, `expected.yaml` or D-entries change.
 
+### Added: a local concept classifier for data_check
+
+- `data_check` fills the column concepts its rules leave blank with a local,
+  multilingual classifier (XLM-RoBERTa-large fine-tuned on 108k LLM-labelled
+  columns, ONNX with 8-bit weights, ~840 MB, downloaded once from the Hugging
+  Face Hub), instead of leaving them to the LLM tier (D33). It runs offline in
+  ~0.1 s per column on eight CPU threads and ~2 GB of memory; held out, it scores
+  F1 0.795 on ResearchBox and 0.736-0.761 on OSF/GitHub/Zenodo repositories,
+  against 0.784 / 0.740 for Muse Spark 1.3 on metacheck's prompt. Install it with `pip install "pytacheck[concepts]"`
+  (also in `[all]`); without it `data_check` behaves as metacheck.
+- `concepts=` (option `pytacheck.concepts`, `PYTACHECK_CONCEPTS`) picks the tier:
+  `"classifier"` (default), `"cascade"` (the columns the classifier is least
+  sure of go to the LLM under `llm_use(TRUE)`; threshold
+  `pytacheck.concepts.threshold` / `PYTACHECK_CONCEPT_THRESHOLD`, default 0.92),
+  `"llm"` (metacheck's behaviour) or `"rules"`. `pytacheck.concepts.model` /
+  `PYTACHECK_CONCEPT_MODEL` loads another model (a directory or `repo@revision`).
+
 ### Changed: regular expressions
 
 - R's regex dialects (TRE for `grepl`/`gsub`, PCRE with `perl = TRUE`) are

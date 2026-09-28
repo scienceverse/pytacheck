@@ -850,6 +850,9 @@ METACHECK_DEFAULTS: tuple[tuple[str, str, str, Any], ...] = (
     # metacheck's paper_write() saves the paper object unless schema_version =
     # "12.0"; pytacheck's "auto" writes a 12.x paper as a 12.0 file
     ("pytacheck.papers.io", "paper_write", "schema_version", None),
+    # pytacheck's data_check() fills blank column concepts with a local classifier;
+    # metacheck leaves them to its LLM tier (D33)
+    ("pytacheck.modules.data_check", "data_check", "concepts", "llm"),
 )
 
 

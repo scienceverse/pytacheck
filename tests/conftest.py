@@ -78,6 +78,13 @@ def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("PYTACHECK_NO_SLEEP", "1")
 
 
+@pytest.fixture(autouse=True)
+def _concepts_as_metacheck(monkeypatch: pytest.MonkeyPatch) -> None:
+    """data_check's concepts come from metacheck's rules/LLM tier, not the local
+    classifier (a model download); tests/datacheck_concepts opts back in."""
+    monkeypatch.setenv("PYTACHECK_CONCEPTS", "llm")
+
+
 # -- hygiene: tests write to tmp_path, never into the checkout's root ---------------
 #
 # A function that saves files takes metacheck's default ``save_path = "."``

@@ -21,8 +21,15 @@ rather than copied, and nothing invented ([the accuracy contract](docs/PORTING.m
 ```bash
 pip install pytacheck                 # core: bibr JSON / Grobid XML input
 pip install "pytacheck[bibr]"         # + extract PDF/DOCX/HTML with bibr, in-process
-pip install "pytacheck[all]"          # + bibr, data-file readers, REST API, charset detection
+pip install "pytacheck[concepts]"     # + data_check's offline column-concept classifier
+pip install "pytacheck[all]"          # + bibr, data-file readers, REST API, charset detection, concepts
 ```
+
+With `pytacheck[concepts]`, `data_check` gives concepts (reaction time, age, Likert
+item, condition, ...) to the columns its rules leave blank with a local multilingual
+classifier (downloaded once, ~840 MB; ~2 GB of memory) rather than an LLM. `concepts="cascade"` sends
+the columns it is unsure of to the LLM, and `concepts="llm"` is metacheck's behaviour
+(see D33 in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md)).
 
 Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/scienceverse/pytacheck run paper.json -m all_p_values`.
 
