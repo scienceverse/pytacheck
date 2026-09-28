@@ -30,6 +30,8 @@ from pytacheck.status import (
 )
 
 VALIDATED = {"power", "stat_p_exact", "stat_p_nonsig", "marginal", "stat_effect_size"}
+#: the validated modules whose R header says the team validated them on Psychological Science
+PSYCH_SCI = {"power", "stat_effect_size"}
 
 
 def _raw() -> bytes:
@@ -118,7 +120,16 @@ def test_nothing_is_inferred() -> None:
         (ev,) = modules[ref]["evidence"]
         for key in ("validators", "date", "unit", "settings", "server_safe", "protocol"):
             assert ev[key] is None, (ref, key)
-        assert ev["corpus"]["fields"] == (["psychology"] if ref == "metacheck::power" else None)
+        named = ref.removeprefix("metacheck::") in PSYCH_SCI
+        assert ev["corpus"]["source"] == ("Psychological Science" if named else None), ref
+        assert ev["corpus"]["fields"] == (["psychology"] if named else None), ref
+
+
+def test_the_corpus_is_named_where_r_names_it(upstream_dir: Path) -> None:
+    for name in sorted(VALIDATED):
+        source = (upstream_dir / "inst" / "modules" / f"{name}.R").read_text(encoding="utf-8")
+        named = re.search(r"validated by the Metacheck team on [^.]*Psychological Science", source)
+        assert bool(named) == (name in PSYCH_SCI), name
 
 
 @pytest.mark.parametrize("name", ["stat_check", "ref_accuracy"])

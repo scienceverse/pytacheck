@@ -87,7 +87,13 @@
           "validators": null,
           "date": null,
           "unit": null,
-          "corpus": {"source": null, "papers": 161, "fields": null, "sampling": null, "labels": null},
+          "corpus": {
+            "source": "Psychological Science",
+            "papers": 161,
+            "fields": ["psychology"],
+            "sampling": null,
+            "labels": null
+          },
           "counts": {"tp": 1106, "fp": 45, "fn": 23, "tn": 295},
           "settings": null,
           "server_safe": null,
