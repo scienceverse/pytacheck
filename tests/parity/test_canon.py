@@ -294,9 +294,14 @@ def test_number_text(r: str, p: str, equal: bool) -> None:
 
 
 def test_numbers_in_tables_compare_to_the_relative_tolerance() -> None:
-    r = _df(k=_chr("x"), p=_chr("p = 0.05"))
-    assert canon.compare(r, _df(k=_chr("x"), p=_chr("p = .050"))).equal
-    assert not canon.compare(r, _df(k=_chr("x"), p=_chr("p = 0.051"))).equal
+    def output(reported: str) -> dict:
+        # stat_check's key leaves the cell to be compared as a value
+        table = _df(paper_id=_chr("a"), raw=_chr("t(9) = 1"), reported=_chr(reported))
+        return _output("stat_check", table)
+
+    r = output("p = 0.05")
+    assert canon.compare(r, output("p = .050")).equal
+    assert canon.compare(r, output("p = 0.051")).paths == ["table.reported[]"]
     # and at the printed precision: the last digit of an id is a difference
     r = _df(k=_chr("x"), isbn=_chr("9780123456789"))
     assert not canon.compare(r, _df(k=_chr("x"), isbn=_chr("9780123456788"))).equal
