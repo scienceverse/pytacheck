@@ -84,16 +84,18 @@ fails.
 
 Record with **Python 3.12 on Linux**, the version CI's primary jobs use.
 Python's own error messages differ between versions, and they are part of the
-records. The recorder refuses to write here under any other version.
+records. Record with **every extra installed**, as CI installs them: some change
+outputs (without xlrd, data_check reads no `.xls` file). The recorder refuses
+to write here under any other version, or with an extra missing.
 
 ```sh
-uv run --python 3.12 python scripts/record_snapshots.py               # every set
-uv run --python 3.12 python scripts/record_snapshots.py --only modules
+uv run --python 3.12 --all-extras python scripts/record_snapshots.py               # every set
+uv run --python 3.12 --all-extras python scripts/record_snapshots.py --only modules
 ```
 
 `uv run --python 3.12` rebuilds the project's `.venv` with Python 3.12. To
 keep your usual `.venv`, give uv another folder for this one, for example
-`UV_PROJECT_ENVIRONMENT=../pytacheck-py312 uv run --python 3.12 ...`.
+`UV_PROJECT_ENVIRONMENT=../pytacheck-py312 uv run --python 3.12 --all-extras ...`.
 
 The other modes run under any version:
 

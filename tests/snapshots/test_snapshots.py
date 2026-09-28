@@ -494,13 +494,34 @@ def test_list_shows_every_set(script: ModuleType, capsys: pytest.CaptureFixture[
 
 
 def test_the_recorder_writes_git_only_under_the_recording_python(
-    script: ModuleType, monkeypatch: pytest.MonkeyPatch
+    script: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    monkeypatch.setattr(store, "SNAPSHOT_DIR", tmp_path)  # were it to write after all
     monkeypatch.setattr(script, "_on_recording_platform", lambda: False)
     with pytest.raises(SystemExit, match=r"uv run --python 3\.12"):
         script.main(["--only", "fixtures"])
     with pytest.raises(SystemExit, match="--cases records part of a set"):
         script.main(["--only", "fixtures", "--cases", "all_urls.*"])
+
+
+def test_the_recorder_writes_git_only_with_every_extra_installed(
+    script: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(store, "SNAPSHOT_DIR", tmp_path)  # were it to write after all
+    monkeypatch.setattr(script, "_on_recording_platform", lambda: True)
+    monkeypatch.setattr(script, "_missing_extras", lambda: ["xlrd"])
+    with pytest.raises(SystemExit, match=r"xlrd missing: run `uv run --python 3\.12 --all-extras"):
+        script.main(["--only", "fixtures"])
+
+
+def test_missing_extras_are_the_optional_dependencies_not_installed(
+    script: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import importlib.metadata
+
+    requires = ["numpy>=1.26", "pytest>=8; extra == 'data'", "no-such-dist[x]>=1; extra == 'data'"]
+    monkeypatch.setattr(importlib.metadata, "requires", lambda name: requires)
+    assert script._missing_extras() == ["no-such-dist"]
 
 
 def test_an_unknown_set_is_refused(script: ModuleType) -> None:

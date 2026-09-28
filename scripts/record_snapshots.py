@@ -1,7 +1,7 @@
 """Record, check and compare the raw snapshots in tests/snapshots/ (package SNAP).
 
-    uv run --python 3.12 python scripts/record_snapshots.py            # record every set
-    uv run --python 3.12 python scripts/record_snapshots.py --only modules
+    uv run --python 3.12 --all-extras python scripts/record_snapshots.py   # record every set
+    uv run --python 3.12 --all-extras python scripts/record_snapshots.py --only modules
     uv run python scripts/record_snapshots.py --check    # record twice and compare the bytes
     uv run python scripts/record_snapshots.py --diff     # compare a new recording with git's
     uv run python scripts/record_snapshots.py --list     # the sets and their case counts
@@ -9,9 +9,11 @@
 The sets and their cases are defined in tests/snapshots/inputs.py, the format in
 tests/snapshots/store.py (tests/snapshots/README.md explains both).
 
-Recording writes into tests/snapshots/ only under Python 3.12, the version the
-committed snapshots are recorded with: error messages of Python itself differ
-between versions. ``--out DIR`` records into another folder with any version.
+Recording writes into tests/snapshots/ only under Python 3.12 on Linux, the
+version the committed snapshots are recorded with (error messages of Python
+itself differ between versions), and with every extra installed, as CI installs
+them (without xlrd, data_check reads no .xls file). ``--out DIR`` records into
+another folder with any version.
 
 ``--check`` records twice, in two processes with different ``PYTHONHASHSEED``
 values, and fails unless both give the same bytes. Under Python 3.12 it also
@@ -32,6 +34,7 @@ import argparse
 import difflib
 import fnmatch
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -48,6 +51,7 @@ from tests.snapshots import inputs, oracle, store
 #: the Python the committed snapshots are recorded with, on Linux
 PYTHON = (3, 12)
 RECORDED_WITH = "Python 3.12 on linux"
+RECORD_COMMAND = "uv run --python 3.12 --all-extras python scripts/record_snapshots.py"
 #: the two hash seeds of --check
 SEEDS = ("12345", "777")
 SCRIPT = Path(__file__).resolve()
@@ -73,6 +77,22 @@ def _python() -> str:
 def _on_recording_platform() -> bool:
     """Python 3.12 on Linux, as the committed snapshots are recorded."""
     return sys.version_info[:2] == PYTHON and sys.platform == "linux"
+
+
+def _missing_extras() -> list[str]:
+    """pytacheck's optional dependencies that are not installed."""
+    from importlib import metadata
+
+    missing: set[str] = set()
+    for requirement in metadata.requires("pytacheck") or []:
+        if "extra ==" not in requirement:
+            continue
+        name = re.split(r"[\s\[<>=!~;]", requirement, maxsplit=1)[0]
+        try:
+            metadata.distribution(name)
+        except metadata.PackageNotFoundError:
+            missing.add(name)
+    return sorted(missing)
 
 
 def select(only: list[str] | None) -> list[inputs.SnapshotSet]:
@@ -133,7 +153,13 @@ def cmd_record(args: argparse.Namespace) -> int:
     if committed and not _on_recording_platform() and not args.any_python:
         raise SystemExit(
             f"the snapshots are recorded with {RECORDED_WITH}, this is {_python()}: run "
-            "`uv run --python 3.12 python scripts/record_snapshots.py` (tests/snapshots/README.md)"
+            f"`{RECORD_COMMAND}` (tests/snapshots/README.md)"
+        )
+    missing = _missing_extras() if committed else []
+    if missing:
+        raise SystemExit(
+            f"the snapshots are recorded with every extra installed, as CI installs them; "
+            f"{', '.join(missing)} missing: run `{RECORD_COMMAND}` (tests/snapshots/README.md)"
         )
     sets = select(args.only)
     recorded, groups = record(sets, args.cases)
