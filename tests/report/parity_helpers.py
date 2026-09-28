@@ -72,7 +72,8 @@ def rp_report_module_run(paper: Any, modules: Any, args: Any = None) -> dict[str
 
 
 def _unpath(text: str) -> str:
-    return re.sub(re.escape(str(MODULES)) + r"/([a-z_]+)\.py", r"\1", text)
+    # the report writes a module's anchor from its lower-cased path
+    return re.sub(re.escape(str(MODULES)) + r"/([a-z_]+)\.py", r"\1", text, flags=re.I)
 
 
 def rp_report_qmd(paper: Any, modules: Any, args: Any = None, qmd_paper: Any = "same") -> str:

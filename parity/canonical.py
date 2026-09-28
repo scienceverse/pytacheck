@@ -101,7 +101,7 @@ class Spellings:
         if not self.aliases:
             return None
         either = "|".join(re.escape(a) for a in self.aliases)  # longest first
-        return re.compile(rf"(?<![\w.-])(?:{either})(?![\w.-])")
+        return re.compile(rf"(?<![\w.>-])(?:{either})(?![\w.-])")
 
     def apply(self, value: str) -> str:
         for a, b in self.links:

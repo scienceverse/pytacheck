@@ -191,11 +191,16 @@ def test_a_quarantined_case_never_fails_the_run(tree, tmp_path, monkeypatch, cap
         assert len(got["problems"]) > 1  # how it differs from R is kept
         out = capsys.readouterr().out
         assert f"1 quarantined (parity/quarantine.yaml; not failures):\n  beta/same: {_WHY}" in out
-    # in worker processes too
+    # in worker processes too: two cases, so that a pool really starts
+    tree.area("beta", _case("same", "b"), _case("other", "b"))
+    _quarantine(tmp_path, monkeypatch, "beta/other", "beta/same")
     if "fork" in multiprocessing.get_all_start_methods():
         monkeypatch.setattr(parity_main.sys, "platform", "linux")
         many = parity_main.run_cases(load_cases("beta"), jobs=2, strict=True, quarantine=True)
-        assert [(r.status, r.failing) for r in many] == [("quarantined", False)]
+        assert sorted((r.key, r.status, r.failing) for r in many) == [
+            ("beta/other", "quarantined", False),
+            ("beta/same", "quarantined", False),
+        ]
 
 
 def test_a_quarantined_change_does_not_fail_under_strict(tree, tmp_path, monkeypatch) -> None:
@@ -305,8 +310,10 @@ def test_the_quarantine_file_is_checked(tmp_path) -> None:
     assert load_quarantine(tmp_path / "none.yaml") == {}
     # a rewrite is seen, even when the file's time stamp does not move
     path = tmp_path / "q.yaml"
+    path.write_text(good)
+    assert load_quarantine(path) == {"a/b": "why"}  # cached under this time stamp
     stamp = path.stat().st_mtime_ns
-    path.write_text("max_cases: 1\ncases:\n  - {case: c/d, reason: why}\n")
+    path.write_text(good.replace("a/b", "c/d"))
     os.utime(path, ns=(stamp, stamp))
     assert load_quarantine(path) == {"c/d": "why"}
 
@@ -357,6 +364,25 @@ def test_the_checkout_is_repo_however_it_is_reached(tmp_path, monkeypatch) -> No
         assert pcanonical.portable(other) == other
         assert pcanonical.portable({"t": "chr", "v": [other]}) == {"t": "chr", "v": [other]}
     assert pcanonical.portable({f"{link}/k": f"x\n{link}"}) == {"<repo>/k": "x\n<repo>"}
+
+
+def test_a_link_inside_the_checkout_is_not_repo_twice() -> None:
+    # "/src" is a link to the checkout, which has a src folder of its own
+    spelled = pcanonical.Spellings(("/home/j/pt",), ("/src",), ())
+    assert spelled.apply("/home/j/pt/src/pytacheck/x.py") == "<repo>/src/pytacheck/x.py"
+    assert spelled.apply("/src/pytacheck/x.py") == "<repo>/pytacheck/x.py"
+
+
+def test_report_module_paths_are_removed_whatever_their_case(monkeypatch) -> None:
+    from tests.report import parity_helpers
+
+    # the report writes the anchor of a module from its lower-cased path
+    monkeypatch.setattr(parity_helpers, "MODULES", Path("/tmp/Work-H/tests/report/modules"))
+    text = (
+        "[a](#/tmp/work-h/tests/report/modules/rp_error.py) "
+        "[b](#/tmp/Work-H/tests/report/modules/rp_ok.py)"
+    )
+    assert parity_helpers._unpath(text) == "[a](#rp_error) [b](#rp_ok)"
 
 
 def test_the_checkout_is_repo_in_json_with_backslashes(monkeypatch) -> None:
