@@ -565,7 +565,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 - **The LINKS path** grows to 26.5 days, still under 27.
 - **Peak parallelism** on days 9.5-13.5 is 4-5 agents, under the plan's 7.
 - **Total:** ≈ 116.5 + 9.5 = **≈ 126 package-days in 36 packages**.
-- **Since this proposal.** Decisions 3 (b) and 2 (a) have moved the plan to a critical path of ≈ 29.5 days and ≈ 132 package-days in 37 packages (ARCHITECTURE.md §4.4). BATCH-b grew from 6 to 9 days and runs on days 18-27. The path through REPO and DATA-b now has 2.5 days of float, so a slip in BATCH-a or FETCH still delays REPO but moves the end only once it passes 2.5 days. ARCHITECTURE.md still schedules CACHE at 4 days, so the ≈ 1 day that decision 22 (a2) saves is not taken out of those totals.
+- **Since this proposal.** Decision 3 (b) has moved the plan to a critical path of ≈ 29.5 days and ≈ 129 package-days in 36 packages (ARCHITECTURE.md §4.4). BATCH-b grew from 6 to 9 days and runs on days 18-27. The path through REPO and DATA-b now has 2.5 days of float, so a slip in BATCH-a or FETCH still delays REPO but moves the end only once it passes 2.5 days. ARCHITECTURE.md still schedules CACHE at 4 days, so the ≈ 1 day that decision 22 (a2) saves is not taken out of those totals.
 
 **Doc amendments made with this proposal:**
 - ARCHITECTURE.md: the header, §0, §2.6, §2.8, §3.2, §4.3, §4.4, §4.5, §4.6, §5.2, §5.3, §6 and Appendix A.

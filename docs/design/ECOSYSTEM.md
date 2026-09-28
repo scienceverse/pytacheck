@@ -1,6 +1,6 @@
 # Pytacheck ecosystem: validation status, presets, the module store and R ports
 
-**Status.** Draft 2 (2026-09-27; draft 1 was 2026-09-26). Proposed; its decisions (§9) are all decided (maintainer, 2026-09-27). Of §6's store fixes, rows 1, 2, 3 and 5 are partly done, through pytacheck-modules#1 (merged 2026-09-27) and pytacheck-modules#2 (open), and pytacheck's scaffold names row 2's interim pin. Nothing else here is implemented, in pytacheck or in the store repository `scienceverse/pytacheck-modules`. It extends `docs/design/module-system-v2.md`, whose deferred item "multi-level trust tiers, a policy engine" (`:592`) it brings back as data, not as a policy engine. Legal statements in §5 are an engineering assessment, not legal advice.
+**Status.** Draft 2 (2026-09-27; draft 1 was 2026-09-26). Proposed; its decisions (§9) are all decided (maintainer, 2026-09-27). Of §6's store fixes, rows 1, 2, 3 and 5 are partly done, through pytacheck-modules#1 (merged 2026-09-27), #2 and #3 (both merged 2026-09-28). The store and pytacheck's scaffold now install pytacheck from its main branch. Nothing else here is implemented, in pytacheck or in the store repository `scienceverse/pytacheck-modules`. It extends `docs/design/module-system-v2.md`, whose deferred item "multi-level trust tiers, a policy engine" (`:592`) it brings back as data, not as a policy engine. Legal statements in §5 are an engineering assessment, not legal advice.
 
 **Evidence markers.** As in FIDELITY.md: **(M)** measured in this session (upstream metacheck at the harness pin; pytacheck at f559c1be; the store at 1005d6b, and at 23736aa for §1.4 and §6), **(E)** an estimate with its basis. The research notes behind this document are in `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/results/` (`tiers.md`, `market-gap.md`, `market-research.md`, `porting.md`).
 
@@ -25,7 +25,7 @@ The store's code review (`reviewed`) belongs to trust, not status. That is why t
 
 A reviewed store pack can be experimental, and a validated module is still subject to the install consent card.
 
-**Cost (E).** About 1,800-1,900 new source lines: status and store ≈ 560-660 (§4.12), `port/` ≈ 1,260 (§5.2). Against that, 850-1,100 source lines and about 700 test lines can go from `packs/` (§4.11). `packs/` and status together end ≈ 190-540 lines smaller than today; `src/` as a whole grows by ≈ 700-1,100 lines, all of it in `port/`. These are the figures ARCHITECTURE.md §5.3's line ledger should carry. In agent-days: TIERS 2.5, STORE-2a 1.5, STORE-2b 1.5-2, PORT 5, and DECL 3 for YAML modules (§8), from ARCHITECTURE.md decision 2 (decided 2026-09-27: (a)). DECL's ≈ +380-460 net lines are in ARCHITECTURE.md §5.3, not in the figures above.
+**Cost (E).** About 1,800-1,900 new source lines: status and store ≈ 560-660 (§4.12), `port/` ≈ 1,260 (§5.2). Against that, 850-1,100 source lines and about 700 test lines can go from `packs/` (§4.11). `packs/` and status together end ≈ 190-540 lines smaller than today; `src/` as a whole grows by ≈ 700-1,100 lines, all of it in `port/`. These are the figures ARCHITECTURE.md §5.3's line ledger should carry. In agent-days: TIERS 2.5, STORE-2a 1.5, STORE-2b 1.5-2, PORT 5 (§8).
 
 **Outside pytacheck.** Most of §2, §3.4 and §7 needs work or agreement from the metacheck team. §8.1 lists those asks, the date each is needed by, and what pytacheck does if the answer is no or not yet.
 
@@ -81,7 +81,7 @@ These decide the launch list (§3.1). Pytacheck should record the team's answers
 - **Two packs.** `clinical_trials` (MIT, one module `trial_registration`, with tests) and `fields` (CC0-1.0, presets only: `general`, `psychology`, `medicine`, `open-science`).
 - **The store repository is private too.** Its README says: "While this store is private, pytacheck needs read access to it: set PYTACHECK_GITHUB_TOKEN (or GH_TOKEN / GITHUB_TOKEN)". Every index.json entry points at `scienceverse/pytacheck-modules`. So today every store user goes through the token fetch chain in `stores.py:223-295`, and outside researchers cannot fork it to contribute.
 - **CI passes.** pytacheck-modules#1 (merged 2026-09-27) moved `check.yml` to a self-hosted runner and gave `PYTACHECK_READ_TOKEN` only to the two "Install pytacheck" steps (`check.yml:86-87`, `:150-151`), as an HTTP header scoped to `scienceverse/pytacheck`. It is no longer in the workflow-level `env`. The secret is set, and every run since 09:11 UTC on 2026-09-27 passed, including the push to main after the merge and pytacheck-modules#2. The `check` job still runs pack code and tests with `contents: read` (§6 item 5), and it skips PRs from forks (`check.yml:59-61`), so an outside contributor gets no CI run.
-- **Main still pins a stale feature branch.** `claude/pytacheck-metacheck-fork-0x7q73` (6cec4b56; pytacheck's main is 8d8a2364, the initial commit only) is named at `check.yml:39`, `README.md:16,37` and `CONTRIBUTING.md:9,16`. pytacheck-modules#2 (open; `ci/repin-pytacheck` at 160a27e) re-pins all five to `claude/elegant-fermat-eo7s89`, the head of `scienceverse/pytacheck#1`, and says to switch to `@main` once that pull request merges. pytacheck's own `packs/scaffold.py:24-26` now writes the same branch into every new pack. It is still a constant, not derived from the installed version.
+- **Main pinned a stale feature branch (fixed).** `claude/pytacheck-metacheck-fork-0x7q73` (6cec4b56) was named at `check.yml:39`, `README.md:16,37` and `CONTRIBUTING.md:9,16`. pytacheck-modules#2 (merged 2026-09-28) re-pinned all five to the head of `scienceverse/pytacheck#1`, and pytacheck-modules#3 (merged 2026-09-28, 359c5fdb) moved them to `@main` after that pull request merged. pytacheck's own `packs/scaffold.py:23` (`INSTALL_SPEC`) writes the same `@main` spec into every new pack. It is still a constant, not derived from the installed version.
 - **index.json is current.** 40cc467 (in pytacheck-modules#1) rebuilt it: generated at 2026-09-27T13:19:18Z, it lists clinical_trials 0.2.0 and fields 0.1.1, as the pack.json files say. The index job's run on main after the merge found it up to date.
 - **Licence wording.** `REVIEW.md:22` and `CONTRIBUTING.md:23` allow CC0-1.0 for packs, while `pack check` asks for "an OSI-approved licence" (`check.py:284`). CC0 is not OSI-approved but is GPL-compatible, so the two rules disagree. The store should ask for a licence on the §5.4 list instead.
 - **The medicine preset says** "add the clinical_trials pack" in prose, because pack.json cannot declare a pack dependency (§4.10).
@@ -193,7 +193,7 @@ A certification holds only for the code it measured. There is one binding per ki
 | Implementation | Bound by | When the code changes |
 |---|---|---|
 | pytacheck built-ins | a list of exact pytacheck releases, plus `method: "rerun"` | a release is added only after a rerun on its release candidate (below). There is no range and no open upper bound |
-| store and external packs | `code_sha256` over the pack's module sources (`.py` files and `pytacheck.module/1` `.yaml` files) and declared data files, excluding docs, tests and CI files, plus the exact pytacheck releases it was measured on | the label falls back to experimental or unvalidated, with "validated at 1.2.0 (code ab12…), this is 1.3.0". A README or test edit does not decertify |
+| store and external packs | `code_sha256` over the pack's module sources and declared data files, excluding docs, tests and CI files, plus the exact pytacheck releases it was measured on | the label falls back to experimental or unvalidated, with "validated at 1.2.0 (code ab12…), this is 1.3.0". A README or test edit does not decertify |
 | metacheck (R) | a list of exact metacheck releases | falls back to experimental |
 
 - Hashing one file would be too narrow, since behaviour also depends on helpers, the core and packages such as statcheck. Hashing the whole package would decertify at every release. The exact release plus a rerun is what makes relaxed fidelity (FIDELITY.md) safe: **the Python port is certified on its own measured counts, not on its parity with R.**
@@ -289,7 +289,7 @@ The TIERS gate includes a test that an installed store module named by a preset 
 
 | Concept | DeepSeek Harness | Claude Code plugins, Agent Skills | pytacheck |
 |---|---|---|---|
-| Unit | an npm package declaring `"dsh": {"bundle": {"patch": …}}` | a plugin folder, or a `SKILL.md` folder with small frontmatter | a **pack**: `pack.json` plus `@module` `.py` files or `pytacheck.module/1` YAML files (ARCHITECTURE.md decision 2 (a)) |
+| Unit | an npm package declaring `"dsh": {"bundle": {"patch": …}}` | a plugin folder, or a `SKILL.md` folder with small frontmatter | a **pack**: `pack.json` plus `@module` `.py` files |
 | What users start with | a **profile**, an ordered list of bundles (`dsh --profile web`) | bundle plugins through `dependencies` | a **preset** (`pack::preset`, with `extends` and `exclude`) |
 | Install | `dsh plugin --profile P add github:owner/repo` | `claude plugin install name@marketplace` | `pytacheck pack install name`, or `owner/repo@rev` for unlisted packs |
 | Catalog | the GitHub topic `dsh-plugin`; a community `marketplace.json` | `marketplace.json` in any repository | `index.json` built by store CI, a generated `CATALOG.md` (§4.7), and a `pytacheck-pack` topic for unlisted packs |
@@ -333,7 +333,6 @@ The format is already close. pytacheck's store follows the same design: a CI-bui
 | `citation` | the pack's `CITATION.cff`, which the scaffold already writes |
 | `maintainers` | pack.json, as GitHub handles (the nf-core convention) |
 | `ci` | the nightly job (§4.6) |
-| `yaml` in `languages` | the pack's `pytacheck.module/1` files (ARCHITECTURE.md §4.3 DECL). `store build` must set the `code` flag to true for a pack with YAML modules, since they run on the user's papers like any module; today it counts only `.py` files |
 
 ### 4.5 Lifecycle
 
@@ -351,7 +350,7 @@ The store runs `pack check` and each pack's tests on every listed rev each night
 
 ### 4.7 Catalog
 
-`store build` also writes `CATALOG.md` (≈ 30 lines of code): one table of packs and modules with description, fields, status with PPV and sensitivity and a link to the evidence, CI state, review date and tree, licence, languages (R, Python, YAML), maintainers, preset membership and the install line. GitHub renders it, and it replaces the README's hand-written pack table. There is no ranking by install count. A static site on GitHub Pages is deferred: Pages needs the store repository to be public (or a paid plan), and publishing it would expose a store that is private today (§1.4).
+`store build` also writes `CATALOG.md` (≈ 30 lines of code): one table of packs and modules with description, fields, status with PPV and sensitivity and a link to the evidence, CI state, review date and tree, licence, languages (R, Python), maintainers, preset membership and the install line. GitHub renders it, and it replaces the README's hand-written pack table. There is no ranking by install count. A static site on GitHub Pages is deferred: Pages needs the store repository to be public (or a paid plan), and publishing it would expose a store that is private today (§1.4).
 
 ### 4.8 Security baseline
 
@@ -367,7 +366,6 @@ Add:
 - **Project config cannot widen trust.** A project config may not set `stores`, `validation_registry` or `status: all`. These are the keys a hostile checked-out repository could use.
 - **CI that runs pack code holds no credentials.** Jobs that import or test pack code run with `permissions: {}`, no secrets and no persisted credentials. A read token, while one is needed, is set only on the install step, never in workflow-level `env`. Issue creation, index commits and catalog publishing run in a separate job on main that reads the test job's artifact. Fork PRs get no secrets anyway, so a token never fixes CI for community PRs. The same rule applies to G7 in pytacheck's own CI (ARCHITECTURE.md §2.11).
 - **No hosted install.** The API never installs packs and runs with `use(allow_local=False)`, as today.
-- **YAML modules** (ARCHITECTURE.md decision 2 (a), §4.3 DECL): a strict safe loader that refuses anchors, aliases, tags and duplicate keys and caps a file at 64 KB (E), a typed schema, patterns only through lane 2 with count and length caps and a time limit per paper over all of a module's `regex` calls, no HTML in text, and `{n}` and `{s}` as the only placeholders. `pack check` runs the schema check where it runs the AST scan on `.py` files. A YAML module gets no extra trust: the same pin, tree hash, consent card and project-config gate. Today the gate counts only `.py` references as local code, and the consent card calls a pack without `.py` files "no code" (`install.py:426`); DECL extends both to YAML modules.
 
 ### 4.9 Federation, later
 
@@ -412,7 +410,7 @@ The project-config code-trust gate is **not** deleted (§4.8). Nor is `config_fi
 | deletions (§4.11) | −850 to −1,100 |
 | **`packs/` and status together** | **≈ −190 to −540**, plus about −700 test lines |
 
-New lines in this table: +560 to +660. PORT adds ≈ +1,260 in `src/pytacheck/port/` (§5.2), outside `packs/`. DECL's ≈ 40-100 lines of YAML discovery, checks and the consent card in `packs/` are not in this table; ARCHITECTURE.md §5.3 carries them with the rest of decision 2 (a).
+New lines in this table: +560 to +660. PORT adds ≈ +1,260 in `src/pytacheck/port/` (§5.2), outside `packs/`.
 
 ---
 
@@ -441,8 +439,8 @@ Five resumable subcommands, with their state in `port.json`.
 
 **`port translate`: LLM-assisted.**
 1. Extract the roxygen header into `@module` arguments, the `<validation>` prose into a draft evidence record (the author confirms it), and a census of the symbols the module calls.
-2. Build a brief: the called symbols mapped to the new API (`pytacheck.doc`, `pc.check`, ARCHITECTURE.md §2.10) with their Python signatures (`inspect.signature`), not the R-shaped names in `pytacheck.compat`; the matching rows of `docs/PORTING.md` §3; one few-shot pair per output form (marginal.R and the migrated marginal check once CORE lands, today's marginal.py until then; once DECL converts marginal, marginal.R and `marginal.yaml` for YAML output, and ethics_check.R and the migrated ethics_check for `.py` output); and the relaxed rules of FIDELITY.md.
-3. Write the port next to the untouched `<name>.R`, with a test file and `ports.<name>` in pack.json. The port is `<name>.py` against `pytacheck.doc`. From DECL on, under ARCHITECTURE.md decision 2 (decided 2026-09-27: (a)), it is `<name>.yaml` in the `pytacheck.module/1` format when step 1's census finds only `text_search`, `count`, `scroll_table`, `collapse_section`, `format_ref` and `bibentry`, plus the base R glue `ifelse`, `nrow`, `sprintf`, `c`, `names` and `list`, and a two-way traffic light. `--form yaml` or `--form py` forces a form. Its report is typed blocks (`Table`, `Callout`), not fenced strings. The `scroll_table` and `collapse_section` façades still work for hand-written v1 modules, because the fence parser is kept for them (ARCHITECTURE.md §2.9).
+2. Build a brief: the called symbols mapped to the new API (`pytacheck.doc`, `pc.check`, ARCHITECTURE.md §2.10) with their Python signatures (`inspect.signature`), not the R-shaped names in `pytacheck.compat`; the matching rows of `docs/PORTING.md` §3; one few-shot pair (marginal.R and the migrated marginal check once CORE lands, today's marginal.py until then); and the relaxed rules of FIDELITY.md.
+3. Write the port next to the untouched `<name>.R`, with a test file and `ports.<name>` in pack.json. The port is `<name>.py` against `pytacheck.doc`. Declarative TOML checks are deferred (ARCHITECTURE.md decision 2 (decided 2026-09-28: (c))); if they are built later, they become the preferred output for modules that are only patterns, section filters and a traffic-light rule. Its report is typed blocks (`Table`, `Callout`), not fenced strings. The `scroll_table` and `collapse_section` façades still work for hand-written v1 modules, because the fence parser is kept for them (ARCHITECTURE.md §2.9).
 4. Run on the demo paper and feed tracebacks back, for at most 3 rounds (E). The brief can also be written out for a coding agent instead.
 
 **`port diff`: faithful or not.** R runs as one `Rscript` process per diff: the shipped copy of `run_cases.R` and `canonical.R` reads a JSON case file. The port runs through the canonicaliser (FIDELITY.md §4). The corpus is the demo paper, the 21 matrix papers, and `--corpus DIR` for the author's validation set.
@@ -465,9 +463,9 @@ Cost for 22 inputs (E, from `PERF_REPORT.md:30-35`): R ≈ 15 s, Python 1-2 s. `
 
 **A passing `port diff` means "faithful port", not "validated".** A port of a validated R module keeps that status only through a rerun of the evidence corpus (§2.5).
 
-**Size (E).** ≈ 1,260 new lines (licence 200, consent 120, extract 200, brief and loop 150, diff 250, update 80, enforcement 140, CLI 120) and ≈ 1,100 moved (the R runner and the scorer, extracted to `pytacheck.port`). DECL's YAML output adds ≈ 80 (ARCHITECTURE.md §5.3).
+**Size (E).** ≈ 1,260 new lines (licence 200, consent 120, extract 200, brief and loop 150, diff 250, update 80, enforcement 140, CLI 120) and ≈ 1,100 moved (the R runner and the scorer, extracted to `pytacheck.port`).
 
-**The pilot.** No third-party metacheck R module is known today; all 30 upstream modules are already ported by hand. So PORT's gate is a round-trip port of an upstream module, for example `marginal.R`, that passes `port diff` at the thresholds above. DECL adds a second round trip: `marginal.R` translated to YAML passes the same thresholds. An external pilot needs a named module and author, with consent in hand before PORT starts: waiting for an author's reply is not in PORT's 5 days. The lack of demand evidence is a risk, and PORT can wait behind ARCHITECTURE.md decision 5's phase-A stop point (decided 2026-09-27: (a)) until a real request arrives.
+**The pilot.** No third-party metacheck R module is known today; all 30 upstream modules are already ported by hand. So PORT's gate is a round-trip port of an upstream module, for example `marginal.R`, that passes `port diff` at the thresholds above. An external pilot needs a named module and author, with consent in hand before PORT starts: waiting for an author's reply is not in PORT's 5 days. The lack of demand evidence is a risk, and PORT can wait behind ARCHITECTURE.md decision 5's phase-A stop point (decided 2026-09-27: (a)) until a real request arrives.
 
 **For R authors.** What an R author does to get a module into the store:
 1. Put the `.R` module in a public GitHub repository with a LICENSE on the §5.4 list.
@@ -501,7 +499,7 @@ A translation is a derivative work (17 U.S.C. §101; EU Directive 2009/24/EC Art
 
 So the store asks for "a licence on the §5.4 list", not for "an OSI-approved licence" as `check.py:284` says today.
 
-Notices to preserve: MIT's copyright and permission text, Apache's NOTICE and change notices, GPL/AGPL §5(a) ("prominent notices stating that you modified it, and giving a relevant date"), CC BY §3(a). The port's header, in its `.py` or `.yaml` file, plus `ported_from` covers them. pytacheck's own port of metacheck needs the same: FIDELITY.md and ARCHITECTURE.md drop the per-file "Port of R/…" docstrings, and pytacheck has no NOTICE file. A top-level NOTICE replaces them: "pytacheck is a modified Python translation of metacheck (© DeBruine, Mesquida, Werner, Lakens et al., AGPL-3.0-or-later), <url>@<pinned rev>, modified <date>".
+Notices to preserve: MIT's copyright and permission text, Apache's NOTICE and change notices, GPL/AGPL §5(a) ("prominent notices stating that you modified it, and giving a relevant date"), CC BY §3(a). The `.py` header plus `ported_from` covers them. pytacheck's own port of metacheck needs the same: FIDELITY.md and ARCHITECTURE.md drop the per-file "Port of R/…" docstrings, and pytacheck has no NOTICE file. A top-level NOTICE replaces them: "pytacheck is a modified Python translation of metacheck (© DeBruine, Mesquida, Werner, Lakens et al., AGPL-3.0-or-later), <url>@<pinned rev>, modified <date>".
 
 **Inbound terms: the DCO**, not a CLA, for the pytacheck repository and for packs kept in the store repository. The store never relicenses ("You keep the copyright; the pack keeps your licence", `pytacheck-modules/CONTRIBUTING.md:71`). For a pack pinned from an author's repository, the store's commits are only the pin, so a DCO there certifies nothing about the code. Those packs rely on the licence check and, for ports, the consent record. The DCO certifies only the submitter's own right to submit, which is why third-party ports need the consent record.
 
@@ -548,7 +546,7 @@ In pack.json under `ports.<module>`, not in `@module`, because consent governs d
 
 **`store build --check` enforces it** (≈ 140 lines):
 1. `license` must be valid SPDX and pass the matrix; today's warning (`check.py:279-285`) becomes an error for store entries.
-2. A complete record is required for any `.R` file with a `.py` or `.yaml` twin and for any `ports.*` entry. The `sha256` must match the `.R` file, and `rev` must be 40-hex.
+2. A complete record is required for any `.R` file with a `.py` twin and for any `ports.*` entry. The `sha256` must match the `.R` file, and `rev` must be 40-hex.
 3. Consent:
    - a. It is not needed only for self-consent, under the single rule of §5.2 step 3: the source is not a fork (or the pin is its upstream parent), and `by.github` owns that repository or is a DESCRIPTION `aut`/`cre` with a confirmed handle. Otherwise `evidence` must point into the source repository; with a token, its author must be the owner or a collaborator.
    - b. A licence grant (`license_granted`, for a `needs-relicence` verdict) must come from every holder in `ported_from.copyright`, or from the rights-holder of an organisation-owned repository. It should be a LICENSE commit in the source repository, not only a comment. One collaborator's comment is not a grant.
@@ -564,12 +562,12 @@ The install card gains one line: "ported from owner/repo (MIT); consent by @aaut
 
 ## 6. The real store: proposed fixes
 
-Status on 2026-09-27: rows 1, 2, 3 and 5 are partly done, through pytacheck-modules#1 (merged 2026-09-27) and pytacheck-modules#2 (open). The other rows are open.
+Status on 2026-09-28: rows 1, 2, 3 and 5 are partly done, through pytacheck-modules#1 (merged 2026-09-27), #2 and #3 (both merged 2026-09-28). The other rows are open.
 
 | # | Fix | Where |
 |---|---|---|
 | 1 | **Make CI run, and let outsiders in.** Make both `scienceverse/pytacheck` and `scienceverse/pytacheck-modules` public (decision 13 (decided 2026-09-27: (a)); the simplest route for AGPL §13, fork-based contributions and a public catalog). Adding the `PYTACHECK_READ_TOKEN` secret is only a stopgap: it fixes maintainer PRs, never fork PRs, which get no secrets. Until the store is public, pytacheck keeps the token fetch path (§4.11), so no user is cut off. **Partly done** (pytacheck-modules#1): store CI runs on a self-hosted runner and passes, with the `PYTACHECK_READ_TOKEN` secret set. Both repositories are still private | store and pytacheck settings |
-| 2 | **Re-pin** to pytacheck's main branch, or a tag, once `scienceverse/pytacheck#1` merges. Make the scaffold derive its pin from the installed version instead of a constant. **Partly done**: pytacheck-modules#2 (open) re-pins the store to `claude/elegant-fermat-eo7s89`, the head of `scienceverse/pytacheck#1`, since pytacheck's main holds only the initial commit; pytacheck's scaffold names the same branch. The move to main and the derived scaffold pin are not done | `check.yml:39`, `README.md:16,37`, `CONTRIBUTING.md:9,16`; pytacheck `packs/scaffold.py:24-26` |
+| 2 | **Re-pin** to pytacheck's main branch, or a tag, once `scienceverse/pytacheck#1` merges. Make the scaffold derive its pin from the installed version instead of a constant. **Partly done**: pytacheck-modules#3 (merged 2026-09-28) moved the store to `@main`, and pytacheck's scaffold writes the same spec. The derived scaffold pin is not done | `check.yml:39`, `README.md:16,37`, `CONTRIBUTING.md:9,16`; pytacheck `packs/scaffold.py:23` |
 | 3 | **Rebuild index.json** (the push-to-main job commits it once CI runs), and again from the public repository once it is public. **Partly done** (pytacheck-modules#1): 40cc467 rebuilt it, and the index job on main found it up to date after the merge. The rebuild from the public repository waits | `index.json` |
 | 4 | **Licence wording:** "a licence on the §5.4 list" for packs, in place of the CC0-only-for-presets and OSI wording; pytacheck's `check.py:284` message to match | `REVIEW.md:22`, `CONTRIBUTING.md:23` |
 | 5 | **Scope the read token to one step.** Move `PYTACHECK_READ_TOKEN` out of the workflow-level `env` onto the install step; run pack code and tests with `permissions: {}`; commit index.json from a separate job on main (§4.8). **Partly done** (pytacheck-modules#1): the token reaches only the install steps. The separate `index` job on main, which commits index.json, was already there before #1. The `check` job still runs pack code and tests with `contents: read` | `check.yml` |
@@ -603,10 +601,9 @@ What metacheck needs so both packages read the same registry, in about 150 lines
 | Package | Days (E) | Content | Depends on |
 |---|---:|---|---|
 | **TIERS** | 2.5 | the provisional `validation.json` snapshot at `src/pytacheck/resources/status/validation.json` (§2.3), labels, policies, `status=` everywhere, `dropped_reasons`, `init`, report badges and box, the `metacheck::validated` alias and its five test files (§3.2), removal of `DEFAULT_MODULES`. Gate: the snapshot's schema, a built-in entry for each module, `select(preset="metacheck::default", status="validated")` returns the 5 modules, and an installed store module named by a preset still runs by default | none; phase A. Owns `presets.py` before CORE-1d. The §8.1 asks are sent before it closes |
-| **STORE-2a** | 1.5 | §4.3 (without the bot), §4.4 (without the `yaml` row, which is DECL's), §4.5, §4.7 `CATALOG.md`, §4.8 additions (without the YAML modules bullet, which is DECL's), §4.10; the store fixes 1-6 of §6. Files: `packs/**` except the §4.11 rows | TIERS |
+| **STORE-2a** | 1.5 | §4.3 (without the bot), §4.4, §4.5, §4.7 `CATALOG.md`, §4.8 additions, §4.10; the store fixes 1-6 of §6. Files: `packs/**` except the §4.11 rows | TIERS |
 | **STORE-2b** | 1.5-2 | the deletions of §4.11. The `module.py`, `config.py` and `registry.py` rows go as a change request to the core agent | decision 13 (decided 2026-09-27: (a)); both repositories public and index.json rebuilt (§4.11 precondition); CORE-1d closed |
 | **PORT** | 5 | §5.2-§5.6, with the round-trip pilot of §5.2 | HARNESS-v2 (the canonicaliser), STORE-2a |
-| **DECL** | 3 | YAML modules (ARCHITECTURE.md §4.3 DECL, decision 2 (a)): the loader and its security rules (§4.8), marginal's conversion, YAML packs in `pack check`, `store build` (§4.4) and the scaffold, and `port translate`'s YAML output (§5.2) | CORE-1e, PATTERNS, MODSYS |
 
 The registry repository, its CI and the validator group are the team's work, not a pytacheck package.
 
@@ -629,7 +626,7 @@ The design needs work or agreement from people outside pytacheck. The pytacheck 
 
 ## 9. Decisions
 
-Numbered as in ARCHITECTURE.md §6, which carries the full list. All 23 decisions there are decided (maintainer, 2026-09-27), all as recommended except 2, which takes (a), and 3, which takes (b). Neither is in this table, so every row here takes its recommendation: (a), and for decision 20 also uploads (i) and counts (i).
+Numbered as in ARCHITECTURE.md §6, which carries the full list. All 23 decisions there are decided (maintainer, 2026-09-27), all as recommended except 3, which takes (b); decision 2 was changed to (c), the recommendation, on 2026-09-28. Neither 2 nor 3 is in this table, so every row here takes its recommendation: (a), and for decision 20 also uploads (i) and counts (i).
 
 | # | Decision | Recommendation |
 |---|---|---|
