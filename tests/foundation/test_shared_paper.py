@@ -10,36 +10,23 @@ paper modules of the accuracy matrix, equals stat_check run alone.
 
 from __future__ import annotations
 
+import tomllib
 from pathlib import Path
 
 import pytest
 
 import pytacheck as pc
+from parity.accuracy import MATRIX_FILE
 from parity.canonical import canonical
 from pytacheck.module import module_run, run_session
 from tests.httpmock import no_network
 
-#: the accuracy matrix's offline paper modules (parity/accuracy/matrix.toml) but stat_check
-OTHERS = (
-    "all_p_values",
-    "all_urls",
-    "coi_check",
-    "coi_check_oi",
-    "ethics_check",
-    "funding_check",
-    "funding_check_oi",
-    "marginal",
-    "open_practices",
-    "ref_accuracy",
-    "ref_consistency",
-    "ref_miscitation",
-    "ref_replication",
-    "ref_retraction",
-    "ref_summary",
-    "stat_effect_size",
-    "stat_p_exact",
-    "stat_p_nonsig",
-)
+#: the accuracy matrix's offline paper modules but stat_check, in the matrix's order
+OTHERS = [
+    m
+    for m in tomllib.loads(MATRIX_FILE.read_text(encoding="utf-8"))["papers"]["modules"]
+    if m != "stat_check"
+]
 
 #: matrix inputs on which stat_check finds statistics (red and green)
 INPUTS = [
