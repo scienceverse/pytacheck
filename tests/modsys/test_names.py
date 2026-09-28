@@ -224,3 +224,42 @@ def test_an_entry_file_one_typo_from_a_listed_pack(ms) -> None:
         router.get(codeload("jane/fieldz", REV_C)).respond(content=tarball(dir_files(own)))
         _, issues = store_build(root, check=True)
     assert "one typo from the pack 'fields'" in _name_issues(issues)["packs/fieldz"]
+
+
+# --- a trailing newline never passes a name check ---------------------------------------
+
+
+def test_a_module_file_with_a_trailing_newline_is_not_a_module(tmp_path) -> None:
+    from pytacheck.packs.manifest import Pack
+
+    (tmp_path / "check_a.py").write_text("x = 1\n")
+    (tmp_path / "check_b\n.py").write_text("x = 1\n")
+    pack = Pack(name="lab", root=tmp_path, kind="path", trust="local")
+    assert pack.modules() == ["check_a"]
+    assert pack.has_module("check_a")
+    assert not pack.has_module("check_b\n")
+
+
+def test_a_preset_name_with_a_trailing_newline_is_refused() -> None:
+    from pytacheck.packs.manifest import validate_preset
+
+    validate_preset("fast", {})
+    with pytest.raises(PackError, match="Invalid preset name"):
+        validate_preset("fast\n", {})
+
+
+def test_a_store_name_with_a_trailing_newline_is_refused() -> None:
+    from pytacheck.packs.stores import StoreError, _validate_store_name
+
+    assert _validate_store_name("lab") == "lab"
+    with pytest.raises(StoreError, match="Invalid store name"):
+        _validate_store_name("lab\n")
+
+
+def test_scaffold_names_with_a_trailing_newline_are_refused(tmp_path) -> None:
+    from pytacheck.packs.scaffold import module_template, pack_new
+
+    with pytest.raises(ValueError, match="only letters"):
+        module_template("my_check\n", tmp_path)
+    with pytest.raises(PackError, match="Invalid module name"):
+        pack_new("lab", tmp_path, module="my_check\n")

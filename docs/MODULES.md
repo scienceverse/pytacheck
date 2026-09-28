@@ -508,6 +508,14 @@ pytacheck pack install ./my-pack    # use it live while developing (edits apply 
 pytacheck modules --pack my-pack
 ```
 
+**Names.** A pack name is 2 to 40 lowercase letters, digits, `_` or `-`, and
+starts with a letter. It may not start with `official` or `scienceverse`
+(ignoring `-` and `_`), and `metacheck`, `pytacheck`, `local` and `modules` are
+taken. A module name is letters, digits and `_`, and starts with a letter.
+In the official store, a new pack or module name may not be the same as, or one
+typo (one letter added, removed or changed, or two swapped) from, a name
+already in use, so a typo cannot pick up someone else's code.
+
 `pack.json`:
 
 ```json

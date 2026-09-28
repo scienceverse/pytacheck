@@ -462,7 +462,7 @@ def split_ref(ref: Any) -> tuple[str, str] | None:
     """
     if not isinstance(ref, str) or "::" not in ref:
         return None
-    m = _QUALIFIED_RE.match(ref)
+    m = _QUALIFIED_RE.fullmatch(ref)
     if m is None:
         return None
     if _allow_local() and any(
@@ -522,7 +522,7 @@ def _locate(key: str) -> tuple[str, Any]:
             if candidate.is_file():
                 return ("file", candidate)
     problems: list[str] = []
-    if _MODULE_NAME_RE.match(key):
+    if _MODULE_NAME_RE.fullmatch(key):
         from pytacheck.packs.registry import find_module, registry
 
         try:

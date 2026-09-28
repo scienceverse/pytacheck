@@ -376,7 +376,7 @@ def store_indexes(*, refresh: bool = False) -> tuple[dict[str, dict[str, Any]], 
 
 
 def _validate_store_name(name: Any) -> str:
-    if not isinstance(name, str) or not PACK_NAME_RE.match(name):
+    if not isinstance(name, str) or not PACK_NAME_RE.fullmatch(name):
         raise StoreError(
             f"Invalid store name {name!r}: use 2-40 lowercase letters, digits, '_' or '-'"
         )

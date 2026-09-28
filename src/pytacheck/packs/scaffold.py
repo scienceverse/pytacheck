@@ -51,9 +51,9 @@ def module_template(
     Every ``module_name`` in the template is replaced, as in R. Unlike R, an
     existing file is not overwritten unless ``overwrite=True``.
     """
-    if not re.match(r"^[a-zA-Z0-9_]+$", str(module_name)):
+    if not re.fullmatch(r"[a-zA-Z0-9_]+", str(module_name)):
         raise ValueError("The module_name must contain only letters, numbers, and _")
-    if not re.match(r"^[A-Za-z]", module_name):
+    if not re.match(r"[A-Za-z]", module_name):
         raise ValueError("The module_name must start with a letter (it is a Python function)")
     text = _template("module.py.tmpl").replace("module_name", module_name)
     folder = Path(path)
@@ -85,7 +85,7 @@ def pack_new(
 
     validate_pack_name(name)
     module = module or f"{name.replace('-', '_')}_example"
-    if not re.match(r"^[A-Za-z][A-Za-z0-9_]*$", module):
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", module):
         raise PackError(f"Invalid module name {module!r}")
     root = Path(path) / name
     if root.exists() and any(root.iterdir()):

@@ -483,7 +483,7 @@ def get_pack(name: str, *, allow_local: bool = True) -> Pack:
 
 def find_module(name: str, *, allow_local: bool = True) -> list[Pack]:
     """The non-built-in active packs that provide a module called *name*."""
-    if not MODULE_NAME_RE.match(name):
+    if not MODULE_NAME_RE.fullmatch(name):
         return []
     return [
         p

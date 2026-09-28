@@ -105,7 +105,7 @@ def _pack_fields(folder: Path, manifest: Mapping[str, Any]) -> dict[str, Any]:
     names = sorted(
         p.stem
         for p in folder.glob("*.py")
-        if not p.name.startswith("_") and MODULE_NAME_RE.match(p.stem)
+        if not p.name.startswith("_") and MODULE_NAME_RE.fullmatch(p.stem)
     )
     modules = []
     for n in names:
