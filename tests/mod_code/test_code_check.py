@@ -1094,7 +1094,11 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
             for n in names
         ]
     )
-    with warnings.catch_warnings():
+    # the refused files are then streamed from their URLs: serve recorded
+    # responses only (a 404)
+    from tests.httpmock import replay
+
+    with replay("apis"), warnings.catch_warnings():
         warnings.simplefilter("ignore")
         mo = module_run(fake_repo_check(table), "code_check")
     assert counts and all(c == {"https://osf.io/x": 5} for c in counts)
@@ -1127,7 +1131,7 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
             for n in [*names, "bundle.zip"]
         ]
     )
-    with warnings.catch_warnings():
+    with replay("apis"), warnings.catch_warnings():
         warnings.simplefilter("ignore")
         mo = module_run(fake_repo_check(zipped), "code_check")
     assert len(counts) == 2 and all(c == {"https://osf.io/x": 6} for c in counts)
@@ -1159,14 +1163,19 @@ def test_per_paper_pin_check_uses_the_module_download_options(
             for n in ("analysis.R", "renv.lock")
         ]
     )
-    module_run(
-        fake_repo_check(table),
-        "code_check",
-        download=False,
-        max_file_size=7,
-        max_download_size=9,
-        cache=True,
-    )
+    # without a download the files are streamed from their URLs: serve recorded
+    # responses only (a 404)
+    from tests.httpmock import replay
+
+    with replay("apis"):
+        module_run(
+            fake_repo_check(table),
+            "code_check",
+            download=False,
+            max_file_size=7,
+            max_download_size=9,
+            cache=True,
+        )
     pin_calls = [c for c in calls if "max_file_size" in c]
     assert len(pin_calls) == 2  # the whole-run check and the per-paper check
     for c in pin_calls:

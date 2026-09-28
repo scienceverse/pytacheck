@@ -8,6 +8,7 @@ import pytacheck as pc
 from parity.cases import load_cases
 from pytacheck.module import _builtin_names
 from pytacheck.packs.check import metadata_issues, run_issues
+from tests.httpmock import no_network
 
 BUILTINS = list(_builtin_names())
 OFFLINE = [
@@ -26,7 +27,11 @@ def test_module_metadata(name: str) -> None:
 
 @pytest.mark.parametrize("name", OFFLINE)
 def test_module_does_not_mutate_paper(name: str, demo: pc.Paper) -> None:
-    issues = run_issues(pc.module_info(name), [("demopaper()", demo)])
+    # offline modules run offline: codebook_check runs data_check and repo_check
+    # when it has no data_check output, and they look up the demo paper's OSF and
+    # ResearchBox links; refused, they find no files and the run goes on
+    with no_network():
+        issues = run_issues(pc.module_info(name), [("demopaper()", demo)])
     if any(i.code == "run" for i in issues):
         pytest.skip(f"{name} needs resources not available offline")
     problems = [str(i) for i in issues if i.code in ("mutation", "traffic_light")]

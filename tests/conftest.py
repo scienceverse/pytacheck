@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import contextlib
+import ipaddress
 import os
+import socket
 import sys
 import warnings
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 import pytest
 
@@ -76,6 +80,68 @@ def _isolated_state(
 def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
     """Courtesy delays and retry backoff are pointless against mocks."""
     monkeypatch.setenv("PYTACHECK_NO_SLEEP", "1")
+
+
+# -- hygiene: a test not marked `network` never reaches the internet ---------------
+#
+# A request a test forgets to mock goes out for real, and the offline suite
+# (`-m "not network and not r"`) then waits on the network and fails without it.
+# A socket connecting to anything but loopback, or to a local proxy the
+# environment configures (`HTTPS_PROXY`, ...), fails the test there and then;
+# loopback and Unix sockets work as before. A name lookup alone is allowed: it
+# sends no request (`online()` makes one), and the connection that would follow
+# it is caught. `no_network()` (tests/httpmock.py) patches the same methods
+# inside a test and, when it ends, puts back what it found (this guard), so the
+# two nest.
+
+
+def _is_loopback(host: Any) -> bool:
+    try:
+        return ipaddress.ip_address(str(host).split("%", 1)[0]).is_loopback
+    except ValueError:
+        return bool(host == "localhost")
+
+
+def _local_proxy_ports() -> set[int]:
+    ports = set()
+    for name in ("http_proxy", "https_proxy", "all_proxy"):
+        for value in filter(None, (os.environ.get(name), os.environ.get(name.upper()))):
+            url = urlsplit(value if "://" in value else f"http://{value}")
+            with contextlib.suppress(ValueError):  # not a port number
+                if _is_loopback(url.hostname):
+                    ports.add(url.port or 80)
+    return ports
+
+
+@pytest.fixture(autouse=True)
+def _no_internet(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> None:
+    if request.node.get_closest_marker("network"):
+        return
+    proxies = _local_proxy_ports()
+    connect, connect_ex = socket.socket.connect, socket.socket.connect_ex
+
+    def check(sock: socket.socket, address: Any) -> None:
+        if sock.family not in (socket.AF_INET, socket.AF_INET6):
+            return
+        local = _is_loopback(address[0])
+        if local and address[1] not in proxies:
+            return
+        pytest.fail(
+            f"the test reached for the internet (connect to {address!r}"
+            f"{', a proxy' if local else ''}): mock the request (tests/httpmock.py) "
+            "or mark the test `network`"
+        )
+
+    def guarded_connect(self: socket.socket, address: Any) -> None:
+        check(self, address)
+        return connect(self, address)
+
+    def guarded_connect_ex(self: socket.socket, address: Any) -> int:
+        check(self, address)
+        return connect_ex(self, address)
+
+    monkeypatch.setattr(socket.socket, "connect", guarded_connect)
+    monkeypatch.setattr(socket.socket, "connect_ex", guarded_connect_ex)
 
 
 # -- hygiene: tests write to tmp_path, never into the checkout's root ---------------
