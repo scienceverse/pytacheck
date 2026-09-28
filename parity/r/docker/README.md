@@ -32,8 +32,9 @@ another name.
 Rebuild when `upstream/metacheck` moves: the wrapper then asks for the new
 commit's image and says it is missing. Also rebuild after a change to the lock
 file, `install-suggests.R` or the Dockerfile. The tag stays the same then, and
-`build.sh` replaces the image under it. Keep the Dockerfile in step with
-`parity.yml`: the same base image digest and httptest2 commit.
+`build.sh` replaces the image under it (`docker image prune` then frees the
+old one's disk). Keep the Dockerfile in step with `parity.yml`: the same base
+image digest and httptest2 commit.
 
 To keep a copy of a working image outside Docker:
 `docker save pytacheck-r-reference:<tag> | gzip > r-reference.tar.gz`, and
@@ -45,7 +46,7 @@ To keep a copy of a working image outside Docker:
 export PYTACHECK_RSCRIPT=$PWD/parity/r/docker/Rscript
 uv run python -m parity generate --area core
 uv run python -m parity accuracy --generate -m marginal
-git status     # unchanged goldens are rewritten with the same bytes
+git status     # clean: the goldens come out byte for byte
 ```
 
 The `Rscript` wrapper runs `Rscript` in the image with `docker run`:
@@ -53,10 +54,10 @@ The `Rscript` wrapper runs `Rscript` in the image with `docker run`:
 - as your user and group, on the host's network, with an empty `HOME` of its
   own (a tmpfs): nothing one run leaves in `~`, such as metacheck's data
   folder, reaches the next;
-- with `/tmp`, the checkout you call it from and the wrapper's own checkout
-  mounted at the same paths, each with its git common dir (worktrees and
-  submodules point into it). R sees no other host paths, except the working
-  directory when it is outside a checkout;
+- with `/tmp` (and `$TMPDIR`), the checkout you call it from and the
+  wrapper's own checkout mounted at the same paths, each with its git common
+  dir (worktrees and submodules point into it). R sees no other host paths,
+  except the working directory when it is outside a checkout;
 - with your environment, minus host-only variables (`PATH`, `HOME`, `XDG_*`,
   `R_LIBS_USER`, `R_LIBS_SITE` and the like). `R_LIBS` is kept: the accuracy
   report puts the suggests library on it;
