@@ -303,6 +303,21 @@ def test_rebinding_is_undone_everywhere(paper: pc.Paper) -> None:
         del sys.modules[late.__name__]
 
 
+def test_a_module_that_raises_out_of_the_probe_still_undoes_it(
+    monitoring: bool, paper: pc.Paper
+) -> None:
+    def state() -> tuple[Any, ...]:
+        mon = getattr(sys, "monitoring", None)
+        tools = [mon.get_tool(i) for i in (3, 4)] if mon else []
+        return (ts.text_search, copy.deepcopy, mod.module_run, readers._XlsxBook.__init__, tools)
+
+    before = state()
+    with pytest.raises(ModuleError), perf.Probe(monitoring=monitoring) as probe:
+        module_run(paper, busy, fail=True)
+    assert state() == before and perf._ACTIVE is None
+    assert probe.total().runs == 1
+
+
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="sys.monitoring is new in 3.12")
 def test_monitoring_frees_its_tool_and_falls_back_when_none_is_free() -> None:
     mon = sys.monitoring
