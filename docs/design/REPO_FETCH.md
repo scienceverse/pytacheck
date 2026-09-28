@@ -5,7 +5,7 @@
 - add caching, possibly with a bundled Redis;
 - say whether pytacheck and bibr should share a Redis layer.
 
-It adds two decisions (ARCHITECTURE.md §6, 22 and 23) and two packages (FETCH and CACHE, §8), and it amends BATCH_DESIGN's R5, R6, N1, §3.5, §4.1, P3-2 and §7. Nothing in `src/` changes until the decisions are made.
+It adds two decisions (ARCHITECTURE.md §6, 22 and 23) and two packages (FETCH and CACHE, §8), and it amends BATCH_DESIGN's R5, R6, N1, §3.5, §4.1, P3-2 and §7. The maintainer decided both on 2026-09-27, each as recommended: 22 (a2) and 23 (a) (§9). Nothing in `src/` has changed for them yet.
 
 **Evidence markers.** `scratchpad/` means `/tmp/claude-1000/-home-jakub-dev-pytacheck--claude-worktrees-pytacheck-scienceverse-transfer-09704e/3c3979d0-9ad6-438c-9171-6e13a6483378/scratchpad`.
 - **(M)**: measured on 2026-09-27 at 86564608, anonymously (no token, no email, `trust_env=False`), from one workstation and one IP. Since 86564608 only CI files have changed.
@@ -37,8 +37,8 @@ A separate bug makes `data_check` download 500.5 MiB to get 4.2 KB **(M)**. R ha
 |---|---|---|
 | **Transport** | The shared client speaks HTTP/1.1 to every host (RF-1). This must land before any change that raises concurrency | BATCH-a |
 | **Batching** | Per-host work queues across repositories; OSF id canonicalisation, bulk id lookups and leaf-skip traversal; no wasted HEADs; parallel zip peeks with suffix ranges; reuse of peeked bytes; one download scheduler; archives shared across modules (RF-2 to RF-10, §3) | FETCH, LINKS, REPO, BATCH-b |
-| **Cache store** | One `CacheStore`: the in-run memo, then a file store on the machine, then an optional Redis/Valkey backend chosen by URL. It holds repository listings that are validated on every run, immutable, or kept for a short TTL, plus zip-peek indexes and the request ledger. File bytes go to a content-addressed blob store on disk, never to Redis (§5) | CACHE |
-| **OSF's limits** | OSF publishes 100 requests/h for anonymous clients. A per-identity request ledger enforces OSF's windows of a minute or longer across processes and runs, and `OSF_PAT` is recommended when a run would exceed them (§2.2, decision 23) | BATCH-a, CACHE |
+| **Cache store** | One `CacheStore`: the in-run memo, then a file store on the machine, then an optional Redis/Valkey backend chosen by URL, which waits until a second `pytacheck serve` replica is planned (decision 22 (decided 2026-09-27: (a2))). It holds repository listings that are validated on every run, immutable, or kept for a short TTL, plus zip-peek indexes and the request ledger. File bytes go to a content-addressed blob store on disk, never to Redis (§5) | CACHE |
+| **OSF's limits** | OSF publishes 100 requests/h for anonymous clients. A per-identity request ledger enforces OSF's windows of a minute or longer across processes and runs, and `OSF_PAT` is recommended when a run would exceed them (§2.2, decision 23 (decided 2026-09-27: (a))) | BATCH-a, CACHE |
 
 **Headline targets (E, §7):**
 
@@ -49,7 +49,7 @@ A separate bug makes `data_check` download 500.5 MiB to get 4.2 KB **(M)**. R ha
 | psy737 `repo_check` | 47.3 s | ≈ 8-14 s | ≈ 1-2 s |
 
 **Redis and bibr.**
-- **Agreed:** Redis, or better Valkey, as an optional tier for server deployments, bundled in the compose stack.
+- **Agreed:** Redis, or better Valkey, as an optional tier for server deployments, bundled in the compose stack. With one platform server (§9) it can wait: decision 22 (decided 2026-09-27: (a2)) ships the file tier first, behind the same interface.
 - **Not agreed:** a layer shared with bibr. bibr never calls a repository host, so it would give datacheck 0 cache hits.
   - No other namespace is shared either: bibr's Crossref cache is for another host (`api.crossref.org`, pytacheck uses `api.labs.crossref.org`), and the two LLM caches use different keys and formats.
   - Sharing would couple eviction policy, credentials and deploys (§6.2).
@@ -208,7 +208,7 @@ Source: `scratchpad/osfrate/`.
 **What this means:**
 1. Anonymously, the published limit binds on every axis, and it is tighter than R. R already goes past 100/h after 2-3 OSF-heavy papers.
 2. With a token, only 10,000/day is published. Per-second rate and concurrency fall back to R's bound.
-3. Decision 23 recommends reading R's bound as a **host envelope**: at most 10 in flight (R's `max_active`), plus OSF's windows. The strict reading, 1 in flight per call site, forbids OSF fan-out.
+3. Decision 23 (decided 2026-09-27: (a)) reads R's bound as a **host envelope**: at most 10 in flight (R's `max_active`), plus OSF's windows. The strict reading, 1 in flight per call site, forbids OSF fan-out.
 4. **N1's `HostPolicy` cannot express this** with one (rate, burst, concurrency). It needs:
    - **path scopes**, since files-list and the provider list share the prefix `/v2/nodes/{id}/files/`;
    - **several windows per scope**;
@@ -283,7 +283,7 @@ R4 applies to each change: outputs must be provably identical when every request
 | **RF-2** | BL-1 as planned (rolling window, no trailing sleep). Every per-dataset `_query` loop becomes one `batch_query` per host, and each URL keeps `_query`'s error isolation: an exception gives `None` for that URL alone, and `RequestAbort` still propagates. The PsychArchives and DSpace 7 loops, which send dependent `http.request` chains with no sleep, run their URLs in parallel through the limiter | `http.py:314-325`; `_query` loops: `dataverse.py:567-582, 1383-1395`, `figshare.py:398-409`, `fourtu.py:150-160`, `reshare.py:144`, `mendeley.py:134`, `dataone.py:271-282`, `dryad.py:220`; serial `http.request` loops: `psycharchives.py:611`, `dspace7.py:335` | −2.0 s on the demo, −5.5 s on psy737 **(M)**; 0.5 s per `_query` dataset request elsewhere | dedup only; per-URL errors isolated as today | BATCH-a (core), FETCH (call sites) |
 | **RF-3** | One work queue per host across a paper's repositories: every OSF id at once, registration parents through the same queue, `list_git` threaded, all through the N1 limiter. Errors isolated per repository; assembly in input order | `_repo_check.py:610-621, 683-687, 792-810` | the OSF listing approaches its slowest project: 22.7 s → ≈ 8-9 s (E: `all_k4`). 51% of psychology OSF papers make 2 or more listing calls | order preserved | FETCH |
 | **RF-4** | OSF traversal: (a) the memo key is the canonical id (`osf_check_id`), which also reuses a registration's parent listing; (b) bulk `filter[id]` lookups for nodes and registrations; misses keep today's `/guids/{id}/` lookup, with the trailing slash (§2.3); (c) RF-4′'s leaf skip (§2.3); (d) the files URL is built from the id, so a node's record and its files request run together, while its `/children` request waits for (c)'s count and is sent only when the count is above 0 | `osf.py:314-327, 350-364, 447-487`; `osf_helpers.py:529-548` | psy737 −32 of 63 wire requests (−14.4 s serial) and critical path 13.98 → ≈ 7-8 s (E, `research/code-map.md`); −16.6% of psychology listing calls (E); demo `/children` 10 → 2 (E) | identical (count 0 ⇒ empty `/children`, M 13/13; ids re-associated). The fixture redactors must strip `related_counts`: `tests/mod_repo_check/parity_support.py:35, 40-55` and `tests/archives_osf/osfmock.py:28, 32-45` | FETCH |
-| **RF-5** | Drop the wasted HEADs. The GitHub/GitLab existence HEAD becomes the API's 404 (`github.py:400`, `gitlab.py:77`), and download reuses the listing's repository. The OSF `?zip=` HEAD is skipped (it is always 501). The GitHub zipball's size HEAD goes too: today's size warning reads the tree's blob sizes instead, and the cap itself stays with RF-8 (U-5) | `github.py:400`; `gitlab.py:77`; `download.py:1731, 1906-1951` | 2 requests on the demo (its two `?zip=` HEADs, both 501), plus 3 per GitHub repository (both existence HEADs and the zipball HEAD) and 2 per GitLab repository; api.github.com calls 4 → 3 per repository | identical, except the OSF zip gate (U-1, §4) | FETCH |
+| **RF-5** | Drop the wasted HEADs. The GitHub/GitLab existence HEAD becomes the API's 404 (`github.py:400`, `gitlab.py:77`), and download reuses the listing's repository. The OSF `?zip=` HEAD is skipped (it is always 501). The GitHub zipball's size HEAD goes too: it never gives a size (U-5), so the size warning reads the tree's blob sizes instead, which is new behaviour, and the cap itself stays with RF-8 | `github.py:400`; `gitlab.py:77`; `download.py:1731, 1906-1951` | 2 requests on the demo (its two `?zip=` HEADs, both 501), plus 3 per GitHub repository (both existence HEADs and the zipball HEAD) and 2 per GitLab repository; api.github.com calls 4 → 3 per repository | identical, except the OSF zip gate (U-1, §4) | FETCH |
 | **RF-6** | zip_peek runs in parallel across zips through the limiter. A suffix range `bytes=-131072` replaces HEAD plus range, with the size read from `content-range` (M: a 206 with `bytes 5386-6409/6410`). A file whose listed size fits the window is fetched whole. A server that answers 200 falls back to HEAD | `repo_check.py:591-630`; `data_check.py:884-901`; `zip_peek.py:235-285, 315-363` | 13.6-16.05 s → ≈ 5 s (E: the longest single GET) | identical | FETCH |
 | **RF-7** | Zip members: keep the peeked bytes. When the archive fits the window, extract locally with 0 requests; otherwise send one coalesced range per member, in parallel. Fix the member-cache path (U-4) | `zip_peek.py:332-344, 464-471, 529-530`; `download.py:1452-1456, 1495-1500` | 4.9 s → 0; the same-process re-run 4.8 s → 0 **(M baseline)** | identical | FETCH |
 | **RF-8** | One download scheduler: all hosts' whole-repository zips concurrently under per-host caps; `_remote_size` HEADs in parallel, or skipped when the listing gives a size; the serial remainder on per-host threads; large files inside the pool; file blobs read from and written to the store by the listing's hash (§5.1). The GitHub zipball is capped by the want-set: small want-sets use per-file raw fetches, but only when the tree has no `.gitattributes` and no LFS pointers, since `git archive` applies export-ignore, export-subst and eol rules and may include LFS content, and raw fetches do not; otherwise the zipball | `download.py:1562, 1715-1946, 1978-2002` (becomes `archives/fetch.py`) | downloads 37-42 s → ≈ 8-12 s (E); elife70119's zipball 51.8 MB → ≈ 5 KB (M baseline) | identical | LINKS (the fetch.py engine) |
@@ -299,20 +299,20 @@ R4 applies to each change: outputs must be provably identical when every request
 
 ---
 
-## 4. Bugs found (U-entry candidates)
+## 4. Bugs found
 
 | # | Bug | Where (R) | In R too? | Effect | Fix | Package |
 |---|---|---|---|---|---|---|
-| U-1 | **The OSF zip gate never refuses.** `_remote_content_length` ignores the status: OSF answers a HEAD on `?zip=` with 501 and `Content-Length: 0`, which reads as 0 bytes. `node_osf_n` counts only the rows passed in, and data_check passes only the wanted subset | `download.py:615-633, 1731-1740`; `data_check.py:926-940` | **yes**: `R/repo-download.R:205-217, 1519, 1547-1552`; `R/code_check.R:289` | elife70119: 500.5 MiB and 45-101 s for 4.2 KB **(M)** | A non-2xx HEAD means the size is unknown. Gate on the summed listing sizes, and count the node's full listing (the `repo_file_counts` data_check already computes, `:929-938`) | FETCH |
-| U-2 | **GitHub and GitLab hyperlinks are never found on bibr12 JSON or GROBID TEI reads.** `_host_links` searches the url table's first column, which on those reads is `url_id` | `archives/github.py:331`; `text/search.py:255-256` | **yes**: `R/text_search.R:102`; `R/import-bibr12.R:57` | 0956797620970559.xml holds a github.com link twice and finds 0 repositories; fixing it recovers 7 GitHub and 1 GitLab repositories in the psychology corpus **(M)**. On biomedical papers read from TEI or bibr12 JSON (GitHub 30-66% of repositories), most GitHub repositories would be missed **(E**, from the mechanism**)** | Search `href` explicitly, as the OSF, Zenodo, Dataverse and FSD finders already do. This raises GitHub traffic: about 10 api.github.com calls per eLife paper that links GitHub, against 60/h anonymous (E: 2.58 repositories × 4 calls), so it needs the GitHub policy in §2.2 | FETCH |
-| U-3 | The OSF memo stores errors and incomplete listings, against R5. In a long-lived server a transient error sticks until restart | `osf.py:488-490` | not checked | wrong results after a transient failure | store only complete, error-free listings | FETCH |
-| U-4 | The zip-member cache path is never hit: members are written where the reuse check does not look | `download.py:1452-1456` against `:1495-1500` | not checked | members fetched again on every run | RF-7 | FETCH |
-| U-5 | The GitHub zipball has no size cap and only warns | `download.py:1931-1958` | not checked | 51.8 MB for 10 wanted files of 4.4 KB **(M)** | RF-8 | LINKS |
-| U-6 | httpcore's `KeyError` escapes `http.request`'s retry | `http.py:218` | – | no retry at the HTTP layer. An OSF page becomes `request_failed`, which the OSF layer retries twice (`osf.py:604-609, 718-719`). A GUID batch fails the paper's whole OSF block (`osf_helpers.py:538-540`; `_repo_check.py:739, 763`). A parallel download fails its file (`download.py:1004-1005`). An unguarded caller such as `crossref_doi` raises (`db/crossref.py:719-724`) | gone with RF-1 | BATCH-a |
+| U-1 (U195) | **The OSF zip gate never refuses.** `_remote_content_length` ignores the status: OSF answers a HEAD on `?zip=` with 501 and `Content-Length: 0`, which reads as 0 bytes. `node_osf_n` counts only the rows passed in, and data_check passes only the wanted subset | `download.py:615-633, 1731-1740`; `data_check.py:926-940` | **yes**: `R/repo-download.R:205-217, 1519, 1547-1552`; the callers pass `[need_dl, ]` (`inst/modules/data_check.R:662`, `R/code_check.R:289`, `inst/modules/code_check.R:245`) | elife70119: 500.5 MiB and 45-101 s for 4.2 KB **(M)** | A non-2xx HEAD means the size is unknown. Gate on the summed listing sizes, and count the node's full listing (the `repo_file_counts` data_check already computes, `:929-938`) | FETCH |
+| U-2 (U196) | **GitHub and GitLab hyperlinks are never found on bibr12 JSON or GROBID TEI reads.** `_host_links` searches the url table's first column, which on those reads is `url_id`. pytacheck reads TEI as 12.x by default (D1) | `archives/github.py:331`; `text/search.py:255-256` | **yes**, for 12.x papers: `R/text_search.R:102`; `R/import-bibr12.R:56-59`. metacheck's `read()` of TEI gives the older format, whose first column is `href`, so R loses these links on bibr 12.x exports and 12.0 Grobid conversions only | 0956797620970559.xml holds a github.com link twice and finds 0 repositories; fixing it recovers 7 GitHub and 1 GitLab repositories in the psychology corpus **(M)**. On biomedical papers read from TEI or bibr12 JSON (GitHub 30-66% of repositories), most GitHub repositories would be missed **(E**, from the mechanism**)** | Search `href` explicitly, as the OSF, Zenodo, Dataverse and FSD finders already do. This raises GitHub traffic: about 10 api.github.com calls per eLife paper that links GitHub, against 60/h anonymous (E: 2.58 repositories × 4 calls), so it needs the GitHub policy in §2.2 | FETCH |
+| U-3 (U197) | The OSF memo stores errors and incomplete listings, against R5. In a long-lived server a transient error sticks until restart | `osf.py:488-490` | **yes**: `R/archive-osf.R:286`; with `cache = TRUE` the failure also goes to disk, because `.repo_info_ok()` looks only for an `error` column (`R/repo-info-cache.R:115-125`) | wrong results after a transient failure | store only complete, error-free listings | FETCH |
+| U-4 (U198) | The zip-member cache path is never hit: members are written where the reuse check does not look | `download.py:1452-1456` against `:1495-1500` | **yes**: `R/repo-download.R:1199-1210` against `:1311-1319` | members fetched again on every run | RF-7 | FETCH |
+| U-5 (U199) | The GitHub zipball and the GitLab archive have no size cap and only warn, and the warnings never fire: codeload's and GitLab's HEAD replies carry no Content-Length | `download.py:1931-1958` | **yes**: `R/repo-download.R:1839-1860, 1864-1911` | 51.8 MB for 10 wanted files of 4.4 KB **(M)** | RF-8 | LINKS |
+| U-6 | httpcore's `KeyError` escapes `http.request`'s retry | `http.py:218` | – | no retry at the HTTP layer. An OSF page becomes `request_failed`, which the OSF layer retries twice (`osf.py:604-609, 718-719`). A GUID batch fails the paper's whole OSF block (`osf_helpers.py:538-540`; `_repo_check.py:739, 763`). A parallel download fails its file (`download.py:1004-1005`). An unguarded caller such as `crossref_doi` raises (`db/crossref.py:719-724`) | gone with RF-1. httpcore's, not metacheck's, so not in the register: reported as [encode/httpx#3002](https://github.com/encode/httpx/issues/3002) (open); [encode/httpcore#1118](https://github.com/encode/httpcore/pull/1118) (open) would serialise the stream ids but not the read and write overlap behind errno 11 | BATCH-a |
 | – | `repo_info_cache()` is read nowhere; `PYTACHECK_BIBR_URL` in the compose file is read by nothing | `info_cache.py:35-41`; `docker-compose.yml:21` | – | dead settings | wire them to the store (§5.6), or remove them | CACHE |
-| – | Resolving a cache path creates that cache's `.metacheck_*` directory in the current directory (the repo-file, repo-listing and LLM caches each have one), and the documented `docker run --rm` loses its anonymous `/cache` volume, so every Docker CLI run starts cold | `archives/cache.py:20-42`; `README.md:27`; `Dockerfile:56, 60` | R's own cache directory rule was not checked | clutter; cold runs | the store lives in `config.cache_dir()`; the README mounts a named volume | CACHE |
+| – (U200) | Resolving a cache path creates that cache's `.metacheck_*` directory in the current directory (the repo-file, repo-listing and LLM caches each have one), and the documented `docker run --rm` loses its anonymous `/cache` volume, so every Docker CLI run starts cold | `archives/cache.py:20-42`; `README.md:27`; `Dockerfile:56, 60` | **yes** (U200): `R/cache.R:29-34`, and with `cache = FALSE` R still keeps ResearchBox archives there (`R/archive-researchbox.R:306`). In a read-only directory R's cache reads miss silently, where pytacheck's raise `PermissionError` | clutter; cold runs | the store lives in `config.cache_dir()`; the README mounts a named volume | CACHE |
 
-U-1 and U-2 change results (Band A), so each needs a deviation row under FIDELITY.md. U-5's fix does not: RF-8 still fetches every wanted file, only by a cheaper route. Reporting U-1 and U-2 to metacheck is the maintainer's call.
+U-1 and U-2 change results (Band A), so each needs a deviation row under FIDELITY.md. U-5's fix does not: RF-8 still fetches every wanted file, only by a cheaper route. U-1 to U-5 and the cache-directory row are U195-U200 in `docs/UPSTREAM_ISSUES.md` (status open), each checked against metacheck's source at the pin, for one report later (§9).
 
 ---
 
@@ -361,8 +361,8 @@ A root link and a component link in the same tree are separate entries, each sto
 | Tier | What | Default |
 |---|---|---|
 | 0: in-run memo | `RunContext.cache` (N2) | always |
-| 1: local store | one file per key under `config.cache_dir("store")` (the OS user cache directory from platformdirs, or `PYTACHECK_CACHE_DIR`, which is `/cache` in the image); JSON in a versioned envelope, written with `os.replace`; blobs under `blobs/<algo>/<ab>/<hash>`; a size-bounded LRU sweep at most once per run, which never touches the ledger files | on (decision 22) |
-| 2: networked | `RedisStore` (optional extra `pytacheck[redis]`, redis-py, MIT), chosen by `PYTACHECK_CACHE_URL=redis://…`, which also works for Valkey. Cache reads and writes fail open, with bibr's timeouts (2 s connect, 5 s per operation, `bibr/cache.py:70-71`), and after the first failure the tier is skipped for the rest of the run; prefix `pytacheck:v1:` | only when configured |
+| 1: local store | one file per key under `config.cache_dir("store")` (the OS user cache directory from platformdirs, or `PYTACHECK_CACHE_DIR`, which is `/cache` in the image); JSON in a versioned envelope, written with `os.replace`; blobs under `blobs/<algo>/<ab>/<hash>`; a size-bounded LRU sweep at most once per run, which never touches the ledger files | on (decision 22 (decided 2026-09-27: (a2))) |
+| 2: networked | `RedisStore` (optional extra `pytacheck[redis]`, redis-py, MIT), chosen by `PYTACHECK_CACHE_URL=redis://…`, which also works for Valkey. Cache reads and writes fail open, with bibr's timeouts (2 s connect, 5 s per operation, `bibr/cache.py:70-71`), and after the first failure the tier is skipped for the rest of the run; prefix `pytacheck:v1:` | only when configured. Under decision 22 (decided 2026-09-27: (a2)) it waits until a second `pytacheck serve` replica is planned |
 
 Reads go memo → local → networked, and writes go through to every tier that may hold the entry. With a networked tier the local tier still holds the blobs.
 
@@ -391,8 +391,8 @@ OSF's windows of a minute or longer (§2.2) span processes and runs, so an in-pr
   - A lock older than 10 s is stale, judged against the mtime of a file just touched in the same directory, so on the file server's clock.
   - A stale lock is broken only after re-reading its token and finding it unchanged, under a second `O_EXCL` lock (`<name>.break`), so two processes cannot both take it.
   - `cache_store="off"` and `"refresh"` do not reset the ledger, and the LRU sweep never deletes it.
-- **Redis backend.** A sorted set per (scope, identity), updated by one Lua script (ZREMRANGEBYSCORE, ZCARD, ZADD) that scores by the server's `TIME` and adds a unique member per request (the time plus a random suffix). Ledger keys carry **no TTL**, so `volatile-lru` never evicts them (§6.3). A set is trimmed only when its own identity sends again, so an identity that stops sending (a retired token) leaves its set behind, with at most one longest window of members. At most once per run, the backend SCANs the ledger keys and deletes the sets whose newest member is older than their longest window.
-- **When a window is exhausted** (decision 23):
+- **Redis backend.** It waits with the rest of the networked tier until a second `pytacheck serve` replica is planned (decision 22 (decided 2026-09-27: (a2))). A sorted set per (scope, identity), updated by one Lua script (ZREMRANGEBYSCORE, ZCARD, ZADD) that scores by the server's `TIME` and adds a unique member per request (the time plus a random suffix). Ledger keys carry **no TTL**, so `volatile-lru` never evicts them (§6.3). A set is trimmed only when its own identity sends again, so an identity that stops sending (a retired token) leaves its set behind, with at most one longest window of members. At most once per run, the backend SCANs the ledger keys and deletes the sets whose newest member is older than their longest window.
+- **When a window is exhausted** (decision 23 (decided 2026-09-27: (a))):
   - the limiter waits up to 60 s, or not at all under `skip_on_api_limit`. For a known reset, `http.request` already skips the wait under `skip_on_api_limit`, but otherwise sleeps until the reset with no cap (`http.py:209-213`);
   - beyond that, the request fails as a 429 would, with a message naming `OSF_PAT` (or, for GitHub, `GITHUB_PAT_GITHUB_COM`, `archives/github.py:418`) and the reset time. That needs a deviation row, since R would have sent the request (CACHE's gates, §8);
   - a run forecast to exceed the anonymous hour prints one warning at the start that recommends a token.
@@ -436,8 +436,8 @@ Source: `scratchpad/research/deployment.md`.
 | notebook, CLI, `pytacheck batch -j N` on one machine | memo + local store; workers share through files |
 | HPC | the local store on the shared filesystem (atomic rename, `O_EXCL` locks); no services |
 | Docker CLI | the local store on a named volume |
-| `pytacheck serve`, one replica | memo + local store on the `/cache` volume |
-| compose with several replicas; the scienceverse platform | + the networked tier: one cache and one ledger across replicas |
+| `pytacheck serve`, one replica; the scienceverse platform for the foreseeable future (§9) | memo + local store on the `/cache` volume |
+| compose with several replicas; the scienceverse platform once a second replica is planned | + the networked tier: one cache and one ledger across replicas. Under decision 22 (decided 2026-09-27: (a2)) it waits until then |
 
 - A local file read costs 19 µs, a network round trip to another host on a private network 3.3 ms (a ping, which is the floor for a Redis GET), and one OSF call about 0.3 s **(M)**.
 - The scienceverse platform plans to call `pytacheck serve` over HTTP, replacing the R plumber service; its checks worker runs one job at a time today (R).
@@ -470,6 +470,7 @@ Source: `scratchpad/research/deployment.md`.
 
 ### 6.3 The bundled server
 
+- **When.** Under decision 22 (decided 2026-09-27: (a2)) this server, its compose service and its CI test wait until a second `pytacheck serve` replica is planned (§8, CACHE).
 - **Server and licence.** **Valkey** (BSD-3), or Redis ≥ 8 under its AGPLv3 option. Not `redis:7.x`: 7.4 is RSALv2/SSPLv1.
   - pytacheck is AGPL-3.0-or-later.
   - Pulling an official image is not redistribution; shipping one inside the pytacheck image would be.
@@ -484,6 +485,7 @@ Source: `scratchpad/research/deployment.md`.
 - **Instance.** Its own instance, one per role as the platform already runs its Redis servers: about 512 MB, its own password, reachable only on the private network. Valkey is preferred.
 - **Privacy.** It holds only public metadata. Paper content stays per job, as the platform requires.
 - **Persistence.** A RAM-only instance restarts with an empty ledger, so it should keep AOF, or the operator accepts that window. The platform owner decides.
+- **Needed now?** No. The platform will run one server for the foreseeable future (§9), so the file store on its `/cache` volume is enough. The instance above is for when a second server is planned.
 
 ---
 
@@ -508,7 +510,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 
 ## 8. Plan changes
 
-**Decisions.** 22 (the store and Redis) and 23 (OSF's limits under R6), in ARCHITECTURE.md §6.
+**Decisions.** 22 (the store and Redis; decided 2026-09-27: (a2)) and 23 (OSF's limits under R6; decided 2026-09-27: (a)), in ARCHITECTURE.md §6.
 
 **Packages (E):**
 
@@ -516,7 +518,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 |---|---:|---|---|
 | **BATCH-a** | 2 → **3** | 6.5-9.5 | + RF-1 with its test and pool sizing; `HostPolicy` path scopes, several windows, identity and sliding-window logs; the OSF and GitHub policies (§2.2); an empty cookie jar for OSF hosts |
 | **FETCH** (new) | **4** | 9.5-13.5, after BATCH-a | RF-2's call sites, RF-3 to RF-7, U-1 to U-4, the OSF vector and git-SHA validators on CACHE's API, and the `repo_info_cache` call sites moved onto the store |
-| **CACHE** (new) | **4** | 9.5-13.5, after BATCH-a | §5 and §6.3: the store protocol, file backend, blob store, ledger, Redis backend and compose service, the switches and run-record fields, the dead settings |
+| **CACHE** (new) | **4**; ≈ 3 under decision 22 (decided 2026-09-27: (a2)), which defers the Redis backend, the compose service and the Valkey CI test | 9.5-13.5, after BATCH-a | §5 and §6.3: the store protocol, file backend, blob store, ledger, Redis backend and compose service, the switches and run-record fields, the dead settings |
 | **LINKS** | 7.5 → **8** | 16-24 (was 16-23.5) | + RF-8's scheduler, the zipball cap (U-5), and the download side of the blob store (read and write by the listing hash, through CACHE's API) in the `archives/fetch.py` engine |
 | **REPO** | unchanged | unchanged | RF-9's `RepoIndex.fetch` with the shared download directory; LINKS keeps the zip, and CODE-b moves code_check onto it; RF-3's queues arrive from FETCH; L7-6 stays |
 | **BATCH-b** | unchanged | unchanged | RF-10 (BL-2's HTTP memo) sits in front of the store |
@@ -540,6 +542,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 - **Order of work.** `repo_check.py` and `_repo_check.py` first, days 9.5-11, because REPO takes them over at day 13.5.
 
 **CACHE.**
+- **Under decision 22 (decided 2026-09-27: (a2))** the Redis backend, its compose service and its CI test wait until a second `pytacheck serve` replica is planned. So do the items below that serve only them: the `redis` extra, the Valkey service in `docker-compose.yml` and in CI, and the gates that test that tier: the Redis test, fail-open, and that no credentialed or view-only response reaches it.
 - **Files:**
   - `cache/**` (new);
   - `archives/{info_cache,cache}.py`;
@@ -552,7 +555,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
   - a Redis test against a Valkey service container in CI;
   - fail-open when the backend is down;
   - a credentialed or view-only response never reaches the networked tier, and a token caller is never served an `anon` OSF tree or id type;
-  - a deviation row under FIDELITY.md for a request the ledger refuses (decision 23), with a test that `skip_on_api_limit` fails it at once;
+  - a deviation row under FIDELITY.md for a request the ledger refuses (decision 23 (decided 2026-09-27: (a))), with a test that `skip_on_api_limit` fails it at once;
   - with the store off, outputs byte-identical to today on the full parity run and the accuracy gate;
   - NFS-safe writes (atomic rename, `O_EXCL` locks).
 
@@ -562,6 +565,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 - **The LINKS path** grows to 26.5 days, still under 27.
 - **Peak parallelism** on days 9.5-13.5 is 4-5 agents, under the plan's 7.
 - **Total:** ≈ 116.5 + 9.5 = **≈ 126 package-days in 36 packages**.
+- **Since this proposal.** Decisions 3 (b) and 2 (a) have moved the plan to a critical path of ≈ 29.5 days and ≈ 132 package-days in 37 packages (ARCHITECTURE.md §4.4). BATCH-b grew from 6 to 9 days and runs on days 18-27. The path through REPO and DATA-b now has 2.5 days of float, so a slip in BATCH-a or FETCH still delays REPO but moves the end only once it passes 2.5 days. ARCHITECTURE.md still schedules CACHE at 4 days, so the ≈ 1 day that decision 22 (a2) saves is not taken out of those totals.
 
 **Doc amendments made with this proposal:**
 - ARCHITECTURE.md: the header, §0, §2.6, §2.8, §3.2, §4.3, §4.4, §4.5, §4.6, §5.2, §5.3, §6 and Appendix A.
@@ -570,13 +574,14 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 
 ---
 
-## 9. Open questions for the maintainer
+## 9. The maintainer's answers (2026-09-27)
 
-1. **Which workload is the ~40 s?** The paper; the command (`repo_check` or `data_check`, CLI or Python); `cache=True` or not; a first or a repeated run; and the network. The demo gives 38.95 s cold and 35.6 s on a `cache=True` re-run, and a median psychology paper gives about 10 s (§1). If a median paper takes 40 s, look at `data_check`'s downloads, or at HTTP/2 backoff.
-2. **Two OSF test accounts** for the token-bearing traversal fixture (§8).
-3. **Upstream reports** of U-1 and U-2 to metacheck.
-4. **Early fixes.** RF-1 (one line), U-1, U-3 and RF-4(a) (the canonical OSF key) touch files that no phase-A package holds. They could land ahead of the rewrite as small PRs if the speed is wanted now. Without RF-1, today's 4-, 8- and 10-thread pools keep hitting the HTTP/2 race.
-5. **The platform.** Will it run more than one `pytacheck serve` replica? That decides whether it needs the networked tier.
+1. **Which workload is the ~40 s?** Not known; it probably came from a run with an LLM configured. The demo reproduces it without any LLM call (38.95 s cold, 35.6 s on a `cache=True` re-run, §1), so the repository fetches alone explain about 40 s. A median psychology paper gives about 10 s **(E)**.
+2. **Two OSF test accounts** for the token-bearing traversal fixture (§8): the maintainer will create them and send the details.
+3. **Upstream reports** of U-1 and U-2: collect them with the other metacheck bugs in `docs/UPSTREAM_ISSUES.md` for one report later. Done: U-1 to U-5 and the cache-directory row are U195-U200 there (§4).
+4. **Early fixes** of RF-1, U-1, U-3 and RF-4(a) ahead of the rewrite: not wanted. They land in their packages.
+5. **The platform** will run one `pytacheck serve` for the foreseeable future. The file store on its `/cache` volume is enough (§6.1), so decision 22 now recommends (a2): the file tier and its ledger first, and the Redis/Valkey backend when a second server is planned. **Decided (maintainer, 2026-09-27): (a2).**
+6. **OSF's limits** (decision 23): **Decided (maintainer, 2026-09-27): (a).** The request ledger enforces OSF's windows of a minute or longer, and `OSF_PAT` is recommended when a run would exceed the anonymous hour (§2.2, §5.5).
 
 ---
 

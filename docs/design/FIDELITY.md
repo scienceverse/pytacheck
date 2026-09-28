@@ -1,6 +1,6 @@
 # Pytacheck fidelity: results locked, presentation free
 
-**Status.** Draft 2 (2026-09-27), after review 3. Proposed; nothing here is implemented. It changes F1-F3 and F5 of ARCHITECTURE.md §1.1, and it adds harness package HARNESS-v2 (§11) to the plan in ARCHITECTURE.md §4.
+**Status.** Draft 2 (2026-09-27), after review 3. Decision 1 (b) of ARCHITECTURE.md §6 adopts its three bands (maintainer, 2026-09-27); nothing here is implemented. It changes F1-F3 and F5 of ARCHITECTURE.md §1.1, and it adds harness package HARNESS-v2 (§11) to the plan in ARCHITECTURE.md §4.
 
 **Evidence markers.**
 - **(M)**: measured in this session, from `parity.cases.load_cases()`, the case YAML and the source tree at f559c1be. The scripts are in `/tmp/claude-0/-home-user-pytacheck/b01f2e9f-255f-5b7e-9d0d-70c9d055b185/scratchpad/research/fidelity/` (`count_cases.py`, `count_priv.py`, `pres.py`, `val.py`), and review 3's scripts in `scratchpad/review3/` (`c1.py`-`c7.py`, `num.py`).
@@ -249,9 +249,9 @@ The goldens step (`upstream-sync.yml:153-166`) stays. What follows it changes:
 
 **The porting map shrinks with it.**
 - `porting/symbols.json` keeps exported functions, module entry points and pattern constants: at most 431 entries (1,127 − 696 dot-prefixed). The 772 private-target mappings go.
-- `porting/map/*.toml` (42 files, 1,924 lines) becomes one `porting/modules.toml` of about 150 lines (E: 30 modules × 5 lines). Each entry maps an R module to its Python module, its pattern-constant names and its validation snapshot.
+- `porting/map/*.toml` (42 files, 1,924 lines) becomes one `porting/modules.toml` of about 150 lines (E: 30 modules × 5 lines). Each entry maps an R module to its Python module, its pattern-constant names and its validation snapshot. For a YAML module, which ARCHITECTURE.md decision 2 (decided 2026-09-27: (a)) adds, the Python module is its `.yaml` file, and the pattern constant is its `search.patterns` list.
 - File mirroring goes, and so do the "Port of R/…" docstrings (`docs/PORTING.md:107`). A top-level `NOTICE` replaces them: "pytacheck is a modified Python translation of metacheck (© DeBruine, Mesquida, Werner, Lakens et al., AGPL-3.0-or-later), <url>@<pinned rev>, modified <date>". pytacheck has no NOTICE today.
-- **Pattern lists stay verbatim.** They are behaviour, and they are the cheapest signal from upstream. A test compares each constant with R's vector.
+- **Pattern lists stay verbatim.** They are behaviour, and they are the cheapest signal from upstream. A test compares each constant with R's vector. For a YAML module it reads the list from the file, so marginal's pattern stays checked after its conversion.
 
 HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbols.json` shrink, `porting/modules.toml` and the NOTICE (§11, step 7).
 
@@ -283,11 +283,11 @@ HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbol
 | Y2 | CHANGE | `_r/` (1,213 lines) keeps only the regex dialects, `.rds` and display collation |
 | Y3-Y5 | KEEP | Unaffected |
 | §2.13 rejections for performance, soundness or API reasons | KEEP rejected | Not fidelity questions |
-| §2.13 YAML modules | KEEP deferred | The F2 objection is gone. Declarative TOML checks stay deferred until a store author or the porting translator needs them (ARCHITECTURE.md decision 2 (c), §2.10) |
+| §2.13 YAML modules | DROP the rejection. Decision 2 (decided 2026-09-27: (a)) builds them in DECL (ARCHITECTURE.md §4.3) | The F2 objection is gone. A `pytacheck.module/1` YAML module keeps its pattern list verbatim, and the §7 test reads it from the file. marginal's conversion is its own PR, with the validator's approval and no deviation row (ARCHITECTURE.md §4.3 DECL) |
 | §2.13 `module_api` / store filtering | CHANGE | Filtering by validation status is now needed (ECOSYSTEM.md §3) |
 | §2.13 schema 2 | KEEP rejected | Packs keep their existing `validation` record; status comes from the registry (ECOSYSTEM.md §2.3) |
 | §2.13 document order | DROP the rejection | Band B allows it |
-| §2.13 corpus mode | KEEP deferred | Neighbour invariance is a correctness risk |
+| §2.13 corpus mode | DROP the rejection. Decision 3 (decided 2026-09-27: (b)) builds it in BATCH-b (ARCHITECTURE.md §4.3) | Neighbour invariance is still a correctness risk, so a module switches only after batch-equality compares its corpus rows exactly with paper mode's. That compares pytacheck with itself, not with R: the gate is 0 differences, and no deviation row can excuse one |
 | §3.4: R parser, `.rds`, user-visible regex semantics, business logic, statcheck's three-valued logic, coi agrep, ODS walker, SPV decoders, stat-output readers, archive and database clients, `html_text2`, Grobid TEI, UAX#29, bibr 12, tier-2 corpora | KEEP | They decide inputs and detections (Band A) |
 | §3.4 R number formatting | CHANGE | In the report renderer, plus `_r.format_num` for statout cells and LLM prompts (§8, item 2) |
 | §3.4 ICU-like collation | CHANGE | Only for sorted lists users see; audit the 55 `r_sort_key` call sites |
@@ -299,8 +299,8 @@ HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbol
 | §3.4 harness comparator | CHANGE | The canonicaliser goes in front |
 | §3.4 U-entries marked Kept | CHANGE | Keep only those that touch Band A |
 | §3.4 rejected dependencies | KEEP | Unrelated to fidelity |
-| Decision 1 (document order) | CHANGE to (b), unrecorded | Band B |
-| Decision 5 (plan) | CHANGE | Re-planned as phases A-D (ARCHITECTURE.md §4.4) |
+| Decision 1 (document order) | CHANGE to (b), unrecorded. **Decided (maintainer, 2026-09-27): (b).** | Band B |
+| Decision 5 (plan) | CHANGE. **Decided (maintainer, 2026-09-27): (a).** | Re-planned as phases A-D (ARCHITECTURE.md §4.4) |
 
 ---
 
@@ -315,6 +315,7 @@ HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbol
 7. **Order changes surprise users** even when they are free. Each PR that changes a module's default order adds a line to the CHANGELOG's unreleased section in the same PR, so the release notes list every such module. The order is documented per module.
 8. **No corpus for re-certification is in hand.** Upstream ships no validation data, and the Psychological Science papers may not be shareable. Without the team's full-paper ground truth, a Band A change in a validated module can only be signed off, never re-measured (§2.2, rule 1), and the validated label cannot be re-checked at a release (ECOSYSTEM.md §2.5).
 9. **The sign-off depends on the metacheck team.** The validator group, the corpus and the certifications are theirs (ECOSYSTEM.md §8.1). If they decline or do not answer, the CODEOWNERS entries stay with the maintainer, and Band A changes in validated modules wait (§2.2, rule 1).
+10. **marginal becomes a YAML module**, under ARCHITECTURE.md decision 2 (decided 2026-09-27: (a)). It is validated, and its behaviour then also depends on the loader and compiler in `declarative/`, which, like `core/**`, no validator owns. The conversion PR needs the validator's approval, unchanged lock digests and byte-identical report text (ARCHITECTURE.md §4.3 DECL). After it, every PR that touches `declarative/**` runs G1 on mod_marginal and G2; a Band A change there needs a row in `mod_marginal.toml` with the validator's sign-off; and each release's rerun covers the YAML form (ECOSYSTEM.md §2.5). If the validators ask, `declarative/**` joins their CODEOWNERS paths.
 
 ---
 
