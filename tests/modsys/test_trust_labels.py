@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+import httpx
 import pytest
 import respx
 
@@ -193,7 +194,9 @@ def test_sync_leaves_a_spoofed_pin_unlisted_on_later_syncs(store, ms) -> None:
 
 
 def test_the_label_comes_from_the_install_record_not_the_pin(ms) -> None:
-    ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, store=None, pin=False)
+    ms.install(
+        "demo", {"hello": mod_src("hello")}, rev=REV_A, store=None, reviewed="2026-09-01", pin=False
+    )
     ms.pin("demo", {"rev": REV_A, "store": "pytacheck", "reviewed": "2026-09-01"})
     pack = get_pack("demo")
     assert (pack.trust, pack.store, pack.reviewed) == ("unlisted", None, None)
@@ -249,9 +252,68 @@ def test_sync_keeps_a_listed_pack_unlisted_when_the_reinstall_is_declined(
     store.publish()
     capsys.readouterr()
     assert pack_install(yes=False) == []  # no terminal to ask on: not an error
-    assert "stays unlisted" in capsys.readouterr().err
+    captured = capsys.readouterr()
+    assert "stays unlisted" in captured.err
+    assert "Every pinned pack is installed" not in captured.out + captured.err
     assert _record(ms, REV_C)["store"] is None
     assert get_pack("demo").trust == "unlisted"
+
+
+def test_sync_says_why_it_installs_unlisted_files_again(store, ms, capsys) -> None:
+    store.add("demo", {"hello": mod_src("hello")}, tamper={"tree_sha256": "0" * 64})
+    tree = _listed_tree(ms)
+    ms.pin("demo", {"source": SOURCE, "rev": REV_C, "tree_sha256": tree, "store": "pytacheck"})
+    pack_install(yes=True)
+    store.entries["demo"]["tree_sha256"] = tree
+    store.publish()
+    capsys.readouterr()
+    pack_install(yes=True)
+    err = capsys.readouterr().err
+    assert "'demo' is installed as unlisted; the store 'pytacheck' now lists it" in err
+
+
+def test_sync_keeps_a_listed_pack_unlisted_when_the_reinstall_fails(store, ms, capsys) -> None:
+    entry = store.add("demo", {"hello": mod_src("hello")})
+    store.router.get(INDEX_URL, name="index").respond(404)
+    ms.pin(
+        "demo",
+        {"source": SOURCE, "rev": REV_C, "tree_sha256": entry["tree_sha256"], "store": "pytacheck"},
+    )
+    assert pack_install(yes=True)[0].trust == "unlisted"
+    store.publish()
+    store.router["tar-" + REV_C].mock(side_effect=httpx.ConnectError("offline"))
+    capsys.readouterr()
+    assert pack_install(yes=True) == []  # the files are installed and usable: not an error
+    captured = capsys.readouterr()
+    assert "stays unlisted" in captured.err
+    assert "offline" in captured.err
+    assert "Every pinned pack is installed" not in captured.out + captured.err
+    assert get_pack("demo").trust == "unlisted"
+
+
+def test_sync_of_unlisted_files_with_a_pin_that_has_no_source_is_not_an_error(ms) -> None:
+    ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, store=None, pin=False)
+    ms.pin("demo", {"rev": REV_A, "store": "pytacheck"})
+    assert pack_install(yes=True) == []
+    assert get_pack("demo").trust == "unlisted"
+
+
+def test_sync_looks_for_a_missing_pack_name_in_a_fresh_index_once_per_store(store, ms) -> None:
+    for name in ("demo", "two", "three"):
+        entry = store.add(name, {"hello": mod_src("hello")})
+        del store.entries[name]  # the store does not list these packs
+        ms.pin(
+            name,
+            {
+                "source": {"github": "example/store", "subdir": f"packs/{name}"},
+                "rev": REV_C,
+                "tree_sha256": entry["tree_sha256"],
+                "store": "pytacheck",
+            },
+        )
+    store.add("other", {"hello": mod_src("hello")})
+    assert len(pack_install(yes=True)) == 3
+    assert store.router["index"].call_count == 2  # the cached one, then one fresh
 
 
 def test_sync_of_a_pin_without_a_source_does_not_say_everything_is_installed(

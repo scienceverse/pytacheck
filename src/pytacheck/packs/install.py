@@ -715,6 +715,8 @@ def _trust_project_code(config: Any, *, yes: bool) -> int:
 
 
 def _sync(*, yes: bool) -> list[Pack]:
+    from rich.markup import escape
+
     config = load_config()
     done: list[Pack] = []
     problems: list[str] = []
@@ -754,14 +756,27 @@ def _sync(*, yes: bool) -> list[Pack]:
                 if not cand.store:
                     continue
                 todo += 1
+            if recheck:
+                ui.console().print(
+                    f"'{escape(name)}' is installed as unlisted; the store "
+                    f"'{escape(str(cand.store))}' now lists it, so it is installed again "
+                    "as a store pack."
+                )
             try:
                 done.append(_install(cand, scope=None, yes=yes))
             except Cancelled:
                 if not recheck:
                     raise
                 ui.console().print(
-                    f"'{name}' stays unlisted until you accept the reinstall "
+                    f"'{escape(name)}' stays unlisted until you accept the reinstall "
                     "(run `pytacheck pack install`)."
+                )
+            except PackError as exc:
+                if not recheck:
+                    raise
+                ui.console().print(
+                    f"'{escape(name)}' stays unlisted: it could not be installed again "
+                    f"as a store pack ({escape(str(exc))})."
                 )
         except PackError as exc:
             problems.append(f"{name}: {exc}")
@@ -781,8 +796,6 @@ def _enrich_from_store(cand: _Candidate, fresh: set[str] | None = None) -> None:
     store cannot be asked, the pack is installed as the unlisted source it is.
     *fresh* holds the stores already fetched again, so a sync does that once per store.
     """
-    from pytacheck.packs.stores import NotListedError
-
     if not cand.store or not cand.name:
         return
     store, cand.store = cand.store, None
@@ -792,8 +805,6 @@ def _enrich_from_store(cand: _Candidate, fresh: set[str] | None = None) -> None:
         if not listed and store not in fresh:  # the cached index may predate the listing
             fresh.add(store)
             entry, listed = _listing(cand, store, refresh=True)
-    except NotListedError:
-        listed = False
     except PackError as exc:
         cand.notes.append(
             f"The store '{store}' could not confirm the pin ({exc}): it is installed as an "
@@ -815,12 +826,15 @@ def _enrich_from_store(cand: _Candidate, fresh: set[str] | None = None) -> None:
 
 def _listing(cand: _Candidate, store: str, *, refresh: bool) -> tuple[dict[str, Any], bool]:
     """The store's entry for the pack, and whether it lists exactly the candidate's pin."""
-    from pytacheck.packs.stores import find_entry
+    from pytacheck.packs.stores import NotListedError, _find_entry
 
     assert cand.name
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        _, entry = find_entry(cand.name, store=store, refresh=refresh)
+        try:
+            _, entry = _find_entry(cand.name, store, refresh=refresh)
+        except NotListedError:
+            return {}, False
     source = _source_without_rev(entry.get("source"))
     if "path" in source:
         source["path"] = str(_store_path(store, cand.name, source["path"], entry.get("_location")))

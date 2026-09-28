@@ -236,9 +236,10 @@ is installed as `unlisted` (the consent card says so), and so is a pin whose
 store cannot be reached. A store lists one commit of a pack, so a team lock file
 that pins an older commit installs as `unlisted` once the store moves on. If the
 cached index is out of date, `pack install` fetches it again before it decides
-(once per store in one run). Files installed as `unlisted` are checked again on
-the next `pack install`, and become `store` once the store lists them; if you
-decline the reinstall, they stay `unlisted`.
+(once per store in one run, also for a pack name it does not list). Files
+installed as `unlisted` are checked again on the next `pack install`, and become
+`store` once the store lists them; if you decline the reinstall or it fails, they
+stay `unlisted`.
 
 The REST API server never installs packs and never runs local code: it runs
 built-in modules and installed packs only (`use(allow_local=False)`).
