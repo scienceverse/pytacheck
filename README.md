@@ -32,7 +32,7 @@ Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/scienceverse/pytacheck 
 import pytacheck as pc
 
 paper = pc.read("paper.json")          # bibr JSON, Grobid XML — or a PDF with pytacheck[bibr]
-pc.paper_write(paper, "checked")        # a bibr 12.x paper is saved as a bibr 12.0 file
+pc.paper_write(paper, "checked")        # a bibr 12.0 paper is saved as a bibr 12.0 file
 pc.module_list()                        # available checks
 out = pc.module_run(paper, "marginal")
 out.traffic_light, out.summary_text
@@ -62,9 +62,10 @@ once pull request #423 is merged, and pytacheck already does:
 * Grobid TEI is converted to 12.x: `pc.read("paper.tei.xml")`,
   `pc.grobid_to_bibr(...)`, `convert()` and the CLI all do this. Pass
   `schema_version=None` for metacheck's older conversion.
-* `pc.paper_write(paper)` saves a 12.x paper as a bibr 12.0 file. The bytes are the ones
-  metacheck writes, except that pytacheck is named as the converter. An older paper is
-  saved as before, and `schema_version=None` always saves the paper object.
+* `pc.paper_write(paper)` saves a paper read from a 12.0 export as a bibr 12.0 file. The
+  bytes are the ones metacheck writes, except that pytacheck is named as the converter.
+  An older paper is saved as before, a paper read from a later 12.x (12.1) is refused,
+  and `schema_version=None` always saves the paper object.
 
 A 12.x paper has these tables and fields:
 
