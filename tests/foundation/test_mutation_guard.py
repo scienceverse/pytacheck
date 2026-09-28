@@ -1,7 +1,7 @@
 """An in-place edit of ``p.text`` is seen by the next run (ARCHITECTURE.md §2.2, H0-9).
 
-Nothing caches a paper's text between calls, so a user who edits a table in
-place and runs again gets fresh results. Inside ``run_session()`` the same holds
+No cache may serve a paper's old text after an in-place edit, so a user who
+edits a table in place and runs again gets fresh results. Inside ``run_session()`` the same holds
 for ``text_search`` and for a module not run yet, while a repeated
 ``module_run`` returns its memo: edits made inside a table are not seen, as
 ``run_session``'s docstring and docs/MODULES.md say. The paper comes in three
@@ -64,9 +64,11 @@ def test_run_session_sees_the_edit_except_in_its_memo(paper: pc.Paper) -> None:
         edit(paper)
         assert len(pc.text_search(paper, "zzqq")) == 1
         assert seen(paper, "all_urls")  # not run yet in this session
-        # the documented contract: the repeated run is a memo hit and misses the edit;
-        # change this only together with run_session()'s docstring and docs/MODULES.md
-        assert not seen(paper, "ethics_check")
+        # the documented contract: the repeated run is a memo hit and misses the edit
+        assert not seen(paper, "ethics_check"), (
+            "a repeated module_run inside run_session() saw an in-place edit; if that is "
+            "intended, change run_session()'s docstring, docs/MODULES.md and this test together"
+        )
         assert (session.hits, session.misses) == (1, 2)
     assert seen(paper, "ethics_check")
 
