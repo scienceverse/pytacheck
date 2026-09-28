@@ -631,6 +631,43 @@ def test_check_reports_recordings_that_differ(
     assert "  fixtures: c" in out
 
 
+def test_check_fails_when_the_recording_differs_from_the_committed_one(
+    script: ModuleType,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The two recordings agree with each other, but not with the committed snapshots."""
+
+    def records(**values: str) -> dict[str, store.Record]:
+        return {i: {"ok": True, "value": {"t": "chr", "v": [v]}} for i, v in values.items()}
+
+    class Done:
+        returncode = 0
+
+        def __init__(self, out: Path) -> None:
+            store.write_set(out, "fixtures", "json", records(c="new"), {"c": "g"})
+
+        def communicate(self) -> tuple[str, None]:
+            return "", None
+
+    committed = tmp_path / "committed"
+    monkeypatch.setattr(store, "SNAPSHOT_DIR", committed)
+    monkeypatch.setattr(script, "_record_elsewhere", lambda out, seed, args: Done(out))
+    monkeypatch.setattr(script, "_on_recording_platform", lambda: True)
+    check = ["--check", "--only", "fixtures"]
+    store.write_set(committed, "fixtures", "json", records(c="new"), {"c": "g"})
+    assert script.main(check) == 0
+    assert "fixtures: equal to the committed snapshots" in capsys.readouterr().out
+    for committed_records in (records(c="old"), records(c="new", d="gone")):
+        store.write_set(committed, "fixtures", "json", committed_records, {"c": "g", "d": "g"})
+        assert script.main(check) == 1
+        assert "fixtures: 1 cases differ from the committed snapshots" in capsys.readouterr().out
+    monkeypatch.setattr(script, "_on_recording_platform", lambda: False)
+    assert script.main(check) == 0
+    assert "not compared with the committed snapshots" in capsys.readouterr().out
+
+
 # -- the committed snapshots -------------------------------------------------------------------
 
 
