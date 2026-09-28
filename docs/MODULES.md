@@ -312,6 +312,9 @@ pytacheck store update          # re-fetch indexes (they are cached for an hour)
 pytacheck store remove mylab
 ```
 
+`store add` and `store remove` have no `--project` option: stores live in the
+user config only.
+
 A store URL can be a GitHub or GitLab repository, a URL of an `index.json`, or a
 local folder. Offline, cached indexes are used (with a warning).
 

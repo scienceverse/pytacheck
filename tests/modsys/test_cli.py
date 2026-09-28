@@ -206,6 +206,35 @@ def test_store_commands(store, ms, capsys, tmp_path) -> None:
     assert json.loads((seed / "index.json").read_text())["packs"][0]["name"] == "tiny"
 
 
+def test_store_add_and_remove_have_no_project_option(ms, tmp_path) -> None:
+    for argv in (["add", "lab", str(tmp_path)], ["remove", "lab"]):
+        with pytest.raises(SystemExit) as exc:
+            main(["store", *argv, "--project", "--yes"])
+        assert exc.value.code == 2
+
+
+def test_init_hides_only_the_cached_index_warning(ms, monkeypatch, capsys) -> None:
+    import warnings
+
+    def indexes():
+        warnings.warn(
+            "The store 'lab' is unreachable (x); using its index cached at y", stacklevel=2
+        )
+        warnings.warn(
+            "Ignoring the stores in the project config /p/pytacheck.json: x", stacklevel=2
+        )
+        return {}, {}
+
+    answers = iter(["1", "2", "u"])
+    monkeypatch.setattr("pytacheck.packs.stores.store_indexes", indexes)
+    monkeypatch.setattr(ui, "interactive", lambda: True)
+    monkeypatch.setattr(ui, "ask", lambda *a, **k: next(answers))
+    monkeypatch.setattr(ui, "confirm", lambda *a, **k: True)
+    assert main(["init"]) == 0
+    err = capsys.readouterr().err
+    assert "Ignoring the stores in the project config" in err and "unreachable" not in err
+
+
 def test_init_non_interactive(store, ms, capsys) -> None:
     store.add("fields", presets={"psychology": {"modules": ["marginal", "stat_check"]}})
     assert main(["init"]) == 1
