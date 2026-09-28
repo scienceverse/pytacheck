@@ -15,8 +15,11 @@ from __future__ import annotations
 import datetime as dt
 import math
 import os
+import re
 import struct
 from collections.abc import Mapping
+from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 
@@ -53,19 +56,68 @@ def linked_trees(checkout: Path, rels: tuple[str, ...] = LINKABLE) -> tuple[tupl
     return tuple(sorted(found, key=lambda t: len(t[0]), reverse=True))
 
 
+def _in_json(s: str) -> bytes:
+    """*s* as it is written inside a JSON string."""
+    return orjson.dumps(s)[1:-1]
+
+
+@dataclass(frozen=True)
+class Spellings:
+    """How a result writes the paths of a checkout, and what they become."""
+
+    #: its real path: ``<repo>`` wherever it appears (as R writes goldens)
+    roots: tuple[str, ...]
+    #: the symlinks it was reached by: ``<repo>`` only as a whole path, not inside a
+    #: longer name or a URL (a short link such as ``/w`` is common text)
+    aliases: tuple[str, ...]
+    #: the real paths of the trees it links to, and the ``<repo>/<rel>`` they become
+    links: tuple[tuple[str, str], ...]
+
+    @classmethod
+    def of(cls, checkout: Path, *others: str | Path) -> Spellings:
+        """The spellings of *checkout*, reached by each of *others* that is a symlink
+        to it (see :func:`checkout_spellings` and :func:`linked_trees`)."""
+        roots = checkout_spellings(checkout)
+        aliases = tuple(s for s in checkout_spellings(checkout, *others) if s not in roots)
+        links = tuple(
+            (spelling, f"<repo>/{rel}")
+            for real, rel in linked_trees(checkout)
+            for spelling in checkout_spellings(Path(real))
+        )
+        return cls(roots, aliases, links)
+
+    @cached_property
+    def plain_json(self) -> tuple[tuple[bytes, bytes], ...]:
+        """The plain substitutions (links, then roots) in canonical JSON."""
+        pairs = [*self.links, *((r, "<repo>") for r in self.roots)]
+        return tuple((_in_json(a), b.encode()) for a, b in pairs)
+
+    @cached_property
+    def aliases_json(self) -> tuple[bytes, ...]:
+        return tuple(_in_json(a) for a in self.aliases)
+
+    @cached_property
+    def alias_pattern(self) -> re.Pattern[str] | None:
+        if not self.aliases:
+            return None
+        either = "|".join(re.escape(a) for a in self.aliases)  # longest first
+        return re.compile(rf"(?<![\w.-])(?:{either})(?![\w.-])")
+
+    def apply(self, value: str) -> str:
+        for a, b in self.links:
+            value = value.replace(a, b)
+        for r in self.roots:
+            value = value.replace(r, "<repo>")
+        if self.alias_pattern is not None:
+            value = self.alias_pattern.sub("<repo>", value)
+        return value
+
+
 _CHECKOUT = Path(__file__).resolve().parent.parent
-#: the checkout, as the OS writes it, and through the symlink it was reached by
-_ROOTS = checkout_spellings(
+#: this checkout, also as reached through a symlink (the import path, the shell's)
+_SPELLINGS = Spellings.of(
     _CHECKOUT, Path(__file__).absolute().parent.parent, os.environ.get("PWD", "")
 )
-_ROOTS_JSON = tuple(orjson.dumps(r)[1:-1] for r in _ROOTS)
-#: the trees the checkout links to: their real paths become ``<repo>/<rel>``
-_LINKS = tuple(
-    (spelling, f"<repo>/{rel}")
-    for real, rel in linked_trees(_CHECKOUT)
-    for spelling in checkout_spellings(Path(real))
-)
-_LINKS_JSON = tuple((orjson.dumps(a)[1:-1], b.encode()) for a, b in _LINKS)
 _SCALAR_TYPES = (str, bool, int, float, complex, np.generic)
 
 
@@ -242,21 +294,17 @@ def portable(value: Any) -> Any:
         raw = orjson.dumps(value)
     except TypeError:  # e.g. a lone surrogate from undecodable bytes
         return _portable_walk(value)
-    if not any(r in raw for r in _ROOTS_JSON) and not any(a in raw for a, _ in _LINKS_JSON):
+    if any(a in raw for a in _SPELLINGS.aliases_json):  # rare: judged string by string
+        return _portable_walk(value)
+    if not any(a in raw for a, _ in _SPELLINGS.plain_json):
         return value
-    for a, b in _LINKS_JSON:
+    for a, b in _SPELLINGS.plain_json:
         raw = raw.replace(a, b)
-    for r in _ROOTS_JSON:
-        raw = raw.replace(r, b"<repo>")
     return orjson.loads(raw)
 
 
 def _portable_str(value: str) -> str:
-    for a, b in _LINKS:
-        value = value.replace(a, b)
-    for r in _ROOTS:
-        value = value.replace(r, "<repo>")
-    return value
+    return _SPELLINGS.apply(value)
 
 
 def _portable_walk(value: Any) -> Any:

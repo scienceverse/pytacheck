@@ -1105,7 +1105,7 @@ NEEDS_R_REASON = (
 # -- parity/quarantine.yaml -----------------------------------------------------------
 
 QUARANTINE_FILE = ROOT / "parity" / "quarantine.yaml"
-_QUARANTINE_CACHE: dict[Path, tuple[int, dict[str, str]]] = {}
+_QUARANTINE_CACHE: dict[Path, tuple[bytes, dict[str, str]]] = {}
 
 
 def load_quarantine(path: Path | None = None) -> dict[str, str]:
@@ -1116,18 +1116,18 @@ def load_quarantine(path: Path | None = None) -> dict[str, str]:
     ``quarantined``, which never fails the run, ``--strict`` included. The file
     also holds ``max_cases``, which must equal the number of cases listed: adding a
     case means raising it (and the ceiling pinned in the tests), which a reviewer
-    sees. Re-read when the file changes, so a long-lived process (pytest) sees a
-    new file.
+    sees. Parsed again whenever its text changes, so a long-lived process (pytest)
+    sees a new file; not by its time stamp, which may not move on a quick rewrite.
     """
     path = QUARANTINE_FILE if path is None else path
     try:
-        mtime = path.stat().st_mtime_ns
+        raw = path.read_bytes()
     except FileNotFoundError:
         return {}
     cached = _QUARANTINE_CACHE.get(path)
-    if cached is not None and cached[0] == mtime:
+    if cached is not None and cached[0] == raw:
         return cached[1]
-    data = load_yaml(path)
+    data = yaml.load(raw.decode("utf-8"), Loader=YAML_LOADER)
     if not isinstance(data, dict) or set(data) != {"max_cases", "cases"}:
         raise ValueError(f"{path.name}: expected the keys max_cases and cases")
     listed = data["cases"] or []
@@ -1158,7 +1158,7 @@ def load_quarantine(path: Path | None = None) -> dict[str, str]:
             f"{path.name}: max_cases is {max_cases} but {len(found)} cases are listed; "
             "set max_cases to the number of cases listed"
         )
-    _QUARANTINE_CACHE[path] = (mtime, found)
+    _QUARANTINE_CACHE[path] = (raw, found)
     return found
 
 

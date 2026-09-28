@@ -73,7 +73,7 @@ cases read:
 
 ```bash
 git submodule update --init      # upstream/metacheck: fixtures and recorded responses
-uv sync --locked --all-extras    # the data extra's readers (pyreadstat, xlrd)
+uv sync --locked --all-extras    # the data extra (pyreadstat, xlrd, snowballstemmer)
 ```
 
 Without the submodule some 1,800 cases fail, and without the extra some 60, all for
@@ -81,10 +81,13 @@ that one reason. So `check` and `lock` look first and stop with exit status 2 an
 the command that fixes it, before running anything. The cases that need the reference
 R are `skip`ped without it, in a worktree as anywhere.
 
-Goldens and results write the checkout as `<repo>`, in its real path (as R's
-`normalizePath()` gives it) and in the symlinked spelling it was reached by. When
-`upstream/metacheck` is a symlink to another checkout's submodule, its real path is
-written `<repo>/upstream/metacheck`, as R wrote it. A case reads its files through
+Goldens write the checkout as `<repo>`: R replaces its real path (as
+`normalizePath()` gives it). Python results do the same, and also replace the
+symlinked spelling the checkout was reached by, but only as a whole path, not inside
+a longer name or a URL. When `upstream/metacheck` is a symlink to another checkout's
+submodule, Python writes its real path `<repo>/upstream/metacheck`, as R did on the
+checkout the goldens came from. R does not map these symlinks, so run `generate` on a
+plain checkout with its own submodule. A case reads its files through
 `case_path()` (`$paper`, `$read`, `$file`), which refuses a path that leaves the
 checkout through any other symlink, so a case cannot depend on a file that only
 exists in one worktree. A `$expr` that builds its own path is not checked.
@@ -96,7 +99,8 @@ that is not pytacheck's, each with its reason. `check` reports such a case as
 `quarantined` instead of any status that would fail it (`fail`, `error`,
 `r_changed`, `py_changed`, `xpass`, `unlocked`, `missing`). A quarantined case never
 fails the run, and `check --strict` does not fail it either; the tests pin both. One
-that passes is a `pass`. The file is a last resort: fix the environment first.
+that passes is a `pass`. `lock` ignores the quarantine: it still records, changes and
+removes the lock entry of a quarantined case. The file is a last resort: fix the environment first.
 `max_cases` must equal the number of cases listed, and `QUARANTINE_CEILING` in
 `tests/test_parity_cli.py` must equal it too, so adding a case means changing both,
 in a change a reviewer sees. It should only ever go down. Nothing is quarantined

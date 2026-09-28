@@ -194,7 +194,7 @@ def test_a_quarantined_case_never_fails_the_run(tree, tmp_path, monkeypatch, cap
     # in worker processes too
     if "fork" in multiprocessing.get_all_start_methods():
         monkeypatch.setattr(parity_main.sys, "platform", "linux")
-        many = parity_main.run_cases(load_cases("beta"), jobs=2, strict=True)
+        many = parity_main.run_cases(load_cases("beta"), jobs=2, strict=True, quarantine=True)
         assert [(r.status, r.failing) for r in many] == [("quarantined", False)]
 
 
@@ -248,6 +248,32 @@ def test_a_quarantine_entry_naming_no_case_fails_check(tree, tmp_path, monkeypat
     assert _report(tmp_path, "--area", "beta")[0] == 1
 
 
+def test_lock_ignores_the_quarantine(tree, tmp_path, monkeypatch, capsys) -> None:
+    # a quarantined marked case is still locked ...
+    _quarantine(tmp_path, monkeypatch, "alpha/marked")
+    assert parity_main.main(["lock"]) == 0
+    assert "(1 new, 0 changed, 0 removed)" in capsys.readouterr().out
+    assert set(tree.entries("alpha")) == {"marked"}
+    # ... and its entry removed when the mark is stale
+    tree.area("alpha", _case("same", "a"), _case("marked", "a", mark=True))
+    assert parity_main.main(["lock"]) == 1
+    out = capsys.readouterr().out
+    assert "[XPASS     ] alpha/marked" in out and "  removed  alpha/marked" in out
+    assert tree.entries("alpha") == {}
+
+
+def test_pytest_skips_a_quarantined_case(tree, tmp_path, monkeypatch) -> None:
+    from tests.test_parity import test_parity
+
+    tree.area("beta", _case("same", "b"))  # differs from R's golden
+    (case,) = load_cases("beta")
+    with pytest.raises(AssertionError, match="differs from R"):
+        test_parity(case)
+    _quarantine(tmp_path, monkeypatch, "beta/same")
+    with pytest.raises(pytest.skip.Exception, match=f"quarantined: {_WHY}"):
+        test_parity(case)
+
+
 def test_the_quarantine_file_is_checked(tmp_path) -> None:
     def load(text: str) -> dict[str, str]:
         path = tmp_path / "q.yaml"
@@ -277,6 +303,12 @@ def test_the_quarantine_file_is_checked(tmp_path) -> None:
         load(good.replace("max_cases: 1", "max_cases: true"))
     # no file, no quarantine
     assert load_quarantine(tmp_path / "none.yaml") == {}
+    # a rewrite is seen, even when the file's time stamp does not move
+    path = tmp_path / "q.yaml"
+    stamp = path.stat().st_mtime_ns
+    path.write_text("max_cases: 1\ncases:\n  - {case: c/d, reason: why}\n")
+    os.utime(path, ns=(stamp, stamp))
+    assert load_quarantine(path) == {"c/d": "why"}
 
 
 # -- a fresh worktree -------------------------------------------------------------------
@@ -293,7 +325,7 @@ def test_check_and_lock_stop_when_the_checkout_lacks_its_setup(
         err = capsys.readouterr().err
         assert "upstream/metacheck is empty" in err
         assert "git submodule update --init" in err
-        assert "pyreadstat, xlrd not installed" in err
+        assert "pyreadstat, xlrd, snowballstemmer not installed" in err
         assert "uv sync --locked --all-extras" in err
     assert not (tmp_path / "parity").exists()  # nothing ran
     (tmp_path / "upstream" / "metacheck").mkdir(parents=True)
@@ -314,11 +346,30 @@ def test_the_checkout_is_repo_however_it_is_reached(tmp_path, monkeypatch) -> No
     assert {os.path.realpath(real), str(link)} <= set(spellings)
     assert str(tmp_path / "elsewhere") not in spellings
     assert spellings == tuple(sorted(spellings, key=len, reverse=True))
-    monkeypatch.setattr(pcanonical, "_ROOTS", spellings)
-    monkeypatch.setattr(pcanonical, "_ROOTS_JSON", tuple(s.encode() for s in spellings))
+    spelled = pcanonical.Spellings.of(real, link, tmp_path / "elsewhere", "")
+    assert os.path.realpath(real) in spelled.roots and spelled.aliases[0] == str(link)
+    monkeypatch.setattr(pcanonical, "_SPELLINGS", spelled)
     value = {"t": "chr", "v": [f"{link}/a.csv", f"{os.path.realpath(real)}/b.csv"]}
     assert pcanonical.portable(value) == {"t": "chr", "v": ["<repo>/a.csv", "<repo>/b.csv"]}
     assert pcanonical.portable(f"{link}/a.csv") == "<repo>/a.csv"
+    # a link's spelling is a whole path: not part of a longer name or of a URL
+    for other in (f"{link}2/a.csv", f"https://example.org{link}/a.csv"):
+        assert pcanonical.portable(other) == other
+        assert pcanonical.portable({"t": "chr", "v": [other]}) == {"t": "chr", "v": [other]}
+    assert pcanonical.portable({f"{link}/k": f"x\n{link}"}) == {"<repo>/k": "x\n<repo>"}
+
+
+def test_the_checkout_is_repo_in_json_with_backslashes(monkeypatch) -> None:
+    # a Windows path, as the OS writes it and with "/" as R writes it
+    spelled = pcanonical.Spellings(("C:\\w\\repo", "C:/w/repo"), ("D:\\r",), ())
+    monkeypatch.setattr(pcanonical, "_SPELLINGS", spelled)
+    value = {"t": "chr", "v": ["C:\\w\\repo\\a.csv", "C:/w/repo/b.csv"]}
+    want = {"t": "chr", "v": ["<repo>\\a.csv", "<repo>/b.csv"]}
+    assert pcanonical.portable(value) == want
+    # and as reached through a symlink
+    value["v"].append("D:\\r\\c.csv")
+    want["v"].append("<repo>\\c.csv")
+    assert pcanonical.portable(value) == want
 
 
 def test_case_paths_stay_inside_the_checkout(tmp_path, monkeypatch) -> None:
@@ -364,8 +415,11 @@ def test_a_symlinked_submodule_is_repo_too(tmp_path, monkeypatch) -> None:
     real = os.path.realpath(shared)
     assert pcanonical.linked_trees(root) == ((real, "upstream/metacheck"),)
     assert pcanonical.linked_trees(tmp_path / "shared") == ()  # nothing linked
-    monkeypatch.setattr(pcanonical, "_LINKS", ((real, "<repo>/upstream/metacheck"),))
-    monkeypatch.setattr(pcanonical, "_LINKS_JSON", ((real.encode(), b"<repo>/upstream/metacheck"),))
+    spelled = pcanonical.Spellings.of(root)
+    assert dict(spelled.links) == dict.fromkeys(
+        (real, Path(real).as_posix()), "<repo>/upstream/metacheck"
+    )
+    monkeypatch.setattr(pcanonical, "_SPELLINGS", spelled)
     value = {"t": "chr", "v": [f"{real}/tests/a.txt"]}
     assert pcanonical.portable(value) == {
         "t": "chr",

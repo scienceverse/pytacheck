@@ -48,7 +48,7 @@ from R / Python raised where R returned); ``skip`` (needs the reference R);
 lists it with a reason: never a failure, ``--strict`` included).
 
 ``check`` and ``lock`` stop with a hint, before running anything, when the
-checkout lacks its ``upstream/metacheck`` submodule or the ``data`` extra's readers.
+checkout lacks its ``upstream/metacheck`` submodule or the ``data`` extra.
 
 ``lock`` prints each entry it adds, changes or removes: the case, its tier and
 mark, the old and new fingerprints, and how Python differs from R. It adds new
@@ -272,17 +272,22 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
 
 
 def run_case(
-    case: Case, lock: Mapping[str, Fingerprint] | None = None, strict: bool = False
+    case: Case,
+    lock: Mapping[str, Fingerprint] | None = None,
+    strict: bool = False,
+    quarantine: bool = False,
 ) -> CaseResult:
-    """:func:`_run_case`, with a quarantined case that would fail reported as such.
+    """:func:`_run_case`, and with *quarantine* (``check``, not ``lock``) a
+    quarantined case that would fail reported as such.
 
     A case listed in parity/quarantine.yaml is ``quarantined`` instead of any status
     that can fail (all but ``pass``, ``xfail`` and ``skip``), and never fails the
     run, strict or not; the reason comes first among its problems. One that passes
-    stays a pass.
+    stays a pass. ``lock`` sees what the case really does, so it still records and
+    removes the lock entry of a quarantined case.
     """
     res = _run_case(case, lock, strict)
-    reason = load_quarantine().get(case.key)
+    reason = load_quarantine().get(case.key) if quarantine else None
     if reason is not None and res.status in _QUARANTINABLE:
         res.done(QUARANTINED, [f"quarantined: {reason}", *res.problems], failing=False)
     return res
@@ -492,11 +497,14 @@ def _captured(res: CaseResult) -> Iterator[None]:
 
 
 def _run_quietly(
-    case: Case, lock: Mapping[str, Fingerprint] | None, strict: bool = False
+    case: Case,
+    lock: Mapping[str, Fingerprint] | None,
+    strict: bool = False,
+    quarantine: bool = False,
 ) -> CaseResult:
     holder = CaseResult.of(case)
     with _captured(holder):
-        res = run_case(case, lock, strict)
+        res = run_case(case, lock, strict, quarantine)
     res.output = holder.output
     return res
 
@@ -504,11 +512,12 @@ def _run_quietly(
 _POOL_CASES: list[Case] = []
 _POOL_USE_LOCK = True
 _POOL_STRICT = False
+_POOL_QUARANTINE = False
 
 
-def _pool_init(keys: list[str], use_lock: bool, strict: bool) -> None:
-    global _POOL_CASES, _POOL_USE_LOCK, _POOL_STRICT
-    _POOL_USE_LOCK, _POOL_STRICT = use_lock, strict
+def _pool_init(keys: list[str], use_lock: bool, strict: bool, quarantine: bool) -> None:
+    global _POOL_CASES, _POOL_USE_LOCK, _POOL_STRICT, _POOL_QUARANTINE
+    _POOL_USE_LOCK, _POOL_STRICT, _POOL_QUARANTINE = use_lock, strict, quarantine
     if not _POOL_CASES:  # a spawned (not forked) worker loads the cases itself
         _hermetic_env()
         by_key = {c.key: c for c in load_cases()}
@@ -516,7 +525,8 @@ def _pool_init(keys: list[str], use_lock: bool, strict: bool) -> None:
 
 
 def _pool_task(i: int) -> tuple[int, CaseResult]:
-    return i, _run_quietly(_POOL_CASES[i], None if _POOL_USE_LOCK else {}, _POOL_STRICT)
+    lock = None if _POOL_USE_LOCK else {}
+    return i, _run_quietly(_POOL_CASES[i], lock, _POOL_STRICT, _POOL_QUARANTINE)
 
 
 def run_cases(
@@ -525,12 +535,14 @@ def run_cases(
     use_lock: bool = True,
     progress: Callable[[CaseResult], None] | None = None,
     strict: bool = False,
+    quarantine: bool = False,
 ) -> list[CaseResult]:
     """:func:`run_case` for every case, in *jobs* processes (0: one per CPU), with
     each case's output kept in its result; results in case order.
 
     Without *use_lock*, expected failures come out ``unlocked`` with their
-    fingerprints (what ``lock`` records). *strict* is :func:`run_case`'s.
+    fingerprints (what ``lock`` records). *strict* and *quarantine* are
+    :func:`run_case`'s.
     """
     global _POOL_CASES
     jobs = jobs if jobs > 0 else os.cpu_count() or 1
@@ -538,7 +550,7 @@ def run_cases(
     if jobs == 1 or len(cases) < 2:
         out = []
         for case in cases:
-            res = _run_quietly(case, lock, strict)
+            res = _run_quietly(case, lock, strict, quarantine)
             if progress:
                 progress(res)
             out.append(res)
@@ -553,7 +565,7 @@ def run_cases(
         with ctx.Pool(
             min(jobs, len(cases)),
             initializer=_pool_init,
-            initargs=([c.key for c in cases], use_lock, strict),
+            initargs=([c.key for c in cases], use_lock, strict, quarantine),
         ) as pool:
             for i, res in pool.imap_unordered(_pool_task, range(len(cases)), chunksize=1):
                 results[i] = res
@@ -607,8 +619,9 @@ def stale_quarantine_entries(cases: list[Case], areas: list[str] | None = None) 
     ]
 
 
-#: modules the goldens of the data-reading areas need (the ``data`` extra's readers)
-_EXTRA_MODULES = ("pyreadstat", "xlrd")
+#: the modules of the ``data`` extra without which some cases differ from R (with
+#: matplotlib and pypdf missing, none do)
+_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer")
 
 
 def environment_problems() -> list[str]:
@@ -623,7 +636,7 @@ def environment_problems() -> list[str]:
     lacking = [m for m in _EXTRA_MODULES if importlib.util.find_spec(m) is None]
     if lacking:
         problems.append(
-            f"{', '.join(lacking)} not installed (the data-reading cases need them): "
+            f"{', '.join(lacking)} not installed (the data extra; some cases need them): "
             "run `uv sync --locked --all-extras`"
         )
     return problems
@@ -676,7 +689,7 @@ def cmd_check(ns: argparse.Namespace) -> int:
     started = time.perf_counter()
     cases = _select(ns)
     progress = _Progress(len(cases), ns.verbose)
-    results = run_cases(cases, ns.jobs, progress=progress, strict=ns.strict)
+    results = run_cases(cases, ns.jobs, progress=progress, strict=ns.strict, quarantine=True)
     elapsed = time.perf_counter() - started
     stale = [] if _partial(ns) else stale_lock_entries(cases, ns.area)
     unknown = [] if _partial(ns) else stale_quarantine_entries(cases, ns.area)
