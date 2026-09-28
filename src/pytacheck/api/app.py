@@ -228,16 +228,21 @@ class _BearerAuth:
                 return scheme.lower() == b"bearer" and hmac.compare_digest(token.strip(), self.key)
         return False
 
+    @staticmethod
+    def is_open(scope: Scope) -> bool:
+        path = scope["path"]
+        root = scope.get("root_path", "")
+        if root and path.startswith(root):  # behind a path prefix, as Starlette's router
+            path = path[len(root) :]
+        return bool(path == _OPEN_PATH)
+
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         kind = scope["type"]
-        if (
-            kind == "lifespan"
-            or (kind == "http" and scope["path"] == _OPEN_PATH)
-            or self.allowed(scope)
-        ):
+        if kind == "lifespan" or (kind == "http" and self.is_open(scope)) or self.allowed(scope):
             await self.app(scope, receive, send)
         elif kind == "http":
-            LOG.warning("Rejected %s %s: missing or wrong API key", scope["method"], scope["path"])
+            # %r keeps a newline in the path from forging a log line
+            LOG.warning("Rejected %s %r: missing or wrong API key", scope["method"], scope["path"])
             response = _error(
                 401, "Missing or invalid API key. Send 'Authorization: Bearer <key>'."
             )

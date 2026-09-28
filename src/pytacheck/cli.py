@@ -458,10 +458,10 @@ def cmd_serve(ns: argparse.Namespace) -> int:
                 "characters, or serve on 127.0.0.1. If something in front of this server "
                 "already authenticates every request, pass --behind-authenticating-proxy."
             )
-        print(
-            f"warning: serving on {ns.host} without an API key; "
+        warnings.warn(
+            f"serving on {ns.host} without an API key; "
             "every request must be authenticated in front of this server.",
-            file=sys.stderr,
+            stacklevel=2,
         )
     uvicorn.run("pytacheck.api.app:create_app", factory=True, host=ns.host, port=ns.port)
     return 0

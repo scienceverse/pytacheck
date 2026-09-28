@@ -46,11 +46,15 @@ but does not check the host.
 ## Docker
 
 `docker-compose.yml` passes `PYTACHECK_API_KEY` to the container and stops with an
-error when it is unset:
+error when it is unset. Compose reads the variable for every command, not only `up`,
+so `docker compose down` and `docker compose logs` need it too. The simplest way is a
+`.env` file next to `docker-compose.yml`, which compose reads by itself and git ignores:
 
 ```bash
-export PYTACHECK_API_KEY=...
+echo "PYTACHECK_API_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" > .env
 docker compose up
 ```
+
+Compose also publishes bibr's port on `127.0.0.1` only, since bibr has no key.
 
 With `docker run`, pass the variable with `-e PYTACHECK_API_KEY`.

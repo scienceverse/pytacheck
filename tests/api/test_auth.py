@@ -15,7 +15,15 @@ from pytacheck.api.app import ApiConfigError, api_key, create_app, is_loopback
 from pytacheck.cli import main
 
 KEY = "k" * 32
-GUARDED = ["/paper/modules", "/docs", "/openapi.json", "/redoc", "/no/such/route"]
+GUARDED = [
+    "/paper/modules",
+    "/docs",
+    "/openapi.json",
+    "/redoc",
+    "/no/such/route",
+    "/healthz",  # /health is matched exactly
+    "/health/x",
+]
 
 
 @pytest.fixture
@@ -35,6 +43,22 @@ def test_without_a_key_the_api_is_open(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_health_needs_no_key(keyed: TestClient) -> None:
     assert keyed.get("/health").status_code == 200
+
+
+def test_health_needs_no_key_under_a_path_prefix(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("PYTACHECK_API_KEY", KEY)
+    c = TestClient(create_app(), root_path="/api")
+    assert c.get("/api/health").status_code == 200
+    assert c.get("/api/paper/modules").status_code == 401
+
+
+def test_startup_and_shutdown_do_not_need_the_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PYTACHECK_API_KEY", KEY)
+    with TestClient(create_app()) as c:  # runs the lifespan
+        assert c.get("/health").status_code == 200
+        assert c.get("/paper/modules").status_code == 401
 
 
 @pytest.mark.parametrize("path", GUARDED)
@@ -95,9 +119,18 @@ def test_keys_are_never_logged(keyed: TestClient, caplog: pytest.LogCaptureFixtu
     with caplog.at_level(logging.DEBUG, logger="pytacheck.api"):
         keyed.get("/paper/modules", headers=bearer(guess))
         keyed.get("/paper/modules", headers=bearer(KEY))
-    assert "Rejected GET /paper/modules" in caplog.text
+    assert "Rejected GET '/paper/modules'" in caplog.text
     assert KEY not in caplog.text
     assert guess not in caplog.text
+
+
+def test_a_newline_in_the_path_cannot_forge_a_log_line(
+    keyed: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
+    with caplog.at_level(logging.DEBUG, logger="pytacheck.api"):
+        keyed.get("/x%0aINFO forged line")
+    assert "\n" not in caplog.records[-1].getMessage()
+    assert "Rejected GET" in caplog.text
 
 
 def test_websockets_need_the_key_too(keyed: TestClient) -> None:

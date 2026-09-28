@@ -6,7 +6,9 @@
 #        http://localhost:8000/paper/info               (routes: /docs, with the same header)
 #
 # The API needs a key (32 or more characters) on every route except /health, so
-# compose refuses to start without PYTACHECK_API_KEY.
+# every compose command (up, down, logs) needs PYTACHECK_API_KEY. Put it in a
+# .env file next to this one, which compose reads by itself (.env is git-ignored):
+#   PYTACHECK_API_KEY=<the key>
 #
 # pytacheck talks to bibr in-process when built with WITH_BIBR=1; the separate
 # bibr service is for convert_bibr(backend = "selfhosted", api_url = "http://bibr:8000")
@@ -33,7 +35,7 @@ services:
   bibr:
     image: ghcr.io/scienceverse/bibr:latest
     ports:
-      - "8001:8000"
+      - "127.0.0.1:8001:8000"
     volumes:
       - bibr-cache:/root/.cache
 

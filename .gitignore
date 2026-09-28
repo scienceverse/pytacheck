@@ -18,6 +18,8 @@ htmlcov/
 .Rproj.user/
 # parity scratch output (goldens live in parity/golden and ARE committed)
 parity/_out/
+# compose settings, including PYTACHECK_API_KEY
+.env
 # editors / OS
 .idea/
 .vscode/
