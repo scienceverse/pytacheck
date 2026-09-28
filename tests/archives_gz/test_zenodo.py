@@ -308,13 +308,17 @@ def test_zenodo_file_download(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -
 
 
 def test_zenodo_file_download_folder_suffix(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, respx_mock: respx.MockRouter
 ) -> None:
     # an existing record folder gives "<id>_1", then "<id>_2"
     monkeypatch.setattr(
         zenodo,
         "zenodo_info",
         _mock_info([{"id": "a_{zid}", "key": "a.csv", "size": 1, "links": {"self": None}}]),
+    )
+    # no file is omitted, so the whole-record archive is tried first: there is none
+    respx_mock.get("https://zenodo.org/api/records/12345/files-archive").mock(
+        return_value=httpx.Response(404)
     )
     for expected in ("12345", "12345_1", "12345_2"):
         with pytest.warns(UserWarning):
