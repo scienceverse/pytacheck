@@ -670,6 +670,10 @@ def _summary_lines(results: list[CaseResult], stale: list[str], elapsed: float) 
     return lines
 
 
+def _cell(text: str) -> str:
+    return text.replace("|", "\\|").replace("\n", " ")[:200]
+
+
 def markdown_summary(results: list[CaseResult], stale: list[str], elapsed: float) -> str:
     """A Markdown summary of a check: statuses by tier, marks by tier, kind and ref,
     and the cases that fail or warn."""
@@ -723,8 +727,8 @@ def markdown_summary(results: list[CaseResult], stale: list[str], elapsed: float
                 "|---|---|---|---|",
             ]
             for r in picked[:200]:
-                first = (r.problems[0] if r.problems else "").replace("|", "\\|").replace("\n", " ")
-                out.append(f"| `{r.key}` | {r.tier} | {r.status} | {first[:200]} |")
+                first = _cell(r.problems[0] if r.problems else "")
+                out.append(f"| `{r.key}` | {r.tier} | {r.status} | {first} |")
             if len(picked) > 200:
                 out.append(f"| ... and {len(picked) - 200} more | | | |")
     if stale:
@@ -822,10 +826,6 @@ def _lock_change_lines(changes: list[LockChange]) -> list[str]:
             lines.append("      differs from R:")
             lines += [f"        - {d}" for d in ch.differences()]
     return lines
-
-
-def _cell(text: str) -> str:
-    return text.replace("|", "\\|").replace("\n", " ")[:200]
 
 
 def lock_markdown(changes: list[LockChange]) -> str:
