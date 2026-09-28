@@ -227,6 +227,16 @@ Each pack has a trust label: `builtin`, `store` (listed and pinned by a store),
 `unlisted` (installed from a URL or at a commit the store does not list), `local`
 (a folder on your machine) or `dist` (a pip-installed package).
 
+A pin that names a store does not make a pack `store`: any config file can say
+that. `pack install` gives the label only when the named store's index lists
+that pack name, commit and tree hash, and it writes the result to the install
+record. The label a run reports is read from that record. A pin for a commit
+the store does not list, or one whose files differ from the listed hash, is
+installed as `unlisted` (the consent card says so), and so is a pin whose store
+cannot be reached. If the cached index is out of date, `pack install` fetches it
+again before it decides. Files installed as `unlisted` are checked again on the
+next `pack install`, and become `store` once the store lists them.
+
 The REST API server never installs packs and never runs local code: it runs
 built-in modules and installed packs only (`use(allow_local=False)`).
 

@@ -54,6 +54,7 @@ from pytacheck.packs.registry import (
     pin_rev12,
     registry,
 )
+from pytacheck.packs.registry import refresh as forget_cached_packs
 from pytacheck.packs.scan import FileScan, module_metadata, scan_file, scan_tree
 from pytacheck.packs.tree import INSTALL_RECORD, file_sha256, tree_files, tree_sha256
 
@@ -382,7 +383,9 @@ def _card(
         info.add_row("store", "[yellow]not listed in any store (unlisted)[/]")
     info.add_row("source", escape(describe_source(cand.source)))
     info.add_row("rev", escape(cand.rev or "(a local folder: no commit)"))
-    check = "matches the store index" if cand.tree_sha256 else "computed"
+    check = "computed"
+    if cand.tree_sha256:
+        check = "matches the store index" if cand.store else "matches the pin"
     info.add_row("tree", f"{tree} [dim]({check})[/]")
     if manifest.get("license"):
         info.add_row("license", escape(str(manifest["license"])))
@@ -534,8 +537,12 @@ def _install(
     _check_source(cand.source)
     if cand.name and cand.rev:
         existing = install_dir(cand.name, {"rev": cand.rev})
-        if _record_matches(existing, cand.rev, cand.tree_sha256):
-            done = _read_record(existing)
+        done = _read_record(existing) if existing.is_dir() else {}
+        # the record holds the store label: files first installed as unlisted are
+        # installed again when a store lists them
+        if _record_matches(existing, cand.rev, cand.tree_sha256) and (
+            not cand.store or done.get("store") == cand.store
+        ):
             manifest = read_manifest(existing)
             pin = _pin_for(cand, done["tree_sha256"], manifest.get("version"))
             if scope is not None:
@@ -589,13 +596,16 @@ def _install(
             for f in files:
                 os.chmod(os.path.join(folder, f), 0o444)
         final.parent.mkdir(parents=True, exist_ok=True)
-        if final.exists():
+        replaced = final.exists()
+        if replaced:
             os.replace(final, tmp / "previous")  # an incomplete or modified earlier install
         os.replace(stage, final)
     except BaseException:
         _cleanup(tmp, created)
         raise
     _cleanup(tmp, created)
+    if replaced:
+        forget_cached_packs()  # a loaded pack would keep the old files and label
     if scope is not None:
         where = _write_pin(name, pin, scope)
         ui.console().print(f"Installed '{name}' into {final} and pinned it in {where}")
@@ -715,11 +725,18 @@ def _sync(*, yes: bool) -> list[Pack]:
         try:
             validate_pack_name(name)
             target = install_dir(name, pin)
+            recheck = False
             if _record_matches(target, pin.get("rev"), pin.get("tree_sha256")):
-                continue
-            todo += 1
+                # files installed as unlisted stay so until the store lists them: look again
+                recheck = (
+                    bool(pin.get("store")) and _read_record(target).get("store") != pin["store"]
+                )
+                if not recheck:
+                    continue
             source = _source_without_rev(pin.get("source"))
             if not source:
+                if recheck:
+                    continue
                 raise PackError(f"The pin of '{name}' has no source to install from")
             cand = _Candidate(
                 name=name,
@@ -730,6 +747,9 @@ def _sync(*, yes: bool) -> list[Pack]:
                 store=pin.get("store"),
             )
             _enrich_from_store(cand)
+            if recheck and not cand.store:
+                continue
+            todo += 1
             done.append(_install(cand, scope=None, yes=yes))
         except PackError as exc:
             problems.append(f"{name}: {exc}")
@@ -741,34 +761,57 @@ def _sync(*, yes: bool) -> list[Pack]:
 
 
 def _enrich_from_store(cand: _Candidate) -> None:
-    """Add the store's review date / yanked notice for the pinned revision (best effort)."""
+    """Keep the pin's store only if it lists exactly this pin; then add its review and yank.
+
+    A pin is a claim, and a project config can carry anyone's. The store index has
+    the say: the pack keeps ``store`` (and so trust ``store``) only when the named
+    store lists this name, revision, source and tree hash. Otherwise, or when the
+    store cannot be asked, the pack is installed as the unlisted source it is.
+    """
     if not cand.store or not cand.name:
         return
+    store, cand.store = cand.store, None
+    try:
+        entry, listed = _listing(cand, store, refresh=False)
+        if not listed:  # the cached index may predate the listing
+            entry, listed = _listing(cand, store, refresh=True)
+    except PackError as exc:
+        cand.notes.append(
+            f"The store '{store}' could not confirm the pin ({exc}): it is installed as an "
+            f"unlisted, unreviewed pack. Run `pytacheck pack install {cand.name}` when the "
+            "store can be reached."
+        )
+        return
+    if not listed:
+        cand.notes.append(
+            f"The pin names the store '{store}', which does not list this revision: "
+            "it is installed as an unlisted, unreviewed pack."
+        )
+        return
+    cand.store = store
+    cand.reviewed = entry.get("reviewed")
+    cand.yanked = entry.get("yanked")
+    cand.base = cand.base or entry.get("_location")
+
+
+def _listing(cand: _Candidate, store: str, *, refresh: bool) -> tuple[dict[str, Any], bool]:
+    """The store's entry for the pack, and whether it lists exactly the candidate's pin."""
     from pytacheck.packs.stores import find_entry
 
-    try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            _, entry = find_entry(cand.name, store=cand.store)
-    except PackError:
-        return
+    assert cand.name
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        _, entry = find_entry(cand.name, store=store, refresh=refresh)
     source = _source_without_rev(entry.get("source"))
     if "path" in source:
-        try:
-            source["path"] = str(
-                _store_path(cand.store, cand.name, source["path"], entry.get("_location"))
-            )
-        except PackError:
-            return
-    same = (
+        source["path"] = str(_store_path(store, cand.name, source["path"], entry.get("_location")))
+    listed = bool(
         (entry.get("source") or {}).get("rev") == cand.rev
         and source == cand.source
-        and entry.get("tree_sha256") in (None, cand.tree_sha256)
+        and cand.tree_sha256
+        and entry.get("tree_sha256") == cand.tree_sha256
     )
-    if same:  # the store lists exactly this pin: show its review and any yank
-        cand.reviewed = entry.get("reviewed")
-        cand.yanked = entry.get("yanked")
-        cand.base = cand.base or entry.get("_location")
+    return entry, listed
 
 
 def pack_install(ref: str | None = None, *, scope: str = "user", yes: bool = False) -> Any:
