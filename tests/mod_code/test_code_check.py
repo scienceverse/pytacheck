@@ -1163,14 +1163,19 @@ def test_per_paper_pin_check_uses_the_module_download_options(
             for n in ("analysis.R", "renv.lock")
         ]
     )
-    module_run(
-        fake_repo_check(table),
-        "code_check",
-        download=False,
-        max_file_size=7,
-        max_download_size=9,
-        cache=True,
-    )
+    # without a download the files are streamed from their URLs: serve recorded
+    # responses only (a 404)
+    from tests.httpmock import replay
+
+    with replay("apis"):
+        module_run(
+            fake_repo_check(table),
+            "code_check",
+            download=False,
+            max_file_size=7,
+            max_download_size=9,
+            cache=True,
+        )
     pin_calls = [c for c in calls if "max_file_size" in c]
     assert len(pin_calls) == 2  # the whole-run check and the per-paper check
     for c in pin_calls:
