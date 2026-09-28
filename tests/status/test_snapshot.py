@@ -111,6 +111,28 @@ def test_counts_are_copied_from_the_r_blocks(upstream_dir: Path) -> None:
         assert text.startswith(f"In a sample of {ev['corpus']['papers']} papers"), name
 
 
+#: ECOSYSTEM.md §1.1: papers, (tp, fp, fn, tn), and the PPV and sensitivity derived
+#: from them; stat_p_nonsig states no FN, so it has no sensitivity
+_COUNTS = {
+    "power": (128, (203, 21, 22, None), 0.906, 0.902),
+    "stat_p_exact": (225, (269, 78, 136, 4557), 0.775, 0.664),
+    "stat_p_nonsig": (194, (1486, 153, None, None), 0.907, None),
+    "marginal": (51, (38, 22, 27, None), 0.633, 0.585),
+    "stat_effect_size": (161, (1106, 45, 23, 295), 0.961, 0.98),
+}
+
+
+@pytest.mark.parametrize("name", sorted(_COUNTS))
+def test_each_count_has_its_own_key(name) -> None:
+    """The R test above finds each number in the text; this catches a TP/FP/FN swap."""
+    papers, (tp, fp, fn, tn), ppv, sensitivity = _COUNTS[name]
+    (ev,) = snapshot().modules[f"metacheck::{name}"]["evidence"]
+    assert ev["corpus"]["papers"] == papers
+    assert ev["counts"] == {"tp": tp, "fp": fp, "fn": fn, "tn": tn}
+    metrics = status(name).metrics
+    assert (metrics.get("ppv"), metrics.get("sensitivity")) == (ppv, sensitivity)
+
+
 def test_nothing_is_inferred() -> None:
     """Only what the R blocks say: no implied FN, no py binding, no invented metadata."""
     modules = snapshot().modules
