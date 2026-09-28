@@ -4,7 +4,7 @@ The test parses every file under ``src/pytacheck`` with ``ast`` and collects eac
 import wherever it sits: at module level, in a function, in a ``TYPE_CHECKING``
 block, as ``from . import x``, or as a constant string given to
 ``importlib.import_module`` or ``__import__``. Lazy-export maps and computed
-module names are not imports the parser can see. The graph feeds two rules.
+module names are not imports the parser can see. The graph feeds three rules.
 
 **Foundation.** §2.1 says ``core/**`` imports only ``_r``, ``_values``,
 ``_json``, ``papers.model``, ``papers.schema`` and ``papers.ids``. ``core/`` and
@@ -20,14 +20,24 @@ imports (``text``, ``modules``, ``report``, ``api``, ``cli``, ``archives``,
 and not the positive list, because §2.6 puts ``LLMSettings``, the config
 setters, ``RepoIndex`` and ``CacheStore`` in ``core/run.py``, and the positive
 list forbids them. The two sections disagree, so the lint enforces what both
-accept. A package's ``__init__`` is not an import edge of its submodules.
+accept. §2.1 also says the façades import the core, never the reverse. So the
+core may not import the permanent façades (§2.10) that §2.6 and §2.7 do not
+need either: ``papers.tables``, ``stats``, ``io.read`` and ``compat``, and the
+runners ``module_run`` and ``get_prev_outputs``, which sit on ``execute()``. Those
+two are banned as names, so the core can still reach the module resolver in
+``pytacheck.module``. A package's ``__init__`` is not an import edge of its
+submodules.
 
-**Migrated modules.** A file that imports ``pytacheck.doc`` counts as migrated
-and may not use ``text.search``, ``papers.tables``, ``_r.frames`` or
-``_r.regex.grepl``, however it reaches them: a module import, a name imported
-from a package that re-exports it (found in the ``__init__`` files), or
-attribute access such as ``regex.grepl``. ``pytacheck.doc`` does not exist yet,
-so this rule finds nothing today and is exercised on synthetic trees.
+**Migrated modules.** A check module (a file under ``modules/``) that imports
+``pytacheck.doc`` counts as migrated. It may not use ``text.search``,
+``papers.tables``, ``_r.frames`` or ``_r.regex.grepl``, however it reaches them:
+a module import, a name imported from a package that re-exports it (found in the
+``__init__`` files), or attribute access such as ``regex.grepl``. Only an import
+statement marks a module as migrated, also one in a ``TYPE_CHECKING`` block;
+attribute access to ``pytacheck.doc`` does not. Façades such as ``compat`` or
+the top-level ``__init__`` re-export the old names on purpose, so the rule does
+not apply to them. ``pytacheck.doc`` does not exist yet, so this rule finds
+nothing today and is exercised on synthetic trees.
 
 There is no rule for YAML modules (decision 2 is (c)).
 
@@ -58,10 +68,15 @@ CORE = _names("core")
 LOWER = FOUNDATION + CORE
 UPPER = _names("text", "modules", "report", "api", "cli", "archives", "datacheck", "codecheck")
 DOC = f"{PKG}.doc"
+# permanent façades (§2.10) the core does not need; the runners are banned as names
+FACADES = _names(
+    "papers.tables", "stats", "io.read", "compat", "module.module_run", "module.get_prev_outputs"
+)
+CHECK_MODULES = f"{PKG}.modules"
 # what a migrated module may not use; a name is banned along with everything under it
 BANNED = _names("text.search", "papers.tables", "_r.frames", "_r.regex.grepl")
 # named by §2.1 but not written yet
-NOT_YET = frozenset(_names("core", "doc", "papers.ids"))
+NOT_YET = frozenset(_names("core", "doc", "papers.ids", "compat"))
 
 # (rule, file under src/pytacheck, banned target) -> why it is still there
 ALLOWED: dict[tuple[str, str, str], str] = {}
@@ -200,7 +215,11 @@ def _resolve(symbol: str, reexports: dict[str, str]) -> str:
 def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
     """Every layering violation under *root*, keyed like ``ALLOWED``."""
     edges, reexports = build(root)
-    migrated = {e.path for e in edges if e.note != "attribute" and _under(e.symbol, DOC)}
+    migrated = {
+        e.path
+        for e in edges
+        if e.note != "attribute" and _under(e.module, CHECK_MODULES) and _under(e.symbol, DOC)
+    }
     found: dict[tuple[str, str, str], Edge] = {}
     for edge in edges:
         symbol = _resolve(edge.symbol, reexports)
@@ -210,10 +229,10 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
             if _under(target, PKG) and not _under(target, LOWER):
                 found.setdefault(("lower", edge.path, target), edge)
         if _under(edge.module, CORE):
-            for layer in (*UPPER, DOC):
+            for layer in (*UPPER, *FACADES, DOC):
                 if _under(edge.target, layer) or _under(symbol, layer):
                     found.setdefault(("core", edge.path, layer), edge)
-        if edge.path in migrated and not _under(edge.module, (DOC, *CORE)):
+        if edge.path in migrated:
             for banned in BANNED:
                 if _under(symbol, banned):
                     found.setdefault(("migrated", edge.path, banned), edge)
@@ -256,18 +275,23 @@ def test_allow_list_is_well_formed() -> None:
 
 def test_named_layers_exist() -> None:
     """A rename must not turn a rule into one that checks nothing."""
-    for name in (*LOWER, *UPPER, *BANNED):
+    for name in (*LOWER, *UPPER, *FACADES, *BANNED, CHECK_MODULES):
         if name in NOT_YET:
-            continue
-        rel = Path(*name.split(".")[1:])
-        assert (
-            (SRC / rel).is_dir() or (SRC / rel.with_suffix(".py")).is_file() or _is_symbol(name)
-        ), f"{name} is gone: update the layer lists"
+            assert not _exists(name), f"{name} exists now: remove it from NOT_YET"
+        else:
+            assert _exists(name), f"{name} is gone: update the layer lists"
+
+
+def _exists(name: str) -> bool:
+    rel = Path(*name.split(".")[1:])
+    return (SRC / rel).is_dir() or (SRC / rel.with_suffix(".py")).is_file() or _is_symbol(name)
 
 
 def _is_symbol(name: str) -> bool:
     """Whether *name* is a function defined in the module above it."""
     module, _, func = name.rpartition(".")
+    if module == PKG:
+        return False
     path = SRC / Path(*module.split(".")[1:]).with_suffix(".py")
     return path.is_file() and f"def {func}(" in path.read_text(encoding="utf-8")
 
@@ -323,7 +347,9 @@ BASE = {
         "if TYPE_CHECKING:\n"
         "    from pytacheck.text import text_search\n"
         "    from pytacheck.module import module_run\n"
+        "    from pytacheck.io.read import read\n"
     ),
+    "io/read.py": "def read(): ...\n",
 }
 
 
@@ -353,6 +379,17 @@ def found_in(tmp_path: Path, files: dict[str, str]) -> set[tuple[str, str, str]]
         ),
         # reached by attribute through the lazy top-level __getattr__
         ("import pytacheck._r.regex\nx = pytacheck.text_search(1)\n", "text"),
+        # the façades import the core, never the reverse
+        ("from pytacheck.papers.tables import paper_table\n", "papers.tables"),
+        ("from pytacheck.papers import tables\n", "papers.tables"),
+        ("from pytacheck.stats import stats\n", "stats"),
+        ("from pytacheck import stats\n", "stats"),
+        ("from pytacheck.io.read import read\n", "io.read"),
+        ("from pytacheck import read\n", "io.read"),
+        ("from pytacheck.compat import paper_table\n", "compat"),
+        ("from pytacheck.module import module_run\n", "module.module_run"),
+        ("from pytacheck import module_run as run\n", "module.module_run"),
+        ("import pytacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
     ],
 )
 def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
@@ -381,14 +418,16 @@ def test_core_may_import_the_foundation(tmp_path: Path) -> None:
 
 
 def test_core_may_import_what_the_run_context_needs(tmp_path: Path) -> None:
-    """§2.6 gives ``core/run.py`` settings, caches and the module runner."""
+    """§2.6 gives ``core/run.py`` settings, caches and the resolved module specs."""
     source = (
         "from pytacheck.llm import LLMSettings\n"
         "from pytacheck.config import email\n"
         "from pytacheck.cache import CacheStore\n"
         "from pytacheck.repository import RepoIndex\n"
-        "from pytacheck.module import module_run\n"
-        "from pytacheck import module_run as run\n"
+        "from pytacheck.module import ModuleSpec, module_find\n"
+        "import pytacheck.module as m\n"
+        "spec = m.module_find('x')\n"
+        "from pytacheck.packs import registry\n"
         "import pytacheck.db\n"
     )
     assert found_in(tmp_path, {"core/run.py": source}) == set()
@@ -488,6 +527,41 @@ def test_migrated_module_may_not_use_the_old_helpers(
 )
 def test_migrated_rule_is_derived_from_the_doc_import(tmp_path: Path, source: str) -> None:
     assert found_in(tmp_path, {"modules/m.py": source}) == set()
+
+
+def test_a_type_checking_doc_import_marks_a_module_as_migrated(tmp_path: Path) -> None:
+    source = (
+        "from typing import TYPE_CHECKING\n"
+        "if TYPE_CHECKING:\n    from pytacheck.doc import Doc\n"
+        "from pytacheck._r.frames import count\n"
+    )
+    assert ("migrated", "modules/m.py", f"{PKG}._r.frames") in found_in(
+        tmp_path, {"modules/m.py": source}
+    )
+
+
+def test_doc_attribute_access_does_not_mark_a_module_as_migrated(tmp_path: Path) -> None:
+    source = "import pytacheck\nx = pytacheck.doc.Doc\nfrom pytacheck._r.frames import count\n"
+    assert found_in(tmp_path, {"modules/m.py": source}) == set()
+
+
+def test_facades_that_import_doc_are_not_migrated_modules(tmp_path: Path) -> None:
+    reexports = (
+        "from pytacheck.text.search import text_search\n"
+        "from pytacheck.papers.tables import paper_table\n"
+        "from pytacheck._r import bind_rows\n"
+    )
+    files = {
+        "compat.py": "from pytacheck.doc import Result\n" + reexports,
+        "__init__.py": (
+            "from typing import TYPE_CHECKING\n"
+            "if TYPE_CHECKING:\n    from pytacheck.doc import Doc\n"
+            "    from pytacheck.text import text_search\n"
+            "    from pytacheck.module import module_run\n"
+        ),
+        "report/blocks.py": "from pytacheck.doc import Result\n" + reexports,
+    }
+    assert found_in(tmp_path, files) == set()
 
 
 def test_from_pytacheck_import_doc_marks_a_module_as_migrated(tmp_path: Path) -> None:
