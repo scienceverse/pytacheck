@@ -2,7 +2,8 @@
 
 A store is data only: listing, searching and showing never run pack code.
 The default store ``pytacheck`` is ``https://github.com/scienceverse/pytacheck-modules``;
-config can add others or remove it (see ``docs/MODULES.md``).
+the user config can add others or remove it, a project's ``pytacheck.json`` cannot
+(see ``docs/MODULES.md``).
 
 Where the index is read from:
 
@@ -425,8 +426,21 @@ def store_list() -> pd.DataFrame:
     )
 
 
+def _user_scope_only(scope: str) -> None:
+    """Stores live in the user config: a project config cannot hold them."""
+    if scope == "project":
+        raise StoreError(
+            "A project config cannot add, change or remove stores. "
+            "Stores go in your user config: leave out --project"
+        )
+
+
 def store_add(name: str, url: str, *, scope: str = "user") -> Path:
-    """Add (or change) a store in the *scope* config file; returns that file."""
+    """Add (or change) a store in the *scope* config file; returns that file.
+
+    *scope* ``"project"`` is refused: a project config cannot hold stores.
+    """
+    _user_scope_only(scope)
     _validate_store_name(name)
     url = check_store_url(url)  # rejects unsupported URLs and credentials early
 
@@ -440,7 +454,11 @@ def store_add(name: str, url: str, *, scope: str = "user") -> Path:
 
 
 def store_remove(name: str, *, scope: str = "user") -> Path:
-    """Remove a store: drop it from the *scope* file, or mask it there with ``null``."""
+    """Remove a store: drop it from the *scope* file, or mask it there with ``null``.
+
+    *scope* ``"project"`` is refused, as in :func:`store_add`.
+    """
+    _user_scope_only(scope)
     _validate_store_name(name)
     config = load_config()
     if name not in config.stores:

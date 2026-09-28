@@ -147,7 +147,10 @@ def cache_dir(subdir: str = "", override: str | os.PathLike[str] | None = None) 
 # or a cloned repository, so it is not trusted like the user's own config:
 # one owned by another user (or writable by others) is ignored, and the local
 # code it names (path packs, ``.py`` modules in presets) runs only once the
-# user has trusted that code (``trust_local()``; ``pack install`` asks).
+# user has trusted that code (``trust_local()``; ``pack install`` asks). It
+# cannot set ``stores`` at all: a store decides where packs come from, so a
+# project's stores are ignored with a warning and stores come from the user
+# file (or the file ``PYTACHECK_CONFIG`` names) only.
 
 BUILTIN_STORE = "pytacheck"
 BUILTIN_STORE_URL = "https://github.com/scienceverse/pytacheck-modules"
@@ -163,6 +166,7 @@ _writes = 0  # bumped by update_config(): mtime_ns alone can miss rapid rewrites
 #: provenance.file_sha256).
 _RACY_NS = 3_000_000_000
 _warned_unsafe: set[tuple[str, str]] = set()
+_warned_stores: set[str] = set()
 
 
 class ConfigError(ValueError):
@@ -462,6 +466,8 @@ def load_config() -> Config:
     ``pytacheck`` is built in; ``PYTACHECK_STORE_URL`` overrides its URL.
     Project entries that run local code the user has not trusted
     (:func:`trust_local`) are left out and listed in ``Config.untrusted``.
+    A project file's ``stores`` are ignored, with a warning: a cloned
+    repository must not add a store or replace the built-in one.
     """
     stamp = config_stamp()
     cached = _config_cache.get("config")
@@ -481,6 +487,16 @@ def load_config() -> Config:
         _check_section(data, path)
         where = (scope, str(path))
         for key, value in data.items():
+            if key == "stores" and scope == "project":
+                if value and str(path) not in _warned_stores:
+                    _warned_stores.add(str(path))
+                    warnings.warn(
+                        f"Ignoring the stores in the project config {path}: a project config "
+                        "cannot add, change or remove stores. Put them in your user config "
+                        "with `pytacheck store add NAME URL`",
+                        stacklevel=2,
+                    )
+                continue
             if key in _SECTIONS:
                 for name, item in (value or {}).items():
                     if item is None:
