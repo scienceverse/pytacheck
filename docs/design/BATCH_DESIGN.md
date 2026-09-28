@@ -9,7 +9,7 @@ Markers used for numbers:
 
 The VM was shared with other agents throughout, so absolute times are only indicative. Ratios measured within one run are reliable.
 
-**Amended on 2026-09-27 by [REPO_FETCH.md](REPO_FETCH.md)** for repository fetches, a cache store across runs, and OSF's limits. The notes marked "REPO_FETCH" below (R5, R6, N1, §3.5, §4.1, P3-2, §7) say what changes; everything else stands.
+**Amended on 2026-09-27 by [REPO_FETCH.md](REPO_FETCH.md)** for repository fetches, a cache store across runs, and OSF's limits. The notes marked "REPO_FETCH" below (R5, R6, N1, §3.5, §4.1, P3-2, §7) say what changes. ARCHITECTURE.md decision 3 (decided 2026-09-27: (b)) also amends BL-8's gate, and revision 3 settles §8's items 1-3; the notes there say how. Everything else stands.
 
 ---
 
@@ -164,9 +164,9 @@ This is why **layer 1 comes first**: removing these costs speeds up the single-p
 - **R3. Deterministic.** Results are in input order. `summary.csv` and `tables/*.csv` are byte-identical for any `jobs` and `chunk_size`.
 - **R4. Request shapes.** Requests may change only where the output is provably identical when every request succeeds (deduplicating keys, chunking PubPeer). Fixtures whose request counts change are re-recorded in the same commit. Behaviour that differs only on failure is an isolation improvement recorded as a U-entry.
 - **R5. Caching.** Errors, 429s and 5xx are never cached. Staleness is explicit: memos last one run; nothing persistent is added in v1.
-  - *REPO_FETCH, if decision 22 (a) is taken:* v1 adds a `CacheStore` for repository metadata that is validated on every run, immutable, or held for a short TTL (1-30 d), and for file blobs by hash (REPO_FETCH.md §5). Errors are still never stored, and lookups still last one run.
+  - *REPO_FETCH, under decision 22 (decided 2026-09-27: (a2)):* v1 adds a `CacheStore` for repository metadata that is validated on every run, immutable, or held for a short TTL (1-30 d), and for file blobs by hash (REPO_FETCH.md §5). It has only the local file tier until a second `pytacheck serve` replica is planned. Errors are still never stored, and lookups still last one run.
 - **R6. Politeness.** Across all worker processes together, requests never exceed R's bound or a service's published limit.
-  - *REPO_FETCH, if decision 23 (a) is taken:* OSF's published limits are hourly and daily (100 per hour anonymous, 10,000 per day with a token), and its file lists are limited to 75 per minute, so they span runs as well as processes. A request ledger keeps every window of a minute or longer (REPO_FETCH.md §2.2, §5.5). R's bound is read as a per-host envelope of 10 in flight (R's `max_active` for pages 2..n). The pinned R's `.batch_query` is sequential (1 in flight, `R/utils.R:185-188`), while N1 below allows `batch_size`.
+  - *REPO_FETCH, under decision 23 (decided 2026-09-27: (a)):* OSF's published limits are hourly and daily (100 per hour anonymous, 10,000 per day with a token), and its file lists are limited to 75 per minute, so they span runs as well as processes. A request ledger keeps every window of a minute or longer (REPO_FETCH.md §2.2, §5.5). R's bound is read as a per-host envelope of 10 in flight (R's `max_active` for pages 2..n). The pinned R's `.batch_query` is sequential (1 in flight, `R/utils.R:185-188`), while N1 below allows `batch_size`.
 - **R7. One run object.** The existing `run_session()` owns every run-scoped cache. There is no separate network session.
 
 ### 3.2 Shape
@@ -305,7 +305,7 @@ python -m parity batch-equality          # harness
 | LLM concurrency | `pytacheck.llm.workers` = 2 inside `run_batch`, 1 elsewhere (unchanged); provider in-flight cap 8 per host for the whole run, local servers 1 | Bounded by the per-host limiter |
 | Rate share | each worker gets `1/jobs` of every host's rate and in-flight budget. In-flight is `max(1, floor(cap/jobs))`, with a warning when `jobs` exceeds a host's cap. | R6 with no shared-memory limiter |
 | Memo | module outputs: one `run_session` per chunk. HTTP and lookup memo: per worker process for the run, LRU 256 MB. | Bounded memory; deduplicates within each process |
-| Persistent HTTP cache | none (phase 3, opt-in). *REPO_FETCH:* repository metadata goes to the `CacheStore`, on by default if decision 22 (a) is taken; lookups stay uncached | R5 |
+| Persistent HTTP cache | none (phase 3, opt-in). *REPO_FETCH:* repository metadata goes to the `CacheStore`, on by default under decision 22 (decided 2026-09-27: (a2)); lookups stay uncached | R5 |
 | `resume` | off. A non-empty `out_dir` without `--resume` or `--force` is refused. | No silent reuse |
 | `max_age` | 7 days, for reusing results of modules that `require` network or LLM when resuming | A resumed run must not miss a new retraction or PubPeer comment |
 | Progress | a rich bar when `verbose()` is on and stderr is a TTY; workers run with `verbose(False)` | One bar, no nested bars |
@@ -487,7 +487,7 @@ Every item keeps outputs unchanged unless it names a U-entry. "Accept" is the ac
 | BL-5 | E4: `run_batch` paper mode: plan, contiguous chunks, worker loop with `module_run_each` (network and LLM modules in `io_workers` threads), sink, manifest, merge, `BatchResult`, progress queue, two-stage Ctrl-C, `--dry-run`, resume with `max_age` | `batch/{__init__,plan,worker,sink,progress}.py` | H2(a), (c), (d); a 1,000-paper synthetic run stays under `jobs` × 300 MB RSS | L |
 | BL-6 | E5: pool (`forkserver` with preload, or spawn; `max_tasks_per_child=20`; initializer; requeue on `BrokenProcessPool`, then one paper per task) | `batch/pool.py` | Fault test: a module that calls `os._exit` for one paper marks only that paper `crashed`; the preload starts no thread | M |
 | BL-7 | E6: `pytacheck batch`, `pytacheck report -j`, `report(PaperList, jobs=N)` (the same `ReportList`, files and warnings as `jobs=1`) | `cli.py`, `report/report.py` (delegation only, after lane7), `__init__.py` | CLI tests; `report(list, jobs=4)` equals `report(list)` apart from the date and run-record timestamps | M |
-| BL-8 | Corpus mode: `batch/views.py` (chunk input with concatenated earlier outputs, split by `paper_id`, `_assemble` per paper, the duplicate-id fallback, per-paper re-run when a list call fails), then set `batch="list"` on the built-ins H2 lists as eligible (lane5 reviews) | `batch/views.py`, `modules/*.py` (decorators only) | H2(b) green for every flipped module; `final/bench_mixed.py`-style chain in corpus mode at most 0.55x of paper mode's CPU | M |
+| BL-8 | Corpus mode: `batch/views.py` (chunk input with concatenated earlier outputs, split by `paper_id`, `_assemble` per paper, the duplicate-id fallback, per-paper re-run when a list call fails), then set `batch="list"` on the built-ins H2 lists as eligible (lane5 reviews) | `batch/views.py`, `modules/*.py` (decorators only) | H2(b) green for every flipped module; `final/bench_mixed.py`-style chain in corpus mode at most 0.55x of paper mode's CPU. *Decision 3 (decided 2026-09-27: (b)), ARCHITECTURE.md §6:* built in package BATCH-b. The 0.55x target predates the core, which removes the fixed costs it came from, so it becomes "no slower than paper mode, ratio measured"; H2(b) gains fixed and seeded random chunks, and the five neighbour-dependent modules stay `"paper"` (ARCHITECTURE.md §4.3) | M |
 | BL-9 | `docs/BATCH.md`: the two modes, defaults, fidelity guarantees, the output folder, resume, politeness | `docs/BATCH.md` | Reviewed | S |
 
 ### closing: _r/** and cross-cutting
@@ -527,7 +527,7 @@ Every item keeps outputs unchanged unless it names a U-entry. "Accept" is the ac
    4. H2 (harness) together with BL-5.
    5. BL-8: corpus mode and the `batch="list"` flips.
    6. BL-9: docs.
-   - *Option for the orchestrator:* BL-1 touches only `http.py`, which no lane owns, and keeps every signature. It could start during lanes 3-7 if lane7 agrees, because lane7's db tests exercise `batch_query` timing.
+   - *Option for the orchestrator:* BL-1 touches only `http.py`, which no lane owns, and keeps every signature. It could start during lanes 3-7 if lane7 agrees, because lane7's db tests exercise `batch_query` timing. Revision 3 settles this: BL-1 runs in BATCH-a at days 6.5-9.5 (§8).
 4. **Closing:** C-1 to C-4.
 5. **Phase 3:** P3-1 to P3-5, each behind its gate.
 
@@ -542,7 +542,7 @@ The critical path to a usable `pytacheck batch` is: L6-1 → L5-5/L5-7 → BL-3 
 | Changing `module_run(PaperList)` so modules no longer depend on their neighbours (design 1, T2) | This is R's own list-mode behaviour: ref_accuracy's corpus-level `len(bib_match)==0` branch, and stat_check's 0 in list mode against NA per paper. Those modules simply stay `"paper"` in batches. |
 | Deriving per-paper verdicts from aggregate list outputs | R2. The traffic light and report are aggregates in list mode. |
 | "Collect rounds" for LLM batch APIs (designs 1 and 2) | Deferred error rows make power's all-failed branch fire (`_power.py:368-389`), which sends the fallback prompt for every paragraph, doubling the batch. Modules with broad `except` clauses would also take degraded paths. |
-| A custom supervised worker pool, a shared-memory (`RawArray`/crc32) limiter, SQLite single-flight across processes | Stdlib `ProcessPoolExecutor` plus a per-worker rate share covers the need. Those pieces are maintenance-heavy and unproven. *REPO_FETCH:* the rate share cannot keep an hourly window across runs, so REPO_FETCH.md §5.5 adds a request ledger in files or Redis. It counts requests; it is not a limiter in shared memory. |
+| A custom supervised worker pool, a shared-memory (`RawArray`/crc32) limiter, SQLite single-flight across processes | Stdlib `ProcessPoolExecutor` plus a per-worker rate share covers the need. Those pieces are maintenance-heavy and unproven. *REPO_FETCH:* the rate share cannot keep an hourly window across runs, so REPO_FETCH.md §5.5 adds a request ledger in files, and in Redis once a second `pytacheck serve` replica is planned (decision 22 (decided 2026-09-27: (a2))). It counts requests; it is not a limiter in shared memory. |
 | An incremental result store keyed on code and environment digests, with dependency recording | Any core change invalidates everything anyway. A missing key component gives silently stale results. v1 resumes by run key plus input hash. |
 | Resume on by default; a persistent HTTP cache on by default | A re-run months later would silently miss new retractions or PubPeer comments. *REPO_FETCH:* this still holds for lookups. The repository `CacheStore` is on by default only because each entry is re-validated on every run, cannot change, or expires within its TTL (REPO_FETCH.md §5.1). |
 | A separate `net_session` beside `run_session` | One run object (R7). |
@@ -560,6 +560,8 @@ The critical path to a usable `pytacheck batch` is: L6-1 → L5-5/L5-7 → BL-3 
 ---
 
 ## 8. Decisions for the orchestrator
+
+*ARCHITECTURE.md revision 3 settles 1-3:* `mode="paper"` stays the default (§4.3 BATCH-b); BL-1 runs in BATCH-a at days 6.5-9.5, since revision 3 replaces lanes 3-7; repeated ids follow decision 6 (decided 2026-09-27: (a)). Item 1's 2x for corpus mode was measured before the core. On the core, ARCHITECTURE.md §2.8 expects ≈ 1.1-1.3x over paper mode **(E)**, and BATCH-b measures it.
 
 1. **Default `mode` for `pytacheck batch`.** I recommend `"paper"`: it is a superset of the outputs and exactly the loop. `"corpus"` halves CPU (303 vs 606 ms/paper **(M)**) but has no per-paper verdicts.
 2. **Pulling BL-1 (`http.py`) forward** into lanes 3-7. It is safe signature-wise, but lane7 must agree (§6).

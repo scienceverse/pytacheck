@@ -5,7 +5,7 @@
 - add caching, possibly with a bundled Redis;
 - say whether pytacheck and bibr should share a Redis layer.
 
-It adds two decisions (ARCHITECTURE.md §6, 22 and 23) and two packages (FETCH and CACHE, §8), and it amends BATCH_DESIGN's R5, R6, N1, §3.5, §4.1, P3-2 and §7. Nothing in `src/` changes until the decisions are made.
+It adds two decisions (ARCHITECTURE.md §6, 22 and 23) and two packages (FETCH and CACHE, §8), and it amends BATCH_DESIGN's R5, R6, N1, §3.5, §4.1, P3-2 and §7. The maintainer decided both on 2026-09-27, each as recommended: 22 (a2) and 23 (a) (§9). Nothing in `src/` has changed for them yet.
 
 **Evidence markers.** `scratchpad/` means `/tmp/claude-1000/-home-jakub-dev-pytacheck--claude-worktrees-pytacheck-scienceverse-transfer-09704e/3c3979d0-9ad6-438c-9171-6e13a6483378/scratchpad`.
 - **(M)**: measured on 2026-09-27 at 86564608, anonymously (no token, no email, `trust_env=False`), from one workstation and one IP. Since 86564608 only CI files have changed.
@@ -37,8 +37,8 @@ A separate bug makes `data_check` download 500.5 MiB to get 4.2 KB **(M)**. R ha
 |---|---|---|
 | **Transport** | The shared client speaks HTTP/1.1 to every host (RF-1). This must land before any change that raises concurrency | BATCH-a |
 | **Batching** | Per-host work queues across repositories; OSF id canonicalisation, bulk id lookups and leaf-skip traversal; no wasted HEADs; parallel zip peeks with suffix ranges; reuse of peeked bytes; one download scheduler; archives shared across modules (RF-2 to RF-10, §3) | FETCH, LINKS, REPO, BATCH-b |
-| **Cache store** | One `CacheStore`: the in-run memo, then a file store on the machine, then an optional Redis/Valkey backend chosen by URL. It holds repository listings that are validated on every run, immutable, or kept for a short TTL, plus zip-peek indexes and the request ledger. File bytes go to a content-addressed blob store on disk, never to Redis (§5) | CACHE |
-| **OSF's limits** | OSF publishes 100 requests/h for anonymous clients. A per-identity request ledger enforces OSF's windows of a minute or longer across processes and runs, and `OSF_PAT` is recommended when a run would exceed them (§2.2, decision 23) | BATCH-a, CACHE |
+| **Cache store** | One `CacheStore`: the in-run memo, then a file store on the machine, then an optional Redis/Valkey backend chosen by URL, which waits until a second `pytacheck serve` replica is planned (decision 22 (decided 2026-09-27: (a2))). It holds repository listings that are validated on every run, immutable, or kept for a short TTL, plus zip-peek indexes and the request ledger. File bytes go to a content-addressed blob store on disk, never to Redis (§5) | CACHE |
+| **OSF's limits** | OSF publishes 100 requests/h for anonymous clients. A per-identity request ledger enforces OSF's windows of a minute or longer across processes and runs, and `OSF_PAT` is recommended when a run would exceed them (§2.2, decision 23 (decided 2026-09-27: (a))) | BATCH-a, CACHE |
 
 **Headline targets (E, §7):**
 
@@ -49,7 +49,7 @@ A separate bug makes `data_check` download 500.5 MiB to get 4.2 KB **(M)**. R ha
 | psy737 `repo_check` | 47.3 s | ≈ 8-14 s | ≈ 1-2 s |
 
 **Redis and bibr.**
-- **Agreed:** Redis, or better Valkey, as an optional tier for server deployments, bundled in the compose stack. With one platform server (§9) it can wait: decision 22 (a2) ships the file tier first, behind the same interface.
+- **Agreed:** Redis, or better Valkey, as an optional tier for server deployments, bundled in the compose stack. With one platform server (§9) it can wait: decision 22 (decided 2026-09-27: (a2)) ships the file tier first, behind the same interface.
 - **Not agreed:** a layer shared with bibr. bibr never calls a repository host, so it would give datacheck 0 cache hits.
   - No other namespace is shared either: bibr's Crossref cache is for another host (`api.crossref.org`, pytacheck uses `api.labs.crossref.org`), and the two LLM caches use different keys and formats.
   - Sharing would couple eviction policy, credentials and deploys (§6.2).
@@ -208,7 +208,7 @@ Source: `scratchpad/osfrate/`.
 **What this means:**
 1. Anonymously, the published limit binds on every axis, and it is tighter than R. R already goes past 100/h after 2-3 OSF-heavy papers.
 2. With a token, only 10,000/day is published. Per-second rate and concurrency fall back to R's bound.
-3. Decision 23 recommends reading R's bound as a **host envelope**: at most 10 in flight (R's `max_active`), plus OSF's windows. The strict reading, 1 in flight per call site, forbids OSF fan-out.
+3. Decision 23 (decided 2026-09-27: (a)) reads R's bound as a **host envelope**: at most 10 in flight (R's `max_active`), plus OSF's windows. The strict reading, 1 in flight per call site, forbids OSF fan-out.
 4. **N1's `HostPolicy` cannot express this** with one (rate, burst, concurrency). It needs:
    - **path scopes**, since files-list and the provider list share the prefix `/v2/nodes/{id}/files/`;
    - **several windows per scope**;
@@ -361,8 +361,8 @@ A root link and a component link in the same tree are separate entries, each sto
 | Tier | What | Default |
 |---|---|---|
 | 0: in-run memo | `RunContext.cache` (N2) | always |
-| 1: local store | one file per key under `config.cache_dir("store")` (the OS user cache directory from platformdirs, or `PYTACHECK_CACHE_DIR`, which is `/cache` in the image); JSON in a versioned envelope, written with `os.replace`; blobs under `blobs/<algo>/<ab>/<hash>`; a size-bounded LRU sweep at most once per run, which never touches the ledger files | on (decision 22) |
-| 2: networked | `RedisStore` (optional extra `pytacheck[redis]`, redis-py, MIT), chosen by `PYTACHECK_CACHE_URL=redis://…`, which also works for Valkey. Cache reads and writes fail open, with bibr's timeouts (2 s connect, 5 s per operation, `bibr/cache.py:70-71`), and after the first failure the tier is skipped for the rest of the run; prefix `pytacheck:v1:` | only when configured |
+| 1: local store | one file per key under `config.cache_dir("store")` (the OS user cache directory from platformdirs, or `PYTACHECK_CACHE_DIR`, which is `/cache` in the image); JSON in a versioned envelope, written with `os.replace`; blobs under `blobs/<algo>/<ab>/<hash>`; a size-bounded LRU sweep at most once per run, which never touches the ledger files | on (decision 22 (decided 2026-09-27: (a2))) |
+| 2: networked | `RedisStore` (optional extra `pytacheck[redis]`, redis-py, MIT), chosen by `PYTACHECK_CACHE_URL=redis://…`, which also works for Valkey. Cache reads and writes fail open, with bibr's timeouts (2 s connect, 5 s per operation, `bibr/cache.py:70-71`), and after the first failure the tier is skipped for the rest of the run; prefix `pytacheck:v1:` | only when configured. Under decision 22 (decided 2026-09-27: (a2)) it waits until a second `pytacheck serve` replica is planned |
 
 Reads go memo → local → networked, and writes go through to every tier that may hold the entry. With a networked tier the local tier still holds the blobs.
 
@@ -391,8 +391,8 @@ OSF's windows of a minute or longer (§2.2) span processes and runs, so an in-pr
   - A lock older than 10 s is stale, judged against the mtime of a file just touched in the same directory, so on the file server's clock.
   - A stale lock is broken only after re-reading its token and finding it unchanged, under a second `O_EXCL` lock (`<name>.break`), so two processes cannot both take it.
   - `cache_store="off"` and `"refresh"` do not reset the ledger, and the LRU sweep never deletes it.
-- **Redis backend.** A sorted set per (scope, identity), updated by one Lua script (ZREMRANGEBYSCORE, ZCARD, ZADD) that scores by the server's `TIME` and adds a unique member per request (the time plus a random suffix). Ledger keys carry **no TTL**, so `volatile-lru` never evicts them (§6.3). A set is trimmed only when its own identity sends again, so an identity that stops sending (a retired token) leaves its set behind, with at most one longest window of members. At most once per run, the backend SCANs the ledger keys and deletes the sets whose newest member is older than their longest window.
-- **When a window is exhausted** (decision 23):
+- **Redis backend.** It waits with the rest of the networked tier until a second `pytacheck serve` replica is planned (decision 22 (decided 2026-09-27: (a2))). A sorted set per (scope, identity), updated by one Lua script (ZREMRANGEBYSCORE, ZCARD, ZADD) that scores by the server's `TIME` and adds a unique member per request (the time plus a random suffix). Ledger keys carry **no TTL**, so `volatile-lru` never evicts them (§6.3). A set is trimmed only when its own identity sends again, so an identity that stops sending (a retired token) leaves its set behind, with at most one longest window of members. At most once per run, the backend SCANs the ledger keys and deletes the sets whose newest member is older than their longest window.
+- **When a window is exhausted** (decision 23 (decided 2026-09-27: (a))):
   - the limiter waits up to 60 s, or not at all under `skip_on_api_limit`. For a known reset, `http.request` already skips the wait under `skip_on_api_limit`, but otherwise sleeps until the reset with no cap (`http.py:209-213`);
   - beyond that, the request fails as a 429 would, with a message naming `OSF_PAT` (or, for GitHub, `GITHUB_PAT_GITHUB_COM`, `archives/github.py:418`) and the reset time. That needs a deviation row, since R would have sent the request (CACHE's gates, §8);
   - a run forecast to exceed the anonymous hour prints one warning at the start that recommends a token.
@@ -436,8 +436,8 @@ Source: `scratchpad/research/deployment.md`.
 | notebook, CLI, `pytacheck batch -j N` on one machine | memo + local store; workers share through files |
 | HPC | the local store on the shared filesystem (atomic rename, `O_EXCL` locks); no services |
 | Docker CLI | the local store on a named volume |
-| `pytacheck serve`, one replica | memo + local store on the `/cache` volume |
-| compose with several replicas; the scienceverse platform | + the networked tier: one cache and one ledger across replicas |
+| `pytacheck serve`, one replica; the scienceverse platform for the foreseeable future (§9) | memo + local store on the `/cache` volume |
+| compose with several replicas; the scienceverse platform once a second replica is planned | + the networked tier: one cache and one ledger across replicas. Under decision 22 (decided 2026-09-27: (a2)) it waits until then |
 
 - A local file read costs 19 µs, a network round trip to another host on a private network 3.3 ms (a ping, which is the floor for a Redis GET), and one OSF call about 0.3 s **(M)**.
 - The scienceverse platform plans to call `pytacheck serve` over HTTP, replacing the R plumber service; its checks worker runs one job at a time today (R).
@@ -470,6 +470,7 @@ Source: `scratchpad/research/deployment.md`.
 
 ### 6.3 The bundled server
 
+- **When.** Under decision 22 (decided 2026-09-27: (a2)) this server, its compose service and its CI test wait until a second `pytacheck serve` replica is planned (§8, CACHE).
 - **Server and licence.** **Valkey** (BSD-3), or Redis ≥ 8 under its AGPLv3 option. Not `redis:7.x`: 7.4 is RSALv2/SSPLv1.
   - pytacheck is AGPL-3.0-or-later.
   - Pulling an official image is not redistribution; shipping one inside the pytacheck image would be.
@@ -509,7 +510,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 
 ## 8. Plan changes
 
-**Decisions.** 22 (the store and Redis) and 23 (OSF's limits under R6), in ARCHITECTURE.md §6.
+**Decisions.** 22 (the store and Redis; decided 2026-09-27: (a2)) and 23 (OSF's limits under R6; decided 2026-09-27: (a)), in ARCHITECTURE.md §6.
 
 **Packages (E):**
 
@@ -517,7 +518,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 |---|---:|---|---|
 | **BATCH-a** | 2 → **3** | 6.5-9.5 | + RF-1 with its test and pool sizing; `HostPolicy` path scopes, several windows, identity and sliding-window logs; the OSF and GitHub policies (§2.2); an empty cookie jar for OSF hosts |
 | **FETCH** (new) | **4** | 9.5-13.5, after BATCH-a | RF-2's call sites, RF-3 to RF-7, U-1 to U-4, the OSF vector and git-SHA validators on CACHE's API, and the `repo_info_cache` call sites moved onto the store |
-| **CACHE** (new) | **4**; ≈ 3 under decision 22 (a2), which defers the Redis backend, the compose service and the Valkey CI test | 9.5-13.5, after BATCH-a | §5 and §6.3: the store protocol, file backend, blob store, ledger, Redis backend and compose service, the switches and run-record fields, the dead settings |
+| **CACHE** (new) | **4**; ≈ 3 under decision 22 (decided 2026-09-27: (a2)), which defers the Redis backend, the compose service and the Valkey CI test | 9.5-13.5, after BATCH-a | §5 and §6.3: the store protocol, file backend, blob store, ledger, Redis backend and compose service, the switches and run-record fields, the dead settings |
 | **LINKS** | 7.5 → **8** | 16-24 (was 16-23.5) | + RF-8's scheduler, the zipball cap (U-5), and the download side of the blob store (read and write by the listing hash, through CACHE's API) in the `archives/fetch.py` engine |
 | **REPO** | unchanged | unchanged | RF-9's `RepoIndex.fetch` with the shared download directory; LINKS keeps the zip, and CODE-b moves code_check onto it; RF-3's queues arrive from FETCH; L7-6 stays |
 | **BATCH-b** | unchanged | unchanged | RF-10 (BL-2's HTTP memo) sits in front of the store |
@@ -541,6 +542,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 - **Order of work.** `repo_check.py` and `_repo_check.py` first, days 9.5-11, because REPO takes them over at day 13.5.
 
 **CACHE.**
+- **Under decision 22 (decided 2026-09-27: (a2))** the Redis backend, its compose service and its CI test wait until a second `pytacheck serve` replica is planned. So do the items below that serve only them: the `redis` extra, the Valkey service in `docker-compose.yml` and in CI, and the gates that test that tier: the Redis test, fail-open, and that no credentialed or view-only response reaches it.
 - **Files:**
   - `cache/**` (new);
   - `archives/{info_cache,cache}.py`;
@@ -553,7 +555,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
   - a Redis test against a Valkey service container in CI;
   - fail-open when the backend is down;
   - a credentialed or view-only response never reaches the networked tier, and a token caller is never served an `anon` OSF tree or id type;
-  - a deviation row under FIDELITY.md for a request the ledger refuses (decision 23), with a test that `skip_on_api_limit` fails it at once;
+  - a deviation row under FIDELITY.md for a request the ledger refuses (decision 23 (decided 2026-09-27: (a))), with a test that `skip_on_api_limit` fails it at once;
   - with the store off, outputs byte-identical to today on the full parity run and the accuracy gate;
   - NFS-safe writes (atomic rename, `O_EXCL` locks).
 
@@ -563,6 +565,7 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 - **The LINKS path** grows to 26.5 days, still under 27.
 - **Peak parallelism** on days 9.5-13.5 is 4-5 agents, under the plan's 7.
 - **Total:** ≈ 116.5 + 9.5 = **≈ 126 package-days in 36 packages**.
+- **Since this proposal.** Decisions 3 (b) and 2 (a) have moved the plan to a critical path of ≈ 29.5 days and ≈ 132 package-days in 37 packages (ARCHITECTURE.md §4.4). BATCH-b grew from 6 to 9 days and runs on days 18-27. The path through REPO and DATA-b now has 2.5 days of float, so a slip in BATCH-a or FETCH still delays REPO but moves the end only once it passes 2.5 days. ARCHITECTURE.md still schedules CACHE at 4 days, so the ≈ 1 day that decision 22 (a2) saves is not taken out of those totals.
 
 **Doc amendments made with this proposal:**
 - ARCHITECTURE.md: the header, §0, §2.6, §2.8, §3.2, §4.3, §4.4, §4.5, §4.6, §5.2, §5.3, §6 and Appendix A.
@@ -577,7 +580,8 @@ One sample per condition was measured, OSF latency is heavy-tailed, and Zenodo w
 2. **Two OSF test accounts** for the token-bearing traversal fixture (§8): the maintainer will create them and send the details.
 3. **Upstream reports** of U-1 and U-2: collect them with the other metacheck bugs in `docs/UPSTREAM_ISSUES.md` for one report later. Done: U-1 to U-5 and the cache-directory row are U195-U200 there (§4).
 4. **Early fixes** of RF-1, U-1, U-3 and RF-4(a) ahead of the rewrite: not wanted. They land in their packages.
-5. **The platform** will run one `pytacheck serve` for the foreseeable future. The file store on its `/cache` volume is enough (§6.1), so decision 22 now recommends (a2): the file tier and its ledger first, and the Redis/Valkey backend when a second server is planned.
+5. **The platform** will run one `pytacheck serve` for the foreseeable future. The file store on its `/cache` volume is enough (§6.1), so decision 22 now recommends (a2): the file tier and its ledger first, and the Redis/Valkey backend when a second server is planned. **Decided (maintainer, 2026-09-27): (a2).**
+6. **OSF's limits** (decision 23): **Decided (maintainer, 2026-09-27): (a).** The request ledger enforces OSF's windows of a minute or longer, and `OSF_PAT` is recommended when a run would exceed the anonymous hour (§2.2, §5.5).
 
 ---
 
