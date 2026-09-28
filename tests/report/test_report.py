@@ -23,6 +23,7 @@ from pytacheck.report.report import (
     report_qmd,
     report_repository,
 )
+from tests.httpmock import no_network
 
 PSYCHSCI = (
     Path(__file__).resolve().parents[2] / "upstream/metacheck/tests/testthat/fixtures/psychsci"
@@ -187,7 +188,9 @@ def test_default_output_file(tmp_path, monkeypatch, demo):
 
 def test_default_modules_skip_unported(tmp_path, demo):
     """Default modules that pytacheck has not ported yet are skipped with a warning."""
-    with warnings.catch_warnings(record=True) as w:
+    # the default modules include ones that go online (prereg_check, repo_check,
+    # ref_pubpeer): offline they fail or find nothing, and still count as run
+    with no_network(), warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         rep = report(demo, output_file=tmp_path / "r.qmd", output_format="qmd")
     available = [m for m in DEFAULT_MODULES if m in rep]
