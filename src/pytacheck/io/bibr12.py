@@ -4,7 +4,9 @@ bibr export schema 12.0 is the schema pytacheck targets. A JSON file with a
 root ``schema_version`` is read here; any version other than 12.x stops with
 metacheck's error (so bibr 11.x files are refused, as in metacheck), and files
 without a root ``schema_version`` (bibr v10.x and older, metacheck's demo and
-fixture papers) are read by the older reader exactly as before.
+fixture papers) are read by the older reader exactly as before. The error also
+says what to do. A later 12.x may add keys and enum values: unknown keys are
+ignored, and an unknown enum value is kept and logged once (bibr's forward policy).
 
 A paper read from a 12.x file keeps metacheck's own names where it has them --
 the 12.x ``metadata`` and ``source`` objects make the ``info`` table and
@@ -30,6 +32,7 @@ import hashlib
 import json
 import math
 import os
+import re
 from collections.abc import Mapping, Sequence
 from os import PathLike
 from pathlib import Path
@@ -41,6 +44,7 @@ import pandas as pd
 
 from pytacheck._r.base import as_character, trimws
 from pytacheck._r.regex import grepl, is_na, sub
+from pytacheck.log import logger
 from pytacheck.papers.io import _field
 from pytacheck.papers.model import Paper
 from pytacheck.papers.schema import (
@@ -320,6 +324,87 @@ _WRITE_ORDER = (
 
 _SCALAR_SCHEMA = {"chr": "string", "int": "integer", "num": "number", "lgl": "boolean"}
 _INT_MAX = 2147483647
+
+_BIB_TYPES = (
+    "journal_article",
+    "book",
+    "book_chapter",
+    "dataset",
+    "software",
+    "preprint",
+    "conference_paper",
+    "report",
+    "thesis",
+    "other",
+)
+_BIB_TYPE_SET = frozenset(_BIB_TYPES)
+_SERVICES = frozenset(
+    ["crossref", "openalex", "datacite", "doi.org", "openlibrary", "ror", "manual", "other"]
+)
+
+# The values bibr's 12.x schema lists for its enum columns, by export table
+# and column. Any 12.x release may add values (bibr's forward policy), so a
+# value not listed is read as it is and logged once (:func:`_log_new_values`).
+_BIBR12_VOCAB: dict[str, dict[str, frozenset[str]]] = {
+    "source": {
+        "input_format": frozenset(["pdf", "docx", "jats", "tei", "html", "epub", "unknown"])
+    },
+    "metadata": {
+        "paper_type": frozenset(
+            [
+                "empirical",
+                "review",
+                "meta_analysis",
+                "case_study",
+                "commentary",
+                "corrigendum",
+                "erratum",
+                "retraction",
+                "unknown",
+            ]
+        )
+    },
+    "section": {
+        "section_type": frozenset(
+            [
+                "title",
+                "abstract",
+                "intro",
+                "method",
+                "results",
+                "discussion",
+                "references",
+                "acknowledgment",
+                "funding",
+                "keywords",
+                "endnote",
+                "appendix",
+                "data_availability",
+                "author_contributions",
+                "coi",
+                "ethics",
+                "footnote",
+                "table",
+                "figure",
+                "unknown",
+            ]
+        )
+    },
+    "bib": {"bib_type": _BIB_TYPE_SET},
+    "xref": {
+        "xref_type": frozenset(
+            ["bib", "table", "figure", "foot", "supplementary", "equation", "section"]
+        )
+    },
+    "eq": {"comp": frozenset(["=", "<", ">", "≤", "≥", "≈", "≠", "≪", "≫", "~"])},
+    "metadata_match": {"bib_type": _BIB_TYPE_SET, "service": _SERVICES},
+    "affiliation_match": {"service": _SERVICES},
+    "funding_match": {"service": _SERVICES},
+    "bib_match": {"bib_type": _BIB_TYPE_SET, "service": _SERVICES},
+}
+
+# values already logged in this process: (table, column, value)
+_LOGGED_VALUES: set[tuple[str, str, str]] = set()
 
 
 def _paper_schema_bibr12() -> dict[str, Any]:
@@ -934,6 +1019,36 @@ def _schema_version(x: Mapping[str, Any]) -> str:
     return version
 
 
+def _other_schema_advice(version: str) -> str:
+    """What to do about an export in a schema other than 12.x."""
+    major = re.match(r"\s*(\d+)", version)
+    if major is not None and int(major.group(1)) > 12:
+        return "Update pytacheck, or extract the paper again with a bibr version that writes schema 12.x."
+    return "Extract the paper again with a bibr version that writes schema 12.x."
+
+
+def _log_new_values(records: Mapping[str, Sequence[Any]], version: str, file_name: str) -> None:
+    """Log the enum values of *records* that 12.x does not list, each once per process.
+
+    The values stay in the paper as they are: bibr's policy for 12.x is that a
+    reader accepts enum values it does not know. Only strings are checked.
+    """
+    new: dict[str, list[str]] = {}
+    for table, columns in _BIBR12_VOCAB.items():
+        for row in records.get(table, ()):
+            if not isinstance(row, Mapping):
+                continue
+            for column, known in columns.items():
+                value = row.get(column)
+                if not isinstance(value, str) or value in known:
+                    continue
+                if (table, column, value) not in _LOGGED_VALUES:
+                    _LOGGED_VALUES.add((table, column, value))
+                    new.setdefault(f"{table}.{column}", []).append(value)
+    if new:
+        logger("bibr12_new_value", {"schema_version": version, "file": file_name, "values": new})
+
+
 def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str) -> Paper:
     """``.read_bibr12()`` on already parsed JSON (``file_name`` names it in errors).
 
@@ -946,13 +1061,19 @@ def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str
     if not grepl(r"^12\.", version):
         raise ValueError(
             f"bibr export schema {version} is not supported: metacheck reads schema 12.x "
-            f"and the older files without a root schema_version ({file_name})"
+            f"and the older files without a root schema_version ({file_name}). "
+            + _other_schema_advice(version)
         )
 
     raw = {tbl: _as_rows(x.get(tbl)) for tbl in BIBR12_TABLES}
     for rows in raw.values():
         for row in rows:
             _r_index(row, "")  # .bibr12_rows(): a scalar row stops
+    _log_new_values(
+        {**raw, "source": [_field(x, "source")], "metadata": [_field(x, "metadata")]},
+        version,
+        file_name,
+    )
 
     # metacheck keeps degrees of freedom in parentheses, as printed: "(28)"
     raw["eq"] = [
@@ -1029,18 +1150,6 @@ def _bibr12_doi(x: Sequence[Any]) -> list[str | None]:
     return out
 
 
-_BIB_TYPES = (
-    "journal_article",
-    "book",
-    "book_chapter",
-    "dataset",
-    "software",
-    "preprint",
-    "conference_paper",
-    "report",
-    "thesis",
-    "other",
-)
 _BIB_TYPE_MAP = {
     "article": "journal_article",
     "journal-article": "journal_article",
