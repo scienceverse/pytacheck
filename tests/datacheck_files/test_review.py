@@ -222,7 +222,10 @@ def test_detect_likert_scale_integer_overflow_is_na() -> None:
     assert out["coverage"] == pytest.approx(25 / 26)
 
 
-def test_manifest_without_repo_url(tmp_path: Path) -> None:
+def test_manifest_without_repo_url(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    # the listing leaves b.csv (below) unsized, so the manifest asks the server
+    # for its size (a HEAD request); offline, the probe finds no size
+    monkeypatch.setattr(F, "_remote_size", lambda url: None)
     files = pd.DataFrame({"file_name": ["a.csv"], "file_url": [None], "data_type": ["data"]})
     path = tmp_path / "m.json"
     F._data_check_write_manifest(path, files, [True], None, "p1", "data", 100, 500)
