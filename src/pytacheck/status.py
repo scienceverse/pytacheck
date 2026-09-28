@@ -436,9 +436,10 @@ class Status:
     records for the module. ``stale_note`` says why a certification does not
     hold for this code (``"validated on 0.4.0, not re-measured on 0.5.0"``),
     and ``note`` is the registry's note, the reason for a withdrawal, or the
-    provisional wording before the registry's note. ``team`` is true for a module of a team pack, and
-    ``source`` is how the module is loaded: ``builtin``, ``installed``,
-    ``path`` or ``dist`` (its pack's kind), ``plugin``, ``file`` or ``object``.
+    provisional wording before the registry's note. ``team`` is true for a
+    module of a team pack, and ``source`` is how the module is loaded:
+    ``builtin``, ``installed``, ``path`` or ``dist`` (its pack's kind),
+    ``plugin``, ``file`` or ``object``.
     """
 
     ref: str
