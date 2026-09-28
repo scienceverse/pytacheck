@@ -12,13 +12,19 @@ Examples::
 
     python -m parity generate --area text          # needs R + metacheck
     python -m parity check --area text -v
+    python -m parity check --area core,text_extract+review  # core, text_extract(_review)
     python -m parity check --only text_search.demo.significant
     python -m parity check --tier 1 --jobs 4       # the realistic corpus, 4 processes
+    python -m parity check --strict --jobs 4       # a changed tier-2 mark fails too
     python -m parity check --md summary.md         # also a Markdown summary
     python -m parity check --report out.json       # the per-case JSON report
-    python -m parity lock --area text              # after changing a marked case
+    python -m parity lock --area text              # after adding a mark
+    python -m parity lock --area text --reviewed   # after reviewing the changes it printed
     python -m parity lock -k json_expand --suggest # also propose marks for R crashes
     python -m parity accuracy --gate               # the realistic-corpus report and gate
+
+``--area`` takes one area, several separated by commas, or ``<area>+review``
+for an area and its ``<area>_review`` cases, and may be repeated.
 
 ``generate`` uses the ``Rscript`` on PATH unless ``PYTACHECK_RSCRIPT`` or
 ``--rscript`` points elsewhere, and always runs R under ``C.UTF-8`` / UTC
@@ -35,9 +41,16 @@ Statuses of ``check`` (see docs/PARITY.md and ``parity.lockfile``): ``pass``;
 paths where they differ are as locked); ``xpass`` (marked, but it matches R: remove
 the mark); ``r_changed`` / ``py_changed`` (a marked case whose golden / Python
 result changed since it was locked: a failure for a tier-1 case, a warning for a
-tier-2 one unless a value became an exception); ``unlocked`` (marked, no lock
-entry); ``fail`` / ``error`` (unmarked, differs from R / Python raised where R
-returned); ``skip`` (needs the reference R); ``missing`` (no golden).
+tier-2 one unless a value became an exception or ``--strict`` is given);
+``unlocked`` (marked, no lock entry); ``fail`` / ``error`` (unmarked, differs
+from R / Python raised where R returned); ``skip`` (needs the reference R);
+``missing`` (no golden).
+
+``lock`` prints each entry it adds, changes or removes: the case, its tier and
+mark, the old and new fingerprints, and how Python differs from R. It adds new
+entries and removes stale ones, but changes an existing entry only with
+``--reviewed``, once that diff has been read (``--md`` also writes it as a
+Markdown table for the pull request).
 """
 
 from __future__ import annotations
@@ -69,9 +82,11 @@ from parity.cases import (
     VALUE_WHERE_R_FAILS_KINDS,
     Case,
     RWithoutReference,
+    UnknownAreaError,
     expected_to_fail,
     iter_case_files,
     load_cases,
+    parse_areas,
     r_text,
     run_python,
     skip_reason,
@@ -89,6 +104,7 @@ from parity.lockfile import (
     R_VALUE_PY_ERROR,
     Fingerprint,
     digest,
+    entry_diff,
     lock_path,
     locked_areas,
     r_digest,
@@ -159,7 +175,7 @@ class CaseResult:
     tier: int
     status: str = PASS
     #: whether the status fails the run (``r_changed``/``py_changed`` of a tier-2
-    #: case only warn)
+    #: case only warn, unless the check is strict)
     failing: bool = False
     problems: list[str] = field(default_factory=list)
     seconds: float = 0.0
@@ -169,6 +185,8 @@ class CaseResult:
     r_text: bool = False
     #: an expected failure's fingerprints, as ``lock`` would record them
     fingerprint: Fingerprint | None = None
+    #: an expected failure's differences from R (its problems, without advice)
+    differences: list[str] = field(default_factory=list)
     #: R's error message when R raised and Python returned a value
     r_error: str | None = None
     #: what the case printed (its last ``OUTPUT_LIMIT`` characters), when the
@@ -232,10 +250,14 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
     return res.status, res.problems, res.seconds
 
 
-def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseResult:
+def run_case(
+    case: Case, lock: Mapping[str, Fingerprint] | None = None, strict: bool = False
+) -> CaseResult:
     """Run *case*'s Python side and compare it with R's golden.
 
-    *lock* is its area's lock (default: ``parity/lock/<area>.json``). A
+    *lock* is its area's lock (default: ``parity/lock/<area>.json``). With
+    *strict*, a tier-2 case that changed since it was locked fails, as a tier-1
+    one does, instead of warning. A
     ``known_divergence`` with ``r_text`` compares Python with R's golden as
     rewritten by its substitutions: such a case passes when that is all that
     differs (and fails when a substitution changes nothing, or when the case
@@ -321,7 +343,7 @@ def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseR
         py=raised(err) if err is not None else digest(comparable(py, options), run),
         diff=tuple(paths),
     )
-    res.fingerprint = fp
+    res.fingerprint, res.differences = fp, problems
     entry = (read_lock(case.area) if lock is None else lock).get(case.id)
     if entry is None:
         return res.done(
@@ -333,8 +355,9 @@ def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseR
         )
     if entry == fp:
         return res.done(XFAIL, problems)
-    # a tier-2 change only warns, unless Python now raises where it returned a value
-    failing = case.tier == 1 or (fp.raises and not entry.raises)
+    # a tier-2 change only warns, unless the check is strict or Python now raises
+    # where it returned a value
+    failing = strict or case.tier == 1 or (fp.raises and not entry.raises)
     if entry.r != fp.r:
         what = ["R's golden changed since the case was locked: check that the mark still holds"]
         return res.done(R_CHANGED, what + _changes(entry, fp, case.id) + problems, failing)
@@ -347,7 +370,7 @@ def _changes(entry: Fingerprint, fp: Fingerprint, case_id: str) -> list[str]:
         out.append(f"Python's result changed since the case was locked ({entry.py} -> {fp.py})")
     if entry.diff != fp.diff:
         out.append(f"the differing paths changed: {list(entry.diff)} -> {list(fp.diff)}")
-    return [*out, f"re-lock it once reviewed: `python -m parity lock -k {case_id}`"]
+    return [*out, f"re-lock it once reviewed: `python -m parity lock -k {case_id} --reviewed`"]
 
 
 def _differences(
@@ -430,21 +453,24 @@ def _captured(res: CaseResult) -> Iterator[None]:
             res.output = ("..." if size > OUTPUT_LIMIT else "") + kept
 
 
-def _run_quietly(case: Case, lock: Mapping[str, Fingerprint] | None) -> CaseResult:
+def _run_quietly(
+    case: Case, lock: Mapping[str, Fingerprint] | None, strict: bool = False
+) -> CaseResult:
     holder = CaseResult.of(case)
     with _captured(holder):
-        res = run_case(case, lock)
+        res = run_case(case, lock, strict)
     res.output = holder.output
     return res
 
 
 _POOL_CASES: list[Case] = []
 _POOL_USE_LOCK = True
+_POOL_STRICT = False
 
 
-def _pool_init(keys: list[str], use_lock: bool) -> None:
-    global _POOL_CASES, _POOL_USE_LOCK
-    _POOL_USE_LOCK = use_lock
+def _pool_init(keys: list[str], use_lock: bool, strict: bool) -> None:
+    global _POOL_CASES, _POOL_USE_LOCK, _POOL_STRICT
+    _POOL_USE_LOCK, _POOL_STRICT = use_lock, strict
     if not _POOL_CASES:  # a spawned (not forked) worker loads the cases itself
         _hermetic_env()
         by_key = {c.key: c for c in load_cases()}
@@ -452,7 +478,7 @@ def _pool_init(keys: list[str], use_lock: bool) -> None:
 
 
 def _pool_task(i: int) -> tuple[int, CaseResult]:
-    return i, _run_quietly(_POOL_CASES[i], None if _POOL_USE_LOCK else {})
+    return i, _run_quietly(_POOL_CASES[i], None if _POOL_USE_LOCK else {}, _POOL_STRICT)
 
 
 def run_cases(
@@ -460,12 +486,13 @@ def run_cases(
     jobs: int = 1,
     use_lock: bool = True,
     progress: Callable[[CaseResult], None] | None = None,
+    strict: bool = False,
 ) -> list[CaseResult]:
     """:func:`run_case` for every case, in *jobs* processes (0: one per CPU), with
     each case's output kept in its result; results in case order.
 
     Without *use_lock*, expected failures come out ``unlocked`` with their
-    fingerprints (what ``lock`` records).
+    fingerprints (what ``lock`` records). *strict* is :func:`run_case`'s.
     """
     global _POOL_CASES
     jobs = jobs if jobs > 0 else os.cpu_count() or 1
@@ -473,7 +500,7 @@ def run_cases(
     if jobs == 1 or len(cases) < 2:
         out = []
         for case in cases:
-            res = _run_quietly(case, lock)
+            res = _run_quietly(case, lock, strict)
             if progress:
                 progress(res)
             out.append(res)
@@ -488,7 +515,7 @@ def run_cases(
         with ctx.Pool(
             min(jobs, len(cases)),
             initializer=_pool_init,
-            initargs=([c.key for c in cases], use_lock),
+            initargs=([c.key for c in cases], use_lock, strict),
         ) as pool:
             for i, res in pool.imap_unordered(_pool_task, range(len(cases)), chunksize=1):
                 results[i] = res
@@ -568,11 +595,10 @@ def cmd_check(ns: argparse.Namespace) -> int:
     root_before = _root_entries()
     started = time.perf_counter()
     cases = _select(ns)
-    results = run_cases(cases, ns.jobs, progress=_Progress(len(cases), ns.verbose))
+    progress = _Progress(len(cases), ns.verbose)
+    results = run_cases(cases, ns.jobs, progress=progress, strict=ns.strict)
     elapsed = time.perf_counter() - started
-    stale = (
-        [] if _partial(ns) else stale_lock_entries(cases, None if ns.area is None else [ns.area])
-    )
+    stale = [] if _partial(ns) else stale_lock_entries(cases, ns.area)
 
     report = Path(ns.report) if ns.report else _default_report()
     report.parent.mkdir(parents=True, exist_ok=True)
@@ -644,6 +670,10 @@ def _summary_lines(results: list[CaseResult], stale: list[str], elapsed: float) 
     return lines
 
 
+def _cell(text: str) -> str:
+    return text.replace("|", "\\|").replace("\n", " ")[:200]
+
+
 def markdown_summary(results: list[CaseResult], stale: list[str], elapsed: float) -> str:
     """A Markdown summary of a check: statuses by tier, marks by tier, kind and ref,
     and the cases that fail or warn."""
@@ -697,8 +727,8 @@ def markdown_summary(results: list[CaseResult], stale: list[str], elapsed: float
                 "|---|---|---|---|",
             ]
             for r in picked[:200]:
-                first = (r.problems[0] if r.problems else "").replace("|", "\\|").replace("\n", " ")
-                out.append(f"| `{r.key}` | {r.tier} | {r.status} | {first[:200]} |")
+                first = _cell(r.problems[0] if r.problems else "")
+                out.append(f"| `{r.key}` | {r.tier} | {r.status} | {first} |")
             if len(picked) > 200:
                 out.append(f"| ... and {len(picked) - 200} more | | | |")
     if stale:
@@ -746,6 +776,85 @@ R_CRASH = re.compile(
 )
 
 
+#: the differences from R shown for each lock change
+_SHOWN = 3
+
+
+@dataclass
+class LockChange:
+    """A lock entry that ``lock`` adds, changes or removes."""
+
+    key: str
+    old: Fingerprint | None
+    new: Fingerprint | None
+    #: the case's result, when it ran
+    result: CaseResult | None = None
+    #: a change of an existing entry that was not written (it needs ``--reviewed``)
+    held: bool = False
+
+    @property
+    def what(self) -> str:
+        return "new" if self.old is None else "removed" if self.new is None else "changed"
+
+    def about(self) -> str:
+        """The case's tier and mark, why a removed entry goes, and whether it was held."""
+        res, parts = self.result, []
+        if res is not None:
+            parts.append(f"tier {res.tier}")
+            if res.kind:
+                parts.append(" ".join(x for x in (res.kind, res.ref) if x))
+        if self.what == "removed":
+            xpass = res is not None and res.status == XPASS
+            parts.append("it matches R now" if xpass else "no longer an expected failure")
+        if self.held:
+            parts.append("not written: needs --reviewed")
+        return "; ".join(parts)
+
+    def differences(self) -> list[str]:
+        """How Python differs from R where the entry stays, the first few."""
+        found = self.result.differences if self.result is not None and self.new else []
+        more = [f"... and {len(found) - _SHOWN} more"] if len(found) > _SHOWN else []
+        return found[:_SHOWN] + more
+
+
+def _lock_change_lines(changes: list[LockChange]) -> list[str]:
+    lines = []
+    for ch in changes:
+        lines.append(f"  {ch.what:8} {ch.key} ({ch.about()})")
+        lines += [f"      {name:5}{text}" for name, text in entry_diff(ch.old, ch.new)]
+        if ch.differences():
+            lines.append("      differs from R:")
+            lines += [f"        - {d}" for d in ch.differences()]
+    return lines
+
+
+def lock_markdown(changes: list[LockChange]) -> str:
+    """A ``lock`` run's changes as a Markdown table, for the pull request."""
+    counts = Counter(ch.what for ch in changes)
+    held = sum(ch.held for ch in changes)
+    out = [
+        "# Lock changes",
+        "",
+        ", ".join(f"{counts[k]} {k}" for k in ("new", "changed", "removed"))
+        + (f"; {held} changed entries not written (they need --reviewed)" if held else "")
+        + ".",
+    ]
+    if changes:
+        out += [
+            "",
+            "| case | change | tier and mark | r | py | diff | differs from R |",
+            "|---|---|---|---|---|---|---|",
+        ]
+    for ch in changes:
+        fps = dict(entry_diff(ch.old, ch.new))
+        out.append(
+            f"| `{ch.key}` | {ch.what} | {_cell(ch.about())} | "
+            + " | ".join(_cell(fps.get(k, "")) for k in ("r", "py", "diff"))
+            + f" | {'<br>'.join(_cell(d) for d in ch.differences())} |"
+        )
+    return "\n".join(out) + "\n"
+
+
 def cmd_lock(ns: argparse.Namespace) -> int:
     started = time.perf_counter()
     cases = _select(ns)
@@ -765,8 +874,8 @@ def cmd_lock(ns: argparse.Namespace) -> int:
     selected = {c.key for c in cases}
     areas = set(by_area) | {c.area for c in cases}
     if not _partial(ns):  # lock files of areas without cases
-        areas |= set(locked_areas()) if ns.area is None else {ns.area}
-    changes: dict[str, list[str]] = defaultdict(list)
+        areas |= set(locked_areas() if ns.area is None else ns.area)
+    changes: list[LockChange] = []
     total = 0
     for area in sorted(areas):
         old = read_lock(area)
@@ -775,32 +884,45 @@ def cmd_lock(ns: argparse.Namespace) -> int:
             for case_id, fp in old.items()
             if case_id in expected[area] and f"{area}/{case_id}" not in selected
         }
-        for res in by_area.get(area, []):
+        ran = {res.id: res for res in by_area.get(area, [])}
+        for res in ran.values():
             if res.status == UNLOCKED and res.fingerprint is not None:
                 new[res.id] = res.fingerprint
             elif res.id in old and res.id in expected[area] and res.status != XPASS:
                 new[res.id] = old[res.id]  # not run (skip) or broken (error): keep the entry
         for case_id in sorted(set(old) | set(new)):
-            if case_id not in old:
-                changes["new"].append(f"{area}/{case_id}")
-            elif case_id not in new:
-                changes["removed"].append(f"{area}/{case_id}")
-            elif old[case_id] != new[case_id]:
-                changes["changed"].append(f"{area}/{case_id}")
+            before, after = old.get(case_id), new.get(case_id)
+            if before == after:
+                continue
+            change = LockChange(f"{area}/{case_id}", before, after, ran.get(case_id))
+            # a new entry pins a mark added in the same change, and removing one
+            # only tightens the check; changing a pinned difference needs a review
+            if change.what == "changed" and not ns.reviewed:
+                new[case_id], change.held = before, True
+            changes.append(change)
         write_lock(area, new)
         total += len(new)
-    counts = ", ".join(f"{len(changes[k])} {k}" for k in ("new", "changed", "removed"))
+    written = Counter(ch.what for ch in changes if not ch.held)
+    counts = ", ".join(f"{written[k]} {k}" for k in ("new", "changed", "removed"))
     print(
         f"locked {total} cases in {sum(lock_path(a).exists() for a in areas)} areas ({counts}) "
         f"in {time.perf_counter() - started:.0f} s"
     )
-    for what in ("new", "changed", "removed"):
-        keys = changes[what]
-        if keys:
-            shown = ", ".join(keys[:30]) + (
-                f" ... and {len(keys) - 30} more" if len(keys) > 30 else ""
-            )
-            print(f"  {what}: {shown}")
+    for line in _lock_change_lines(changes):
+        print(line)
+    held = [ch for ch in changes if ch.held]
+    if held:
+        print(
+            f"{len(held)} locked entries changed and were not written: review the "
+            "differences above, then run the same command with --reviewed"
+        )
+    if ns.md:
+        text = lock_markdown(changes)
+        if ns.md == "-":
+            print(text)
+        else:
+            Path(ns.md).write_text(text, encoding="utf-8")
+            print(f"changes: {ns.md}")
     problems = [
         r for r in results if r.status in (XPASS, FAIL, ERROR) and (r.kind or r.status == XPASS)
     ]
@@ -809,7 +931,7 @@ def cmd_lock(ns: argparse.Namespace) -> int:
         print(summarize(res.problems[:5]))
     if ns.suggest:
         _suggest([r for r in results if not r.kind])
-    return 1 if problems else 0
+    return 1 if problems or held else 0
 
 
 def _suggest(unmarked: list[CaseResult]) -> None:
@@ -869,10 +991,25 @@ def _hermetic_env() -> None:
 
 _TIER_HELP = "only tier-1 (realistic corpus, parity/corpus.toml) or tier-2 (synthetic) cases"
 _JOBS_HELP = "run the cases in N processes (0: one per CPU; default 1)"
+_AREA_HELP = (
+    "only these areas: one, several separated by commas, or <area>+review for an area "
+    "and its <area>_review cases; may be repeated"
+)
+
+
+def _areas(value: str) -> list[str]:
+    try:
+        return parse_areas(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from None
+
+
+def _add_area(p: argparse.ArgumentParser) -> None:
+    p.add_argument("--area", action="extend", type=_areas, metavar="AREAS", help=_AREA_HELP)
 
 
 def _add_selection(p: argparse.ArgumentParser) -> None:
-    p.add_argument("--area")
+    _add_area(p)
     p.add_argument("--only", nargs="*", help="case ids or area/id keys")
     p.add_argument("-k", help="substring filter on area/id")
     p.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)
@@ -888,7 +1025,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
     g = sub.add_parser("generate", help="write goldens by running R")
-    g.add_argument("--area")
+    _add_area(g)
     g.add_argument("--only", nargs="*")
     g.add_argument("--rscript")
     g.set_defaults(func=cmd_generate)
@@ -896,6 +1033,11 @@ def main(argv: list[str] | None = None) -> int:
     _add_selection(c)
     c.add_argument("-v", "--verbose", action="store_true")
     c.add_argument("--allow-missing", action="store_true")
+    c.add_argument(
+        "--strict",
+        action="store_true",
+        help="a tier-2 marked case that changed since it was locked fails instead of warning",
+    )
     c.add_argument(
         "--report",
         metavar="PATH",
@@ -916,16 +1058,32 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="also run unmarked cases and propose r_bug_fixed marks where R crashed",
     )
+    lk.add_argument(
+        "--reviewed",
+        action="store_true",
+        help="also change existing entries (after reviewing the changes a run without it prints)",
+    )
+    lk.add_argument(
+        "--md",
+        nargs="?",
+        const="-",
+        metavar="PATH",
+        help="also write the changes as a Markdown table (to stdout without PATH)",
+    )
     lk.set_defaults(func=cmd_lock)
     ls = sub.add_parser("list", help="list cases")
-    ls.add_argument("--area")
+    _add_area(ls)
     ls.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)
     ls.set_defaults(func=cmd_list)
     from parity import accuracy
 
     accuracy.add_parser(sub)
     ns = parser.parse_args(argv)
-    return int(ns.func(ns))
+    try:
+        return int(ns.func(ns))
+    except UnknownAreaError as exc:  # a usage error, as argparse reports them
+        print(f"python -m parity {ns.cmd}: error: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

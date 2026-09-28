@@ -42,7 +42,9 @@ python -m parity generate --area text --only text_search.demo.significant
 python -m parity check --area text -v          # Python vs goldens
 python -m parity check --tier 1 --jobs 4       # the realistic corpus, 4 processes
 python -m parity check --jobs 0 --md summary.md  # everything, one process per CPU
-python -m parity lock --area text              # after changing a marked case
+python -m parity check --strict --area core,text  # a changed tier-2 mark fails too
+python -m parity lock --area text              # after adding a mark
+python -m parity lock --area text --reviewed   # after changing a marked case
 python -m parity list --tier 2                 # cases, their tiers, missing goldens
 pytest -m "parity and tier1"                   # the same checks, as tests
 ```
@@ -52,8 +54,10 @@ with the reference R; never edit one by hand. They are committed, so `check` and
 `pytest` need no R.
 
 `check` selects cases with `--area`, `--only <id or area/id> ...`, `-k <substring>`
-and `--tier 1|2`, runs them in `--jobs N` processes (`0`: one per CPU), writes a
-per-case JSON report (`--report PATH`; by default a new
+and `--tier 1|2` (`--area` takes one area, several separated by commas, or
+`<area>+review` for an area and its `<area>_review` cases; it may be repeated, and
+an area without a case file is an error), runs them in `--jobs N` processes (`0`:
+one per CPU), writes a per-case JSON report (`--report PATH`; by default a new
 `parity/_out/report-<time>-<pid>.json`, so runs side by side do not overwrite each
 other) and, with `--md [PATH]`, a Markdown summary: statuses by tier and the marked
 cases grouped by tier, kind and ref. It prints only the cases that fail or warn
@@ -277,31 +281,37 @@ What `check` reports:
 | `pass` | matches R (after its `r_text`, if any) | no |
 | `xfail` | marked, and R's golden, Python's result and the differing paths are as locked | no |
 | `xpass` | marked, but matches R: remove the mark (metacheck may have fixed the bug) | yes |
-| `r_changed` | marked, and R's golden changed since it was locked: check the mark still holds | tier 1; tier 2 warns |
-| `py_changed` | marked, and Python's result or the differing paths changed | tier 1; tier 2 warns, unless a value became an exception |
+| `r_changed` | marked, and R's golden changed since it was locked: check the mark still holds | tier 1; tier 2 warns, unless `--strict` |
+| `py_changed` | marked, and Python's result or the differing paths changed | tier 1; tier 2 warns, unless a value became an exception or `--strict` |
 | `unlocked` | marked, without a lock entry | yes |
 | `fail` / `error` | unmarked, and differs from R / Python raised where R returned | yes |
 | `skip` | needs the reference R (see below) | no |
 | `missing` | no golden: run `generate` | yes |
 
-A tier-2 warning is a `LockWarning` under pytest and is listed in the summary.
-`check` also fails on a lock entry that names no marked case (a stale entry).
+A tier-2 warning is a `LockWarning` under pytest and is listed in the summary;
+`check --strict` fails on it instead. `check` also fails on a lock entry that names
+no marked case (a stale entry).
 
 After changing a marked case, or code a marked case runs, re-lock its area and review
 what moved:
 
 ```bash
-python -m parity lock --area mod_repo_check --jobs 4   # prints new, changed and removed keys
-python -m parity lock -k json_expand                   # just some cases
+python -m parity lock --area mod_repo_check --jobs 4   # prints what it adds, changes, removes
+python -m parity lock --area mod_repo_check --reviewed # writes the changes it printed
+python -m parity lock -k json_expand --md lock.md      # just some cases; a table for the PR
 python -m parity lock --area db_review --suggest       # also propose marks
 ```
 
-`lock` rewrites the entries of the marked cases it runs, drops entries of cases that
-pass or are no longer marked, and keeps those of cases it could not run. With
-`--suggest` it also runs the unmarked cases and prints ready-to-edit `r_bug_fixed`
-marks for those where R crashed (an R or dplyr error such as "subscript out of
-bounds") and Python returns a value. Check each value, record the bug as a U-entry
-and add the mark to your lane's divergences file.
+`lock` prints each entry it adds, changes or removes: the case, its tier and mark,
+the old and new `r`, `py` and `diff`, and the first differences from R. It adds the
+entries of newly marked cases, drops entries of cases that pass or are no longer
+marked, and keeps those of cases it could not run. It changes an existing entry only
+with `--reviewed`: without it, the change is printed, not written, and `lock` exits
+non-zero. `--md [PATH]` also writes the changes as a Markdown table to put in the
+pull request. With `--suggest` it also runs the unmarked cases and prints
+ready-to-edit `r_bug_fixed` marks for those where R crashed (an R or dplyr error
+such as "subscript out of bounds") and Python returns a value. Check each value,
+record the bug as a U-entry and add the mark to your lane's divergences file.
 
 ## How cases run
 
