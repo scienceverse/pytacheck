@@ -727,7 +727,7 @@ code deliberately differs:
   --record` builds the record from the report's module outputs.
 * **CLI.** `presets show REF` is accepted as well as `presets REF`. Tables
   print as plain aligned text when stdout is not a terminal. Extra flags:
-  `rerun --yes/--record/--json`, `store add|remove --project --yes`,
+  `rerun --yes/--record/--json`, `store add|remove --yes`,
   `store build --repo`, `pack show --json`. `init` with several presets saves
   a config preset `mine` extending them.
 * **API.** Without `modules` or `preset`, `/paper/check` runs a preset

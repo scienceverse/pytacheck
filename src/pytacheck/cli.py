@@ -618,17 +618,17 @@ def cmd_store(ns: argparse.Namespace) -> int:
 
         # refuse URLs with credentials before the prompt shows them
         url = stores.check_store_url(ns.url)
-        if not _confirm(ns, f"Add the store '{ns.name}' ({url}) to {config_path(_scope(ns))}?"):
+        if not _confirm(ns, f"Add the store '{ns.name}' ({url}) to {config_path()}?"):
             return _err("cancelled")
-        path = stores.store_add(ns.name, ns.url, scope=_scope(ns))
+        path = stores.store_add(ns.name, ns.url)
         print(f"Added the store '{ns.name}' to {path}")
         return 0
     if action == "remove":
         from pytacheck.config import config_path
 
-        if not _confirm(ns, f"Remove the store '{ns.name}' from {config_path(_scope(ns))}?"):
+        if not _confirm(ns, f"Remove the store '{ns.name}' from {config_path()}?"):
             return _err("cancelled")
-        path = stores.store_remove(ns.name, scope=_scope(ns))
+        path = stores.store_remove(ns.name)
         print(f"Removed the store '{ns.name}' ({path})")
         return 0
     if action == "update":
@@ -655,6 +655,13 @@ def cmd_store(ns: argparse.Namespace) -> int:
 # --- init -------------------------------------------------------------------
 
 
+def _hide_cached_index_warning() -> None:
+    """Hide only "store unreachable, using its cached index" (init offers what is cached)."""
+    import warnings
+
+    warnings.filterwarnings("ignore", message=r"The store '.*' is unreachable")
+
+
 def _init_choices(fields: list[str]) -> list[tuple[str, str]]:
     """``(preset ref, description)`` offered by ``init`` for the chosen fields."""
     import warnings
@@ -666,7 +673,7 @@ def _init_choices(fields: list[str]) -> list[tuple[str, str]]:
         (f"metacheck::{k}", v.get("description", "")) for k, v in builtin_pack().presets.items()
     ]
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+        _hide_cached_index_warning()
         indexes, _ = store_indexes()
     wanted = set(fields)
     for index in indexes.values():
@@ -691,7 +698,7 @@ def _init_interactive(ns: argparse.Namespace) -> tuple[list[str], str]:
 
     con = ui.console()
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+        _hide_cached_index_warning()
         indexes, problems = store_indexes()
     for name, problem in problems.items():
         con.print(f"[yellow]The store '{_escape(name)}' is unavailable:[/] {_escape(problem)}")
@@ -928,11 +935,9 @@ def build_parser() -> argparse.ArgumentParser:
     q = ssub.add_parser("add", help="add a store")
     q.add_argument("name")
     q.add_argument("url")
-    q.add_argument("--project", action="store_true")
     q.add_argument("--yes", action="store_true")
     q = ssub.add_parser("remove", help="remove a store")
     q.add_argument("name")
-    q.add_argument("--project", action="store_true")
     q.add_argument("--yes", action="store_true")
     q = ssub.add_parser("update", help="fetch store indexes")
     q.add_argument("name", nargs="?", default=None)

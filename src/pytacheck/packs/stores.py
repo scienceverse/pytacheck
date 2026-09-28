@@ -431,7 +431,7 @@ def _user_scope_only(scope: str) -> None:
     if scope == "project":
         raise StoreError(
             "A project config cannot add, change or remove stores. "
-            "Stores go in your user config: leave out --project"
+            "Stores go in your user config (scope='user')"
         )
 
 

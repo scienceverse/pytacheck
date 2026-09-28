@@ -120,6 +120,30 @@ def test_merge_rules(scopes, tmp_path) -> None:
     assert set(cfg.presets) == {"thesis", "proj"}
 
 
+def test_a_malformed_ignored_project_stores_section_does_not_stop_commands(scopes) -> None:
+    user, project = scopes
+    _write(user, {"preset": "u"})
+    _write(project, {"preset": "p", "stores": {"lab": 5}})
+    with pytest.warns(UserWarning, match="Ignoring the stores in the project config"):
+        cfg = load_config()
+    assert cfg.preset == "p" and set(cfg.stores) == {"pytacheck"}
+    _write(user, {"stores": {"lab": 5}})  # a user file's stores are still checked
+    with pytest.raises(ConfigError, match=r"stores\.lab must be a URL"):
+        load_config()
+
+
+def test_update_config_ignores_a_malformed_ignored_project_stores_section(
+    scopes, monkeypatch
+) -> None:
+    _, project = scopes
+    _write(project, {"stores": {"lab": 5}})
+    update_config("project", lambda c: c.update(preset="p"))
+    assert json.loads(project.read_text())["preset"] == "p"
+    monkeypatch.setenv("PYTACHECK_CONFIG", str(project))  # now its stores apply
+    with pytest.raises(ConfigError, match=r"stores\.lab must be a URL"):
+        update_config("project", lambda c: c.update(preset="q"))
+
+
 def test_a_project_config_cannot_set_stores(scopes, monkeypatch) -> None:
     # a cloned repository must not add a store, nor replace or hide the official one
     from pytacheck.packs.stores import store_list

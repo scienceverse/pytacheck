@@ -373,13 +373,14 @@ def _resolve_path(value: str, base: Path) -> str:
     return str(p if p.is_absolute() else (base / p).resolve())
 
 
-def _check_section(data: dict[str, Any], path: Path) -> None:
+def _check_section(data: dict[str, Any], path: Path, *, skip: tuple[str, ...] = ()) -> None:
+    """Check the shape of a config file; sections named in *skip* are not looked at."""
     preset = data.get("preset")
     if preset is not None and not isinstance(preset, str):
         raise ConfigError(f"{path}: 'preset' must be a string or null")
     for section in _SECTIONS:
         value = data.get(section)
-        if value is None:
+        if value is None or section in skip:
             continue
         if not isinstance(value, dict):
             raise ConfigError(f"{path}: '{section}' must be an object")
@@ -484,7 +485,8 @@ def load_config() -> Config:
     trusted = trusted_local() if any(scope == "project" for scope, _ in files) else frozenset()
     for scope, path in files:
         data = _read_json(path)
-        _check_section(data, path)
+        # a project's stores are ignored (warned about below), so they need no check
+        _check_section(data, path, skip=("stores",) if scope == "project" else ())
         where = (scope, str(path))
         for key, value in data.items():
             if key == "stores" and scope == "project":
@@ -559,7 +561,9 @@ def update_config(scope: str, fn: Callable[[dict[str, Any]], dict[str, Any] | No
         data = result
     if not isinstance(data, dict):
         raise ConfigError("update_config(): the new config must be a dict")
-    _check_section(data, path)
+    # a project file's stores are ignored, so they need no check (unless PYTACHECK_CONFIG names it)
+    own_project = scope == "project" and not os.environ.get("PYTACHECK_CONFIG", "").strip()
+    _check_section(data, path, skip=("stores",) if own_project else ())
     path.parent.mkdir(parents=True, exist_ok=True)
     try:
         mode = path.stat().st_mode & 0o777
@@ -578,7 +582,7 @@ def update_config(scope: str, fn: Callable[[dict[str, Any]], dict[str, Any] | No
         raise
     _writes += 1
     _config_cache.clear()
-    if scope == "project" and not os.environ.get("PYTACHECK_CONFIG", "").strip():
+    if own_project:
         added = _local_code_of(data, path) - before
         if added:
             trust_local(added)
