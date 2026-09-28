@@ -309,6 +309,16 @@ def validate_registry(data: Any, *, where: str = "validation.json") -> dict[str,
     }
 
 
+def _unique_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """A JSON object, refusing a repeated key: ``json`` would keep only the last one."""
+    out: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in out:
+            raise ValueError(f"the key {key!r} appears twice in one object")
+        out[key] = value
+    return out
+
+
 @dataclass(frozen=True)
 class Registry:
     """A checked registry file and the sha256 digest of its bytes.
@@ -324,7 +334,7 @@ class Registry:
     @classmethod
     def from_bytes(cls, raw: bytes, *, where: str) -> Registry:
         try:
-            data = json.loads(raw)
+            data = json.loads(raw, object_pairs_hook=_unique_keys)
         except ValueError as exc:
             raise StatusError(f"Cannot read {where}: {exc}") from exc
         return cls(validate_registry(data, where=where), hashlib.sha256(raw).hexdigest(), where)

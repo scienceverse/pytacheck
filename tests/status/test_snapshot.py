@@ -175,6 +175,16 @@ def test_read_registry(tmp_path) -> None:
         read_registry(path)
 
 
+def test_a_repeated_key_is_refused() -> None:
+    """Otherwise the later, empty power entry would silently replace its evidence."""
+    raw = _raw().replace(
+        b'"metacheck::stat_p_nonsig": {',
+        b'"metacheck::power": {"provisional": true},\n    "metacheck::stat_p_nonsig": {',
+    )
+    with pytest.raises(StatusError, match="'metacheck::power' appears twice"):
+        Registry.from_bytes(raw, where="test.json")
+
+
 # ---------------------------------------------------------------------------
 # Schema
 # ---------------------------------------------------------------------------
