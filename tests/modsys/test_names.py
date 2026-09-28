@@ -118,7 +118,9 @@ def test_the_real_stores_names_pass_even_without_an_index(ms) -> None:
     assert not _name_issues(issues) and not _name_issues(issues, "warning")
 
 
-@pytest.mark.parametrize("name", ["clinical_trial", "clinical-trials", "clinicaltrials"])
+@pytest.mark.parametrize(
+    "name", ["clinical_trial", "clinical-trials", "clinicaltrials", "clinicaltrial"]
+)
 def test_a_new_pack_one_typo_from_a_listed_pack(ms, name) -> None:
     root = _store(ms)
     ms.pack(root / "packs" / name, name)
@@ -156,9 +158,10 @@ def test_a_new_module_named_like_a_built_in_module(ms) -> None:
     assert "'power' is the same as 'metacheck::power'" in _name_issues(issues)["packs/lab"]
 
 
-def test_a_new_module_one_typo_from_another_packs_module(ms) -> None:
+@pytest.mark.parametrize("name", ["Trial_Registration", "TrialRegistratio"])
+def test_a_new_module_one_typo_from_another_packs_module(ms, name) -> None:
     root = _store(ms)
-    ms.pack(root / "packs" / "lab", "lab", {"Trial_Registration": mod_src("Trial_Registration")})
+    ms.pack(root / "packs" / "lab", "lab", {name: mod_src(name)})
     _, issues = store_build(root, check=True)
     message = _name_issues(issues)["packs/lab"]
     assert "one typo from 'clinical_trials::trial_registration'" in message

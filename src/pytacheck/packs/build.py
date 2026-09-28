@@ -241,7 +241,7 @@ def _name_issues(
     from pytacheck.presets import _declared_builtin
 
     def fold(name: str) -> str:
-        return name.lower().replace("-", "_")
+        return name.lower().replace("-", "").replace("_", "")
 
     rule = "rename it (a name new to the store must differ by more than one typo)"
     issue = _err if check else _warn
