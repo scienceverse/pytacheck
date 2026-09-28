@@ -22,7 +22,7 @@ fails when the recording differs from the committed snapshots.
 ``--diff`` lists the cases added, removed and changed against the committed
 snapshots, with the paths that differ and a diff of each changed record.
 ``--from DIR`` compares a recording made earlier (``--out DIR``) instead of
-recording again.
+recording again: the sets it holds, or those of ``--only``.
 
 ``--cases GLOB`` limits every mode to the matching case ids; it cannot write
 into tests/snapshots/, since a partial set would drop the other cases.
@@ -280,7 +280,10 @@ def cmd_diff(args: argparse.Namespace) -> int:
         print(f"note: the committed snapshots are {RECORDED_WITH}'s, this is {_python()}")
     if args.source:
         source = Path(args.source)
-        sets = [s for s in sets if (source / s.name / store.INDEX).is_file()]
+        absent = [s.name for s in sets if not (source / s.name / store.INDEX).is_file()]
+        if absent and (args.only or len(absent) == len(sets)):  # else: the sets it holds
+            raise SystemExit(f"{source} holds no recording of {', '.join(absent)}")
+        sets = [s for s in sets if s.name not in absent]
         recorded = {s.name: store.read_set(source, s.name) for s in sets}
     else:
         recorded, _groups = record(sets, args.cases)

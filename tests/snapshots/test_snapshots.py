@@ -569,6 +569,18 @@ def test_record_then_diff_shows_the_added_and_changed_cases(
     assert '+ "error": "ValueError: changed",' in out
 
 
+def test_diff_from_a_folder_without_the_sets_is_refused(
+    script: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(store, "SNAPSHOT_DIR", tmp_path / "committed")
+    with pytest.raises(SystemExit, match="holds no recording of modules, fixtures"):
+        script.main(["--diff", "--from", str(tmp_path / "typo")])
+    records = {"a": {"ok": True, "value": {"t": "null"}}}
+    store.write_set(tmp_path / "new", "fixtures", "json", records, {"a": "g"})
+    with pytest.raises(SystemExit, match=r"holds no recording of modules$"):
+        script.main(["--diff", "--from", str(tmp_path / "new"), "--only", "modules", "fixtures"])
+
+
 def test_a_case_that_used_the_network_is_not_written(
     script: ModuleType,
     tmp_path: Path,
