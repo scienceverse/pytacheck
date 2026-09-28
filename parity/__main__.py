@@ -182,8 +182,8 @@ STATUSES = (
     ERROR,
     MISSING,
 )
-#: the statuses that parity/quarantine.yaml turns into ``quarantined``
-_QUARANTINABLE = (R_CHANGED, PY_CHANGED, FAIL, ERROR)
+#: the statuses that parity/quarantine.yaml turns into ``quarantined``: all that can fail
+_QUARANTINABLE = (XPASS, R_CHANGED, PY_CHANGED, UNLOCKED, FAIL, ERROR, MISSING)
 
 
 @dataclass
@@ -276,9 +276,10 @@ def run_case(
 ) -> CaseResult:
     """:func:`_run_case`, with a quarantined case that would fail reported as such.
 
-    A case listed in parity/quarantine.yaml is ``quarantined`` instead of ``fail``,
-    ``error``, ``r_changed`` or ``py_changed``, and never fails the run, strict or
-    not; the reason comes first among its problems. One that passes stays a pass.
+    A case listed in parity/quarantine.yaml is ``quarantined`` instead of any status
+    that can fail (all but ``pass``, ``xfail`` and ``skip``), and never fails the
+    run, strict or not; the reason comes first among its problems. One that passes
+    stays a pass.
     """
     res = _run_case(case, lock, strict)
     reason = load_quarantine().get(case.key)

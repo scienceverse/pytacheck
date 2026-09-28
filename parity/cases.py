@@ -802,10 +802,15 @@ def case_path(rel: str) -> Path:
     ROOT is a real path, so the result is spelled the way R's ``normalizePath()``
     spells it, whatever symlink the checkout was reached by. A symlink inside the
     checkout must not lead out of it: a case would read a file that only exists
-    here, and its result would not be the same in another worktree.
+    here, and its result would not be the same in another worktree. The one
+    exception is a tree the checkout is known to link to (the submodule, shared
+    between worktrees): parity.canonical writes its files ``<repo>/<rel>`` as R does.
     """
+    from parity.canonical import linked_trees
+
     path = ROOT / rel
-    if not Path(os.path.realpath(path)).is_relative_to(ROOT):
+    real = Path(os.path.realpath(path))
+    if not any(real.is_relative_to(base) for base in (ROOT, *(t for t, _ in linked_trees(ROOT)))):
         raise ValueError(f"{rel}: a case reads only files inside the checkout")
     return path
 
@@ -1109,9 +1114,10 @@ def load_quarantine(path: Path | None = None) -> dict[str, str]:
     A quarantined case fails here for a reason outside pytacheck (an environment
     that cannot be fixed, a tool it needs): ``check`` reports it as
     ``quarantined``, which never fails the run, ``--strict`` included. The file
-    also holds the ratchet ``max_cases``, which must equal the number of cases
-    listed: adding a case means raising it, which a reviewer sees. Re-read when the
-    file changes, so a long-lived process (pytest) sees a new file.
+    also holds ``max_cases``, which must equal the number of cases listed: adding a
+    case means raising it (and the ceiling pinned in the tests), which a reviewer
+    sees. Re-read when the file changes, so a long-lived process (pytest) sees a
+    new file.
     """
     path = QUARANTINE_FILE if path is None else path
     try:
@@ -1125,22 +1131,32 @@ def load_quarantine(path: Path | None = None) -> dict[str, str]:
     if not isinstance(data, dict) or set(data) != {"max_cases", "cases"}:
         raise ValueError(f"{path.name}: expected the keys max_cases and cases")
     listed = data["cases"] or []
-    if not isinstance(listed, list) or not isinstance(data["max_cases"], int):
+    max_cases = data["max_cases"]
+    if (
+        not isinstance(listed, list)
+        or not isinstance(max_cases, int)
+        or isinstance(max_cases, bool)
+    ):
         raise ValueError(f"{path.name}: max_cases is a number and cases a list")
     found: dict[str, str] = {}
     for entry in listed:
-        if not isinstance(entry, dict) or set(entry) != {"case", "reason"}:
+        if (
+            not isinstance(entry, dict)
+            or set(entry) != {"case", "reason"}
+            or not isinstance(entry["case"], str)
+            or not isinstance(entry["reason"], str)
+        ):
             raise ValueError(f"{path.name}: each case has a case (area/id) and a reason")
-        key, reason = str(entry["case"]), str(entry["reason"]).strip()
+        key, reason = entry["case"], entry["reason"].strip()
         if not reason:
             raise ValueError(f"{path.name}: {key} has no reason")
         if key in found:
             raise ValueError(f"{path.name}: {key} is listed twice")
         found[key] = reason
-    if len(found) != data["max_cases"]:
+    if len(found) != max_cases:
         raise ValueError(
-            f"{path.name}: max_cases is {data['max_cases']} but {len(found)} cases are "
-            "listed; the count may only go down, so set max_cases to the number of cases left"
+            f"{path.name}: max_cases is {max_cases} but {len(found)} cases are listed; "
+            "set max_cases to the number of cases listed"
         )
     _QUARANTINE_CACHE[path] = (mtime, found)
     return found

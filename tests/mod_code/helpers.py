@@ -265,14 +265,20 @@ def cc_norm(mo: Any) -> Any:
     """
     from dataclasses import replace
 
+    from parity.canonical import linked_trees
     from pytacheck._r.regex import sub
 
     root = str(ROOT)
+    # a submodule that is a symlink to another checkout's: R's checkout holds it
+    links = [(real, f"{root}/{rel}") for real, rel in linked_trees(ROOT)]
 
     def norm(x: Any) -> Any:
         if x is None or (isinstance(x, float) and x != x) or x is pd.NA:
             return None
-        return sub("^.*/metacheck-repo-files/", "<DL>/", str(x).replace(root, "<ROOT>"))
+        text = str(x)
+        for real, here in links:
+            text = text.replace(real, here)
+        return sub("^.*/metacheck-repo-files/", "<DL>/", text.replace(root, "<ROOT>"))
 
     table = mo.table.copy()
     for c in ("file_url", "file_location", "error"):

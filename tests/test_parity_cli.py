@@ -18,6 +18,8 @@ from parity import lockfile
 from parity.cases import UnknownAreaError, case_path, load_cases, load_quarantine, parse_areas
 from parity.lockfile import Fingerprint, entry_diff
 
+#: what the tree fixture replaces: the real check of the checkout's setup
+_ENVIRONMENT_PROBLEMS = parity_main.environment_problems
 _MARK = "known_divergence: {kind: r_bug_fixed, ref: U1, reason: fixed}"
 
 
@@ -61,6 +63,7 @@ def tree(tmp_path, monkeypatch) -> Tree:
     monkeypatch.setattr(pcases, "load_corpus", lambda: corpus)
     monkeypatch.setattr(pcases, "upstream_refs", lambda: {"U1": "fixed"})
     monkeypatch.setattr(lockfile, "LOCK_DIR", t.lock)
+    monkeypatch.setattr(parity_main, "environment_problems", lambda: [])  # not this checkout's
     t.area("alpha", _case("same", "a"), _case("marked", "b", mark=True))
     t.area("alpha_review", _case("same", "a"))
     t.area("beta", _case("same", "a"))
@@ -152,7 +155,8 @@ def test_strict_fails_a_changed_tier_2_case(tree, tmp_path, monkeypatch, capsys)
 
 # -- quarantine -------------------------------------------------------------------------
 
-#: the most cases parity/quarantine.yaml may list; lower it with the list, never raise it
+#: the number of cases parity/quarantine.yaml lists. Adding a case means raising this
+#: in the same reviewed change; it may otherwise only go down.
 QUARANTINE_CEILING = 0
 _WHY = "needs a tool that cannot be installed here"
 
@@ -167,9 +171,9 @@ def _quarantine(tmp_path: Path, monkeypatch, *keys: str) -> Path:
     return path
 
 
-def test_the_quarantine_file_stays_within_its_ratchet() -> None:
+def test_the_quarantine_file_holds_what_the_ceiling_says() -> None:
     quarantined = load_quarantine()
-    assert len(quarantined) <= QUARANTINE_CEILING
+    assert len(quarantined) == QUARANTINE_CEILING
     assert not set(quarantined) - {c.key for c in load_cases()}
 
 
@@ -211,6 +215,28 @@ def test_a_quarantined_case_that_passes_is_a_pass(tree, tmp_path, monkeypatch) -
     assert (status, by_case["beta/same"]["status"]) == (0, "pass")
 
 
+def test_every_failing_status_can_be_quarantined(tree, tmp_path, monkeypatch) -> None:
+    def quarantined(case: str) -> None:
+        area = case.partition("/")[0]
+        _quarantine(tmp_path, monkeypatch)
+        status, by_case = _report(tmp_path, "--area", area)
+        wanted = by_case[case]["status"]
+        assert (status, wanted) == (1, wanted) and wanted in ("xpass", "unlocked", "missing")
+        _quarantine(tmp_path, monkeypatch, case)
+        status, by_case = _report(tmp_path, "--area", area)
+        assert (status, by_case[case]["status"]) == (0, "quarantined")
+
+    # xpass: an expected failure that now matches R
+    tree.area("alpha", _case("same", "a"), _case("marked", "a", mark=True))
+    quarantined("alpha/marked")
+    # unlocked: marked, and without a lock entry
+    tree.area("alpha", _case("same", "a"), _case("marked", "b", mark=True))
+    quarantined("alpha/marked")
+    # missing: no golden
+    (tree.golden / "beta" / "same.json").unlink()
+    quarantined("beta/same")
+
+
 def test_a_quarantine_entry_naming_no_case_fails_check(tree, tmp_path, monkeypatch, capsys) -> None:
     _quarantine(tmp_path, monkeypatch, "beta/gone")
     assert _report(tmp_path)[0] == 1
@@ -244,6 +270,11 @@ def test_the_quarantine_file_is_checked(tmp_path) -> None:
         load("cases: []\n")
     with pytest.raises(ValueError, match=r"a case \(area/id\) and a reason"):
         load("max_cases: 1\ncases:\n  - {case: a/b}\n")
+    for empty in ("reason:", "reason: ~", "reason: 3"):  # not a text
+        with pytest.raises(ValueError, match=r"a case \(area/id\) and a reason"):
+            load(f"max_cases: 1\ncases:\n  - case: a/b\n    {empty}\n")
+    with pytest.raises(ValueError, match="max_cases is a number"):
+        load(good.replace("max_cases: 1", "max_cases: true"))
     # no file, no quarantine
     assert load_quarantine(tmp_path / "none.yaml") == {}
 
@@ -254,6 +285,7 @@ def test_the_quarantine_file_is_checked(tmp_path) -> None:
 def test_check_and_lock_stop_when_the_checkout_lacks_its_setup(
     tree, tmp_path, monkeypatch, capsys
 ) -> None:
+    monkeypatch.setattr(parity_main, "environment_problems", _ENVIRONMENT_PROBLEMS)
     monkeypatch.setattr(parity_main, "ROOT", tmp_path)  # no upstream/metacheck here
     monkeypatch.setattr(parity_main.importlib.util, "find_spec", lambda name: None)
     for command in ("check", "lock"):
@@ -266,7 +298,7 @@ def test_check_and_lock_stop_when_the_checkout_lacks_its_setup(
     assert not (tmp_path / "parity").exists()  # nothing ran
     (tmp_path / "upstream" / "metacheck").mkdir(parents=True)
     (tmp_path / "upstream" / "metacheck" / "DESCRIPTION").write_text("Package: metacheck\n")
-    monkeypatch.undo()
+    monkeypatch.setattr(parity_main.importlib.util, "find_spec", lambda name: object())
     assert parity_main.environment_problems() == []
 
 
@@ -312,6 +344,65 @@ def test_case_paths_stay_inside_the_checkout(tmp_path, monkeypatch) -> None:
             pcases.decode({key: "leak/paper.json"})
     with pytest.raises(ValueError, match="inside the checkout"):
         pcases.decode({"$read": ["fixtures/a.txt", "leak/paper.json"]})
+
+
+def _linked_checkout(tmp_path: Path) -> tuple[Path, Path]:
+    """A checkout whose upstream/metacheck is a symlink to another checkout's."""
+    root, shared = tmp_path / "root", tmp_path / "shared" / "metacheck"
+    (shared / "tests").mkdir(parents=True)
+    (shared / "tests" / "a.txt").write_text("a")
+    (root / "upstream").mkdir(parents=True)
+    try:
+        (root / "upstream" / "metacheck").symlink_to(shared, target_is_directory=True)
+    except OSError:
+        pytest.skip("no symlinks here")
+    return root, shared
+
+
+def test_a_symlinked_submodule_is_repo_too(tmp_path, monkeypatch) -> None:
+    root, shared = _linked_checkout(tmp_path)
+    real = os.path.realpath(shared)
+    assert pcanonical.linked_trees(root) == ((real, "upstream/metacheck"),)
+    assert pcanonical.linked_trees(tmp_path / "shared") == ()  # nothing linked
+    monkeypatch.setattr(pcanonical, "_LINKS", ((real, "<repo>/upstream/metacheck"),))
+    monkeypatch.setattr(pcanonical, "_LINKS_JSON", ((real.encode(), b"<repo>/upstream/metacheck"),))
+    value = {"t": "chr", "v": [f"{real}/tests/a.txt"]}
+    assert pcanonical.portable(value) == {
+        "t": "chr",
+        "v": ["<repo>/upstream/metacheck/tests/a.txt"],
+    }
+    assert pcanonical.portable(f"{real}/tests/a.txt") == "<repo>/upstream/metacheck/tests/a.txt"
+    assert pcanonical.portable("/elsewhere/a.txt") == "/elsewhere/a.txt"
+
+
+def test_case_paths_may_go_through_a_symlinked_submodule(tmp_path, monkeypatch) -> None:
+    root, _ = _linked_checkout(tmp_path)
+    (root / "leak").symlink_to(tmp_path, target_is_directory=True)
+    monkeypatch.setattr(pcases, "ROOT", root)
+    assert case_path("upstream/metacheck/tests/a.txt") == root / "upstream/metacheck/tests/a.txt"
+    with pytest.raises(ValueError, match="inside the checkout"):
+        case_path("leak/other.txt")  # a link that is not the submodule
+
+
+def test_cc_norm_writes_a_symlinked_submodule_under_root(tmp_path, monkeypatch) -> None:
+    from dataclasses import dataclass, field
+
+    import pandas as pd
+
+    from tests.mod_code import helpers
+
+    root, shared = _linked_checkout(tmp_path)
+    monkeypatch.setattr(helpers, "ROOT", root)
+
+    @dataclass(frozen=True)
+    class Output:
+        table: pd.DataFrame
+        extras: dict = field(default_factory=dict)
+
+    where = f"{os.path.realpath(shared)}/tests/a.txt"
+    table = pd.DataFrame({"file_location": [where, f"{root}/b.txt"]})
+    got = helpers.cc_norm(Output(table)).table["file_location"].tolist()
+    assert got == ["<ROOT>/upstream/metacheck/tests/a.txt", "<ROOT>/b.txt"]
 
 
 # -- lock -------------------------------------------------------------------------------

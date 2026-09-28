@@ -35,12 +35,37 @@ def checkout_spellings(checkout: Path, *others: str | Path) -> tuple[str, ...]:
     return tuple(sorted(both, key=len, reverse=True))
 
 
+#: the checkout's directories that may be symlinks to a tree elsewhere (a submodule
+#: shared between worktrees)
+LINKABLE = ("upstream/metacheck",)
+
+
+def linked_trees(checkout: Path, rels: tuple[str, ...] = LINKABLE) -> tuple[tuple[str, str], ...]:
+    """Each of *rels* that is a symlink out of *checkout*, as ``(real path, rel)``,
+    longest real path first. R was run on a checkout that holds these files itself,
+    so a result spells them ``<repo>/<rel>``."""
+    found = []
+    for rel in rels:
+        link = checkout / rel
+        real = os.path.realpath(link)
+        if link.is_symlink() and real != str(Path(os.path.realpath(checkout)) / rel):
+            found.append((real, rel))
+    return tuple(sorted(found, key=lambda t: len(t[0]), reverse=True))
+
+
 _CHECKOUT = Path(__file__).resolve().parent.parent
 #: the checkout, as the OS writes it, and through the symlink it was reached by
 _ROOTS = checkout_spellings(
     _CHECKOUT, Path(__file__).absolute().parent.parent, os.environ.get("PWD", "")
 )
 _ROOTS_JSON = tuple(orjson.dumps(r)[1:-1] for r in _ROOTS)
+#: the trees the checkout links to: their real paths become ``<repo>/<rel>``
+_LINKS = tuple(
+    (spelling, f"<repo>/{rel}")
+    for real, rel in linked_trees(_CHECKOUT)
+    for spelling in checkout_spellings(Path(real))
+)
+_LINKS_JSON = tuple((orjson.dumps(a)[1:-1], b.encode()) for a, b in _LINKS)
 _SCALAR_TYPES = (str, bool, int, float, complex, np.generic)
 
 
@@ -217,14 +242,18 @@ def portable(value: Any) -> Any:
         raw = orjson.dumps(value)
     except TypeError:  # e.g. a lone surrogate from undecodable bytes
         return _portable_walk(value)
-    if not any(r in raw for r in _ROOTS_JSON):
+    if not any(r in raw for r in _ROOTS_JSON) and not any(a in raw for a, _ in _LINKS_JSON):
         return value
+    for a, b in _LINKS_JSON:
+        raw = raw.replace(a, b)
     for r in _ROOTS_JSON:
         raw = raw.replace(r, b"<repo>")
     return orjson.loads(raw)
 
 
 def _portable_str(value: str) -> str:
+    for a, b in _LINKS:
+        value = value.replace(a, b)
     for r in _ROOTS:
         value = value.replace(r, "<repo>")
     return value

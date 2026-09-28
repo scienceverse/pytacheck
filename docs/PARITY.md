@@ -81,22 +81,26 @@ that one reason. So `check` and `lock` look first and stop with exit status 2 an
 the command that fixes it, before running anything. The cases that need the reference
 R are `skip`ped without it, in a worktree as anywhere.
 
-Paths do not depend on where the checkout is. Goldens and results write it as
-`<repo>`, in its real path (as R's `normalizePath()` gives it) and in the symlinked
-spelling it was reached by. A case reads its files through `case_path()`, which
-refuses a path that leaves the checkout through a symlink, so a case cannot depend
-on a file that only exists in one worktree.
+Goldens and results write the checkout as `<repo>`, in its real path (as R's
+`normalizePath()` gives it) and in the symlinked spelling it was reached by. When
+`upstream/metacheck` is a symlink to another checkout's submodule, its real path is
+written `<repo>/upstream/metacheck`, as R wrote it. A case reads its files through
+`case_path()` (`$paper`, `$read`, `$file`), which refuses a path that leaves the
+checkout through any other symlink, so a case cannot depend on a file that only
+exists in one worktree. A `$expr` that builds its own path is not checked.
 
 ### Quarantine
 
 `parity/quarantine.yaml` lists cases that fail in some environment for a reason
 that is not pytacheck's, each with its reason. `check` reports such a case as
-`quarantined` instead of `fail`, `error`, `r_changed` or `py_changed`. A quarantined
-case never fails the run, and `check --strict` does not fail it either; the
-tests pin both. One that passes is a `pass`. The file is a last resort: fix the
-environment first. `max_cases` must equal the number of cases listed, so the count
-only goes down, and `QUARANTINE_CEILING` in `tests/test_parity_cli.py` is the most
-it may ever be. Nothing is quarantined today.
+`quarantined` instead of any status that would fail it (`fail`, `error`,
+`r_changed`, `py_changed`, `xpass`, `unlocked`, `missing`). A quarantined case never
+fails the run, and `check --strict` does not fail it either; the tests pin both. One
+that passes is a `pass`. The file is a last resort: fix the environment first.
+`max_cases` must equal the number of cases listed, and `QUARANTINE_CEILING` in
+`tests/test_parity_cli.py` must equal it too, so adding a case means changing both,
+in a change a reviewer sees. It should only ever go down. Nothing is quarantined
+today.
 
 ## What is compared
 
