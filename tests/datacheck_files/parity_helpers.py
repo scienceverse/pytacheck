@@ -10,6 +10,7 @@ import datetime as dt
 import json
 import math
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -27,13 +28,11 @@ class _NamedList:
     def __init__(self, pairs: list[tuple[Any, Any]]) -> None:
         self.pairs = pairs
 
-    def to_canonical(self) -> dict[str, Any]:
-        from parity.canonical import canonical
-
+    def to_canonical(self, encode: Callable[[Any], dict[str, Any]]) -> dict[str, Any]:
         return {
             "t": "list",
             "names": ["" if k is None else str(k) for k, _ in self.pairs],
-            "v": [canonical(v) for _, v in self.pairs],
+            "v": [encode(v) for _, v in self.pairs],
         }
 
 
