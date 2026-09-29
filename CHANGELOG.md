@@ -7,6 +7,12 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### The import package is metacheck
+
+- **Changed:** the import package is now `metacheck` (`src/metacheck`). `import pytacheck` and the `pytacheck` command keep working: every `pytacheck.<sub>` is the same module object as `metacheck.<sub>`, and type checkers see the public names through stubs. Packs may declare `requires.metacheck`; use `>=0.4.0a2.dev0` if the pack does `import metacheck`, because 0.4.0a1 has no `metacheck` import package. `requires.pytacheck` is still read, and `pack check` warns if both are given. The pack scanner treats `pytacheck.*` and `metacheck.*` alike. Saved tables and the repo-info cache keep their format, so files move between this version and 0.4.0a1 both ways. Not renamed yet: the store id, folders, `PYTACHECK_*` variables, logger names, format ids, the command's help name and the version line.
+- **Things that do change:** warnings now come from `metacheck.*` modules, so a warning filter that matches `module="pytacheck..."` needs `metacheck` instead. `importlib.resources.files("pytacheck")`, `pytacheck.__file__` and `pytacheck.__path__` point at the small alias folder; use `files("metacheck")` or a subpackage such as `files("pytacheck.resources")`. Messages that name a module or a file of the package name it under `metacheck` (for example `metacheck.pack_install()`, `metacheck/resources/...` in `status --check`, and `module 'metacheck.io' has no attribute ...`).
+- **Upgrading an old git install:** run `pip uninstall pytacheck` first. An install from before the distribution was renamed owns the same `pytacheck/` folder. **In a git checkout** that has been on an older commit, run `git clean -fdX src/pytacheck` once to remove the old bytecode folders.
+
 ### bibr server client
 
 - `convert_bibr(backend="bibr")` and `convert()` (with `BIBR_URL` and `BIBR_API_KEY`) use bibr serve's job API and the hosted service in front of it: submit to `/papers/jobs`, poll, fetch the result, honour `Retry-After` on a 429 (bounded), read a 409 on the result as not ready, explain 401/403/413/415, and never send the token over plain http except to localhost or across a redirect. `"selfhosted"` now sends the token and waits out a 429; the readiness check accepts an anonymous bibr serve (docs/BIBR.md section 3, docs/UPSTREAM_ISSUES.md D59).

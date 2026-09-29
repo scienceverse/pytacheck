@@ -32,8 +32,10 @@ name: Upstream sync
 # host, where it would also hold the repository's only runner that long.
 
 on:
-  schedule:
-    - cron: "23 5 * * *" # daily
+  # The daily run is off while the import package is being renamed (RENAME-1 to
+  # RENAME-3): a sync pull request would touch files the rename script rewrites.
+  # schedule:
+  #   - cron: "23 5 * * *" # daily
   workflow_dispatch:
     inputs:
       to:
