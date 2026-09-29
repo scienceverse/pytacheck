@@ -102,6 +102,7 @@ jobs:
             install.sh
             install.ps1
             install/constraints-app.txt
+            parity/UPSTREAM.toml
           sparse-checkout-cone-mode: false
           path: extras
       - env:
@@ -112,4 +113,5 @@ jobs:
           if [[ "$GITHUB_REF_NAME" =~ [0-9](a|b|rc)[0-9]+$ ]]; then flags+=(--prerelease); fi
           gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP"/dist/* \
             extras/install.sh extras/install.ps1 extras/install/constraints-app.txt \
-            --repo "$GITHUB_REPOSITORY" --generate-notes "${flags[@]}"
+            --repo "$GITHUB_REPOSITORY" --generate-notes \
+            --notes "Compared against metacheck (R) $(grep -m1 '^commit' extras/parity/UPSTREAM.toml | cut -d'"' -f2); see CHANGELOG.md." "${flags[@]}"

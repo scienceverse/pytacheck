@@ -2,7 +2,7 @@
 
 **Check research outputs for best practices — in Python.**
 
-**Try it:** a preview app that runs on your own computer, installed with one command. See [docs/TRY.md](docs/TRY.md).
+**Try it:** a preview app that runs on your own computer, installed with one command. See [docs/TRY.md](https://github.com/scienceverse/pytacheck/blob/main/docs/TRY.md).
 
 metacheck (Python) is a fast, Python-native port of ScienceVerse's
 [metacheck](https://github.com/scienceverse/metacheck) R package, designed to work
@@ -11,33 +11,35 @@ hand in hand with [bibr](https://bibr.org). It follows metacheck's `dev` branch 
 adds bibr export schema 12.0), and every function and module is **checked against the
 original R implementation** by a parity test suite that runs the real R package. The
 goal is results at least as accurate as metacheck's, with metacheck's bugs fixed
-rather than copied, and nothing invented ([the accuracy contract](docs/PORTING.md#1-the-accuracy-contract)).
+rather than copied, and nothing invented ([the accuracy contract](https://github.com/scienceverse/pytacheck/blob/main/docs/PORTING.md#1-the-accuracy-contract)).
 
-> **Status: alpha.** The port is in progress; see [the porting status](docs/STATUS.md).
+> **Status: alpha.** The port is in progress; see [the porting status](https://github.com/scienceverse/pytacheck/blob/main/docs/STATUS.md).
 > A difference from metacheck that is not documented as a fix or a deliberate change
-> in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md) is a bug: please
+> in [docs/UPSTREAM_ISSUES.md](https://github.com/scienceverse/pytacheck/blob/main/docs/UPSTREAM_ISSUES.md) is a bug: please
 > [open an issue](https://github.com/scienceverse/pytacheck/issues).
 
 ## Install
 
 ```bash
-pip install --pre metacheck           # core: bibr JSON / Grobid XML input
-pip install --pre "metacheck[bibr]"   # + extract PDF/DOCX/HTML with bibr, in-process
-pip install --pre "metacheck[all]"    # + bibr, data-file readers, REST API, charset detection
+pip install "metacheck>=0.4.0a1"           # core: bibr JSON / Grobid XML input
+pip install "metacheck[bibr]>=0.4.0a1"     # + extract PDF/DOCX/HTML with bibr, in-process
+pip install "metacheck[all]>=0.4.0a1"      # + bibr, data-file readers, REST API, charset detection
 ```
 
-The package is on PyPI as `metacheck` and is a pre-release for now, so pip needs `--pre`.
+The package is on PyPI as `metacheck` and is a pre-release for now, so the requirement names the pre-release (`>=0.4.0a1`); this lets pip and uv pick it
+for metacheck only, not for its dependencies. If you installed `pytacheck` from GitHub
+before, run `pip uninstall pytacheck` first: the old and the new package share files.
 The Python module is still called `pytacheck` (`import pytacheck`) and so is one of the
 commands; `metacheck` is the same command.
 
 To try the app in your browser, with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv tool install --prerelease allow "metacheck[app]"
+uv tool install "metacheck[app]>=0.4.0a1"
 metacheck-app
 ```
 
-If you do not use Python, one line installs the app; see [docs/TRY.md](docs/TRY.md).
+If you do not use Python, one line installs the app; see [docs/TRY.md](https://github.com/scienceverse/pytacheck/blob/main/docs/TRY.md).
 On a Mac or Linux:
 
 ```bash
@@ -101,8 +103,8 @@ A 12.x paper has these tables and fields:
 | `paper.extraction` | the export's extraction block: `producer` (bibr or Grobid, with its version), `converter`, `completed_at`, diagnostics and warnings |
 
 The built-in modules handle both 12.x and older papers, and so does a mixed paper list.
-[docs/MODULES.md](docs/MODULES.md#papers-bibr-12x-and-the-older-format) shows how to
-write modules that do the same. [docs/BIBR.md](docs/BIBR.md) covers reading bibr's
+[docs/MODULES.md](https://github.com/scienceverse/pytacheck/blob/main/docs/MODULES.md#papers-bibr-12x-and-the-older-format) shows how to
+write modules that do the same. [docs/BIBR.md](https://github.com/scienceverse/pytacheck/blob/main/docs/BIBR.md) covers reading bibr's
 output.
 
 ## Presets, packs and community modules
@@ -121,8 +123,8 @@ pytacheck pack new my-checks                     # write your own
 
 Installed packs are pinned to a commit and a file hash, every result records
 which code produced it, and `pytacheck rerun run.json paper.json` replays a run.
-See [docs/MODULES.md](docs/MODULES.md) for the user and author guides and
-[docs/API.md](docs/API.md) for the REST API and its API key.
+See [docs/MODULES.md](https://github.com/scienceverse/pytacheck/blob/main/docs/MODULES.md) for the user and author guides and
+[docs/API.md](https://github.com/scienceverse/pytacheck/blob/main/docs/API.md) for the REST API and its API key.
 
 ## How it relates to metacheck
 
@@ -130,8 +132,8 @@ See [docs/MODULES.md](docs/MODULES.md) for the user and author guides and
   metacheck's do: traffic lights, summary tables, report texts and numbers agree with
   metacheck on real papers, repositories and data. Where metacheck is clearly wrong
   (a crash on valid input, a wrong count, a false positive), pytacheck does the right
-  thing and records the bug in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md) so it
-  can be reported upstream. The parity harness ([docs/PARITY.md](docs/PARITY.md)) runs
+  thing and records the bug in [docs/UPSTREAM_ISSUES.md](https://github.com/scienceverse/pytacheck/blob/main/docs/UPSTREAM_ISSUES.md) so it
+  can be reported upstream. The parity harness ([docs/PARITY.md](https://github.com/scienceverse/pytacheck/blob/main/docs/PARITY.md)) runs
   metacheck in R on the same inputs and compares every value, every difference is
   marked with its reason, and the committed goldens are regenerated from R in CI, so
   they cannot drift.
@@ -141,7 +143,7 @@ See [docs/MODULES.md](docs/MODULES.md) for the user and author guides and
 * **Auto-updated.** A scheduled workflow watches metacheck's `dev` branch (and, until
   it is merged, pull request #423). When the tracked head moves, the goldens are
   regenerated in R and an AI agent ports the change. The change is only merged once
-  parity is green again ([docs/PORTING.md](docs/PORTING.md)).
+  parity is green again ([docs/PORTING.md](https://github.com/scienceverse/pytacheck/blob/main/docs/PORTING.md)).
 * **Faster.** pytacheck prefers mature compiled libraries (pandas, orjson, lxml, the
   `regex` engine) to re-implementing R's internals, builds paper tables lazily, and
   assembles corpus-wide tables without per-paper overhead.

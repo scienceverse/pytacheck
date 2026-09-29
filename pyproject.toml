@@ -41,7 +41,8 @@ dependencies = [
     # spreadsheet cells (.xlsx, .xls, .ods) through calamine, a small Rust
     # library that pandas also uses as a read_excel engine
     "python-calamine>=0.8",
-    "httpx[http2]>=0.28.1",
+    "httpx[http2]>=0.28.1,<1",
+    "packaging>=24",
     "h2>=4.4.1",
     "lxml>=5.3",
     "markdown-it-py>=3.0",

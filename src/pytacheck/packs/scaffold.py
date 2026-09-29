@@ -19,7 +19,7 @@ from pytacheck.packs.manifest import PackError, validate_pack_name
 __all__ = ["INSTALL_SPEC", "module_template", "pack_new"]
 
 #: What CI installs to check a pack: the pip requirement the pytacheck-modules
-#: store's workflow uses too (until a release with the pack tools is on PyPI). One place to change.
+#: store's workflow uses too (a PyPI pre-release, metacheck>=0.4.0a1, works too). One place to change.
 INSTALL_SPEC = "metacheck @ git+https://github.com/scienceverse/pytacheck@main"
 
 #: template file -> path inside a new pack ("{module}" is the example module's name)
@@ -94,8 +94,8 @@ def pack_new(
     base_version = re.match(r"^\d+(\.\d+)?", __version__)  # major.minor
     requires = base_version.group(0) if base_version else "0.3"
     if not re.fullmatch(r"\d+(\.\d+)*", __version__):
-        # 0.4.0a1 is below 0.4 (PEP 440): a pre-release or dev build must pass its own pack
-        requires += ".0a0"
+        # 0.4.0a1 and 0.5.0.dev1 are below 0.4 and 0.5 (PEP 440); .dev0 is below all of them: a pre-release or dev build must pass its own pack
+        requires += ".0.dev0"
     values = {
         "{{name}}": name,
         "{{module}}": module,

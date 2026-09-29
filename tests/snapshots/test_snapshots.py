@@ -544,7 +544,9 @@ def test_missing_extras_are_the_optional_dependencies_not_installed(
     import importlib.metadata
 
     requires = ["numpy>=1.26", "pytest>=8; extra == 'data'", "no-such-dist[x]>=1; extra == 'data'"]
-    monkeypatch.setattr(importlib.metadata, "requires", lambda name: requires)
+    monkeypatch.setattr(
+        importlib.metadata, "requires", lambda name: requires if name == "metacheck" else 1 / 0
+    )
     assert script._missing_extras() == ["no-such-dist"]
 
 

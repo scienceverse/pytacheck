@@ -9,7 +9,7 @@ package's. The R commit each release is compared against is in
 
 ## 0.4.0a1 (first release on PyPI)
 
-First release on PyPI, as `metacheck` (`pip install --pre metacheck`). It is a
+First release on PyPI, as `metacheck` (`pip install "metacheck>=0.4.0a1"`). It is a
 pre-release. The import name is still `pytacheck` and so is one of the
 commands; `metacheck` is the same command, and `python -m pytacheck` works.
 Compared against the R package at commit `b239264` (metacheck 0.3.1 at `85c8c87`
@@ -18,6 +18,10 @@ plus scienceverse/metacheck#423, which the port targets ahead of its merge).
 - The app and the installer: `metacheck-app` and `metacheck[app]`; a one-line
   installer for people who do not use Python (docs/TRY.md).
 - Packs that require `pytacheck` find the installed `metacheck`.
+- Upgrading: if you installed `pytacheck` from GitHub, run `pip uninstall pytacheck`
+  before installing `metacheck` (both install the same files). Pack authors: a
+  workflow that installs `pytacheck @ git+...` must install `metacheck @ git+...`
+  (or `metacheck>=0.4.0a1` from PyPI) instead.
 - `pyyaml` is now a core dependency (codecheck reads YAML).
 - NOTICE and CITATION.cff credit the R package and its authors.
 
@@ -28,7 +32,7 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
 - R-faithful regular expressions (TRE leftmost-longest and PCRE semantics),
   number formatting, collation and dplyr idioms (`pytacheck._r`).
 - bibr-schema `Paper`/`PaperList` with lazily materialised tables; reading
-  bibr JSON directly or in-process from bibr (`pytacheck[bibr]`).
+  bibr JSON directly or in-process from bibr (`metacheck[bibr]`).
 - Module system compatible with metacheck's (`module_run`, chaining,
   `get_prev_outputs`, `module_list`), plugin modules via entry points.
 - Parity harness running metacheck in R; goldens regenerated in CI.

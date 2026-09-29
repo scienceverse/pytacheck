@@ -218,3 +218,20 @@ def test_cli_pack_check_and_new(ms, capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["ok"] is False
     assert {"level", "code", "where", "message"} <= set(payload["issues"][0])
+
+
+@pytest.mark.parametrize(
+    "built", ["0.5.0.dev1", "0.4.0.dev2", "0.4.0a1", "0.4.0rc1", "0.4.0", "0.4.2"]
+)
+def test_pack_new_requirement_is_met_by_the_build_that_wrote_it(
+    ms, monkeypatch: pytest.MonkeyPatch, built: str
+) -> None:
+    from packaging.specifiers import SpecifierSet
+    from packaging.version import Version
+
+    from pytacheck.packs import scaffold
+
+    monkeypatch.setattr(scaffold, "__version__", built)
+    root = pack_new("dev-pack", ms.work)
+    requires = json.loads((root / "pack.json").read_text())["requires"]["pytacheck"]
+    assert SpecifierSet(requires).contains(Version(built), prereleases=True)

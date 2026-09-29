@@ -1,5 +1,5 @@
 metacheck (Python)
-Copyright (C) 2025-2026 the metacheck (Python) contributors
+Copyright (C) 2026 the metacheck (Python) contributors
 
 This package is the Python version of metacheck, the R package by Lisa
 DeBruine, Cristian Mesquida, Jakub Werner, Daniel Lakens and contributors
@@ -7,7 +7,10 @@ DeBruine, Cristian Mesquida, Jakub Werner, Daniel Lakens and contributors
 checks, texts, regular expressions, reference data and outputs come from the R
 package and are compared with it by the parity tests in this repository. The R
 package is licensed under the GNU Affero General Public License, and so is
-this port. If you use metacheck, please cite the R package (see CITATION.cff).
+this port. Portions are copyright the metacheck authors (Lisa DeBruine,
+Cristian Mesquida, Jakub Werner, Daniel Lakens and contributors). If you use
+metacheck, please cite the R package (see
+https://github.com/scienceverse/pytacheck/blob/main/CITATION.cff).
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License as published by the Free
