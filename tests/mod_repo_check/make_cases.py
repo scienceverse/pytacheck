@@ -34,8 +34,9 @@ PSYCHSCI = [
 DEMO_JSON = "upstream/metacheck/inst/demos/to_err_is_human.json"
 BIBR12 = "upstream/metacheck/tests/testthat/fixtures/bibr12/"
 
-# local file locations are absolute paths: they depend on the checkout
-LOCAL_IGNORE = ["table.file_location"]
+# the file_location column is never compared in these four cases: R raises an error
+# (the nameless ones), or the row count differs (U121) and the comparison stops there
+NO_TABLE_COMPARE = ["table.file_location"]
 
 
 def rstr(s: str) -> str:
@@ -161,20 +162,20 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
     ("osf.not_found", "an OSF guid that does not exist (404)", one(osf("xxxxx"), "p_404"), {}),
     ("osf.preprint", "an OSF preprint is not a repository", one(osf("xp5cy"), "p_pre"), {}),
     # --- local folders ------------------------------------------------------------------
-    ("local.code_files", "metacheck's code_files fixture: green", local(CODE_FILES), LOCAL_IGNORE),
+    ("local.code_files", "metacheck's code_files fixture: green", local(CODE_FILES), {}),
     (
         "local.vector",
         "a vector of local file paths",
         local([f"{CODE_FILES}/analysis.R", f"{CODE_FILES}/README.md"]),
-        LOCAL_IGNORE,
+        {},
     ),
-    ("local.tidy", "README, data and code: green", local(FIX + "tidy"), LOCAL_IGNORE),
+    ("local.tidy", "README, data and code: green", local(FIX + "tidy"), {}),
     (
         "local.messy",
         "spaces, special characters, unclassifiable files, E-Prime binaries, a .tar.gz, "
         "study folders and a manuscript naming other studies",
         local(FIX + "messy", text=STUDIES),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "local.roster_extra",
@@ -184,7 +185,7 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
             "p_extra",
             text=["In Study 1 participants rated faces.", "Study 2 replicated it."],
         ),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "local.roster_missing",
@@ -194,40 +195,40 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
             "p_missing",
             text=["Study 1 and Study 2 are reported here.", "Study 3 is in the supplement."],
         ),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "local.roster_missing_one",
         "the manuscript names one study with no matching files",
         local(FIX + "tidy", "p_missing1", text=["Study 1 and Study 2 are reported here."]),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "local.edat_ok",
         "E-Prime files with their .txt exports",
         local(FIX + "edat_ok"),
-        LOCAL_IGNORE,
+        {},
     ),
-    ("local.zip", "local archives are not peeked (no URL)", local(FIX + "zip_local"), LOCAL_IGNORE),
-    ("local.rpkg", "an R package tree is excluded", local(FIX + "rpkg"), LOCAL_IGNORE),
+    ("local.zip", "local archives are not peeked (no URL)", local(FIX + "zip_local"), {}),
+    ("local.rpkg", "an R package tree is excluded", local(FIX + "rpkg"), {}),
     (
         "local.desc_only",
         "DESCRIPTION without NAMESPACE is kept",
         local(FIX + "desc_only"),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "local.rpkg_root",
         "a root package that is the deposit is kept",
         local(FIX + "rpkg_root"),
-        LOCAL_IGNORE,
+        {},
     ),
-    ("local.vendored", "a vendored package is excluded", local(FIX + "vendored"), LOCAL_IGNORE),
+    ("local.vendored", "a vendored package is excluded", local(FIX + "vendored"), {}),
     (
         "local.missing_path",
         "a local path that does not exist: an empty local repository",
         local(FIX + "does_not_exist"),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "local.paperlist",
@@ -236,7 +237,7 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
             "papers": [{"url": [], "id": "p_a"}, {"url": [], "id": "p_b"}],
             "args": {"local_path": FIX + "tidy"},
         },
-        LOCAL_IGNORE,
+        {},
     ),
     # --- OSF (metacheck's recordings) ------------------------------------------------------
     ("osf.629bx", "OSF project: code, data and a zip, no README", one(osf("629bx"), "p_629bx"), {}),
@@ -293,13 +294,13 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
         "osf.local",
         "an OSF project and a local folder",
         local(CODE_FILES, "p_osf_local", url=osf("629bx")),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "osf.local_only",
         "local_only = TRUE with an OSF link and a local folder",
         local(CODE_FILES, "p_osf_lo", url=osf("629bx"), local_only=True),
-        LOCAL_IGNORE,
+        {},
     ),
     (
         "osf.no_peek",
@@ -340,7 +341,7 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
             "read": [BIBR12 + f for f in ("preprint.json", "probe_docx.json", "full.json")],
             "args": {"local_path": FIX + "tidy"},
         },
-        LOCAL_IGNORE,
+        {},
     ),
     # --- Zenodo (metacheck's recordings) -----------------------------------------------------
     (
@@ -547,7 +548,12 @@ ALL_PLATFORMS = list(
 PLATFORM_URLS = [urls for _, _, urls in PLATFORM] + [ALL_PLATFORMS]
 
 CASES += [
-    (cid, note, one(urls, "p_" + cid.replace(".", "_")), {"ignore": ["table.file_location"]})
+    (
+        cid,
+        note,
+        one(urls, "p_" + cid.replace(".", "_")),
+        NO_TABLE_COMPARE if cid.endswith(".nameless") else {},
+    )
     for cid, note, urls in PLATFORM
 ]
 CASES += [
@@ -555,13 +561,13 @@ CASES += [
         "all_platforms",
         "every platform in one paper",
         one(ALL_PLATFORMS, "p_all"),
-        {"ignore": ["table.file_location"]},
+        NO_TABLE_COMPARE,
     ),
     (
         "all_platforms.paperlist",
         "every platform, spread over a paper list",
         {"papers": [{"url": ALL_PLATFORMS[i::3], "id": f"p_all{i}"} for i in range(3)]},
-        {"ignore": ["table.file_location"]},
+        NO_TABLE_COMPARE,
     ),
     (
         "all_platforms.report",
@@ -632,7 +638,7 @@ CASES += [
         cid,
         note,
         one(urls, "p_" + cid.replace(".", "_")),
-        {"ignore": ["table.file_location"]},
+        {},
     )
     for cid, note, urls in (
         ("dspace.unfound", "a PsychArchives item that does not exist", [PA_HANDLE + "99991"]),
