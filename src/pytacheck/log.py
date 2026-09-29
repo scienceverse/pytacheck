@@ -101,7 +101,8 @@ def logger(label: str = "", contents: Any = None, path: str | Path | None = None
 def lastlog(i: int | list[int] = 1, path: str | Path | None = None) -> Any:
     """The *i*-th most recent log entries (1 = newest), like ``lastlog()``.
 
-    Returns ``None`` for a log that cannot be created or read.
+    Returns ``None`` for a log that cannot be created or opened. A line that
+    is not JSON still raises, as R's ``read_json()`` does.
     """
     try:
         target = Path(path) if path else logpath()
