@@ -1,7 +1,7 @@
 """Tight integration with bibr, the ScienceVerse extraction pipeline.
 
 bibr turns PDF/DOCX/HTML/ePub papers into bibr export schema 12.x, the
-schema pytacheck targets. With ``pip install "pytacheck[bibr]"`` it runs
+schema pytacheck targets. With ``pip install "metacheck[bibr]"`` it runs
 in-process: extraction results are read straight into native 12.x
 :class:`~pytacheck.papers.Paper` objects (see :func:`pytacheck.papers.from_bibr`
 and :mod:`pytacheck.io.bibr12`), exactly as the same export read from JSON,
@@ -25,7 +25,7 @@ from pytacheck.papers.model import Paper, PaperList
 __all__ = ["BibrNotInstalledError", "bibr_available", "bibr_version", "chew"]
 
 INSTALL_HINT = (
-    'Install the bibr extra to extract papers from documents: pip install "pytacheck[bibr]"'
+    'Install the bibr extra to extract papers from documents: pip install "metacheck[bibr]"'
 )
 
 

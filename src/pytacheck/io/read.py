@@ -65,7 +65,7 @@ def read(
     schema 12.x is read natively (:mod:`pytacheck.io.bibr12`), any other
     version (bibr 11.x included) is refused; files without one (bibr v10.x and
     older) are read exactly as metacheck reads them. Source documents (PDF,
-    DOCX, HTML, ...) are extracted with bibr when the ``pytacheck[bibr]`` extra
+    DOCX, HTML, ...) are extracted with bibr when the ``metacheck[bibr]`` extra
     is installed; ``bibr_options`` are passed to :func:`pytacheck.io.bibr.chew`.
 
     ``schema_version`` says how a Grobid TEI (``.xml``) file is converted:

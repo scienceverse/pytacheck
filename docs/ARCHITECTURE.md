@@ -60,7 +60,7 @@ raw records directly into one DataFrame instead of building one per paper. Table
 returned by reference and must not be mutated by library code (tested for every
 module).
 
-With `pytacheck[bibr]`, `pc.read("paper.pdf")` runs bibr in-process and converts its
+With `metacheck[bibr]`, `pc.read("paper.pdf")` runs bibr in-process and converts its
 result dict straight into a `Paper` (`from_bibr`), without writing JSON.
 
 ## Modules

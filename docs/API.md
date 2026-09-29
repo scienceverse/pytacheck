@@ -1,7 +1,7 @@
 # The REST API
 
 `pytacheck serve` runs the REST API, a port of metacheck's plumber API. It needs
-`pip install "pytacheck[api]"`. The routes are listed at `/docs` and in the
+`pip install "metacheck[api]"`. The routes are listed at `/docs` and in the
 docstring of `pytacheck.api.app`.
 
 ## Access
