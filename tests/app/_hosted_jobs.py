@@ -40,7 +40,8 @@ def sleep(*_a: Any, **_k: Any) -> Any:
 def counted(*_a: Any, **_k: Any) -> Any:
     with open(os.environ[LOG_ENV], "a", encoding="utf-8") as fh:
         fh.write(f"start {time.time()}\n")
-    time.sleep(0.6)
+    # longer than a spawned process takes to start, so two runs surely overlap
+    time.sleep(2.5)
     with open(os.environ[LOG_ENV], "a", encoding="utf-8") as fh:
         fh.write(f"end {time.time()}\n")
     return started()

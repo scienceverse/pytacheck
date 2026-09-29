@@ -35,13 +35,13 @@ PORT = 7861
 
 @pytest.fixture(autouse=True, scope="module")
 def _runs() -> Iterator[None]:
-    """Runs start by fork where there is one (faster) and by spawn elsewhere (Windows). The
-    stand-ins in ``_hosted_jobs`` reach the run's process either way."""
+    """Runs start by spawn, as on the server. Fork is not safe in a process with threads
+    (filelock refuses it while another thread holds a lock), so it stays a choice for a
+    quick local run. The stand-ins in ``_hosted_jobs`` reach the run's process either way."""
     with pytest.MonkeyPatch.context() as mp:
         mp.syspath_prepend(str(Path(__file__).parent))
-        # METACHECK_TEST_START=spawn runs them the Windows way on any system
-        default = "fork" if hasattr(os, "fork") else "spawn"
-        mp.setattr(hosting, "START_METHOD", os.environ.get("METACHECK_TEST_START", default))
+        # METACHECK_TEST_START=fork is faster where there is fork
+        mp.setattr(hosting, "START_METHOD", os.environ.get("METACHECK_TEST_START", "spawn"))
         yield
 
 

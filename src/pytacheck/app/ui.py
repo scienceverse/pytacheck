@@ -555,17 +555,17 @@ def build_app(
             # a click ends with the fast results; the data check goes on in a second event,
             # so that the same button works again and a new check or Stop can end it. On a
             # shared server the data check is part of the run and its time limit.
-            following = [
+            for event in clicked:
                 event.success(
                     follow, None, outputs, concurrency_limit=None, api_visibility="private"
                 )
-                for event in clicked
-            ]
+            # Stop ends the job, and the following event then ends within a second by
+            # itself. Cancelling that event as well races with its end inside Gradio,
+            # which then prints a KeyError traceback in the person's terminal.
             stop.click(
                 on_stop,
                 None,
                 [status, stop],
-                cancels=cast(Any, following),
                 concurrency_limit=None,
                 api_visibility="private",
             )

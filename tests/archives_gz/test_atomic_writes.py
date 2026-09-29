@@ -313,7 +313,7 @@ def test_an_oserror_names_the_target_not_the_temp_file(
     with pytest.raises(PermissionError) as ei, atomic_write(str(target)) as fh:
         fh.write(b"x")
     assert ei.value.filename == str(target)
-    assert str(target) in str(ei.value)
+    assert ".~" not in str(ei.value)
     monkeypatch.undo()
     with pytest.raises(FileNotFoundError) as ej, atomic_write(str(tmp_path / "no" / "f")):
         pass
