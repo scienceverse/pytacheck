@@ -2,6 +2,8 @@
 
 This is a preview of metacheck in Python. It runs on your own computer: you give it a paper, and it checks the paper and writes a report.
 
+If you were sent a link to a hosted copy, you can open that link instead and install nothing. It runs the same app on a server.
+
 ## Install it
 
 **On a Mac or Linux.** Open Terminal and paste this line:
@@ -48,12 +50,20 @@ The folder is:
 
 Drop in a PDF, a GROBID XML file or a bibr JSON file. Or try the demo paper.
 
-About PDFs: a PDF is turned into text by the public GROBID server at TU Eindhoven (https://grobid.hti.ieis.tue.nl). R metacheck uses the same server. So a PDF you check is sent there. If that server does not answer, the PDF goes to a public GROBID server hosted on Hugging Face instead. XML and JSON files stay on your computer.
+About PDFs: "Read PDFs with" lets you choose how a PDF is turned into text.
+
+- **GROBID** is the default. It is the public server at TU Eindhoven (https://grobid.hti.ieis.tue.nl). R metacheck uses the same server. So a PDF you check is sent there. If that server does not answer, the PDF goes to a public GROBID server hosted on Hugging Face instead.
+- **bibr** is the scienceverse service. It needs a key. The person who sent you the link can give you one. Paste it into the box "Your bibr key". Tick "Remember the key on this computer" if you want to type it only once. The key is saved in a file that only you can read, and it is sent to the bibr service only. If bibr does not work, the app tells you. It does not switch to GROBID by itself, because you chose where the PDF goes.
+
+XML and JSON files stay on your computer.
+
+About data files: the box "Check the shared data files" is ticked. When the paper links to data files on OSF or other repositories, the app downloads them and checks them. This can take a few minutes. The other results appear first, and the data check is added when it is done. A line under the results shows that it is still running. Press "Stop the data check" if you do not want to wait. The other results stay on the page. Downloaded files are kept on your computer, so a second run is faster. Untick the box to skip this check.
 
 ## Which checks run
 
 - Five checks are validated. The app says this about them: "Error rates as published in the documentation of R metacheck 0.3.1. The R version and PDF pipeline they were measured with are not recorded. Not yet re-measured on this version."
 - A set of experimental checks also runs. Each one is labelled as experimental.
+- The data check is experimental too. It runs last, unless you untick its box.
 - The online checks are optional. They are slower, because they look things up on other servers.
 
 ## Open it again

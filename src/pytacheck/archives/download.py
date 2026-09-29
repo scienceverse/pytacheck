@@ -39,6 +39,7 @@ from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
 from pytacheck._r import grepl, gsub, is_na, plural, sub
+from pytacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -125,6 +126,38 @@ def _repo_cache_dir() -> str:
     return _metacheck_cache_subdir(
         ".metacheck_repo_cache", override=get_option("metacheck.repo_cache.dir")
     )
+
+
+_STALE_TEMP_AGE_S = 6 * 3600
+_swept = False
+
+
+def _sweep_repo_cache_once() -> None:
+    """Once per process, remove temporary files that a killed run left in the repo cache.
+
+    A hosted run's process can be ended mid-write; its temporary file (see
+    :mod:`pytacheck.archives._atomic`) would otherwise stay for good. Only files
+    older than 6 hours are removed; the cache folder is not created; never raises.
+    """
+    global _swept
+    if _swept:
+        return
+    _swept = True
+    try:
+        from pytacheck.archives._atomic import sweep_stale
+        from pytacheck.archives.cache import _metacheck_cache_root
+        from pytacheck.utils import get_option
+
+        override = get_option("metacheck.repo_cache.dir")
+        root = (
+            str(override)
+            if override is not None and str(override) != ""
+            else os.path.join(_metacheck_cache_root(), ".metacheck_repo_cache")
+        )
+        if os.path.isdir(root):
+            sweep_stale(root, _STALE_TEMP_AGE_S)
+    except Exception:  # noqa: S110 - a sweep must never fail a run
+        pass
 
 
 def _scalar(x: Any, what: str = "x") -> Any:
@@ -468,7 +501,7 @@ def _file_response(method: str, url: str, path: str | None) -> Any:
             f"! Could not read a file:// file:\nCould not open file {local}"
         ) from e
     if path is not None:
-        with open(path, "wb") as fh:
+        with atomic_write(path) as fh:
             fh.write(body)
         body = b""
     resp = httpx.Response(
@@ -500,10 +533,11 @@ def _perform_once(
         return _file_response(method, url, path)
     headers = dict(spec.get("headers") or {})
     to = httpx.Timeout(timeout if timeout is not None else 60.0, connect=20.0)
-    client = http.client()
+    client = http.client_for(url)
     follow = not spec.get("unrestricted_auth")
     try:
         for _hop in range(20):
+            http.check_interrupt()
             req = client.build_request(method, url, headers=headers, timeout=to)
             resp = client.send(req, stream=True, follow_redirects=follow)
             if not follow and resp.is_redirect and resp.next_request is not None:
@@ -515,8 +549,9 @@ def _perform_once(
             break
         try:
             if path is not None:
-                with open(path, "wb") as fh:
+                with atomic_write(path) as fh:
                     for chunk in resp.iter_bytes(chunk_size=1 << 20):
+                        http.check_interrupt()
                         fh.write(chunk)
             else:
                 resp.read()
@@ -653,7 +688,9 @@ def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
     """
     spec = dict(req)
     url = str(spec.get("url") or "")
-    if grepl(r"osf\.io", url, ignore_case=True):
+    host = (_host(url) or "").lower()
+    if host == "osf.io" or host.endswith(".osf.io"):
+        # the host, not the whole URL: a path or a look-alike host must not get the token
         from pytacheck.archives.osf_helpers import osf_pat
 
         try:
@@ -1279,7 +1316,7 @@ def _download_zip_to_cache(
                     continue
                 try:
                     os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
-                    with open(dest, "wb") as fh:
+                    with atomic_write(dest) as fh:
                         fh.write(data)
                 except OSError:
                     continue
@@ -1420,6 +1457,7 @@ def download_repo_files(
     if rel_path is None:
         rel_path = list(file_names)
     rel_path = [fn if p is None else p for p, fn in zip(rel_path, file_names, strict=True)]
+    _sweep_repo_cache_once()
     cache_paths = [_safe_write_path(cache_path(repo_urls[i], rel_path[i])) or "" for i in range(n)]
     df[".cache_path"] = pd.Series(cache_paths, dtype=object)
 

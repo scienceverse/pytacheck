@@ -22,12 +22,14 @@ function Install-Metacheck {
     $ErrorActionPreference = 'Stop'
 
     # The commit that gets installed. Move it when the app moves.
-    $Ref = 'b4ac3e5b98e7e0135653ab3c7f42a916dbf5b436'
+    $Ref = '01526ee8a8d7e0fc26f63247a6a74b635db0c437'
 
     $UvVersion = '0.12.20'
     $UvUrl = "https://github.com/astral-sh/uv/releases/download/$UvVersion"
     $IssuesUrl = 'https://github.com/scienceverse/pytacheck/issues'
-    $Tool = 'pytacheck'
+    $Tool = 'metacheck'
+    # Installs before 0.4.0a1 named the tool pytacheck.
+    $OldTool = 'pytacheck'
 
     # SHA-256 of each uv archive, from the .sha256 files of the uv release.
     $UvSha = @{
@@ -215,10 +217,40 @@ function Install-Metacheck {
             Fail "METACHECK_CONSTRAINTS is not a file: $constraints"
         }
 
+        # An install under the old tool name owns the same commands. It stays until
+        # the new one is in, so a failed install leaves the app that worked; --force
+        # lets the new tool take over those commands.
+        $oldDir = Join-Path $root "tools\$OldTool"
+        $force = @()
+        if (Test-Path -LiteralPath $oldDir) { $force = @('--force') }
+
         Say 'Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ...'
-        $code = Invoke-Uv tool install --managed-python --python 3.12 $spec -c $constraints
-        if ($code -ne 0) { Fail "the install failed. If it keeps failing, please tell us at $IssuesUrl" }
+        $code = Invoke-Uv tool install @force --managed-python --python 3.12 $spec -c $constraints
+        if ($code -ne 0) {
+            if ($force.Count -gt 0) { Fail "the install failed. The earlier version is still installed. If it keeps failing, please tell us at $IssuesUrl" }
+            Fail "the install failed. If it keeps failing, please tell us at $IssuesUrl"
+        }
         if (-not (Test-Path -LiteralPath $app)) { Fail "the install finished but $app is missing. Please tell us at $IssuesUrl" }
+
+        # The old tool is not needed any more. Its folder holds its only record, so it
+        # goes with Remove-Item, not uv tool uninstall (that would remove the commands
+        # the new tool now owns). Commands only the old tool had go too.
+        if ($force.Count -gt 0) {
+            $oldReceipt = Join-Path $oldDir 'uv-receipt.toml'
+            $newReceipt = Join-Path $root "tools\$Tool\uv-receipt.toml"
+            if ((Test-Path -LiteralPath $oldReceipt) -and (Test-Path -LiteralPath $newReceipt)) {
+                $newText = Get-Content -LiteralPath $newReceipt -Raw
+                foreach ($m in [regex]::Matches((Get-Content -LiteralPath $oldReceipt -Raw), 'install-path = ["'']([^"'']+)["'']')) {
+                    $leaf = ($m.Groups[1].Value -split '[\\/]')[-1]
+                    $old = Join-Path $binDir $leaf
+                    if ($leaf -and -not $newText.Contains($leaf) -and (Test-Path -LiteralPath $old)) {
+                        Remove-Item -LiteralPath $old -Force -ErrorAction SilentlyContinue
+                    }
+                }
+            }
+            # a file still in use stays; the next install removes it
+            Remove-Item -LiteralPath $oldDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
     } finally {
         foreach ($name in $uvEnv.Keys) { [Environment]::SetEnvironmentVariable($name, $saved[$name], 'Process') }
         $env:PATH = $savedPath

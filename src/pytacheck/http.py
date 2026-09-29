@@ -41,9 +41,12 @@ __all__ = [
     "RETRY_STATUSES",
     "Throttle",
     "batch_query",
+    "check_interrupt",
     "client",
+    "client_for",
     "close_client",
     "host_reset_at",
+    "interruptible",
     "request",
     "resp_json",
     "skip_on_api_limit",
@@ -53,16 +56,53 @@ __all__ = [
 RETRY_STATUSES = (429, 500, 502, 503, 504)
 
 _client: httpx.Client | None = None
+_client_h1: httpx.Client | None = None
+#: Hosts that reset HTTP/2 streams when several requests share one connection (seen on OSF with
+#: 4 or more at once: instant ``ReadError``). Their requests use an HTTP/1.1 client instead.
+_H1_HOSTS = ("osf.io",)
 _client_lock = threading.Lock()
 _skip_limit: ContextVar[bool] = ContextVar("pytacheck_skip_on_api_limit", default=False)
+#: Called before each request, each downloaded chunk and during waits; it raises to end them.
+#: Set per context by :func:`interruptible`, so an application can stop one running job.
+_interrupt: ContextVar[Callable[[], None] | None] = ContextVar("pytacheck_interrupt", default=None)
 _host_reset: dict[str, float] = {}
 _reset_lock = threading.Lock()
 
 
+@contextlib.contextmanager
+def interruptible(check: Callable[[], None]) -> Iterator[None]:
+    """Run a block whose requests and waits call *check*; *check* raises to end them.
+
+    Threads started with ``copy_context()`` (as the library's own pools are) inherit it.
+    """
+    token = _interrupt.set(check)
+    try:
+        yield
+    finally:
+        _interrupt.reset(token)
+
+
+def check_interrupt() -> None:
+    """Raise what the enclosing :func:`interruptible` block's check raises (else nothing)."""
+    check = _interrupt.get()
+    if check is not None:
+        check()
+
+
 def sleep(seconds: float) -> None:
-    """``Sys.sleep()`` that the test suite can switch off (``PYTACHECK_NO_SLEEP``)."""
+    """``Sys.sleep()`` that the test suite can switch off (``PYTACHECK_NO_SLEEP``).
+
+    Inside :func:`interruptible` it wakes every quarter second to look for an interrupt.
+    """
     if seconds > 0 and not os.environ.get("PYTACHECK_NO_SLEEP"):
-        time.sleep(seconds)
+        if _interrupt.get() is None:
+            time.sleep(seconds)
+            return
+        end = time.monotonic() + seconds
+        while (left := end - time.monotonic()) > 0:
+            check_interrupt()
+            time.sleep(min(left, 0.25))
+        check_interrupt()
 
 
 def _user_agent() -> str:
@@ -91,13 +131,34 @@ def client() -> httpx.Client:
         return _client
 
 
-def close_client() -> None:
-    """Close the shared client (a new one is created on next use)."""
-    global _client
+def client_for(url: str) -> httpx.Client:
+    """The shared client for *url*: HTTP/1.1 for the hosts in ``_H1_HOSTS``, else :func:`client`."""
+    global _client_h1
+    host = urlsplit(url).hostname or ""
+    if not any(host == h or host.endswith(f".{h}") for h in _H1_HOSTS):
+        return client()
     with _client_lock:
-        if _client is not None:
-            _client.close()
-            _client = None
+        if _client_h1 is None or _client_h1.is_closed:
+            import httpx
+
+            _client_h1 = httpx.Client(
+                http2=False,
+                follow_redirects=True,
+                timeout=httpx.Timeout(60.0, connect=20.0),
+                limits=httpx.Limits(max_connections=32, max_keepalive_connections=16),
+                headers={"User-Agent": _user_agent()},
+            )
+        return _client_h1
+
+
+def close_client() -> None:
+    """Close the shared clients (new ones are created on next use)."""
+    global _client, _client_h1
+    with _client_lock:
+        for c in (_client, _client_h1):
+            if c is not None:
+                c.close()
+        _client = _client_h1 = None
 
 
 @contextlib.contextmanager
@@ -203,9 +264,10 @@ def request(
     import httpx
 
     host = urlsplit(url).hostname or ""
-    session = http or client()
+    session = http or client_for(url)
     resp: httpx.Response | None = None
     for attempt in range(1, max_tries + 1):
+        check_interrupt()
         reset = host_reset_at(host)
         if reset is not None:
             if skipping_api_limits():

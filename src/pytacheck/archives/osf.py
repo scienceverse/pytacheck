@@ -40,6 +40,7 @@ from pytacheck._r import (
     strsplit,
     sub,
 )
+from pytacheck.archives._atomic import atomic_write
 
 __all__ = [
     "OsfResult",
@@ -853,10 +854,12 @@ def _stream_to_file(url: str, path: str, timeout_s: float = 1800, max_tries: int
     status = 0
     for attempt in range(1, max_tries + 1):
         try:
-            with http.client().stream("GET", url, headers=headers, timeout=timeout_s) as resp:
+            with http.client_for(url).stream(
+                "GET", url, headers=headers, timeout=timeout_s
+            ) as resp:
                 status = resp.status_code
                 if status == 200 or not is_transient(resp) or attempt == max_tries:
-                    with open(path, "wb") as fh:
+                    with atomic_write(path) as fh:
                         for chunk in resp.iter_bytes():
                             fh.write(chunk)
                     return status

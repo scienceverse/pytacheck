@@ -19,8 +19,8 @@ from pytacheck.packs.manifest import PackError, validate_pack_name
 __all__ = ["INSTALL_SPEC", "module_template", "pack_new"]
 
 #: What CI installs to check a pack: the pip requirement the pytacheck-modules
-#: store's workflow uses too (pytacheck is not on PyPI yet). One place to change.
-INSTALL_SPEC = "pytacheck @ git+https://github.com/scienceverse/pytacheck@main"
+#: store's workflow uses too (a PyPI pre-release, metacheck>=0.4.0a1, works too). One place to change.
+INSTALL_SPEC = "metacheck @ git+https://github.com/scienceverse/pytacheck@main"
 
 #: template file -> path inside a new pack ("{module}" is the example module's name)
 PACK_FILES = {
@@ -91,14 +91,18 @@ def pack_new(
     if root.exists() and any(root.iterdir()):
         raise PackError(f"{root} already exists and is not empty")
     now = datetime.now(UTC)
-    base_version = re.match(r"^\d+(\.\d+)?", __version__)  # major.minor: dev builds pass
+    base_version = re.match(r"^\d+(\.\d+)?", __version__)  # major.minor
+    requires = base_version.group(0) if base_version else "0.3"
+    if not re.fullmatch(r"\d+(\.\d+)*", __version__):
+        # 0.4.0a1 and 0.5.0.dev1 are below 0.4 and 0.5 (PEP 440); .dev0 is below all of them: a pre-release or dev build must pass its own pack
+        requires += ".0.dev0"
     values = {
         "{{name}}": name,
         "{{module}}": module,
         "{{title}}": title or f"{name} checks",
         "{{year}}": str(now.year),
         "{{date}}": now.strftime("%Y-%m-%d"),
-        "{{pytacheck_version}}": base_version.group(0) if base_version else "0.3",
+        "{{pytacheck_version}}": requires,
         "{{install_spec}}": INSTALL_SPEC,
     }
     for template, target in PACK_FILES.items():

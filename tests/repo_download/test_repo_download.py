@@ -835,6 +835,24 @@ def test_auth_for_url_hosts(monkeypatch: pytest.MonkeyPatch) -> None:
     assert spec["headers"]["User-Agent"] == "metacheck"
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://raw.githubusercontent.com/someone/osf.io/main/d.csv",
+        "https://attacker.example/osf.io/data.csv",
+        "https://osf.io.attacker.example/d.csv",
+        "https://notosf.io/d.csv",
+    ],
+)
+def test_the_osf_token_goes_to_osf_hosts_only(monkeypatch: pytest.MonkeyPatch, url: str) -> None:
+    monkeypatch.setenv("OSF_PAT", "osf-token")
+    spec = _auth_for_url({"method": "GET", "url": url, "headers": {}})
+    assert "Authorization" not in spec["headers"] and "unrestricted_auth" not in spec
+    for host in ("osf.io", "files.osf.io", "files.de-1.osf.io", "api.osf.io"):
+        spec = _auth_for_url({"method": "GET", "url": f"https://{host}/x", "headers": {}})
+        assert spec["headers"]["Authorization"] == "Bearer osf-token"
+
+
 def test_unrestricted_auth_keeps_token_across_redirect(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

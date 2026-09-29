@@ -21,12 +21,14 @@ main() {
   set -eu
 
   # The commit that gets installed. Move it when the app moves.
-  REF="b4ac3e5b98e7e0135653ab3c7f42a916dbf5b436"
+  REF="01526ee8a8d7e0fc26f63247a6a74b635db0c437"
 
   UV_VERSION="0.12.20"
   UV_URL="https://github.com/astral-sh/uv/releases/download/$UV_VERSION"
   ISSUES_URL="https://github.com/scienceverse/pytacheck/issues"
-  TOOL="pytacheck"
+  TOOL="metacheck"
+  # Installs before 0.4.0a1 named the tool pytacheck.
+  OLD_TOOL="pytacheck"
 
   say() { printf '%s\n' "$*"; }
   die() {
@@ -254,11 +256,36 @@ main() {
     die "METACHECK_CONSTRAINTS is not a file: $constraints"
   fi
 
+  # An install under the old tool name owns the same commands. It stays until
+  # the new one is in, so a failed install leaves the app that worked; --force
+  # lets the new tool take over those commands.
+  old_dir="$root/tools/$OLD_TOOL"
+  force=""
+  [ ! -d "$old_dir" ] || force="--force"
+
   say "Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ..."
-  if ! run_uv tool install --managed-python --python 3.12 "$spec" -c "$constraints"; then
+  # shellcheck disable=SC2086 # $force is empty or one flag
+  if ! run_uv tool install $force --managed-python --python 3.12 "$spec" -c "$constraints"; then
+    if [ -n "$force" ]; then
+      die "the install failed. The earlier version is still installed. If it keeps failing, please tell us at $ISSUES_URL"
+    fi
     die "the install failed. If it keeps failing, please tell us at $ISSUES_URL"
   fi
   [ -x "$app" ] || die "the install finished but $app is missing. Please tell us at $ISSUES_URL"
+
+  # The old tool is not needed any more. Its folder holds its only record, so it
+  # goes with rm, not uv tool uninstall (that would remove the commands the new
+  # tool now owns). Commands only the old tool had would point at nothing, so they go too.
+  if [ -n "$force" ]; then
+    for link in "$bin_dir"/*; do
+      if [ -L "$link" ]; then
+        case "$(readlink "$link")" in
+          "$old_dir"/*) rm -f "$link" ;;
+        esac
+      fi
+    done
+    rm -rf "${old_dir:?}"
+  fi
 
   rm -rf "$tmp"
   trap - EXIT INT TERM

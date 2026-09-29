@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install pytacheck
-        # the same pytacheck the store's CI uses (until pytacheck is on PyPI)
+        # the same pytacheck the store's CI uses (metacheck on PyPI is a pre-release for now)
         run: pip install "{{install_spec}}" pytest
       - name: pytacheck pack check
         run: pytacheck pack check .

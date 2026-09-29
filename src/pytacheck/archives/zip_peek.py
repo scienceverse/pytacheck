@@ -29,6 +29,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from pytacheck._r import grepl, gsub, is_na, strsplit, sub
+from pytacheck.archives._atomic import atomic_write, staged_dir
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -539,7 +540,7 @@ def _zip_fetch_members(
         except OSError:
             pass
         try:
-            with open(target, "wb") as fh:
+            with atomic_write(target) as fh:
                 fh.write(data)
         except OSError:
             continue
@@ -864,7 +865,8 @@ def _expand_zip(
         return empty
     if not os.path.isdir(dest):
         try:
-            _unzip_all(zip_path, dest)
+            with staged_dir(dest) as stage:  # dest appears only once the extraction ended
+                _unzip_all(zip_path, stage)
         except Exception:  # noqa: S110 - R: tryCatch(unzip(...), error = NULL)
             pass
     return _archive_rows(dest, zip_row, os.path.basename(zip_path), skip_types)
@@ -918,7 +920,8 @@ def _expand_tar(
         return empty
     if not os.path.isdir(dest):
         try:
-            _untar_all(tar_path, dest)
+            with staged_dir(dest) as stage:  # dest appears only once the extraction ended
+                _untar_all(tar_path, stage)
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
     return _archive_rows(dest, tar_row, os.path.basename(tar_path), skip_types)
@@ -970,7 +973,7 @@ def _expand_compressed(
     if not os.path.exists(out):
         try:
             os.makedirs(dest, exist_ok=True)
-            with _open_compressed(gz_path, ext) as con, open(out, "wb") as oc:
+            with _open_compressed(gz_path, ext) as con, atomic_write(out) as oc:
                 while True:
                     chunk = con.read(1048576)
                     if not chunk:

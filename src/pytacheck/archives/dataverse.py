@@ -29,6 +29,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from pytacheck._r import as_character, compile_r, grepl, gsub, is_na, plural, r_round, sub
+from pytacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
     import httpx
@@ -888,7 +889,7 @@ def _fetch_file(
                         return False
                     headers = fresh
                     continue
-                with open(target, "wb") as fh:
+                with atomic_write(target) as fh:
                     for chunk in resp.iter_bytes():
                         fh.write(chunk)
                 return True

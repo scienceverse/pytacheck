@@ -18,10 +18,12 @@ import time
 import webbrowser
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
+from pytacheck.app import hosted as hosting
 from pytacheck.app import state as saved
 
-MISSING_EXTRA = "The app needs the app extra: pip install 'pytacheck[app]'"
+MISSING_EXTRA = "The app needs the app extra: pip install 'metacheck[app]>=0.4.0a1'"
 HOST = "127.0.0.1"
 
 
@@ -31,7 +33,18 @@ def build_parser() -> argparse.ArgumentParser:
         description="Open the metacheck app in your browser. It runs on this computer only.",
     )
     parser.add_argument("--no-browser", action="store_true", help="do not open the browser")
-    parser.add_argument("--port", type=int, default=0, help="port to use (default: a free one)")
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=None,
+        help="port to use (default: a free one; with --hosted: $PORT, else 7860)",
+    )
+    parser.add_argument(
+        "--hosted",
+        action="store_true",
+        help="serve other people over https behind a proxy (needs METACHECK_APP_TOKENS)",
+    )
+    parser.add_argument("--host", default=None, help="address to listen on (--hosted only)")
     parser.add_argument(
         "--self-test",
         action="store_true",
@@ -120,10 +133,10 @@ def _warm_up() -> None:
         check_paper(pc.demofile("json"), workdir=Path(work))
 
 
-def _bind(port: int) -> socket.socket:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def _bind(port: int, host: str = HOST) -> socket.socket:
+    sock = socket.socket(socket.AF_INET6 if ":" in host else socket.AF_INET, socket.SOCK_STREAM)
     try:
-        sock.bind((HOST, port))
+        sock.bind((host, port))
     except OSError:
         sock.close()
         raise
@@ -131,29 +144,58 @@ def _bind(port: int) -> socket.socket:
     return sock
 
 
-def _serve(port: int, open_browser: bool) -> int:
+def uvicorn_config(app: Any, *, hosted: bool) -> Any:
+    """The server settings. There is no access log: its lines hold the query string, which
+    carries the token of a first visit."""
+    import uvicorn
+
+    extra: dict[str, Any] = {}
+    if hosted:
+        # The platform's proxy is the only peer and sets the scheme of the request.
+        extra["forwarded_allow_ips"] = "*"
+    return uvicorn.Config(app, log_level="warning", access_log=False, **extra)
+
+
+def _serve(
+    port: int, open_browser: bool, config: hosting.HostedConfig | None = None, host: str = HOST
+) -> int:
     import uvicorn
 
     try:
-        sock = _bind(port)
+        sock = _bind(port, host)
     except OSError as exc:
         print(f"Port {port} is not available ({exc.strerror or exc}). Try another --port.")
         return 1
     gradio_dir = private_gradio_dir()
-    from pytacheck.app.server import create_app
+    from pytacheck.app.server import create_app, create_hosted_app
     from pytacheck.config import verbose
 
     port = sock.getsockname()[1]
     token = secrets.token_urlsafe(32)
     verbose(False)
-    server = uvicorn.Server(uvicorn.Config(create_app(port, token), log_level="warning"))
-    saved.write_state(port, token)
+    if config is None:
+        app = create_app(port, token)
+        saved.write_state(port, token)
+    else:
+        app = create_hosted_app(port, config)
+    server = uvicorn.Server(uvicorn_config(app, hosted=config is not None))
 
     def when_up() -> None:
         while not server.started and not server.should_exit:
             time.sleep(0.05)
         if server.started:
-            _announce(_url(port, token), open_browser)
+            if config is None:
+                _announce(_url(port, token), open_browser)
+            elif config.proxy_auth:
+                print(
+                    f"metacheck is serving on port {port}; the proxy in front signs people in",
+                    flush=True,
+                )
+            else:  # the log must not hold a token
+                print(
+                    f"metacheck is serving {len(config.tokens)} access token(s) on port {port}",
+                    flush=True,
+                )
             _warm_up()
 
     threading.Thread(target=when_up, daemon=True).start()
@@ -167,9 +209,10 @@ def _serve(port: int, open_browser: bool) -> int:
         pass
     finally:
         sock.close()
-        saved.remove_state(port)
-        with contextlib.suppress(OSError):
-            saved.state_path().with_name("open.html").unlink()
+        if config is None:
+            saved.remove_state(port)
+            with contextlib.suppress(OSError):
+                saved.state_path().with_name("open.html").unlink()
         shutil.rmtree(gradio_dir, ignore_errors=True)
         if os.environ.get("GRADIO_TEMP_DIR") == str(gradio_dir):
             del os.environ["GRADIO_TEMP_DIR"]
@@ -189,11 +232,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     os.environ["GRADIO_ANALYTICS_ENABLED"] = "False"  # before gradio is imported
     if ns.self_test:
         return _self_test()
-    if not 0 <= ns.port <= 65535:
+    if ns.host is not None and not ns.hosted:
+        print("--host only works together with --hosted.", file=sys.stderr)
+        return 2
+    port = ns.port if ns.port is not None else (hosting.default_port() if ns.hosted else 0)
+    if not 0 <= port <= 65535:
         print("The port must be a number from 0 to 65535.", file=sys.stderr)
         return 2
+    if ns.hosted:
+        try:
+            config = hosting.HostedConfig.from_env()
+        except hosting.HostedError as exc:
+            print(exc, file=sys.stderr)
+            return 2
+        return _serve(port, False, config, ns.host or HOST)
     running = saved.find_running()
-    if running is not None and ns.port in (0, running["port"]):
+    if running is not None and port in (0, running["port"]):
         _announce(_url(running["port"], running["token"]), not ns.no_browser)
         return 0
-    return _serve(ns.port, not ns.no_browser)
+    return _serve(port, not ns.no_browser)

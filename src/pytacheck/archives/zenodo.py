@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from pytacheck._r import is_na
+from pytacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
     import httpx
@@ -784,7 +785,7 @@ def _unzip_list(x: Any) -> list[Any]:
 def _stream_to(resp_ctx: Any, path: str) -> httpx.Response:
     with resp_ctx as resp:
         if resp.status_code == 200:
-            with open(path, "wb") as fh:
+            with atomic_write(path) as fh:
                 for chunk in resp.iter_bytes():
                     fh.write(chunk)
         return resp  # type: ignore[no-any-return]

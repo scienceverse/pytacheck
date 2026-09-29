@@ -35,6 +35,7 @@ def test_the_sets_are_disjoint_real_modules() -> None:
     sets = [
         set(checks.FAST_OFFLINE),
         set(checks.ONLINE),
+        set(checks.DATA),
         set(checks.NEVER),
         set(checks.NOT_SHOWN),
         VALIDATED,
@@ -42,12 +43,24 @@ def test_the_sets_are_disjoint_real_modules() -> None:
     for i, a in enumerate(sets):
         for b in sets[i + 1 :]:
             assert not a & b
-    for name in (*checks.FAST_OFFLINE, *checks.ONLINE, *checks.NEVER, *checks.NOT_SHOWN):
+    for name in (
+        *checks.FAST_OFFLINE,
+        *checks.ONLINE,
+        *checks.DATA,
+        *checks.NEVER,
+        *checks.NOT_SHOWN,
+    ):
         assert module_find(name) is not None
     assert all(checks.FAST_OFFLINE.values())
-    assert all(checks.NEVER.values()) and all(checks.NOT_SHOWN.values())
-    for slow in ("code_check", "data_check", "codebook_check", "psychds_check", "reg_check"):
+    assert (
+        all(checks.DATA.values()) and all(checks.NEVER.values()) and all(checks.NOT_SHOWN.values())
+    )
+    assert set(checks.DATA) == {"data_check"}
+    assert checks.status_labels()["data_check"] == "experimental"
+    for slow in ("code_check", "codebook_check", "psychds_check", "reg_check"):
         assert slow in checks.NEVER
+    # the data check has its own box: the fast selection never holds it
+    assert "data_check" not in checks.selected_checks(online=True)
 
 
 def test_selection_orders_the_summary_last() -> None:
@@ -77,7 +90,8 @@ def test_demo_run(tmp_path: Path) -> None:
     assert all(not r.result.startswith("Failed") for r in analysis.rows)
     assert "<html" in analysis.html.lower()
     assert analysis.report_path == tmp_path / "out" / "to_err_is_human_report.html"
-    assert analysis.report_path.read_text(encoding="utf-8").strip() == analysis.html.strip()
+    saved = analysis.report_path.read_text(encoding="utf-8")
+    assert saved.strip() == run.protect(analysis.html).strip()  # the report, under its policy
     assert analysis.seconds < 10
 
 
@@ -127,11 +141,28 @@ def test_markup_in_a_paper_cannot_load_anything_in_the_report(tmp_path: Path) ->
     )
     analysis = run.check_paper(evil, workdir=tmp_path)
     assert "<script>fetch('http://x.example')</script>" in analysis.html  # unescaped, as in R
+    assert "<script>fetch('http://x.example')</script>" in analysis.html
+    csp = run.report_csp()
+    # only the report's own script may run: the paper's tag is not in the policy
+    assert "script-src 'sha256-" in csp and "unsafe-inline" not in csp.split("style-src")[0]
+    assert "default-src 'none'" in csp and "connect-src" not in csp and "img-src data:" in csp
+    saved = analysis.report_path.read_text(encoding="utf-8")
+    assert f'content="{csp}"' in saved.split("</head>")[0]  # before any paper text
     frame = ui.report_frame(analysis.html)
-    csp = html.escape(f'<meta http-equiv="Content-Security-Policy" content="{ui.REPORT_CSP}">')
-    assert f'srcdoc="{csp}' in frame  # the policy comes before any paper text
-    assert "default-src 'none'" in ui.REPORT_CSP
-    assert "connect-src" not in ui.REPORT_CSP and "img-src data:" in ui.REPORT_CSP
+    assert html.escape(f'content="{csp}"') in frame
+
+
+def test_the_policy_allows_exactly_the_reports_own_script(tmp_path: Path) -> None:
+    import base64
+    import hashlib
+    import re
+
+    page = run.check_paper(pc.demofile("json"), workdir=tmp_path).html
+    scripts = re.findall(r"<script>(.*?)</script>", page, re.DOTALL)
+    assert len(scripts) == 1
+    digest = base64.b64encode(hashlib.sha256(scripts[0].encode()).digest()).decode()
+    assert f"script-src 'sha256-{digest}';" in run.report_csp()
+    assert not re.search(r"<\w+[^>]*\son[a-z]+\s*=", page)  # no event handler of its own
 
 
 def test_report_filename() -> None:
@@ -272,8 +303,10 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     steps: list[str] = []
     progress = lambda _f, desc=None: steps.append(desc)  # noqa: E731
     on_demo = _button_function("on_demo")
-    results, summary, table, frame, download = on_demo(False, request, progress)
+    page = on_demo(False, False, "grobid", "", False, request, progress)
+    results, summary, table, frame, download, status, stop = page
     assert results["visible"] is True
+    assert status == "" and stop["visible"] is False
     assert "Ran 16 checks" in summary
     assert [row[1] for row in table].count("Validated") == 5
     assert frame.startswith('<iframe title="Report" sandbox="allow-scripts')
@@ -281,14 +314,14 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     assert 'href="/report/abc123/to_err_is_human_report.html"' in download
     assert "Download the report" in download
     assert steps[0] == "Reading the paper"
-    on_demo(False, request, progress)  # a second run of the same session works
+    on_demo(False, False, "grobid", "", False, request, progress)  # a second run works
 
 
 def test_check_button_needs_a_file_and_words_errors_plainly() -> None:
     request = SimpleNamespace(session_hash="abc123")
     on_check = _button_function("on_check")
     with pytest.raises(gr.Error, match="Upload a paper first") as info:
-        on_check(None, False, request, lambda *_a, **_k: None)
+        on_check(None, False, False, "grobid", "", False, request, lambda *_a, **_k: None)
     assert info.value.print_exception is False
     folder = Path(get_upload_folder()) / "test-app-uploads"
     folder.mkdir(parents=True, exist_ok=True)
@@ -296,7 +329,7 @@ def test_check_button_needs_a_file_and_words_errors_plainly() -> None:
         txt = folder / "a.txt"
         txt.write_text("x")
         with pytest.raises(gr.Error, match="not supported") as info:
-            on_check(str(txt), False, request, lambda *_a, **_k: None)
+            on_check(str(txt), False, False, "grobid", "", False, request, lambda *_a, **_k: None)
         assert info.value.print_exception is False
     finally:
         shutil.rmtree(folder, ignore_errors=True)

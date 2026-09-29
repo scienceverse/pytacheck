@@ -5,10 +5,21 @@ from __future__ import annotations
 from importlib.metadata import PackageNotFoundError, version
 from typing import NotRequired, TypedDict
 
-try:
-    __version__ = version("pytacheck")
-except PackageNotFoundError:  # pragma: no cover - running from a source tree
-    __version__ = "0.0.0+unknown"
+#: The distribution is "metacheck"; "pytacheck" is what installs before 0.4.0a1 are called.
+DISTRIBUTION = "metacheck"
+_OLD_DISTRIBUTION = "pytacheck"
+
+
+def _installed_version() -> str:
+    for name in (DISTRIBUTION, _OLD_DISTRIBUTION):
+        try:
+            return version(name)
+        except PackageNotFoundError:
+            continue
+    return "0.0.0+unknown"  # pragma: no cover - running from a source tree
+
+
+__version__ = _installed_version()
 
 
 class _Upstream(TypedDict):
