@@ -99,11 +99,15 @@ def logger(label: str = "", contents: Any = None, path: str | Path | None = None
 
 
 def lastlog(i: int | list[int] = 1, path: str | Path | None = None) -> Any:
-    """The *i*-th most recent log entries (1 = newest), like ``lastlog()``."""
-    target = Path(path) if path else logpath()
+    """The *i*-th most recent log entries (1 = newest), like ``lastlog()``.
+
+    Returns ``None`` for a log that cannot be created or opened. A line that
+    is not JSON still raises, as R's ``read_json()`` does.
+    """
     try:
+        target = Path(path) if path else logpath()
         lines = target.read_bytes().splitlines()
-    except OSError:
+    except OSError:  # the log directory cannot be created, or the file read
         return None
     entries = [orjson.loads(line) for line in reversed(lines) if line.strip()]
     if not entries:
