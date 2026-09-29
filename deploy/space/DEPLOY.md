@@ -9,8 +9,9 @@ This is for a link that a few people open in a browser, with nothing to install.
 3. In the `Dockerfile`, or as a build variable named `REF` in the Space settings, set `REF` to the commit of pytacheck to install. Use a full commit hash.
 4. In the Space settings, add these secrets:
    - `METACHECK_APP_TOKENS`: one access token per person, separated by commas. Each token has at least 32 characters.
-   - `SCIVRS_API_KEY` (optional): a key for the bibr service. People who choose bibr to read their PDF then need no key of their own. Without it, each person types their own key; it is used for that check only and never saved on the server.
-   - `PYTACHECK_BIBR_URL` (optional): the address of the bibr service. Without it, the app takes the address from metacheck's public server list.
+   - `SCIVRS_API_KEY` (optional): a key for the bibr service, whichever kind of service it is (R metacheck reads a key of this name). People who choose bibr to read their PDF then need no key of their own. Without it, each person types their own key; it is used for that check only and never saved on the server.
+   - `PYTACHECK_BIBR_URL` (optional): the address of the bibr service: the root of a `bibr serve`, or of the hosted bibr service in front of it, where a paper goes to `/papers/jobs`. It starts with `https://`. Plain `http://` works only for an address on the same machine (`localhost`, `127.0.0.1` or `::1`), because the key goes along with every paper. Without it, the app takes the address from metacheck's public server list, whose entries say which kind of service each one is.
+   - `PYTACHECK_BIBR_BACKEND` (optional): the kind of service at `PYTACHECK_BIBR_URL`. `bibr`, the default, is `bibr serve` and the hosted bibr service. `scivrs` is the Scienceverse platform, where a paper goes to `/jobs`. The app does not start with any other value.
    - `OSF_PAT` (optional): an OSF token for the checks that look up OSF pages.
 5. The Space sets `SPACE_HOST` itself, and the app allows that host name only.
 
@@ -58,7 +59,9 @@ Use `-p 127.0.0.1:7860:7860` when the proxy runs on the same machine, so that th
 - set `X-Forwarded-Proto https`.
 - turn off response buffering, because the page gets its progress as a stream (in nginx: `proxy_buffering off;`).
 
-Without `METACHECK_APP_TOKENS` (or `METACHECK_APP_AUTH=proxy`) or a host name the app refuses to start. Cookies are marked Secure, so the link has to be opened over https.
+To offer bibr with the server's key, add `-e SCIVRS_API_KEY -e PYTACHECK_BIBR_URL=<address>` (step 4 above). `-e SCIVRS_API_KEY` without a value passes the key from your shell, so it is not written in the command.
+
+Without `METACHECK_APP_TOKENS` (or `METACHECK_APP_AUTH=proxy`) or a host name the app refuses to start. It also refuses to start with a `PYTACHECK_BIBR_URL` or `PYTACHECK_BIBR_BACKEND` that cannot work, and says what to change. Cookies are marked Secure, so the link has to be opened over https.
 
 ## Behind a sign-in proxy
 

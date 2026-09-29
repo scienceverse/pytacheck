@@ -30,6 +30,12 @@ def _list(*entries: dict[str, str]) -> httpx.Response:
 
 
 GROBID = {"id": "g", "service": "grobid", "url": "https://grobid.example.test"}
+#: the list entry of each kind of bibr service: bibr serve (or the hosted service in front of
+#: it), and the platform, which R metacheck reaches with the key in SCIVRS_API_KEY
+LISTED = {
+    "bibr": {"id": "b", "service": "bibr", "url": BIBR},
+    "scivrs": {"id": "p", "service": "bibr", "url": BIBR, "api_key": "SCIVRS_API_KEY"},
+}
 
 
 def _pdf(tmp_path: Path) -> Path:
@@ -39,27 +45,37 @@ def _pdf(tmp_path: Path) -> Path:
 
 
 class FakeBibr:
-    """A bibr service: the job queue of the platform, answering with ``result`` bytes."""
+    """A bibr service answering with ``result`` bytes: the job API of bibr serve
+    (``protocol="bibr"``), or the job queue of the platform (``"scivrs"``)."""
 
-    def __init__(self, router: respx.MockRouter, result: bytes | None = None) -> None:
+    def __init__(
+        self, router: respx.MockRouter, result: bytes | None = None, protocol: str = "bibr"
+    ) -> None:
         self.result = (
             result if result is not None else (FIXTURES / "bibr_12_1_full.json").read_bytes()
         )
-        self.submit = httpx.Response(200, json={"job_id": "j1"})
-        self.status = httpx.Response(200, json={"status": "complete"})
+        self.jobs = "/papers/jobs" if protocol == "bibr" else "/jobs"
+        if protocol == "bibr":
+            self.submit = httpx.Response(
+                202, json={"job_id": "j1", "status": "queued", "status_url": "/papers/jobs/j1"}
+            )
+            self.status = httpx.Response(200, json={"job_id": "j1", "status": "succeeded"})
+        else:
+            self.submit = httpx.Response(200, json={"job_id": "j1"})
+            self.status = httpx.Response(200, json={"status": "complete"})
         self.requests: list[httpx.Request] = []
         router.route(host="bibr.example.test").mock(side_effect=self)
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         self.requests.append(request)
         path = request.url.path
-        if request.method == "POST" and path == "/jobs":
+        if request.method == "POST" and path == self.jobs:
             if isinstance(self.submit, Exception):
                 raise self.submit
             return self.submit
-        if path == "/jobs/j1":
+        if path == f"{self.jobs}/j1":
             return self.status
-        if path == "/jobs/j1/result":
+        if path == f"{self.jobs}/j1/result":
             return httpx.Response(200, content=self.result)
         return httpx.Response(404)
 
@@ -67,15 +83,15 @@ class FakeBibr:
 @pytest.fixture
 def router() -> Any:
     with respx.mock(assert_all_called=False) as mock:
-        mock.get(SERVERS_URL).mock(
-            return_value=_list(GROBID, {"id": "b", "service": "bibr", "url": BIBR})
-        )
+        mock.get(SERVERS_URL).mock(return_value=_list(GROBID, LISTED["bibr"]))
         yield mock
 
 
-@pytest.fixture
-def server(router: respx.MockRouter) -> FakeBibr:
-    return FakeBibr(router)
+@pytest.fixture(params=["bibr", "scivrs"])
+def server(request: pytest.FixtureRequest, router: respx.MockRouter) -> FakeBibr:
+    """The service of the list, of each kind: a test that uses it runs against both."""
+    router.get(SERVERS_URL).mock(return_value=_list(GROBID, LISTED[request.param]))
+    return FakeBibr(router, protocol=request.param)
 
 
 def check(tmp_path: Path, key: str = KEY) -> run.Analysis:
@@ -88,7 +104,7 @@ def test_a_pdf_goes_to_bibr_and_the_answer_is_checked(server: FakeBibr, tmp_path
     assert all(not r.result.startswith("Failed") for r in analysis.rows)
     assert analysis.name == "Some Paper"
     submit = server.requests[0]
-    assert submit.method == "POST" and str(submit.url) == f"{BIBR}/jobs"
+    assert submit.method == "POST" and str(submit.url) == f"{BIBR}{server.jobs}"
     assert submit.headers["authorization"] == f"Bearer {KEY}"
     assert b"%PDF-1.4" in submit.read()
     assert all(r.url.host == "bibr.example.test" for r in server.requests)
@@ -206,8 +222,81 @@ def test_the_address_comes_from_the_environment_first(
     router: respx.MockRouter, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv(bibr.URL_ENV, f"{OTHER}/")
-    assert bibr.bibr_url() == OTHER
+    assert bibr.bibr_service() == (OTHER, "bibr")  # bibr serve, or the service in front of it
+    for value, backend in (("scivrs", "scivrs"), (" SCIVRS ", "scivrs"), ("bibr", "bibr")):
+        monkeypatch.setenv(bibr.BACKEND_ENV, value)
+        assert bibr.bibr_service() == (OTHER, backend)
+    monkeypatch.setenv(bibr.URL_ENV, "http://127.0.0.1:8000")  # this computer: plain http is fine
+    assert bibr.bibr_service() == ("http://127.0.0.1:8000", "bibr")
     assert not router.calls  # the list is not even read
+
+
+@pytest.mark.parametrize("backend", ["bibr", "scivrs"])
+def test_the_configured_backend_is_the_one_asked(
+    router: respx.MockRouter, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, backend: str
+) -> None:
+    """bibr serve, and the hosted service in front of it, take a job at /papers/jobs; the
+    platform at /jobs. Sending one the other's request gets a 404 and a wrong message."""
+    router.get(SERVERS_URL).mock(side_effect=AssertionError("the list must not be read"))
+    monkeypatch.setenv(bibr.URL_ENV, BIBR)
+    if backend == "scivrs":
+        monkeypatch.setenv(bibr.BACKEND_ENV, "scivrs")
+    server = FakeBibr(router, protocol=backend)
+    assert check(tmp_path).rows
+    assert [r.url.path for r in server.requests] == [
+        server.jobs,
+        f"{server.jobs}/j1",
+        f"{server.jobs}/j1/result",
+    ]
+
+
+@pytest.mark.parametrize("value", ["platform", "selfhosted", "auto", "papers"])
+def test_a_wrong_backend_setting_says_what_to_set(
+    router: respx.MockRouter, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, value: str
+) -> None:
+    server = FakeBibr(router)
+    monkeypatch.setenv(bibr.BACKEND_ENV, value)
+    assert bibr.settings_problem() == bibr.BAD_BACKEND  # without an address too: a typo
+    monkeypatch.setenv(bibr.URL_ENV, BIBR)
+    assert bibr.settings_problem() == bibr.BAD_BACKEND
+    with pytest.raises(run.UserError) as info:
+        check(tmp_path)
+    assert str(info.value) == bibr.BAD_BACKEND
+    assert "PYTACHECK_BIBR_BACKEND is either bibr" in bibr.BAD_BACKEND
+    assert not server.requests
+
+
+@pytest.mark.parametrize(
+    ("url", "backend", "problem"),
+    [
+        ("bibr.example.test", "bibr", bibr.BAD_URL),
+        ("ftp://bibr.example.test", "scivrs", bibr.BAD_URL),
+        ("https://", "bibr", bibr.BAD_URL),
+        ("http://[::1", "bibr", bibr.BAD_URL),
+        ("http://bibr.example.test", "bibr", bibr.PLAIN_HTTP),  # the key would go in clear
+        ("http://bibr.example.test", "scivrs", None),  # as before
+        ("http://localhost:8000", "bibr", None),
+        ("http://[::1]:8000/", "bibr", None),
+        (BIBR, "bibr", None),
+    ],
+)
+def test_an_address_that_cannot_work_is_refused(
+    monkeypatch: pytest.MonkeyPatch, url: str, backend: str, problem: str | None
+) -> None:
+    monkeypatch.setenv(bibr.URL_ENV, url)
+    monkeypatch.setenv(bibr.BACKEND_ENV, backend)
+    assert bibr.settings_problem() == problem
+
+
+def test_a_plain_http_address_is_refused_before_anything_is_sent(
+    router: respx.MockRouter, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    router.route().mock(side_effect=AssertionError("nothing may be sent"))
+    monkeypatch.setenv(bibr.URL_ENV, "http://bibr.example.test")
+    with pytest.raises(run.UserError) as info:
+        check(tmp_path)
+    assert str(info.value) == bibr.PLAIN_HTTP
+    assert KEY not in str(info.value)
 
 
 def test_the_first_bibr_entry_of_the_list_is_used_and_kept(router: respx.MockRouter) -> None:
@@ -218,16 +307,55 @@ def test_the_first_bibr_entry_of_the_list_is_used_and_kept(router: respx.MockRou
             {"id": "b2", "service": "bibr", "url": OTHER},
         )
     )
-    assert bibr.bibr_url() == BIBR
-    assert bibr.bibr_url() == BIBR
+    assert bibr.bibr_service() == (BIBR, "bibr")
+    assert bibr.bibr_service() == (BIBR, "bibr")
     assert listing.call_count == 1  # read once per process
+
+
+@pytest.mark.parametrize(
+    ("extra", "backend"),
+    [
+        ({}, "bibr"),
+        ({"api_key": "SCIVRS_API_KEY"}, "scivrs"),  # the platform, as metacheck lists it now
+        ({"api_key": "BIBR_API_KEY"}, "bibr"),
+        ({"protocol": "scivrs"}, "scivrs"),
+        ({"protocol": "bibr", "api_key": "SCIVRS_API_KEY"}, "bibr"),  # the protocol wins
+        ({"protocol": " Bibr "}, "bibr"),
+    ],
+)
+def test_the_list_entry_says_how_to_talk_to_the_service(
+    router: respx.MockRouter, extra: dict[str, str], backend: str
+) -> None:
+    router.get(SERVERS_URL).mock(
+        return_value=_list(GROBID, {"id": "b", "service": "bibr", "url": BIBR, **extra})
+    )
+    assert bibr.bibr_service() == (BIBR, backend)
+
+
+def test_an_entry_this_version_cannot_talk_to_is_passed_over(
+    router: respx.MockRouter, tmp_path: Path
+) -> None:
+    router.get(SERVERS_URL).mock(
+        return_value=_list(
+            {"id": "b1", "service": "bibr", "url": OTHER, "protocol": "bibr-v2"},
+            {"id": "b2", "service": "bibr", "url": BIBR},
+        )
+    )
+    assert bibr.bibr_service() == (BIBR, "bibr")
+    bibr._forget_list()
+    router.get(SERVERS_URL).mock(
+        return_value=_list({"id": "b1", "service": "bibr", "url": OTHER, "protocol": "bibr-v2"})
+    )
+    with pytest.raises(run.UserError) as info:
+        check(tmp_path)
+    assert str(info.value) == bibr.NOT_FOUND
 
 
 def test_an_unreadable_list_is_asked_again_next_time(router: respx.MockRouter) -> None:
     listing = router.get(SERVERS_URL).mock(side_effect=httpx.ConnectError("offline"))
-    assert bibr.bibr_url() is None
+    assert bibr.bibr_service() is None
     listing.mock(return_value=_list({"id": "b", "service": "bibr", "url": BIBR}))
-    assert bibr.bibr_url() == BIBR
+    assert bibr.bibr_service() == (BIBR, "bibr")
 
 
 def test_an_address_without_https_is_not_used_for_a_key(router: respx.MockRouter) -> None:
@@ -237,7 +365,7 @@ def test_an_address_without_https_is_not_used_for_a_key(router: respx.MockRouter
             {"id": "b2", "service": "bibr", "url": OTHER},
         )
     )
-    assert bibr.bibr_url() == OTHER
+    assert bibr.bibr_service() == (OTHER, "bibr")
 
 
 # -- the key -------------------------------------------------------------------------

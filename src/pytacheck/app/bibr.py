@@ -1,4 +1,5 @@
-"""The bibr option: where the service is, which key to use, how a remembered key is kept.
+"""The bibr option: where the service is and how to talk to it, which key to use, how a
+remembered key is kept.
 
 It does not import gradio. Problems the person can fix are raised as ``UserError``.
 """
@@ -12,26 +13,35 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlsplit
 
 import orjson
 
 __all__ = [
+    "BACKENDS",
+    "BACKEND_ENV",
     "KEY_ENV",
     "URL_ENV",
-    "bibr_url",
+    "bibr_service",
     "convert_pdf",
     "forget_key",
     "key_path",
     "load_key",
     "resolve_key",
     "save_key",
+    "settings_problem",
     "show_key",
 ]
 
 #: the environment variable R metacheck reads for the same key
 KEY_ENV = "SCIVRS_API_KEY"
 URL_ENV = "PYTACHECK_BIBR_URL"
+#: how to talk to the service in ``URL_ENV``: one of ``BACKENDS``, ``bibr`` when it is not set
+BACKEND_ENV = "PYTACHECK_BIBR_BACKEND"
+#: ``bibr`` is the job API of bibr serve and of the hosted bibr service in front of it
+#: (``/papers/jobs``); ``scivrs`` is the job queue of the Scienceverse platform (``/jobs``)
+BACKENDS = ("bibr", "scivrs")
 #: seconds to wait for metacheck's public server list
 LIST_TIMEOUT = 5.0
 
@@ -41,9 +51,20 @@ REFUSED = "The bibr service did not accept this key."
 UNAVAILABLE = "The bibr service is not available right now. Use GROBID for now."
 BAD_FORMAT = "The bibr service sent a format this version cannot read yet. Use GROBID for now."
 BAD_PDF = "The bibr service could not read this PDF. Try another copy of the paper."
+#: wrong settings: the person running the app can fix them (a hosted server does not start)
+BAD_BACKEND = (
+    f"{BACKEND_ENV} is either bibr (the default: bibr serve, or the hosted bibr service in "
+    "front of it) or scivrs (the Scienceverse platform)."
+)
+BAD_URL = f"{URL_ENV} must be a full address, such as https://bibr.example.org."
+PLAIN_HTTP = (
+    f"{URL_ENV} must start with https://, so that the bibr key is not sent unencrypted. "
+    "Plain http:// works for this computer only (localhost, 127.0.0.1 or ::1)."
+)
 
 _list_lock = threading.Lock()
-_server_urls: list[str] | None = None
+#: the bibr entries of the public list, as (address, backend)
+_servers: list[tuple[str, str]] | None = None
 
 
 def key_path() -> Path:
@@ -99,19 +120,33 @@ def resolve_key(typed: str | None, *, remembered: bool = True) -> str:
     )
 
 
-def _list_urls() -> list[str] | None:
-    """The bibr addresses in metacheck's public server list; ``None`` if it cannot be read."""
+def _entry_backend(entry: dict[str, Any]) -> str | None:
+    """How to talk to a bibr entry of the public list: its ``protocol`` when it has one; else
+    ``scivrs`` when its key is ``SCIVRS_API_KEY`` (the platform's), else ``bibr``. ``None``
+    for a protocol this version does not know."""
+    protocol = entry.get("protocol")
+    if protocol:
+        backend = str(protocol).strip().lower()
+        return backend if backend in BACKENDS else None
+    return "scivrs" if entry.get("api_key") == KEY_ENV else "bibr"
+
+
+def _list_services() -> list[tuple[str, str]] | None:
+    """The bibr entries of metacheck's public server list, as (address, backend); ``None``
+    if it cannot be read. An entry this version cannot talk to is left out."""
     from pytacheck.io.convert import _server_list
 
     try:
         servers = _server_list()
     except Exception:
         return None
-    return [
-        str(s["url"]).rstrip("/")
-        for s in servers
-        if isinstance(s, dict) and s.get("service") == "bibr" and s.get("url")
-    ]
+    found = []
+    for s in servers:
+        if isinstance(s, dict) and s.get("service") == "bibr" and s.get("url"):
+            backend = _entry_backend(s)
+            if backend is not None:
+                found.append((str(s["url"]).rstrip("/"), backend))
+    return found
 
 
 def _safe(url: str) -> bool:
@@ -122,18 +157,52 @@ def _safe(url: str) -> bool:
     )
 
 
-def bibr_url() -> str | None:
-    """``PYTACHECK_BIBR_URL``, else the first bibr entry in the public list (read once)."""
-    global _server_urls
-    override = os.environ.get(URL_ENV, "").strip()
-    if override:
-        return override.rstrip("/")
+def _configured() -> tuple[str, str] | None:
+    """``PYTACHECK_BIBR_URL`` and the backend from ``PYTACHECK_BIBR_BACKEND``, or ``None``
+    when no address is set. A wrong setting raises ``ValueError`` that says what to set."""
+    backend = os.environ.get(BACKEND_ENV, "").strip().lower() or "bibr"
+    if backend not in BACKENDS:
+        raise ValueError(BAD_BACKEND)
+    url = os.environ.get(URL_ENV, "").strip().rstrip("/")
+    if not url:
+        return None
+    try:
+        parts = urlsplit(url)
+        usable = parts.scheme in ("http", "https") and bool(parts.hostname)
+    except ValueError:
+        usable = False
+    if not usable:
+        raise ValueError(BAD_URL)
+    # the bibr backend refuses to send a key over plain http to another computer
+    if backend == "bibr" and not _safe(url):
+        raise ValueError(PLAIN_HTTP)
+    return url, backend
+
+
+def settings_problem() -> str | None:
+    """What is wrong with ``PYTACHECK_BIBR_URL`` or ``PYTACHECK_BIBR_BACKEND``, or ``None``
+    (a hosted server checks this before it starts)."""
+    try:
+        _configured()
+    except ValueError as exc:
+        return str(exc)
+    return None
+
+
+def bibr_service() -> tuple[str, str] | None:
+    """Where the service is and how to talk to it, as (address, backend):
+    ``PYTACHECK_BIBR_URL`` with ``PYTACHECK_BIBR_BACKEND``, else the first bibr entry in the
+    public list that a key may go to (read once). A wrong setting raises ``ValueError``."""
+    global _servers
+    configured = _configured()
+    if configured is not None:
+        return configured
     with _list_lock:
-        cached = _server_urls
+        cached = _servers
     if cached is None:
         pool = ThreadPoolExecutor(max_workers=1)
         try:
-            cached = pool.submit(_list_urls).result(timeout=LIST_TIMEOUT)
+            cached = pool.submit(_list_services).result(timeout=LIST_TIMEOUT)
         except FutureTimeout:
             cached = None
         finally:
@@ -141,8 +210,8 @@ def bibr_url() -> str | None:
         if cached is None:
             return None  # not remembered: the next run asks again
         with _list_lock:
-            _server_urls = cached
-    return next((u for u in cached if _safe(u)), None)
+            _servers = cached
+    return next((s for s in cached if _safe(s[0])), None)
 
 
 def _status(exc: BaseException) -> int | None:
@@ -159,11 +228,17 @@ def convert_pdf(path: Path, workdir: Path, key: str) -> Path:
 
     if not key:
         raise UserError(NO_KEY)
-    url = bibr_url()
-    if url is None:
-        raise UserError(NOT_FOUND)
     try:
-        out = pc.convert(path, save_path=workdir, method="bibr", api_url=url, api_key=key)
+        service = bibr_service()
+    except ValueError as exc:
+        raise UserError(str(exc)) from None
+    if service is None:
+        raise UserError(NOT_FOUND)
+    url, backend = service
+    try:
+        out = pc.convert(
+            path, save_path=workdir, method="bibr", api_url=url, api_key=key, backend=backend
+        )
     except RuntimeError as exc:
         status = _status(exc)
         if status in (401, 403):
@@ -186,6 +261,6 @@ def convert_pdf(path: Path, workdir: Path, key: str) -> Path:
 
 def _forget_list() -> None:
     """For tests: read the server list again."""
-    global _server_urls
+    global _servers
     with _list_lock:
-        _server_urls = None
+        _servers = None

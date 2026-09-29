@@ -20,6 +20,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+from pytacheck.app import bibr
 from pytacheck.app import hosted as hosting
 from pytacheck.app import state as saved
 
@@ -244,6 +245,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             config = hosting.HostedConfig.from_env()
         except hosting.HostedError as exc:
             print(exc, file=sys.stderr)
+            return 2
+        problem = bibr.settings_problem()
+        if problem:
+            print(problem, file=sys.stderr)
             return 2
         return _serve(port, False, config, ns.host or HOST)
     running = saved.find_running()
