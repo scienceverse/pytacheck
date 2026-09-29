@@ -185,7 +185,7 @@ This covers the three groups asked for: the team's validated modules, the team's
 - **`metrics`** carries evidence that is not count-based, such as ref_accuracy's. It is only an example of the form: ref_accuracy is a candidate, not certified (§3.1, Q6).
 - **`settings`** records how the module was configured when measured. For an LLM module it holds a digest of the model id, prompt and response schema. A run with other settings shows the status with a note ("validated without an LLM"), and a server under `validated` runs it only with the certified settings.
 - **`server_safe`** is set by the team after a timed run on the server's limits, and it is the one source for "server-safe" in both packages (§3.4, §7 item 4). With the scienceverse Platform on the public side (the maintainer, 2026-09-27), the server whose limits count is the Platform's (§3.4, §8).
-- **Extractor** (proposed, [ROADMAP.md](ROADMAP.md) §1 and §5; EXTRACT-PROV): an evidence record also says which extraction it covers, with the engine, the producer's version and build, and the export schema version. A run on another extraction shows the status with a note, as for `settings`.
+- **Extractor** (proposed, [ROADMAP.md](ROADMAP.md) §2 and §4 (EXTRACT-PROV)): an evidence record also says which extraction it covers, with the engine, the producer's version and build, and the export schema version. A run on another extraction shows the status with a note, as for `settings`.
 
 ### 2.5 Binding a certification to code
 
@@ -211,7 +211,7 @@ A certification holds only for the code it measured. There is one binding per ki
 **Proposed changes ([ROADMAP.md](ROADMAP.md) §5.2, §5.4 to §5.6; final text once D07 and D08 are answered and the metacheck team agrees).**
 - **Step 4, grace (D07).** The one-release grace does not apply to provisional entries until the bridge, the re-measurement of the validated checks on this implementation with the team's labelled papers.
 - **The Band A rule (D07).** A Band A change in a validated check needs a validator's sign-off and, where a public labelled set exists, a passing validation subset.
-- **After the bridge (D07).** A check outside tolerance drops to experimental and shows "measured below the published rates".
+- **After the bridge (D08; ROADMAP §5.4).** A check outside tolerance drops to experimental and shows "measured below the published rates".
 - **Step 3, tolerance (D08).** D08's rule replaces the 5% or ±2 rule once the team agrees. It also adds the re-measurement triggers: a change to a validated check's code closure, pattern files or data; a change to an LLM check's model, prompt or schema; a new extractor version; and a dependency change that touches the closure.
 
 ### 2.6 Field scope
