@@ -35,8 +35,9 @@ through the top-level lazy ``__getattr__``, is an upward edge. A chain is judged
 by the name it resolves to and by each module it reads a bound name from, so
 ``pytacheck.llm.Paper`` and ``pytacheck.llm.r.bind_rows`` are edges to ``llm``.
 A from-import is judged the same way: by the package it runs, and by the name it
-resolves to when that package is in the foundation. The top level is judged by
-the name alone, so ``pytacheck.Paper`` is the foundation's ``Paper``.
+resolves to when that package is in the foundation. At the top level only a
+chain is judged by the name alone, so ``pytacheck.Paper`` is the foundation's
+``Paper``, while ``from pytacheck import Paper`` is an import of the top level.
 
 **Core.** Once ``core/**`` exists it keeps the positive list of §2.1: it imports
 only the foundation above and the core itself. §2.6 adds what ``core/run.py``
@@ -391,7 +392,7 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
             # a name reached by attribute is judged where it is defined, and by each
             # module it is read from; a from-import is judged like that chain: by the
             # package it runs, and by the name when the package is in the foundation;
-            # the top level is judged by the name alone
+            # a chain at the top level is judged by the name alone
             if edge.note == "attribute":
                 targets = [symbol, *edge.via]
             else:
