@@ -39,10 +39,10 @@ _TIER_MARKS = {1: pytest.mark.tier1, 2: pytest.mark.tier2}
     "case", [pytest.param(c, marks=_TIER_MARKS[c.tier], id=c.key) for c in CASES]
 )
 def test_parity(case) -> None:
-    res = run_case(case)
+    res = run_case(case, quarantine=True)
     if res.status == "missing":
         pytest.fail(f"no golden for {case.key}: run `python -m parity generate --area {case.area}`")
-    if res.status == "skip":
+    if res.status in ("skip", "quarantined"):
         pytest.skip(res.problems[0])
     if res.warning:  # a tier-2 marked case that changed since it was locked
         warnings.warn(f"{case.key}: {res.status}\n{summarize(res.problems)}", LockWarning, 1)
