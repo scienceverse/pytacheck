@@ -19,9 +19,10 @@ def state_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 @pytest.fixture(autouse=True)
 def bibr_settings(monkeypatch: pytest.MonkeyPatch) -> None:
-    """No key or address from the environment, and the server list is read again."""
+    """No key, address or backend from the environment, and the server list is read again."""
     from pytacheck.app import bibr
 
     monkeypatch.delenv(bibr.KEY_ENV, raising=False)
     monkeypatch.delenv(bibr.URL_ENV, raising=False)
+    monkeypatch.delenv(bibr.BACKEND_ENV, raising=False)
     bibr._forget_list()

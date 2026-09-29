@@ -9,9 +9,11 @@ import logging
 import multiprocessing
 import operator
 import os
+import re
 import threading
 import time
 from collections.abc import Iterator
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
@@ -20,8 +22,8 @@ import pytest
 from starlette.testclient import TestClient
 
 import pytacheck as pc
+from pytacheck.app import bibr, launch, ui
 from pytacheck.app import hosted as hosting
-from pytacheck.app import launch, ui
 from pytacheck.app.security import HOSTED_COOKIE, HOSTED_DENIED_PAGE, PROXY_DENIED_PAGE
 from pytacheck.app.server import create_hosted_app
 
@@ -182,6 +184,28 @@ def test_proxy_sign_in_settings_are_checked(
         hosting.HostedConfig.from_env()
 
 
+@pytest.mark.parametrize(
+    ("settings", "problem"),
+    [
+        ({bibr.BACKEND_ENV: "platform"}, bibr.BAD_BACKEND),
+        ({bibr.URL_ENV: "bibr.example.org"}, bibr.BAD_URL),
+        ({bibr.URL_ENV: "http://bibr.example.org"}, bibr.PLAIN_HTTP),
+    ],
+)
+def test_refuses_to_start_with_a_bibr_setting_that_cannot_work(
+    env: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    settings: dict[str, str],
+    problem: str,
+) -> None:
+    env.setenv("METACHECK_APP_HOSTS", HOST)
+    env.setenv("METACHECK_APP_TOKENS", TOKEN_A)
+    for name, value in settings.items():
+        env.setenv(name, value)
+    assert launch.main(["--hosted"]) == 2
+    assert capsys.readouterr().err.strip() == problem
+
+
 # --- the app behind the guard -------------------------------------------------------
 
 
@@ -326,9 +350,11 @@ def test_no_state_file_is_written(client: TestClient, state_dir: Path) -> None:
 SETTINGS = [False, False, "grobid", "", False]
 
 
-def _join(client: TestClient, fn_index: int, path: str, session: str) -> str:
+def _join(
+    client: TestClient, fn_index: int, path: str, session: str, settings: list[Any] = SETTINGS
+) -> str:
     body = {
-        "data": [{"path": path, "meta": {"_type": "gradio.FileData"}}, *SETTINGS],
+        "data": [{"path": path, "meta": {"_type": "gradio.FileData"}}, *settings],
         "fn_index": fn_index,
         "session_hash": session,
     }
@@ -533,8 +559,6 @@ def test_a_run_at_the_limit_leaves_no_report_behind(
 
 
 def test_a_shared_server_never_offers_a_saved_key(env: pytest.MonkeyPatch) -> None:
-    from pytacheck.app import bibr
-
     env.delenv(bibr.KEY_ENV, raising=False)
     bibr.save_key("saved-key-1234")
     text = json.dumps(ui.build_app(hosted=config()).get_config_file())
@@ -542,6 +566,94 @@ def test_a_shared_server_never_offers_a_saved_key(env: pytest.MonkeyPatch) -> No
     local = json.dumps(ui.build_app().get_config_file())
     assert "Remember the key on this computer" in local
     assert bibr.resolve_key("", remembered=False) == ""
+
+
+@pytest.fixture
+def bibr_serve() -> Iterator[tuple[str, list[tuple[str, str, str, bytes]]]]:
+    """A stand-in for bibr serve on a port of this computer: its job API, for one paper.
+
+    Gives its address and what it was asked: (method, path, authorization, body)."""
+    paper = (Path(__file__).parents[1] / "bibr12" / "fixtures" / "bibr_12_1_full.json").read_bytes()
+    seen: list[tuple[str, str, str, bytes]] = []
+
+    class BibrServe(BaseHTTPRequestHandler):
+        def _body(self) -> bytes:
+            if "chunked" not in self.headers.get("Transfer-Encoding", "").lower():
+                return self.rfile.read(int(self.headers.get("Content-Length") or 0))
+            body = b""
+            while size := int(self.rfile.readline().split(b";")[0].strip() or b"0", 16):
+                body += self.rfile.read(size)
+                self.rfile.readline()
+            self.rfile.readline()
+            return body
+
+        def _answer(self, status: int, body: Any) -> None:
+            data = body if isinstance(body, bytes) else json.dumps(body).encode()
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+        def _seen(self, body: bytes = b"") -> None:
+            seen.append((self.command, self.path, self.headers.get("Authorization", ""), body))
+
+        def do_POST(self) -> None:
+            self._seen(self._body())
+            if self.path == "/papers/jobs":
+                queued = {"job_id": "j1", "status": "queued", "status_url": "/papers/jobs/j1"}
+                self._answer(202, queued)
+            else:
+                self._answer(404, {"detail": "Not Found"})
+
+        def do_GET(self) -> None:
+            self._seen()
+            if self.path == "/papers/jobs/j1":
+                self._answer(200, {"job_id": "j1", "status": "succeeded"})
+            elif self.path == "/papers/jobs/j1/result":
+                self._answer(200, paper)
+            else:
+                self._answer(404, {"detail": "Not Found"})
+
+        def log_message(self, *_args: Any) -> None:
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), BibrServe)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield f"http://127.0.0.1:{server.server_port}", seen
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(5)
+
+
+def test_a_hosted_server_sends_a_pdf_to_bibr_serve(
+    env: pytest.MonkeyPatch, bibr_serve: tuple[str, list[tuple[str, str, str, bytes]]]
+) -> None:
+    """With ``PYTACHECK_BIBR_URL`` and the key of the settings, a PDF goes to bibr serve's job
+    API from the run's process, and the checks run on the paper that comes back."""
+    url, seen = bibr_serve
+    key = "server-key-" + "k" * 24
+    env.setenv(bibr.URL_ENV, url)
+    env.setenv(bibr.KEY_ENV, key)
+    shared = create_hosted_app(PORT + 7, config())
+    with TestClient(shared, base_url=BASE, follow_redirects=False) as tc:
+        tc.get(f"/?token={TOKEN_A}")
+        pdf = {"files": ("paper.pdf", b"%PDF-1.4 h8 not really", "application/pdf")}
+        (path,) = tc.post("/gradio_api/upload", files=pdf).json()
+        events = _join(tc, _fn_index(tc), path, "h8", [False, False, "bibr", "", False])
+    assert re.search(r"Ran \d+ checks", events), events[-500:]
+    assert key not in events
+    assert [(method, where) for method, where, _, _ in seen] == [
+        ("POST", "/papers/jobs"),
+        ("GET", "/papers/jobs/j1"),
+        ("GET", "/papers/jobs/j1/result"),
+    ]
+    assert all(auth == f"Bearer {key}" for _, _, auth, _ in seen)
+    assert b"%PDF-1.4 h8" in seen[0][3]
+    assert not Path(path).exists()
 
 
 def _double(x: int, report: Any = None) -> int:
