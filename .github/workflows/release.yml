@@ -93,6 +93,23 @@ jobs:
         with:
           name: dist
           path: ${{ runner.temp }}/dist
+      # The installers and the pinned dependency list, attached next to the
+      # built files (the checkout is sparse: only these three files).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            install.sh
+            install.ps1
+            install/constraints-app.txt
+          sparse-checkout-cone-mode: false
+          path: extras
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP"/dist/* --repo "$GITHUB_REPOSITORY" --generate-notes
+        run: |
+          # a version with a, b or rc (PEP 440 pre-release) is marked as one
+          flags=()
+          if [[ "$GITHUB_REF_NAME" =~ [0-9](a|b|rc)[0-9]+$ ]]; then flags+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP"/dist/* \
+            extras/install.sh extras/install.ps1 extras/install/constraints-app.txt \
+            --repo "$GITHUB_REPOSITORY" --generate-notes "${flags[@]}"
