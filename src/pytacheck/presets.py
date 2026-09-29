@@ -203,6 +203,25 @@ def _qualified(ref: str) -> str | None:
     return f"{where[0].name}::{ref}" if kind == "pack" else None
 
 
+def _installed_version(name: str) -> str:
+    """The installed version of a distribution; PackageNotFoundError if there is none.
+
+    Packs still name this package ``pytacheck`` (in ``requires`` and as a
+    dependency). It is installed as ``metacheck`` (0.4.0a1 on), so that name
+    is looked up first, and an old install as ``pytacheck`` still counts.
+    """
+    if re.sub(r"[-_.]+", "-", name).lower() == "pytacheck":
+        from pytacheck._version import DISTRIBUTION
+
+        for alias in (DISTRIBUTION, name):
+            try:
+                return importlib.metadata.version(alias)
+            except importlib.metadata.PackageNotFoundError:
+                continue
+        raise importlib.metadata.PackageNotFoundError(name)
+    return importlib.metadata.version(name)
+
+
 def _dependency_ok(req: str) -> bool:
     try:
         from packaging.requirements import InvalidRequirement, Requirement
@@ -211,7 +230,7 @@ def _dependency_ok(req: str) -> bool:
         if m is None:
             raise PresetError(f"Invalid dependency {req!r}") from None
         try:
-            importlib.metadata.version(m.group(1))
+            _installed_version(m.group(1))
         except importlib.metadata.PackageNotFoundError:
             return False
         return True
@@ -222,7 +241,7 @@ def _dependency_ok(req: str) -> bool:
     if r.marker is not None and not r.marker.evaluate():
         return True
     try:
-        version = importlib.metadata.version(r.name)
+        version = _installed_version(r.name)
     except importlib.metadata.PackageNotFoundError:
         return False
     return not r.specifier or r.specifier.contains(version, prereleases=True)
