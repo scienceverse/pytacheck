@@ -1,6 +1,6 @@
 # Deploy the app as a shared link
 
-This is for a link that a few people open in a browser, with nothing to install. They need a personal access token in the link.
+This is for a link that a few people open in a browser, with nothing to install. They need a personal access token in the link, unless a sign-in proxy lets them in (see [Behind a sign-in proxy](#behind-a-sign-in-proxy)).
 
 ## On a Hugging Face Space
 
@@ -57,4 +57,22 @@ Use `-p 127.0.0.1:7860:7860` when the proxy runs on the same machine, so that th
 - set `X-Forwarded-Proto https`.
 - turn off response buffering, because the page gets its progress as a stream (in nginx: `proxy_buffering off;`).
 
-Without `METACHECK_APP_TOKENS` or a host name the app refuses to start. Cookies are marked Secure, so the link has to be opened over https.
+Without `METACHECK_APP_TOKENS` (or `METACHECK_APP_AUTH=proxy`) or a host name the app refuses to start. Cookies are marked Secure, so the link has to be opened over https.
+
+## Behind a sign-in proxy
+
+When the server already has a sign-in page in front of it (a proxy that lets only signed-in people through), the app needs no tokens. Set:
+
+- `METACHECK_APP_AUTH=proxy`, and no `METACHECK_APP_TOKENS`.
+- `METACHECK_APP_HOSTS` as above.
+- `METACHECK_APP_USER_HEADER` (optional but recommended): the header that the proxy adds to every request it lets through, for example `X-Forwarded-User`. A request without it gets 403.
+
+```sh
+docker run --rm -p 127.0.0.1:7860:7860 \
+  -e METACHECK_APP_AUTH=proxy \
+  -e METACHECK_APP_HOSTS=<host name> \
+  -e METACHECK_APP_USER_HEADER=<header name> \
+  metacheck-app
+```
+
+In this mode anyone who reaches the container gets in, so it must be reachable through the proxy only: publish the port on `127.0.0.1` or on a network that only the proxy is on. The proxy must also remove that header from what the browser sends before it adds its own. The Host, `X-Forwarded-Proto` and buffering rules above still apply. The app still checks the host name, refuses requests that another site starts, and keeps no log of papers.

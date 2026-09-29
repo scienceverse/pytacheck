@@ -20,7 +20,14 @@ from starlette.requests import cookie_parser
 from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-__all__ = ["DENIED_PAGE", "HOSTED_COOKIE", "HOSTED_DENIED_PAGE", "TokenGuard", "cookie_name"]
+__all__ = [
+    "DENIED_PAGE",
+    "HOSTED_COOKIE",
+    "HOSTED_DENIED_PAGE",
+    "PROXY_DENIED_PAGE",
+    "TokenGuard",
+    "cookie_name",
+]
 
 DENIED_PAGE = (
     "<!doctype html><html lang=en><meta charset=utf-8><title>metacheck</title>"
@@ -29,6 +36,10 @@ DENIED_PAGE = (
 )
 HOSTED_DENIED_PAGE = DENIED_PAGE.replace(
     "from the link that the metacheck-app command printed", "from the link you were sent"
+)
+PROXY_DENIED_PAGE = DENIED_PAGE.replace(
+    "Open metacheck from the link that the metacheck-app command printed.",
+    "Sign in first, then open metacheck again.",
 )
 #: The ``__Host-`` prefix makes a browser refuse the cookie unless it is Secure, has no
 #: Domain and covers the whole site.
@@ -51,6 +62,8 @@ class TokenGuard:
 
     The hosted app passes ``hosts`` (names that are served over https), several
     ``tokens`` and ``secure=True``. A person gets a cookie with the token that they used.
+    Behind a sign-in proxy it passes ``proxy_auth=True`` and no tokens: the proxy decides
+    who gets in, and ``user_header``, when given, must be on every request.
     """
 
     def __init__(
@@ -62,11 +75,17 @@ class TokenGuard:
         tokens: Sequence[str] = (),
         hosts: Sequence[str] | None = None,
         secure: bool = False,
+        proxy_auth: bool = False,
+        user_header: str | None = None,
     ) -> None:
         self.app = app
         self.tokens = [*tokens, *([token] if token else [])]
-        if not self.tokens:
+        if proxy_auth and (self.tokens or hosts is None):
+            raise ValueError("proxy_auth takes hosts and no tokens")
+        if not self.tokens and not proxy_auth:
             raise ValueError("TokenGuard needs at least one token")
+        self.proxy_auth = proxy_auth
+        self.user_header = user_header.lower() if user_header else None
         self.secure = secure
         self.hosted = hosts is not None
         self.cookie = HOSTED_COOKIE if secure else cookie_name(port)
@@ -77,7 +96,7 @@ class TokenGuard:
         else:
             self.hosts = {host.lower() for host in hosts}
             self.origins = {f"https://{host}" for host in self.hosts}
-            self.denied = HOSTED_DENIED_PAGE
+            self.denied = PROXY_DENIED_PAGE if proxy_auth else HOSTED_DENIED_PAGE
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] not in ("http", "websocket"):
@@ -99,6 +118,14 @@ class TokenGuard:
             return
         if self._foreign(scope, headers):
             await self._deny(scope, receive, send)
+            return
+        if self.proxy_auth:
+            if self.user_header and not headers.get(self.user_header, "").strip():
+                await self._deny(scope, receive, send)
+            elif self._remote_file(path):
+                await self._not_found(scope, receive, send)
+            else:
+                await self.app(scope, receive, send)
             return
         query = parse_qsl(scope["query_string"].decode("latin-1"), keep_blank_values=True)
         given = next((v for k, v in query if k == "token"), None)

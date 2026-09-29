@@ -34,6 +34,8 @@ __all__ = [
 T = TypeVar("T")
 
 TOKENS_ENV = "METACHECK_APP_TOKENS"
+AUTH_ENV = "METACHECK_APP_AUTH"
+USER_HEADER_ENV = "METACHECK_APP_USER_HEADER"
 HOSTS_ENV = "METACHECK_APP_HOSTS"
 SPACE_HOST_ENV = "SPACE_HOST"  # set by Hugging Face Spaces
 TIMEOUT_ENV = "METACHECK_APP_JOB_TIMEOUT"
@@ -48,6 +50,7 @@ MAX_QUEUE = 10
 #: how a run's process is started; tests use "fork" to carry their patches over
 START_METHOD = "spawn"
 TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_-]{32,}")
+HEADER_PATTERN = re.compile(r"[A-Za-z0-9-]+")
 
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 HOSTED_NOTE = "Your paper is processed on this server and deleted when the report is ready."
@@ -71,12 +74,24 @@ class HostedConfig:
     hosts: tuple[str, ...]
     job_timeout: float = DEFAULT_TIMEOUT
     commit: str | None = None
+    #: a sign-in proxy in front of the app lets people in, so there are no tokens
+    proxy_auth: bool = False
+    #: in proxy mode, a header the proxy sets on every request it lets through
+    user_header: str | None = None
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> HostedConfig:
         env = os.environ if env is None else env
+        auth = (env.get(AUTH_ENV) or "").strip().lower()
+        if auth not in ("", "tokens", "proxy"):
+            raise HostedError(f"{AUTH_ENV} is either tokens (the default) or proxy.")
+        proxy_auth = auth == "proxy"
         tokens = _items(env.get(TOKENS_ENV))
-        if not tokens:
+        if proxy_auth and tokens:
+            raise HostedError(
+                f"{TOKENS_ENV} is not used when {AUTH_ENV} is proxy. Remove one of the two."
+            )
+        if not tokens and not proxy_auth:
             raise HostedError(
                 f"Hosted mode needs access tokens. Set {TOKENS_ENV} to one or more tokens "
                 f"of at least {MIN_TOKEN_LENGTH} characters, separated by commas."
@@ -109,7 +124,14 @@ class HostedConfig:
         if timeout <= 0:
             raise HostedError(f"{TIMEOUT_ENV} must be a number of seconds above 0.")
         commit = (env.get(COMMIT_ENV) or "").strip() or None
-        return cls(tuple(tokens), tuple(hosts), timeout, commit)
+        user_header = (env.get(USER_HEADER_ENV) or "").strip() or None
+        if user_header and not proxy_auth:
+            raise HostedError(f"{USER_HEADER_ENV} only works when {AUTH_ENV} is proxy.")
+        if user_header and not HEADER_PATTERN.fullmatch(user_header):
+            raise HostedError(
+                f"{USER_HEADER_ENV} takes one header name, for example X-Forwarded-User."
+            )
+        return cls(tuple(tokens), tuple(hosts), timeout, commit, proxy_auth, user_header)
 
 
 def default_port(env: Mapping[str, str] | None = None) -> int:

@@ -186,6 +186,11 @@ def _serve(
         if server.started:
             if config is None:
                 _announce(_url(port, token), open_browser)
+            elif config.proxy_auth:
+                print(
+                    f"metacheck is serving on port {port}; the proxy in front signs people in",
+                    flush=True,
+                )
             else:  # the log must not hold a token
                 print(
                     f"metacheck is serving {len(config.tokens)} access token(s) on port {port}",

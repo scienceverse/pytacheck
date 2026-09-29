@@ -22,12 +22,18 @@ def create_app(port: int, token: str) -> Any:
 
 
 def create_hosted_app(port: int, config: HostedConfig) -> Any:
-    """The app for a shared server: any of the tokens, https, the configured host names."""
+    """The app for a shared server: any of the tokens (or a sign-in proxy in front), https,
+    the configured host names."""
     return _assemble(
         port,
         config,
         lambda app: app.add_middleware(
-            TokenGuard, tokens=config.tokens, hosts=config.hosts, secure=True
+            TokenGuard,
+            tokens=config.tokens,
+            hosts=config.hosts,
+            secure=True,
+            proxy_auth=config.proxy_auth,
+            user_header=config.user_header,
         ),
     )
 

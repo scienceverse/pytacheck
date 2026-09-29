@@ -20,7 +20,7 @@ from starlette.testclient import TestClient
 import pytacheck as pc
 from pytacheck.app import hosted as hosting
 from pytacheck.app import launch, ui
-from pytacheck.app.security import HOSTED_COOKIE, HOSTED_DENIED_PAGE
+from pytacheck.app.security import HOSTED_COOKIE, HOSTED_DENIED_PAGE, PROXY_DENIED_PAGE
 from pytacheck.app.server import create_hosted_app
 
 TOKEN_A = "a" * 32
@@ -40,7 +40,7 @@ def _fork_runs() -> Iterator[None]:
 
 @pytest.fixture
 def env(monkeypatch: pytest.MonkeyPatch) -> pytest.MonkeyPatch:
-    for name in ("TOKENS", "HOSTS", "JOB_TIMEOUT", "COMMIT"):
+    for name in ("TOKENS", "HOSTS", "JOB_TIMEOUT", "COMMIT", "AUTH", "USER_HEADER"):
         monkeypatch.delenv(f"METACHECK_APP_{name}", raising=False)
     monkeypatch.delenv("SPACE_HOST", raising=False)
     monkeypatch.delenv("PORT", raising=False)
@@ -138,6 +138,35 @@ def test_port_and_host_arguments(env: pytest.MonkeyPatch) -> None:
 def test_host_needs_hosted(capsys: pytest.CaptureFixture[str]) -> None:
     assert launch.main(["--host", "0.0.0.0"]) == 2
     assert "--hosted" in capsys.readouterr().err
+
+
+def test_proxy_sign_in_needs_no_tokens(env: pytest.MonkeyPatch) -> None:
+    env.setenv("METACHECK_APP_HOSTS", HOST)
+    env.setenv("METACHECK_APP_AUTH", "proxy")
+    cfg = hosting.HostedConfig.from_env()
+    assert cfg.proxy_auth and cfg.tokens == () and cfg.user_header is None
+    env.setenv("METACHECK_APP_USER_HEADER", "X-Forwarded-User")
+    assert hosting.HostedConfig.from_env().user_header == "X-Forwarded-User"
+
+
+@pytest.mark.parametrize(
+    ("settings", "named"),
+    [
+        ({"METACHECK_APP_AUTH": "proxy", "METACHECK_APP_TOKENS": TOKEN_A}, "Remove one"),
+        ({"METACHECK_APP_AUTH": "open"}, "tokens (the default) or proxy"),
+        ({"METACHECK_APP_TOKENS": TOKEN_A, "METACHECK_APP_USER_HEADER": "X-User"}, "only works"),
+        ({"METACHECK_APP_AUTH": "proxy", "METACHECK_APP_USER_HEADER": "X User"}, "one header"),
+        ({"METACHECK_APP_AUTH": "proxy", "METACHECK_APP_HOSTS": ""}, "METACHECK_APP_HOSTS"),
+    ],
+)
+def test_proxy_sign_in_settings_are_checked(
+    env: pytest.MonkeyPatch, settings: dict[str, str], named: str
+) -> None:
+    env.setenv("METACHECK_APP_HOSTS", HOST)
+    for name, value in settings.items():
+        env.setenv(name, value)
+    with pytest.raises(hosting.HostedError, match=named.replace("(", r"\(").replace(")", r"\)")):
+        hosting.HostedConfig.from_env()
 
 
 # --- the app behind the guard -------------------------------------------------------
@@ -500,6 +529,41 @@ def test_remove_upload_takes_its_folder_when_it_is_in_the_gradio_folder(
     (folder / "b.pdf").write_text("x")
     hosting.remove_upload(folder / "a.pdf")
     assert (folder / "b.pdf").exists()
+
+
+# --- behind a sign-in proxy ---------------------------------------------------------
+
+
+def test_behind_a_sign_in_proxy_there_is_no_token() -> None:
+    app = create_hosted_app(PORT, config(tokens=(), proxy_auth=True))
+    with TestClient(app, base_url=BASE, follow_redirects=False) as tc:
+        resp = tc.get("/")
+        assert resp.status_code == 200 and "set-cookie" not in resp.headers
+        # a token in the address is not needed and sets no cookie
+        assert "set-cookie" not in tc.get(f"/?token={TOKEN_A}").headers
+        # the other guards stay
+        assert tc.get("/", headers={"host": "evil.example"}).status_code == 403
+        assert tc.get("/", headers={"origin": "https://evil.example"}).status_code == 403
+        assert tc.get("/gradio_api/file=https://example.com/x").status_code == 404
+
+
+def test_behind_a_sign_in_proxy_the_user_header_is_required() -> None:
+    app = create_hosted_app(PORT, config(tokens=(), proxy_auth=True, user_header="X-Auth-User"))
+    with TestClient(app, base_url=BASE, follow_redirects=False) as tc:
+        resp = tc.get("/")
+        assert resp.status_code == 403 and resp.text == PROXY_DENIED_PAGE
+        assert tc.get("/", headers={"x-auth-user": " "}).status_code == 403
+        assert tc.get("/", headers={"X-Auth-User": "someone"}).status_code == 200
+        assert tc.get("/healthz").json() == {"ok": True}
+
+
+def test_the_proxy_guard_takes_no_tokens() -> None:
+    from pytacheck.app.security import TokenGuard
+
+    with pytest.raises(ValueError, match="no tokens"):
+        TokenGuard(object(), tokens=(TOKEN_A,), hosts=(HOST,), proxy_auth=True)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="no tokens"):
+        TokenGuard(object(), proxy_auth=True)  # type: ignore[arg-type]
 
 
 # --- the log ------------------------------------------------------------------------
