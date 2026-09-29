@@ -1072,10 +1072,7 @@ def _log_new_values(records: Mapping[str, Sequence[Any]], version: str, file_nam
     }
     if left_out:
         entry["left_out"] = left_out
-    try:
-        logger("bibr12_new_value", entry)
-    except OSError:  # the data directory cannot be written
-        pass
+    logger("bibr12_new_value", entry)
 
 
 def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str) -> Paper:
