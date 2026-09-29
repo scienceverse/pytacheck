@@ -6,8 +6,10 @@ import gradio; problems the person can fix are raised as :class:`UserError`.
 
 from __future__ import annotations
 
+import contextvars
 import os
 import re
+import sys
 import tempfile
 import threading
 import time
@@ -17,13 +19,17 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from pytacheck.app.checks import selected_checks, status_labels
+from pytacheck.app import bibr
+from pytacheck.app.checks import DATA, selected_checks, status_labels
 
 __all__ = [
     "GROBID_SERVERS",
     "Analysis",
+    "DataJob",
     "Row",
+    "Run",
     "UserError",
+    "begin",
     "check_paper",
     "find_grobid",
     "grobid_servers",
@@ -92,6 +98,7 @@ class Analysis:
     html: str  # the report page
     report_path: Path
     seconds: float
+    data_pending: bool = False  # the data check has not finished
 
 
 def report_filename(name: str) -> str:
@@ -112,6 +119,8 @@ def _row(module: str, output: Any) -> Row:
     label = status_labels().get(module, "experimental")
     light = LIGHTS.get(str(output.traffic_light), str(output.traffic_light).capitalize())
     summary = _plain(output.summary_text)
+    if output.traffic_light == "fail":
+        summary = _plain(output.report)[:300] or summary
     return Row(
         module=module,
         check=str(output.title or module),
@@ -169,51 +178,246 @@ def _convert_pdf(path: Path, workdir: Path) -> Path:
     raise UserError(NO_SERVER)
 
 
-def read_paper(path: str | os.PathLike[str], workdir: Path) -> Any:
-    """Read a bibr JSON, GROBID XML or PDF file into a paper."""
+def read_paper(
+    path: str | os.PathLike[str],
+    workdir: Path,
+    *,
+    pdf: str = "grobid",
+    bibr_key: str = "",
+) -> Any:
+    """Read a bibr JSON, GROBID XML or PDF file into a paper.
+
+    A PDF is turned into text by GROBID, or by bibr with ``pdf="bibr"`` and a key.
+    """
     import pytacheck as pc
 
     source = Path(path)
     suffix = source.suffix.lower()
     if suffix not in (".pdf", ".xml", ".json"):
         raise UserError(BAD_TYPE)
-    if suffix == ".pdf":
+    from_bibr = suffix == ".pdf" and pdf == "bibr"
+    if from_bibr:
+        source = bibr.convert_pdf(source, workdir, bibr_key)
+    elif suffix == ".pdf":
         source = _convert_pdf(source, workdir)
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             paper = pc.read(str(source))
     except Exception as exc:
-        raise UserError(BAD_PAPER) from exc
+        raise UserError(bibr.BAD_FORMAT if from_bibr else BAD_PAPER) from exc
     if not isinstance(paper, pc.Paper):
-        raise UserError(BAD_PAPER)
+        raise UserError(bibr.BAD_FORMAT if from_bibr else BAD_PAPER)
     if len(pc.search_text(paper, ".*")) == 0:
         raise UserError(NO_TEXT_PDF if suffix == ".pdf" else NO_TEXT)
     return paper
 
 
-def check_paper(
+class Stopped(BaseException):
+    """Raised inside the data check when the person stops it (not an ``Exception``, so that no
+    ``except Exception`` in the library swallows it)."""
+
+
+#: the data check whose thread (or a pool thread it started) is running this code
+_JOB: contextvars.ContextVar[DataJob | None] = contextvars.ContextVar("app_data_job", default=None)
+_ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+
+
+class _Stderr:
+    """``sys.stderr`` while a data check runs: what it prints goes to the job, not the console."""
+
+    def __init__(self, real: Any) -> None:
+        self.real = real
+
+    def write(self, text: str) -> int:
+        job = _JOB.get()
+        if job is None:
+            return int(self.real.write(text))
+        job.note(text)
+        return len(text)
+
+    def isatty(self) -> bool:
+        # progress bars only draw on a terminal; the job reads what they draw
+        return _JOB.get() is not None or bool(self.real.isatty())
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self.real, name)
+
+
+def _latest(text: str) -> str:
+    """The last line the library printed, as a status text (a progress bar becomes ``name (3/19)``)."""
+    line = _ANSI.sub("", text).replace("\r", "\n").strip().splitlines()
+    last = line[-1].strip() if line else ""
+    bar = re.match(r"^(.*?)\s*\[[^\]]*\]\s*(\d+/\d+)?", last)
+    if bar and "[" in last:
+        last = f"{bar.group(1)} ({bar.group(2)})" if bar.group(2) else bar.group(1)
+    return re.sub(r"^\(?[-\\|/]\)?\s+", "", last)[:160].strip()
+
+
+def data_cache_dir() -> Path | None:
+    """Where downloaded data files are kept between runs (``None``: the library's own place)."""
+    if os.environ.get("PYTACHECK_CACHE_DIR"):
+        return None
+    import platformdirs
+
+    return Path(platformdirs.user_cache_dir("pytacheck")) / "repo-files"
+
+
+class DataJob:
+    """The data check, running in a thread of its own so that the page can show its progress."""
+
+    def __init__(self, paper: Any) -> None:
+        self.paper = paper
+        self.message = ""  # the library's latest progress text
+        self.output: Any = None  # the module's output
+        self.error: Exception | None = None
+        self.stopped = False
+        self._stop = threading.Event()
+        self._thread = threading.Thread(target=self._run, name="data-check", daemon=True)
+
+    def start(self) -> None:
+        self._thread.start()
+
+    @property
+    def done(self) -> bool:
+        return not self._thread.is_alive()
+
+    def wait(self, timeout: float | None = None) -> bool:
+        """Wait for the check to end (at most ``timeout`` seconds); whether it has ended."""
+        self._thread.join(timeout)
+        return self.done
+
+    def stop(self) -> None:
+        """Ask the check to stop. It stops the next time the library prints a progress text."""
+        self._stop.set()
+
+    def note(self, text: str) -> None:
+        if self._stop.is_set():
+            raise Stopped
+        latest = _latest(text)
+        if latest:
+            self.message = latest
+
+    def _run(self) -> None:
+        from pytacheck.module import run_session, use
+        from pytacheck.report.report import report_module_run
+        from pytacheck.utils import local_options
+
+        token = _JOB.set(self)
+        real = sys.stderr
+        try:
+            if self._stop.is_set():
+                raise Stopped
+            folder = data_cache_dir()
+            options = {"metacheck.repo_cache.dir": str(folder)} if folder else {}
+            with _RUN_LOCK:
+                if self._stop.is_set():
+                    raise Stopped
+                sys.stderr = _Stderr(real)
+                try:
+                    with (
+                        use(allow_local=False),
+                        run_session(),
+                        local_options(options),
+                        warnings.catch_warnings(),
+                    ):
+                        warnings.simplefilter("ignore")
+                        outputs = report_module_run(
+                            self.paper, list(DATA), args={"data_check": {"cache": True}}
+                        )
+                finally:
+                    sys.stderr = real
+            self.output = outputs.get("data_check")
+        except Stopped:
+            self.stopped = True
+        except Exception as exc:
+            self.error = exc
+        finally:
+            _JOB.reset(token)
+
+
+class Run:
+    """One paper after its fast checks. ``analysis`` is what the page shows first."""
+
+    def __init__(
+        self, source: Path, paper: Any, outputs: Any, names: list[str], target: Path, start: float
+    ) -> None:
+        self.source = source
+        self.paper = paper
+        self.outputs = outputs
+        self.names = names
+        self.target = target
+        self.start = start
+        self.analysis: Analysis
+
+    def data_job(self) -> DataJob:
+        return DataJob(self.paper)
+
+    def finish(self, job: DataJob) -> Analysis:
+        """The analysis with the data check's result (or its error) added."""
+        from pytacheck.module import SECTION_LEVELS
+        from pytacheck.report.report import ReportOutput
+
+        rows = [_row(name, self.outputs[name]) for name in self.names if name in self.outputs]
+        outputs = self.outputs
+        if job.output is not None:
+            merged = {**self.outputs, "data_check": job.output}
+            ordered = sorted(
+                merged.items(),
+                key=lambda kv: (
+                    SECTION_LEVELS.index(kv[1].section)
+                    if kv[1].section in SECTION_LEVELS
+                    else len(SECTION_LEVELS)
+                ),
+            )
+            outputs = ReportOutput(ordered, paper=self.paper)
+            rows.append(_row("data_check", job.output))
+        else:
+            reason = _plain(job.error)[:300] if job.error else "The data check did not finish."
+            rows.append(Row("data_check", DATA_TITLE, "Experimental", f"Failed: {reason}"))
+        return self._write(rows, outputs, pending=False)
+
+    def _write(self, rows: list[Row], outputs: Any, pending: bool) -> Analysis:
+        from pytacheck.report.report import render_module_outputs
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            page = render_module_outputs(outputs, self.paper)
+        self.target.mkdir(parents=True, exist_ok=True)
+        report_path = self.target / report_filename(self.source.stem)
+        report_path.write_text(page, encoding="utf-8")
+        seconds = time.perf_counter() - self.start
+        return Analysis(self.source.stem, rows, page, report_path, seconds, pending)
+
+
+DATA_TITLE = "Data check"
+
+
+def begin(
     path: str | os.PathLike[str],
     *,
     online: bool = False,
+    data: bool = False,
     workdir: Path,
     report_dir: Path | None = None,
     progress: Progress | None = None,
-) -> Analysis:
-    """Run the demo checks on one file and write the report into ``report_dir``.
+    pdf: str = "grobid",
+    bibr_key: str = "",
+) -> Run:
+    """Read the paper and run the fast checks. With ``data``, the analysis says the data check is due.
 
     ``workdir`` is scratch space for the PDF conversion. ``report_dir`` (default
     ``workdir``) gets the report file.
     """
     import pytacheck as pc
     from pytacheck.module import run_session, use
-    from pytacheck.report.report import render_module_outputs, report_module_run
+    from pytacheck.report.report import report_module_run
 
     tick = progress or (lambda _fraction, _text: None)
     start = time.perf_counter()
     source = Path(path)
     tick(0.05, "Reading the paper")
-    paper = read_paper(source, workdir)
+    paper = read_paper(source, workdir, pdf=pdf, bibr_key=bibr_key)
     tick(0.3, "Running the checks")
     names = selected_checks(online)
     if "ref_accuracy" in names and len(pc.paper_table(paper, "bib_match")) == 0:
@@ -222,15 +426,46 @@ def check_paper(
     with _RUN_LOCK, use(allow_local=False), run_session(), warnings.catch_warnings():
         warnings.simplefilter("ignore")
         outputs = report_module_run(paper, names)
-        tick(0.85, "Writing the report")
-        page = render_module_outputs(outputs, paper)
+    tick(0.85, "Writing the report")
+    run = Run(source, paper, outputs, names, Path(report_dir or workdir), start)
     rows = [_row(name, outputs[name]) for name in names if name in outputs]
-    target = Path(report_dir or workdir)
-    target.mkdir(parents=True, exist_ok=True)
-    report_path = target / report_filename(source.stem)
-    report_path.write_text(page, encoding="utf-8")
+    run.analysis = run._write(rows, outputs, pending=data)
     tick(1.0, "Done")
-    return Analysis(source.stem, rows, page, report_path, time.perf_counter() - start)
+    return run
+
+
+def check_paper(
+    path: str | os.PathLike[str],
+    *,
+    online: bool = False,
+    data: bool = False,
+    workdir: Path,
+    report_dir: Path | None = None,
+    progress: Progress | None = None,
+    pdf: str = "grobid",
+    bibr_key: str = "",
+) -> Analysis:
+    """Run the demo checks on one file and write the report into ``report_dir``.
+
+    With ``data`` the data check runs too and this waits for it: it downloads the paper's
+    data files. The self-test leaves it out.
+    """
+    run = begin(
+        path,
+        online=online,
+        data=data,
+        workdir=workdir,
+        report_dir=report_dir,
+        progress=progress,
+        pdf=pdf,
+        bibr_key=bibr_key,
+    )
+    if not data:
+        return run.analysis
+    job = run.data_job()
+    job.start()
+    job.wait()
+    return run.finish(job)
 
 
 def scratch_dir() -> tempfile.TemporaryDirectory[str]:

@@ -31,7 +31,14 @@ def client() -> Iterator[TestClient]:
 def _join(client: TestClient, fn_index: int, path: str) -> str:
     """Send the check button's event with this file and read the event stream."""
     body = {
-        "data": [{"path": path, "meta": {"_type": "gradio.FileData"}}, False],
+        "data": [
+            {"path": path, "meta": {"_type": "gradio.FileData"}},
+            False,  # online checks
+            False,  # data check: no downloads in tests
+            "grobid",
+            "",
+            False,
+        ],
         "fn_index": fn_index,
         "session_hash": "t1",
     }
@@ -49,7 +56,7 @@ def _join(client: TestClient, fn_index: int, path: str) -> str:
 def _check_fn_index(client: TestClient) -> int:
     config = client.get("/config").json()
     (dep,) = (
-        d for d in config["dependencies"] if d["targets"][0][1] == "click" and len(d["inputs"]) == 2
+        d for d in config["dependencies"] if d["targets"][0][1] == "click" and len(d["inputs"]) == 6
     )
     return int(dep["id"])
 
