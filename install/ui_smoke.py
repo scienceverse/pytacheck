@@ -17,11 +17,21 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from playwright.sync_api import Page, Request, sync_playwright
+from playwright.sync_api import TimeoutError as PlaywrightTimeout
 
 RUNNING = re.compile(r"metacheck is running at (http://127\.0\.0\.1:\d+/\?token=\S+)")
 PAPER = (
     Path(__file__).resolve().parent.parent / "src/pytacheck/resources/demos/to_err_is_human.json"
 )
+# A closed local proxy: a download from the server side fails loudly instead of passing unseen.
+NO_OUTSIDE = {
+    "HTTP_PROXY": "http://127.0.0.1:9",
+    "HTTPS_PROXY": "http://127.0.0.1:9",
+    "NO_PROXY": "127.0.0.1,localhost",
+    "http_proxy": "http://127.0.0.1:9",
+    "https_proxy": "http://127.0.0.1:9",
+    "no_proxy": "127.0.0.1,localhost",
+}
 SLOW = 240_000  # ms: the first check on a fresh runner
 
 
@@ -31,7 +41,7 @@ def start_app(app: str, port: int, timeout: float) -> tuple[subprocess.Popen[str
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        env={**os.environ, "PYTHONUNBUFFERED": "1", **NO_OUTSIDE},
     )
     lines: list[str] = []
 
@@ -65,27 +75,45 @@ def stop_app(proc: subprocess.Popen[str]) -> None:
 
 def untick_data_check(page: Page) -> None:
     """The shared-data check downloads from OSF. CI must not depend on it."""
-    box = page.get_by_label(re.compile(r"^Check the shared data files"))
-    if box.count() and box.first.is_checked():
+    # By role: the label text of a Gradio checkbox starts with a space.
+    box = page.get_by_role("checkbox", name=re.compile(r"^\s*Check the shared data files"))
+    if not box.count():
+        print("data check box: not on the page", flush=True)
+    elif box.first.is_checked():
         box.first.uncheck()
-        print("unticked: Check the shared data files", flush=True)
+        print("data check box: unticked", flush=True)
+    else:
+        print("data check box: already unticked", flush=True)
 
 
 def check_results(page: Page, what: str) -> None:
     """Wait for the table, then assert Validated rows and a report with content."""
     table = page.get_by_label("Results")
+    table.wait_for(timeout=60_000)
     validated = table.get_by_text("Validated", exact=True)
-    validated.first.wait_for(timeout=SLOW)
+    try:
+        validated.first.wait_for(timeout=SLOW)
+    except PlaywrightTimeout:
+        raise AssertionError(f"{what}: no Validated row appeared") from None
     n = validated.count()
     if n < 5:
         raise AssertionError(f"{what}: {n} Validated rows, expected at least 5")
     print(f"{what}: {n} Validated rows", flush=True)
-    report = page.frame_locator("iframe[title='Report']")
-    report.locator("body").wait_for(timeout=SLOW)
-    text = report.locator("body").inner_text()
-    if len(text.strip()) < 200:
-        raise AssertionError(f"{what}: the report is nearly empty ({len(text.strip())} characters)")
-    print(f"{what}: report has {len(text.strip())} characters", flush=True)
+    failed = table.get_by_text(re.compile(r"^\s*Failed")).count()
+    if failed:
+        raise AssertionError(f"{what}: {failed} checks failed")
+    page.locator("iframe[title='Report']").wait_for(state="attached", timeout=60_000)
+    body = page.frame_locator("iframe[title='Report']").locator("body")
+    body.wait_for(state="attached", timeout=60_000)
+    length = 0
+    for _ in range(60):
+        length = len(body.inner_text().strip())
+        if length >= 200:
+            break
+        time.sleep(0.5)
+    if length < 200:
+        raise AssertionError(f"{what}: the report is nearly empty ({length} characters)")
+    print(f"{what}: report has {length} characters", flush=True)
 
 
 def click_through(page: Page, url: str, paper: Path) -> None:
@@ -98,9 +126,9 @@ def click_through(page: Page, url: str, paper: Path) -> None:
     page.reload()  # a clean page, so the second table is the second run's
     page.get_by_role("button", name="Check my paper").wait_for(timeout=60_000)
     untick_data_check(page)
-    # Gradio's label sits on the drop zone; the file input is inside the same block.
-    page.locator("input[type=file]").first.set_input_files(str(paper))
-    page.get_by_text(paper.name).first.wait_for(timeout=30_000)
+    block = page.locator(".block", has_text="Your paper (PDF, GROBID XML or bibr JSON)").last
+    block.locator("input[type=file]").set_input_files(str(paper))
+    block.get_by_label(paper.name, exact=True).first.wait_for(timeout=30_000)
     page.get_by_role("button", name="Check my paper").click()
     check_results(page, "uploaded JSON")
 
@@ -139,22 +167,23 @@ def main() -> int:
                     outside.append(request.url)
 
             page.on("request", seen)
+            failed = True
             try:
                 click_through(page, url, args.paper)
-            except Exception:
-                args.shots.mkdir(parents=True, exist_ok=True)
-                shot = args.shots / "failure.png"
-                page.screenshot(path=str(shot), full_page=True)
-                print(f"screenshot: {shot}", flush=True)
-                raise
+                failed = False
             finally:
+                for line in errors:
+                    print("console:", line, flush=True)
+                for request_url in outside:
+                    print("outside request:", request_url, flush=True)
+                if failed or errors or outside:
+                    args.shots.mkdir(parents=True, exist_ok=True)
+                    shot = args.shots / "failure.png"
+                    page.screenshot(path=str(shot), full_page=True)
+                    print(f"screenshot: {shot}", flush=True)
                 browser.close()
     finally:
         stop_app(proc)
-    for line in errors:
-        print("console:", line)
-    for request_url in outside:
-        print("outside request:", request_url)
     if errors or outside:
         return 1
     print("ui smoke ok", flush=True)
