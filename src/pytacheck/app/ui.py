@@ -167,8 +167,9 @@ def analyse_upload(
     job = started.data_job()
     begun = time.monotonic()
     job.start()
-    while not job.wait(1.0):
-        if time.time() > stop_data_at:
+    # the wait ends at stop_data_at at the latest, so the stop is never late
+    while not job.wait(min(1.0, max(0.0, stop_data_at - time.time()))):
+        if time.time() >= stop_data_at:
             job.stop()
             job.wait(grace)
             if job.output is None:

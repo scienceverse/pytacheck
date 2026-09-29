@@ -247,7 +247,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     env:
       METACHECK_NO_LAUNCH: "1"
-      # the last installer that installed the tool as pytacheck
+      # an earlier installer, which installed the tool as pytacheck
       OLD_INSTALLER: https://raw.githubusercontent.com/scienceverse/pytacheck/b4ac3e5b98e7e0135653ab3c7f42a916dbf5b436
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
@@ -265,9 +265,12 @@ jobs:
           old="$METACHECK_HOME/tools/pytacheck"
           curl -LsSf "$OLD_INSTALLER/install.sh" | /bin/sh
           [ -d "$old" ] || { echo "::error::the earlier installer left no pytacheck tool"; exit 1; }
-          if METACHECK_SPEC="metacheck[app] @ file://$RUNNER_TEMP/missing" /bin/sh install.sh; then
+          if METACHECK_SPEC="metacheck[app] @ file://$RUNNER_TEMP/missing" /bin/sh install.sh 2> "$RUNNER_TEMP/failed.txt"; then
             echo "::error::an install that cannot find the app succeeded"; exit 1
           fi
+          cat "$RUNNER_TEMP/failed.txt"
+          grep -q "The earlier version is still installed" "$RUNNER_TEMP/failed.txt" ||
+            { echo "::error::the install failed for another reason"; exit 1; }
           [ -d "$old" ] || { echo "::error::the failed install removed the earlier app"; exit 1; }
           "$app" --self-test
           /bin/sh install.sh
@@ -285,9 +288,11 @@ jobs:
           if (-not (Test-Path -LiteralPath $old)) { throw "the earlier installer left no pytacheck tool" }
           $env:METACHECK_SPEC = "metacheck[app] @ " + ([System.Uri](Join-Path $env:RUNNER_TEMP 'missing')).AbsoluteUri
           $failed = $false
-          try { & "$env:GITHUB_WORKSPACE\install.ps1" } catch { $failed = $true; Write-Host $_ }
+          $message = ''
+          try { & "$env:GITHUB_WORKSPACE\install.ps1" } catch { $failed = $true; $message = "$_"; Write-Host $message }
           Remove-Item Env:METACHECK_SPEC
           if (-not $failed) { throw "an install that cannot find the app succeeded" }
+          if ($message -notlike '*The earlier version is still installed*') { throw "the install failed for another reason" }
           if (-not (Test-Path -LiteralPath $old)) { throw "the failed install removed the earlier app" }
           & $app --self-test
           if ($LASTEXITCODE -ne 0) { throw "the earlier app no longer works" }

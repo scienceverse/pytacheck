@@ -62,7 +62,7 @@ class Job:
 
     def wait(self, timeout: float | None = None) -> bool:
         # long enough for Gradio to send the progress text of each wait
-        time.sleep(min(0.5, timeout or 0.5))
+        time.sleep(0.5 if timeout is None else min(0.5, timeout))
         self.waits += 1
         return self.waits > self.limit
 
