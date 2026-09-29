@@ -6,17 +6,19 @@ Nothing here imports gradio; ``ui`` and ``server`` use it.
 from __future__ import annotations
 
 import base64
-import concurrent.futures
-import contextvars
+import contextlib
+import multiprocessing
 import os
+import pickle
+import re
+import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 __all__ = [
     "DEFAULT_PORT",
-    "DELETE_CACHE",
     "HOSTED_NOTE",
     "MAX_QUEUE",
     "MAX_RUNS",
@@ -26,6 +28,7 @@ __all__ = [
     "JobRunner",
     "data_link",
     "footer",
+    "sweep",
 ]
 
 T = TypeVar("T")
@@ -42,8 +45,9 @@ MIN_TOKEN_LENGTH = 32
 #: runs at the same time, and paper checks waiting for a free place
 MAX_RUNS = 2
 MAX_QUEUE = 10
-#: [seconds between sweeps, age in seconds] for files Gradio made
-DELETE_CACHE = (60, 300)
+#: how a run's process is started; tests use "fork" to carry their patches over
+START_METHOD = "spawn"
+TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_-]{32,}")
 
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 HOSTED_NOTE = "Your paper is processed on this server and deleted when the report is ready."
@@ -82,6 +86,11 @@ class HostedConfig:
                 raise HostedError(
                     f"Token {number} in {TOKENS_ENV} is shorter than {MIN_TOKEN_LENGTH} "
                     "characters. Make longer ones, for example with: openssl rand -hex 24"
+                )
+            if not TOKEN_PATTERN.fullmatch(token):
+                raise HostedError(
+                    f"Token {number} in {TOKENS_ENV} has characters that do not survive in a "
+                    "link. Use only letters, digits, - and _, for example: openssl rand -hex 24"
                 )
         hosts = [h.lower() for h in _items(env.get(HOSTS_ENV)) or _items(env.get(SPACE_HOST_ENV))]
         if not hosts:
@@ -133,11 +142,51 @@ def data_link(name: str, page: str) -> str:
     )
 
 
-class JobRunner:
-    """Runs one paper check with a time limit and deletes the uploaded file afterwards.
+def sweep(job_timeout: float) -> tuple[int, int]:
+    """Gradio's ``delete_cache``: [seconds between sweeps, age in seconds].
 
-    A thread cannot be stopped. After the limit the person gets the message at once, and
-    the run's thread finishes in the background and then cleans up after itself.
+    An upload can wait in the queue behind every place before it, so its age is well above
+    the longest wait plus the run. The runner deletes each upload after its run anyway.
+    """
+    return (60, int(job_timeout * (MAX_QUEUE // MAX_RUNS + 1)) + 60)
+
+
+def remove_upload(path: str | os.PathLike[str]) -> None:
+    """Delete an upload, and its folder (named after the file's hash) when that is empty."""
+    upload = Path(path)
+    upload.unlink(missing_ok=True)
+    root = os.environ.get("GRADIO_TEMP_DIR")
+    folder = upload.parent.resolve()
+    if root and folder != Path(root).resolve() and folder.is_relative_to(Path(root).resolve()):
+        with contextlib.suppress(OSError):
+            folder.rmdir()
+
+
+def _child(conn: Any, job: Callable[..., Any], args: tuple[Any, ...], progress: bool) -> None:
+    """The process of one run: send progress, then the result or the error."""
+
+    def report(fraction: float, text: str) -> None:
+        conn.send(("progress", fraction, text))
+
+    try:
+        try:
+            answer: tuple[Any, ...] = ("done", job(*args, report) if progress else job(*args))
+            conn.send(answer)
+        except Exception as exc:
+            try:
+                pickle.loads(pickle.dumps(exc))  # noqa: S301 - our own error, to see it comes out again
+                conn.send(("error", exc))
+            except Exception:  # the error cannot be sent as it is
+                conn.send(("error", RuntimeError(str(exc))))
+    finally:
+        conn.close()
+
+
+class JobRunner:
+    """Runs one paper check in its own process, with a time limit.
+
+    At the limit the process is killed, so a check that hangs frees its place at once and
+    cannot hold up the next runs. The uploaded file is deleted when the run ends.
     """
 
     def __init__(self, timeout: float) -> None:
@@ -149,20 +198,42 @@ class JobRunner:
         *args: Any,
         upload: str | os.PathLike[str] | None = None,
         on_timeout: Callable[[], Exception],
+        on_progress: Callable[[float, str], None] | None = None,
     ) -> T:
-        """``job(*args)``, then delete ``upload``."""
-
-        def work() -> T:
-            try:
-                return job(*args)
-            finally:
-                if upload:
-                    Path(upload).unlink(missing_ok=True)
-
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-        future = pool.submit(contextvars.copy_context().run, work)
-        pool.shutdown(wait=False)
+        """``job(*args)`` (plus a progress function as last argument if ``on_progress`` is
+        given), then delete ``upload``. ``job`` and its arguments must be picklable."""
+        context: Any = multiprocessing.get_context(START_METHOD)
+        receive, send = context.Pipe(duplex=False)
+        process = context.Process(
+            target=_child, args=(send, job, args, on_progress is not None), daemon=True
+        )
         try:
-            return future.result(timeout=self.timeout)
-        except concurrent.futures.TimeoutError:
-            raise on_timeout() from None
+            process.start()
+            send.close()  # so that the end of the child shows as end of file
+            deadline = time.monotonic() + self.timeout
+            while True:
+                if not receive.poll(max(deadline - time.monotonic(), 0)):
+                    raise on_timeout() from None
+                try:
+                    message = receive.recv()
+                except EOFError:
+                    raise RuntimeError("The check ended without an answer") from None
+                if message[0] == "progress":
+                    if on_progress:
+                        on_progress(message[1], message[2])
+                elif message[0] == "error":
+                    raise message[1]
+                else:
+                    return cast(T, message[1])
+        finally:
+            if process.pid is not None:
+                if process.is_alive():
+                    process.terminate()
+                    process.join(5)
+                    if process.is_alive():
+                        process.kill()
+                process.join()
+            receive.close()
+            send.close()
+            if upload:
+                remove_upload(upload)

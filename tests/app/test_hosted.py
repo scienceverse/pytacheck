@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import multiprocessing
+import operator
 import socket
 import threading
 import time
@@ -25,6 +28,14 @@ TOKEN_B = "b-second-token-" + "x" * 20
 HOST = "metacheck.example.org"
 BASE = f"https://{HOST}"
 PORT = 7861
+
+
+@pytest.fixture(autouse=True, scope="module")
+def _fork_runs() -> Iterator[None]:
+    """Runs start by fork here, so a patched ``ui.check_paper`` reaches the run's process."""
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(hosting, "START_METHOD", "fork")
+        yield
 
 
 @pytest.fixture
@@ -61,6 +72,19 @@ def test_refuses_short_tokens_without_printing_them(
     assert launch.main(["--hosted"]) == 2
     err = capsys.readouterr().err
     assert "Token 2" in err and "shorttoken" not in err
+
+
+@pytest.mark.parametrize("bad", ["a+b/c=" * 6, "x" * 31 + " ", "x" * 31 + "?"])
+def test_refuses_tokens_that_do_not_survive_a_link(
+    env: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], bad: str
+) -> None:
+    env.setenv("METACHECK_APP_HOSTS", HOST)
+    env.setenv("METACHECK_APP_TOKENS", f"{TOKEN_A},{bad}")
+    assert launch.main(["--hosted"]) == 2
+    err = capsys.readouterr().err
+    assert "Token 2" in err and bad not in err
+    env.setenv("METACHECK_APP_TOKENS", "Ab_-" * 8)
+    assert hosting.HostedConfig.from_env().tokens == ("Ab_-" * 8,)
 
 
 def test_refuses_to_start_without_hosts(
@@ -156,6 +180,21 @@ def test_the_cookie_is_secure_in_hosted_mode_and_not_in_local_mode(client: TestC
         assert "Secure" not in local.get("/?token=local-token").headers["set-cookie"]
 
 
+def test_the_token_redirect_stays_on_this_site(client: TestClient) -> None:
+    for path in ("/%2Fevil.example/", "/%2F%2Fevil.example/x", "/a"):
+        resp = client.get(f"{path}?token={TOKEN_A}&b=1")
+        location = resp.headers["location"]
+        assert resp.status_code == 303 and location.startswith("/"), location
+        assert not location.startswith("//"), location
+    load = {
+        "sec-fetch-site": "cross-site",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-dest": "document",
+    }
+    page = client.get(f"/%2Fevil.example/?token={TOKEN_A}", headers=load).text
+    assert "url=/evil.example/" in page
+
+
 def test_opened_from_a_link_on_another_site(client: TestClient) -> None:
     """A link in a mail or chat is a cross-site page load: the cookie must still land."""
     load = {
@@ -203,6 +242,14 @@ def test_footer_falls_back_to_the_repository() -> None:
     assert "tree/" not in hosting.footer("1.0", "not a commit; rm -rf")
 
 
+def test_the_privacy_text_names_the_server(client: TestClient) -> None:
+    client.get(f"/?token={TOKEN_A}")
+    text = client.get("/config").text
+    assert "XML and JSON files are checked on this server." in text
+    assert "this computer" not in text
+    assert "checked on this computer" in str(ui.build_app().get_config_file())
+
+
 def test_the_local_page_has_no_hosted_texts() -> None:
     blocks = ui.build_app()
     assert hosting.HOSTED_NOTE not in str(blocks.get_config_file())
@@ -212,7 +259,16 @@ def test_limits_are_two_runs_and_ten_waiting() -> None:
     blocks = ui.build_app(hosted=config())
     assert blocks._queue.max_size == 10
     assert blocks._queue.default_concurrency_limit == 2
-    assert blocks.delete_cache == (60, 300)
+    interval, age = blocks.delete_cache
+    # an upload may wait behind ten others (two at a time) and then run
+    assert interval == 60 and age > 6 * 900
+    assert hosting.sweep(10)[1] > 6 * 10
+    assert blocks.delete_cache == hosting.sweep(900)
+    # one shared limit for both buttons: each listener would otherwise get its own
+    clicks = [fn for fn in blocks.fns.values() if fn.targets and fn.targets[0][1] == "click"]
+    assert len(clicks) == 2
+    assert {fn.concurrency_id for fn in clicks} == {"paper"}
+    assert {fn.concurrency_limit for fn in clicks} == {2}
     assert ui.build_app()._queue.default_concurrency_limit == 1
 
 
@@ -246,8 +302,10 @@ def _fn_index(client: TestClient) -> int:
     return int(dep["id"])
 
 
-def _upload(client: TestClient) -> str:
-    files = {"files": ("paper.json", pc.demofile("json").read_bytes(), "application/json")}
+def _upload(client: TestClient, extra: str = "") -> str:
+    """An upload; a different ``extra`` makes a different file (Gradio names it by its hash)."""
+    body = pc.demofile("json").read_bytes() + extra.encode()
+    files = {"files": ("paper.json", body, "application/json")}
     (path,) = client.post("/gradio_api/upload", files=files).json()
     return str(path)
 
@@ -263,45 +321,185 @@ def test_a_run_leaves_nothing_behind(client: TestClient) -> None:
     assert client.get("/report/h1/paper_report.html").status_code == 404
 
 
-def test_a_run_over_the_time_limit_gets_a_plain_message(
-    env: pytest.MonkeyPatch,
-) -> None:
-    release = threading.Event()
-
-    def slow(*_a: Any, **_k: Any) -> Any:
-        release.wait(20)
-        raise RuntimeError("late")
-
-    env.setattr(ui, "check_paper", slow)
-    tight = create_hosted_app(PORT + 1, config(job_timeout=0.3))
+def test_a_run_over_the_time_limit_gets_a_plain_message(env: pytest.MonkeyPatch) -> None:
+    env.setattr(ui, "check_paper", lambda *_a, **_k: time.sleep(30))
+    tight = create_hosted_app(PORT + 1, config(job_timeout=0.5))
     with TestClient(tight, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
         path = _upload(tc)
         start = time.perf_counter()
         events = _join(tc, _fn_index(tc), path, "h2")
         assert time.perf_counter() - start < 10
-        release.set()
     assert hosting.TOO_SLOW in events
-    deadline = time.time() + 5
-    while Path(path).exists() and time.time() < deadline:
-        time.sleep(0.05)
     assert not Path(path).exists()
+    assert not multiprocessing.active_children()  # the run was stopped, not abandoned
+
+
+def _analysis(*_a: Any, **_k: Any) -> Any:
+    from pytacheck.app.run import Analysis
+
+    return Analysis("x", [], "<p>x</p>", Path("x_report.html"), 0.1)
+
+
+def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch) -> None:
+    running = multiprocessing.Value("i", 0)
+    peak = multiprocessing.Value("i", 0)
+
+    def counted(*_a: Any, **_k: Any) -> Any:
+        with running.get_lock():
+            running.value += 1
+            peak.value = max(peak.value, running.value)
+        time.sleep(0.6)
+        with running.get_lock():
+            running.value -= 1
+        return _analysis()
+
+    env.setattr(ui, "check_paper", counted)
+    shared = create_hosted_app(PORT + 2, config())
+    answers: list[str] = []
+    tc = TestClient(shared, base_url=BASE, follow_redirects=False)
+    tc.__enter__()
+    tc.get(f"/?token={TOKEN_A}")
+    deps = tc.get("/config").json()["dependencies"]
+    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 2)
+    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 1)
+    uploads = [_upload(tc, str(n)) for n in range(3)]
+
+    def click(button: str, number: int) -> None:
+        if button == "check":
+            answers.append(_join(tc, check_fn, uploads[number], f"{button}{number}"))
+        else:
+            answers.append(_join_demo(tc, demo_fn, f"{button}{number}"))
+
+    threads = [
+        threading.Thread(target=click, args=(button, n))
+        for n in range(3)
+        for button in ("check", "demo")
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(60)
+    tc.__exit__(None, None, None)
+    assert len(answers) == 6, answers
+    assert all("Ran 0 checks" in a for a in answers), [
+        a[-300:] for a in answers if "Ran 0 checks" not in a
+    ]
+    assert peak.value == 2
+
+
+def _join_demo(client: TestClient, fn_index: int, session: str) -> str:
+    body = {"data": [False], "fn_index": fn_index, "session_hash": session}
+    assert client.post("/gradio_api/queue/join", json=body).status_code == 200
+    text = ""
+    with client.stream("GET", "/gradio_api/queue/data", params={"session_hash": session}) as s:
+        for line in s.iter_lines():
+            text += line
+            if '"process_completed"' in line:
+                break
+    return text
+
+
+def test_the_upload_field_is_cleared_after_a_run(env: pytest.MonkeyPatch) -> None:
+    env.setattr(ui, "check_paper", _analysis)
+    shared = create_hosted_app(PORT + 3, config())
+    with TestClient(shared, base_url=BASE, follow_redirects=False) as tc:
+        tc.get(f"/?token={TOKEN_A}")
+        fn = _fn_index(tc)
+        events = _join(tc, fn, _upload(tc), "h3")
+        done = next(ln for ln in events.split("data: ") if '"process_completed"' in ln)
+        output = json.loads(done)["output"]["data"]
+        assert len(output) == 6 and output[-1] is None
+        # a second click on a file that is gone says so in plain words
+        gone = _upload(tc)
+        Path(gone).unlink()
+        assert ui.EXPIRED in _join(tc, fn, gone, "h4")
+
+
+def _double(x: int, report: Any = None) -> int:
+    if report:
+        report(0.5, "half")
+    return x * 2
+
+
+def _fail(message: str) -> None:
+    raise ValueError(message)
+
+
+class _Odd(Exception):
+    def __init__(self, a: str, b: str) -> None:  # cannot be rebuilt from its args
+        super().__init__(f"{a}{b}")
+
+
+def _fail_odd() -> None:
+    raise _Odd("o", "dd")
+
+
+def _sleep(seconds: float) -> None:
+    time.sleep(seconds)
 
 
 def test_job_runner_returns_the_result_and_deletes_the_upload(tmp_path: Path) -> None:
     upload = tmp_path / "up.pdf"
     upload.write_text("x")
-    runner = hosting.JobRunner(5)
-    assert runner.run(lambda a, b: a + b, 1, 2, upload=upload, on_timeout=TimeoutError) == 3
+    runner = hosting.JobRunner(20)
+    assert runner.run(operator.add, 1, 2, upload=upload, on_timeout=TimeoutError) == 3
     assert not upload.exists()
     upload.write_text("x")
     with pytest.raises(ValueError, match="boom"):
-        runner.run(
-            lambda: (_ for _ in ()).throw(ValueError("boom")),
-            upload=upload,
-            on_timeout=TimeoutError,
-        )
+        runner.run(_fail, "boom", upload=upload, on_timeout=TimeoutError)
     assert not upload.exists()
+    with pytest.raises(RuntimeError, match="odd"):
+        runner.run(_fail_odd, on_timeout=TimeoutError)
+    seen: list[tuple[float, str]] = []
+    assert (
+        runner.run(_double, 4, on_timeout=TimeoutError, on_progress=lambda *a: seen.append(a)) == 8
+    )
+    assert seen == [(0.5, "half")]
+
+
+def test_job_runner_works_with_spawn_the_way_the_server_runs(env: pytest.MonkeyPatch) -> None:
+    env.setattr(hosting, "START_METHOD", "spawn")
+    assert hosting.JobRunner(60).run(operator.add, 1, 2, on_timeout=TimeoutError) == 3
+
+
+def test_job_runner_kills_a_run_at_the_limit(tmp_path: Path) -> None:
+    upload = tmp_path / "up.pdf"
+    upload.write_text("x")
+    runner = hosting.JobRunner(0.5)
+    for _ in range(4):  # runs that hang do not pile up, and do not hold up the next one
+        start = time.perf_counter()
+        with pytest.raises(TimeoutError):
+            runner.run(_sleep, 30, upload=upload, on_timeout=TimeoutError)
+        assert time.perf_counter() - start < 5
+        assert not multiprocessing.active_children()
+    assert not upload.exists()
+    assert hosting.JobRunner(20).run(_double, 2, on_timeout=TimeoutError) == 4
+
+
+def test_remove_upload_takes_its_folder_when_it_is_in_the_gradio_folder(
+    tmp_path: Path, env: pytest.MonkeyPatch
+) -> None:
+    env.setenv("GRADIO_TEMP_DIR", str(tmp_path))
+    folder = tmp_path / "5380f9d8"
+    folder.mkdir()
+    (folder / "paper.pdf").write_text("x")
+    hosting.remove_upload(folder / "paper.pdf")
+    assert not folder.exists() and tmp_path.exists()
+    loose = tmp_path / "loose.pdf"
+    loose.write_text("x")
+    hosting.remove_upload(loose)
+    assert tmp_path.exists() and not loose.exists()
+    elsewhere = tmp_path.parent / f"{tmp_path.name}-other"
+    elsewhere.mkdir()
+    (elsewhere / "p.pdf").write_text("x")
+    hosting.remove_upload(elsewhere / "p.pdf")
+    assert elsewhere.exists()
+    (folder).mkdir()
+    (folder / "a.pdf").write_text("x")
+    (folder / "b.pdf").write_text("x")
+    hosting.remove_upload(folder / "a.pdf")
+    assert (folder / "b.pdf").exists()
 
 
 # --- the log ------------------------------------------------------------------------
@@ -327,6 +525,15 @@ def test_no_token_reaches_the_log(
     env.setattr(launch, "_warm_up", lambda: None)
     caplog.set_level(logging.DEBUG)
     cfg = config(tokens=(TOKEN_A,)) if hosted else None
+    printed: list[dict[str, Any]] = []
+    real_print = print
+
+    def spy(*args: Any, **kwargs: Any) -> None:
+        if args and str(args[0]).startswith("metacheck is serving"):
+            printed.append(kwargs)
+        real_print(*args, **kwargs)
+
+    env.setattr(launch, "print", spy, raising=False)
     before = _servers()
     result: list[int] = []
     with socket.socket() as probe:
@@ -363,6 +570,7 @@ def test_no_token_reaches_the_log(
         assert token not in out.out + out.err
     assert not any(r.name == "uvicorn.access" for r in caplog.records)
     if hosted:
+        assert printed and printed[0].get("flush") is True  # a pipe shows it at once
         assert not state_dir.exists() or not any(state_dir.iterdir())
 
 

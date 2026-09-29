@@ -187,7 +187,10 @@ def _serve(
             if config is None:
                 _announce(_url(port, token), open_browser)
             else:  # the log must not hold a token
-                print(f"metacheck is serving {len(config.tokens)} access token(s) on port {port}")
+                print(
+                    f"metacheck is serving {len(config.tokens)} access token(s) on port {port}",
+                    flush=True,
+                )
             _warm_up()
 
     threading.Thread(target=when_up, daemon=True).start()

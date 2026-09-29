@@ -7,6 +7,7 @@ import html
 import shutil
 import tempfile
 import threading
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import quote
@@ -88,7 +89,16 @@ CSS = (
     "#download-report a{display:inline-block;padding:8px 16px;border:1px solid "
     "var(--border-color-primary);border-radius:8px;text-decoration:none;font-weight:600}"
 )
+EXPIRED = "Your upload is no longer on the server. Upload the paper again."
 FAILED = "Something went wrong while checking this paper. Try the demo paper or another file."
+
+
+def analyse_upload(path: str, online: bool, progress: Callable[[float, str], None]) -> Analysis:
+    """One hosted run, in its own process: the report stays in the scratch folder."""
+    if not Path(path).is_file():
+        raise UserError(EXPIRED)
+    with scratch_dir() as work:
+        return check_paper(path, online=online, workdir=Path(work), progress=progress)
 
 
 def report_frame(page: str) -> str:
@@ -153,8 +163,7 @@ def build_app(
                 path,
                 online=online,
                 workdir=Path(work),
-                # hosted: the report stays in the scratch folder, which is deleted
-                report_dir=None if hosted else sessions.folder(session),
+                report_dir=sessions.folder(session),
                 progress=lambda fraction, text: progress(fraction, desc=text),
             )
 
@@ -166,14 +175,13 @@ def build_app(
                 analysis = analyse(path, online, session, progress)
             else:
                 analysis = jobs.run(
-                    analyse,
+                    analyse_upload,
                     path,
                     online,
-                    session,
-                    progress,
                     # the demo paper is part of the package: only an upload is deleted
                     upload=None if Path(path).resolve() == _demo_path() else path,
                     on_timeout=lambda: gr.Error(hosting.TOO_SLOW, print_exception=False),
+                    on_progress=lambda fraction, text: progress(fraction, desc=text),
                 )
         except UserError as exc:
             raise gr.Error(str(exc), print_exception=False) from exc
@@ -197,7 +205,9 @@ def build_app(
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
     ) -> tuple[Any, ...]:
-        return run(upload, online, request.session_hash or "", progress)
+        shown = run(upload, online, request.session_hash or "", progress)
+        # hosted: the upload is deleted after its run, so the field is cleared as well
+        return (*shown, None) if hosted else shown
 
     def on_demo(
         online: bool,
@@ -206,10 +216,13 @@ def build_app(
     ) -> tuple[Any, ...]:
         from pytacheck.papers.io import demofile
 
-        return run(str(demofile("json")), online, request.session_hash or "", progress)
+        shown = run(str(demofile("json")), online, request.session_hash or "", progress)
+        return (*shown, gr.skip()) if hosted else shown
 
     blocks_kwargs = (
-        {**BLOCKS_KWARGS, "delete_cache": hosting.DELETE_CACHE} if hosted else BLOCKS_KWARGS
+        {**BLOCKS_KWARGS, "delete_cache": hosting.sweep(hosted.job_timeout)}
+        if hosted
+        else BLOCKS_KWARGS
     )
     with gr.Blocks(**blocks_kwargs) as app:
         gr.Markdown(f"# metacheck\n\nPython version, preview {__version__}")
@@ -221,7 +234,8 @@ def build_app(
         )
         if hosted:
             gr.Markdown(hosting.HOSTED_NOTE)
-        gr.Markdown(PRIVACY)
+        # a visitor's own computer is not where the files are checked
+        gr.Markdown(PRIVACY.replace("this computer", "this server") if hosted else PRIVACY)
         with gr.Row():
             check = gr.Button("Check my paper", variant="primary")
             demo = gr.Button("Try the demo paper")
@@ -253,8 +267,24 @@ def build_app(
             gr.Markdown(hosting.footer(__version__, hosted.commit))
 
         outputs = [results, summary, table, frame, download]
-        check.click(on_check, [upload, online], outputs, api_visibility="private")
-        demo.click(on_demo, [online], outputs, api_visibility="private")
+        # one shared limit: each button on its own would allow the full number of runs
+        limits: dict[str, Any] = (
+            {"concurrency_id": "paper", "concurrency_limit": hosting.MAX_RUNS} if hosted else {}
+        )
+        check.click(
+            on_check,
+            [upload, online],
+            [*outputs, upload] if hosted else outputs,
+            api_visibility="private",
+            **limits,
+        )
+        demo.click(
+            on_demo,
+            [online],
+            [*outputs, upload] if hosted else outputs,
+            api_visibility="private",
+            **limits,
+        )
     if hosted:
         app.queue(
             **{

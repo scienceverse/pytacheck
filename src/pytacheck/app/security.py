@@ -157,7 +157,8 @@ class TokenGuard:
         self, scope: Scope, query: list[tuple[str, str]], headers: dict[str, str], token: str
     ) -> Response:
         rest = urlencode([(k, v) for k, v in query if k != "token"])
-        target = quote(scope["path"]) + (f"?{rest}" if rest else "")
+        # always a path on this site: "//host/" would send the browser to another site
+        target = "/" + quote(scope["path"]).lstrip("/") + (f"?{rest}" if rest else "")
         response: Response
         if headers.get("sec-fetch-site") in FOREIGN_SITES:
             # A redirect keeps the site of the request that started it, so the browser
