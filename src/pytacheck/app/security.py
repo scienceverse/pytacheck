@@ -13,19 +13,26 @@ from __future__ import annotations
 
 import html
 import secrets
+from collections.abc import Sequence
 from urllib.parse import parse_qsl, quote, urlencode
 
 from starlette.requests import cookie_parser
 from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-__all__ = ["DENIED_PAGE", "TokenGuard", "cookie_name"]
+__all__ = ["DENIED_PAGE", "HOSTED_COOKIE", "HOSTED_DENIED_PAGE", "TokenGuard", "cookie_name"]
 
 DENIED_PAGE = (
     "<!doctype html><html lang=en><meta charset=utf-8><title>metacheck</title>"
     "<body style='font-family:sans-serif;max-width:32rem;margin:4rem auto;padding:0 1rem'>"
     "<p>Open metacheck from the link that the metacheck-app command printed.</p></body></html>"
 )
+HOSTED_DENIED_PAGE = DENIED_PAGE.replace(
+    "from the link that the metacheck-app command printed", "from the link you were sent"
+)
+#: The ``__Host-`` prefix makes a browser refuse the cookie unless it is Secure, has no
+#: Domain and covers the whole site.
+HOSTED_COOKIE = "__Host-metacheck"
 HEALTH_PATH = "/healthz"
 #: Gradio fetches a remote URL when asked for ``/gradio_api/file=<url>`` or, on its
 #: deprecated route, ``/gradio_api/file/<url>``
@@ -40,23 +47,54 @@ def cookie_name(port: int) -> str:
 
 
 class TokenGuard:
-    def __init__(self, app: ASGIApp, *, port: int, token: str) -> None:
+    """Guards for the local app (one ``token``, ``127.0.0.1``) or the hosted one.
+
+    The hosted app passes ``hosts`` (names that are served over https), several
+    ``tokens`` and ``secure=True``. A person gets a cookie with the token that they used.
+    """
+
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        port: int = 0,
+        token: str | None = None,
+        tokens: Sequence[str] = (),
+        hosts: Sequence[str] | None = None,
+        secure: bool = False,
+    ) -> None:
         self.app = app
-        self.token = token
-        self.cookie = cookie_name(port)
-        self.hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
-        self.origins = {f"http://{host}" for host in self.hosts}
+        self.tokens = [*tokens, *([token] if token else [])]
+        if not self.tokens:
+            raise ValueError("TokenGuard needs at least one token")
+        self.secure = secure
+        self.hosted = hosts is not None
+        self.cookie = HOSTED_COOKIE if secure else cookie_name(port)
+        if hosts is None:
+            self.hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
+            self.origins = {f"http://{host}" for host in self.hosts}
+            self.denied = DENIED_PAGE
+        else:
+            self.hosts = {host.lower() for host in hosts}
+            self.origins = {f"https://{host}" for host in self.hosts}
+            self.denied = HOSTED_DENIED_PAGE
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] not in ("http", "websocket"):
             await self.app(scope, receive, send)
             return
         headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope["headers"]}
+        path = scope["path"]
+        health = scope["type"] == "http" and path == HEALTH_PATH
+        # A hosted health probe comes from the platform, under any Host. It answers a
+        # fixed {"ok": true} and reads nothing.
+        if health and self.hosted:
+            await JSONResponse({"ok": True})(scope, receive, send)
+            return
         if headers.get("host", "").lower() not in self.hosts:
             await self._deny(scope, receive, send)
             return
-        path = scope["path"]
-        if scope["type"] == "http" and path == HEALTH_PATH:
+        if health:
             await JSONResponse({"ok": True})(scope, receive, send)
             return
         if self._foreign(scope, headers):
@@ -66,7 +104,7 @@ class TokenGuard:
         given = next((v for k, v in query if k == "token"), None)
         if given is not None and self._same(given):
             if scope["type"] == "http":
-                await self._redirect(scope, query, headers)(scope, receive, send)
+                await self._redirect(scope, query, headers, given)(scope, receive, send)
             else:
                 await self._deny(scope, receive, send)
             return
@@ -108,10 +146,15 @@ class TokenGuard:
         return False
 
     def _same(self, value: str) -> bool:
-        return secrets.compare_digest(value.encode("utf-8"), self.token.encode("utf-8"))
+        """Whether ``value`` is one of the tokens; every token is compared, in constant time."""
+        raw = value.encode("utf-8")
+        found = False
+        for token in self.tokens:
+            found |= secrets.compare_digest(raw, token.encode("utf-8"))
+        return found
 
     def _redirect(
-        self, scope: Scope, query: list[tuple[str, str]], headers: dict[str, str]
+        self, scope: Scope, query: list[tuple[str, str]], headers: dict[str, str], token: str
     ) -> Response:
         rest = urlencode([(k, v) for k, v in query if k != "token"])
         target = quote(scope["path"]) + (f"?{rest}" if rest else "")
@@ -127,13 +170,13 @@ class TokenGuard:
         else:
             response = RedirectResponse(target, status_code=303)
         response.set_cookie(
-            self.cookie, self.token, httponly=True, samesite="strict", path="/", secure=False
+            self.cookie, token, httponly=True, samesite="strict", path="/", secure=self.secure
         )
         response.headers["Referrer-Policy"] = "no-referrer"
         return response
 
     async def _deny(self, scope: Scope, receive: Receive, send: Send) -> None:
-        await self._refuse(scope, receive, send, HTMLResponse(DENIED_PAGE, status_code=403))
+        await self._refuse(scope, receive, send, HTMLResponse(self.denied, status_code=403))
 
     async def _not_found(self, scope: Scope, receive: Receive, send: Send) -> None:
         await self._refuse(scope, receive, send, JSONResponse({"detail": "Not found"}, 404))
