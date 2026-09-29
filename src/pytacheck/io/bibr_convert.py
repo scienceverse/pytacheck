@@ -45,7 +45,9 @@ PathLikeStr = str | PathLike[str]
 _BACKENDS = ("auto", "scivrs", "selfhosted", "bibr")
 
 #: environment variables of the ``"bibr"`` backend (``BIBR_API_URL`` is the name bibr's own
-#: example clients read; ``BIBR_URL`` wins when both are set)
+#: example clients read; ``BIBR_URL`` wins when both are set). Only ``BIBR_URL`` steers the
+#: choice of backend (``backend="auto"``, ``convert()``): ``BIBR_API_URL`` is often set for
+#: other tools, and is read only once the ``"bibr"`` backend has been asked for.
 BIBR_URL_ENV = ("BIBR_URL", "BIBR_API_URL")
 BIBR_KEY_ENV = "BIBR_API_KEY"
 _BIBR_DEFAULT_URL = "http://localhost:8000"
@@ -185,11 +187,19 @@ def _bibr_env_url() -> str:
     return ""
 
 
+def _bibr_steering_url() -> str:
+    """The server named in ``BIBR_URL``: the only address that picks the ``"bibr"`` backend
+    for ``backend="auto"`` and ``convert()`` (``BIBR_API_URL`` does not); ``""`` when unset."""
+    return _env(BIBR_URL_ENV[0])
+
+
 def _is_loopback(host: str) -> bool:
+    """``localhost`` or a loopback address (``127.0.0.0/8``, ``::1``). Not ``*.localhost``: a
+    resolver may send such a name anywhere, and the token would go along in clear."""
     import ipaddress
 
     host = host.strip("[]").rstrip(".").lower()
-    if host == "localhost" or host.endswith(".localhost"):
+    if host == "localhost":
         return True
     try:
         return ipaddress.ip_address(host).is_loopback
@@ -216,8 +226,8 @@ def _check_bibr_target(api_url: str, api_key: str | None) -> None:
     if api_key and not _may_send_token(api_url):
         raise ValueError(
             f"Refusing to send the bibr API token over plain http to {parts.hostname}. "
-            "Use an https:// address; plain http is accepted only for localhost, 127.0.0.1 "
-            "and ::1."
+            "Use an https:// address; plain http is accepted only for localhost and "
+            "loopback addresses (127.0.0.1, ::1)."
         )
 
 
@@ -340,7 +350,7 @@ class _Session:
     """
 
     api_url: str
-    api_key: str | None
+    api_key: str | None = field(repr=False)  # a token must not turn up in a log or traceback
     timeout: float
     max_retries: int
     max_retry_wait: float
@@ -366,6 +376,32 @@ class _Session:
         self.waited += seconds
 
 
+def _honour_host_reset(sess: _Session, url: str, doing: str) -> None:
+    """Bound, and count, the wait the shared layer would do for this host on its own.
+
+    ``pytacheck.http`` remembers a 429 that any caller got from a host (the readiness probe
+    retries one, for instance) and sleeps until its reset before every later request to the
+    host, however far off. Here that wait gets the same limits as a ``Retry-After`` on this
+    client's own requests: too long is an error, else it is slept here and used up from the
+    session's budget.
+    """
+    from pytacheck import http
+
+    reset = http.host_reset_at(urlsplit(url).hostname or "")
+    if reset is None:
+        return
+    wait = max(0.0, reset - time.time())
+    if wait > sess.max_retry_wait or sess.elapsed + wait > sess.timeout:
+        raise BibrRequestError(
+            f"HTTP 429 Too Many Requests while {doing}. The server rate-limited an earlier "
+            f"request and asked to wait {wait:.0f} s more, which is more than pytacheck will.",
+            429,
+            "",
+            wait,
+        )
+    sess.sleep(wait)
+
+
 def _bibr_call(
     sess: _Session,
     method: str,
@@ -381,13 +417,15 @@ def _bibr_call(
     ``max_retries`` times, never waiting longer than ``max_retry_wait`` for one retry nor
     past the session's ``timeout``. A 429 means nothing was done, so a retry cannot
     duplicate work. Every other status is returned as it is: the shared layer's own retries
-    are switched off, because they wait out any ``Retry-After``, however long it is.
+    are switched off, because they wait out any ``Retry-After``, however long it is (and a
+    reset it remembers from another caller is bounded by :func:`_honour_host_reset`).
     Returns ``None`` for no answer when *allow_no_response*, else raises.
     """
     from pytacheck import http
 
     retries = 0
     while True:
+        _honour_host_reset(sess, url, doing)
         resp = http.request(
             method,
             url,
@@ -466,53 +504,77 @@ def _bibr_result(resp: Any) -> bytes:
     return bytes(resp.content)
 
 
+def _unavailable(resp: Any) -> bool:
+    """No answer, or one that says the server (or what is behind it) is briefly unavailable."""
+    return resp is None or resp.status_code in (502, 503, 504)
+
+
 def _bibr_await_result(sess: _Session, job_id: str, poll_interval: float) -> bytes:
     """Poll ``GET /papers/jobs/{id}`` (queued, running, succeeded or failed) with a growing
     delay, then fetch ``/result``. A 409 from ``/result`` means not finished yet: keep
-    polling. A status poll that gets no answer, or a 502, 503 or 504, is tolerated a few
-    times in a row.
+    polling. A status poll or a result fetch that gets no answer, or a 502, 503 or 504, is
+    tolerated a few times in a row (the job is done on the server: giving up on one hiccup
+    would lose a paper that already counted against a quota).
 
     The job path is built from the job id and the configured address; the ``status_url`` in
     the server's answer is not followed, which keeps the token on the host it was meant for.
     """
     job_url = _url_append(sess.api_url, "papers", "jobs", quote(job_id, safe=""))
-    doing = f"checking job {_clean(job_id, 60)}"
-    fetching = f"fetching the result of job {_clean(job_id, 60)}"
+    shown = _clean(job_id, 60)  # the id comes from the server: no control characters
+    doing = f"checking job {shown}"
+    fetching = f"fetching the result of job {shown}"
     delay = poll_interval
     failures = 0
     state: Any = None
+
+    def outage(resp: Any, what: str) -> None:
+        """Count one more failed request in a row; give up after too many."""
+        nonlocal failures
+        failures += 1
+        if failures > _MAX_POLL_FAILURES:
+            if resp is None:
+                raise ConnectionError(f"Failed to perform HTTP request to {sess.api_url}")
+            raise _bibr_error(resp, what, sess.api_key)
+
     while True:
         resp = _bibr_call(sess, "GET", job_url, doing, allow_no_response=True, timeout=30)
-        if resp is None or resp.status_code in (502, 503, 504):
-            failures += 1
-            if failures > _MAX_POLL_FAILURES:
-                if resp is None:
-                    raise ConnectionError(f"Failed to perform HTTP request to {sess.api_url}")
-                raise _bibr_error(resp, doing, sess.api_key)
+        if _unavailable(resp):
+            outage(resp, doing)
         elif resp.status_code >= 400:
             raise _bibr_error(resp, doing, sess.api_key)
         else:
-            failures = 0
             status = _json_object(resp)
             state = status.get("status")
             if state == "failed":
                 error = _job_error(status)
-                logger("convert_bibr", {"job_id": job_id, "error": error})
-                raise RuntimeError(f"Job {job_id} failed: {error}")
+                logger("convert_bibr", {"job_id": shown, "error": error})
+                raise RuntimeError(f"Job {shown} failed: {error}")
             if state == "succeeded":
                 rresp = _bibr_call(
-                    sess, "GET", _url_append(job_url, "result"), fetching, timeout=300
+                    sess,
+                    "GET",
+                    _url_append(job_url, "result"),
+                    fetching,
+                    allow_no_response=True,
+                    timeout=300,
                 )
-                if rresp.status_code == 200:
+                if rresp is not None and rresp.status_code == 200:
                     return _bibr_result(rresp)
-                if rresp.status_code != 409:
+                if _unavailable(rresp):
+                    outage(rresp, fetching)  # the failures of the polls in between do not reset it
+                elif rresp.status_code != 409:
                     raise _bibr_error(rresp, fetching, sess.api_key)
+                else:
+                    failures = 0
+            else:
+                failures = 0
         if sess.elapsed >= sess.timeout:
-            logger("convert_bibr", {"job_id": job_id, "error": "timeout"})
+            logger("convert_bibr", {"job_id": shown, "error": "timeout"})
             raise TimeoutError(
-                f"Job {job_id} timed out after {as_character(sess.timeout)}s "
+                f"Job {shown} timed out after {as_character(sess.timeout)}s "
                 f"(last status: {as_character(state) if state is not None else ''}); "
-                "it may still finish on the server"
+                "it may still finish on the server, and counts against your limit on active "
+                "jobs there until it does"
             )
         # the last wait ends at the deadline, so that one final poll can still see the job done
         sess.sleep(min(delay, max(sess.timeout - sess.elapsed, 0.0)))
@@ -571,12 +633,14 @@ def convert_bibr(
     * ``"bibr"``: the job API of ``bibr serve`` and of the hosted service in front of it
       (bibr-gate): ``POST /papers/jobs``, poll ``/papers/jobs/{id}``, fetch ``/result``.
       Address and token come from ``api_url``/``api_key`` or ``BIBR_URL``/``BIBR_API_KEY``
-      (default address ``http://localhost:8000``, no token). A token is never sent over
-      plain http, except to localhost, 127.0.0.1 and ::1.
+      (default address ``http://localhost:8000``, no token; ``BIBR_API_URL`` is read here
+      too, after ``BIBR_URL``). A token is never sent over plain http, except to localhost
+      and loopback addresses (127.0.0.1, ::1). ``poll_interval`` must be positive.
 
-    ``backend="auto"`` uses ``"bibr"`` when ``BIBR_URL`` (or ``BIBR_API_URL``) is set and
-    no ``api_url`` is given, or when only ``BIBR_API_KEY`` is set; else ``"scivrs"``
-    when an API key is given or ``SCIVRS_API_KEY`` is set; else ``"selfhosted"``.
+    ``backend="auto"`` uses ``"bibr"`` when ``BIBR_URL`` is set and no ``api_url`` is given,
+    or when ``BIBR_API_KEY`` is the only key there is (no ``api_key`` argument, no
+    ``SCIVRS_API_KEY``); else ``"scivrs"`` when an API key is given or ``SCIVRS_API_KEY``
+    is set; else ``"selfhosted"``. ``BIBR_API_URL`` alone does not pick a backend.
 
     A 429 answer (``"bibr"`` and ``"selfhosted"``) is retried after its ``Retry-After``
     seconds, up to ``max_retries`` times and never waiting more than ``max_retry_wait``
@@ -611,6 +675,11 @@ def convert_bibr(
     # once, before any file: a list would otherwise log the same refusal for each file
     if backend == "bibr" or (backend == "selfhosted" and api_key):
         _check_bibr_target(api_url, api_key)
+    if backend == "bibr" and not 0 < poll_interval < math.inf:  # NaN fails this too
+        raise ValueError(
+            "poll_interval must be a positive number of seconds (0 would poll the server in "
+            f"a tight loop), not {poll_interval!r}."
+        )
 
     paths: list[str] = (
         [os.fspath(file_path)]
@@ -697,8 +766,12 @@ def convert_bibr(
 
 def _auto_backend(api_key: str | None, api_url: str | None, env_key: str) -> str:
     """The ``backend="auto"`` choice (see :func:`convert_bibr`). Arguments beat the
-    environment: a ``BIBR_*`` variable picks ``"bibr"`` only for what was not passed."""
-    if api_url is None and (_bibr_env_url() or (api_key is None and _env(BIBR_KEY_ENV))):
+    environment: a ``BIBR_*`` variable picks ``"bibr"`` only for what was not passed, and a
+    ``BIBR_API_KEY`` alone does not take over from a ``SCIVRS_API_KEY``, which chose the
+    platform before the ``"bibr"`` backend existed."""
+    if api_url is None and (
+        _bibr_steering_url() or (api_key is None and not env_key and _env(BIBR_KEY_ENV))
+    ):
         return "bibr"
     return "scivrs" if api_key is not None or env_key else "selfhosted"
 

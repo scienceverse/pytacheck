@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from pathlib import Path
 from typing import Any
 
@@ -69,8 +70,9 @@ class Recorder:
     *states* are the statuses successive polls of a job report (the last one repeats);
     *submit_errors* are answers (or exceptions) the POST routes give before they accept a
     document; *poll_errors* the same for status polls; *result_409* is how many result
-    requests answer 409 even for a finished job; *job_id* and *status_url* are what an
-    accepted submission returns.
+    requests answer 409 even for a finished job; *result_errors* are answers (or exceptions)
+    the result request gives before it serves the paper; *job_id* and *status_url* are what
+    an accepted submission returns.
     """
 
     def __init__(
@@ -82,6 +84,7 @@ class Recorder:
         submit_errors: list[httpx.Response | Exception] | None = None,
         poll_errors: list[httpx.Response | Exception] | None = None,
         result_409: int = 0,
+        result_errors: list[httpx.Response | Exception] | None = None,
         error: dict[str, Any] | None = None,
         error_status: int = 422,
         job_id: str = "job-1",
@@ -97,6 +100,7 @@ class Recorder:
         self.submit_errors = list(submit_errors or [])
         self.poll_errors = list(poll_errors or [])
         self.result_409 = result_409
+        self.result_errors = list(result_errors or [])
         self.error = error or {
             "message": "The model ran out of tokens",
             "error_code": "llm_truncated",
@@ -169,6 +173,8 @@ class Recorder:
             if state == "failed":
                 body["error"] = self.error
             return httpx.Response(200, json=body)
+        if self.result_errors:
+            return _scripted(self.result_errors.pop(0))
         if state in ("queued", "running") or self.result_409 > 0:
             self.result_409 -= 1
             return httpx.Response(409, json={"detail": "job not finished", "status": state})
@@ -390,6 +396,20 @@ def test_bibr_environment_names(pdf: Path, tmp_path: Path, monkeypatch: pytest.M
     assert rec.urls[0] == "https://first.example/papers/jobs"
 
 
+def test_bibr_api_url_alone_does_not_pick_a_backend(
+    server: Recorder, pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """BIBR_API_URL is set for bibr's own notebooks, so it must not move backend="auto"."""
+    monkeypatch.setenv("BIBR_API_URL", "http://192.168.1.20:8000")
+    monkeypatch.setenv("BIBR_API_KEY", TOKEN)
+    convert_bibr(pdf, tmp_path, backend="auto", api_url=SELFHOSTED_URL)  # nothing is refused
+    server.urls.clear()
+    monkeypatch.setenv("SCIVRS_API_KEY", "sv_test")  # the platform user's setup, as before
+    convert_bibr(pdf, tmp_path)
+    assert server.urls[0] == f"{SCIVRS_URL}/jobs"
+    monkeypatch.delenv("SCIVRS_API_KEY")
+
+
 def test_auto_backend_and_bibr_environment(
     server: Recorder, pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -405,8 +425,16 @@ def test_auto_backend_and_bibr_environment(
     convert_bibr(pdf, tmp_path, api_url="http://localhost:9000")
     assert server.urls[0] == "http://localhost:9000/jobs"
 
-    # BIBR_API_KEY alone: bibr serve on this machine, with the token (loopback http is fine)
+    # BIBR_API_KEY alone (no BIBR_URL): a SCIVRS_API_KEY chose the platform before the "bibr"
+    # backend existed, and still does
     monkeypatch.delenv("BIBR_URL")
+    server.urls.clear()
+    convert_bibr(pdf, tmp_path)
+    assert server.urls[0] == f"{SCIVRS_URL}/jobs"
+
+    # ... and where there is no other key it is bibr serve on this machine, with the token
+    # (loopback http is fine)
+    monkeypatch.delenv("SCIVRS_API_KEY")
     server.urls.clear()
     server.headers.clear()
     convert_bibr(pdf, tmp_path)
@@ -486,6 +514,35 @@ def test_bibr_429_on_a_status_poll(pdf: Path, tmp_path: Path, sleeps: list[float
     assert sleeps[0] == 5
 
 
+def test_bibr_host_reset_from_another_caller_is_bounded(
+    pdf: Path, tmp_path: Path, sleeps: list[float], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The shared layer remembers a 429 that any caller got (the readiness probe retries one)
+    and sleeps until the reset before every request to the host: bound it like a Retry-After."""
+    import pytacheck.http as http
+
+    monkeypatch.setattr(http, "_host_reset", {})
+    http._record_reset("bibr.example", time.time() + 7200)
+    rec = Recorder()
+    with _serve(rec), pytest.raises(BibrRequestError, match=r"asked to wait 7[12]\d\d s") as err:
+        _bibr(pdf, tmp_path, timeout=10**6)
+    assert err.value.status_code == 429
+    assert err.value.retry_after is not None and err.value.retry_after > 7000
+    assert rec.urls == []  # nothing was sent
+    assert sleeps == []
+
+    # within the bounds it is slept here, and used up from the session's budget
+    monkeypatch.setattr(http, "_host_reset", {})
+    http._record_reset("bibr.example", time.time() + 30)
+    with _serve(Recorder()):
+        assert Path(_bibr(pdf, tmp_path)).exists()
+    assert 29 < sleeps[0] <= 30
+    monkeypatch.setattr(http, "_host_reset", {})
+    http._record_reset("bibr.example", time.time() + 30)
+    with _serve(Recorder()), pytest.raises(BibrRequestError, match="asked to wait"):
+        _bibr(pdf, tmp_path, timeout=20)  # 30 s would overrun the whole timeout
+
+
 def test_retry_after_forms() -> None:
     import email.utils
     import time
@@ -539,10 +596,49 @@ def test_bibr_failed_job(pdf: Path, tmp_path: Path) -> None:
 
 def test_bibr_timeout(pdf: Path, tmp_path: Path, sleeps: list[float]) -> None:
     with _serve(Recorder(states=("queued",))):
-        with pytest.raises(TimeoutError, match=r"timed out after 10s \(last status: queued\)"):
+        with pytest.raises(
+            TimeoutError, match=r"timed out after 10s \(last status: queued\)"
+        ) as err:
             _bibr(pdf, tmp_path, api_key=None, poll_interval=2, timeout=10)
+    # the job runs on: it keeps one of the user's active-job slots until it ends
+    assert "limit on active jobs" in str(err.value)
     assert sleeps == [2, 3, 4.5, 0.5]  # the last wait ends at the deadline
     assert sum(sleeps) == 10
+
+
+def test_bibr_server_text_is_clean_in_failure_and_timeout(pdf: Path, tmp_path: Path) -> None:
+    """The job id comes from the server: control characters must not reach the messages."""
+    dirty = "j\x1b[2J\nFAKE LINE"
+    with _serve(Recorder(job_id=dirty, states=("failed",))):
+        with pytest.raises(RuntimeError, match=r"Job j \[2J FAKE LINE failed") as err:
+            _bibr(pdf, tmp_path, api_key=None)
+    assert str(err.value).isprintable()
+    with _serve(Recorder(job_id=dirty, states=("queued",))):
+        with pytest.raises(TimeoutError, match=r"Job j \[2J FAKE LINE timed out") as err:
+            _bibr(pdf, tmp_path, api_key=None, timeout=1)
+    assert str(err.value).isprintable()
+
+
+@pytest.mark.parametrize("poll_interval", [0, -1, float("nan"), float("inf")])
+def test_bibr_poll_interval_must_be_positive(
+    poll_interval: float, pdf: Path, tmp_path: Path
+) -> None:
+    """0 polled the server in a tight loop (10 000 requests a second) until the timeout."""
+    rec = Recorder()
+    with _serve(rec), pytest.raises(ValueError, match="poll_interval must be a positive"):
+        _bibr(pdf, tmp_path, poll_interval=poll_interval)
+    assert rec.urls == []  # refused before anything is sent
+    with _serve(Recorder(states=("succeeded",))):
+        assert Path(_bibr(pdf, tmp_path, poll_interval=0.01)).exists()
+
+
+def test_bibr_session_repr_keeps_the_token_out() -> None:
+    from pytacheck.io.bibr_convert import _Session
+
+    sess = _Session(HOSTED_URL, TOKEN, 600, 5, 120)
+    assert TOKEN not in repr(sess)
+    assert HOSTED_URL in repr(sess)
+    assert sess.headers["Authorization"] == f"Bearer {TOKEN}"
 
 
 def test_bibr_unknown_status_keeps_polling(pdf: Path, tmp_path: Path) -> None:
@@ -646,6 +742,55 @@ def test_bibr_flaky_polls_are_tolerated(pdf: Path, tmp_path: Path, sleeps: list[
     assert Path(out).exists()
 
 
+def test_bibr_flaky_result_fetch_is_tolerated(
+    pdf: Path, tmp_path: Path, sleeps: list[float]
+) -> None:
+    """The job is done on the server (and counted against a quota): one 502 or one timeout
+    on the fetch must not throw the paper away."""
+    for hiccup in (
+        httpx.Response(502, json={"error": "upstream_unavailable"}),
+        httpx.Response(503),
+        httpx.Response(504),
+        httpx.ReadTimeout("slow"),
+        httpx.ConnectError("boom"),
+    ):
+        rec = Recorder(result_errors=[hiccup])
+        with _serve(rec):
+            out = _bibr(pdf, tmp_path)
+        assert json.loads(Path(out).read_bytes()) == PAPER
+        assert len([u for u in rec.urls if u.endswith("/result")]) == 2, hiccup
+        assert len(rec.posts) == 1  # the file was uploaded once
+
+    # a few in a row are fine too, mixed with 409
+    rec = Recorder(result_errors=[httpx.Response(502)] * 3 + [httpx.ConnectError("boom")])
+    with _serve(rec):
+        assert Path(_bibr(pdf, tmp_path)).exists()
+
+
+def test_bibr_result_fetch_gives_up_on_a_dead_server(pdf: Path, tmp_path: Path) -> None:
+    down = [httpx.Response(502, json={"error": "upstream_unavailable"})] * 6
+    rec = Recorder(result_errors=down)
+    with _serve(rec):
+        with pytest.raises(
+            BibrRequestError, match="HTTP 502 Bad Gateway while fetching the result"
+        ):
+            _bibr(pdf, tmp_path)
+    # the polls in between succeed, yet the failed fetches still add up (they were not reset)
+    assert len([u for u in rec.urls if u.endswith("/result")]) == 6
+    gone: list[httpx.Response | Exception] = [httpx.ConnectError("boom")] * 6
+    with _serve(Recorder(result_errors=gone)):
+        with pytest.raises(ConnectionError, match="Failed to perform HTTP request"):
+            _bibr(pdf, tmp_path)
+
+
+def test_bibr_result_fetch_errors_that_are_not_outages_raise(pdf: Path, tmp_path: Path) -> None:
+    rec = Recorder(result_errors=[httpx.Response(404, json={"detail": "job not found"})])
+    with _serve(rec), pytest.raises(BibrRequestError, match="expired or was evicted") as err:
+        _bibr(pdf, tmp_path)
+    assert err.value.status_code == 404
+    assert len([u for u in rec.urls if u.endswith("/result")]) == 1  # not retried
+
+
 def test_bibr_polls_give_up_on_a_dead_server(pdf: Path, tmp_path: Path) -> None:
     down = [httpx.Response(502, json={"error": "upstream_unavailable"})] * 6
     with _serve(Recorder(poll_errors=down)):
@@ -710,6 +855,7 @@ def test_bibr_submission_without_a_job_id(pdf: Path, tmp_path: Path) -> None:
         "http://192.168.1.20:8000",
         "http://10.0.0.5",
         "http://localhost.example.com",
+        "http://bibr.localhost",  # a resolver may send *.localhost anywhere
         "http://0.0.0.0:8000",
     ],
 )
@@ -740,7 +886,7 @@ def test_bibr_plain_http_refusal_comes_from_the_environment_too(
         "http://127.0.0.1:8001",
         "http://127.5.6.7",
         "http://[::1]:8001",
-        "http://bibr.localhost",
+        "http://localhost.:8001",
         "https://bibr.example",
         "https://10.0.0.5:8443",
         f"{HOSTED_URL}/prefix",
@@ -907,6 +1053,53 @@ def test_convert_finds_a_local_bibr_serve(
         out = convert(pdf, tmp_path)
     assert json.loads(Path(out).read_bytes()) == PAPER
     assert rec.urls == [f"{SELFHOSTED_URL}/ready", f"{SELFHOSTED_URL}/papers/extract"]
+
+
+def test_convert_local_bibr_serve_is_not_the_platform(
+    pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A platform user (SCIVRS_API_KEY) with a bibr serve on this machine: the server that
+    was found takes the synchronous request, not the platform's /jobs queue (405 on bibr)."""
+    from pytacheck.io.convert import convert
+
+    monkeypatch.setenv("SCIVRS_API_KEY", "sv_test")
+    rec = Recorder()
+    routes = {
+        ("GET", f"{SELFHOSTED_URL}/ready"): rec,
+        ("POST", f"{SELFHOSTED_URL}/papers/extract"): rec,
+    }
+    with api("apis", routes=routes):
+        out = convert(pdf, tmp_path)
+    assert json.loads(Path(out).read_bytes()) == PAPER
+    assert rec.urls == [f"{SELFHOSTED_URL}/ready", f"{SELFHOSTED_URL}/papers/extract"]
+
+    # a backend that was asked for stays: the caller's word beats the guess
+    rec = Recorder()
+    local = re.compile(r"http://localhost:8000/.*")
+    with api("apis", routes={("GET", local): rec, ("POST", local): rec}):
+        convert(pdf, tmp_path, backend="bibr")
+    assert rec.urls[1] == f"{SELFHOSTED_URL}/papers/jobs"
+
+
+def test_convert_ignores_bibr_api_url(
+    pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """BIBR_API_URL (set for bibr's own notebooks) must not steer convert(): a LAN address
+    with a key would be refused, and the message would name BIBR_URL."""
+    from pytacheck.io.convert import convert
+
+    monkeypatch.setenv("BIBR_API_URL", "http://192.168.1.20:8000")
+    monkeypatch.setenv("BIBR_API_KEY", TOKEN)
+    rec = Recorder()
+    routes = {
+        ("GET", f"{SELFHOSTED_URL}/ready"): rec,
+        ("POST", f"{SELFHOSTED_URL}/papers/extract"): rec,
+    }
+    with api("apis", routes=routes) as router:
+        out = convert(pdf, tmp_path)
+    assert json.loads(Path(out).read_bytes()) == PAPER
+    assert rec.urls == [f"{SELFHOSTED_URL}/ready", f"{SELFHOSTED_URL}/papers/extract"]
+    assert not any("192.168.1.20" in str(call.request.url) for call in router.calls)
 
 
 def test_multiple_files_and_failures(server: Recorder, tmp_path: Path, fixtures_dir: Path) -> None:
