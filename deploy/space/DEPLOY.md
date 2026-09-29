@@ -9,7 +9,8 @@ This is for a link that a few people open in a browser, with nothing to install.
 3. In the `Dockerfile`, or as a build variable named `REF` in the Space settings, set `REF` to the commit of pytacheck to install. Use a full commit hash.
 4. In the Space settings, add these secrets:
    - `METACHECK_APP_TOKENS`: one access token per person, separated by commas. Each token has at least 32 characters.
-   - `SCIVRS_API_KEY` (optional): a key for the bibr service, used for PDFs.
+   - `SCIVRS_API_KEY` (optional): a key for the bibr service. People who choose bibr to read their PDF then need no key of their own. Without it, each person types their own key; it is used for that check only and never saved on the server.
+   - `PYTACHECK_BIBR_URL` (optional): the address of the bibr service. Without it, the app takes the address from metacheck's public server list.
    - `OSF_PAT` (optional): an OSF token for the checks that look up OSF pages.
 5. The Space sets `SPACE_HOST` itself, and the app allows that host name only.
 
@@ -37,7 +38,7 @@ Remove that person's token from `METACHECK_APP_TOKENS` and restart the Space. Th
 
 ## What the server keeps
 
-An uploaded paper and its report are deleted when the check ends. The report goes to the browser as a download link inside the page. The server keeps no log of tokens or papers. At most 2 checks run at a time and at most 10 wait. A check that takes longer than `METACHECK_APP_JOB_TIMEOUT` seconds (default 900) is stopped and its process ended, and the person gets a plain message.
+An uploaded paper and its report are deleted when the check ends. The data check (on unless a person unticks it) downloads the data files a paper links to; those files are public, and they are kept in the container's cache folder for the next run until the container is replaced. The data check is part of the run, so the time limit below covers it. The report goes to the browser as a download link inside the page. The server keeps no log of tokens or papers. At most 2 checks run at a time and at most 10 wait. A check that takes longer than `METACHECK_APP_JOB_TIMEOUT` seconds (default 900) is stopped and its process ended, and the person gets a plain message.
 
 ## Any other host
 

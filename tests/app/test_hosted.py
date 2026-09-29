@@ -294,7 +294,7 @@ def test_limits_are_two_runs_and_ten_waiting() -> None:
     assert hosting.sweep(10)[1] > 6 * 10
     assert blocks.delete_cache == hosting.sweep(900)
     # one shared limit for both buttons: each listener would otherwise get its own
-    clicks = [fn for fn in blocks.fns.values() if fn.targets and fn.targets[0][1] == "click"]
+    clicks = [fn for fn in blocks.fns.values() if fn.name in ("on_check", "on_demo")]
     assert len(clicks) == 2
     assert {fn.concurrency_id for fn in clicks} == {"paper"}
     assert {fn.concurrency_limit for fn in clicks} == {2}
@@ -309,9 +309,13 @@ def test_no_state_file_is_written(client: TestClient, state_dir: Path) -> None:
 # --- runs ---------------------------------------------------------------------------
 
 
+#: the other inputs of both buttons: online, data check, PDF reader, bibr key, remember
+SETTINGS = [False, False, "grobid", "", False]
+
+
 def _join(client: TestClient, fn_index: int, path: str, session: str) -> str:
     body = {
-        "data": [{"path": path, "meta": {"_type": "gradio.FileData"}}, False],
+        "data": [{"path": path, "meta": {"_type": "gradio.FileData"}}, *SETTINGS],
         "fn_index": fn_index,
         "session_hash": session,
     }
@@ -327,12 +331,16 @@ def _join(client: TestClient, fn_index: int, path: str, session: str) -> str:
 
 def _fn_index(client: TestClient) -> int:
     deps = client.get("/config").json()["dependencies"]
-    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 2)
+    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 6)
     return int(dep["id"])
 
 
-def _upload(client: TestClient, extra: str = "") -> str:
-    """An upload; a different ``extra`` makes a different file (Gradio names it by its hash)."""
+def _upload(client: TestClient, extra: str) -> str:
+    """An upload; a different ``extra`` makes a different file (Gradio names it by its hash).
+
+    Each test uses its own ``extra``: tests in other workers delete their uploads, and an
+    upload with the same content would be the same file.
+    """
     body = pc.demofile("json").read_bytes() + extra.encode()
     files = {"files": ("paper.json", body, "application/json")}
     (path,) = client.post("/gradio_api/upload", files=files).json()
@@ -341,7 +349,7 @@ def _upload(client: TestClient, extra: str = "") -> str:
 
 def test_a_run_leaves_nothing_behind(client: TestClient) -> None:
     client.get(f"/?token={TOKEN_A}")
-    path = _upload(client)
+    path = _upload(client, " " * 11)  # whitespace, so that the JSON stays valid
     assert Path(path).exists()
     events = _join(client, _fn_index(client), path, "h1")
     assert "Ran 16 checks" in events
@@ -351,11 +359,11 @@ def test_a_run_leaves_nothing_behind(client: TestClient) -> None:
 
 
 def test_a_run_over_the_time_limit_gets_a_plain_message(env: pytest.MonkeyPatch) -> None:
-    env.setattr(ui, "check_paper", lambda *_a, **_k: time.sleep(30))
+    env.setattr(ui, "begin", lambda *_a, **_k: time.sleep(30))
     tight = create_hosted_app(PORT + 1, config(job_timeout=0.5))
     with TestClient(tight, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
-        path = _upload(tc)
+        path = _upload(tc, "h2")
         start = time.perf_counter()
         events = _join(tc, _fn_index(tc), path, "h2")
         assert time.perf_counter() - start < 10
@@ -370,6 +378,13 @@ def _analysis(*_a: Any, **_k: Any) -> Any:
     return Analysis("x", [], "<p>x</p>", Path("x_report.html"), 0.1)
 
 
+def _started(*_a: Any, **_k: Any) -> Any:
+    """What ``begin`` gives back, for a run without the data check."""
+    from types import SimpleNamespace
+
+    return SimpleNamespace(analysis=_analysis())
+
+
 def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch) -> None:
     running = multiprocessing.Value("i", 0)
     peak = multiprocessing.Value("i", 0)
@@ -381,18 +396,18 @@ def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch) -> No
         time.sleep(0.6)
         with running.get_lock():
             running.value -= 1
-        return _analysis()
+        return _started()
 
-    env.setattr(ui, "check_paper", counted)
+    env.setattr(ui, "begin", counted)
     shared = create_hosted_app(PORT + 2, config())
     answers: list[str] = []
     tc = TestClient(shared, base_url=BASE, follow_redirects=False)
     tc.__enter__()
     tc.get(f"/?token={TOKEN_A}")
     deps = tc.get("/config").json()["dependencies"]
-    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 2)
-    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 1)
-    uploads = [_upload(tc, str(n)) for n in range(3)]
+    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 6)
+    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 5)
+    uploads = [_upload(tc, f"shared{n}") for n in range(3)]
 
     def click(button: str, number: int) -> None:
         if button == "check":
@@ -418,7 +433,7 @@ def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch) -> No
 
 
 def _join_demo(client: TestClient, fn_index: int, session: str) -> str:
-    body = {"data": [False], "fn_index": fn_index, "session_hash": session}
+    body = {"data": SETTINGS, "fn_index": fn_index, "session_hash": session}
     assert client.post("/gradio_api/queue/join", json=body).status_code == 200
     text = ""
     with client.stream("GET", "/gradio_api/queue/data", params={"session_hash": session}) as s:
@@ -430,19 +445,91 @@ def _join_demo(client: TestClient, fn_index: int, session: str) -> str:
 
 
 def test_the_upload_field_is_cleared_after_a_run(env: pytest.MonkeyPatch) -> None:
-    env.setattr(ui, "check_paper", _analysis)
+    env.setattr(ui, "begin", _started)
     shared = create_hosted_app(PORT + 3, config())
     with TestClient(shared, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
         fn = _fn_index(tc)
-        events = _join(tc, fn, _upload(tc), "h3")
+        events = _join(tc, fn, _upload(tc, "h3"), "h3")
         done = next(ln for ln in events.split("data: ") if '"process_completed"' in ln)
         output = json.loads(done)["output"]["data"]
-        assert len(output) == 6 and output[-1] is None
+        assert len(output) == 8 and output[-1] is None
         # a second click on a file that is gone says so in plain words
-        gone = _upload(tc)
+        gone = _upload(tc, "h4")
         Path(gone).unlink()
         assert ui.EXPIRED in _join(tc, fn, gone, "h4")
+
+
+def test_a_hosted_run_includes_the_data_check(env: pytest.MonkeyPatch) -> None:
+    """On a shared server the data check is part of the run: one answer, with its row."""
+    from types import SimpleNamespace
+
+    from pytacheck.app.run import Analysis, Row
+
+    seen: dict[str, Any] = {}
+
+    class Job:
+        message = "Downloading data.csv"
+
+        def __init__(self) -> None:
+            self.waits = 0
+
+        def start(self) -> None:
+            seen["started"] = True
+
+        def wait(self, _timeout: float) -> bool:
+            self.waits += 1
+            return self.waits > 1
+
+    def begin(*_a: Any, **kw: Any) -> Any:
+        seen.update(kw)
+        row = Row("data_check", "Data check", "Experimental", "2 data files checked")
+        done = Analysis("x", [row], "<p>x</p>", Path("x_report.html"), 0.1)
+        return SimpleNamespace(
+            analysis=_analysis(), data_job=Job, finish=lambda job: done if job.waits else None
+        )
+
+    env.setattr(ui, "begin", begin)
+    shared = create_hosted_app(PORT + 4, config())
+    with TestClient(shared, base_url=BASE, follow_redirects=False) as tc:
+        tc.get(f"/?token={TOKEN_A}")
+        body = {
+            "data": [
+                {"path": _upload(tc, "h5"), "meta": {"_type": "gradio.FileData"}},
+                False,
+                True,  # the data check
+                "grobid",
+                "",
+                False,
+            ],
+            "fn_index": _fn_index(tc),
+            "session_hash": "h5",
+        }
+        assert tc.post("/gradio_api/queue/join", json=body).status_code == 200
+        text = ""
+        with tc.stream("GET", "/gradio_api/queue/data", params={"session_hash": "h5"}) as s:
+            for line in s.iter_lines():
+                text += line
+                if '"process_completed"' in line:
+                    break
+    done = next(ln for ln in text.split("data: ") if '"process_completed"' in ln)
+    output = json.loads(done)["output"]["data"]
+    assert "2 data files checked" in json.dumps(output)
+    assert "Checking the shared data files" in text  # its progress reached the page
+    assert "Downloading data.csv" in text
+    assert output[-3] == "" and output[-2]["visible"] is False  # no status line, no Stop
+
+
+def test_a_shared_server_never_offers_a_saved_key(env: pytest.MonkeyPatch) -> None:
+    from pytacheck.app import bibr
+
+    env.delenv(bibr.KEY_ENV, raising=False)
+    bibr.save_key("saved-key-1234")
+    text = json.dumps(ui.build_app(hosted=config()).get_config_file())
+    assert "saved on this" not in text and "1234" not in text
+    local = json.dumps(ui.build_app().get_config_file())
+    assert "Remember the key on this computer" in local
+    assert bibr.resolve_key("", remembered=False) == ""
 
 
 def _double(x: int, report: Any = None) -> int:

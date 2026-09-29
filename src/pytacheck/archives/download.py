@@ -500,10 +500,11 @@ def _perform_once(
         return _file_response(method, url, path)
     headers = dict(spec.get("headers") or {})
     to = httpx.Timeout(timeout if timeout is not None else 60.0, connect=20.0)
-    client = http.client()
+    client = http.client_for(url)
     follow = not spec.get("unrestricted_auth")
     try:
         for _hop in range(20):
+            http.check_interrupt()
             req = client.build_request(method, url, headers=headers, timeout=to)
             resp = client.send(req, stream=True, follow_redirects=follow)
             if not follow and resp.is_redirect and resp.next_request is not None:
@@ -517,6 +518,7 @@ def _perform_once(
             if path is not None:
                 with open(path, "wb") as fh:
                     for chunk in resp.iter_bytes(chunk_size=1 << 20):
+                        http.check_interrupt()
                         fh.write(chunk)
             else:
                 resp.read()
@@ -653,7 +655,9 @@ def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
     """
     spec = dict(req)
     url = str(spec.get("url") or "")
-    if grepl(r"osf\.io", url, ignore_case=True):
+    host = (_host(url) or "").lower()
+    if host == "osf.io" or host.endswith(".osf.io"):
+        # the host, not the whole URL: a path or a look-alike host must not get the token
         from pytacheck.archives.osf_helpers import osf_pat
 
         try:

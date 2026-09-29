@@ -1,4 +1,4 @@
-"""Which checks the demo app runs, in four fixed sets."""
+"""Which checks the demo app runs, in five fixed sets."""
 
 from __future__ import annotations
 
@@ -28,11 +28,17 @@ ONLINE: dict[str, str] = {
     "ref_pubpeer": "asks PubPeer about the cited papers",
 }
 
+#: What the "shared data files" box adds. It is experimental, needs no AI and no key, and takes
+#: minutes on the demo paper (227 s cold, 39 s with the download cache), so it runs after the
+#: other checks and its result comes later.
+DATA: dict[str, str] = {
+    "data_check": "downloads the paper's shared data files (OSF and other repositories) and checks them",
+}
+
 #: Checks the demo never runs, each with the reason.
 NEVER: dict[str, str] = {
     "code_check": "downloads code repositories (333 s on the demo paper)",
     "repo_check": "downloads repository listings (46 s on the demo paper)",
-    "data_check": "downloads data files and needs a key for an external service",
     "codebook_check": "downloads data files and needs a key for an external service",
     "psychds_check": "downloads data files and needs a key for an external service",
     "reproducibility_check": "downloads data files",
