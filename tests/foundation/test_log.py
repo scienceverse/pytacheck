@@ -1,4 +1,4 @@
-"""``logger()`` never fails the caller when the log cannot be written."""
+"""``logger()`` and ``lastlog()`` never fail the caller for a log that cannot be used."""
 
 from __future__ import annotations
 
@@ -71,6 +71,28 @@ def test_the_log_directory_can_be_missing_and_unusable(
     target = log.logger("label", {"a": 1})
     assert target == blocker / "data" / "log" / "pytacheck.log.jsonl"
     assert blocker.read_text() == "not a directory"
+
+
+def test_reading_a_log_that_cannot_be_created_gives_none(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """The log location sits under a plain file, so it can never be made."""
+    blocker = tmp_path / "blocker"
+    blocker.write_text("not a directory")
+    monkeypatch.setenv("PYTACHECK_LOG", str(blocker / "log" / "x.jsonl"))
+    assert log.lastlog() is None
+    assert log.lastlog([1, 2]) is None
+    assert blocker.read_text() == "not a directory"
+
+
+def test_reading_the_default_log_on_an_unusable_data_directory_gives_none(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    blocker = tmp_path / "blocker"
+    blocker.write_text("not a directory")
+    monkeypatch.delenv("PYTACHECK_LOG")
+    monkeypatch.setattr(log.platformdirs, "user_data_dir", lambda *a, **k: str(blocker / "data"))
+    assert log.lastlog() is None
 
 
 @pytest.mark.skipif(
