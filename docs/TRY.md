@@ -48,11 +48,11 @@ The folder is:
 
 Drop in a PDF, a GROBID XML file or a bibr JSON file. Or try the demo paper.
 
-About PDFs: a PDF is turned into text by the public GROBID server at TU Eindhoven (https://grobid.hti.ieis.tue.nl). R metacheck uses the same server. So a PDF you check is sent there. XML and JSON files stay on your computer.
+About PDFs: a PDF is turned into text by the public GROBID server at TU Eindhoven (https://grobid.hti.ieis.tue.nl). R metacheck uses the same server. So a PDF you check is sent there. If that server does not answer, the PDF goes to a public GROBID server hosted on Hugging Face instead. XML and JSON files stay on your computer.
 
 ## Which checks run
 
-- Five checks are validated. Their error rates are shown next to them: "Error rates as published in the documentation of R metacheck 0.3.1. The R version and PDF pipeline they were measured with are not recorded. Not yet re-measured on this version."
+- Five checks are validated. The app says this about them: "Error rates as published in the documentation of R metacheck 0.3.1. The R version and PDF pipeline they were measured with are not recorded. Not yet re-measured on this version."
 - A set of experimental checks also runs. Each one is labelled as experimental.
 - The online checks are optional. They are slower, because they look things up on other servers.
 
