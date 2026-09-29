@@ -250,6 +250,12 @@ def _summary(analysis: Analysis) -> str:
     return f"Ran {n} checks on **{analysis.name}** in {analysis.seconds:.1f} s."
 
 
+def default_reader() -> str:
+    """The reader a page starts with: bibr where this computer supplies the bibr key
+    (``SCIVRS_API_KEY``, as a hosted server does), else GROBID, which needs no key."""
+    return "bibr" if os.environ.get(bibr.KEY_ENV, "").strip() else "grobid"
+
+
 def privacy_text(reader: str, hosted: bool = False) -> str:
     return here(PRIVACY_BIBR if reader == "bibr" else PRIVACY, hosted)
 
@@ -516,18 +522,25 @@ def build_app(
         )
         if hosted:
             gr.Markdown(hosting.HOSTED_NOTE)
-        reader = gr.Radio(READERS, value="grobid", label="Read PDFs with")
-        with gr.Group(visible=False) as key_group:
+        first = default_reader()
+        reader = gr.Radio(READERS, value=first, label="Read PDFs with")
+        with gr.Group(visible=first == "bibr") as key_group:
             key = gr.Textbox(label="Your bibr key", type="password")
             remember = gr.Checkbox(
                 label=here("Remember the key on this computer", shared),
                 value=False,
                 visible=remember_keys,
             )
-            note = gr.Markdown(KEY_ONLY_BIBR)
-            forget = gr.Button("Forget the saved key", size="sm", visible=False)
+            note = gr.Markdown(
+                key_note(remember_keys, shared) if first == "bibr" else KEY_ONLY_BIBR
+            )
+            forget = gr.Button(
+                "Forget the saved key",
+                size="sm",
+                visible=first == "bibr" and remember_keys and bool(bibr.load_key()),
+            )
         # a visitor's own computer is not where the files are checked
-        privacy = gr.Markdown(privacy_text("grobid", shared))
+        privacy = gr.Markdown(privacy_text(first, shared))
         with gr.Row():
             check = gr.Button("Check my paper", variant="primary")
             demo = gr.Button("Try the demo paper")
