@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.statout.stata import (
+from metacheck.statout.stata import (
     _smcl_command_chunks,
     _smcl_export_syntax,
     _smcl_render_line,

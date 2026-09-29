@@ -1,4 +1,4 @@
-"""The helpers of the prereg_check module (``pytacheck.modules._prereg``).
+"""The helpers of the prereg_check module (``metacheck.modules._prereg``).
 
 Expected values were produced by R 4.5 / jsonlite (``fromJSON(simplifyVector =
 TRUE)``) and base R's ``unlist()``, ``c()``, ``paste()`` and ``as.character()``.
@@ -11,8 +11,8 @@ import json
 import pandas as pd
 import pytest
 
-from pytacheck.modules import _prereg as pr
-from pytacheck.modules._prereg import RList, RVec
+from metacheck.modules import _prereg as pr
+from metacheck.modules._prereg import RList, RVec
 
 
 def chr1(x: str) -> RVec:

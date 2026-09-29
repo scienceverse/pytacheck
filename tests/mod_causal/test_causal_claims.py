@@ -3,7 +3,7 @@
 metacheck has no testthat tests for this module. These cover its branches
 offline: the randomization patterns (expected values computed with R), the
 causal-claim branches and traffic lights with a fake ``causal_relations()``,
-and the real :func:`pytacheck.text.causal.causal_relations` against a mocked
+and the real :func:`metacheck.text.causal.causal_relations` against a mocked
 Gradio Space (respx). The parity cases (``parity/cases/mod_causal.yaml``)
 compare the same paths with R.
 """
@@ -19,11 +19,11 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.module import ModuleError
+from metacheck.modules.causal_claims import _EXCLUDE_RE, _INCLUDE_RE
+from metacheck.report.blocks import ReportTable
 from parity.cases import ROOT
-from pytacheck.module import ModuleError
-from pytacheck.modules.causal_claims import _EXCLUDE_RE, _INCLUDE_RE
-from pytacheck.report.blocks import ReportTable
 from tests.mod_causal.parity_support import fake_causal_relations, mk, run_fake_causal, untitled
 
 BASE = "https://lakens-causal-sentences.hf.space/gradio_api/call/predict"
@@ -159,7 +159,7 @@ def test_na_title_is_skipped() -> None:
 
 def test_describes_randomization() -> None:
     # U85: an exclusion removes only its own words; negations do not count
-    from pytacheck.modules.causal_claims import _describes_randomization
+    from metacheck.modules.causal_claims import _describes_randomization
 
     texts = pd.Series(
         [
@@ -248,7 +248,7 @@ def test_paper_list_titles_and_counts_per_paper() -> None:
         calls.append(list(sentence))
         return fake_causal_relations(sentence)
 
-    with mock.patch("pytacheck.text.causal.causal_relations", recording):
+    with mock.patch("metacheck.text.causal.causal_relations", recording):
         res = pc.module_run(papers, "causal_claims")
     # U84: every paper's title is classified (metacheck reads paper$info$title,
     # NULL for a paper list), blank and missing titles are skipped
@@ -334,7 +334,7 @@ def test_with_mocked_space() -> None:
 
 
 def test_any_follows_r_if_any() -> None:
-    from pytacheck.modules.causal_claims import _any
+    from metacheck.modules.causal_claims import _any
 
     assert _any(pd.Series([], dtype="boolean")) is False
     assert _any(pd.Series([False, False], dtype="boolean")) is False
@@ -390,8 +390,8 @@ def test_references_are_not_searched() -> None:
 def test_one_search_equals_rs_two_searches(which: str) -> None:
     """R searches twice (text_search(paper, "random") and text_search(paper));
     the port filters one search: the randomization sentences must be the same."""
-    from pytacheck._r import grepl
-    from pytacheck.modules.causal_claims import _EXCLUDE_RE, _INCLUDE_RE
+    from metacheck._r import grepl
+    from metacheck.modules.causal_claims import _EXCLUDE_RE, _INCLUDE_RE
     from tests.mod_causal.gen_parity_cases import PSYCHSCI
 
     paper = (

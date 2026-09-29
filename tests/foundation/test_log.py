@@ -10,7 +10,7 @@ from pathlib import Path
 import orjson
 import pytest
 
-from pytacheck import log
+from metacheck import log
 
 
 @pytest.fixture(autouse=True)

@@ -12,8 +12,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-import pytacheck as pc
-from pytacheck.papers import Paper
+import metacheck as pc
+from metacheck.papers import Paper
 
 
 def ra_set(p: Paper, table: str, bib_id: int, col: str, value: Any) -> Paper:
@@ -84,7 +84,7 @@ def ra_xrefs(
 
 def ra_report_tables(o: Any) -> list[pd.DataFrame]:
     """The data frames a module's report tables display (``ra_report_tables()``)."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     blocks = o.report if isinstance(o.report, list) else [o.report]
     return [b.data for b in blocks if isinstance(b, ReportTable)]

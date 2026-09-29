@@ -6,7 +6,7 @@
 "cases":
 - "id": "repro_dependencies.library_require"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -14,12 +14,12 @@
       - "require(ggplot2)"
 - "id": "repro_dependencies.namespace_base"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text": "x <- stats::sd(1:10)"
 - "id": "repro_dependencies.base_and_cran"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -27,7 +27,7 @@
       - "library(dplyr)"
 - "id": "repro_dependencies.github_ref"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -35,7 +35,7 @@
       - "remotes::install_github('tidyverse/ggplot2@v3.4.0')"
 - "id": "repro_dependencies.url_source"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -43,7 +43,7 @@
       - "install.packages(\"https://example.org/src/contrib/pkgname_1.0.tar.gz\")"
 - "id": "repro_dependencies.pooled_github_over_cran"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$list":
@@ -52,7 +52,7 @@
         - "remotes::install_github('tidyverse/ggplot2')"
 - "id": "repro_dependencies.pooled_files"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$list":
@@ -79,25 +79,25 @@
         - "library(abc)"
 - "id": "repro_dependencies.null"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$null": true
 - "id": "repro_dependencies.python_lang"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text": "library(dplyr)"
     "lang": "Python"
 - "id": "repro_dependencies.empty"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr": []
 - "id": "repro_dependencies.no_packages"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -105,7 +105,7 @@
       - "y <- x + 2"
 - "id": "repro_dependencies.bioc"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -113,7 +113,7 @@
       - "library(dplyr)"
 - "id": "repro_dependencies.bioc_github"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -121,7 +121,7 @@
       - "remotes::install_github('Bioconductor/edgeR')"
 - "id": "repro_dependencies.mixed"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -136,7 +136,7 @@
       - "library(tools)"
 - "id": "repro_dependencies.two_github_refs"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$chr":
@@ -146,7 +146,7 @@
       - "install.packages('http://x.org/src/foo_1.2.tar.gz')"
 - "id": "repro_format_call_refs.sprintf_resolved"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -154,7 +154,7 @@
       - "d <- read.csv(sprintf(\"%s_data.csv\", wd))"
 - "id": "repro_format_call_refs.sprintf_two_vars"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -164,21 +164,21 @@
       - "x <- read_csv(sprintf(\"%s/%s/x.csv\", wd, wd_data))"
 - "id": "repro_format_call_refs.unresolved_var"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
       - "x <- read.csv(paste0(dir_var, \"/scores.csv\"))"
 - "id": "repro_format_call_refs.paste_first_quoted"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
       - "x <- read.csv(paste0(\"data/\", \"scores.csv\", sep = \"\"))"
 - "id": "repro_format_call_refs.file_path"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -186,7 +186,7 @@
       - "y <- readRDS(file.path(\"%s/m.rds\", base))"
 - "id": "repro_format_call_refs.format_spec_skipped"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -194,28 +194,28 @@
       - "cat(sprintf(\"%05.2f\", x), \"\\n\")"
 - "id": "repro_format_call_refs.no_trailing_args"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
       - "d <- read.csv(sprintf(\"Exp1A_Data.txt\"))"
 - "id": "repro_format_call_refs.nested_parens"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
       - "d <- read.csv(sprintf(\"%s.csv\", paste0(a, b)))"
 - "id": "repro_format_call_refs.unbalanced"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
       - "d <- read.csv(sprintf(\"%s.csv\", wd"
 - "id": "repro_format_call_refs.count_mismatch"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -224,7 +224,7 @@
       - "e <- sprintf(\"%d.csv\", wd)"
 - "id": "repro_format_call_refs.multi_line_and_comments"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -237,7 +237,7 @@
       - "z <- paste0('it''s.csv', dir)"
 - "id": "repro_format_call_refs.escaped_quote"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -245,19 +245,19 @@
       - "read.csv(sprintf(\"a\\\"b%s.csv\", p))"
 - "id": "repro_format_call_refs.empty"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr": []
 - "id": "repro_format_call_refs.null"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$null": true
 - "id": "repro_format_call_refs.backslash_value"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -265,7 +265,7 @@
       - "read.csv(sprintf(\"%s/x.csv\", wd))"
 - "id": "repro_simple_string_vars.basic"
   "r": "metacheck:::.repro_simple_string_vars"
-  "py": "pytacheck.repro.core._repro_simple_string_vars"
+  "py": "metacheck.repro.core._repro_simple_string_vars"
   "args":
     "code_text":
       "$chr":
@@ -279,7 +279,7 @@
       - "b <- \"four\"  "
 - "id": "repro_simple_string_vars.none"
   "r": "metacheck:::.repro_simple_string_vars"
-  "py": "pytacheck.repro.core._repro_simple_string_vars"
+  "py": "metacheck.repro.core._repro_simple_string_vars"
   "args":
     "code_text":
       "$chr":
@@ -287,21 +287,21 @@
       - "y <- f()"
 - "id": "repro_redirect_writes.literal"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
       - "write.csv(x, \"results/out.csv\")"
 - "id": "repro_redirect_writes.named_arg"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
       - "write.csv(x, file = \"../Data/Cleaned/x.csv\", row.names = FALSE)"
 - "id": "repro_redirect_writes.variable"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
@@ -311,7 +311,7 @@
       - "out_rds <- \"models/m.rds\""
 - "id": "repro_redirect_writes.inline_pipe"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
@@ -320,7 +320,7 @@
       - "ggsave(filename = file.path(\"figs\", \"fig1.png\"), plot = p)"
 - "id": "repro_redirect_writes.no_target"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
@@ -331,7 +331,7 @@
       - "fwrite(dt, f(x))"
 - "id": "repro_redirect_writes.several"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
@@ -344,27 +344,27 @@
       - "data.table::fwrite(dt, sprintf(\"%s.tsv\", nm))"
 - "id": "repro_redirect_writes.unbalanced"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
       - "write.csv(x, \"a.csv\""
 - "id": "repro_redirect_writes.empty"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr": []
 - "id": "repro_redirect_writes.none"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
       - "x <- 1"
 - "id": "repro_rewrite_paths.single_match"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "d <- read.csv(\"data/demographics.csv\")"
     "file_name": "ex1/analysis.R"
@@ -378,7 +378,7 @@
         - "ex1/demographics.csv"
 - "id": "repro_rewrite_paths.unmatched"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "d <- read.csv(\"data/not_in_plan.csv\")"
     "file_name": "ex1/analysis.R"
@@ -390,7 +390,7 @@
         - "study-ex1/data/scores_data.csv"
 - "id": "repro_rewrite_paths.study_group"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "d <- read.csv(\"demographics.csv\")"
     "file_name": "ex2/analysis.R"
@@ -407,21 +407,21 @@
         - "ex2/demographics.csv"
 - "id": "repro_rewrite_paths.still_ambiguous"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "d <- read.csv(\"demographics.csv\")"
     "file_name": "shared/analysis.R"
     "plan": *id001
 - "id": "repro_rewrite_paths.ref_names_group"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "d <- read.csv(\"Study2/demographics.csv\")"
     "file_name": "shared/analysis.R"
     "plan": *id001
 - "id": "repro_rewrite_paths.same_target_twice"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "d <- read.csv(\"demographics.csv\")"
     "file_name": "ex1/analysis.R"
@@ -435,7 +435,7 @@
         - "study-ex1/data/study-demographics_data.csv"
 - "id": "repro_rewrite_paths.original_target"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "d <- haven::read_dta(\"math.dta\")"
     "file_name": "ex1/analysis.R"
@@ -452,7 +452,7 @@
         - null
 - "id": "repro_rewrite_paths.original_target_na"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text":
       "$chr":
@@ -462,7 +462,7 @@
     "plan": *id002
 - "id": "repro_rewrite_paths.sprintf_call"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text":
       "$chr":
@@ -477,7 +477,7 @@
         - "study-ex1/data/exp1_data.csv"
 - "id": "repro_rewrite_paths.calls_mixed"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text":
       "$chr":
@@ -502,7 +502,7 @@
         - null
 - "id": "repro_rewrite_paths.paste_sep_call"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text":
       "$chr":
@@ -512,7 +512,7 @@
     "plan": *id003
 - "id": "repro_rewrite_paths.na_and_empty_targets"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text":
       "$chr":
@@ -531,7 +531,7 @@
         - "data/y.csv"
 - "id": "repro_rewrite_paths.python_lang"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "read.csv(\"a.csv\")"
     "file_name": "x.py"
@@ -544,7 +544,7 @@
     "lang": "Python"
 - "id": "repro_rewrite_paths.no_plan"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "read.csv(\"a.csv\")"
     "file_name": "x.R"
@@ -552,7 +552,7 @@
       "$null": true
 - "id": "repro_rewrite_paths.plan_missing_cols"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "read.csv(\"a.csv\")"
     "file_name": "x.R"
@@ -562,7 +562,7 @@
         - "a.csv"
 - "id": "repro_rewrite_paths.no_refs"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text": "x <- 1"
     "file_name": "x.R"
@@ -697,20 +697,20 @@
         "py": "lambda m: m.run_order_full(m.pd.DataFrame({'file_name': ['2.R', '10.R', 'b.R', 'a.R']}))"
 - "id": "repro_run_order.empty"
   "r": "repro_run_order"
-  "py": "pytacheck.repro.core.repro_run_order"
+  "py": "metacheck.repro.core.repro_run_order"
   "args":
     "files":
       "$df":
         "file_name": []
 - "id": "repro_run_order.null"
   "r": "repro_run_order"
-  "py": "pytacheck.repro.core.repro_run_order"
+  "py": "metacheck.repro.core.repro_run_order"
   "args":
     "files":
       "$null": true
 - "id": "repro_normalize_basename.vector"
   "r": "metacheck:::.repro_normalize_basename"
-  "py": "pytacheck.repro.core._repro_normalize_basename"
+  "py": "metacheck.repro.core._repro_normalize_basename"
   "args":
     "b":
       "$chr":
@@ -723,7 +723,7 @@
       - "a.tar.gz"
 - "id": "repro_file_io.reads_writes"
   "r": "repro_file_io"
-  "py": "pytacheck.repro.core.repro_file_io"
+  "py": "metacheck.repro.core.repro_file_io"
   "args":
     "code_text_list":
       "prep.R":
@@ -735,7 +735,7 @@
         - "dat <- read.csv(\"clean.csv\")"
 - "id": "repro_file_io.source"
   "r": "repro_file_io"
-  "py": "pytacheck.repro.core.repro_file_io"
+  "py": "metacheck.repro.core.repro_file_io"
   "args":
     "code_text_list":
       "main.R":
@@ -743,13 +743,13 @@
         - "source(\"helper.R\")"
 - "id": "repro_file_io.empty"
   "r": "repro_file_io"
-  "py": "pytacheck.repro.core.repro_file_io"
+  "py": "metacheck.repro.core.repro_file_io"
   "args":
     "code_text_list":
       "$list": []
 - "id": "repro_file_io.mixed"
   "r": "repro_file_io"
-  "py": "pytacheck.repro.core.repro_file_io"
+  "py": "metacheck.repro.core.repro_file_io"
   "args":
     "code_text_list":
       "a.R":
@@ -772,7 +772,7 @@
         - "data.table::fwrite(d, \"f.csv\")"
 - "id": "repro_file_io.unnamed"
   "r": "repro_file_io"
-  "py": "pytacheck.repro.core.repro_file_io"
+  "py": "metacheck.repro.core.repro_file_io"
   "args":
     "code_text_list":
       "$list":
@@ -782,7 +782,7 @@
         - "write.csv(x, \"a.csv\")"
 - "id": "repro_defined_vars.basic"
   "r": "repro_defined_vars"
-  "py": "pytacheck.repro.core.repro_defined_vars"
+  "py": "metacheck.repro.core.repro_defined_vars"
   "args":
     "code_text_list":
       "a.R":
@@ -792,7 +792,7 @@
         - "assign('z', 3)"
 - "id": "repro_defined_vars.variety"
   "r": "repro_defined_vars"
-  "py": "pytacheck.repro.core.repro_defined_vars"
+  "py": "metacheck.repro.core.repro_defined_vars"
   "args":
     "code_text_list":
       "a.R":
@@ -814,13 +814,13 @@
         - "print(1)"
 - "id": "repro_defined_vars.empty"
   "r": "repro_defined_vars"
-  "py": "pytacheck.repro.core.repro_defined_vars"
+  "py": "metacheck.repro.core.repro_defined_vars"
   "args":
     "code_text_list":
       "$list": []
 - "id": "repro_missing_inputs.absent"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs": "missing.csv"
     "plan":
@@ -829,7 +829,7 @@
       "$null": true
 - "id": "repro_missing_inputs.withheld"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs": "big.csv"
     "plan":
@@ -844,7 +844,7 @@
         - 209715200
 - "id": "repro_missing_inputs.withheld_no_size"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs":
       "$chr":
@@ -864,7 +864,7 @@
         - "abc"
 - "id": "repro_missing_inputs.withheld_missing_size_col"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs": "big.csv"
     "plan":
@@ -877,7 +877,7 @@
         - "big.csv"
 - "id": "repro_missing_inputs.not_downloaded"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs": "notdl.csv"
     "plan":
@@ -890,7 +890,7 @@
         - null
 - "id": "repro_missing_inputs.similar"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs":
       "$chr":
@@ -923,7 +923,7 @@
         - null
 - "id": "repro_missing_inputs.empty"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs":
       "$chr": []
@@ -941,12 +941,12 @@
         "py": "lambda m: m.core.repro_missing_inputs(['demographics.csv', 'gone.csv', 'DEMOGRAPHICS.csv'], plan=None, structure_df=m.pd.DataFrame({'file_name': ['study/demographics.csv', 'gone.csv'], 'file_location': ['tests/repro_core/fixtures/layout/demographics.csv', 'tests/repro_core/fixtures/layout/gone.csv']}))"
 - "id": "repro_content_sniff.json"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text": "{\"x\":{\"material\":\"phong\",\"data\":[1,2,3]}}"
 - "id": "repro_content_sniff.html_doctype"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -954,7 +954,7 @@
       - "<html><body>hi</body></html>"
 - "id": "repro_content_sniff.html_tag"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -962,7 +962,7 @@
       - "</html>"
 - "id": "repro_content_sniff.xml"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -970,7 +970,7 @@
       - "<root></root>"
 - "id": "repro_content_sniff.r_block"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -981,19 +981,19 @@
       - "print(x + y)"
 - "id": "repro_content_sniff.empty"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr": []
 - "id": "repro_content_sniff.null"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$null": true
 - "id": "repro_content_sniff.blank"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -1001,7 +1001,7 @@
       - ""
 - "id": "repro_content_sniff.json_array"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -1012,7 +1012,7 @@
       - "   "
 - "id": "repro_content_sniff.json_small_tail"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -1020,7 +1020,7 @@
       - "#x"
 - "id": "repro_content_sniff.json_long_tail"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
@@ -1028,14 +1028,14 @@
       - "x <- 2"
 - "id": "repro_content_sniff.unclosed"
   "r": "metacheck:::.repro_content_sniff"
-  "py": "pytacheck.repro.core._repro_content_sniff"
+  "py": "metacheck.repro.core._repro_content_sniff"
   "args":
     "code_text":
       "$chr":
       - "{\"a\": [1, 2"
 - "id": "repro_is_jags_model.model_block"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text":
       "$chr":
@@ -1044,7 +1044,7 @@
       - "}"
 - "id": "repro_is_jags_model.model_after_comments"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text":
       "$chr":
@@ -1054,19 +1054,19 @@
       - "}"
 - "id": "repro_is_jags_model.path_component"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text": "x <- 1"
     "file_name": "study1/jags_script/conditional_model.R"
 - "id": "repro_is_jags_model.path_windows"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text": "x <- 1"
     "file_name": "study1\\BUGS_SCRIPT\\m.R"
 - "id": "repro_is_jags_model.calling_reference"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text": "psi ~ dlogis(0,1)"
     "file_name": "model_def.R"
@@ -1076,7 +1076,7 @@
         - "m <- rjags::jags.model(file = \"model_def.R\", data = d)"
 - "id": "repro_is_jags_model.calling_reference_r2jags"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text": "psi ~ dlogis(0,1)"
     "file_name": "models/m1.txt"
@@ -1089,7 +1089,7 @@
         - "fit2 <- run.jags('other.txt')"
 - "id": "repro_is_jags_model.not_referenced"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text": "psi ~ dlogis(0,1)"
     "file_name": "model_def.R"
@@ -1100,7 +1100,7 @@
         - "jags.model(\"other.R\")"
 - "id": "repro_is_jags_model.ordinary"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text":
       "$chr":
@@ -1109,92 +1109,92 @@
     "file_name": "analysis.R"
 - "id": "repro_is_jags_model.empty"
   "r": "metacheck:::.repro_is_jags_model"
-  "py": "pytacheck.repro.core._repro_is_jags_model"
+  "py": "metacheck.repro.core._repro_is_jags_model"
   "args":
     "code_text":
       "$chr": []
 - "id": "repro_bioc_packages"
   "r": "metacheck:::.repro_bioc_packages"
-  "py": "pytacheck.repro.core._repro_bioc_packages"
+  "py": "metacheck.repro.core._repro_bioc_packages"
   "args": {}
 - "id": "repro_common_pkgs"
   "r": "metacheck:::.repro_common_pkgs"
-  "py": "pytacheck.repro.core._repro_common_pkgs"
+  "py": "metacheck.repro.core._repro_common_pkgs"
   "args": {}
 - "id": "repro_classify_install_message.00"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "installation of package 'x' had non-zero exit status"
 - "id": "repro_classify_install_message.01"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "configure: error: libxml2 not found"
 - "id": "repro_classify_install_message.02"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "make: *** [x.o] Error 1"
 - "id": "repro_classify_install_message.03"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "g++: fatal error"
 - "id": "repro_classify_install_message.04"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "Could not resolve host: cloud.r-project.org"
 - "id": "repro_classify_install_message.05"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "Timeout was reached: [cran] Operation timed out"
 - "id": "repro_classify_install_message.06"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "Couldn't connect to server"
 - "id": "repro_classify_install_message.07"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "there is no package called 'Rcpp'"
 - "id": "repro_classify_install_message.08"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "dependency 'abc' is not available for package 'xyz'"
 - "id": "repro_classify_install_message.09"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "package 'foo' is not available for this version of R"
 - "id": "repro_classify_install_message.10"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "package 'foo' was built under R version 4.6.0"
 - "id": "repro_classify_install_message.11"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "installed but package 'foo' is not loadable"
 - "id": "repro_classify_install_message.12"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": ""
 - "id": "repro_classify_install_message.13"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg":
       "$NA": true
 - "id": "repro_classify_install_message.14"
   "r": "metacheck:::.repro_classify_install_message"
-  "py": "pytacheck.repro.core._repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "HTTP error 404. Not Found"
 - "id": "repro_find_export_pkg.unique"
@@ -1431,7 +1431,7 @@
         "py": "lambda m: m.run_scripts(['sleep.R'], order=None, timeout=10)"
 - "id": "repro_run_scripts.empty"
   "r": "repro_run_scripts"
-  "py": "pytacheck.repro.core.repro_run_scripts"
+  "py": "metacheck.repro.core.repro_run_scripts"
   "args":
     "run_tbl":
       "$df": {}
@@ -1439,7 +1439,7 @@
       "$chr": []
 - "id": "repro_run_scripts.null"
   "r": "repro_run_scripts"
-  "py": "pytacheck.repro.core.repro_run_scripts"
+  "py": "metacheck.repro.core.repro_run_scripts"
   "args":
     "run_tbl":
       "$null": true
@@ -1447,7 +1447,7 @@
       "$chr": []
 - "id": "repro_install_deps.empty"
   "r": "repro_install_deps"
-  "py": "pytacheck.repro.core.repro_install_deps"
+  "py": "metacheck.repro.core.repro_install_deps"
   "args":
     "install_deps":
       "$null": true
@@ -1502,31 +1502,31 @@
         "py": "lambda m: m.docker._repro_docker_image_for([' 4.2 '], use_declared_version=True)"
 - "id": "repro_docker_container_path.inside"
   "r": "metacheck:::.repro_docker_container_path"
-  "py": "pytacheck.repro.docker._repro_docker_container_path"
+  "py": "metacheck.repro.docker._repro_docker_container_path"
   "args":
     "host_path": "/nonexistent_mc/sandbox/a/b.R"
     "sandbox_root": "/nonexistent_mc/sandbox"
 - "id": "repro_docker_container_path.root_itself"
   "r": "metacheck:::.repro_docker_container_path"
-  "py": "pytacheck.repro.docker._repro_docker_container_path"
+  "py": "metacheck.repro.docker._repro_docker_container_path"
   "args":
     "host_path": "/nonexistent_mc/sandbox"
     "sandbox_root": "/nonexistent_mc/sandbox"
 - "id": "repro_docker_container_path.outside"
   "r": "metacheck:::.repro_docker_container_path"
-  "py": "pytacheck.repro.docker._repro_docker_container_path"
+  "py": "metacheck.repro.docker._repro_docker_container_path"
   "args":
     "host_path": "/elsewhere_mc/x/run.R"
     "sandbox_root": "/nonexistent_mc/sandbox"
 - "id": "repro_docker_container_path.trailing_slash_root"
   "r": "metacheck:::.repro_docker_container_path"
-  "py": "pytacheck.repro.docker._repro_docker_container_path"
+  "py": "metacheck.repro.docker._repro_docker_container_path"
   "args":
     "host_path": "/nonexistent_mc/sandbox/c.R"
     "sandbox_root": "/nonexistent_mc/sandbox/"
 - "id": "repro_docker_resource_args.unset"
   "r": "metacheck:::.repro_docker_resource_args"
-  "py": "pytacheck.repro.docker._repro_docker_resource_args"
+  "py": "metacheck.repro.docker._repro_docker_resource_args"
   "args": {}
 - "id": "repro_docker_resource_args.set"
   "r": "identity"
@@ -1538,7 +1538,7 @@
         "py": "lambda m: m.with_options({'metacheck.docker_resource_limits': {'cpus': 2, 'memory_gb': 3.5}}, m.docker._repro_docker_resource_args)"
 - "id": "repro_install_deps_docker.empty"
   "r": "repro_install_deps_docker"
-  "py": "pytacheck.repro.docker.repro_install_deps_docker"
+  "py": "metacheck.repro.docker.repro_install_deps_docker"
   "args":
     "install_deps":
       "$df":
@@ -1546,7 +1546,7 @@
     "lib_dir": "unused"
 - "id": "repro_run_scripts_docker.empty"
   "r": "repro_run_scripts_docker"
-  "py": "pytacheck.repro.docker.repro_run_scripts_docker"
+  "py": "metacheck.repro.docker.repro_run_scripts_docker"
   "args":
     "run_tbl":
       "$null": true
@@ -1555,7 +1555,7 @@
     "sandbox_root": "/nonexistent_mc"
 - "id": "collect_module_tables.rds.all_p_values.table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_rds"
@@ -1563,7 +1563,7 @@
     "element": "table"
 - "id": "collect_module_tables.rds.all_p_values.summary_table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_rds"
@@ -1571,7 +1571,7 @@
     "element": "summary_table"
 - "id": "collect_module_tables.rds.marginal.table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_rds"
@@ -1579,7 +1579,7 @@
     "element": "table"
 - "id": "collect_module_tables.rds.marginal.report"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_rds"
@@ -1587,7 +1587,7 @@
     "element": "report"
 - "id": "collect_module_tables.rds.not_a_module.table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_rds"
@@ -1595,7 +1595,7 @@
     "element": "table"
 - "id": "collect_module_tables.no_files"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/scripts"
@@ -1610,7 +1610,7 @@
         "py": "lambda m: (lambda x: [x, list(x.prev_outputs), x.prev_outputs['marginal'].table, x.prev_outputs['marginal'].traffic_light])(m.tables._load_module_tables('tests/repro_core/fixtures/tables_rds', 'to_err_is_human', m.pc.demopaper()))"
 - "id": "load_module_tables.missing"
   "r": "metacheck:::.load_module_tables"
-  "py": "pytacheck.repro.tables._load_module_tables"
+  "py": "metacheck.repro.tables._load_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_rds"

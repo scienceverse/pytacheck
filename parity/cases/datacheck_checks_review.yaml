@@ -5,7 +5,7 @@
 "cases":
 - "id": ".parse_frac.review.day_overflow"
   "r": ".parse_frac"
-  "py": "pytacheck.datacheck.checks._parse_frac"
+  "py": "metacheck.datacheck.checks._parse_frac"
   "args":
     "v":
       "$expr":
@@ -14,10 +14,10 @@
     "fmts":
       "$expr":
         "r": "metacheck:::.DATE_FMTS"
-        "py": "__import__('pytacheck.datacheck.checks', fromlist=['C'])._DATE_FMTS"
+        "py": "__import__('metacheck.datacheck.checks', fromlist=['C'])._DATE_FMTS"
 - "id": ".parse_frac.review.minute_overflow"
   "r": ".parse_frac"
-  "py": "pytacheck.datacheck.checks._parse_frac"
+  "py": "metacheck.datacheck.checks._parse_frac"
   "args":
     "v":
       "$expr":
@@ -28,7 +28,7 @@
       - "%Y-%m-%d %H:%M"
 - "id": ".parse_frac.review.second_overflow"
   "r": ".parse_frac"
-  "py": "pytacheck.datacheck.checks._parse_frac"
+  "py": "metacheck.datacheck.checks._parse_frac"
   "args":
     "v":
       "$expr":
@@ -39,7 +39,7 @@
       - "%Y-%m-%d %H:%M:%S"
 - "id": ".parse_frac.review.compact_hhmm"
   "r": ".parse_frac"
-  "py": "pytacheck.datacheck.checks._parse_frac"
+  "py": "metacheck.datacheck.checks._parse_frac"
   "args":
     "v":
       "$expr":
@@ -51,7 +51,7 @@
       - "%Y_%b_%d_%H%M"
 - "id": ".parse_frac.review.hour_overflow"
   "r": ".parse_frac"
-  "py": "pytacheck.datacheck.checks._parse_frac"
+  "py": "metacheck.datacheck.checks._parse_frac"
   "args":
     "v":
       "$expr":
@@ -62,7 +62,7 @@
       - "%Y-%m-%d_%Hh%M"
 - "id": ".parse_frac.review.two_digit_year_day"
   "r": ".parse_frac"
-  "py": "pytacheck.datacheck.checks._parse_frac"
+  "py": "metacheck.datacheck.checks._parse_frac"
   "args":
     "v":
       "$expr":
@@ -73,7 +73,7 @@
       - "%m/%d/%y"
 - "id": "data_col_concept.review.date_day_overflow"
   "r": "data_col_concept"
-  "py": "pytacheck.datacheck.checks.data_col_concept"
+  "py": "metacheck.datacheck.checks.data_col_concept"
   "args":
     "col_name": "test_date"
     "x":
@@ -82,7 +82,7 @@
         "py": "pd.Series(['2020-05-45', '2020-05-46', '2020-05-47', '2020-05-19'], dtype='string')"
 - "id": "data_col_concept.review.timestamp_minute_overflow"
   "r": "data_col_concept"
-  "py": "pytacheck.datacheck.checks.data_col_concept"
+  "py": "metacheck.datacheck.checks.data_col_concept"
   "args":
     "col_name": "timestamp"
     "x":
@@ -91,7 +91,7 @@
         "py": "pd.Series(['2020-05-19 10:65', '2020-05-19 11:75', '2020-05-19 12:95'], dtype='string')"
 - "id": "data_col_facets.review.compact_datetime"
   "r": "data_col_facets"
-  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "py": "metacheck.datacheck.checks.data_col_facets"
   "args":
     "col_name": "session_time"
     "values":
@@ -100,7 +100,7 @@
         "py": "pd.Series(['2022_Sep_08_523', '2022_Sep_09_845', '2022_Oct_01_959'], dtype='string')"
 - "id": "data_col_facets.review.class_hms"
   "r": "data_col_facets"
-  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "py": "metacheck.datacheck.checks.data_col_facets"
   "args":
     "col_name": "start_time"
     "values":
@@ -113,7 +113,7 @@
     - "difftime"
 - "id": "data_col_facets.review.class_difftime"
   "r": "data_col_facets"
-  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "py": "metacheck.datacheck.checks.data_col_facets"
   "args":
     "col_name": "rt"
     "values":
@@ -125,7 +125,7 @@
     - "difftime"
 - "id": "data_check_constant.review.nan_string"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -133,7 +133,7 @@
         "py": "pd.Series(['a', 'a', 'NaN'], dtype='string')"
 - "id": "data_check_constant.review.all_nan_strings"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -141,7 +141,7 @@
         "py": "pd.Series(['NaN', 'NaN'], dtype='string')"
 - "id": "data_check_constant.review.nan_factor"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -149,7 +149,7 @@
         "py": "pd.Series(pd.Categorical(['NaN', 'NaN', 'a']))"
 - "id": "data_check_constant.review.na_string"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -157,7 +157,7 @@
         "py": "pd.Series(['NA', 'NA', 'NA', 'b'], dtype='string')"
 - "id": "data_check_constant.review.nan_near"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -176,7 +176,7 @@
         "py": "0.95"
 - "id": "data_check_constant.review.posixct_fraction"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -184,7 +184,7 @@
         "py": "pd.Series(pd.to_datetime([1577872809.25] * 3, unit='s'))"
 - "id": "data_check_constant.review.posixct_midnight"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -196,7 +196,7 @@
         "py": "0.5"
 - "id": "data_check_constant.review.posixct_levels"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -208,7 +208,7 @@
         "py": "0.3"
 - "id": ".parse_frac.review.posixct"
   "r": ".parse_frac"
-  "py": "pytacheck.datacheck.checks._parse_frac"
+  "py": "metacheck.datacheck.checks._parse_frac"
   "args":
     "v":
       "$expr":
@@ -217,10 +217,10 @@
     "fmts":
       "$expr":
         "r": "metacheck:::.DATETIME_FMTS"
-        "py": "__import__('pytacheck.datacheck.checks', fromlist=['C'])._DATETIME_FMTS"
+        "py": "__import__('metacheck.datacheck.checks', fromlist=['C'])._DATETIME_FMTS"
 - "id": "data_check_scale_values.review.int_1e5"
   "r": "data_check_scale_values"
-  "py": "pytacheck.datacheck.checks.data_check_scale_values"
+  "py": "metacheck.datacheck.checks.data_check_scale_values"
   "args":
     "x":
       "$expr":
@@ -234,7 +234,7 @@
       - !!float "10.0"
 - "id": "data_check_scale_values.review.dbl_1e5"
   "r": "data_check_scale_values"
-  "py": "pytacheck.datacheck.checks.data_check_scale_values"
+  "py": "metacheck.datacheck.checks.data_check_scale_values"
   "args":
     "x":
       "$expr":
@@ -248,7 +248,7 @@
       - !!float "10.0"
 - "id": "data_check_scale_values.review.int_neg_1e5"
   "r": "data_check_scale_values"
-  "py": "pytacheck.datacheck.checks.data_check_scale_values"
+  "py": "metacheck.datacheck.checks.data_check_scale_values"
   "args":
     "x":
       "$expr":
@@ -262,7 +262,7 @@
       - !!float "10.0"
 - "id": "data_check_scale_values.review.int_inferred_1e6"
   "r": "data_check_scale_values"
-  "py": "pytacheck.datacheck.checks.data_check_scale_values"
+  "py": "metacheck.datacheck.checks.data_check_scale_values"
   "args":
     "x":
       "$expr":
@@ -277,7 +277,7 @@
           \ 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5], 1000000, 300000, 55]"
 - "id": "data_check_scale_values.review.dbl_inferred_1e6"
   "r": "data_check_scale_values"
-  "py": "pytacheck.datacheck.checks.data_check_scale_values"
+  "py": "metacheck.datacheck.checks.data_check_scale_values"
   "args":
     "x":
       "$expr":
@@ -295,7 +295,7 @@
           \ 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1000000.0, 300000.0, 55.0], dtype='float64')"
 - "id": "data_check_pii_name.review.vector"
   "r": "data_check_pii_name"
-  "py": "pytacheck.datacheck.checks.data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
   "args":
     "col_name":
       "$chr":
@@ -303,7 +303,7 @@
       - "phone"
 - "id": "data_check_pii_name.review.zero_length"
   "r": "data_check_pii_name"
-  "py": "pytacheck.datacheck.checks.data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
   "args":
     "col_name":
       "$expr":
@@ -311,7 +311,7 @@
         "py": "[]"
 - "id": "data_check_pii_geo.review.zero_length"
   "r": "data_check_pii_geo"
-  "py": "pytacheck.datacheck.checks.data_check_pii_geo"
+  "py": "metacheck.datacheck.checks.data_check_pii_geo"
   "args":
     "col_name":
       "$expr":
@@ -324,7 +324,7 @@
       - !!float "3.0"
 - "id": "data_check_pii_geo.review.vector"
   "r": "data_check_pii_geo"
-  "py": "pytacheck.datacheck.checks.data_check_pii_geo"
+  "py": "metacheck.datacheck.checks.data_check_pii_geo"
   "args":
     "col_name":
       "$chr":
@@ -337,7 +337,7 @@
       - !!float "51.9"
 - "id": ".pii_split_name.review.zero_length"
   "r": ".pii_split_name"
-  "py": "pytacheck.datacheck.checks._pii_split_name"
+  "py": "metacheck.datacheck.checks._pii_split_name"
   "args":
     "x":
       "$expr":
@@ -345,7 +345,7 @@
         "py": "[]"
 - "id": ".concept_is_rt.review.vector_name"
   "r": ".concept_is_rt"
-  "py": "pytacheck.datacheck.checks._concept_is_rt"
+  "py": "metacheck.datacheck.checks._concept_is_rt"
   "args":
     "col_name":
       "$chr":
@@ -358,7 +358,7 @@
       - !!float "3.0"
 - "id": ".concept_is_rt.review.zero_length_name"
   "r": ".concept_is_rt"
-  "py": "pytacheck.datacheck.checks._concept_is_rt"
+  "py": "metacheck.datacheck.checks._concept_is_rt"
   "args":
     "col_name":
       "$expr":
@@ -371,7 +371,7 @@
       - !!float "3.0"
 - "id": ".concept_is_rt.review.na_name"
   "r": ".concept_is_rt"
-  "py": "pytacheck.datacheck.checks._concept_is_rt"
+  "py": "metacheck.datacheck.checks._concept_is_rt"
   "args":
     "col_name":
       "$NA": !!bool "true"
@@ -380,7 +380,7 @@
       - !!float "1.0"
 - "id": ".concept_is_accuracy.review.vector_name"
   "r": ".concept_is_accuracy"
-  "py": "pytacheck.datacheck.checks._concept_is_accuracy"
+  "py": "metacheck.datacheck.checks._concept_is_accuracy"
   "args":
     "col_name":
       "$chr":
@@ -393,7 +393,7 @@
       - !!float "1.0"
 - "id": ".concept_is_condition.review.vector_name"
   "r": ".concept_is_condition"
-  "py": "pytacheck.datacheck.checks._concept_is_condition"
+  "py": "metacheck.datacheck.checks._concept_is_condition"
   "args":
     "col_name":
       "$chr":
@@ -405,7 +405,7 @@
       - !!float "1.0"
 - "id": ".concept_is_condition.review.zero_length_name"
   "r": ".concept_is_condition"
-  "py": "pytacheck.datacheck.checks._concept_is_condition"
+  "py": "metacheck.datacheck.checks._concept_is_condition"
   "args":
     "col_name":
       "$expr":
@@ -416,7 +416,7 @@
       - !!float "1.0"
 - "id": ".concept_is_timestamp.review.vector_name"
   "r": ".concept_is_timestamp"
-  "py": "pytacheck.datacheck.checks._concept_is_timestamp"
+  "py": "metacheck.datacheck.checks._concept_is_timestamp"
   "args":
     "col_name":
       "$chr":
@@ -427,7 +427,7 @@
       - "2020-01-01 10:00:00"
 - "id": ".concept_is_date.review.zero_length_name"
   "r": ".concept_is_date"
-  "py": "pytacheck.datacheck.checks._concept_is_date"
+  "py": "metacheck.datacheck.checks._concept_is_date"
   "args":
     "col_name":
       "$expr":
@@ -447,7 +447,7 @@
           \ 8.0]]"
 - "id": "data_promote_header_row.review.na_leading_text_column"
   "r": "data_promote_header_row"
-  "py": "pytacheck.datacheck.checks.data_promote_header_row"
+  "py": "metacheck.datacheck.checks.data_promote_header_row"
   "args":
     "df":
       "$df":
@@ -474,7 +474,7 @@
         - "z"
 - "id": "data_strip_qualtrics_header.review.na_leading_text_column"
   "r": "data_strip_qualtrics_header"
-  "py": "pytacheck.datacheck.checks.data_strip_qualtrics_header"
+  "py": "metacheck.datacheck.checks.data_strip_qualtrics_header"
   "args":
     "df":
       "$df":
@@ -492,7 +492,7 @@
         - "x"
 - "id": "data_strip_qualtrics_header.review.negative_max_strip"
   "r": "data_strip_qualtrics_header"
-  "py": "pytacheck.datacheck.checks.data_strip_qualtrics_header"
+  "py": "metacheck.datacheck.checks.data_strip_qualtrics_header"
   "args":
     "df":
       "$df": &id001
@@ -510,7 +510,7 @@
         "py": "-1"
 - "id": "data_strip_qualtrics_header.review.zero_max_strip"
   "r": "data_strip_qualtrics_header"
-  "py": "pytacheck.datacheck.checks.data_strip_qualtrics_header"
+  "py": "metacheck.datacheck.checks.data_strip_qualtrics_header"
   "args":
     "df":
       "$df": *id001
@@ -520,7 +520,7 @@
         "py": "0"
 - "id": "data_promote_header_row.review.negative_max_scan"
   "r": "data_promote_header_row"
-  "py": "pytacheck.datacheck.checks.data_promote_header_row"
+  "py": "metacheck.datacheck.checks.data_promote_header_row"
   "args":
     "df":
       "$df": *id001
@@ -530,7 +530,7 @@
         "py": "-1"
 - "id": "data_promote_header_row.review.negative_max_scan_raw"
   "r": "data_promote_header_row"
-  "py": "pytacheck.datacheck.checks.data_promote_header_row"
+  "py": "metacheck.datacheck.checks.data_promote_header_row"
   "args":
     "df":
       "$df": *id001
@@ -544,25 +544,25 @@
         "py": "-1"
 - "id": ".bh_is_trial_level_file.review.jspsych_bom_blank.csv"
   "r": ".bh_is_trial_level_file"
-  "py": "pytacheck.datacheck.checks._bh_is_trial_level_file"
+  "py": "metacheck.datacheck.checks._bh_is_trial_level_file"
   "args":
     "path":
       "$file": "tests/datacheck_checks/data/jspsych_bom_blank.csv"
 - "id": ".bh_is_trial_level_file.review.behaverse_latin1.csv"
   "r": ".bh_is_trial_level_file"
-  "py": "pytacheck.datacheck.checks._bh_is_trial_level_file"
+  "py": "metacheck.datacheck.checks._bh_is_trial_level_file"
   "args":
     "path":
       "$file": "tests/datacheck_checks/data/behaverse_latin1.csv"
 - "id": ".bh_is_trial_level_file.review.jspsych_latin1_body.csv"
   "r": ".bh_is_trial_level_file"
-  "py": "pytacheck.datacheck.checks._bh_is_trial_level_file"
+  "py": "metacheck.datacheck.checks._bh_is_trial_level_file"
   "args":
     "path":
       "$file": "tests/datacheck_checks/data/jspsych_latin1_body.csv"
 - "id": ".bh_is_trial_level_file.review.path_vector"
   "r": ".bh_is_trial_level_file"
-  "py": "pytacheck.datacheck.checks._bh_is_trial_level_file"
+  "py": "metacheck.datacheck.checks._bh_is_trial_level_file"
   "args":
     "path":
       "$expr":
@@ -570,7 +570,7 @@
         "py": "[str(__import__('parity.cases', fromlist=['ROOT']).ROOT / 'tests/datacheck_checks/data/jspsych.csv')]"
 - "id": "data_check_constant.review.tie_numeric"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$dbl":
@@ -584,7 +584,7 @@
         "py": "0.5"
 - "id": "data_check_constant.review.tie_character"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$chr":
@@ -598,7 +598,7 @@
         "py": "0.2"
 - "id": "data_check_constant.review.tie_logical"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$lgl":
@@ -610,7 +610,7 @@
         "py": "0.5"
 - "id": "data_check_constant.review.double_labels_merge"
   "r": "data_check_constant"
-  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "py": "metacheck.datacheck.checks.data_check_constant"
   "args":
     "x":
       "$expr":
@@ -622,7 +622,7 @@
         "py": "0.5"
 - "id": "data_check_numeric_in_text.review.duplicates_order"
   "r": "data_check_numeric_in_text"
-  "py": "pytacheck.datacheck.checks.data_check_numeric_in_text"
+  "py": "metacheck.datacheck.checks.data_check_numeric_in_text"
   "args":
     "x":
       "$chr":
@@ -643,7 +643,7 @@
         "py": "0.6"
 - "id": "data_check_pii_values.review.duplicates"
   "r": "data_check_pii_values"
-  "py": "pytacheck.datacheck.checks.data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
   "args":
     "x":
       "$chr":
@@ -657,7 +657,7 @@
       - "10.0.0.1"
 - "id": "data_check_pii_freetext.review.duplicates_median"
   "r": "data_check_pii_freetext"
-  "py": "pytacheck.datacheck.checks.data_check_pii_freetext"
+  "py": "metacheck.datacheck.checks.data_check_pii_freetext"
   "args":
     "x":
       "$chr":
@@ -674,7 +674,7 @@
         "py": "0.5"
 - "id": "data_check_whitespace.review.duplicates_order"
   "r": "data_check_whitespace"
-  "py": "pytacheck.datacheck.checks.data_check_whitespace"
+  "py": "metacheck.datacheck.checks.data_check_whitespace"
   "args":
     "x":
       "$chr":
@@ -688,7 +688,7 @@
       - "  "
 - "id": "data_check_case_issues.review.duplicates_order"
   "r": "data_check_case_issues"
-  "py": "pytacheck.datacheck.checks.data_check_case_issues"
+  "py": "metacheck.datacheck.checks.data_check_case_issues"
   "args":
     "x":
       "$chr":
@@ -702,12 +702,12 @@
       - " "
 - "id": "data_check_colname.review.multibyte_60_chars"
   "r": "data_check_colname"
-  "py": "pytacheck.datacheck.checks.data_check_colname"
+  "py": "metacheck.datacheck.checks.data_check_colname"
   "args":
     "col_name": "日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本"
 - "id": "data_check_colname.review.multibyte_66_chars"
   "r": "data_check_colname"
-  "py": "pytacheck.datacheck.checks.data_check_colname"
+  "py": "metacheck.datacheck.checks.data_check_colname"
   "args":
     "col_name": "日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本"
 - "id": ".parse_frac.review.battery"
@@ -772,7 +772,7 @@
           , \"September 0, 3\", \"September 29, 1915\", \"december 18, 2023\", \"december 4, 2026\", \"\
           jan 10, 2\"), function(s) vapply(c(metacheck:::.DATETIME_FMTS, metacheck:::.DATE_FMTS), function(f)\
           \ metacheck:::.parse_frac(s, f), 0, USE.NAMES = FALSE)))"
-        "py": "[__import__('pytacheck.datacheck.checks', fromlist=['C'])._parse_frac([s], [f]) for s in\
+        "py": "[__import__('metacheck.datacheck.checks', fromlist=['C'])._parse_frac([s], [f]) for s in\
           \ [' 11-03-10 11:21', ' 12-9-05T10:54:4', ' 14/18/20035', ' 15/10   18', ' 17/10/2062:00', '\
           \ 17/10/9 9:10-59:00', ' 18-3-9 89443:2', ' 19/01/33', ' 19/1/1961', ' 21/09/ 29', ' 22-8-02\
           \ 17:27', ' 27-08-22 51172:2', ' 3-10-05T00:2:5', ' 30 february  19', ' 4-09-5', ' 4/3/70',\
@@ -821,7 +821,7 @@
           \ 'Jan 25,  85', 'Jan 3, 2076', 'Jan 7109, 2032.123', 'June-27, 20815', 'MARCH 11, 1900', 'Mar\
           \ 24, 3.123', 'Mar 5,2020', 'Mar 9, 6', 'Mar 9, 800', 'May 6, 2049', 'Oct 22, 2', 'September\
           \ 0, 3', 'September 29, 1915', 'december 18, 2023', 'december 4, 2026', 'jan 10, 2'] for f in\
-          \ [*__import__('pytacheck.datacheck.checks', fromlist=['C'])._DATETIME_FMTS, *__import__('pytacheck.datacheck.checks',\
+          \ [*__import__('metacheck.datacheck.checks', fromlist=['C'])._DATETIME_FMTS, *__import__('metacheck.datacheck.checks',\
           \ fromlist=['C'])._DATE_FMTS]]"
 - "id": "data_check_scale_values.review.battery"
   "r": "identity"
@@ -888,7 +888,7 @@
           \ 5L, 8L, 2L, 6L, 2L, 6L, 4L, 8L, 1L, 2L, 6L, 8L, 4L, 1L, 6L, 8L, 0L, 6L, 1L, 5L, 1L, 2L, 5L,\
           \ 0L, 2L, 9L, 7L, 3L, 2L, 4L, 6L)), as.double(c(7.0, 5.0, 0.0, 2.0, 10.0, 3.0, 5.0, 999.0, 2.0,\
           \ 4.0, 4.0, 100000.0))), data_check_scale_values)"
-        "py": "[__import__('pytacheck.datacheck.checks', fromlist=['C']).data_check_scale_values(v) for\
+        "py": "[__import__('metacheck.datacheck.checks', fromlist=['C']).data_check_scale_values(v) for\
           \ v in [pd.Series([5, 4, 3, 3, 2, 2, 2, 77, 5, 55, 1, 5, 105, 4, 1, 5, 4, 1, 2, 3], dtype='Int64'),\
           \ pd.Series([1, 6, 105, 6, 2, 7, 5, 5, 1, 7, 3, 6, 3, 2, 6, 2, 3, 4, 5, 77], dtype='Int64'),\
           \ pd.Series([9.0, 7.0, 3.0, 3.0, 2.0, 100000.0, 10.0, 2.0, 3.0, 8.0, 4.0, 11.0, 7.0, 11.0, 1.0,\
@@ -1039,7 +1039,7 @@
           b\", \"x y\", \"x y\", \"x y\", \"b\", \"x y\", \"x y\", \"x y\", \"a\", \"NaN\"), c(\"b\",\
           \ \"b\", \"b\", \"b\", \"b\", \"b\", \"b\", \"b\"), c(\"B\", \"B\", \"B\"), c(\"x y\", \"x y\"\
           , \"x y\")), data_check_constant)"
-        "py": "[__import__('pytacheck.datacheck.checks', fromlist=['C']).data_check_constant(v) for v\
+        "py": "[__import__('metacheck.datacheck.checks', fromlist=['C']).data_check_constant(v) for v\
           \ in [pd.Series(['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA',\
           \ 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'a', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA',\
           \ 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA',\
@@ -1202,7 +1202,7 @@
           \ 2020\", \"May 19, 2020\", \"2020-05-19T16:20:33Z\", \"2020-05-19_16h20.01.792\", \"May 19,\
           \ 2020\", \"May 19, 2020\"), c(\"May 19, 2020\", \"May 19, 2020\", \"May 19, 2020\")), USE.NAMES\
           \ = FALSE)"
-        "py": "[__import__('pytacheck.datacheck.checks', fromlist=['C']).data_col_concept(n, v) for n,\
+        "py": "[__import__('metacheck.datacheck.checks', fromlist=['C']).data_col_concept(n, v) for n,\
           \ v in zip(['StartDate', 'dob', 'birth date', 'birth date', 'dag', 'dag', 'date', 'dag', 'RecordedDate',\
           \ 'StartDate', 'Onset', 'date', 'time', 'timestamp', 'day', 'birth date', 'birth date', 'session\
           \ time', 'birth date', 'Onset', 'birth date', 'Onset', 'dag', 'EndDate', 'dag', 'test_date',\

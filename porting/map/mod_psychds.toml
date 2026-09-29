@@ -4,11 +4,11 @@
 # tests/mod_psychds/gen_parity_cases.py. Review cases (area mod_psychds_review) come from
 # tests/mod_psychds/gen_review_cases.py and fixtures/review_chains.json.
 [files]
-"inst/modules/psychds_check.R" = ["src/pytacheck/modules/psychds_check.py"]
+"inst/modules/psychds_check.R" = ["src/metacheck/modules/psychds_check.py"]
 
 [functions]
-"module:psychds_check" = "pytacheck.modules.psychds_check:psychds_check"
+"module:psychds_check" = "metacheck.modules.psychds_check:psychds_check"
 # module-local helpers defined in inst/modules/psychds_check.R
-"psychds_tree_html" = "pytacheck.modules.psychds_check:psychds_tree_html"
+"psychds_tree_html" = "metacheck.modules.psychds_check:psychds_tree_html"
 # (closures inside psychds_check() are ported alongside it: .pid -> _pid,
 #  keyword_slug -> _keyword_slug, target_of/scaffold/same_dir_real_name inline)

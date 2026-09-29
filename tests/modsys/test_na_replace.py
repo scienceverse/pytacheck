@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import pandas as pd
 
-import pytacheck as pc
-from pytacheck.module import module_run
-from pytacheck.papers.model import PaperList
+import metacheck as pc
+from metacheck.module import module_run
+from metacheck.papers.model import PaperList
 
 _FIRST = """
 import pandas as pd
-from pytacheck.module import module
+from metacheck.module import module
 
 
 @module(title="First", description="d", keywords=["general"])
@@ -29,7 +29,7 @@ def nr_first(paper):
 
 _SECOND = """
 import pandas as pd
-from pytacheck.module import module
+from metacheck.module import module
 
 
 @module(title="Second", description="d", keywords=["general"])

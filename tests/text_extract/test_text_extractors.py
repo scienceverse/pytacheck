@@ -7,9 +7,9 @@ import math
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck._r.regex import grepl
-from pytacheck.text.extract import (
+import metacheck as pc
+from metacheck._r.regex import grepl
+from metacheck.text.extract import (
     _detect_live_data,
     extract_eq,
     extract_p_values,

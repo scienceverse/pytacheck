@@ -19,7 +19,7 @@ from unittest import mock
 
 import pandas as pd
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -56,8 +56,8 @@ def r_type(s: pd.Series, attrs: dict[str, Any]) -> list[str]:
 def _typed(df: pd.DataFrame | None) -> dict[str, Any] | None:
     if df is None:
         return None
-    from pytacheck.datacheck._colattrs import col_attrs_at
-    from pytacheck.datacheck._files_rdata import _complex_as_character
+    from metacheck.datacheck._colattrs import col_attrs_at
+    from metacheck.datacheck._files_rdata import _complex_as_character
 
     types = [r_type(df.iloc[:, j], col_attrs_at(df, j)) for j in range(df.shape[1])]
     data = df.copy()
@@ -79,7 +79,7 @@ def read_delim_typed(
     path: str, sep: str, header: bool, nrows: float | None = None, encoding: str | None = None
 ) -> dict[str, Any] | None:
     """``utils::read.delim(path, sep, header, nrows, check.names = FALSE)`` with R types."""
-    from pytacheck.datacheck._files_readers import read_delim
+    from metacheck.datacheck._files_readers import read_delim
 
     n = math.inf if nrows is None else nrows
     return _typed(read_delim(str(ROOT / path), sep=sep, header=header, nrows=n, encoding=encoding))
@@ -125,8 +125,8 @@ def data_group_cache_key() -> str | None:
     key -- so an ``int`` seed (a double in R) where R has ``8675309L`` shows up
     as a different MD5 (the canonical comparison treats 1L and 1 as equal).
     """
-    from pytacheck.llm.cache import _llm_cache_key
-    from pytacheck.llm.providers import params as ellmer_params
+    from metacheck.llm.cache import _llm_cache_key
+    from metacheck.llm.providers import params as ellmer_params
 
     key: list[str] = []
 

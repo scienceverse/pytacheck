@@ -15,12 +15,12 @@ from pathlib import Path
 import pytest
 import respx
 
-from pytacheck.cli import main
-from pytacheck.module import module_run
-from pytacheck.packs.build import store_build
-from pytacheck.packs.check import pack_check
-from pytacheck.packs.install import pack_install
-from pytacheck.packs.tree import tree_sha256
+from metacheck.cli import main
+from metacheck.module import module_run
+from metacheck.packs.build import store_build
+from metacheck.packs.check import pack_check
+from metacheck.packs.install import pack_install
+from metacheck.packs.tree import tree_sha256
 from tests.modsys.helpers import mod_src
 from tests.modsys.storekit import REV_C, codeload, dir_files, tarball
 
@@ -195,8 +195,8 @@ def test_fixture_store_index_is_current_and_its_pack_passes(ms, tmp_path) -> Non
 
 
 def test_install_from_a_local_store_folder(ms, monkeypatch, tmp_path) -> None:
-    import pytacheck as pc
-    from pytacheck.presets import expand
+    import metacheck as pc
+    from metacheck.presets import expand
 
     monkeypatch.setenv("PYTACHECK_STORE_URL", str(_fixture_store(tmp_path)))
     pack = pack_install("registry", yes=True)

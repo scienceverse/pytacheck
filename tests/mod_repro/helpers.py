@@ -66,7 +66,7 @@ def _with_pid(df: pd.DataFrame | None, pid: str) -> pd.DataFrame | None:
 
 
 def rc_paper(spec: dict[str, Any]) -> Any:
-    import pytacheck as pc
+    import metacheck as pc
 
     which = spec.get("paper", "test")
     if which == "test":
@@ -103,8 +103,8 @@ def rc_input(name: str, paper: Any = None, absolute: bool = False) -> Any:
     *absolute* makes the file locations absolute, so the chain works from any
     working directory.
     """
-    from pytacheck.module import ModuleOutput
-    from pytacheck.papers.tables import paper_id
+    from metacheck.module import ModuleOutput
+    from metacheck.papers.tables import paper_id
 
     spec = specs()["scenarios"][name]
     if paper is None:
@@ -150,9 +150,9 @@ def rc_input(name: str, paper: Any = None, absolute: bool = False) -> Any:
 
 def _tables_dir(name: str, td: str, tables: Any) -> Any:
     """Save the scenario's upstream outputs as a prior build (R: ``rc_tables_dir()``)."""
-    from pytacheck.module import ModuleOutput
-    from pytacheck.papers.tables import paper_id
-    from pytacheck.repro.tables import capture_module_tables
+    from metacheck.module import ModuleOutput
+    from metacheck.papers.tables import paper_id
+    from metacheck.repro.tables import capture_module_tables
 
     x = rc_input(name)
     if tables == "none":
@@ -187,7 +187,7 @@ def _unroot(x: Any, root: str) -> Any:
 
 def _untime(mo: Any) -> None:
     """Zero the run times, which vary between runs (R: ``rc_untime()``)."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     rr = mo.get("run_results")
     if not isinstance(rr, pd.DataFrame) or len(rr) == 0:
@@ -238,7 +238,7 @@ def rc_scrub(mo: Any) -> Any:
 
 def rc_run(name: str, tables: Any = None, paper: Any = None, **kwargs: Any) -> Any:
     """``module_run(rc_input(name), "reproducibility_check", ...)``, scrubbed (R: ``rc_run()``)."""
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     with contextlib.chdir(ROOT):
         if tables is not None:
@@ -277,7 +277,7 @@ def rc_run_mocked(name: str, **kwargs: Any) -> Any:
     import warnings
     from unittest import mock
 
-    from pytacheck.repro import core, docker
+    from metacheck.repro import core, docker
 
     def run_docker(
         run_tbl: Any,

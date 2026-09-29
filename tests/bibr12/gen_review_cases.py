@@ -27,7 +27,7 @@ EDGES = ("edge_types", "edge_minimal", "edge_numeric_id")
 NO_TIME = {"edge_minimal"}
 
 H = "__import__('tests.bibr12._review_helpers', fromlist=['x'])"
-PY_READ_BIBR = "__import__('pytacheck.papers.io', fromlist=['x']).read_bibr"
+PY_READ_BIBR = "__import__('metacheck.papers.io', fromlist=['x']).read_bibr"
 
 # R: a temporary directory, as the Python helpers use
 R_TMP = "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})"
@@ -109,7 +109,7 @@ def cases() -> list[dict[str, Any]]:
             {
                 "id": f"read.{name}",
                 "r": "read",
-                "py": "pytacheck.read",
+                "py": "metacheck.read",
                 "args": {"file_path": {"$file": path}},
             }
         )
@@ -117,7 +117,7 @@ def cases() -> list[dict[str, Any]]:
         {
             "id": "read.edge_types.images",
             "r": "read",
-            "py": "pytacheck.read",
+            "py": "metacheck.read",
             "args": {"file_path": {"$file": f"{FX}/edge_types.json"}, "include_images": True},
         }
     )
@@ -144,7 +144,7 @@ def cases() -> list[dict[str, Any]]:
             {
                 "id": f"paper_table.edge_types.{tbl}",
                 "r": "paper_table",
-                "py": "pytacheck.paper_table",
+                "py": "metacheck.paper_table",
                 "args": {"paper": {"$paper": f"{FX}/edge_types.json"}, "table": tbl},
             }
         )
@@ -153,7 +153,7 @@ def cases() -> list[dict[str, Any]]:
             {
                 "id": f"paper_validate.{name}",
                 "r": "paper_validate",
-                "py": "pytacheck.paper_validate",
+                "py": "metacheck.paper_validate",
                 "args": {"paper": {"$paper": f"{FX}/{name}.json"}},
             }
         )
@@ -161,7 +161,7 @@ def cases() -> list[dict[str, Any]]:
             {
                 "id": f"ref_table.{name}",
                 "r": "ref_table",
-                "py": "pytacheck.ref_table",
+                "py": "metacheck.ref_table",
                 "args": {"paper": {"$paper": f"{FX}/{name}.json"}},
             }
         )
@@ -227,7 +227,7 @@ def cases() -> list[dict[str, Any]]:
             {
                 "id": f"read.version.{vid}",
                 "r": "read",
-                "py": "pytacheck.read",
+                "py": "metacheck.read",
                 "args": {"file_path": expr(r_path, py_path)},
             }
         )
@@ -248,7 +248,7 @@ def cases() -> list[dict[str, Any]]:
             value_case(
                 f"read.error_message.{vid}",
                 f"metacheck:::.read_bibr({r_path})",
-                f"__import__('pytacheck.papers.io', fromlist=['x']).read_bibr({py_path})",
+                f"__import__('metacheck.papers.io', fromlist=['x']).read_bibr({py_path})",
             )
         )
     # an array df with other than one element stops (is.null(df) || grepl(...))
@@ -257,7 +257,7 @@ def cases() -> list[dict[str, Any]]:
             value_case(
                 f"read.error_message.{name}",
                 f"metacheck:::.read_bibr12('{FX}/{name}.json')",
-                f"__import__('pytacheck.io.bibr12', fromlist=['x'])"
+                f"__import__('metacheck.io.bibr12', fromlist=['x'])"
                 f".read_bibr12({H}.FX / '{name}.json')",
             )
         )
@@ -268,7 +268,7 @@ def cases() -> list[dict[str, Any]]:
         {
             "id": "read.version.null",
             "r": "read",
-            "py": "pytacheck.read",
+            "py": "metacheck.read",
             "args": {"file_path": expr(r_path, py_path)},
         }
     )

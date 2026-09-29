@@ -1,6 +1,6 @@
 """File classification: data_classify_files(), .data_doc_role(), .is_r_package_file().
 
-``file_category()``/``filetype()`` belong to pytacheck.fileinfo (ported
+``file_category()``/``filetype()`` belong to metacheck.fileinfo (ported
 separately); these tests stub them with values recorded from R
 (``data/make_classify_ref.R``) and compare the classification layered on top
 of them to metacheck's.  Ports of the classification tests in
@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 DATA = Path(__file__).parent / "data"
 REF = json.loads((DATA / "classify_ref.json").read_text(encoding="utf-8"))

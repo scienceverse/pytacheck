@@ -1,4 +1,4 @@
-"""Tests for pytacheck.statout.stat_output (port of R/stat-output.R)."""
+"""Tests for metacheck.statout.stat_output (port of R/stat-output.R)."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout.stat_output import (
+from metacheck.statout.stat_output import (
     _stat_is_placeholder,
     _stat_result_ids,
     _stat_sanitize_id,
@@ -19,7 +19,7 @@ from pytacheck.statout.stat_output import (
     stat_output_write,
     stat_results_long,
 )
-from pytacheck.statout.stat_tables import read_stat_tables
+from metacheck.statout.stat_tables import read_stat_tables
 
 
 def test_sanitize_id() -> None:

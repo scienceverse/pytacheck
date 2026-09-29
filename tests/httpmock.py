@@ -15,7 +15,7 @@ Usage::
 
     def test_crossref(upstream_dir):
         with replay("apis"):
-            resp = pytacheck.http.request("GET", "https://api.crossref.org/works/10.1/x")
+            resp = metacheck.http.request("GET", "https://api.crossref.org/works/10.1/x")
 
 Requests with no fixture get a 404 (as httptest2 errors), so a test cannot
 silently hit the network. ``no_network()`` refuses every connection and name

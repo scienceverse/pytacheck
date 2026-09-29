@@ -1,22 +1,22 @@
 # R source -> Python location for the prereg_check module (see docs/PORTING.md).
 [files]
-"inst/modules/prereg_check.R" = ["src/pytacheck/modules/prereg_check.py", "src/pytacheck/modules/_prereg.py"]
+"inst/modules/prereg_check.R" = ["src/metacheck/modules/prereg_check.py", "src/metacheck/modules/_prereg.py"]
 
 [functions]
-"module:prereg_check" = "pytacheck.modules.prereg_check:prereg_check"
+"module:prereg_check" = "metacheck.modules.prereg_check:prereg_check"
 # internal helpers defined in inst/modules/prereg_check.R
-osf_prereg_extract = "pytacheck.modules._prereg:osf_prereg_extract"
-osf_special_handlers = "pytacheck.modules._prereg:osf_special_handlers"
-osf_pr_schema = "pytacheck.modules._prereg:osf_pr_schema"
-osf_schema_labels = "pytacheck.modules._prereg:osf_schema_labels"
-osf_blocks_labels = "pytacheck.modules._prereg:osf_blocks_labels"
-osf_pages_labels = "pytacheck.modules._prereg:osf_pages_labels"
-osf_label_to_field = "pytacheck.modules._prereg:osf_label_to_field"
-osf_label_field = "pytacheck.modules._prereg:OSF_LABEL_FIELD"
-ap_schema = "pytacheck.modules._prereg:ap_schema"
-common_osf = "pytacheck.modules._prereg:common_osf"
-withdrawn = "pytacheck.modules._prereg:withdrawn"
-prsp = "pytacheck.modules._prereg:prsp"
-prereg_schema = "pytacheck.modules._prereg:prereg_schema"
-vandenAkker2024 = "pytacheck.modules.prereg_check:_VAN_DEN_AKKER_2024"
-Lakens2024 = "pytacheck.modules.prereg_check:_LAKENS_2024"
+osf_prereg_extract = "metacheck.modules._prereg:osf_prereg_extract"
+osf_special_handlers = "metacheck.modules._prereg:osf_special_handlers"
+osf_pr_schema = "metacheck.modules._prereg:osf_pr_schema"
+osf_schema_labels = "metacheck.modules._prereg:osf_schema_labels"
+osf_blocks_labels = "metacheck.modules._prereg:osf_blocks_labels"
+osf_pages_labels = "metacheck.modules._prereg:osf_pages_labels"
+osf_label_to_field = "metacheck.modules._prereg:osf_label_to_field"
+osf_label_field = "metacheck.modules._prereg:OSF_LABEL_FIELD"
+ap_schema = "metacheck.modules._prereg:ap_schema"
+common_osf = "metacheck.modules._prereg:common_osf"
+withdrawn = "metacheck.modules._prereg:withdrawn"
+prsp = "metacheck.modules._prereg:prsp"
+prereg_schema = "metacheck.modules._prereg:prereg_schema"
+vandenAkker2024 = "metacheck.modules.prereg_check:_VAN_DEN_AKKER_2024"
+Lakens2024 = "metacheck.modules.prereg_check:_LAKENS_2024"

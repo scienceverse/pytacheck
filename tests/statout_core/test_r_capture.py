@@ -1,4 +1,4 @@
-"""Tests for pytacheck.statout.r_capture (port of R/r-capture.R)."""
+"""Tests for metacheck.statout.r_capture (port of R/r-capture.R)."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout.r_capture import (
+from metacheck.statout.r_capture import (
     RSubprocessError,
     RSubprocessTimeout,
     _r_call_fun_arg,
@@ -24,7 +24,7 @@ from pytacheck.statout.r_capture import (
     _r_method_to_fn,
     _read_captures,
 )
-from pytacheck.statout.r_output import read_r_output
+from metacheck.statout.r_output import read_r_output
 
 
 def _lines(path: Path) -> list[str]:

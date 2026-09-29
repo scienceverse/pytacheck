@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "parity" / "cases" / "datacheck_columns.yaml"
 FIX = "tests/datacheck_columns/fixtures"
 UP = "upstream/metacheck/tests/testthat"
-PY = "pytacheck.datacheck.columns"
+PY = "metacheck.datacheck.columns"
 
 cases: list[dict[str, Any]] = []
 
@@ -718,7 +718,7 @@ case(
 def jl(s: str) -> dict[str, Any]:
     return expr(
         f"jsonlite::fromJSON({s!r}, simplifyVector = FALSE)",
-        f"__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads({s!r})",
+        f"__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads({s!r})",
     )
 
 

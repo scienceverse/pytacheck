@@ -15,10 +15,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.codecheck import core
-from pytacheck.codecheck._reval import r_eval
-from pytacheck.codecheck._rjson import RList, json_load, r_as_character, r_unlist_chr
-from pytacheck.codecheck._rparse import parse_exprs
+from metacheck.codecheck import core
+from metacheck.codecheck._reval import r_eval
+from metacheck.codecheck._rjson import RList, json_load, r_as_character, r_unlist_chr
+from metacheck.codecheck._rparse import parse_exprs
 
 FIX = Path(__file__).parent / "fixtures"
 
@@ -267,7 +267,7 @@ def test_predownload_missing_column_is_a_no_op(
     def boom(*args: object, **kwargs: object) -> None:
         raise AssertionError("no download expected")
 
-    monkeypatch.setattr("pytacheck.archives.download.download_repo_files", boom)
+    monkeypatch.setattr("metacheck.archives.download.download_repo_files", boom)
     af = pd.DataFrame(
         {
             "repo_url": ["r", "r"],
@@ -322,10 +322,10 @@ def test_code_expand_zip_mocked(monkeypatch: pytest.MonkeyPatch) -> None:
             }
         )
 
-    monkeypatch.setattr("pytacheck.archives.zip_peek.zip_peek", peek)
-    monkeypatch.setattr("pytacheck.archives.zip_peek._zip_fetch_members", fetch)
+    monkeypatch.setattr("metacheck.archives.zip_peek.zip_peek", peek)
+    monkeypatch.setattr("metacheck.archives.zip_peek._zip_fetch_members", fetch)
     monkeypatch.setattr(
-        "pytacheck.archives.download._repo_cache_path", lambda repo, fp: f"/cache/{fp}"
+        "metacheck.archives.download._repo_cache_path", lambda repo, fp: f"/cache/{fp}"
     )
     af = pd.DataFrame(
         {

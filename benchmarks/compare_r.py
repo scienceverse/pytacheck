@@ -33,7 +33,7 @@ for (i in seq_along(mods)) cat(sprintf("%s\t%.3f\n", mods[[i]], res[[i]]))
 
 
 def python_times(corpus: Path, modules: list[str]) -> dict[str, float]:
-    import pytacheck as pc
+    import metacheck as pc
 
     times: dict[str, float] = {}
     t0 = time.perf_counter()

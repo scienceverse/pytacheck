@@ -10,9 +10,9 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck
-from pytacheck.fileinfo import check_file_naming, file_category, file_types, filetype
-from pytacheck.fileinfo.naming import FILE_NAMING_SEVERITY
+import metacheck
+from metacheck.fileinfo import check_file_naming, file_category, file_types, filetype
+from metacheck.fileinfo.naming import FILE_NAMING_SEVERITY
 
 
 def test_file_category_empty_vector_and_frame() -> None:
@@ -45,7 +45,7 @@ def test_file_category_as_data_frame() -> None:
 
 
 def test_data_classify_files_genomic_formats() -> None:
-    from pytacheck.datacheck.files import data_classify_files
+    from metacheck.datacheck.files import data_classify_files
 
     contents = [
         "sample.fasta",
@@ -163,7 +163,7 @@ def test_file_types_table() -> None:
 
 
 def test_bundled_data_loader() -> None:
-    from pytacheck.resources.data import load_data
+    from metacheck.resources.data import load_data
 
     ft = load_data("file_types")
     assert ft.shape == (404, 2)
@@ -171,9 +171,9 @@ def test_bundled_data_loader() -> None:
 
 
 def test_top_level_exports() -> None:
-    assert pytacheck.file_category is file_category
-    assert pytacheck.filetype is filetype
-    assert pytacheck.check_file_naming is check_file_naming
+    assert metacheck.file_category is file_category
+    assert metacheck.filetype is filetype
+    assert metacheck.check_file_naming is check_file_naming
 
 
 def test_check_file_naming_rules() -> None:

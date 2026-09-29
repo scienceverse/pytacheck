@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from pytacheck.report import (
+from metacheck.report import (
     ReportTable,
     collapse_section,
     format_ref,
@@ -14,7 +14,7 @@ from pytacheck.report import (
     report_table,
     scroll_table,
 )
-from pytacheck.report.render import DataTable, scroll_table_qmd
+from metacheck.report.render import DataTable, scroll_table_qmd
 
 LETTERS = [chr(c) for c in range(ord("A"), ord("Z") + 1)]
 letters = [c.lower() for c in LETTERS]

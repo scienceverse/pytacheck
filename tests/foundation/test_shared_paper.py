@@ -15,10 +15,10 @@ from pathlib import Path
 
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.module import module_run, run_session
 from parity.accuracy import MATRIX_FILE
 from parity.canonical import canonical
-from pytacheck.module import module_run, run_session
 from tests.httpmock import no_network
 
 #: the accuracy matrix's offline paper modules but stat_check, in the matrix's order

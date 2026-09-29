@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import pytacheck as pc
-from pytacheck.papers.model import PaperList
+import metacheck as pc
+from metacheck.papers.model import PaperList
 
 
 def test_section_return_keeps_the_header(demo) -> None:

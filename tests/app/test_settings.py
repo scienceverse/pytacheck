@@ -11,7 +11,7 @@ from typing import Any
 import gradio as gr
 import pytest
 
-from pytacheck.app import server, ui
+from metacheck.app import server, ui
 
 
 @pytest.fixture(scope="module")
@@ -27,7 +27,7 @@ def test_analytics_env_var_is_set_before_gradio_is_imported() -> None:
     code = (
         "import sys, os\n"
         "os.environ.pop('GRADIO_ANALYTICS_ENABLED', None)\n"
-        "from pytacheck.app import main\n"
+        "from metacheck.app import main\n"
         "assert 'gradio' not in sys.modules\n"
         "main(['--self-test'])\n"
         "print(os.environ['GRADIO_ANALYTICS_ENABLED'])\n"
@@ -37,7 +37,7 @@ def test_analytics_env_var_is_set_before_gradio_is_imported() -> None:
 
 
 def test_importing_pytacheck_never_imports_gradio() -> None:
-    code = "import sys, pytacheck, pytacheck.app; print('gradio' in sys.modules)"
+    code = "import sys, metacheck, metacheck.app; print('gradio' in sys.modules)"
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert out.stdout.strip() == "False"
 

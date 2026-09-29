@@ -69,8 +69,8 @@ def read_file_names() -> dict[str, list[str]]:
     R stores each XML path exactly as ``read()`` got it (``list.files()`` of
     ``"dir/"`` gives ``"dir//p.xml"``); the temporary directory is written ``D``.
     """
-    import pytacheck as pc
-    from pytacheck.papers import PaperList
+    import metacheck as pc
+    from metacheck.papers import PaperList
 
     d = _copies({_EMPTY_TEI: ["p.xml", "q.xml"]})
 
@@ -92,7 +92,7 @@ def identity(x: Any) -> Any:
 
 def read_rds_basenames(file: Any) -> Any:
     """``readRDS(file)`` of a paper list with each paper's ``info$file_name`` basename'd."""
-    from pytacheck.io.corpus import _read_rds
+    from metacheck.io.corpus import _read_rds
 
     papers = _read_rds(file)
     for p in papers:
@@ -104,7 +104,7 @@ def read_rds_basenames(file: Any) -> Any:
 
 def read_basenames(file_path: Any, recursive: bool = False) -> Any:
     """``read(file_path, recursive)`` with each paper's ``info$file_name`` basename'd."""
-    import pytacheck as pc
+    import metacheck as pc
 
     papers = pc.read(file_path, recursive=recursive, schema_version=None)
     for p in papers:

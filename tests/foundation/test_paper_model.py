@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
 
 
 def test_demopaper_tables(demo: pc.Paper) -> None:
@@ -54,6 +54,6 @@ def test_import_is_lazy() -> None:
     import subprocess
     import sys
 
-    code = "import sys, pytacheck; print('pandas' in sys.modules)"
+    code = "import sys, metacheck; print('pandas' in sys.modules)"
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
-    assert out.stdout.strip() == "False", "import pytacheck must not import pandas"
+    assert out.stdout.strip() == "False", "import metacheck must not import pandas"

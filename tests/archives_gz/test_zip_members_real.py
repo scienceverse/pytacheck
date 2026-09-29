@@ -17,8 +17,8 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives import zenodo
-from pytacheck.archives.zenodo import _zenodo_id, _zenodo_zip_members, zenodo_file_download
+from metacheck.archives import zenodo
+from metacheck.archives.zenodo import _zenodo_id, _zenodo_zip_members, zenodo_file_download
 from tests.archives_gz.zipserve import MEMBERS, ZipServer, fresh_peek_cache, make_zip
 
 URL = "https://zenodo.org/api/records/24680/files/bundle.zip/content"

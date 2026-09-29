@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.config import (
+from metacheck.config import (
     BUILTIN_STORE_URL,
     ConfigError,
     config_files,
@@ -31,7 +31,7 @@ def scopes(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     proj = tmp_path / "proj"
     cwd = proj / "a" / "b"
     cwd.mkdir(parents=True)
-    monkeypatch.setattr("pytacheck.config.user_config_path", lambda: user)
+    monkeypatch.setattr("metacheck.config.user_config_path", lambda: user)
     monkeypatch.delenv("PYTACHECK_CONFIG", raising=False)
     monkeypatch.delenv("PYTACHECK_STORE_URL", raising=False)
     monkeypatch.chdir(cwd)
@@ -146,7 +146,7 @@ def test_update_config_ignores_a_malformed_ignored_project_stores_section(
 
 def test_a_project_config_cannot_set_stores(scopes, monkeypatch) -> None:
     # a cloned repository must not add a store, nor replace or hide the official one
-    from pytacheck.packs.stores import store_list
+    from metacheck.packs.stores import store_list
 
     user, project = scopes
     _write(user, {"stores": {"mylab": "https://github.com/mylab/store"}})
@@ -172,7 +172,7 @@ def test_a_project_config_cannot_set_stores(scopes, monkeypatch) -> None:
 
 
 def test_stores_cannot_be_written_to_a_project_config(scopes) -> None:
-    from pytacheck.packs.stores import StoreError, store_add, store_remove
+    from metacheck.packs.stores import StoreError, store_add, store_remove
 
     user, project = scopes
     _write(project, {})

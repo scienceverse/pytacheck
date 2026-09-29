@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.statout.omv import _omv_extract_syntax, export_omv_html, import_omv
+from metacheck.statout.omv import _omv_extract_syntax, export_omv_html, import_omv
 
 HERE = Path(__file__).resolve().parent
 FIX = HERE / "fixtures" / "archives"

@@ -9,9 +9,9 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.archives import osf
-from pytacheck.archives.osf import (
+import metacheck as pc
+from metacheck.archives import osf
+from metacheck.archives.osf import (
     OsfResult,
     _osf_error_result,
     _osf_max_page_size,
@@ -26,7 +26,7 @@ from pytacheck.archives.osf import (
     osf_preprint_list,
     osf_type,
 )
-from pytacheck.utils import local_options
+from metacheck.utils import local_options
 
 API = "https://api.osf.io/v2"
 
@@ -333,7 +333,7 @@ def test_osf_info_session_cache(mock_api: respx.MockRouter) -> None:
 
 
 def test_osf_info_disk_cache(mock_api: respx.MockRouter) -> None:
-    from pytacheck.archives.info_cache import _repo_info_cache_get
+    from metacheck.archives.info_cache import _repo_info_cache_get
 
     osf_info("pngda", cache=True)
     hit = _repo_info_cache_get("osf", "pngda")

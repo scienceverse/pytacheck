@@ -11,7 +11,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from pytacheck.archives.osf_helpers import _from_json, _resp_body_json
+from metacheck.archives.osf_helpers import _from_json, _resp_body_json
 
 
 def _resp(body: bytes, ctype: str | None = "application/json") -> httpx.Response:

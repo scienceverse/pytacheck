@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.datacheck import files as F
-from pytacheck.datacheck._files_readers import vec_as_names_unique
+from metacheck.datacheck import files as F
+from metacheck.datacheck._files_readers import vec_as_names_unique
 
 DATA = Path(__file__).parent / "data"
 

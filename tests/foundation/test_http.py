@@ -4,7 +4,7 @@ import httpx
 import pytest
 import respx
 
-from pytacheck import http
+from metacheck import http
 from tests.httpmock import mock_path, r_digest, replay
 
 

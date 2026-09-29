@@ -16,12 +16,12 @@ def test_llm_option_defaults_exist_before_llm_is_imported() -> None:
     # metacheck.llm.use = FALSE, so getOption() sees them before any LLM code runs
     code = (
         "import json, sys\n"
-        "import pytacheck.utils as u\n"
-        "from pytacheck.module import _memo_options\n"
+        "import metacheck.utils as u\n"
+        "from metacheck.module import _memo_options\n"
         "n = u.get_option('metacheck.llm_max_calls')\n"
         "before = _memo_options()\n"
-        "loaded = 'pytacheck.llm.core' in sys.modules\n"
-        "import pytacheck.llm.core\n"
+        "loaded = 'metacheck.llm.core' in sys.modules\n"
+        "import metacheck.llm.core\n"
         "print(json.dumps([n, type(n).__name__, u.get_option('metacheck.llm.use'), loaded,"
         " before == _memo_options()]))\n"
     )
@@ -31,12 +31,12 @@ def test_llm_option_defaults_exist_before_llm_is_imported() -> None:
     n, cls, use, loaded, same = json.loads(out.strip().splitlines()[-1])
     assert (n, cls, use) == (30, "RInt", False)  # 30L: an R integer
     assert not loaded
-    assert same  # the module memo key does not change when pytacheck.llm loads
+    assert same  # the module memo key does not change when metacheck.llm loads
 
 
 @pytest.fixture
 def restore_verbose() -> Iterator[None]:
-    from pytacheck import config
+    from metacheck import config
 
     saved = config._state.get("verbose", None)
     try:
@@ -71,7 +71,7 @@ def restore_verbose() -> Iterator[None]:
     ],
 )
 def test_verbose_converts_as_r(value: Any, expected: bool, restore_verbose: None) -> None:
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     verbose(not expected)
     assert verbose(value) is expected
@@ -80,7 +80,7 @@ def test_verbose_converts_as_r(value: Any, expected: bool, restore_verbose: None
 
 @pytest.mark.parametrize("value", [" TRUE", "yes", "0", "1", "", float("nan"), [None]])
 def test_verbose_refuses_what_r_refuses(value: Any, restore_verbose: None) -> None:
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     verbose(True)
     with pytest.raises(ValueError, match=r"^set verbose with TRUE or FALSE$"):
@@ -89,7 +89,7 @@ def test_verbose_refuses_what_r_refuses(value: Any, restore_verbose: None) -> No
 
 
 def test_verbose_vector_lengths(restore_verbose: None) -> None:
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     with pytest.raises(ValueError, match=r"^the condition has length > 1$"):
         verbose([True, False])
@@ -100,7 +100,7 @@ def test_verbose_vector_lengths(restore_verbose: None) -> None:
 def test_verbose_numpy_scalars(restore_verbose: None) -> None:
     import numpy as np
 
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     assert verbose(np.bool_(False)) is False
     assert verbose(np.int64(3)) is True
@@ -113,7 +113,7 @@ def test_verbose_complex_and_arrays(restore_verbose: None) -> None:
     import numpy as np
     import pandas as pd
 
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     assert verbose(1j) is True
     assert verbose(0j) is False
@@ -130,7 +130,7 @@ def test_verbose_complex_and_arrays(restore_verbose: None) -> None:
 def test_github_pat_is_not_a_default_model(monkeypatch: pytest.MonkeyPatch) -> None:
     # U20: metacheck's .onLoad() picks the defunct "github" provider when only
     # GITHUB_PAT is set, so every LLM call fails
-    from pytacheck.llm import core
+    from metacheck.llm import core
 
     for _, env in core._API_KEY_ENV:
         monkeypatch.delenv(env, raising=False)
@@ -142,8 +142,8 @@ def test_github_pat_is_not_a_default_model(monkeypatch: pytest.MonkeyPatch) -> N
 
 def test_llm_timeout_bounds_hosted_providers() -> None:
     # U20: ellmer's providers waited 300 s whatever llm_timeout() said
-    from pytacheck import utils
-    from pytacheck.llm import core, providers
+    from metacheck import utils
+    from metacheck.llm import core, providers
 
     old_timeout = core.llm_timeout()
     old_opt = utils.get_option("ellmer_timeout_s")

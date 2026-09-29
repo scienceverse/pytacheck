@@ -1,6 +1,6 @@
 """Port of metacheck's tests/testthat/test-module-power.R (plus R-checked edge cases).
 
-The R tests mock ``ellmer::chat()``; here ``pytacheck.llm.providers.chat`` is
+The R tests mock ``ellmer::chat()``; here ``metacheck.llm.providers.chat`` is
 replaced by a :class:`FakeChat`. Expected values not in the R tests were
 produced by running the same mocks through metacheck (R 4.5.3, pinned commit).
 """
@@ -16,9 +16,9 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.module import module_list, module_run
-from pytacheck.modules import _power
+import metacheck as pc
+from metacheck.module import module_list, module_run
+from metacheck.modules import _power
 from tests.mod_power.parity_helpers import paragraphs
 from tests.mod_power.support import FakeChat, structured_lookup
 
@@ -404,8 +404,8 @@ def test_power_with_llm_structured(llm_on: None, mock_chat: MockChat) -> None:
 
 
 def test_power_model_attribution_and_no_fallback_notice(llm_on: None, mock_chat: MockChat) -> None:
-    from pytacheck.llm import llm_model
-    from pytacheck.utils import local_options
+    from metacheck.llm import llm_model
+    from metacheck.utils import local_options
 
     test_model = "groq/llama-3.3-70b-versatile"
     with local_options({"metacheck.llm.model": test_model}):
@@ -449,7 +449,7 @@ def test_power_falls_back_to_prompt_fenced_extraction(
 def test_power_fallback_prompt_includes_schema(
     llm_on: None, monkeypatch: pytest.MonkeyPatch, schema_served: Any
 ) -> None:
-    from pytacheck.llm import providers
+    from metacheck.llm import providers
 
     prompts: list[str] = []
 
@@ -816,7 +816,7 @@ def test_power_with_ollama_structured(llm_on: None, mock_chat: MockChat) -> None
             }
         )
     )
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     # the "apis" fixtures answer llm()'s ollama_up / model-exists pre-checks
     with replay("apis"), local_options({"metacheck.llm.model": "ollama/qwen2.5:3b"}):
@@ -837,7 +837,7 @@ def test_power_with_ollama_structured(llm_on: None, mock_chat: MockChat) -> None
 
 
 def test_power_seed_is_sent(llm_on: None, monkeypatch: pytest.MonkeyPatch) -> None:
-    from pytacheck.llm import providers
+    from metacheck.llm import providers
 
     seen: list[Any] = []
 
@@ -918,7 +918,7 @@ def test_power_empty_paper(llm_off: None) -> None:
     ],
 )
 def test_ignore_case_folds_unicode_case_variants(pattern: str, text: str) -> None:
-    from pytacheck._r import grepl
+    from metacheck._r import grepl
 
     assert grepl(pattern, [text], ignore_case=True) == [True]
     assert grepl(pattern, [text]) == [False]
@@ -928,14 +928,14 @@ def test_ignore_case_folds_unicode_case_variants(pattern: str, text: str) -> Non
 @pytest.mark.parametrize(("pattern", "text"), [("ss", "ß"), ("ß", "SS"), ("fi", "ﬁ")])
 @pytest.mark.parametrize("perl", [False, True])
 def test_ignore_case_has_no_full_case_folding(pattern: str, text: str, perl: bool) -> None:
-    from pytacheck._r import grepl
+    from metacheck._r import grepl
 
     assert grepl(pattern, [text], ignore_case=True, perl=perl) == [False]
 
 
 def test_tre_ignore_case_negated_bracket() -> None:
     # R: regmatches(x, gregexpr("[^a-z]+", x, ignore.case = TRUE))
-    from pytacheck._r import gsub, regextract_all
+    from metacheck._r import gsub, regextract_all
 
     x = "T+ participants: M = 0.22 s"
     assert regextract_all("[^a-z]+", [x], ignore_case=True) == [["+ ", ": ", " = 0.22 "]]

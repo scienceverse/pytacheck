@@ -85,8 +85,8 @@ def fn_case(
     return case
 
 
-ZP = "pytacheck.archives.zip_peek."
-DL = "pytacheck.archives.download."
+ZP = "metacheck.archives.zip_peek."
+DL = "metacheck.archives.download."
 
 
 def zip_cases() -> list[dict[str, Any]]:
@@ -597,7 +597,7 @@ def download_cases() -> list[dict[str, Any]]:
                     "$expr": {
                         "r": "vapply(c(" + ", ".join(map(str, statuses)) + "), function(s) "
                         "metacheck:::.storage_is_transient(httr2::response(status_code = s)), logical(1))",
-                        "py": "[__import__('pytacheck.archives.download', fromlist=['x'])._storage_is_transient("
+                        "py": "[__import__('metacheck.archives.download', fromlist=['x'])._storage_is_transient("
                         "__import__('httpx').Response(s)) for s in ["
                         + ", ".join(map(str, statuses))
                         + "]]",

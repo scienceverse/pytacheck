@@ -21,7 +21,7 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeout
 
 RUNNING = re.compile(r"metacheck is running at (http://127\.0\.0\.1:\d+/\?token=\S+)")
 PAPER = (
-    Path(__file__).resolve().parent.parent / "src/pytacheck/resources/demos/to_err_is_human.json"
+    Path(__file__).resolve().parent.parent / "src/metacheck/resources/demos/to_err_is_human.json"
 )
 # A closed local proxy: a download from the server side fails loudly instead of passing unseen.
 NO_OUTSIDE = {

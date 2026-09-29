@@ -12,8 +12,8 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.io.bibr_convert import (
+import metacheck as pc
+from metacheck.io.bibr_convert import (
     BibrRequestError,
     _bibr_isalive,
     _bibr_save_result,
@@ -202,7 +202,7 @@ def pdf() -> Path:
 @pytest.fixture
 def sleeps(monkeypatch: pytest.MonkeyPatch) -> list[float]:
     """The waits the client asks for (nothing really sleeps)."""
-    import pytacheck.http as http
+    import metacheck.http as http
 
     waited: list[float] = []
     monkeypatch.setattr(http, "sleep", waited.append)
@@ -519,7 +519,7 @@ def test_bibr_host_reset_from_another_caller_is_bounded(
 ) -> None:
     """The shared layer remembers a 429 that any caller got (the readiness probe retries one)
     and sleeps until the reset before every request to the host: bound it like a Retry-After."""
-    import pytacheck.http as http
+    import metacheck.http as http
 
     monkeypatch.setattr(http, "_host_reset", {})
     http._record_reset("bibr.example", time.time() + 7200)
@@ -547,7 +547,7 @@ def test_retry_after_forms() -> None:
     import email.utils
     import time
 
-    from pytacheck.io.bibr_convert import _retry_after
+    from metacheck.io.bibr_convert import _retry_after
 
     def value(header: str | None) -> float | None:
         headers = {} if header is None else {"Retry-After": header}
@@ -633,7 +633,7 @@ def test_bibr_poll_interval_must_be_positive(
 
 
 def test_bibr_session_repr_keeps_the_token_out() -> None:
-    from pytacheck.io.bibr_convert import _Session
+    from metacheck.io.bibr_convert import _Session
 
     sess = _Session(HOSTED_URL, TOKEN, 600, 5, 120)
     assert TOKEN not in repr(sess)
@@ -989,7 +989,7 @@ def test_selfhosted_refuses_a_token_over_plain_http(pdf: Path, tmp_path: Path) -
 def test_convert_uses_the_bibr_url_without_probing(
     pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import pytacheck.io.convert as conv
+    import metacheck.io.convert as conv
 
     def fail(*_a: object, **_k: object) -> None:
         raise AssertionError("BIBR_URL is used as given: no server list, no probe")
@@ -1010,7 +1010,7 @@ def test_convert_uses_the_bibr_url_without_probing(
 def test_convert_passes_bibr_options(
     pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pytacheck.io.convert import convert
+    from metacheck.io.convert import convert
 
     monkeypatch.setenv("BIBR_URL", HOSTED_URL)
     rec = Recorder()
@@ -1022,7 +1022,7 @@ def test_convert_passes_bibr_options(
 def test_convert_arguments_beat_bibr_url(
     pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pytacheck.io.convert import convert
+    from metacheck.io.convert import convert
 
     monkeypatch.setenv("BIBR_URL", HOSTED_URL)
     rec = Recorder()
@@ -1041,7 +1041,7 @@ def test_convert_finds_a_local_bibr_serve(
     pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """An anonymous RC /ready says only {"status": "ready"}: enough to be found."""
-    from pytacheck.io.convert import convert
+    from metacheck.io.convert import convert
 
     monkeypatch.delenv("SCIVRS_API_KEY", raising=False)
     rec = Recorder()
@@ -1060,7 +1060,7 @@ def test_convert_local_bibr_serve_is_not_the_platform(
 ) -> None:
     """A platform user (SCIVRS_API_KEY) with a bibr serve on this machine: the server that
     was found takes the synchronous request, not the platform's /jobs queue (405 on bibr)."""
-    from pytacheck.io.convert import convert
+    from metacheck.io.convert import convert
 
     monkeypatch.setenv("SCIVRS_API_KEY", "sv_test")
     rec = Recorder()
@@ -1086,7 +1086,7 @@ def test_convert_ignores_bibr_api_url(
 ) -> None:
     """BIBR_API_URL (set for bibr's own notebooks) must not steer convert(): a LAN address
     with a key would be refused, and the message would name BIBR_URL."""
-    from pytacheck.io.convert import convert
+    from metacheck.io.convert import convert
 
     monkeypatch.setenv("BIBR_API_URL", "http://192.168.1.20:8000")
     monkeypatch.setenv("BIBR_API_KEY", TOKEN)

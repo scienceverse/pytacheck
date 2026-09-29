@@ -6,10 +6,10 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck._r import count, plural
-from pytacheck.module import module
-from pytacheck.report import collapse_section, scroll_table
-from pytacheck.text import text_search
+from metacheck._r import count, plural
+from metacheck.module import module
+from metacheck.report import collapse_section, scroll_table
+from metacheck.text import text_search
 
 
 @module(

@@ -10,7 +10,7 @@ from starlette.routing import Route, WebSocketRoute
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
-from pytacheck.app.security import DENIED_PAGE, TokenGuard, cookie_name
+from metacheck.app.security import DENIED_PAGE, TokenGuard, cookie_name
 
 PORT = 4321
 TOKEN = "s3cret-token"

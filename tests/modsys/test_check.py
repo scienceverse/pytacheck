@@ -6,10 +6,10 @@ import json
 
 import pytest
 
-from pytacheck.cli import main
-from pytacheck.module import module_run
-from pytacheck.packs.check import CheckIssue, pack_check
-from pytacheck.packs.scaffold import module_template, pack_new
+from metacheck.cli import main
+from metacheck.module import module_run
+from metacheck.packs.check import CheckIssue, pack_check
+from metacheck.packs.scaffold import module_template, pack_new
 
 VALIDATED = "<validation>Validated on 10 papers.</validation>"
 
@@ -33,7 +33,7 @@ def src(
     )
     body = "\n".join(f"    {line}" for line in lines)
     return (
-        f"from pytacheck.module import module\n{header}\n\n"
+        f"from metacheck.module import module\n{header}\n\n"
         f"@module(title={title if title is not None else name.title()!r}, "
         f"description='The {name} module', details={details!r}, "
         f"keywords={list(keywords)!r}, requires={list(requires)!r})\n"
@@ -126,7 +126,7 @@ def test_run_problems(ms) -> None:
 
 def test_network_use_must_be_declared(ms) -> None:
     undeclared = good("fetches", header="import httpx")
-    declared = good("declared", header="from pytacheck import http", requires=("network",))
+    declared = good("declared", header="from metacheck import http", requires=("network",))
     folder = ms.pack(ms.root / "net", "net", {"fetches": undeclared, "declared": declared})
     issues = pack_check(folder)
     errors = {(i.where, i.code) for i in issues if i.level == "error"}
@@ -229,7 +229,7 @@ def test_pack_new_requirement_is_met_by_the_build_that_wrote_it(
     from packaging.specifiers import SpecifierSet
     from packaging.version import Version
 
-    monkeypatch.setattr("pytacheck._version.__version__", built)
+    monkeypatch.setattr("metacheck._version.__version__", built)
     root = pack_new("dev-pack", ms.work)
     requires = json.loads((root / "pack.json").read_text())["requires"]["pytacheck"]
     assert SpecifierSet(requires).contains(Version(built), prereleases=True)

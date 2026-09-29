@@ -31,7 +31,7 @@ Dumper.add_representer(str, _str)
 MOCK = "tests/archives_d2/mocks"
 APIS = "apis"
 RUN = "tests.archives_d2.parity_support.run"
-PKG = "pytacheck.archives"
+PKG = "metacheck.archives"
 cases: list[dict[str, Any]] = []
 IGNORE_PID = {"ignore": ["paper_id"]}
 

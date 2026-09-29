@@ -11,7 +11,7 @@ on:
       - install.sh
       - install.ps1
       - install/**
-      - src/pytacheck/app/**
+      - src/metacheck/app/**
       - pyproject.toml
       - uv.lock
       - .github/workflows/installer.yml
@@ -20,7 +20,7 @@ on:
       - install.sh
       - install.ps1
       - install/**
-      - src/pytacheck/app/**
+      - src/metacheck/app/**
       - pyproject.toml
       - uv.lock
       - .github/workflows/installer.yml

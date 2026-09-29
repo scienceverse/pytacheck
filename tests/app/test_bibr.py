@@ -15,9 +15,9 @@ import orjson
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.app import bibr, run, ui
-from pytacheck.io.convert import SERVERS_URL
+import metacheck as pc
+from metacheck.app import bibr, run, ui
+from metacheck.io.convert import SERVERS_URL
 
 BIBR = "https://bibr.example.test"
 OTHER = "https://other.example.test"

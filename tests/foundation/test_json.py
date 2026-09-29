@@ -1,4 +1,4 @@
-"""pytacheck._json.loads: orjson with a standard-library fallback."""
+"""metacheck._json.loads: orjson with a standard-library fallback."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import math
 import orjson
 import pytest
 
-from pytacheck._json import JSONDecodeError, loads
+from metacheck._json import JSONDecodeError, loads
 
 
 @pytest.mark.parametrize(

@@ -321,7 +321,7 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$expr":
@@ -334,7 +334,7 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$expr":
@@ -348,7 +348,7 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$expr":
@@ -361,7 +361,7 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$expr":
@@ -374,7 +374,7 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$expr":
@@ -388,7 +388,7 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$expr":
@@ -401,12 +401,12 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$call":
               "r": "module_run"
-              "py": "pytacheck.module.module_run"
+              "py": "metacheck.module.module_run"
               "args":
                 "paper":
                   "$expr":
@@ -420,7 +420,7 @@
     "paper":
       "$call":
         "r": "module_run"
-        "py": "pytacheck.module.module_run"
+        "py": "metacheck.module.module_run"
         "args":
           "paper":
             "$expr":

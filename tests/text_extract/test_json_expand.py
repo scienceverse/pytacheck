@@ -8,7 +8,7 @@ from collections.abc import Iterator
 import pandas as pd
 import pytest
 
-from pytacheck.text.json_expand import (
+from metacheck.text.json_expand import (
     _deparse,
     _parse_json,
     _simplify,

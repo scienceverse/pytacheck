@@ -10,7 +10,7 @@ import sys
 
 import pytest
 
-from pytacheck.packs.manifest import (
+from metacheck.packs.manifest import (
     FIELDS,
     Pack,
     PackError,
@@ -19,8 +19,8 @@ from pytacheck.packs.manifest import (
     validate_pack_name,
     validate_preset,
 )
-from pytacheck.packs.registry import builtin_pack, install_dir, pin_rev12
-from pytacheck.packs.tree import file_sha256, tree_files, tree_sha256
+from metacheck.packs.registry import builtin_pack, install_dir, pin_rev12
+from metacheck.packs.tree import file_sha256, tree_files, tree_sha256
 
 
 @pytest.mark.parametrize("name", ["ab", "psych", "my-pack", "lab_2", "a" * 40])
@@ -214,13 +214,13 @@ def test_tree_hash_equals_sha256sum_pipeline(tmp_path) -> None:
 
 def test_import_pytacheck_does_not_import_packs() -> None:
     code = (
-        "import sys, pytacheck as pc\n"
-        "assert 'pytacheck.packs' not in sys.modules\n"
+        "import sys, metacheck as pc\n"
+        "assert 'metacheck.packs' not in sys.modules\n"
         "pc.module_run(pc.demopaper(), 'marginal')\n"
         "pc.module_list()\n"
-        "assert 'pytacheck.packs' not in sys.modules, 'built-in runs must not need packs'\n"
+        "assert 'metacheck.packs' not in sys.modules, 'built-in runs must not need packs'\n"
         "pc.refresh\n"
-        "assert 'pytacheck.packs' in sys.modules\n"
+        "assert 'metacheck.packs' in sys.modules\n"
     )
     env = {**os.environ, "PYTACHECK_CONFIG": "none"}
     subprocess.run([sys.executable, "-c", code], check=True, env=env)

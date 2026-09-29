@@ -17,17 +17,17 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.cli import main
-from pytacheck.config import ConfigError, config_files, load_config
-from pytacheck.module import ModuleError, module, module_find, module_run, run_session
-from pytacheck.packs.build import store_build
-from pytacheck.packs.install import pack_install
-from pytacheck.packs.manifest import PackError
-from pytacheck.packs.registry import refresh
-from pytacheck.packs.stores import validate_index
-from pytacheck.presets import select
-from pytacheck.provenance import json_safe, module_provenance, rerun, run_modules
+import metacheck as pc
+from metacheck.cli import main
+from metacheck.config import ConfigError, config_files, load_config
+from metacheck.module import ModuleError, module, module_find, module_run, run_session
+from metacheck.packs.build import store_build
+from metacheck.packs.install import pack_install
+from metacheck.packs.manifest import PackError
+from metacheck.packs.registry import refresh
+from metacheck.packs.stores import validate_index
+from metacheck.presets import select
+from metacheck.provenance import json_safe, module_provenance, rerun, run_modules
 from tests.modsys.helpers import mod_src
 from tests.modsys.storekit import (
     INDEX_URL,
@@ -61,7 +61,7 @@ def scoped(ms, tmp_path, monkeypatch):
     """Separate user and project configs (``ms`` names one file for every scope)."""
     user = tmp_path / "userconf" / "config.json"
     user.parent.mkdir()
-    monkeypatch.setattr("pytacheck.config.user_config_path", lambda: user)
+    monkeypatch.setattr("metacheck.config.user_config_path", lambda: user)
     monkeypatch.delenv("PYTACHECK_CONFIG")
     project = ms.work / "proj"
     project.mkdir()
@@ -99,8 +99,8 @@ def test_run_exits_1_says_why_and_runs_the_rest(ms, capsys, demo_json) -> None:
 
 
 def test_unported_metacheck_modules_say_so(ms, capsys, demo_json) -> None:
-    from pytacheck.module import _builtin_names
-    from pytacheck.presets import _declared_builtin
+    from metacheck.module import _builtin_names
+    from metacheck.presets import _declared_builtin
 
     unported = sorted(set(_declared_builtin()) - set(_builtin_names()))
     if not unported:
@@ -157,7 +157,7 @@ def test_memo_tells_apart_functions_sharing_a_name_and_file(paper) -> None:
 
 @module(title="Counts", description="What the paper looks like now")
 def _state(paper):
-    from pytacheck.llm.core import llm_use
+    from metacheck.llm.core import llm_use
 
     return {
         "summary_text": f"n={len(paper.text)} flag={paper.extra.get('flag')} llm={llm_use()}",
@@ -166,7 +166,7 @@ def _state(paper):
 
 
 def test_memo_sees_replaced_tables_extra_and_llm_options() -> None:
-    from pytacheck.llm.core import llm_use
+    from metacheck.llm.core import llm_use
 
     p = pc.test_paper([f"Sentence {i}." for i in range(10)])
     was = llm_use()
@@ -539,8 +539,8 @@ def test_rerun_replays_modules_that_never_resolved(ms, paper, tmp_path, capsys, 
     assert [o.module for o in again] == ["marginal", "not_a_module"]
     assert again[1].traffic_light == "fail" and again[0].traffic_light != "fail"
     # the CLI round trip documented in MODULES.md, with a metacheck module not ported yet
-    from pytacheck.module import _builtin_names
-    from pytacheck.presets import _declared_builtin
+    from metacheck.module import _builtin_names
+    from metacheck.presets import _declared_builtin
 
     unported = sorted(set(_declared_builtin()) - set(_builtin_names()))
     if not unported:
@@ -587,7 +587,7 @@ def test_rerun_checks_files_before_importing_them(store, ms, paper, tmp_path) ->
 
 
 def test_as_r_leaves_out_modules_r_cannot_run(ms) -> None:
-    from pytacheck.presets import preset_as_r
+    from metacheck.presets import preset_as_r
 
     _lab(ms, py_only=mod_src("py_only"))
     text = preset_as_r([("marginal", {}), ("lab::py_only", {"x": 2})])
@@ -596,7 +596,7 @@ def test_as_r_leaves_out_modules_r_cannot_run(ms) -> None:
 
 
 def test_pack_template_installs_what_the_store_ci_installs(ms) -> None:
-    from pytacheck.packs.scaffold import INSTALL_SPEC, pack_new
+    from metacheck.packs.scaffold import INSTALL_SPEC, pack_new
 
     root = pack_new("tmpl", ms.work)
     workflow = (root / ".github" / "workflows" / "pytacheck.yml").read_text()
@@ -611,7 +611,7 @@ def test_modules_md_does_not_promise_html_run_records() -> None:
 
 def test_report_record_keeps_the_run_order(ms, capsys, demo_json) -> None:
     try:
-        from pytacheck.report import report as report_mod
+        from metacheck.report import report as report_mod
 
         report_mod.report  # noqa: B018
     except (ImportError, AttributeError):

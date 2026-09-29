@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.db.pubpeer import _request_body, pubpeer_comments
+from metacheck.db.pubpeer import _request_body, pubpeer_comments
 
 
 def test_request_body_matches_jsonlite() -> None:

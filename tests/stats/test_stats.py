@@ -5,10 +5,10 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_run
-from pytacheck.stats import stats
-from pytacheck.stats.statcheck import VAR_RAW
+import metacheck as pc
+from metacheck.module import module_run
+from metacheck.stats import stats
+from metacheck.stats.statcheck import VAR_RAW
 
 STATCHECK_COLUMNS = [
     "test_type",

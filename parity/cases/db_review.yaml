@@ -1,4 +1,4 @@
-# Adversarial-review parity cases for pytacheck.db (see tests/db/review.R).
+# Adversarial-review parity cases for metacheck.db (see tests/db/review.R).
 "area": "db_review"
 "cases":
 - "id": "crossref_parse_item.fixtures.single_1"
@@ -105,7 +105,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(title = \"X\", container = \"Y\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['X'], 'container': ['Y']}))"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['X'], 'container': ['Y']}))"
 - "id": "crossref_query.replay.df_no_container"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a reference table without author or container columns is searched by what it has (R: differing number of rows)"}
   "r": "identity"
@@ -114,7 +114,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(title = \"X\", authors = \"A\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['X'], 'authors': ['A']}))"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['X'], 'authors': ['A']}))"
 - "id": "crossref_query.replay.df_blank_fields"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a blank or missing reference is not searched (R queries Crossref for it)"}
   "r": "identity"
@@ -123,7 +123,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(title = c(\"T1\", NA, \"\", NA), authors = c(\"\", \"A\", NA, \"\"), container = c(NA, \"\", \"C\", NA)))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', None, '', None], 'authors': ['', 'A', None, ''], 'container': [None, '', 'C', None]}))"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', None, '', None], 'authors': ['', 'A', None, ''], 'container': [None, '', 'C', None]}))"
 - "id": "crossref_query.replay.df_journal_booktitle"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a table reference's fields are joined with '; ' and list cells with ', ' (R: literal backslash-n, deparsed list(), or a length-2 condition error)"}
   "r": "identity"
@@ -132,7 +132,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(title = c(\"T1\", \"T2\"), author = c(\"A\", \"B\"), journal = c(\"J\", NA), booktitle = c(\"B1\", \"B2\")))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2'], 'author': ['A', 'B'], 'journal': ['J', None], 'booktitle': ['B1', 'B2']}))"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2'], 'author': ['A', 'B'], 'journal': ['J', None], 'booktitle': ['B1', 'B2']}))"
 - "id": "crossref_query.replay.df_list_author"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a table reference's fields are joined with '; ' and list cells with ', ' (R: literal backslash-n, deparsed list(), or a length-2 condition error)"}
   "r": "identity"
@@ -141,7 +141,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(title = c(\"T\", NA), authors = I(list(\"Lisa\", \"Lisa\")), container = c(\"C\", NA)))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T', None], 'authors': [['Lisa'], ['Lisa']], 'container': ['C', None]}))"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T', None], 'authors': [['Lisa'], ['Lisa']], 'container': ['C', None]}))"
 - "id": "crossref_query.replay.df_list_author_two"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a table reference's fields are joined with '; ' and list cells with ', ' (R: literal backslash-n, deparsed list(), or a length-2 condition error)"}
   "r": "identity"
@@ -150,7 +150,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(title = \"T\", authors = I(list(c(\"A\", \"B\"))), container = \"C\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T'], 'authors': [['A', 'B']], 'container': ['C']}))"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T'], 'authors': [['A', 'B']], 'container': ['C']}))"
 - "id": "crossref_query.replay.zero_row_select"
   "r": "identity"
   "py": "copy.copy"
@@ -158,7 +158,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).\", select = \"nonexistent\")); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', 'Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', select=['nonexistent'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', 'Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', select=['nonexistent'])"
 - "id": "crossref_query.replay.char_na"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a blank or missing reference is not searched (R queries Crossref for it)"}
   "r": "identity"
@@ -167,7 +167,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(c(NA, \"no such reference\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', [None, 'no such reference'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', [None, 'no such reference'])"
 - "id": "crossref_query.replay.min0_rows"
   "r": "identity"
   "py": "copy.copy"
@@ -175,7 +175,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).\", min_score = 0, select = c(\"DOI\", \"score\", \"editor\", \"published\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', 'Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', min_score=0, select=['DOI', 'score', 'editor', 'published'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_query', 'Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', min_score=0, select=['DOI', 'score', 'editor', 'published'])"
 - "id": "crossref_doi.replay.zero_row_select"
   "r": "identity"
   "py": "copy.copy"
@@ -183,7 +183,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.1002/bdm.2172\", \"10.1002/ejsp.2023\", \"10.1037/0003-066x.54.6.408\"), select = \"nonexistent\")); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408'], select=['nonexistent'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408'], select=['nonexistent'])"
 - "id": "crossref_doi.replay.some_zero_rows"
   "r": "identity"
   "py": "copy.copy"
@@ -191,7 +191,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.1002/bdm.2172\", \"10.1002/ejsp.2023\", \"10.1037/0003-066x.54.6.408\", \"10.1177/0956797614520714\", \"10.1007/978-3-540-74997-4_9\", \"10.1016/j.actpsy.2009.12.006\"), select = c(\"abstract\", \"edition-number\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['abstract', 'edition-number'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['abstract', 'edition-number'])"
 - "id": "crossref_doi.replay.wide_select"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "null fields are NA, a list of values is one '; '-separated value named by its field (R: deparsed column names such as ISSN.\"0894-3257\" or a failure)"}
   "r": "identity"
@@ -200,7 +200,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.1002/bdm.2172\", \"10.1002/ejsp.2023\", \"10.1037/0003-066x.54.6.408\", \"10.1177/0956797614520714\", \"10.1007/978-3-540-74997-4_9\", \"10.1016/j.actpsy.2009.12.006\"), select = c(\"DOI\", \"ISSN\", \"subject\", \"author\", \"title\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['DOI', 'ISSN', 'subject', 'author', 'title'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['DOI', 'ISSN', 'subject', 'author', 'title'])"
 - "id": "crossref_doi.replay.dup_names"
   "r": "identity"
   "py": "copy.copy"
@@ -208,7 +208,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.1002/bdm.2172\", \"10.1002/ejsp.2023\", \"10.1037/0003-066x.54.6.408\", \"10.1177/0956797614520714\", \"10.1007/978-3-540-74997-4_9\", \"10.1016/j.actpsy.2009.12.006\"), select = c(\"DOI\", \"link\", \"isbn-type\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['DOI', 'link', 'isbn-type'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['DOI', 'link', 'isbn-type'])"
 - "id": "crossref_doi.replay.all_fields_error"
   "r": "identity"
   "py": "copy.copy"
@@ -216,7 +216,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.1002/bdm.2172\", \"10.1002/ejsp.2023\", \"10.1037/0003-066x.54.6.408\", \"10.1177/0956797614520714\", \"10.1007/978-3-540-74997-4_9\", \"10.1016/j.actpsy.2009.12.006\"), select = c(\"DOI\", \"relation\", \"volume\"))); x"
-        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['DOI', 'relation', 'volume'])"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.crossref_doi', ['10.1002/bdm.2172', '10.1002/ejsp.2023', '10.1037/0003-066x.54.6.408', '10.1177/0956797614520714', '10.1007/978-3-540-74997-4_9', '10.1016/j.actpsy.2009.12.006'], select=['DOI', 'relation', 'volume'])"
 - "id": "doi_lookup.mock.org"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -225,7 +225,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/org\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/org'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/org'])"
 - "id": "doi_lookup.mock.nopub"
   "r": "identity"
   "py": "copy.copy"
@@ -233,7 +233,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/nopub\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/nopub'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/nopub'])"
 - "id": "doi_lookup.mock.partialpage"
   "r": "identity"
   "py": "copy.copy"
@@ -241,7 +241,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/partialpage\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/partialpage'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/partialpage'])"
 - "id": "doi_lookup.mock.emptypage"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -250,7 +250,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/emptypage\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/emptypage'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/emptypage'])"
 - "id": "doi_lookup.mock.numvol"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -259,7 +259,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/numvol\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/numvol'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/numvol'])"
 - "id": "doi_lookup.mock.numvol_mixed"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -268,7 +268,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/numvol\", \"10.9999/org\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/numvol', '10.9999/org'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/numvol', '10.9999/org'])"
 - "id": "doi_lookup.mock.html_na"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -277,7 +277,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(NA, \"10.9999/html\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', [None, '10.9999/html'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', [None, '10.9999/html'])"
 - "id": "doi_lookup.mock.html_first"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -286,7 +286,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/html\", NA, \"10.9999/org\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/html', None, '10.9999/org'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/html', None, '10.9999/org'])"
 - "id": "doi_lookup.mock.all"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -295,7 +295,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/org\", \"10.9999/nopub\", \"10.9999/partialpage\", NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['10.9999/org', '10.9999/nopub', '10.9999/partialpage', None])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/org', '10.9999/nopub', '10.9999/partialpage', None])"
 - "id": "doi_lookup.mock.cleaned"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -304,7 +304,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"https://doi.org/10.9999/org\", \" doi: 10.9999/nopub\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', ['https://doi.org/10.9999/org', ' doi: 10.9999/nopub'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['https://doi.org/10.9999/org', ' doi: 10.9999/nopub'])"
 - "id": "datacite_doi.mock.dc1"
   "r": "identity"
   "py": "copy.copy"
@@ -312,7 +312,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc1'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', ['10.9999/dc1'])"
 - "id": "datacite_doi.mock.dc2"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "title and container are the title fields and the year a number (R: the title language \"en\" as the title, the container type \"Series\" as the container and the year as text)"}
   "r": "identity"
@@ -321,7 +321,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc2'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', ['10.9999/dc2'])"
 - "id": "datacite_doi.mock.both"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row, fields are text and the year a number, and title and container are the title fields (R: a bind_rows() type error, the title language \"en\" as the title and the container type \"Series\" as the container)"}
   "r": "identity"
@@ -330,7 +330,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\", \"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc1', '10.9999/dc2'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', ['10.9999/dc1', '10.9999/dc2'])"
 - "id": "datacite_doi.mock.na_html"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -339,7 +339,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA, \"10.9999/dc3\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None, '10.9999/dc3'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', [None, '10.9999/dc3'])"
 - "id": "datacite_doi.mock.html_first"
   "r": "identity"
   "py": "copy.copy"
@@ -347,7 +347,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc3\", \"10.9999/dc1\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc3', '10.9999/dc1'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', ['10.9999/dc3', '10.9999/dc1'])"
 - "id": "openalex_doi.mock.oa"
   "r": "identity"
   "py": "copy.copy"
@@ -355,7 +355,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_doi(c(\"10.9999/oa\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_doi', ['10.9999/oa'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_doi', ['10.9999/oa'])"
 - "id": "openalex_doi.mock.mixed"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "a work with an empty abstract index is returned with an empty abstract (R's order(NULL) fails and reports it not found)"}
   "r": "identity"
@@ -364,7 +364,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_doi(c(\"10.9999/oa2\", \"10.9999/oa3\", NA, \"bad\", \"10.9999/oa\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_doi', ['10.9999/oa2', '10.9999/oa3', None, 'bad', '10.9999/oa'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_doi', ['10.9999/oa2', '10.9999/oa3', None, 'bad', '10.9999/oa'])"
 - "id": "pubpeer_comments.mock.dup"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "feedback without an id is ignored and a DOI reported twice keeps its first feedback (R fails, or gives an NA DOI another work's comments)"}
   "r": "identity"
@@ -373,7 +373,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/A\", \"10.9999/b\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.pubpeer.pubpeer_comments', ['10.9999/A', '10.9999/b'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', ['10.9999/A', '10.9999/b'])"
 - "id": "pubpeer_comments.mock.cd"
   "r": "identity"
   "py": "copy.copy"
@@ -381,7 +381,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/C\", NA, \"10.9999/d\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.pubpeer.pubpeer_comments', ['10.9999/C', None, '10.9999/d'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', ['10.9999/C', None, '10.9999/d'])"
 - "id": "pubpeer_comments.mock.na_id"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "feedback without an id is ignored and a DOI reported twice keeps its first feedback (R fails, or gives an NA DOI another work's comments)"}
   "r": "identity"
@@ -390,7 +390,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(NA, \"10.9999/e\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.pubpeer.pubpeer_comments', [None, '10.9999/e'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', [None, '10.9999/e'])"
 - "id": "pubpeer_comments.mock.no_id_col"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "feedback without an id is ignored and a DOI reported twice keeps its first feedback (R fails, or gives an NA DOI another work's comments)"}
   "r": "identity"
@@ -399,7 +399,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/f\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.pubpeer.pubpeer_comments', ['10.9999/f'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', ['10.9999/f'])"
 - "id": "pubpeer_comments.mock.empty_fb"
   "r": "identity"
   "py": "copy.copy"
@@ -407,7 +407,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/g\", \"10.9999/h\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.pubpeer.pubpeer_comments', ['10.9999/g', '10.9999/h'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', ['10.9999/g', '10.9999/h'])"
 - "id": "pubpeer_comments.mock.users_str"
   "r": "identity"
   "py": "copy.copy"
@@ -415,7 +415,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/i\", \"10.9999/J\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.pubpeer.pubpeer_comments', ['10.9999/i', '10.9999/J'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', ['10.9999/i', '10.9999/J'])"
 - "id": "doi_clean.tricky"
   "r": "identity"
   "py": "copy.copy"
@@ -423,7 +423,7 @@
     "x":
       "$expr":
         "r": "doi_clean(c(\"doi.org/10.1234/x\", \"DX.DOI.ORG/10.1234/x\", \"http://dx.doi.org/10.1234/ab#sec/full\", \"https://doi.org/10.1234/ab/full#x\", \"10.1234%2Fabc\", \"doi 10.1234/abc\", \"DOI:10.1234/abc\", \"doi:  10.1234/abc\", \"Doi : 10.1234/ABC \", \"\\tdoi:10.1234/tab\\n\", \"10.1234/abc\\n\", \"10.1234/ab\\ncd\", \"x10.12/short\", \"10.123/fine.\", \"10.1234/abc.\", \"urn:doi:10.1234/xyz\", \"https://doi.org/doi:10.1234/xyz\", \"10.١٢٣٤/arabic\", \"10.1234/é\", \"10.1234/a b\", \"10.1234/<tag>\", \"10.1234/a;b(c)d:e\", \"10.12345678901/long\", \"10.1234/\", \"10.1234\", \"\", \" \", \"https://www.doi.org/10.1234/www\", \"https://doi.org/\", \" 10.1234/nbsp \", \"10.1234/full/full\", \"10.1234/x#\", \"10.1016/S0140-6736(97)11096-0\", \"https://doi.org/10.1038/nphys1170/full\", NA))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_clean(['doi.org/10.1234/x', 'DX.DOI.ORG/10.1234/x', 'http://dx.doi.org/10.1234/ab#sec/full', 'https://doi.org/10.1234/ab/full#x', '10.1234%2Fabc', 'doi 10.1234/abc', 'DOI:10.1234/abc', 'doi:  10.1234/abc', 'Doi : 10.1234/ABC ', '\\tdoi:10.1234/tab\\n', '10.1234/abc\\n', '10.1234/ab\\ncd', 'x10.12/short', '10.123/fine.', '10.1234/abc.', 'urn:doi:10.1234/xyz', 'https://doi.org/doi:10.1234/xyz', '10.١٢٣٤/arabic', '10.1234/é', '10.1234/a b', '10.1234/<tag>', '10.1234/a;b(c)d:e', '10.12345678901/long', '10.1234/', '10.1234', '', ' ', 'https://www.doi.org/10.1234/www', 'https://doi.org/', '\\xa010.1234/nbsp\\xa0', '10.1234/full/full', '10.1234/x#', '10.1016/S0140-6736(97)11096-0', 'https://doi.org/10.1038/nphys1170/full', None])"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_clean(['doi.org/10.1234/x', 'DX.DOI.ORG/10.1234/x', 'http://dx.doi.org/10.1234/ab#sec/full', 'https://doi.org/10.1234/ab/full#x', '10.1234%2Fabc', 'doi 10.1234/abc', 'DOI:10.1234/abc', 'doi:  10.1234/abc', 'Doi : 10.1234/ABC ', '\\tdoi:10.1234/tab\\n', '10.1234/abc\\n', '10.1234/ab\\ncd', 'x10.12/short', '10.123/fine.', '10.1234/abc.', 'urn:doi:10.1234/xyz', 'https://doi.org/doi:10.1234/xyz', '10.١٢٣٤/arabic', '10.1234/é', '10.1234/a b', '10.1234/<tag>', '10.1234/a;b(c)d:e', '10.12345678901/long', '10.1234/', '10.1234', '', ' ', 'https://www.doi.org/10.1234/www', 'https://doi.org/', '\\xa010.1234/nbsp\\xa0', '10.1234/full/full', '10.1234/x#', '10.1016/S0140-6736(97)11096-0', 'https://doi.org/10.1038/nphys1170/full', None])"
 - "id": "doi_valid_format.tricky"
   "r": "identity"
   "py": "copy.copy"
@@ -431,7 +431,7 @@
     "x":
       "$expr":
         "r": "doi_valid_format(c(\"doi.org/10.1234/x\", \"DX.DOI.ORG/10.1234/x\", \"http://dx.doi.org/10.1234/ab#sec/full\", \"https://doi.org/10.1234/ab/full#x\", \"10.1234%2Fabc\", \"doi 10.1234/abc\", \"DOI:10.1234/abc\", \"doi:  10.1234/abc\", \"Doi : 10.1234/ABC \", \"\\tdoi:10.1234/tab\\n\", \"10.1234/abc\\n\", \"10.1234/ab\\ncd\", \"x10.12/short\", \"10.123/fine.\", \"10.1234/abc.\", \"urn:doi:10.1234/xyz\", \"https://doi.org/doi:10.1234/xyz\", \"10.١٢٣٤/arabic\", \"10.1234/é\", \"10.1234/a b\", \"10.1234/<tag>\", \"10.1234/a;b(c)d:e\", \"10.12345678901/long\", \"10.1234/\", \"10.1234\", \"\", \" \", \"https://www.doi.org/10.1234/www\", \"https://doi.org/\", \" 10.1234/nbsp \", \"10.1234/full/full\", \"10.1234/x#\", \"10.1016/S0140-6736(97)11096-0\", \"https://doi.org/10.1038/nphys1170/full\", NA))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_valid_format(['doi.org/10.1234/x', 'DX.DOI.ORG/10.1234/x', 'http://dx.doi.org/10.1234/ab#sec/full', 'https://doi.org/10.1234/ab/full#x', '10.1234%2Fabc', 'doi 10.1234/abc', 'DOI:10.1234/abc', 'doi:  10.1234/abc', 'Doi : 10.1234/ABC ', '\\tdoi:10.1234/tab\\n', '10.1234/abc\\n', '10.1234/ab\\ncd', 'x10.12/short', '10.123/fine.', '10.1234/abc.', 'urn:doi:10.1234/xyz', 'https://doi.org/doi:10.1234/xyz', '10.١٢٣٤/arabic', '10.1234/é', '10.1234/a b', '10.1234/<tag>', '10.1234/a;b(c)d:e', '10.12345678901/long', '10.1234/', '10.1234', '', ' ', 'https://www.doi.org/10.1234/www', 'https://doi.org/', '\\xa010.1234/nbsp\\xa0', '10.1234/full/full', '10.1234/x#', '10.1016/S0140-6736(97)11096-0', 'https://doi.org/10.1038/nphys1170/full', None])"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_valid_format(['doi.org/10.1234/x', 'DX.DOI.ORG/10.1234/x', 'http://dx.doi.org/10.1234/ab#sec/full', 'https://doi.org/10.1234/ab/full#x', '10.1234%2Fabc', 'doi 10.1234/abc', 'DOI:10.1234/abc', 'doi:  10.1234/abc', 'Doi : 10.1234/ABC ', '\\tdoi:10.1234/tab\\n', '10.1234/abc\\n', '10.1234/ab\\ncd', 'x10.12/short', '10.123/fine.', '10.1234/abc.', 'urn:doi:10.1234/xyz', 'https://doi.org/doi:10.1234/xyz', '10.١٢٣٤/arabic', '10.1234/é', '10.1234/a b', '10.1234/<tag>', '10.1234/a;b(c)d:e', '10.12345678901/long', '10.1234/', '10.1234', '', ' ', 'https://www.doi.org/10.1234/www', 'https://doi.org/', '\\xa010.1234/nbsp\\xa0', '10.1234/full/full', '10.1234/x#', '10.1016/S0140-6736(97)11096-0', 'https://doi.org/10.1038/nphys1170/full', None])"
 - "id": "doi_valid_format.cleaned_tricky"
   "r": "identity"
   "py": "copy.copy"
@@ -439,7 +439,7 @@
     "x":
       "$expr":
         "r": "doi_valid_format(doi_clean(c(\"doi.org/10.1234/x\", \"DX.DOI.ORG/10.1234/x\", \"http://dx.doi.org/10.1234/ab#sec/full\", \"https://doi.org/10.1234/ab/full#x\", \"10.1234%2Fabc\", \"doi 10.1234/abc\", \"DOI:10.1234/abc\", \"doi:  10.1234/abc\", \"Doi : 10.1234/ABC \", \"\\tdoi:10.1234/tab\\n\", \"10.1234/abc\\n\", \"10.1234/ab\\ncd\", \"x10.12/short\", \"10.123/fine.\", \"10.1234/abc.\", \"urn:doi:10.1234/xyz\", \"https://doi.org/doi:10.1234/xyz\", \"10.١٢٣٤/arabic\", \"10.1234/é\", \"10.1234/a b\", \"10.1234/<tag>\", \"10.1234/a;b(c)d:e\", \"10.12345678901/long\", \"10.1234/\", \"10.1234\", \"\", \" \", \"https://www.doi.org/10.1234/www\", \"https://doi.org/\", \" 10.1234/nbsp \", \"10.1234/full/full\", \"10.1234/x#\", \"10.1016/S0140-6736(97)11096-0\", \"https://doi.org/10.1038/nphys1170/full\")))"
-        "py": "(lambda m: m.doi_valid_format(m.doi_clean(['doi.org/10.1234/x', 'DX.DOI.ORG/10.1234/x', 'http://dx.doi.org/10.1234/ab#sec/full', 'https://doi.org/10.1234/ab/full#x', '10.1234%2Fabc', 'doi 10.1234/abc', 'DOI:10.1234/abc', 'doi:  10.1234/abc', 'Doi : 10.1234/ABC ', '\\tdoi:10.1234/tab\\n', '10.1234/abc\\n', '10.1234/ab\\ncd', 'x10.12/short', '10.123/fine.', '10.1234/abc.', 'urn:doi:10.1234/xyz', 'https://doi.org/doi:10.1234/xyz', '10.١٢٣٤/arabic', '10.1234/é', '10.1234/a b', '10.1234/<tag>', '10.1234/a;b(c)d:e', '10.12345678901/long', '10.1234/', '10.1234', '', ' ', 'https://www.doi.org/10.1234/www', 'https://doi.org/', '\\xa010.1234/nbsp\\xa0', '10.1234/full/full', '10.1234/x#', '10.1016/S0140-6736(97)11096-0', 'https://doi.org/10.1038/nphys1170/full'])))(__import__('pytacheck.db.doi', fromlist=['x']))"
+        "py": "(lambda m: m.doi_valid_format(m.doi_clean(['doi.org/10.1234/x', 'DX.DOI.ORG/10.1234/x', 'http://dx.doi.org/10.1234/ab#sec/full', 'https://doi.org/10.1234/ab/full#x', '10.1234%2Fabc', 'doi 10.1234/abc', 'DOI:10.1234/abc', 'doi:  10.1234/abc', 'Doi : 10.1234/ABC ', '\\tdoi:10.1234/tab\\n', '10.1234/abc\\n', '10.1234/ab\\ncd', 'x10.12/short', '10.123/fine.', '10.1234/abc.', 'urn:doi:10.1234/xyz', 'https://doi.org/doi:10.1234/xyz', '10.١٢٣٤/arabic', '10.1234/é', '10.1234/a b', '10.1234/<tag>', '10.1234/a;b(c)d:e', '10.12345678901/long', '10.1234/', '10.1234', '', ' ', 'https://www.doi.org/10.1234/www', 'https://doi.org/', '\\xa010.1234/nbsp\\xa0', '10.1234/full/full', '10.1234/x#', '10.1016/S0140-6736(97)11096-0', 'https://doi.org/10.1038/nphys1170/full'])))(__import__('metacheck.db.doi', fromlist=['x']))"
 - "id": "doi_valid_format.numeric"
   "r": "identity"
   "py": "copy.copy"
@@ -447,7 +447,7 @@
     "x":
       "$expr":
         "r": "doi_valid_format(c(10.1234, 1))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_valid_format([10.1234, 1.0])"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_valid_format([10.1234, 1.0])"
 - "id": "doi_clean.numeric_vector"
   "r": "identity"
   "py": "copy.copy"
@@ -455,7 +455,7 @@
     "x":
       "$expr":
         "r": "doi_clean(c(10.1234, 1e5, 0.1))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_clean([10.1234, 1e5, 0.1])"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_clean([10.1234, 1e5, 0.1])"
 - "id": "doi_clean.integer"
   "r": "identity"
   "py": "copy.copy"
@@ -463,7 +463,7 @@
     "x":
       "$expr":
         "r": "doi_clean(5L)"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_clean(5)"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_clean(5)"
 - "id": "doi_clean.logical"
   "r": "identity"
   "py": "copy.copy"
@@ -471,7 +471,7 @@
     "x":
       "$expr":
         "r": "doi_clean(c(TRUE, NA))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_clean([True, None])"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_clean([True, None])"
 - "id": "doi_resolves.offline_tricky"
   "r": "identity"
   "py": "copy.copy"
@@ -479,81 +479,81 @@
     "x":
       "$expr":
         "r": "doi_resolves(c(\"\", \" \", NA, \"doi.org/bad\", \"x10.12/short\", \"https://doi.org/\"))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_resolves(['', ' ', None, 'doi.org/bad', 'x10.12/short', 'https://doi.org/'])"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_resolves(['', ' ', None, 'doi.org/bad', 'x10.12/short', 'https://doi.org/'])"
 - "id": "check_orcid.review_01"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000-0002-7523-5539 "
 - "id": "check_orcid.review_02"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": " https://orcid.org/0000-0002-7523-5539/"
 - "id": "check_orcid.review_03"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000 0002 7523 5539"
 - "id": "check_orcid.review_04"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000000275235539"
 - "id": "check_orcid.review_05"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000-0002-7523-55390"
 - "id": "check_orcid.review_06"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "000-0002-7523-5539"
 - "id": "check_orcid.review_07"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "０000-0002-7523-5539"
 - "id": "check_orcid.review_08"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000-0002-1694-233X"
 - "id": "check_orcid.review_09"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000-0002-1694-2339"
 - "id": "check_orcid.review_10"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "orcid.org/0000-0001-5109-3700"
 - "id": "check_orcid.review_11"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000-0001-5109-370X"
 - "id": "check_orcid.review_12"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "ABCD-0002-7523-5539"
 - "id": "check_orcid.review_13"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "an ORCiD with X before the check digit is not valid (FALSE); R fails on if (NA)"}
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "0000-0002-7523-X539"
 - "id": "check_orcid.review_14"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": "http://orcid.org/0000-0003-4617-4219"
 - "id": "check_orcid.review_numeric"
   "r": "check_orcid"
-  "py": "pytacheck.db.orcid.check_orcid"
+  "py": "metacheck.db.orcid.check_orcid"
   "args":
     "orcid": 1234
 - "id": "get_orcid.given_initials"
@@ -563,7 +563,7 @@
     "x":
       "$expr":
         "r": "local({b <- as.list(body(metacheck::get_orcid)); e <- Find(function(e) is.call(e) && identical(e[[1]], as.name('<-')) && identical(e[[2]], as.name('given2')), b); vapply(c(\"L\", \"L.\", \"Lisa\", \"L M\", \"L. M.\", \"Lisa M\", \"Lisa M.\", \"L Marie\", \"Anne-Marie\", \" J R R \", \"J. R. R. Tolkien\", \"Ünal\", \"É.\", \"*\", \"Lisa Marie\", \"A.B.\", \"M.-L.\", \"Jean Paul Sartre\"), function(given) eval(e[[3]], list(given = given)), character(1), USE.NAMES = FALSE)})"
-        "py": "(lambda o, u: [u.url_encode(o._initials(g)) for g in ['L', 'L.', 'Lisa', 'L M', 'L. M.', 'Lisa M', 'Lisa M.', 'L Marie', 'Anne-Marie', ' J R R ', 'J. R. R. Tolkien', 'Ünal', 'É.', '*', 'Lisa Marie', 'A.B.', 'M.-L.', 'Jean Paul Sartre']])(__import__('pytacheck.db.orcid', fromlist=['x']), __import__('pytacheck.db._utils', fromlist=['x']))"
+        "py": "(lambda o, u: [u.url_encode(o._initials(g)) for g in ['L', 'L.', 'Lisa', 'L M', 'L. M.', 'Lisa M', 'Lisa M.', 'L Marie', 'Anne-Marie', ' J R R ', 'J. R. R. Tolkien', 'Ünal', 'É.', '*', 'Lisa Marie', 'A.B.', 'M.-L.', 'Jean Paul Sartre']])(__import__('metacheck.db.orcid', fromlist=['x']), __import__('metacheck.db._utils', fromlist=['x']))"
 - "id": "get_orcid.family_encoding"
   "r": "identity"
   "py": "copy.copy"
@@ -571,7 +571,7 @@
     "x":
       "$expr":
         "r": "local({b <- as.list(body(metacheck::get_orcid)); e <- Find(function(e) is.call(e) && identical(e[[1]], as.name('<-')) && identical(e[[2]], as.name('family2')), b); vapply(c(\"DeBruine\", \" van der Berg \", \"O%27Brien\", \"Müller\", \"Smith&Co\"), function(family) eval(e[[3]], list(family = family)), character(1), USE.NAMES = FALSE)})"
-        "py": "(lambda u, t: [u.url_encode(t(f)) for f in ['DeBruine', ' van der Berg ', 'O%27Brien', 'Müller', 'Smith&Co']])(__import__('pytacheck.db._utils', fromlist=['x']), __import__('pytacheck._r.base', fromlist=['x']).trimws)"
+        "py": "(lambda u, t: [u.url_encode(t(f)) for f in ['DeBruine', ' van der Berg ', 'O%27Brien', 'Müller', 'Smith&Co']])(__import__('metacheck.db._utils', fromlist=['x']), __import__('metacheck._r.base', fromlist=['x']).trimws)"
 - "id": "openalex_query.mock.title_source"
   "r": "identity"
   "py": "copy.copy"
@@ -579,7 +579,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Synthetic Title One\", \"J A\", strict = TRUE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Synthetic Title One', 'J A', strict=True)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Synthetic Title One', 'J A', strict=True)"
 - "id": "openalex_query.mock.title_source_case"
   "r": "identity"
   "py": "copy.copy"
@@ -587,7 +587,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"synthetic title ONE\", \"j b\", strict = TRUE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'synthetic title ONE', 'j b', strict=True)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'synthetic title ONE', 'j b', strict=True)"
 - "id": "openalex_query.mock.multi_title_strict"
   "r": "identity"
   "py": "copy.copy"
@@ -595,7 +595,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Synthetic Title One\", NA, strict = TRUE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Synthetic Title One', None, strict=True)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Synthetic Title One', None, strict=True)"
 - "id": "openalex_query.mock.multi_title_loose"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "candidates are ordered by relevance_score as numbers (R sorts the text)"}
   "r": "identity"
@@ -604,7 +604,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Synthetic Title One\", NA, strict = FALSE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Synthetic Title One', None, strict=False)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Synthetic Title One', None, strict=False)"
 - "id": "openalex_query.mock.wrong_source_loose"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "candidates are ordered by relevance_score as numbers (R sorts the text)"}
   "r": "identity"
@@ -613,7 +613,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Synthetic Title One\", \"Nope\", strict = FALSE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Synthetic Title One', 'Nope', strict=False)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Synthetic Title One', 'Nope', strict=False)"
 - "id": "openalex_query.mock.colon_fallback"
   "r": "identity"
   "py": "copy.copy"
@@ -621,7 +621,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Main Part: Subtitle\", \"Src\", strict = TRUE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Main Part: Subtitle', 'Src', strict=True)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Main Part: Subtitle', 'Src', strict=True)"
 - "id": "openalex_query.mock.colon_fallback_loose"
   "r": "identity"
   "py": "copy.copy"
@@ -629,7 +629,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Main Part: Subtitle\", NA, strict = FALSE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Main Part: Subtitle', None, strict=False)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Main Part: Subtitle', None, strict=False)"
 - "id": "openalex_query.mock.title_only_strict"
   "r": "identity"
   "py": "copy.copy"
@@ -637,7 +637,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Only Title Match\", \"Other\", strict = TRUE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Only Title Match', 'Other', strict=True)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Only Title Match', 'Other', strict=True)"
 - "id": "openalex_query.mock.title_only_loose"
   "r": "identity"
   "py": "copy.copy"
@@ -645,7 +645,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Only Title Match\", \"Other\", strict = FALSE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Only Title Match', 'Other', strict=False)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Only Title Match', 'Other', strict=False)"
 - "id": "openalex_query.mock.no_results"
   "r": "identity"
   "py": "copy.copy"
@@ -653,7 +653,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"No Match At All\", NA, strict = TRUE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'No Match At All', None, strict=True)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'No Match At All', None, strict=True)"
 - "id": "openalex_query.mock.multi_title_source"
   "r": "identity"
   "py": "copy.copy"
@@ -661,7 +661,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Twin, Title\", \"SAME J\", strict = TRUE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Twin, Title', 'SAME J', strict=True)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Twin, Title', 'SAME J', strict=True)"
 - "id": "openalex_query.mock.multi_title_source_loose"
   "r": "identity"
   "py": "copy.copy"
@@ -669,7 +669,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Twin, Title\", \"SAME J\", strict = FALSE), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.openalex_query', 'Twin, Title', 'SAME J', strict=False)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.openalex_query', 'Twin, Title', 'SAME J', strict=False)"
 - "id": "regcheck_compare.msg.nbsp_paper"
   "r": "identity"
   "py": "copy.copy"
@@ -677,7 +677,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\"\\u00a0\")"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('\\u00a0')"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('\\u00a0')"
 - "id": "regcheck_compare.msg.blank_paper"
   "r": "identity"
   "py": "copy.copy"
@@ -685,7 +685,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\" \\t\\n\")"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare(' \\t\\n')"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare(' \\t\\n')"
 - "id": "regcheck_compare.msg.both"
   "r": "identity"
   "py": "copy.copy"
@@ -693,7 +693,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\"p\", prereg_text = \"r\", registration_id = \"NCT1\")"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='r', registration_id='NCT1')"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='r', registration_id='NCT1')"
 - "id": "regcheck_compare.msg.blank_prereg"
   "r": "identity"
   "py": "copy.copy"
@@ -701,7 +701,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\"p\", prereg_text = \"  \")"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='  ')"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', prereg_text='  ')"
 - "id": "regcheck_compare.msg.client_vector"
   "r": "identity"
   "py": "copy.copy"
@@ -709,7 +709,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\"p\", \"r\", client = c(\"groq\", \"openai\"))"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client=['groq', 'openai'])"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client=['groq', 'openai'])"
 - "id": "regcheck_compare.msg.client_unknown"
   "r": "identity"
   "py": "copy.copy"
@@ -717,7 +717,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\"p\", \"r\", client = \"llama\")"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='llama')"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='llama')"
 - "id": "regcheck_compare.msg.client_partial_token"
   "r": "identity"
   "py": "copy.copy"
@@ -725,7 +725,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\"p\", \"r\", client = \"gr\")"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='gr')"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', client='gr')"
 - "id": "regcheck_compare.msg.no_server"
   "r": "identity"
   "py": "copy.copy"
@@ -733,7 +733,7 @@
     "x":
       "$expr":
         "r": "regcheck_compare(\"p\", \"r\", base_url = \"http://127.0.0.1:9/\")"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', base_url='http://127.0.0.1:9/')"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('p', 'r', base_url='http://127.0.0.1:9/')"
 - "id": "regcheck_start_local.msg.bad_method"
   "r": "identity"
   "py": "copy.copy"
@@ -741,7 +741,7 @@
     "x":
       "$expr":
         "r": "regcheck_start_local(\"podman\")"
-        "py": "__import__('pytacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local('podman')"
+        "py": "__import__('metacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local('podman')"
 - "id": "regcheck_start_local.msg.method_vector"
   "r": "identity"
   "py": "copy.copy"
@@ -749,7 +749,7 @@
     "x":
       "$expr":
         "r": "regcheck_start_local(c(\"docker\", \"x\"))"
-        "py": "__import__('pytacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local(['docker', 'x'])"
+        "py": "__import__('metacheck.db.regcheck_local', fromlist=['x']).regcheck_start_local(['docker', 'x'])"
 - "id": "doi_resolves.mock.codes"
   "r": "identity"
   "py": "copy.copy"
@@ -757,7 +757,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_resolves(c(\"10.9999/code1\", \"10.9999/code100\", \"10.9999/code2\", \"10.9999/code200\", \"10.9999/code3\", \"10.9999/nocode\", \"10.9999/listcode\", \"10.9999/strcode\", \"10.9999/boolcode\", \"10.9999/floatcode\", \"10.9999/nullcode\", \"10.9999/partialcode\", \"10.9999/twocode\", \"10.9999/html\", \"10.9999/forbidden\", \"10.9999/unrecorded\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_resolves', ['10.9999/code1', '10.9999/code100', '10.9999/code2', '10.9999/code200', '10.9999/code3', '10.9999/nocode', '10.9999/listcode', '10.9999/strcode', '10.9999/boolcode', '10.9999/floatcode', '10.9999/nullcode', '10.9999/partialcode', '10.9999/twocode', '10.9999/html', '10.9999/forbidden', '10.9999/unrecorded'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_resolves', ['10.9999/code1', '10.9999/code100', '10.9999/code2', '10.9999/code200', '10.9999/code3', '10.9999/nocode', '10.9999/listcode', '10.9999/strcode', '10.9999/boolcode', '10.9999/floatcode', '10.9999/nullcode', '10.9999/partialcode', '10.9999/twocode', '10.9999/html', '10.9999/forbidden', '10.9999/unrecorded'])"
 - "id": "doi_clean.fuzz"
   "r": "identity"
   "py": "copy.copy"
@@ -765,7 +765,7 @@
     "x":
       "$expr":
         "r": "doi_clean(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_clean(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_clean(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))"
 - "id": "doi_valid_format.fuzz"
   "r": "identity"
   "py": "copy.copy"
@@ -773,7 +773,7 @@
     "x":
       "$expr":
         "r": "doi_valid_format(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))))"
-        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_valid_format(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))"
+        "py": "__import__('metacheck.db.doi', fromlist=['x']).doi_valid_format(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))"
 - "id": "doi_valid_format.fuzz_cleaned"
   "r": "identity"
   "py": "copy.copy"
@@ -781,7 +781,7 @@
     "x":
       "$expr":
         "r": "doi_valid_format(doi_clean(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\")))))"
-        "py": "(lambda m: m.doi_valid_format(m.doi_clean(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))))(__import__('pytacheck.db.doi', fromlist=['x']))"
+        "py": "(lambda m: m.doi_valid_format(m.doi_clean(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))))(__import__('metacheck.db.doi', fromlist=['x']))"
 - "id": "url_encode.fuzz"
   "r": "identity"
   "py": "copy.copy"
@@ -789,7 +789,7 @@
     "x":
       "$expr":
         "r": "utils::URLencode(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))), reserved = TRUE)"
-        "py": "[__import__('pytacheck.db._utils', fromlist=['x']).url_encode(s, reserved=True) for s in __import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8'))]"
+        "py": "[__import__('metacheck.db._utils', fromlist=['x']).url_encode(s, reserved=True) for s in __import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8'))]"
 - "id": "url_encode.fuzz_unreserved"
   "r": "identity"
   "py": "copy.copy"
@@ -797,7 +797,7 @@
     "x":
       "$expr":
         "r": "utils::URLencode(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))))"
-        "py": "[__import__('pytacheck.db._utils', fromlist=['x']).url_encode(s) for s in __import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8'))]"
+        "py": "[__import__('metacheck.db._utils', fromlist=['x']).url_encode(s) for s in __import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8'))]"
 - "id": "check_orcid.fuzz"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "an ORCiD with X before the check digit is not valid (FALSE); R fails on if (NA)"}
   "r": "identity"
@@ -806,7 +806,7 @@
     "x":
       "$expr":
         "r": "lapply(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/orcid_fuzz.json\"))), \\(o) pc_catch(check_orcid(o)))"
-        "py": "(lambda catch, o: [catch(lambda s=s: o.check_orcid(s)) for s in __import__('json').load(open('tests/db/data/orcid_fuzz.json', encoding='utf-8'))])(__import__('parity.pyhelpers', fromlist=['x']).catch, __import__('pytacheck.db.orcid', fromlist=['x']))"
+        "py": "(lambda catch, o: [catch(lambda s=s: o.check_orcid(s)) for s in __import__('json').load(open('tests/db/data/orcid_fuzz.json', encoding='utf-8'))])(__import__('parity.pyhelpers', fromlist=['x']).catch, __import__('metacheck.db.orcid', fromlist=['x']))"
 - "id": "doi_lookup.mock.na_numvol"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
   "r": "identity"
@@ -815,7 +815,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(NA, \"10.9999/numvol\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', [None, '10.9999/numvol'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', [None, '10.9999/numvol'])"
 - "id": "doi_lookup.mock.na_only"
   "r": "identity"
   "py": "copy.copy"
@@ -823,7 +823,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(NA, NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', [None, None])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', [None, None])"
 - "id": "datacite_doi.mock.na_dc2"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row, fields are text and the year a number, and title and container are the title fields (R: a bind_rows() type error, the title language \"en\" as the title and the container type \"Series\" as the container)"}
   "r": "identity"
@@ -832,7 +832,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA, \"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None, '10.9999/dc2'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', [None, '10.9999/dc2'])"
 - "id": "datacite_doi.mock.na_only"
   "r": "identity"
   "py": "copy.copy"
@@ -840,7 +840,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', [None])"
 - "id": "datacite_doi.mock.na_dc1"
   "r": "identity"
   "py": "copy.copy"
@@ -848,7 +848,7 @@
     "x":
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\", NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc1', None])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.crossref.datacite_doi', ['10.9999/dc1', None])"
 - "id": "crossref_query.offline.df"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "offline, a reference table gives one row per reference (R spreads them over the columns of one row, and fails for zero rows)"}
   "r": "identity"
@@ -857,7 +857,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = c(\"T1\", \"T2\"), authors = c(\"A1\", \"A2\"), container = c(\"C1\", \"C2\")))), online = function(...) FALSE, .package = \"metacheck\")"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2'], 'authors': ['A1', 'A2'], 'container': ['C1', 'C2']}))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2'], 'authors': ['A1', 'A2'], 'container': ['C1', 'C2']}))"
 - "id": "crossref_query.offline.df_journal_na"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "offline, a reference table gives one row per reference (R spreads them over the columns of one row, and fails for zero rows)"}
   "r": "identity"
@@ -866,7 +866,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = c(\"T1\", \"T2\", \"T3\"), author = c(\"A\", NA, \"C\"), journal = c(\"J\", NA, \"K\"), booktitle = c(\"B1\", \"B2\", \"B3\")))), online = function(...) FALSE, .package = \"metacheck\")"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2', 'T3'], 'author': ['A', None, 'C'], 'journal': ['J', None, 'K'], 'booktitle': ['B1', 'B2', 'B3']}))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T1', 'T2', 'T3'], 'author': ['A', None, 'C'], 'journal': ['J', None, 'K'], 'booktitle': ['B1', 'B2', 'B3']}))"
 - "id": "crossref_query.offline.df_single"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "offline, a reference table gives one row per reference (R spreads them over the columns of one row, and fails for zero rows)"}
   "r": "identity"
@@ -875,7 +875,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = \"T\", authors = \"A\", container = NA_character_))), online = function(...) FALSE, .package = \"metacheck\")"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T'], 'authors': ['A'], 'container': pd.array([None], dtype='string')}))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T'], 'authors': ['A'], 'container': pd.array([None], dtype='string')}))"
 - "id": "crossref_query.offline.df_list_author"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "offline, a reference table gives one row per reference (R spreads them over the columns of one row, and fails for zero rows)"}
   "r": "identity"
@@ -884,7 +884,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = c(\"T\", NA), authors = I(list(\"Lisa\", c(\"A\", \"B\"))), container = c(\"C\", NA)))), online = function(...) FALSE, .package = \"metacheck\")"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T', None], 'authors': [['Lisa'], ['A', 'B']], 'container': ['C', None]}))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': ['T', None], 'authors': [['Lisa'], ['A', 'B']], 'container': ['C', None]}))"
 - "id": "crossref_query.offline.df_zero_rows_error"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "offline, a reference table gives one row per reference (R spreads them over the columns of one row, and fails for zero rows)"}
   "r": "identity"
@@ -893,7 +893,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(data.frame(title = character(0), authors = character(0), container = character(0)))), online = function(...) FALSE, .package = \"metacheck\")"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', pd.DataFrame({'title': pd.array([], dtype='string'), 'authors': pd.array([], dtype='string'), 'container': pd.array([], dtype='string')}))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('metacheck.db.crossref.crossref_query', pd.DataFrame({'title': pd.array([], dtype='string'), 'authors': pd.array([], dtype='string'), 'container': pd.array([], dtype='string')}))"
 - "id": "crossref_query.offline.text"
   "r": "identity"
   "py": "copy.copy"
@@ -901,7 +901,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(c(\"ref one\", NA, \"ref two\"))), online = function(...) FALSE, .package = \"metacheck\")"
-        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', ['ref one', None, 'ref two'])"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('metacheck.db.crossref.crossref_query', ['ref one', None, 'ref two'])"
 - "id": "regcheck_compare.msg.null_client"
   "r": "identity"
   "py": "copy.copy"
@@ -909,7 +909,7 @@
     "x":
       "$expr":
         "r": "withr::with_envvar(c(REGCHECK_API_TOKEN = NA), regcheck_compare(\"paper text\", client = NULL))"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', client=None)"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', client=None)"
 - "id": "regcheck_compare.msg.null_client_both"
   "r": "identity"
   "py": "copy.copy"
@@ -917,4 +917,4 @@
     "x":
       "$expr":
         "r": "withr::with_envvar(c(REGCHECK_API_TOKEN = NA), regcheck_compare(\"paper text\", prereg_text = \"r\", registration_id = \"NCT1\", client = NULL))"
-        "py": "__import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', prereg_text='r', registration_id='NCT1', client=None)"
+        "py": "__import__('metacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', prereg_text='r', registration_id='NCT1', client=None)"

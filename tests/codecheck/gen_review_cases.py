@@ -19,7 +19,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "parity" / "cases" / "codecheck_review.yaml"
 FIX = "tests/codecheck/fixtures"
-CORE = "pytacheck.codecheck.core"
+CORE = "metacheck.codecheck.core"
 
 cases: list[dict[str, Any]] = []
 

@@ -15,10 +15,10 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 MK = "tests/archives_gz/mocks_review"
 PS = "tests.archives_gz.parity_support.run"
-GH = "pytacheck.archives.github"
-GL = "pytacheck.archives.gitlab"
-ZE = "pytacheck.archives.zenodo"
-ZU = "pytacheck.archives.zenodo_upload"
+GH = "metacheck.archives.github"
+GL = "metacheck.archives.gitlab"
+ZE = "metacheck.archives.zenodo"
+ZU = "metacheck.archives.zenodo_upload"
 IGN_PID = {"ignore": ["paper_id"]}
 
 cases: list[dict] = []
@@ -106,7 +106,7 @@ for _fn, _mod in (("github_links", GH), ("gitlab_links", GL), ("zenodo_links", Z
     wrapped(
         f"{_fn}.review.empty_paperlist",
         f'{_fn}(paperlist(test_paper("a"))[0])',
-        f'{imp(_mod)}.{_fn}(__import__("pytacheck").PaperList([]))',
+        f'{imp(_mod)}.{_fn}(__import__("metacheck").PaperList([]))',
     )
 case(
     "zenodo_links.review.tricky",

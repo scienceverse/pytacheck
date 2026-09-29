@@ -87,7 +87,7 @@ def _env(**values: str) -> Iterator[None]:
 @contextlib.contextmanager
 def mocked(*mock_dirs: str | Path) -> Iterator[respx.MockRouter]:
     """metacheck's test setup around :func:`replay`."""
-    from pytacheck import utils
+    from metacheck import utils
 
     with (
         tempfile.TemporaryDirectory() as tmp,
@@ -136,7 +136,7 @@ def run_prereg(
     """
     from unittest import mock as umock
 
-    import pytacheck as pc
+    import metacheck as pc
 
     items: list[Any] = []
     if demo:
@@ -147,11 +147,11 @@ def run_prereg(
     items.extend(tp(p.get("url") or [], p["id"], p.get("text")) for p in papers)
     paper = plist(*items) if paperlist or len(items) > 1 else items[0]
     dirs = (LOCAL_MOCKS,) if mock == "local" else (mock,)
-    with mocked(*dirs), umock.patch("pytacheck.utils.online", return_value=True):
+    with mocked(*dirs), umock.patch("metacheck.utils.online", return_value=True):
         mo = pc.module_run(paper, "prereg_check")
     if not report:
         return mo
-    from pytacheck.report.report import module_report
+    from metacheck.report.report import module_report
 
     return _R_CHUNK.sub("\n<R-CHUNK>\n", module_report(mo))
 
@@ -164,7 +164,7 @@ def run_prereg_tables(**kwargs: Any) -> list[Any]:
     back into data frames, and this returns the same tables (in report order)
     so their cells are compared.
     """
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     mo = run_prereg(**kwargs)
     tables: list[Any] = []
@@ -182,7 +182,7 @@ def run_prereg_tables(**kwargs: Any) -> list[Any]:
 
 def tp(url: Sequence[str] | str, paper_id: str, text: Sequence[str] | None = None) -> Any:
     """``test_paper(text, url)`` with a fixed ``paper_id`` (R: ``p$paper_id <- id``)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(text, [url] if isinstance(url, str) else list(url))
     p.paper_id = paper_id
@@ -191,6 +191,6 @@ def tp(url: Sequence[str] | str, paper_id: str, text: Sequence[str] | None = Non
 
 def plist(*papers: Any) -> Any:
     """``paperlist(...)``."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.PaperList(list(papers))

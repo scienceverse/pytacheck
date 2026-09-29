@@ -8,12 +8,12 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.packs.install import pack_install, pack_show
-from pytacheck.packs.manifest import PackError
-from pytacheck.packs.registry import get_pack, load_module
-from pytacheck.packs.stores import find_entry, store_update
-from pytacheck.packs.tree import INSTALL_RECORD, tree_sha256
-from pytacheck.provenance import module_provenance
+from metacheck.packs.install import pack_install, pack_show
+from metacheck.packs.manifest import PackError
+from metacheck.packs.registry import get_pack, load_module
+from metacheck.packs.stores import find_entry, store_update
+from metacheck.packs.tree import INSTALL_RECORD, tree_sha256
+from metacheck.provenance import module_provenance
 from tests.modsys.helpers import REV_A, mod_src
 from tests.modsys.storekit import (
     INDEX_URL,

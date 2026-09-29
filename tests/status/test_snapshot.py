@@ -17,8 +17,8 @@ from typing import Any
 
 import pytest
 
-from pytacheck.module import _builtin_names
-from pytacheck.status import (
+from metacheck.module import _builtin_names
+from metacheck.status import (
     PROVISIONAL_NOTE,
     Registry,
     StatusError,
@@ -36,7 +36,7 @@ PSYCH_SCI = {"power", "stat_effect_size"}
 
 def _raw() -> bytes:
     return (
-        importlib.resources.files("pytacheck.resources")
+        importlib.resources.files("metacheck.resources")
         .joinpath("status/validation.json")
         .read_bytes()
     )
@@ -58,7 +58,7 @@ def _r_block(upstream_dir: Path, name: str) -> str:
 
 
 def test_snapshot_ships_in_the_package() -> None:
-    root = importlib.resources.files("pytacheck.resources")
+    root = importlib.resources.files("metacheck.resources")
     assert root.joinpath("status/validation.json").is_file()
 
 
@@ -327,7 +327,7 @@ def test_check_needs_metacheck_as_a_team_pack() -> None:
 
 
 def test_check_reports_an_unreadable_snapshot(monkeypatch) -> None:
-    import pytacheck.status as status_mod
+    import metacheck.status as status_mod
 
     def broken() -> Registry:
         raise StatusError("validation.json uses schema 9")

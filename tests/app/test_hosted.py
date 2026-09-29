@@ -21,11 +21,11 @@ import httpx
 import pytest
 from starlette.testclient import TestClient
 
-import pytacheck as pc
-from pytacheck.app import bibr, launch, ui
-from pytacheck.app import hosted as hosting
-from pytacheck.app.security import HOSTED_COOKIE, HOSTED_DENIED_PAGE, PROXY_DENIED_PAGE
-from pytacheck.app.server import create_hosted_app
+import metacheck as pc
+from metacheck.app import bibr, launch, ui
+from metacheck.app import hosted as hosting
+from metacheck.app.security import HOSTED_COOKIE, HOSTED_DENIED_PAGE, PROXY_DENIED_PAGE
+from metacheck.app.server import create_hosted_app
 
 TOKEN_A = "a" * 32
 TOKEN_B = "b-second-token-" + "x" * 20
@@ -238,7 +238,7 @@ def test_the_cookie_is_secure_in_hosted_mode_and_not_in_local_mode(client: TestC
     assert cookie.startswith(f"{HOSTED_COOKIE}={TOKEN_B}")
     assert "Secure" in cookie and "HttpOnly" in cookie and "SameSite=strict" in cookie
     assert "Path=/" in cookie and "Domain" not in cookie
-    from pytacheck.app.server import create_app
+    from metacheck.app.server import create_app
 
     with TestClient(
         create_app(4400, "local-token"), base_url="http://127.0.0.1:4400", follow_redirects=False
@@ -297,7 +297,7 @@ def test_the_hosted_texts(client: TestClient) -> None:
     text = client.get("/config").text
     assert "Your paper is processed on this server and deleted when the report is ready." in text
     assert "https://github.com/scienceverse/pytacheck/tree/0123abcd" in text.replace("\\/", "/")
-    from pytacheck._version import __version__
+    from metacheck._version import __version__
 
     assert __version__ in text
 
@@ -770,7 +770,7 @@ def test_behind_a_sign_in_proxy_the_user_header_is_required() -> None:
 
 
 def test_the_proxy_guard_takes_no_tokens() -> None:
-    from pytacheck.app.security import TokenGuard
+    from metacheck.app.security import TokenGuard
 
     with pytest.raises(ValueError, match="no tokens"):
         TokenGuard(object(), tokens=(TOKEN_A,), hosts=(HOST,), proxy_auth=True)  # type: ignore[arg-type]
@@ -795,7 +795,7 @@ def test_no_token_reaches_the_log(
     state_dir: Path,
     hosted: bool,
 ) -> None:
-    from pytacheck import config as lib_config
+    from metacheck import config as lib_config
 
     env.setitem(lib_config._state, "verbose", lib_config.verbose())
     env.setattr(launch, "_warm_up", lambda: None)
@@ -841,7 +841,7 @@ def test_no_token_reaches_the_log(
     # between a probe and the bind
     thread = threading.Thread(target=serve, daemon=True)
     thread.start()
-    from pytacheck.app import state as saved
+    from metacheck.app import state as saved
 
     assert up.wait(30), (thread.is_alive(), result, errors, capfd.readouterr())
     found = servers[0].servers[0].sockets[0].getsockname()[1]

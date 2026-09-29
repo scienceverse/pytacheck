@@ -137,7 +137,7 @@ def convert_call(files):
     return {
         "$call": {
             "r": "grobid_to_bibr",
-            "py": "pytacheck.io.grobid.grobid_to_bibr",
+            "py": "metacheck.io.grobid.grobid_to_bibr",
             "args": {"xml_path": xml_path, "save_path": {"$null": True}, "schema_version": "12.0"},
         }
     }
@@ -164,7 +164,7 @@ for name, path in ALL.items():
         {
             "id": f".grobid_to_bibr.{name}",
             "r": ".grobid_to_bibr",
-            "py": "pytacheck.io.grobid._grobid_to_bibr",
+            "py": "metacheck.io.grobid._grobid_to_bibr",
             "args": {"xml_path": {"$file": path}, "schema_version": "12.0"},
             "compare": {"ignore": ignore(path)},
         },
@@ -180,7 +180,7 @@ add(
     {
         "id": "grobid_to_bibr.null_save.demo",
         "r": "grobid_to_bibr",
-        "py": "pytacheck.io.grobid.grobid_to_bibr",
+        "py": "metacheck.io.grobid.grobid_to_bibr",
         "args": {
             "xml_path": {"$file": UPSTREAM["demo"]},
             "save_path": {"$null": True},
@@ -195,7 +195,7 @@ add(
     {
         "id": "grobid_to_bibr.null_save.multiple_with_failure",
         "r": "grobid_to_bibr",
-        "py": "pytacheck.io.grobid.grobid_to_bibr",
+        "py": "metacheck.io.grobid.grobid_to_bibr",
         "args": {
             "xml_path": expr(f"file.path(getwd(), {r_vec(multi)})", f"{H}.paths({multi!r})"),
             "save_path": {"$null": True},
@@ -208,7 +208,7 @@ add(
     {
         "id": "grobid_to_bibr.null_save.dir",
         "r": "grobid_to_bibr",
-        "py": "pytacheck.io.grobid.grobid_to_bibr",
+        "py": "metacheck.io.grobid.grobid_to_bibr",
         "args": {
             "xml_path": {"$file": f"{FIX}/debruine"},
             "save_path": {"$null": True},
@@ -222,7 +222,7 @@ for tag, value in (("11", "11"), ("number", 12.0), ("vector", ["12.0", "12.0"]))
         {
             "id": f"grobid_to_bibr.error.schema_version_{tag}",
             "r": "grobid_to_bibr",
-            "py": "pytacheck.io.grobid.grobid_to_bibr",
+            "py": "metacheck.io.grobid.grobid_to_bibr",
             "args": {
                 "xml_path": {"$file": UPSTREAM["demo"]},
                 "save_path": {"$null": True},
@@ -235,7 +235,7 @@ add(
     {
         "id": ".grobid_to_bibr.error.schema_version_11",
         "r": ".grobid_to_bibr",
-        "py": "pytacheck.io.grobid._grobid_to_bibr",
+        "py": "metacheck.io.grobid._grobid_to_bibr",
         "args": {"xml_path": {"$file": UPSTREAM["demo"]}, "schema_version": "11"},
     }
 )
@@ -308,7 +308,7 @@ for tag, files in (("upstream", LIST_UP), ("io", LIST_IO)):
             {
                 "id": f"paper_table.{tag}.{t}",
                 "r": "paper_table",
-                "py": "pytacheck.paper_table",
+                "py": "metacheck.paper_table",
                 "args": {"paper": convert_call(files), "table": t},
             },
             f"paper_table() of every table over the 12.0 conversions of the {tag} TEI files"

@@ -14,10 +14,10 @@ import pytest
 import respx
 from gradio.utils import get_upload_folder
 
-import pytacheck as pc
-from pytacheck.app import checks, run, ui
-from pytacheck.module import module_find
-from pytacheck.status import status_table
+import metacheck as pc
+from metacheck.app import checks, run, ui
+from metacheck.module import module_find
+from metacheck.status import status_table
 
 VALIDATED = {"power", "stat_p_exact", "stat_p_nonsig", "marginal", "stat_effect_size"}
 

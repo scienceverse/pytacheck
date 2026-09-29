@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck.columns import _scale_typo_of, data_col_stats, data_col_type
+from metacheck.datacheck.columns import _scale_typo_of, data_col_stats, data_col_type
 
 
 def test_data_col_type_applies_the_rule_ladder() -> None:

@@ -55,15 +55,15 @@ def _args(args: Any) -> dict[str, Any]:
 
 
 def rp_module_report(paper: Any, module: str, header: Any = 3, **kwargs: Any) -> str:
-    from pytacheck.module import module_run
-    from pytacheck.report.report import module_report
+    from metacheck.module import module_run
+    from metacheck.report.report import module_report
 
     op = module_run(paper, rp_mod(module), **kwargs)
     return rp_mask(module_report(op, header=header))
 
 
 def rp_report_module_run(paper: Any, modules: Any, args: Any = None) -> dict[str, Any]:
-    from pytacheck.report.report import report_module_run
+    from metacheck.report.report import report_module_run
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -77,7 +77,7 @@ def _unpath(text: str) -> str:
 
 
 def rp_report_qmd(paper: Any, modules: Any, args: Any = None, qmd_paper: Any = "same") -> str:
-    from pytacheck.report.report import report_module_run, report_qmd
+    from metacheck.report.report import report_module_run, report_qmd
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -89,7 +89,7 @@ def rp_report_qmd(paper: Any, modules: Any, args: Any = None, qmd_paper: Any = "
 def rp_report(
     paper: Any, modules: Any, output_format: str = "qmd", args: Any = None
 ) -> dict[str, Any]:
-    from pytacheck.report.report import report
+    from metacheck.report.report import report
 
     fd, f = tempfile.mkstemp(suffix=f".{output_format}")
     os.close(fd)
@@ -109,7 +109,7 @@ def rp_report(
 
 
 def rp_html_export(fixture: str) -> Any:
-    from pytacheck.report.html_output import _html_export_r_source
+    from metacheck.report.html_output import _html_export_r_source
 
     d = tempfile.mkdtemp()
     try:
@@ -130,7 +130,7 @@ def fixture(name: str) -> str:
 
 
 def rp_report_repository(folder: str, modules: Any, args: Any = None) -> dict[str, Any]:
-    from pytacheck.report.report import report_repository
+    from metacheck.report.report import report_repository
 
     d = tempfile.mkdtemp()
     fd, f = tempfile.mkstemp(suffix=".qmd")
@@ -162,7 +162,7 @@ def rp_report_repository(folder: str, modules: Any, args: Any = None) -> dict[st
 
 def rp_report_repository_dir(path: str, modules: Any = None, args: Any = None) -> dict[str, Any]:
     """``report_repository()`` on a repository folder of the checkout (repo-relative *path*)."""
-    from pytacheck.report.report import report_repository
+    from metacheck.report.report import report_repository
 
     fd, f = tempfile.mkstemp(suffix=".qmd")
     os.close(fd)
@@ -187,6 +187,6 @@ def rp_report_repository_dir(path: str, modules: Any = None, args: Any = None) -
 
 
 def rp_validate(gt: Any, module: str) -> Any:
-    from pytacheck.validate import validate
+    from metacheck.validate import validate
 
     return validate(gt, rp_mod(module))

@@ -1,4 +1,4 @@
-"""Tests for pytacheck.statout.stato_map (port of R/stato-map.R).
+"""Tests for metacheck.statout.stato_map (port of R/stato-map.R).
 
 metacheck has no dedicated testthat file for the STATO mapping; its behaviour
 is exercised through test-stat-tables.R / test-stat-output.R (typed result
@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import pytest
 
-from pytacheck.statout import stato_map
-from pytacheck.statout.stato_map import (
+from metacheck.statout import stato_map
+from metacheck.statout.stato_map import (
     _MC_STAT_LABELS,
     _MC_STAT_MAP,
     _MC_STAT_NS,
@@ -178,8 +178,8 @@ def test_spv_row_labels(label: str, expected: dict[str, str]) -> None:
 def test_notebook_statistic_is_typed_by_result_class(fixtures_dir) -> None:
     """test-stat-tables.R: a parsed TtestResult line carries call_fn, which lets
     stato_type_column() type its bare "statistic" column as a t-statistic."""
-    from pytacheck.statout.stat_output import stat_results_long
-    from pytacheck.statout.stat_tables import read_stat_tables
+    from metacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.stat_tables import read_stat_tables
 
     tabs = read_stat_tables(str(fixtures_dir / "notebooks" / "notebook_python.ipynb"))
     long = stat_results_long(tabs, source_file="notebook_python.ipynb")

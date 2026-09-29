@@ -1,10 +1,10 @@
-"""Tests for pytacheck.statout.r_output (port of R/r-output.R)."""
+"""Tests for metacheck.statout.r_output (port of R/r-output.R)."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from pytacheck.statout.r_output import (
+from metacheck.statout.r_output import (
     _make_unique,
     _r_as_numeric,
     _r_call_fn,

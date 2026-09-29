@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pytacheck.packs.scan import module_metadata, network_imports, scan_file
+from metacheck.packs.scan import module_metadata, network_imports, scan_file
 
 
 def test_imports_and_risky_calls(tmp_path) -> None:
@@ -10,7 +10,7 @@ def test_imports_and_risky_calls(tmp_path) -> None:
     f.write_text(
         "from __future__ import annotations\n"
         "import os, json\n"
-        "from pytacheck import http\n"
+        "from metacheck import http\n"
         "from urllib.request import urlopen\n"
         "from . import _helper\n"
         "def f():\n"
@@ -25,18 +25,18 @@ def test_imports_and_risky_calls(tmp_path) -> None:
     assert {
         "os",
         "json",
-        "pytacheck",
-        "pytacheck.http",
+        "metacheck",
+        "metacheck.http",
         "urllib.request",
         ".",
         "subprocess",
     } <= set(scan.imports)
     risky = dict(scan.risky)
     assert risky["subprocess"] == "runs programs"
-    assert risky["pytacheck.http"].startswith("network")
+    assert risky["metacheck.http"].startswith("network")
     assert risky["urllib.request"].startswith("network")
     assert risky["os.system()"] == "runs programs" and risky["eval()"] == "evaluates code"
-    assert sorted(network_imports(scan)) == ["pytacheck.http", "urllib.request"]
+    assert sorted(network_imports(scan)) == ["metacheck.http", "urllib.request"]
     bad = tmp_path / "bad.py"
     bad.write_text("def (:\n")
     assert scan_file(bad).error.startswith("SyntaxError")
@@ -46,8 +46,8 @@ def test_module_metadata_is_read_statically(tmp_path) -> None:
     f = tmp_path / "apa_df.py"
     f.write_text(
         "raise SystemExit('never imported')\n"
-        "from pytacheck.module import module\n"
-        "import pytacheck as pc\n"
+        "from metacheck.module import module\n"
+        "import metacheck as pc\n"
         "@pc.module(title='APA df', description='''\n    Checks degrees of freedom.\n''',\n"
         "           keywords=['results', 'network'], requires='llm',\n"
         "           validation={'papers': 3, 'tp': 2, 'fp': 1}, author=f'x{1}')\n"

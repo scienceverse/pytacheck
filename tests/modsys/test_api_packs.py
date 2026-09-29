@@ -11,8 +11,8 @@ pytest.importorskip("fastapi")
 import httpx
 from fastapi.testclient import TestClient
 
-import pytacheck as pc
-from pytacheck.api.app import available_modules, create_app
+import metacheck as pc
+from metacheck.api.app import available_modules, create_app
 from tests.modsys import api_probe
 from tests.modsys.helpers import mod_src
 
@@ -31,7 +31,7 @@ def packs(ms):
     """An installed pack (allowed on the server) and a path pack (local code: never)."""
     policy = mod_src(
         "policy",
-        header="from pytacheck.module import use_setting",
+        header="from metacheck.module import use_setting",
         body='return {"summary_text": f"allow_local={use_setting(\'allow_local\', True)}"}',
         args="",
     )
@@ -87,7 +87,7 @@ def test_check_with_a_preset(packs, demo_json) -> None:
 
 
 def test_check_defaults(packs, demo_json, monkeypatch) -> None:
-    from pytacheck.api.app import _check_selection
+    from metacheck.api.app import _check_selection
 
     # plumber: every available module (not run here: some built-ins use the network)
     assert [m for m, _ in _check_selection({})] == available_modules()

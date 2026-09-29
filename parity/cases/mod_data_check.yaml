@@ -619,7 +619,7 @@
           \ 'documentation', 'code', 'data', 'materials'), doc_role = c(NA, 'readme', NA, NA, NA), group\
           \ = c('ex1', NA, 'ex2', NA, 'ex1')), data.frame(file_name = c('a.csv', 'x.R'), detail = c('Generic\
           \ name', 'Bad')))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).repo_tree_block(__import__('pandas').DataFrame({'repo_url':\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).repo_tree_block(__import__('pandas').DataFrame({'repo_url':\
           \ ['r1', 'r1', 'r2', None, 'r1'], 'file_name': ['a.csv', 'README.md', 'x.R', 'y.csv', 'p.png'],\
           \ 'file_path': ['data/a.csv', 'README.md', 'x.R', 'y.csv', 'm/p.png'], 'data_type': ['data',\
           \ 'documentation', 'code', 'data', 'materials'], 'doc_role': [None, 'readme', None, None, None],\
@@ -633,7 +633,7 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$repo_tree_block(data.frame(repo_url\
           \ = 'r', file_name = c('b.csv', 'a.csv')))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).repo_tree_block(__import__('pandas').DataFrame({'repo_url':\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).repo_tree_block(__import__('pandas').DataFrame({'repo_url':\
           \ ['r', 'r'], 'file_name': ['b.csv', 'a.csv']}))"
 - "id": "repo_tree_block.none"
   "r": "base::identity"
@@ -643,7 +643,7 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$repo_tree_block(data.frame(repo_url\
           \ = NA_character_, file_name = 'a.csv'))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).repo_tree_block(__import__('pandas').DataFrame({'repo_url':\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).repo_tree_block(__import__('pandas').DataFrame({'repo_url':\
           \ [None], 'file_name': ['a.csv']}))"
 - "id": "dv_issue_cell.merge"
   "r": "base::identity"
@@ -655,7 +655,7 @@
           \ info (values)', 'Whitespace', 'Personal info (column name)', 'Mystery check'), c('Values look\
           \ like emails; review. More.', \"2 values have 'padding' <here>\", 'The name suggests an email\
           \ address that is really far too long to show in the table cell as a whole.', ''))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_issue_cell(['Personal info\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_issue_cell(['Personal info\
           \ (values)', 'Whitespace', 'Personal info (column name)', 'Mystery check'], ['Values look like\
           \ emails; review. More.', \"2 values have 'padding' <here>\", 'The name suggests an email address\
           \ that is really far too long to show in the table cell as a whole.', ''])"
@@ -668,7 +668,7 @@
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); dc_with_careless(e$.dv_careless_block(data.frame(a\
           \ = c(3, 1, 2, NA), b = c(3, 2, 2, 4), c = c(3, 3, 2, 4), d = c(3, 4, 2, 4), e = c(3, 5, 2,\
           \ 4), f = c(2, 1, 2, 4)), c('r1', 'r2', 'r3', 'r4'), '1-5', 'panas'))})"
-        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).with_careless(__import__('pytacheck.modules._data_check',\
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).with_careless(__import__('metacheck.modules._data_check',\
           \ fromlist=['_']).dv_careless_block, __import__('pandas').DataFrame({'a': [3, 1, 2, None], 'b':\
           \ [3, 2, 2, 4], 'c': [3, 3, 2, 4], 'd': [3, 4, 2, 4], 'e': [3, 5, 2, 4], 'f': [2, 1, 2, 4]}),\
           \ ['r1', 'r2', 'r3', 'r4'], '1-5', 'panas')"
@@ -680,7 +680,7 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); dc_with_careless(e$.dv_careless_block(data.frame(a\
           \ = 1:6, b = 6:1, c = 1:6, d = 6:1, e = 1:6), as.character(1:6), '1-6', 'x'))})"
-        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).with_careless(__import__('pytacheck.modules._data_check',\
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).with_careless(__import__('metacheck.modules._data_check',\
           \ fromlist=['_']).dv_careless_block, __import__('pandas').DataFrame({'a': [1, 2, 3, 4, 5, 6],\
           \ 'b': [6, 5, 4, 3, 2, 1], 'c': [1, 2, 3, 4, 5, 6], 'd': [6, 5, 4, 3, 2, 1], 'e': [1, 2, 3,\
           \ 4, 5, 6]}), [str(i) for i in range(1, 7)], '1-6', 'x')"
@@ -696,7 +696,7 @@
           \ 10, 5), irv = c(0.4, 0, 0, 0.1, 0.5), reason = 'straightlining', n_items = c(10L, 6L, 6L,\
           \ 10L, 6L), straight_cut = c(8, 5, 5, 8, 5), scale_range = '1-5', source_file = c('s.csv', 's.csv',\
           \ 't.csv', 's.csv', 's.csv')))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_careless_by_respondent(__import__('pandas').DataFrame({'scale':\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_careless_by_respondent(__import__('pandas').DataFrame({'scale':\
           \ ['panas (1-5, 10 items)', 'rse (1-5, 6 items)', 'rse (1-5, 6 items)', 'panas (1-5, 10 items)',\
           \ 'bfi (1-5, 6 items)'], 'respondent': ['10', '10', '2', '9', 'b'], 'longstring': [8.0, 6, 6,\
           \ 10, 5], 'irv': [0.4, 0, 0, 0.1, 0.5], 'reason': ['straightlining'] * 5, 'n_items': [10, 6,\
@@ -709,7 +709,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_careless_by_respondent(data.frame())})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_careless_by_respondent(__import__('pandas').DataFrame())"
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_careless_by_respondent(__import__('pandas').DataFrame())"
 - "id": "dv_scale_n_items"
   "r": "base::identity"
   "py": "tests.mod_data_check.helpers.identity"
@@ -718,7 +718,7 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_scale_n_items(c('a\
           \ (1-5, 12 items)', 'b (?, 3 items)'))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_scale_n_items(['a (1-5,\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_scale_n_items(['a (1-5,\
           \ 12 items)', 'b (?, 3 items)'])"
 - "id": "dv_careless_coverage_text.skipped"
   "r": "base::identity"
@@ -728,7 +728,7 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_careless_coverage_text(1L,\
           \ 2L)})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_careless_coverage_text(1,\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_careless_coverage_text(1,\
           \ 2)"
 - "id": "dv_careless_coverage_text.all"
   "r": "base::identity"
@@ -738,7 +738,7 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_careless_coverage_text(3L,\
           \ 0L)})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_careless_coverage_text(3,\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_careless_coverage_text(3,\
           \ 0)"
 - "id": "dv_q_datetime"
   "r": "base::identity"
@@ -762,7 +762,7 @@
           \ 10:05:00', '2021-05-01 10:11:30', '2021-05-03 11:00:00'), Status = c('Survey Preview', 'IP\
           \ Address', 'Spam'), Finished = c(TRUE, FALSE, TRUE), IPAddress = '1.2.3.4', RecipientEmail\
           \ = 'a@b.c', check.names = FALSE))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_qualtrics_summary(__import__('pandas').DataFrame({'StartDate':\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_qualtrics_summary(__import__('pandas').DataFrame({'StartDate':\
           \ ['2021-05-01 10:00:00', '2021-05-01 10:10:00', '2021-05-03 09:00:00'], 'EndDate': ['2021-05-01\
           \ 10:05:00', '2021-05-01 10:11:30', '2021-05-03 11:00:00'], 'Status': ['Survey Preview', 'IP\
           \ Address', 'Spam'], 'Finished': __import__('pandas').array([True, False, True], dtype='boolean'),\
@@ -777,7 +777,7 @@
           \ (in seconds)` = c(10, 20, 300, 310, 320, 330, 340, 350, 360, 370, 380, -5, NA), Progress =\
           \ c(100, 50, rep(100, 11)), RecordedDate = c('2021-01-02', rep('2021-01-05 12:00:00', 12)),\
           \ check.names = FALSE))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_qualtrics_summary(__import__('pandas').DataFrame({'Duration\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_qualtrics_summary(__import__('pandas').DataFrame({'Duration\
           \ (in seconds)': [10, 20, 300, 310, 320, 330, 340, 350, 360, 370, 380, -5, None], 'Progress':\
           \ [100, 50] + [100] * 11, 'RecordedDate': ['2021-01-02'] + ['2021-01-05 12:00:00'] * 12}))"
 - "id": "dv_ods_col_letter"
@@ -788,7 +788,7 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_ods_col_letter(c(1L,\
           \ 26L, 27L, 52L, 703L, 0L))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_ods_col_letter([1, 26, 27,\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_ods_col_letter([1, 26, 27,\
           \ 52, 703, 0])"
 - "id": "dv_excel_inspect.messy"
   "r": "base::identity"
@@ -797,7 +797,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_excel_inspect('tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.xlsx')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_excel_inspect(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_excel_inspect(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/messy.xlsx')"
 - "id": "dv_excel_inspect.broken"
   "r": "base::identity"
@@ -806,7 +806,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_excel_inspect('tests/mod_data_check/fixtures/repos/spreadsheets/data/broken.xlsx')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_excel_inspect(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_excel_inspect(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/broken.xlsx')"
 - "id": "dv_ods_inspect.ods"
   "r": "base::identity"
@@ -815,7 +815,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_ods_inspect('tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.ods')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_ods_inspect(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_ods_inspect(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/messy.ods')"
 - "id": "dv_ods_inspect.fods"
   "r": "base::identity"
@@ -824,7 +824,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_ods_inspect('tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.fods')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_ods_inspect(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_ods_inspect(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/messy.fods')"
 - "id": "dv_ods_inspect.clean"
   "r": "base::identity"
@@ -833,7 +833,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_ods_inspect('tests/mod_data_check/fixtures/repos/spreadsheets/data/clean.ods')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_ods_inspect(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_ods_inspect(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/clean.ods')"
 - "id": "dv_spreadsheet_offset_header.offset"
   "r": "base::identity"
@@ -842,7 +842,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_spreadsheet_offset_header('tests/mod_data_check/fixtures/repos/spreadsheets/data/offset.xlsx')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_offset_header(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_offset_header(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/offset.xlsx')"
 - "id": "dv_spreadsheet_offset_header.clean"
   "r": "base::identity"
@@ -851,7 +851,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_spreadsheet_offset_header('tests/mod_data_check/fixtures/repos/spreadsheets/data/clean.xlsx')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_offset_header(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_offset_header(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/clean.xlsx')"
 - "id": "dv_spreadsheet_offset_header.ods"
   "r": "base::identity"
@@ -860,7 +860,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_spreadsheet_offset_header('tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.ods')})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_offset_header(__import__('tests.mod_data_check.helpers',\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_offset_header(__import__('tests.mod_data_check.helpers',\
           \ fromlist=['_']).REPOS / 'spreadsheets/data/messy.ods')"
 - "id": "dv_spreadsheet_findings.fixture"
   "r": "base::identity"
@@ -875,7 +875,7 @@
           \ 'tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.fods', 'tests/mod_data_check/fixtures/repos/basic/data/study.csv',\
           \ 'nope/gone.xlsx'), tabular_usable = c(TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE), non_tabular_reason\
           \ = c(NA, 'mostly free text', NA, NA, NA, NA, NA)))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_findings(__import__('pandas').DataFrame({'file_name':\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_findings(__import__('pandas').DataFrame({'file_name':\
           \ ['messy.xlsx', 'coding.xlsx', 'legacy.xls', 'broken.xlsx', 'messy.fods', 'a.csv', 'gone.xlsx'],\
           \ 'file_location': [str(__import__('tests.mod_data_check.helpers', fromlist=['_']).REPOS / p)\
           \ for p in ['spreadsheets/data/messy.xlsx', 'spreadsheets/data/coding.xlsx', 'spreadsheets/data/legacy.xls',\
@@ -890,5 +890,5 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_spreadsheet_findings(data.frame(file_name\
           \ = 'a.csv', file_location = NA_character_))})"
-        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_findings(__import__('pandas').DataFrame({'file_name':\
+        "py": "__import__('metacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_findings(__import__('pandas').DataFrame({'file_name':\
           \ ['a.csv'], 'file_location': [None]}))"

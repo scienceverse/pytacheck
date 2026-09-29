@@ -12,8 +12,8 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.datacheck import _columns_codebook as cbmod
-from pytacheck.datacheck.columns import _extract_rich_text, _pdf_codebook_lines, parse_codebook
+from metacheck.datacheck import _columns_codebook as cbmod
+from metacheck.datacheck.columns import _extract_rich_text, _pdf_codebook_lines, parse_codebook
 
 FIX = Path(__file__).parent / "fixtures"
 

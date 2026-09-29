@@ -1,4 +1,4 @@
-"""pytacheck._values: missing values, truth tests, scalar coercion and field access."""
+"""metacheck._values: missing values, truth tests, scalar coercion and field access."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pytacheck._values import as_float, as_int, as_str, field, is_missing, is_true
+from metacheck._values import as_float, as_int, as_str, field, is_missing, is_true
 
 NA = None  # R's NA in the expectations below
 NAN = math.nan

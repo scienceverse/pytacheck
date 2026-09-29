@@ -10,8 +10,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import SECTION_LEVELS, ModuleError
+import metacheck as pc
+from metacheck.module import SECTION_LEVELS, ModuleError
 
 MODULE = "open_practices"
 

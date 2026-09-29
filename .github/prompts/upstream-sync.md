@@ -1,6 +1,6 @@
 You are maintaining pytacheck, the Python port of the R package metacheck. metacheck's
 `dev` branch has moved; the submodule `upstream/metacheck` and the pin
-(`parity/UPSTREAM.toml`, `src/pytacheck/_version.py`) already point at the new commit.
+(`parity/UPSTREAM.toml`, `src/metacheck/_version.py`) already point at the new commit.
 
 Read, in this order:
 1. `.upstream-sync/brief.md` — what changed upstream (commits, files, functions, diff),
@@ -15,12 +15,12 @@ Then port the upstream changes:
 - Update the mapped Python files so that pytacheck does what the new R code does: the
   same checks, decisions and reported results (traffic lights, tables, summary and
   report text, extracted values) on realistic inputs, and the same public API. Write
-  idiomatic Python with the shared helpers (`pytacheck._values`, `pytacheck._json`,
-  `pytacheck.http`); do not emulate R internals (error texts, C-library quirks on
+  idiomatic Python with the shared helpers (`metacheck._values`, `metacheck._json`,
+  `metacheck.http`); do not emulate R internals (error texts, C-library quirks on
   malformed input, R type details).
   New R functions go to the location given by `porting/symbols.json` (regenerate it with
   `uv run python scripts/porting_symbols.py` after adding entries to `porting/map/*.toml`).
-  New modules go to `src/pytacheck/modules/<name>.py`.
+  New modules go to `src/metacheck/modules/<name>.py`.
 - Add or update parity cases (`parity/cases/*.yaml`) that exercise every changed
   behaviour, then regenerate goldens with R:
   `uv run python -m parity generate --area <area>` (R is installed; `$PYTACHECK_RSCRIPT`
@@ -28,7 +28,7 @@ Then port the upstream changes:
 - Port new/changed testthat tests to pytest.
 - Update `CHANGELOG.md` (an "Upstream sync" entry listing the ported changes).
 - If upstream changed the paper JSON schema, copy `inst/schema/paper.json` into
-  `src/pytacheck/resources/schema/`; if demos changed, copy `inst/demos/*`.
+  `src/metacheck/resources/schema/`; if demos changed, copy `inst/demos/*`.
 
 Done means all of these pass:
     uv run python -m parity check --jobs 0

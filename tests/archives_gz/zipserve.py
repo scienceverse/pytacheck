@@ -71,7 +71,7 @@ class ZipServer:
 @contextmanager
 def fresh_peek_cache() -> Iterator[None]:
     """``zip_peek()`` caches listings per URL for the session: start and end empty."""
-    from pytacheck.archives import zip_peek as zp
+    from metacheck.archives import zip_peek as zp
 
     zp._ZIP_PEEK_CACHE.clear()
     try:

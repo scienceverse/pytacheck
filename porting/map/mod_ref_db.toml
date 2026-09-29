@@ -1,12 +1,12 @@
 # R source -> Python location for the reference-database modules (see docs/PORTING.md).
 [files]
-"inst/modules/ref_retraction.R" = ["src/pytacheck/modules/ref_retraction.py"]
-"inst/modules/ref_replication.R" = ["src/pytacheck/modules/ref_replication.py"]
-"inst/modules/ref_miscitation.R" = ["src/pytacheck/modules/ref_miscitation.py"]
+"inst/modules/ref_retraction.R" = ["src/metacheck/modules/ref_retraction.py"]
+"inst/modules/ref_replication.R" = ["src/metacheck/modules/ref_replication.py"]
+"inst/modules/ref_miscitation.R" = ["src/metacheck/modules/ref_miscitation.py"]
 
 [functions]
-"module:ref_retraction" = "pytacheck.modules.ref_retraction:ref_retraction"
-"module:ref_replication" = "pytacheck.modules.ref_replication:ref_replication"
-"module:ref_miscitation" = "pytacheck.modules.ref_miscitation:ref_miscitation"
+"module:ref_retraction" = "metacheck.modules.ref_retraction:ref_retraction"
+"module:ref_replication" = "metacheck.modules.ref_replication:ref_replication"
+"module:ref_miscitation" = "metacheck.modules.ref_miscitation:ref_miscitation"
 # (base R tools::toTitleCase(), used for ref_replication's type labels, is ported as
-#  pytacheck.modules.ref_replication:_to_title_case)
+#  metacheck.modules.ref_replication:_to_title_case)

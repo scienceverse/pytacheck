@@ -69,7 +69,7 @@ def pycond(msg, status=None, pyjson=None, text=None, wrap=None, timeout=False):
 
 
 # ---- sanitise ---------------------------------------------------------------
-SAN = ("metacheck:::.llm_sanitise_text", "pytacheck.llm.core._llm_sanitise_text")
+SAN = ("metacheck:::.llm_sanitise_text", "metacheck.llm.core._llm_sanitise_text")
 fn_case(
     "sanitise.controls",
     *SAN,
@@ -97,7 +97,7 @@ fn_case("sanitise.null", *SAN, {"x": {"$null": True}})
 fn_case("sanitise.empty", *SAN, {"x": {"$chr": []}})
 
 # ---- json_retryable ---------------------------------------------------------
-JR = "metacheck:::.llm_json_retryable", "pytacheck.llm.core._llm_json_retryable"
+JR = "metacheck:::.llm_json_retryable", "metacheck.llm.core._llm_json_retryable"
 for i, (msg, st, rj, pj) in enumerate(
     [
         ("Failed to generate JSON", None, None, None),
@@ -340,7 +340,7 @@ for name, rp, pp, model, eff, ra, pa in AR:
     )
 
 # ---- unnest_result ------------------------------------------------------------
-UN = ("metacheck:::.unnest_result", "pytacheck.llm.core._unnest_result")
+UN = ("metacheck:::.unnest_result", "metacheck.llm.core._unnest_result")
 fn_case("unnest_result.object", *UN, {"result": {"n_letters": 5, "is_number": False}})
 fn_case("unnest_result.object_null", *UN, {"result": {"a": "x", "b": None, "c": 1.5}})
 fn_case("unnest_result.wrapper_empty", *UN, {"result": {"variables": []}})
@@ -371,7 +371,7 @@ expr_case(
 )
 
 # ---- cache key ------------------------------------------------------------------
-CK = ("metacheck:::.llm_cache_key", "pytacheck.llm.cache._llm_cache_key")
+CK = ("metacheck:::.llm_cache_key", "metacheck.llm.cache._llm_cache_key")
 fn_case(
     "cache_key.basic",
     *CK,
@@ -467,7 +467,7 @@ expr_case(
 )
 
 # ---- cap -------------------------------------------------------------------------
-CS = ("metacheck:::.cap_size_str", "pytacheck.llm.cap_prompt._cap_size_str")
+CS = ("metacheck:::.cap_size_str", "metacheck.llm.cap_prompt._cap_size_str")
 for i, v in enumerate(
     [None, 0, -5, 512, 1023, 1024, 1536, 1048576, 5.4e9, 1e13, 1e18, 1073741823.9]
 ):
@@ -475,7 +475,7 @@ for i, v in enumerate(
 fn_case(
     "cap_report.basic",
     "cap_report",
-    "pytacheck.llm.cap_report",
+    "metacheck.llm.cap_report",
     {
         "message": "The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it."
     },
@@ -947,7 +947,7 @@ net_case(
 fn_case(
     "ollama_native.basic",
     "metacheck:::.llm_ollama_native",
-    "pytacheck.llm.core._llm_ollama_native",
+    "metacheck.llm.core._llm_ollama_native",
     {
         "text": "A",
         "system_prompt": "Is this a vowel? Answer only 'TRUE' or 'FALSE'.",
@@ -958,7 +958,7 @@ fn_case(
 fn_case(
     "ollama_native.notamodel",
     "metacheck:::.llm_ollama_native",
-    "pytacheck.llm.core._llm_ollama_native",
+    "metacheck.llm.core._llm_ollama_native",
     {
         "text": "A",
         "system_prompt": "Is this a vowel? Answer only 'TRUE' or 'FALSE'.",
@@ -969,20 +969,20 @@ fn_case(
 fn_case(
     "llm_model_list.ollama",
     "llm_model_list",
-    "pytacheck.llm.llm_model_list",
+    "metacheck.llm.llm_model_list",
     {"platform": "ollama"},
     mock_dir="apis",
 )
 fn_case(
     "llm_model_list.invalid",
     "llm_model_list",
-    "pytacheck.llm.llm_model_list",
+    "metacheck.llm.llm_model_list",
     {"platform": "notamodel"},
 )
 fn_case(
     "llm_model_list_groq.mock",
     "metacheck:::.llm_model_list_groq",
-    "pytacheck.llm.core._llm_model_list_groq",
+    "metacheck.llm.core._llm_model_list_groq",
     {},
     mock_dir="apis",
 )

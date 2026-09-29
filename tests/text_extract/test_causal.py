@@ -8,7 +8,7 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.text.causal import causal_relations
+from metacheck.text.causal import causal_relations
 
 BASE = "https://lakens-causal-sentences.hf.space/gradio_api/call/predict"
 
@@ -155,7 +155,7 @@ def test_no_event_id() -> None:
     ],
 )
 def test_json_number(value: float, text: str) -> None:
-    from pytacheck.text.causal import _json_number
+    from metacheck.text.causal import _json_number
 
     assert _json_number(value) == text
 

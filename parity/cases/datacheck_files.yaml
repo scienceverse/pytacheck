@@ -4,7 +4,7 @@
 "cases":
 - "id": "data_format.mixed"
   "r": "data_format"
-  "py": "pytacheck.datacheck.files.data_format"
+  "py": "metacheck.datacheck.files.data_format"
   "args":
     "ext":
       "$chr":
@@ -20,13 +20,13 @@
       - "txt"
 - "id": "data_format.empty"
   "r": "data_format"
-  "py": "pytacheck.datacheck.files.data_format"
+  "py": "metacheck.datacheck.files.data_format"
   "args":
     "ext":
       "$chr": []
 - "id": "data_format.na"
   "r": "data_format"
-  "py": "pytacheck.datacheck.files.data_format"
+  "py": "metacheck.datacheck.files.data_format"
   "args":
     "ext":
       "$expr":
@@ -34,7 +34,7 @@
         "py": "[None, 'tsv']"
 - "id": "data_is_manifest.manifest"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$df":
@@ -53,7 +53,7 @@
       - "notes.txt"
 - "id": "data_is_manifest.real"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$df":
@@ -72,7 +72,7 @@
       - "notes.txt"
 - "id": "data_is_manifest.one_ext"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$df":
@@ -87,7 +87,7 @@
       - "img/c.png"
 - "id": "data_is_manifest.one_ext_min1"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$df":
@@ -103,7 +103,7 @@
     "min_exts": 1
 - "id": "data_is_manifest.paths"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$expr":
@@ -117,7 +117,7 @@
     "threshold": 0.75
 - "id": "data_is_manifest.no_repo"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$df":
@@ -135,7 +135,7 @@
         "py": "[None, '']"
 - "id": "data_is_manifest.null"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$null": true
@@ -146,12 +146,12 @@
       - "notes.txt"
 - "id": "data_is_manifest.from_file"
   "r": "data_is_manifest"
-  "py": "pytacheck.datacheck.files.data_is_manifest"
+  "py": "metacheck.datacheck.files.data_is_manifest"
   "args":
     "df":
       "$call":
         "r": "data_read_head"
-        "py": "pytacheck.datacheck.files.data_read_head"
+        "py": "metacheck.datacheck.files.data_read_head"
         "args":
           "path":
             "$file": "tests/datacheck_files/data/manifest.csv"
@@ -166,86 +166,86 @@
       - "notes.txt"
 - "id": "text_peek.eprime_utf16.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/eprime_utf16.txt"
 - "id": "text_peek.eprime_utf8.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/eprime_utf8.txt"
 - "id": "text_peek.table.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/table.txt"
 - "id": "text_peek.prose.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/prose.txt"
 - "id": "text_peek.bom.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/bom.csv"
 - "id": "text_peek.crlf.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/crlf.csv"
 - "id": "text_peek.cr_only.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/cr_only.csv"
 - "id": "text_peek.empty.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/empty.csv"
 - "id": "text_peek.utf16_table.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/utf16_table.txt"
 - "id": "text_peek.blank_lines.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/blank_lines.csv"
 - "id": "text_peek.latin1_notes.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/latin1_notes.txt"
 - "id": "text_peek.does_not_exist.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/does_not_exist.txt"
 - "id": "text_peek.n2"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/hundred.csv"
     "n": 2
 - "id": "text_peek.inf"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/quoted.csv"
@@ -255,259 +255,259 @@
         "py": "float('inf')"
 - "id": "text_peek.dir"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data"
 - "id": "txt_classify_content.eprime_utf16.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/eprime_utf16.txt"
 - "id": "txt_classify_content.eprime_utf8.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/eprime_utf8.txt"
 - "id": "txt_classify_content.table.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/table.txt"
 - "id": "txt_classify_content.prose.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/prose.txt"
 - "id": "txt_classify_content.one_line.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/one_line.txt"
 - "id": "txt_classify_content.pipe.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/pipe.txt"
 - "id": "txt_classify_content.latin1_notes.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/latin1_notes.txt"
 - "id": "txt_classify_content.headerless.csv"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/headerless.csv"
 - "id": "txt_classify_content.comments.csv"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/comments.csv"
 - "id": "txt_classify_content.empty.csv"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/empty.csv"
 - "id": "txt_classify_content.semicolon.csv"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/semicolon.csv"
 - "id": "txt_classify_content.utf16_table.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/utf16_table.txt"
 - "id": "txt_classify_content.rwrite.csv"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/rwrite.csv"
 - "id": "sniff_delimiter.rwrite.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/rwrite.csv"
 - "id": "sniff_delimiter.semicolon.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/semicolon.csv"
 - "id": "sniff_delimiter.tabbed.tsv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/tabbed.tsv"
 - "id": "sniff_delimiter.pipe.txt"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/pipe.txt"
 - "id": "sniff_delimiter.comments.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/comments.csv"
 - "id": "sniff_delimiter.empty.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/empty.csv"
 - "id": "sniff_delimiter.prose.txt"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/prose.txt"
 - "id": "sniff_delimiter.latin1_header.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/latin1_header.csv"
 - "id": "sniff_delimiter.whitespace.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/whitespace.csv"
 - "id": "detect_header.rwrite.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/rwrite.csv"
     "sep": ","
 - "id": "detect_header.headerless.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/headerless.csv"
     "sep": ","
 - "id": "detect_header.headerless_na.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/headerless_na.csv"
     "sep": ","
 - "id": "detect_header.comments.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/comments.csv"
     "sep": ","
 - "id": "detect_header.single_col.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/single_col.csv"
     "sep": ","
 - "id": "detect_header.empty.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/empty.csv"
     "sep": ","
 - "id": "detect_header.tabbed.tsv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/tabbed.tsv"
     "sep": "\t"
 - "id": "detect_header.quoted.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/quoted.csv"
     "sep": ","
 - "id": "count_fields.a,b,c"
   "r": ".count_fields"
-  "py": "pytacheck.datacheck.files._count_fields"
+  "py": "metacheck.datacheck.files._count_fields"
   "args":
     "line": "a,b,c"
     "sep": ","
 - "id": "count_fields.quoted_a,b,c"
   "r": ".count_fields"
-  "py": "pytacheck.datacheck.files._count_fields"
+  "py": "metacheck.datacheck.files._count_fields"
   "args":
     "line": "\"a,b\",c"
     "sep": ","
 - "id": "count_fields.empty"
   "r": ".count_fields"
-  "py": "pytacheck.datacheck.files._count_fields"
+  "py": "metacheck.datacheck.files._count_fields"
   "args":
     "line": ""
     "sep": ","
 - "id": "count_fields.escaped_quotes,1"
   "r": ".count_fields"
-  "py": "pytacheck.datacheck.files._count_fields"
+  "py": "metacheck.datacheck.files._count_fields"
   "args":
     "line": "\"x\"y\"z\",1"
     "sep": ","
 - "id": "count_fields.a;b;;c"
   "r": ".count_fields"
-  "py": "pytacheck.datacheck.files._count_fields"
+  "py": "metacheck.datacheck.files._count_fields"
   "args":
     "line": "a;b;;c"
     "sep": ";"
 - "id": "is_single_field_blob.blob.csv"
   "r": ".is_single_field_blob"
-  "py": "pytacheck.datacheck.files._is_single_field_blob"
+  "py": "metacheck.datacheck.files._is_single_field_blob"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/blob.csv"
     "sep": ","
 - "id": "is_single_field_blob.bigcells.csv"
   "r": ".is_single_field_blob"
-  "py": "pytacheck.datacheck.files._is_single_field_blob"
+  "py": "metacheck.datacheck.files._is_single_field_blob"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/bigcells.csv"
     "sep": ","
 - "id": "is_single_field_blob.single_col.csv"
   "r": ".is_single_field_blob"
-  "py": "pytacheck.datacheck.files._is_single_field_blob"
+  "py": "metacheck.datacheck.files._is_single_field_blob"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/single_col.csv"
     "sep": ","
 - "id": "is_single_field_blob.empty.csv"
   "r": ".is_single_field_blob"
-  "py": "pytacheck.datacheck.files._is_single_field_blob"
+  "py": "metacheck.datacheck.files._is_single_field_blob"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/empty.csv"
     "sep": ","
 - "id": "data_read_head.rwrite.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/rwrite.csv"
@@ -517,7 +517,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.hundred.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/hundred.csv"
@@ -527,7 +527,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.semicolon.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/semicolon.csv"
@@ -537,7 +537,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.tabbed.tsv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/tabbed.tsv"
@@ -547,7 +547,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.quoted.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/quoted.csv"
@@ -557,7 +557,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.latin1_row3.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/latin1_row3.csv"
@@ -567,7 +567,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.latin1_header.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/latin1_header.csv"
@@ -577,7 +577,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.bom.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/bom.csv"
@@ -587,7 +587,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.crlf.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/crlf.csv"
@@ -597,7 +597,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.headerless.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/headerless.csv"
@@ -607,7 +607,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.headerless_na.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/headerless_na.csv"
@@ -617,7 +617,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.single_col.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/single_col.csv"
@@ -627,7 +627,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.blank_lines.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/blank_lines.csv"
@@ -637,7 +637,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.trailing_blank.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/trailing_blank.csv"
@@ -647,7 +647,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.footer.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/footer.csv"
@@ -657,7 +657,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.ragged.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/ragged.csv"
@@ -667,7 +667,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.title_line.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/title_line.csv"
@@ -677,7 +677,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.comments.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/comments.csv"
@@ -687,7 +687,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.dates.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/dates.csv"
@@ -697,7 +697,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.types.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/types.csv"
@@ -707,7 +707,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.na_strings.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/na_strings.csv"
@@ -717,7 +717,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.empty.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/empty.csv"
@@ -727,7 +727,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.whitespace.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/whitespace.csv"
@@ -737,7 +737,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.header_only.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/header_only.csv"
@@ -747,7 +747,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.cr_only.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/cr_only.csv"
@@ -757,7 +757,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.cr_blank_start.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/cr_blank_start.csv"
@@ -767,7 +767,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.pipe.txt"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/pipe.txt"
@@ -777,7 +777,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.table.txt"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/table.txt"
@@ -787,7 +787,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.prose.txt"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/prose.txt"
@@ -797,7 +797,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.utf16_table.txt"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/utf16_table.txt"
@@ -807,7 +807,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.blob.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/blob.csv"
@@ -817,7 +817,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.bigcells.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/bigcells.csv"
@@ -827,7 +827,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.manifest.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/manifest.csv"
@@ -837,7 +837,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_basic.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_basic.xlsx"
@@ -847,7 +847,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_mixed.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_mixed.xlsx"
@@ -857,7 +857,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_offset.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_offset.xlsx"
@@ -867,7 +867,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_names.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_names.xlsx"
@@ -877,7 +877,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_gaps.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_gaps.xlsx"
@@ -887,7 +887,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_nums.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_nums.xlsx"
@@ -897,7 +897,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_bools.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_bools.xlsx"
@@ -907,7 +907,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_dates.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_dates.xlsx"
@@ -917,7 +917,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_header_only.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_header_only.xlsx"
@@ -927,7 +927,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_numhdr.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_numhdr.xlsx"
@@ -937,7 +937,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_coerce.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_coerce.xlsx"
@@ -947,7 +947,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_sheets.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_sheets.xlsx"
@@ -957,7 +957,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.xl_error.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_error.xlsx"
@@ -967,7 +967,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.readxl_datasets.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/readxl_datasets.xlsx"
@@ -977,7 +977,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.readxl_datasets.xls"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/readxl_datasets.xls"
@@ -987,7 +987,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.readxl_type-me.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/readxl_type-me.xlsx"
@@ -997,7 +997,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.readxl_type-me.xls"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/readxl_type-me.xls"
@@ -1007,7 +1007,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.readxl_geometry.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/readxl_geometry.xlsx"
@@ -1017,7 +1017,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.readxl_clippy.xlsx"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/readxl_clippy.xlsx"
@@ -1027,7 +1027,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.written.ods"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/written.ods"
@@ -1037,7 +1037,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.written.fods"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/written.fods"
@@ -1047,7 +1047,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.typed.ods"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/typed.ods"
@@ -1057,7 +1057,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.labelled.sav"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/labelled.sav"
@@ -1067,7 +1067,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.labelled.dta"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/labelled.dta"
@@ -1077,7 +1077,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.portable.por"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/portable.por"
@@ -1087,7 +1087,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.iris.sas7bdat"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/iris.sas7bdat"
@@ -1097,7 +1097,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.study.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/study.rds"
@@ -1107,7 +1107,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.tibble.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/tibble.rds"
@@ -1117,7 +1117,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.list.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/list.rds"
@@ -1127,7 +1127,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.odd.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/odd.rds"
@@ -1137,7 +1137,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.badname.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/badname.rds"
@@ -1147,7 +1147,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.latin1.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/latin1.rds"
@@ -1157,7 +1157,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.study_xz.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/study_xz.rds"
@@ -1167,7 +1167,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.study_bz2.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/study_bz2.rds"
@@ -1177,7 +1177,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.study_ascii.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/study_ascii.rds"
@@ -1187,7 +1187,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.workspace.RData"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/workspace.RData"
@@ -1197,7 +1197,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.noframe.RData"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/noframe.RData"
@@ -1207,7 +1207,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.twoframes.rda"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/twoframes.rda"
@@ -1217,7 +1217,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.script_refs.R"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/script_refs.R"
@@ -1227,7 +1227,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.labs.rds"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/labs.rds"
@@ -1237,7 +1237,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.labs_ws.RData"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/labs_ws.RData"
@@ -1247,7 +1247,7 @@
         "py": "float('inf')"
 - "id": "data_read_head.does_not_exist.csv"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/does_not_exist.csv"
@@ -1257,79 +1257,79 @@
         "py": "float('inf')"
 - "id": "data_read_head.hundred.csv.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/hundred.csv"
 - "id": "data_read_head.rwrite.csv.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/rwrite.csv"
 - "id": "data_read_head.xl_coerce.xlsx.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_coerce.xlsx"
 - "id": "data_read_head.labelled.sav.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/labelled.sav"
 - "id": "data_read_head.study.rds.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/study.rds"
 - "id": "data_read_head.workspace.RData.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/workspace.RData"
 - "id": "data_read_head.semicolon.csv.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/semicolon.csv"
 - "id": "data_read_head.typed.ods.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/typed.ods"
 - "id": "data_read_head.readxl_datasets.xls.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/readxl_datasets.xls"
 - "id": "data_read_head.iris.sas7bdat.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/iris.sas7bdat"
 - "id": "data_read_head.title_line.csv.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/title_line.csv"
 - "id": "data_read_head.footer.csv.n5"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/footer.csv"
 - "id": "data_read_head.xl_sheets.second"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_sheets.xlsx"
@@ -1340,7 +1340,7 @@
     "sheet": "second"
 - "id": "data_read_head.xl_sheets.index2"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_sheets.xlsx"
@@ -1351,7 +1351,7 @@
     "sheet": 2
 - "id": "data_read_head.xl_sheets.missing"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/xl_sheets.xlsx"
@@ -1362,7 +1362,7 @@
     "sheet": "nope"
 - "id": "data_read_head.hundred.n0"
   "r": "data_read_head"
-  "py": "pytacheck.datacheck.files.data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/hundred.csv"
@@ -1675,7 +1675,7 @@
     "n_rows": null
 - "id": "read_rdata_isolated.workspace"
   "r": ".read_rdata_isolated"
-  "py": "pytacheck.datacheck.files._read_rdata_isolated"
+  "py": "metacheck.datacheck.files._read_rdata_isolated"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/workspace.RData"
@@ -1685,7 +1685,7 @@
         "py": "float('inf')"
 - "id": "read_rdata_isolated.twoframes"
   "r": ".read_rdata_isolated"
-  "py": "pytacheck.datacheck.files._read_rdata_isolated"
+  "py": "metacheck.datacheck.files._read_rdata_isolated"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/twoframes.rda"
@@ -1695,20 +1695,20 @@
         "py": "float('inf')"
 - "id": "read_rdata_isolated.noframe"
   "r": ".read_rdata_isolated"
-  "py": "pytacheck.datacheck.files._read_rdata_isolated"
+  "py": "metacheck.datacheck.files._read_rdata_isolated"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/noframe.RData"
     "n_rows": 2
 - "id": "read_rdata_isolated.missing"
   "r": ".read_rdata_isolated"
-  "py": "pytacheck.datacheck.files._read_rdata_isolated"
+  "py": "metacheck.datacheck.files._read_rdata_isolated"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/nothing.RData"
 - "id": "data_group_from_path.mixed"
   "r": ".data_group_from_path"
-  "py": "pytacheck.datacheck.files._data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
   "args":
     "paths":
       "$expr":
@@ -1720,7 +1720,7 @@
           \ 'ex-5/x', '', None, 'a/b/c.csv', 'EXPT7.R']"
 - "id": "data_group_normalize.mixed"
   "r": ".data_group_normalize"
-  "py": "pytacheck.datacheck.files._data_group_normalize"
+  "py": "metacheck.datacheck.files._data_group_normalize"
   "args":
     "x":
       "$expr":
@@ -1730,7 +1730,7 @@
           \ EX 2 ', 'ex100', None, 'study2ab']"
 - "id": "data_group_sort.mixed"
   "r": ".data_group_sort"
-  "py": "pytacheck.datacheck.files._data_group_sort"
+  "py": "metacheck.datacheck.files._data_group_sort"
   "args":
     "codes":
       "$chr":
@@ -1743,13 +1743,13 @@
       - "pilot2"
 - "id": "data_group_sort.empty"
   "r": ".data_group_sort"
-  "py": "pytacheck.datacheck.files._data_group_sort"
+  "py": "metacheck.datacheck.files._data_group_sort"
   "args":
     "codes":
       "$chr": []
 - "id": "data_group_check_roster.agree"
   "r": ".data_group_check_roster"
-  "py": "pytacheck.datacheck.files._data_group_check_roster"
+  "py": "metacheck.datacheck.files._data_group_check_roster"
   "args":
     "groups":
       "$expr":
@@ -1761,7 +1761,7 @@
       - "ex1"
 - "id": "data_group_check_roster.differ"
   "r": ".data_group_check_roster"
-  "py": "pytacheck.datacheck.files._data_group_check_roster"
+  "py": "metacheck.datacheck.files._data_group_check_roster"
   "args":
     "groups":
       "$chr":
@@ -1773,7 +1773,7 @@
       - "ex2"
 - "id": "data_group_check_roster.empty"
   "r": ".data_group_check_roster"
-  "py": "pytacheck.datacheck.files._data_group_check_roster"
+  "py": "metacheck.datacheck.files._data_group_check_roster"
   "args":
     "groups":
       "$chr":
@@ -1782,7 +1782,7 @@
       "$chr": []
 - "id": "data_group_from_repo.two"
   "r": ".data_group_from_repo"
-  "py": "pytacheck.datacheck.files._data_group_from_repo"
+  "py": "metacheck.datacheck.files._data_group_from_repo"
   "args":
     "repo":
       "$expr":
@@ -1797,7 +1797,7 @@
       - "e.csv"
 - "id": "data_group_from_repo.mirror"
   "r": ".data_group_from_repo"
-  "py": "pytacheck.datacheck.files._data_group_from_repo"
+  "py": "metacheck.datacheck.files._data_group_from_repo"
   "args":
     "repo":
       "$chr":
@@ -1815,7 +1815,7 @@
       - "z.csv"
 - "id": "data_group_from_repo.single"
   "r": ".data_group_from_repo"
-  "py": "pytacheck.datacheck.files._data_group_from_repo"
+  "py": "metacheck.datacheck.files._data_group_from_repo"
   "args":
     "repo":
       "$expr":
@@ -1828,31 +1828,31 @@
       - "c"
 - "id": "data_code_refs.script"
   "r": ".data_code_refs"
-  "py": "pytacheck.datacheck.files._data_code_refs"
+  "py": "metacheck.datacheck.files._data_code_refs"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/script_refs.R"
 - "id": "data_code_refs.data"
   "r": ".data_code_refs"
-  "py": "pytacheck.datacheck.files._data_code_refs"
+  "py": "metacheck.datacheck.files._data_code_refs"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/rwrite.csv"
 - "id": "data_code_refs.missing"
   "r": ".data_code_refs"
-  "py": "pytacheck.datacheck.files._data_code_refs"
+  "py": "metacheck.datacheck.files._data_code_refs"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/nope.R"
 - "id": "data_code_refs.latin1"
   "r": ".data_code_refs"
-  "py": "pytacheck.datacheck.files._data_code_refs"
+  "py": "metacheck.datacheck.files._data_code_refs"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/script_latin1.R"
 - "id": "strip_llm_wrapper.prefixed"
   "r": ".strip_llm_wrapper"
-  "py": "pytacheck.datacheck.files._strip_llm_wrapper"
+  "py": "metacheck.datacheck.files._strip_llm_wrapper"
   "args":
     "df":
       "$df":
@@ -1865,7 +1865,7 @@
     "wrapper": "assignments"
 - "id": "strip_llm_wrapper.bare"
   "r": ".strip_llm_wrapper"
-  "py": "pytacheck.datacheck.files._strip_llm_wrapper"
+  "py": "metacheck.datacheck.files._strip_llm_wrapper"
   "args":
     "df":
       "$df":
@@ -1876,14 +1876,14 @@
     "wrapper": "assignments"
 - "id": "strip_llm_wrapper.null"
   "r": ".strip_llm_wrapper"
-  "py": "pytacheck.datacheck.files._strip_llm_wrapper"
+  "py": "metacheck.datacheck.files._strip_llm_wrapper"
   "args":
     "df":
       "$null": true
     "wrapper": "assignments"
 - "id": "data_group_llm.materials"
   "r": "data_group_llm"
-  "py": "pytacheck.datacheck.files.data_group_llm"
+  "py": "metacheck.datacheck.files.data_group_llm"
   "args":
     "files":
       "$df":
@@ -1897,13 +1897,13 @@
         - "materials"
 - "id": "data_group_llm.null"
   "r": "data_group_llm"
-  "py": "pytacheck.datacheck.files.data_group_llm"
+  "py": "metacheck.datacheck.files.data_group_llm"
   "args":
     "files":
       "$null": true
 - "id": "data_group_llm.multi_repo"
   "r": "data_group_llm"
-  "py": "pytacheck.datacheck.files.data_group_llm"
+  "py": "metacheck.datacheck.files.data_group_llm"
   "args":
     "files":
       "$df":
@@ -1941,7 +1941,7 @@
         - "materials"
 - "id": "data_group_llm.single_repo"
   "r": "data_group_llm"
-  "py": "pytacheck.datacheck.files.data_group_llm"
+  "py": "metacheck.datacheck.files.data_group_llm"
   "args":
     "files":
       "$df":
@@ -1965,7 +1965,7 @@
         - "documentation"
 - "id": "data_group_llm.roster"
   "r": "data_group_llm"
-  "py": "pytacheck.datacheck.files.data_group_llm"
+  "py": "metacheck.datacheck.files.data_group_llm"
   "args":
     "files":
       "$df":
@@ -2009,7 +2009,7 @@
         - "A pilot 1 preceded both."
 - "id": "data_group_llm.code_refs"
   "r": "data_group_llm"
-  "py": "pytacheck.datacheck.files.data_group_llm"
+  "py": "metacheck.datacheck.files.data_group_llm"
   "args":
     "files":
       "$expr":
@@ -2028,7 +2028,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2072,7 +2072,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2122,7 +2122,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2142,7 +2142,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2172,7 +2172,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2216,7 +2216,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2266,7 +2266,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2286,7 +2286,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2316,7 +2316,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2360,7 +2360,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2410,7 +2410,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2430,7 +2430,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2460,7 +2460,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2504,7 +2504,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2554,7 +2554,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2574,7 +2574,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2604,7 +2604,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2648,7 +2648,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2698,7 +2698,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2718,7 +2718,7 @@
     "x":
       "$call":
         "r": "data_group_llm"
-        "py": "pytacheck.datacheck.files.data_group_llm"
+        "py": "metacheck.datacheck.files.data_group_llm"
         "args":
           "files":
             "$df":
@@ -2743,7 +2743,7 @@
     "which": "model"
 - "id": "data_study_roster.test_paper"
   "r": "data_study_roster"
-  "py": "pytacheck.datacheck.files.data_study_roster"
+  "py": "metacheck.datacheck.files.data_study_roster"
   "args":
     "paper":
       "$test_paper":
@@ -2753,13 +2753,13 @@
         - "A pilot 1 preceded both."
 - "id": "data_study_roster.demo"
   "r": "data_study_roster"
-  "py": "pytacheck.datacheck.files.data_study_roster"
+  "py": "metacheck.datacheck.files.data_study_roster"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "data_study_roster.none"
   "r": "data_study_roster"
-  "py": "pytacheck.datacheck.files.data_study_roster"
+  "py": "metacheck.datacheck.files.data_study_roster"
   "args":
     "paper":
       "$test_paper":
@@ -2768,7 +2768,7 @@
         - "The experiment went fine."
 - "id": "data_study_roster.not_paper"
   "r": "data_study_roster"
-  "py": "pytacheck.datacheck.files.data_study_roster"
+  "py": "metacheck.datacheck.files.data_study_roster"
   "args":
     "paper": "Experiment 1"
 - "id": "manifest_merge.create"
@@ -2926,7 +2926,7 @@
     - "[1].provenance"
 - "id": "detect_likert_scale.clean_1_5"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -3132,7 +3132,7 @@
       - 1
 - "id": "detect_likert_scale.bipolar"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -3438,7 +3438,7 @@
       - 2
 - "id": "detect_likert_scale.floor_inferred"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -3644,7 +3644,7 @@
       - 3
 - "id": "detect_likert_scale.zero_present"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -3850,7 +3850,7 @@
       - 5
 - "id": "detect_likert_scale.gap_bridged"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -4056,7 +4056,7 @@
       - 2
 - "id": "detect_likert_scale.suspect_99"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -4263,7 +4263,7 @@
       - 99
 - "id": "detect_likert_scale.suspect_33"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -4470,7 +4470,7 @@
       - 33
 - "id": "detect_likert_scale.adjacent_6"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -4677,7 +4677,7 @@
       - 6
 - "id": "detect_likert_scale.neg99"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -4885,7 +4885,7 @@
       - -99
 - "id": "detect_likert_scale.age"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -5091,7 +5091,7 @@
       - 58
 - "id": "detect_likert_scale.rt"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -5297,7 +5297,7 @@
       - 917
 - "id": "detect_likert_scale.coded"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -5503,7 +5503,7 @@
       - 10
 - "id": "detect_likert_scale.count"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -5709,7 +5709,7 @@
       - 7
 - "id": "detect_likert_scale.nonint"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -5915,7 +5915,7 @@
       - 0.873979309136218
 - "id": "detect_likert_scale.few"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -5924,7 +5924,7 @@
       - 3
 - "id": "detect_likert_scale.na_inf"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -5994,7 +5994,7 @@
       - -.inf
 - "id": "detect_likert_scale.wide_11"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -6400,7 +6400,7 @@
       - -6
 - "id": "detect_likert_scale.max_levels"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -6807,7 +6807,7 @@
     "max_levels": 10
 - "id": "detect_likert_scale.min_coverage"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -7015,7 +7015,7 @@
     "min_coverage": 1.0
 - "id": "detect_likert_scale.min_core"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$dbl":
@@ -7222,19 +7222,19 @@
     "min_core": 6
 - "id": "data_classify_files.empty"
   "r": "data_classify_files"
-  "py": "pytacheck.datacheck.files.data_classify_files"
+  "py": "metacheck.datacheck.files.data_classify_files"
   "args":
     "file_name":
       "$chr": []
 - "id": "data_doc_role.empty"
   "r": ".data_doc_role"
-  "py": "pytacheck.datacheck.files._data_doc_role"
+  "py": "metacheck.datacheck.files._data_doc_role"
   "args":
     "file_name":
       "$chr": []
 - "id": "is_r_package_file.nested"
   "r": ".is_r_package_file"
-  "py": "pytacheck.datacheck.files._is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
   "args":
     "file_path":
       "$expr":
@@ -7244,7 +7244,7 @@
           \ 'top.R', None, '']"
 - "id": "is_r_package_file.none"
   "r": ".is_r_package_file"
-  "py": "pytacheck.datacheck.files._is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
   "args":
     "file_path":
       "$chr":
@@ -7253,7 +7253,7 @@
       - "x/NAMESPACE"
 - "id": "is_r_package_file.backslash"
   "r": ".is_r_package_file"
-  "py": "pytacheck.datacheck.files._is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
   "args":
     "file_path":
       "$chr":
@@ -7262,7 +7262,7 @@
       - "pkg\\R\\a.R"
 - "id": "is_r_package_file.empty"
   "r": ".is_r_package_file"
-  "py": "pytacheck.datacheck.files._is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
   "args":
     "file_path":
       "$chr": []

@@ -6,35 +6,35 @@
 "cases":
 - "id": ".dataone_hosts"
   "r": "metacheck:::.dataone_hosts"
-  "py": "pytacheck.archives.dataone._dataone_hosts"
+  "py": "metacheck.archives.dataone._dataone_hosts"
   "args": {}
 - "id": ".dataone_host_regex"
   "r": "metacheck:::.dataone_host_regex"
-  "py": "pytacheck.archives.dataone._dataone_host_regex"
+  "py": "metacheck.archives.dataone._dataone_host_regex"
   "args": {}
 - "id": ".dspace7_hosts"
   "r": "metacheck:::.dspace7_hosts"
-  "py": "pytacheck.archives.dspace7._dspace7_hosts"
+  "py": "metacheck.archives.dspace7._dspace7_hosts"
   "args": {}
 - "id": ".dspace7_host_regex"
   "r": "metacheck:::.dspace7_host_regex"
-  "py": "pytacheck.archives.dspace7._dspace7_host_regex"
+  "py": "metacheck.archives.dspace7._dspace7_host_regex"
   "args": {}
 - "id": ".dspace_legacy_hosts"
   "r": "metacheck:::.dspace_legacy_hosts"
-  "py": "pytacheck.archives.psycharchives._dspace_legacy_hosts"
+  "py": "metacheck.archives.psycharchives._dspace_legacy_hosts"
   "args": {}
 - "id": ".dspace_legacy_host_regex"
   "r": "metacheck:::.dspace_legacy_host_regex"
-  "py": "pytacheck.archives.psycharchives._dspace_legacy_host_regex"
+  "py": "metacheck.archives.psycharchives._dspace_legacy_host_regex"
   "args": {}
 - "id": ".rbox_headers"
   "r": "metacheck:::.rbox_headers"
-  "py": "pytacheck.archives.researchbox._rbox_headers"
+  "py": "metacheck.archives.researchbox._rbox_headers"
   "args": {}
 - "id": ".dataone_host.shapes"
   "r": "metacheck:::.dataone_host"
-  "py": "pytacheck.archives.dataone._dataone_host"
+  "py": "metacheck.archives.dataone._dataone_host"
   "args":
     "dataone_url":
       "$expr":
@@ -42,30 +42,30 @@
         "py": "[\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\", \"https://doi.org/10.18739/A2GT5FG86\", \"10.5063/PG1Q4B\", \"https://knb.ecoinformatics.org/view/doi:10.18739/X1\", \"https://doi.org/10.6085/AA/marine_ltm.20.1\", \"https://metacat.tfri.gov.tw/metacat/d1/mn/v2/object/abc\", \"https://smithsonian.dataone.org/view/doi:10.1/x\", \"https://example.org/10.9999/x\", \"\", None, \"  10.5063/ABC  \", \"ARCTICDATA.IO/view/doi:10.1/Y\", \"https://arcticdata.io/metacat/d1/mn/v2/view/doi:10.18739/A2GT5FG86/extra\", \"DOI:10.18739/abc\", \"https://doi.org/10.18739/A2GT5FG86.\", \"https://doi.org/10.18739/A2GT5FG86?x=1\", \"no doi here\", \"doi:10.5063/F1Z60M87 and 10.18739/second\"]"
 - "id": ".dataone_host.single"
   "r": "metacheck:::.dataone_host"
-  "py": "pytacheck.archives.dataone._dataone_host"
+  "py": "metacheck.archives.dataone._dataone_host"
   "args":
     "dataone_url": "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86"
 - "id": ".dataone_host.empty"
   "r": "metacheck:::.dataone_host"
-  "py": "pytacheck.archives.dataone._dataone_host"
+  "py": "metacheck.archives.dataone._dataone_host"
   "args":
     "dataone_url":
       "$chr": []
 - "id": ".dataone_host.null"
   "r": "metacheck:::.dataone_host"
-  "py": "pytacheck.archives.dataone._dataone_host"
+  "py": "metacheck.archives.dataone._dataone_host"
   "args":
     "dataone_url":
       "$null": true
 - "id": ".dataone_host.na"
   "r": "metacheck:::.dataone_host"
-  "py": "pytacheck.archives.dataone._dataone_host"
+  "py": "metacheck.archives.dataone._dataone_host"
   "args":
     "dataone_url":
       "$NA": true
 - "id": ".dataone_pid.shapes"
   "r": "metacheck:::.dataone_pid"
-  "py": "pytacheck.archives.dataone._dataone_pid"
+  "py": "metacheck.archives.dataone._dataone_pid"
   "args":
     "dataone_url":
       "$expr":
@@ -73,24 +73,24 @@
         "py": "[\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\", \"https://doi.org/10.18739/A2GT5FG86\", \"10.5063/PG1Q4B\", \"https://knb.ecoinformatics.org/view/doi:10.18739/X1\", \"https://doi.org/10.6085/AA/marine_ltm.20.1\", \"https://metacat.tfri.gov.tw/metacat/d1/mn/v2/object/abc\", \"https://smithsonian.dataone.org/view/doi:10.1/x\", \"https://example.org/10.9999/x\", \"\", None, \"  10.5063/ABC  \", \"ARCTICDATA.IO/view/doi:10.1/Y\", \"https://arcticdata.io/metacat/d1/mn/v2/view/doi:10.18739/A2GT5FG86/extra\", \"DOI:10.18739/abc\", \"https://doi.org/10.18739/A2GT5FG86.\", \"https://doi.org/10.18739/A2GT5FG86?x=1\", \"no doi here\", \"doi:10.5063/F1Z60M87 and 10.18739/second\"]"
 - "id": ".dataone_pid.single"
   "r": "metacheck:::.dataone_pid"
-  "py": "pytacheck.archives.dataone._dataone_pid"
+  "py": "metacheck.archives.dataone._dataone_pid"
   "args":
     "dataone_url": "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86"
 - "id": ".dataone_pid.empty"
   "r": "metacheck:::.dataone_pid"
-  "py": "pytacheck.archives.dataone._dataone_pid"
+  "py": "metacheck.archives.dataone._dataone_pid"
   "args":
     "dataone_url":
       "$chr": []
 - "id": ".dataone_pid.null"
   "r": "metacheck:::.dataone_pid"
-  "py": "pytacheck.archives.dataone._dataone_pid"
+  "py": "metacheck.archives.dataone._dataone_pid"
   "args":
     "dataone_url":
       "$null": true
 - "id": ".dataone_pid.na"
   "r": "metacheck:::.dataone_pid"
-  "py": "pytacheck.archives.dataone._dataone_pid"
+  "py": "metacheck.archives.dataone._dataone_pid"
   "args":
     "dataone_url":
       "$NA": true
@@ -116,13 +116,13 @@
   "compare": *id001
 - "id": "dataone_links.demo"
   "r": "dataone_links"
-  "py": "pytacheck.archives.dataone.dataone_links"
+  "py": "metacheck.archives.dataone.dataone_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "dataone_links.psychsci"
   "r": "dataone_links"
-  "py": "pytacheck.archives.dataone.dataone_links"
+  "py": "metacheck.archives.dataone.dataone_links"
   "args":
     "paper":
       "$read":
@@ -193,7 +193,7 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": ".dataone_info.unknown_host"
   "r": "metacheck:::.dataone_info"
-  "py": "pytacheck.archives.dataone._dataone_info"
+  "py": "metacheck.archives.dataone._dataone_info"
   "args":
     "pid": "doi:10.1/x"
     "host": "example.org"
@@ -244,7 +244,7 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": ".dspace7_parse.shapes"
   "r": "metacheck:::.dspace7_parse"
-  "py": "pytacheck.archives.dspace7._dspace7_parse"
+  "py": "metacheck.archives.dspace7._dspace7_parse"
   "args":
     "url":
       "$expr":
@@ -252,18 +252,18 @@
         "py": "[\"https://repository.gatech.edu/entities/publication/BAC086E5-C606-474B-AF1E-4A6122694AF5\", \"https://repository.gatech.edu/handle/1853/67239.\", \"http://hdl.handle.net/1853/67239\", \"https://www.research-collection.ethz.ch/handle/20.500.11850/12345;\", \"https://open.uni-marburg.de/handle/1/2/3\", \"https://tam-datahub.online.uni-marburg.de/items/x\", \"https://XDL.GI.DE/foo\", \"\", None, \"https://example.org/handle/123/456\", \"https://dspace.ut.ee/handle/10062/1.2.3/x\"]"
 - "id": ".dspace7_parse.single"
   "r": "metacheck:::.dspace7_parse"
-  "py": "pytacheck.archives.dspace7._dspace7_parse"
+  "py": "metacheck.archives.dspace7._dspace7_parse"
   "args":
     "url": "https://repository.gatech.edu/entities/publication/BAC086E5-C606-474B-AF1E-4A6122694AF5"
 - "id": ".dspace7_parse.empty"
   "r": "metacheck:::.dspace7_parse"
-  "py": "pytacheck.archives.dspace7._dspace7_parse"
+  "py": "metacheck.archives.dspace7._dspace7_parse"
   "args":
     "url":
       "$chr": []
 - "id": ".dspace7_parse.null"
   "r": "metacheck:::.dspace7_parse"
-  "py": "pytacheck.archives.dspace7._dspace7_parse"
+  "py": "metacheck.archives.dspace7._dspace7_parse"
   "args":
     "url":
       "$null": true
@@ -287,13 +287,13 @@
   "compare": *id001
 - "id": "dspace7_links.demo"
   "r": "dspace7_links"
-  "py": "pytacheck.archives.dspace7.dspace7_links"
+  "py": "metacheck.archives.dspace7.dspace7_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "dspace7_links.psychsci"
   "r": "dspace7_links"
-  "py": "pytacheck.archives.dspace7.dspace7_links"
+  "py": "metacheck.archives.dspace7.dspace7_links"
   "args":
     "paper":
       "$read":
@@ -408,7 +408,7 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": ".researchdata4tu_id.shapes"
   "r": "metacheck:::.researchdata4tu_id"
-  "py": "pytacheck.archives.fourtu._researchdata4tu_id"
+  "py": "metacheck.archives.fourtu._researchdata4tu_id"
   "args":
     "researchdata4tu_url":
       "$expr":
@@ -416,24 +416,24 @@
         "py": "[\"16766929\", \"https://doi.org/10.4121/16766929.v1\", \"10.4121/uuid:7F866E02-EB39-4A2A-8F7D-2D053EE6CDE9\", \"https://doi.org/10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd\", \"https://doi.org/10.4121/7f866e02-eb39-4a2a-8f7d-2d053ee6cde9\", \"https://data.4tu.nl/datasets/7f866e02-eb39-4a2a-8f7d-2d053ee6cde9\", \"https://data.4tu.nl/articles/dataset/Wind_tunnel/16766929/1\", \"https://data.4tu.nl/articles/16766929\", \"https://data.4tu.nl/articles/dataset/x\", \"\", None, \" 123 \"]"
 - "id": ".researchdata4tu_id.single"
   "r": "metacheck:::.researchdata4tu_id"
-  "py": "pytacheck.archives.fourtu._researchdata4tu_id"
+  "py": "metacheck.archives.fourtu._researchdata4tu_id"
   "args":
     "researchdata4tu_url": "16766929"
 - "id": ".researchdata4tu_id.empty"
   "r": "metacheck:::.researchdata4tu_id"
-  "py": "pytacheck.archives.fourtu._researchdata4tu_id"
+  "py": "metacheck.archives.fourtu._researchdata4tu_id"
   "args":
     "researchdata4tu_url":
       "$chr": []
 - "id": ".researchdata4tu_id.null"
   "r": "metacheck:::.researchdata4tu_id"
-  "py": "pytacheck.archives.fourtu._researchdata4tu_id"
+  "py": "metacheck.archives.fourtu._researchdata4tu_id"
   "args":
     "researchdata4tu_url":
       "$null": true
 - "id": ".researchdata4tu_id.na"
   "r": "metacheck:::.researchdata4tu_id"
-  "py": "pytacheck.archives.fourtu._researchdata4tu_id"
+  "py": "metacheck.archives.fourtu._researchdata4tu_id"
   "args":
     "researchdata4tu_url":
       "$NA": true
@@ -457,13 +457,13 @@
   "compare": *id001
 - "id": "researchdata4tu_links.demo"
   "r": "researchdata4tu_links"
-  "py": "pytacheck.archives.fourtu.researchdata4tu_links"
+  "py": "metacheck.archives.fourtu.researchdata4tu_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "researchdata4tu_links.psychsci"
   "r": "researchdata4tu_links"
-  "py": "pytacheck.archives.fourtu.researchdata4tu_links"
+  "py": "metacheck.archives.fourtu.researchdata4tu_links"
   "args":
     "paper":
       "$read":
@@ -524,11 +524,11 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": "researchdata4tu_pat.get"
   "r": "researchdata4tu_pat"
-  "py": "pytacheck.archives.fourtu.researchdata4tu_pat"
+  "py": "metacheck.archives.fourtu.researchdata4tu_pat"
   "args": {}
 - "id": "researchdata4tu_pat.bad_error"
   "r": "researchdata4tu_pat"
-  "py": "pytacheck.archives.fourtu.researchdata4tu_pat"
+  "py": "metacheck.archives.fourtu.researchdata4tu_pat"
   "args":
     "pat": 1
 - "id": "researchdata4tu_file_download.mock.one"
@@ -551,12 +551,12 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": "researchdata4tu_file_download.none"
   "r": "researchdata4tu_file_download"
-  "py": "pytacheck.archives.fourtu.researchdata4tu_file_download"
+  "py": "metacheck.archives.fourtu.researchdata4tu_file_download"
   "args":
     "researchdata4tu_id": "nope"
 - "id": ".dspace_legacy_parse.shapes"
   "r": "metacheck:::.dspace_legacy_parse"
-  "py": "pytacheck.archives.psycharchives._dspace_legacy_parse"
+  "py": "metacheck.archives.psycharchives._dspace_legacy_parse"
   "args":
     "url":
       "$expr":
@@ -564,44 +564,44 @@
         "py": "[\"https://hdl.handle.net/20.500.12034/17526\", \"https://www.psycharchives.org/jspui/handle/20.500.12034/17526\", \"20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234;\", \"https://DSPACE.UT.EE/handle/10062/12345.\", \"20.500.12034/17526;\", \"https://osf.io/abcde\", \"\", None, \"see 12.34/abc and 20.500.12034/1\", \"https://qsardb.org/repository/handle/10967/106\", \"123456/7\"]"
 - "id": ".dspace_legacy_parse.single"
   "r": "metacheck:::.dspace_legacy_parse"
-  "py": "pytacheck.archives.psycharchives._dspace_legacy_parse"
+  "py": "metacheck.archives.psycharchives._dspace_legacy_parse"
   "args":
     "url": "https://hdl.handle.net/20.500.12034/17526"
 - "id": ".dspace_legacy_parse.empty"
   "r": "metacheck:::.dspace_legacy_parse"
-  "py": "pytacheck.archives.psycharchives._dspace_legacy_parse"
+  "py": "metacheck.archives.psycharchives._dspace_legacy_parse"
   "args":
     "url":
       "$chr": []
 - "id": ".dspace_legacy_parse.null"
   "r": "metacheck:::.dspace_legacy_parse"
-  "py": "pytacheck.archives.psycharchives._dspace_legacy_parse"
+  "py": "metacheck.archives.psycharchives._dspace_legacy_parse"
   "args":
     "url":
       "$null": true
 - "id": ".psycharchives_handle.1"
   "r": "metacheck:::.psycharchives_handle"
-  "py": "pytacheck.archives.psycharchives._psycharchives_handle"
+  "py": "metacheck.archives.psycharchives._psycharchives_handle"
   "args":
     "url": "https://hdl.handle.net/20.500.12034/17526"
 - "id": ".psycharchives_handle.2"
   "r": "metacheck:::.psycharchives_handle"
-  "py": "pytacheck.archives.psycharchives._psycharchives_handle"
+  "py": "metacheck.archives.psycharchives._psycharchives_handle"
   "args":
     "url": "https://www.psycharchives.org/jspui/handle/20.500.12034/17526"
 - "id": ".psycharchives_handle.3"
   "r": "metacheck:::.psycharchives_handle"
-  "py": "pytacheck.archives.psycharchives._psycharchives_handle"
+  "py": "metacheck.archives.psycharchives._psycharchives_handle"
   "args":
     "url": "20.500.12034/17526"
 - "id": ".psycharchives_handle.4"
   "r": "metacheck:::.psycharchives_handle"
-  "py": "pytacheck.archives.psycharchives._psycharchives_handle"
+  "py": "metacheck.archives.psycharchives._psycharchives_handle"
   "args":
     "url": "https://osf.io/abcde"
 - "id": ".psycharchives_handle.vector"
   "r": "metacheck:::.psycharchives_handle"
-  "py": "pytacheck.archives.psycharchives._psycharchives_handle"
+  "py": "metacheck.archives.psycharchives._psycharchives_handle"
   "args":
     "url":
       "$chr":
@@ -609,7 +609,7 @@
       - "20.500.12034/1"
 - "id": ".psycharchives_handle.empty_error"
   "r": "metacheck:::.psycharchives_handle"
-  "py": "pytacheck.archives.psycharchives._psycharchives_handle"
+  "py": "metacheck.archives.psycharchives._psycharchives_handle"
   "args":
     "url":
       "$chr": []
@@ -633,13 +633,13 @@
   "compare": *id001
 - "id": "psycharchives_links.demo"
   "r": "psycharchives_links"
-  "py": "pytacheck.archives.psycharchives.psycharchives_links"
+  "py": "metacheck.archives.psycharchives.psycharchives_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "psycharchives_links.psychsci"
   "r": "psycharchives_links"
-  "py": "pytacheck.archives.psycharchives.psycharchives_links"
+  "py": "metacheck.archives.psycharchives.psycharchives_links"
   "args":
     "paper":
       "$read":
@@ -664,13 +664,13 @@
   "compare": *id001
 - "id": "dspace_links.demo"
   "r": "dspace_links"
-  "py": "pytacheck.archives.psycharchives.dspace_links"
+  "py": "metacheck.archives.psycharchives.dspace_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "dspace_links.psychsci"
   "r": "dspace_links"
-  "py": "pytacheck.archives.psycharchives.dspace_links"
+  "py": "metacheck.archives.psycharchives.dspace_links"
   "args":
     "paper":
       "$read":
@@ -704,7 +704,7 @@
   "mock_dir": "apis"
 - "id": ".psycharchives_info.invalid"
   "r": "metacheck:::.psycharchives_info"
-  "py": "pytacheck.archives.psycharchives._psycharchives_info"
+  "py": "metacheck.archives.psycharchives._psycharchives_info"
   "args":
     "pa_url": "https://osf.io/abcde"
 - "id": ".psycharchives_info.mock.bonndoc"
@@ -881,13 +881,13 @@
   "compare": *id001
 - "id": "rbox_links.demo"
   "r": "rbox_links"
-  "py": "pytacheck.archives.researchbox.rbox_links"
+  "py": "metacheck.archives.researchbox.rbox_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "rbox_links.psychsci"
   "r": "rbox_links"
-  "py": "pytacheck.archives.researchbox.rbox_links"
+  "py": "metacheck.archives.researchbox.rbox_links"
   "args":
     "paper":
       "$read":
@@ -1039,7 +1039,7 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": ".reshare_id.shapes"
   "r": "metacheck:::.reshare_id"
-  "py": "pytacheck.archives.reshare._reshare_id"
+  "py": "metacheck.archives.reshare._reshare_id"
   "args":
     "reshare_url":
       "$expr":
@@ -1047,24 +1047,24 @@
         "py": "[\"854001\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"10.5255/ukda-sn-854243-2\", \"https://reshare.ukdataservice.ac.uk/854243/\", \"http://dx.doi.org/10.5255/UKDA-SN-1\", \"https://reshare.ukdataservice.ac.uk/id/eprint/854001\", \"\", None, \" 42 \", \"nope\"]"
 - "id": ".reshare_id.single"
   "r": "metacheck:::.reshare_id"
-  "py": "pytacheck.archives.reshare._reshare_id"
+  "py": "metacheck.archives.reshare._reshare_id"
   "args":
     "reshare_url": "854001"
 - "id": ".reshare_id.empty"
   "r": "metacheck:::.reshare_id"
-  "py": "pytacheck.archives.reshare._reshare_id"
+  "py": "metacheck.archives.reshare._reshare_id"
   "args":
     "reshare_url":
       "$chr": []
 - "id": ".reshare_id.null"
   "r": "metacheck:::.reshare_id"
-  "py": "pytacheck.archives.reshare._reshare_id"
+  "py": "metacheck.archives.reshare._reshare_id"
   "args":
     "reshare_url":
       "$null": true
 - "id": ".reshare_id.na"
   "r": "metacheck:::.reshare_id"
-  "py": "pytacheck.archives.reshare._reshare_id"
+  "py": "metacheck.archives.reshare._reshare_id"
   "args":
     "reshare_url":
       "$NA": true
@@ -1088,13 +1088,13 @@
   "compare": *id001
 - "id": "reshare_links.demo"
   "r": "reshare_links"
-  "py": "pytacheck.archives.reshare.reshare_links"
+  "py": "metacheck.archives.reshare.reshare_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "reshare_links.psychsci"
   "r": "reshare_links"
-  "py": "pytacheck.archives.reshare.reshare_links"
+  "py": "metacheck.archives.reshare.reshare_links"
   "args":
     "paper":
       "$read":
@@ -1219,7 +1219,7 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": "reshare_file_download.none"
   "r": "reshare_file_download"
-  "py": "pytacheck.archives.reshare.reshare_file_download"
+  "py": "metacheck.archives.reshare.reshare_file_download"
   "args":
     "reshare_id": "nope"
 - "id": ".reshare_verify_downloads.table"
@@ -1248,7 +1248,7 @@
         "py": "lambda m: m.reshare._reshare_verify_downloads(m.pd.DataFrame({'size': [1.0], 'downloaded': [True]}), '/tmp')"
 - "id": ".mendeley_id.shapes"
   "r": "metacheck:::.mendeley_id"
-  "py": "pytacheck.archives.mendeley._mendeley_id"
+  "py": "metacheck.archives.mendeley._mendeley_id"
   "args":
     "mendeley_url":
       "$expr":
@@ -1256,24 +1256,24 @@
         "py": "[\"vjtxybrc28\", \"https://doi.org/10.17632/vjtxybrc28.1\", \"https://data.mendeley.com/datasets/vjtxybrc28/2\", \"10.17632/ABC.3\", \"https://data.mendeley.com/drafts/x\", \"\", None, \"has space\", \" abc \"]"
 - "id": ".mendeley_id.single"
   "r": "metacheck:::.mendeley_id"
-  "py": "pytacheck.archives.mendeley._mendeley_id"
+  "py": "metacheck.archives.mendeley._mendeley_id"
   "args":
     "mendeley_url": "vjtxybrc28"
 - "id": ".mendeley_id.empty"
   "r": "metacheck:::.mendeley_id"
-  "py": "pytacheck.archives.mendeley._mendeley_id"
+  "py": "metacheck.archives.mendeley._mendeley_id"
   "args":
     "mendeley_url":
       "$chr": []
 - "id": ".mendeley_id.null"
   "r": "metacheck:::.mendeley_id"
-  "py": "pytacheck.archives.mendeley._mendeley_id"
+  "py": "metacheck.archives.mendeley._mendeley_id"
   "args":
     "mendeley_url":
       "$null": true
 - "id": ".mendeley_id.na"
   "r": "metacheck:::.mendeley_id"
-  "py": "pytacheck.archives.mendeley._mendeley_id"
+  "py": "metacheck.archives.mendeley._mendeley_id"
   "args":
     "mendeley_url":
       "$NA": true
@@ -1297,13 +1297,13 @@
   "compare": *id001
 - "id": "mendeley_links.demo"
   "r": "mendeley_links"
-  "py": "pytacheck.archives.mendeley.mendeley_links"
+  "py": "metacheck.archives.mendeley.mendeley_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "mendeley_links.psychsci"
   "r": "mendeley_links"
-  "py": "pytacheck.archives.mendeley.mendeley_links"
+  "py": "metacheck.archives.mendeley.mendeley_links"
   "args":
     "paper":
       "$read":
@@ -1409,7 +1409,7 @@
         "py": "lambda m: [m.fsd._fsd_study_id(u) for u in [\"https://services.fsd.tuni.fi/catalogue/FSD2653?lang=en\", \"https://doi.org/10.60686/t-fsd2653\", \"urn.fi/urn:nbn:fi:fsd:T-FSD3136\", \"FSD12\", \"fsd_1234567\", \"FSD 2653\", \"\", None, \"no study\", \"fsd:0042\"]]"
 - "id": ".fsd_study_id.vector_one"
   "r": "metacheck:::.fsd_study_id"
-  "py": "pytacheck.archives.fsd._fsd_study_id"
+  "py": "metacheck.archives.fsd._fsd_study_id"
   "args":
     "url":
       "$chr":
@@ -1417,7 +1417,7 @@
       - "FSD1234"
 - "id": ".fsd_study_id.vector_error"
   "r": "metacheck:::.fsd_study_id"
-  "py": "pytacheck.archives.fsd._fsd_study_id"
+  "py": "metacheck.archives.fsd._fsd_study_id"
   "args":
     "url":
       "$chr":
@@ -1425,7 +1425,7 @@
       - "FSD5678"
 - "id": ".fsd_study_id.empty"
   "r": "metacheck:::.fsd_study_id"
-  "py": "pytacheck.archives.fsd._fsd_study_id"
+  "py": "metacheck.archives.fsd._fsd_study_id"
   "args":
     "url":
       "$chr": []
@@ -1449,13 +1449,13 @@
   "compare": *id001
 - "id": "fsd_links.demo"
   "r": "fsd_links"
-  "py": "pytacheck.archives.fsd.fsd_links"
+  "py": "metacheck.archives.fsd.fsd_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "fsd_links.psychsci"
   "r": "fsd_links"
-  "py": "pytacheck.archives.fsd.fsd_links"
+  "py": "metacheck.archives.fsd.fsd_links"
   "args":
     "paper":
       "$read":
@@ -1489,7 +1489,7 @@
   "mock_dir": "tests/archives_d2/mocks"
 - "id": ".fsd_info.invalid"
   "r": "metacheck:::.fsd_info"
-  "py": "pytacheck.archives.fsd._fsd_info"
+  "py": "metacheck.archives.fsd._fsd_info"
   "args":
     "fsd_url": "https://example.org"
 - "id": "fsd_info.mock.vector"

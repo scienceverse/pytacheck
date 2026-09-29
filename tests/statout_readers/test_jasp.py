@@ -12,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout.jasp import (
+from metacheck.statout.jasp import (
     _dollar,
     _html_inline_images,
     _jasp_analyses_summary,

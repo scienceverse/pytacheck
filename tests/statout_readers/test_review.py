@@ -13,15 +13,15 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout.jasp import (
+from metacheck.statout.jasp import (
     _frame_from_columns,
     _html_inline_images,
     _rsqlite_column,
     _url_decode,
     import_jasp,
 )
-from pytacheck.statout.omv import _omv_extract_syntax, import_omv
-from pytacheck.statout.spv import (
+from metacheck.statout.omv import _omv_extract_syntax, import_omv
+from metacheck.statout.spv import (
     _as_numeric,
     _r_function,
     _r_parse,

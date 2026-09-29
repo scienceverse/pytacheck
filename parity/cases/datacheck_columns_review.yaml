@@ -4,7 +4,7 @@
 "cases":
 - "id": "data_col_type.neg_zero"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "score"
     "values":
@@ -14,7 +14,7 @@
       - !!float "1.0"
 - "id": "data_col_type.neg_zero_many"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "score"
     "values":
@@ -26,7 +26,7 @@
       - !!float "3.5"
 - "id": "data_col_type.factor"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "cond"
     "values":
@@ -35,7 +35,7 @@
         "py": "pd.Series(['lo', 'mid', 'hi', 'lo', None], dtype='category')"
 - "id": "data_col_type.factor_numbers"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "level"
     "values":
@@ -44,7 +44,7 @@
         "py": "pd.Series(['1,5', '2,5', '3,5', '4,5'], dtype='category')"
 - "id": "data_col_type.dates_class"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "when"
     "values":
@@ -53,7 +53,7 @@
         "py": "pd.Series(pd.to_datetime(['2020-01-01', '2020-02-01', None, '2021-03-04']))"
 - "id": "data_col_type.bad_dates"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "when"
     "values":
@@ -64,7 +64,7 @@
       - "2021-02-29"
 - "id": "data_col_type.date_trailing"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "when"
     "values":
@@ -75,7 +75,7 @@
       - "zzz"
 - "id": "data_col_type.hex_ws"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "amount"
     "values":
@@ -88,7 +88,7 @@
       - "-4,25"
 - "id": "data_col_type.nan_strings"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "amount"
     "values":
@@ -105,7 +105,7 @@
       - "9,5"
 - "id": "data_col_type.outliers"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "amount"
     "values":
@@ -122,7 +122,7 @@
       - "x"
 - "id": "data_col_type.mostly_text"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "amount"
     "values":
@@ -134,7 +134,7 @@
       - "c"
 - "id": "data_col_type.nchar_40"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "note"
     "values":
@@ -144,7 +144,7 @@
       - "cccccccccccccccccccccccccccccccccccccccc"
 - "id": "data_col_type.nchar_41"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "note"
     "values":
@@ -154,7 +154,7 @@
       - "ccccccccccccccccccccccccccccccccccccccccc"
 - "id": "data_col_type.inf_values"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "rt"
     "values":
@@ -165,7 +165,7 @@
       - !!int "3"
 - "id": "data_col_type.int_21"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "n"
     "values":
@@ -193,7 +193,7 @@
       - !!int "21"
 - "id": "data_col_type.int_20"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "n"
     "values":
@@ -221,7 +221,7 @@
       - !!int "3"
 - "id": "data_col_type.big_ints"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "n"
     "values":
@@ -231,7 +231,7 @@
       - !!float "300000.0"
 - "id": "data_col_type.numeric_na_name"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": &id002
       "$NA": !!bool "true"
@@ -242,7 +242,7 @@
       - !!float "3.5"
 - "id": "data_col_type.lgl_na_only"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "flag"
     "values":
@@ -251,7 +251,7 @@
       - !!null "null"
 - "id": "data_col_type.unicode_id"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "Participant_ID"
     "values":
@@ -261,7 +261,7 @@
       - "é3"
 - "id": "data_col_type.sub_digit"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "sub_1"
     "values":
@@ -271,7 +271,7 @@
       - !!float "3.5"
 - "id": "data_col_type.subject_n"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "subject12"
     "values":
@@ -281,7 +281,7 @@
       - !!float "3.5"
 - "id": "data_col_type.not_id_suffix"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "valid_ids"
     "values":
@@ -291,7 +291,7 @@
       - !!float "3.5"
 - "id": "data_col_type.class.hms"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "x"
     "values":
@@ -304,7 +304,7 @@
     - "difftime"
 - "id": "data_col_type.class.hms_whole"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "dur"
     "values":
@@ -317,7 +317,7 @@
     - "difftime"
 - "id": "data_col_type.class.difftime"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "x"
     "values":
@@ -329,7 +329,7 @@
     - "difftime"
 - "id": "data_col_type.class.difftime_many"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "x"
     "values":
@@ -341,7 +341,7 @@
     - "difftime"
 - "id": "data_col_type.class.hms_frame_attrs"
   "r": "data_col_type"
-  "py": "pytacheck.datacheck.columns.data_col_type"
+  "py": "metacheck.datacheck.columns.data_col_type"
   "args":
     "col_name": "x"
     "values":
@@ -352,7 +352,7 @@
           \ 61.5]}, dtype='float64'))"
 - "id": "data_col_stats.overflow_sq"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -368,7 +368,7 @@
       - !!float "5.0"
 - "id": "data_col_stats.overflow_sum_sq"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -382,7 +382,7 @@
       - !!float "1.0e+154"
 - "id": "data_col_stats.overflow_mean"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -396,7 +396,7 @@
       - !!float "-1.0e+308"
 - "id": "data_col_stats.overflow_cube"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -412,7 +412,7 @@
       - !!float "4.0"
 - "id": "data_col_stats.inf"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -426,7 +426,7 @@
       - !!float "2.0"
 - "id": "data_col_stats.inf_both"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -440,7 +440,7 @@
       - !!float "1.0"
 - "id": "data_col_stats.tiny"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -456,7 +456,7 @@
       - !!float "5.0e-300"
 - "id": "data_col_stats.thirds"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -478,7 +478,7 @@
       - !!float "0.7"
 - "id": "data_col_stats.n1"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -488,7 +488,7 @@
       - !!float "4.2"
 - "id": "data_col_stats.n2"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -500,7 +500,7 @@
       - !!float "5.3"
 - "id": "data_col_stats.n3"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -514,7 +514,7 @@
       - !!float "1.1"
 - "id": "data_col_stats.n4"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -530,7 +530,7 @@
       - !!float "9.9"
 - "id": "data_col_stats.constant"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -548,7 +548,7 @@
       - !!float "2.5"
 - "id": "data_col_stats.big_offset"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -564,7 +564,7 @@
       - !!float "100000000.7"
 - "id": "data_col_stats.chr_stats"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$chr":
@@ -584,7 +584,7 @@
       - "1e3"
 - "id": "data_col_stats.factor_stats"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$expr":
@@ -596,7 +596,7 @@
         "py": "pd.Series(['b', 'a', 'c', None, 'a'], dtype='category')"
 - "id": "data_col_stats.lgl_stats"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$lgl":
@@ -612,14 +612,14 @@
       - !!null "null"
 - "id": "data_col_stats.null_raw"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats": &id001
       "$null": !!bool "true"
     "x_raw": *id001
 - "id": "data_col_stats.null_stats_raw_na"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats": *id001
     "x_raw":
@@ -630,7 +630,7 @@
       - "b"
 - "id": "data_col_stats.nan_raw"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -648,7 +648,7 @@
       - !!float "3.0"
 - "id": "data_col_stats.neg_zero_unique"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -662,7 +662,7 @@
       - !!float "1.0"
 - "id": "data_col_stats.nested_raw"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats": *id001
     "x_raw":
@@ -671,7 +671,7 @@
         "py": "pd.DataFrame({'a': [1, 2, 3], 'b': ['x', 'y', 'z']})"
 - "id": "data_col_stats.list_raw"
   "r": "data_col_stats"
-  "py": "pytacheck.datacheck.columns.data_col_stats"
+  "py": "metacheck.datacheck.columns.data_col_stats"
   "args":
     "x_for_stats":
       "$dbl":
@@ -683,7 +683,7 @@
         "py": "[1, [2, 3]]"
 - "id": "normalize_label.edge"
   "r": "normalize_label"
-  "py": "pytacheck.datacheck.columns.normalize_label"
+  "py": "metacheck.datacheck.columns.normalize_label"
   "args":
     "x":
       "$chr":
@@ -698,7 +698,7 @@
       - "2nd-order effects (log)"
 - "id": "normalize_varname.edge"
   "r": "normalize_varname"
-  "py": "pytacheck.datacheck.columns.normalize_varname"
+  "py": "metacheck.datacheck.columns.normalize_varname"
   "args":
     "x":
       "$chr":
@@ -711,7 +711,7 @@
       - "É_x"
 - "id": ".normalize_header.edge"
   "r": "metacheck:::.normalize_header"
-  "py": "pytacheck.datacheck.columns._normalize_header"
+  "py": "metacheck.datacheck.columns._normalize_header"
   "args":
     "x":
       "$chr":
@@ -723,7 +723,7 @@
       - "var__name"
 - "id": ".infer_group.edge"
   "r": "metacheck:::.infer_group"
-  "py": "pytacheck.datacheck.columns._infer_group"
+  "py": "metacheck.datacheck.columns._infer_group"
   "args":
     "context_str":
       "$chr":
@@ -737,7 +737,7 @@
       - "Study IV"
 - "id": ".infer_group.numbers"
   "r": "metacheck:::.infer_group"
-  "py": "pytacheck.datacheck.columns._infer_group"
+  "py": "metacheck.datacheck.columns._infer_group"
   "args":
     "context_str":
       "$dbl":
@@ -745,47 +745,47 @@
       - !!int "2"
 - "id": ".decode_value_labels.nan_literal"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "{\"1\": NaN, \"2\": \"b\"}"
 - "id": ".decode_value_labels.infinity_literal"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "[Infinity, 1]"
 - "id": ".decode_value_labels.mixed_types"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "{\"1\": \"a\", \"2\": 3, \"3\": true, \"4\": null}"
 - "id": ".decode_value_labels.dup_keys"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "{\"1\": \"a\", \"1\": \"b\"}"
 - "id": ".decode_value_labels.bool_num"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "{\"1\": true, \"2\": 2.5}"
 - "id": ".decode_value_labels.big_int"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "{\"1\": 3000000000, \"2\": 1}"
 - "id": ".decode_value_labels.scalar_string"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "\"just text\""
 - "id": ".decode_value_labels.trailing_comma"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s": "{\"1\": \"a\",}"
 - "id": ".encode_value_labels.recycle_codes"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$dbl":
@@ -799,7 +799,7 @@
       - "d"
 - "id": ".encode_value_labels.recycle_labels"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$dbl":
@@ -814,7 +814,7 @@
       - "b"
 - "id": ".encode_value_labels.na_code"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$dbl":
@@ -828,7 +828,7 @@
       - "c"
 - "id": ".encode_value_labels.blank_names"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$chr":
@@ -842,7 +842,7 @@
       - "c"
 - "id": ".encode_value_labels.dup_names"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$chr":
@@ -858,7 +858,7 @@
       - "d"
 - "id": ".encode_value_labels.sci_codes"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$dbl":
@@ -874,7 +874,7 @@
       - "d"
 - "id": ".encode_value_labels.ws_labels"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$dbl":
@@ -888,7 +888,7 @@
       - " ok "
 - "id": ".encode_value_labels.escapes"
   "r": "metacheck:::.encode_value_labels"
-  "py": "pytacheck.datacheck.columns._encode_value_labels"
+  "py": "metacheck.datacheck.columns._encode_value_labels"
   "args":
     "codes":
       "$chr":
@@ -900,7 +900,7 @@
       - "tab\there\x01é"
 - "id": ".encode_missing_values.reasons_recycled"
   "r": "metacheck:::.encode_missing_values"
-  "py": "pytacheck.datacheck.columns._encode_missing_values"
+  "py": "metacheck.datacheck.columns._encode_missing_values"
   "args":
     "codes":
       "$dbl":
@@ -914,7 +914,7 @@
       - "na"
 - "id": ".encode_missing_values.numbers"
   "r": "metacheck:::.encode_missing_values"
-  "py": "pytacheck.datacheck.columns._encode_missing_values"
+  "py": "metacheck.datacheck.columns._encode_missing_values"
   "args":
     "codes":
       "$dbl":
@@ -923,127 +923,127 @@
       - !!float "0.5"
 - "id": ".missing_from_value_labels.from_nan"
   "r": "metacheck:::.missing_from_value_labels"
-  "py": "pytacheck.datacheck.columns._missing_from_value_labels"
+  "py": "metacheck.datacheck.columns._missing_from_value_labels"
   "args":
     "vl_json": "{\"1\": NaN, \"2\": \"Refused\"}"
 - "id": ".missing_from_value_labels.array"
   "r": "metacheck:::.missing_from_value_labels"
-  "py": "pytacheck.datacheck.columns._missing_from_value_labels"
+  "py": "metacheck.datacheck.columns._missing_from_value_labels"
   "args":
     "vl_json": "[\"Refused\", \"N/A\"]"
 - "id": ".missing_from_value_labels.numbers"
   "r": "metacheck:::.missing_from_value_labels"
-  "py": "pytacheck.datacheck.columns._missing_from_value_labels"
+  "py": "metacheck.datacheck.columns._missing_from_value_labels"
   "args":
     "vl_json": "{\"-9\": \"No answer\", \"1\": 5}"
 - "id": ".missing_from_value_labels.dup_keys"
   "r": "metacheck:::.missing_from_value_labels"
-  "py": "pytacheck.datacheck.columns._missing_from_value_labels"
+  "py": "metacheck.datacheck.columns._missing_from_value_labels"
   "args":
     "vl_json": "{\"1\": \"Refused\", \"1\": \"N/A\", \"2\": \"x\"}"
 - "id": ".vl_split_pairs.anchor_decimals"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "1.5 (low) to 7.5 (high)"
 - "id": ".parse_value_label_text.anchor_decimals"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "1.5 (low) to 7.5 (high)"
 - "id": ".vl_split_pairs.anchor_one"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "1 (low) and nothing else = 2"
 - "id": ".parse_value_label_text.anchor_one"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "1 (low) and nothing else = 2"
 - "id": ".vl_split_pairs.comma_label_first"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "Counselors, Social workers=21, Teachers=22"
 - "id": ".parse_value_label_text.comma_label_first"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "Counselors, Social workers=21, Teachers=22"
 - "id": ".vl_split_pairs.newline_pairs"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "1 = a\n2 = b\r\n3 = c"
 - "id": ".parse_value_label_text.newline_pairs"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "1 = a\n2 = b\r\n3 = c"
 - "id": ".vl_split_pairs.code_label_dash"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "1-Male, 2-Female"
 - "id": ".parse_value_label_text.code_label_dash"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "1-Male, 2-Female"
 - "id": ".vl_split_pairs.code_label_unicode"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "1 – Low; 2 — High"
 - "id": ".parse_value_label_text.code_label_unicode"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "1 – Low; 2 — High"
 - "id": ".vl_split_pairs.text_both"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "M = Male; F = Female"
 - "id": ".parse_value_label_text.text_both"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "M = Male; F = Female"
 - "id": ".vl_split_pairs.bare_numbers"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "1, 2, 3"
 - "id": ".parse_value_label_text.bare_numbers"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "1, 2, 3"
 - "id": ".vl_split_pairs.pipe_mixed"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "1=Yes | No=2 | 3=Maybe"
 - "id": ".parse_value_label_text.pipe_mixed"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "1=Yes | No=2 | 3=Maybe"
 - "id": ".vl_split_pairs.neg_codes"
   "r": "metacheck:::.vl_split_pairs"
-  "py": "pytacheck.datacheck.columns._vl_split_pairs"
+  "py": "metacheck.datacheck.columns._vl_split_pairs"
   "args":
     "s": "-1 = disagree; 0 = neutral; 1 = agree"
 - "id": ".parse_value_label_text.neg_codes"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "-1 = disagree; 0 = neutral; 1 = agree"
 - "id": ".parse_value_label_text.observed_tie"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "M = Male; F = Female"
     "observed":
@@ -1052,7 +1052,7 @@
       - "Male"
 - "id": ".parse_value_label_text.observed_na"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": "M = Male; F = Female"
     "observed":
@@ -1063,12 +1063,12 @@
       - "M"
 - "id": ".parse_value_label_text.numeric_s"
   "r": "metacheck:::.parse_value_label_text"
-  "py": "pytacheck.datacheck.columns._parse_value_label_text"
+  "py": "metacheck.datacheck.columns._parse_value_label_text"
   "args":
     "s": !!int "5"
 - "id": ".haven_value_labels.dup_texts"
   "r": "metacheck:::.haven_value_labels"
-  "py": "pytacheck.datacheck.columns._haven_value_labels"
+  "py": "metacheck.datacheck.columns._haven_value_labels"
   "args":
     "col":
       "$expr":
@@ -1079,7 +1079,7 @@
           \ 2.0]))"
 - "id": ".haven_value_labels.range_only"
   "r": "metacheck:::.haven_value_labels"
-  "py": "pytacheck.datacheck.columns._haven_value_labels"
+  "py": "metacheck.datacheck.columns._haven_value_labels"
   "args":
     "col":
       "$expr":
@@ -1087,7 +1087,7 @@
         "py": "(lambda s: (s.attrs.update({'na_range': [-9.0, -1.0]}), s)[1])(pd.Series([1.0, 2.0]))"
 - "id": ".looks_like_freetext_labels.na_long"
   "r": "metacheck:::.looks_like_freetext_labels"
-  "py": "pytacheck.datacheck.columns._looks_like_freetext_labels"
+  "py": "metacheck.datacheck.columns._looks_like_freetext_labels"
   "args":
     "labs":
       "$chr":
@@ -1098,7 +1098,7 @@
       - !!null "null"
 - "id": ".find_codebook_cols.label_only_var"
   "r": "metacheck:::.find_codebook_cols"
-  "py": "pytacheck.datacheck.columns._find_codebook_cols"
+  "py": "metacheck.datacheck.columns._find_codebook_cols"
   "args":
     "col_names":
       "$chr":
@@ -1106,7 +1106,7 @@
       - "Variable Name"
 - "id": ".find_codebook_cols.plural"
   "r": "metacheck:::.find_codebook_cols"
-  "py": "pytacheck.datacheck.columns._find_codebook_cols"
+  "py": "metacheck.datacheck.columns._find_codebook_cols"
   "args":
     "col_names":
       "$chr":
@@ -1114,7 +1114,7 @@
       - "Labels"
 - "id": ".find_codebook_cols.question_as_label"
   "r": "metacheck:::.find_codebook_cols"
-  "py": "pytacheck.datacheck.columns._find_codebook_cols"
+  "py": "metacheck.datacheck.columns._find_codebook_cols"
   "args":
     "col_names":
       "$chr":
@@ -1122,7 +1122,7 @@
       - "Question"
 - "id": ".find_codebook_cols.full_name"
   "r": "metacheck:::.find_codebook_cols"
-  "py": "pytacheck.datacheck.columns._find_codebook_cols"
+  "py": "metacheck.datacheck.columns._find_codebook_cols"
   "args":
     "col_names":
       "$chr":
@@ -1131,7 +1131,7 @@
       - "Scale"
 - "id": ".find_codebook_cols.na_names"
   "r": "metacheck:::.find_codebook_cols"
-  "py": "pytacheck.datacheck.columns._find_codebook_cols"
+  "py": "metacheck.datacheck.columns._find_codebook_cols"
   "args":
     "col_names":
       "$chr":
@@ -1140,7 +1140,7 @@
       - "description"
 - "id": ".find_codebook_cols.dup"
   "r": "metacheck:::.find_codebook_cols"
-  "py": "pytacheck.datacheck.columns._find_codebook_cols"
+  "py": "metacheck.datacheck.columns._find_codebook_cols"
   "args":
     "col_names":
       "$chr":
@@ -1150,7 +1150,7 @@
       - "label"
 - "id": ".find_value_label_col.scoring"
   "r": "metacheck:::.find_value_label_col"
-  "py": "pytacheck.datacheck.columns._find_value_label_col"
+  "py": "metacheck.datacheck.columns._find_value_label_col"
   "args":
     "col_names":
       "$chr":
@@ -1158,7 +1158,7 @@
       - "Values"
 - "id": ".find_coding_instruction_col.scoring"
   "r": "metacheck:::.find_coding_instruction_col"
-  "py": "pytacheck.datacheck.columns._find_coding_instruction_col"
+  "py": "metacheck.datacheck.columns._find_coding_instruction_col"
   "args":
     "col_names":
       "$chr":
@@ -1166,7 +1166,7 @@
       - "Scoring"
 - "id": ".looks_like_varnames.dups"
   "r": "metacheck:::.looks_like_varnames"
-  "py": "pytacheck.datacheck.columns._looks_like_varnames"
+  "py": "metacheck.datacheck.columns._looks_like_varnames"
   "args":
     "x":
       "$chr":
@@ -1177,7 +1177,7 @@
       - "a4"
 - "id": ".looks_like_varnames.numbers"
   "r": "metacheck:::.looks_like_varnames"
-  "py": "pytacheck.datacheck.columns._looks_like_varnames"
+  "py": "metacheck.datacheck.columns._looks_like_varnames"
   "args":
     "x":
       "$dbl":
@@ -1186,7 +1186,7 @@
       - !!int "3"
 - "id": ".looks_like_wording.short"
   "r": "metacheck:::.looks_like_wording"
-  "py": "pytacheck.datacheck.columns._looks_like_wording"
+  "py": "metacheck.datacheck.columns._looks_like_wording"
   "args":
     "x":
       "$chr":
@@ -1195,7 +1195,7 @@
       - "e f g h i"
 - "id": ".extract_codebook_positional.last_col_label"
   "r": "metacheck:::.extract_codebook_positional"
-  "py": "pytacheck.datacheck.columns._extract_codebook_positional"
+  "py": "metacheck.datacheck.columns._extract_codebook_positional"
   "args":
     "df":
       "$df":
@@ -1212,7 +1212,7 @@
     "src": "pos.csv"
 - "id": ".extract_codebook_positional.anchors_na"
   "r": "metacheck:::.extract_codebook_positional"
-  "py": "pytacheck.datacheck.columns._extract_codebook_positional"
+  "py": "metacheck.datacheck.columns._extract_codebook_positional"
   "args":
     "df":
       "$df":
@@ -1239,7 +1239,7 @@
     "src": "pos.csv"
 - "id": ".extract_structured_codebook.numeric_cols"
   "r": "metacheck:::.extract_structured_codebook"
-  "py": "pytacheck.datacheck.columns._extract_structured_codebook"
+  "py": "metacheck.datacheck.columns._extract_structured_codebook"
   "args":
     "df":
       "$df":
@@ -1261,7 +1261,7 @@
     "src": "num.csv"
 - "id": ".extract_structured_codebook.na_var"
   "r": "metacheck:::.extract_structured_codebook"
-  "py": "pytacheck.datacheck.columns._extract_structured_codebook"
+  "py": "metacheck.datacheck.columns._extract_structured_codebook"
   "args":
     "df":
       "$df":
@@ -1288,7 +1288,7 @@
     "src": "na.csv"
 - "id": ".osd_slug.na_prefix"
   "r": "metacheck:::.osd_slug"
-  "py": "pytacheck.datacheck.columns._osd_slug"
+  "py": "metacheck.datacheck.columns._osd_slug"
   "args":
     "name": *id001
     "prefix": &id003
@@ -1297,52 +1297,52 @@
         "py": "float('nan')"
 - "id": ".osd_slug.na_name_prefix"
   "r": "metacheck:::.osd_slug"
-  "py": "pytacheck.datacheck.columns._osd_slug"
+  "py": "metacheck.datacheck.columns._osd_slug"
   "args":
     "name": *id002
     "prefix": "Resp Block"
 - "id": ".osd_slug.boundary"
   "r": "metacheck:::.osd_slug"
-  "py": "pytacheck.datacheck.columns._osd_slug"
+  "py": "metacheck.datacheck.columns._osd_slug"
   "args":
     "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
     "prefix": *id001
 - "id": ".osd_slug.boundary_over"
   "r": "metacheck:::.osd_slug"
-  "py": "pytacheck.datacheck.columns._osd_slug"
+  "py": "metacheck.datacheck.columns._osd_slug"
   "args":
     "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
     "prefix": *id001
 - "id": ".osd_slug.single_word"
   "r": "metacheck:::.osd_slug"
-  "py": "pytacheck.datacheck.columns._osd_slug"
+  "py": "metacheck.datacheck.columns._osd_slug"
   "args":
     "name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     "prefix": *id001
 - "id": ".osd_slug.max_chars"
   "r": "metacheck:::.osd_slug"
-  "py": "pytacheck.datacheck.columns._osd_slug"
+  "py": "metacheck.datacheck.columns._osd_slug"
   "args":
     "name": "alpha beta gamma"
     "max_chars": !!int "8"
 - "id": ".osd_safe_code.na"
   "r": "metacheck:::.osd_safe_code"
-  "py": "pytacheck.datacheck.columns._osd_safe_code"
+  "py": "metacheck.datacheck.columns._osd_safe_code"
   "args":
     "x": *id003
 - "id": ".osd_safe_code.null"
   "r": "metacheck:::.osd_safe_code"
-  "py": "pytacheck.datacheck.columns._osd_safe_code"
+  "py": "metacheck.datacheck.columns._osd_safe_code"
   "args":
     "x": *id001
 - "id": ".osd_safe_code.long"
   "r": "metacheck:::.osd_safe_code"
-  "py": "pytacheck.datacheck.columns._osd_safe_code"
+  "py": "metacheck.datacheck.columns._osd_safe_code"
   "args":
     "x": "The quick brown fox jumps over the lazy dog again"
 - "id": ".osd_code_and_provenance.na_scale_na_prefix"
   "r": "metacheck:::.osd_code_and_provenance"
-  "py": "pytacheck.datacheck.columns._osd_code_and_provenance"
+  "py": "metacheck.datacheck.columns._osd_code_and_provenance"
   "args":
     "scale": *id003
     "prefix": *id003
@@ -1355,7 +1355,7 @@
         - "PANAS"
 - "id": ".osd_code_and_provenance.case_insensitive"
   "r": "metacheck:::.osd_code_and_provenance"
-  "py": "pytacheck.datacheck.columns._osd_code_and_provenance"
+  "py": "metacheck.datacheck.columns._osd_code_and_provenance"
   "args":
     "scale": "panas"
     "prefix": "x"
@@ -1368,7 +1368,7 @@
         - ""
 - "id": ".item_text_key.edge"
   "r": "metacheck:::.item_text_key"
-  "py": "pytacheck.datacheck.columns._item_text_key"
+  "py": "metacheck.datacheck.columns._item_text_key"
   "args":
     "x":
       "$chr":
@@ -1379,215 +1379,215 @@
       - ""
 - "id": ".qsf_strip_html.null_list"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('[null]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[null]')"
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[null]')"
 - "id": ".qsf_strip_html.nested"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('[[\"a\", 1]]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[[\"a\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[[\"a\"\
           , 1]]')"
 - "id": ".qsf_strip_html.object_first"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('{\"t\": \"Object <i>text</i>\", \"u\": \"x\"}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"t\":\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"t\":\
           \ \"Object <i>text</i>\", \"u\": \"x\"}')"
 - "id": ".qsf_strip_html.number"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('12.5', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('12.5')"
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('12.5')"
 - "id": ".qsf_strip_html.entity_chain"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('\"a &amp;lt; b&nbsp;&amp;amp;\"', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('\"a &amp;lt;\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('\"a &amp;lt;\
           \ b&nbsp;&amp;amp;\"')"
 - "id": ".qsf_strip_html.deparse_names"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('[{\"\": 1, \"if\": 2, \"a.b\": 3, \"_x\": 4, \".2a\": 5, \"b c\": 6,\
           \ \"ok\": true, \"n\": null}]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[{\"\":\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[{\"\":\
           \ 1, \"if\": 2, \"a.b\": 3, \"_x\": 4, \".2a\": 5, \"b c\": 6, \"ok\": true, \"n\": null}]')"
 - "id": ".qsf_strip_html.deparse_escapes"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('[[\"q\\\\\"\\\\\\\\\\\\n\\\\t\\\\u0001é\"]]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[[\"q\\\\\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[[\"q\\\\\
           \"\\\\\\\\\\\\n\\\\t\\\\u0001é\"]]')"
 - "id": ".qsf_strip_html.empty_object"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('[{}]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[{}]')"
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[{}]')"
 - "id": ".qsf_strip_html.big_int"
   "r": "metacheck:::.qsf_strip_html"
-  "py": "pytacheck.datacheck.columns._qsf_strip_html"
+  "py": "metacheck.datacheck.columns._qsf_strip_html"
   "args":
     "x":
       "$expr":
         "r": "jsonlite::fromJSON('[[3000000000]]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[[3000000000]]')"
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[[3000000000]]')"
 - "id": ".qsf_option_display.displaylogic"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('{\"DisplayLogic\": {\"0\": {\"x\": 1, \"y\": \"z\"}}}', simplifyVector\
           \ = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"DisplayLogic\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"DisplayLogic\"\
           : {\"0\": {\"x\": 1, \"y\": \"z\"}}}')"
 - "id": ".qsf_option_display.two_partials"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('{\"DisplayLogic\": \"a\", \"DisplayX\": \"b\"}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"DisplayLogic\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"DisplayLogic\"\
           : \"a\", \"DisplayX\": \"b\"}')"
 - "id": ".qsf_option_display.lgl_int"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('{\"Display\": [true, 2]}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
           : [true, 2]}')"
 - "id": ".qsf_option_display.lgl_dbl"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('{\"Display\": [true, 2.5]}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
           : [true, 2.5]}')"
 - "id": ".qsf_option_display.nested_nulls"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('{\"Display\": [null, [null, \"deep\"]]}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
           : [null, [null, \"deep\"]]}')"
 - "id": ".qsf_option_display.empty_list"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('{\"Display\": []}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"Display\"\
           : []}')"
 - "id": ".qsf_option_display.lower"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('{\"display\": \"lower\"}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"display\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"display\"\
           : \"lower\"}')"
 - "id": ".qsf_option_display.array_opt"
   "r": "metacheck:::.qsf_option_display"
-  "py": "pytacheck.datacheck.columns._qsf_option_display"
+  "py": "metacheck.datacheck.columns._qsf_option_display"
   "args":
     "opt":
       "$expr":
         "r": "jsonlite::fromJSON('[\"x\"]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[\"x\"]')"
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[\"x\"]')"
 - "id": ".qsf_value_labels.array"
   "r": "metacheck:::.qsf_value_labels"
-  "py": "pytacheck.datacheck.columns._qsf_value_labels"
+  "py": "metacheck.datacheck.columns._qsf_value_labels"
   "args":
     "opts":
       "$expr":
         "r": "jsonlite::fromJSON('[{\"Display\": \"a\"}, {\"Display\": \"b\"}]', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[{\"Display\"\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('[{\"Display\"\
           : \"a\"}, {\"Display\": \"b\"}]')"
 - "id": ".qsf_value_labels.null_opt"
   "r": "metacheck:::.qsf_value_labels"
-  "py": "pytacheck.datacheck.columns._qsf_value_labels"
+  "py": "metacheck.datacheck.columns._qsf_value_labels"
   "args":
     "opts":
       "$expr":
         "r": "jsonlite::fromJSON('{\"1\": null, \"2\": {\"Display\": \"b\"}, \"\": {\"Display\": \"c\"\
           }}', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"1\":\
+        "py": "__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads('{\"1\":\
           \ null, \"2\": {\"Display\": \"b\"}, \"\": {\"Display\": \"c\"}}')"
 - "id": ".qsf_export_col.na_both"
   "r": "metacheck:::.qsf_export_col"
-  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "py": "metacheck.datacheck.columns._qsf_export_col"
   "args":
     "tag": *id002
     "choice_tag": *id002
     "code": "1"
 - "id": ".qsf_export_col.numeric_tag"
   "r": "metacheck:::.qsf_export_col"
-  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "py": "metacheck.datacheck.columns._qsf_export_col"
   "args":
     "tag": !!int "42"
     "choice_tag": !!int "7"
     "code": "1"
 - "id": ".qsf_export_col.case_equal"
   "r": "metacheck:::.qsf_export_col"
-  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "py": "metacheck.datacheck.columns._qsf_export_col"
   "args":
     "tag": "Q1"
     "choice_tag": " q1 "
     "code": "1"
 - "id": "parse_qsf.edge.qsf"
   "r": "parse_qsf"
-  "py": "pytacheck.datacheck.columns.parse_qsf"
+  "py": "metacheck.datacheck.columns.parse_qsf"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/edge.qsf"
 - "id": "parse_qsf.tag_list.qsf"
   "r": "parse_qsf"
-  "py": "pytacheck.datacheck.columns.parse_qsf"
+  "py": "metacheck.datacheck.columns.parse_qsf"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tag_list.qsf"
 - "id": "parse_qsf.tag_empty.qsf"
   "r": "parse_qsf"
-  "py": "pytacheck.datacheck.columns.parse_qsf"
+  "py": "metacheck.datacheck.columns.parse_qsf"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tag_empty.qsf"
 - "id": "parse_qsf.latin1.qsf"
   "r": "parse_qsf"
-  "py": "pytacheck.datacheck.columns.parse_qsf"
+  "py": "metacheck.datacheck.columns.parse_qsf"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/latin1.qsf"
@@ -1603,7 +1603,7 @@
           \ 0.001), c(-1e-5, 1e5), c(0.00012345, 12345), c(-Inf, NA), c(1e5, 2e5, 3e5), c(-0.0, 1.5),\
           \ c(-0.0, 1e-20), c(1L, -20L, NA), c(TRUE, FALSE, NA)), function(v) unname(as.matrix(data.frame(a\
           \ = 'x', b = v))[, 2]))"
-        "py": "[__import__('pytacheck.datacheck._columns_codebook', fromlist=['_'])._format_column(s)\
+        "py": "[__import__('metacheck.datacheck._columns_codebook', fromlist=['_'])._format_column(s)\
           \ for s in [pd.Series([1, 1.5, 0.25], dtype=float), pd.Series([2, 1e-10, 3], dtype=float), pd.Series([3,\
           \ -7, None], dtype=float), pd.Series([1e-99, 1], dtype=float), pd.Series([1e-100, 1], dtype=float),\
           \ pd.Series([1e100, -1], dtype=float), pd.Series([9999999.6, 0.5], dtype=float), pd.Series([99999.99999,\
@@ -1617,128 +1617,128 @@
           \ False, None], dtype='boolean')]]"
 - "id": "parse_codebook.nan_literal.json"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/nan_literal.json"
 - "id": "parse_codebook.nan_literal.csv"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/nan_literal.csv"
 - "id": "parse_codebook.bom_json.csv"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/bom_json.csv"
 - "id": "parse_codebook.bom_table.md"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/bom_table.md"
 - "id": "parse_codebook.multi_table.md"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/multi_table.md"
 - "id": "parse_codebook.missing_cols.csv"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/missing_cols.csv"
 - "id": "parse_codebook.numeric_vars.csv"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/numeric_vars.csv"
 - "id": "parse_codebook.wide_numeric.csv"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/wide_numeric.csv"
 - "id": "parse_codebook.title_semicolon.csv"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/title_semicolon.csv"
 - "id": "parse_codebook.values_shapes.json"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/values_shapes.json"
 - "id": "parse_codebook.edge.qsf"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/edge.qsf"
 - "id": "parse_codebook.tag_list.qsf"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tag_list.qsf"
 - "id": "parse_codebook.tag_empty.qsf"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tag_empty.qsf"
 - "id": "parse_codebook.dup_labels.sav"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/dup_labels.sav"
 - "id": "parse_codebook.tricky.xlsx"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tricky.xlsx"
 - "id": "parse_codebook.numeric.ods"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/numeric.ods"
 - "id": "parse_codebook.handmade.ods"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/handmade.ods"
 - "id": "parse_codebook.latin1_table.md"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/latin1_table.md"
 - "id": "parse_codebook.tagged_na.dta"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tagged_na.dta"
 - "id": "parse_codebook.values_shapes.group"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/values_shapes.json"
     "group": "ex1"
 - "id": "parse_codebook.missing_cols.observed"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/missing_cols.csv"
@@ -1748,80 +1748,80 @@
         "py": "{'d': ['M', 'F', 'M'], 'a': [1, 2]}"
 - "id": "parse_codebook.tricky.lookahead0"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tricky.xlsx"
     "header_lookahead": !!int "1"
 - "id": ".extract_rich_text.run_order.docx"
   "r": "metacheck:::.extract_rich_text"
-  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "py": "metacheck.datacheck.columns._extract_rich_text"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/run_order.docx"
     "ext": "docx"
 - "id": "parse_codebook.run_order.docx"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/run_order.docx"
 - "id": ".extract_rich_text.tricky.docx"
   "r": "metacheck:::.extract_rich_text"
-  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "py": "metacheck.datacheck.columns._extract_rich_text"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tricky.docx"
     "ext": "docx"
 - "id": "parse_codebook.tricky.docx"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tricky.docx"
 - "id": ".extract_rich_text.orphan_no_table.docx"
   "r": "metacheck:::.extract_rich_text"
-  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "py": "metacheck.datacheck.columns._extract_rich_text"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/orphan_no_table.docx"
     "ext": "docx"
 - "id": "parse_codebook.orphan_no_table.docx"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/orphan_no_table.docx"
 - "id": ".extract_rich_text.escapes.rtf"
   "r": "metacheck:::.extract_rich_text"
-  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "py": "metacheck.datacheck.columns._extract_rich_text"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/escapes.rtf"
     "ext": "rtf"
 - "id": "parse_codebook.escapes.rtf"
   "r": "parse_codebook"
-  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "py": "metacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/escapes.rtf"
 - "id": ".extract_rich_text.latin1.rtf"
   "r": "metacheck:::.extract_rich_text"
-  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "py": "metacheck.datacheck.columns._extract_rich_text"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/latin1.rtf"
     "ext": "rtf"
 - "id": ".extract_json_codebook.latin1"
   "r": "metacheck:::.extract_json_codebook"
-  "py": "pytacheck.datacheck.columns._extract_json_codebook"
+  "py": "metacheck.datacheck.columns._extract_json_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/latin1.json"
     "src": "latin1.json"
 - "id": ".strip_rtf.invalid_utf8"
   "r": "metacheck:::.strip_rtf"
-  "py": "pytacheck.datacheck.columns._strip_rtf"
+  "py": "metacheck.datacheck.columns._strip_rtf"
   "args":
     "text":
       "$expr":
@@ -1829,7 +1829,7 @@
         "py": "'caf\\udce9 \\\\par'"
 - "id": ".decode_value_labels.invalid_utf8"
   "r": "metacheck:::.decode_value_labels"
-  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "py": "metacheck.datacheck.columns._decode_value_labels"
   "args":
     "s":
       "$expr":
@@ -1837,88 +1837,88 @@
         "py": "'{\"1\": \"caf\\udce9\"}'"
 - "id": ".extract_markdown_codebook.multi"
   "r": "metacheck:::.extract_markdown_codebook"
-  "py": "pytacheck.datacheck.columns._extract_markdown_codebook"
+  "py": "metacheck.datacheck.columns._extract_markdown_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/multi_table.md"
     "src": "multi_table.md"
 - "id": ".extract_json_codebook.values_shapes"
   "r": "metacheck:::.extract_json_codebook"
-  "py": "pytacheck.datacheck.columns._extract_json_codebook"
+  "py": "metacheck.datacheck.columns._extract_json_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/values_shapes.json"
     "src": "v.json"
 - "id": ".extract_json_codebook.nan"
   "r": "metacheck:::.extract_json_codebook"
-  "py": "pytacheck.datacheck.columns._extract_json_codebook"
+  "py": "metacheck.datacheck.columns._extract_json_codebook"
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/nan_literal.json"
     "src": "n.json"
 - "id": ".extract_haven_labels.sav"
   "r": "metacheck:::.extract_haven_labels"
-  "py": "pytacheck.datacheck.columns._extract_haven_labels"
+  "py": "metacheck.datacheck.columns._extract_haven_labels"
   "args":
     "df":
       "$expr":
         "r": "as.data.frame(haven::read_sav('tests/datacheck_columns/fixtures/review/dup_labels.sav'))"
-        "py": "__import__('pytacheck.datacheck._columns_codebook', fromlist=['x'])._haven_frame('tests/datacheck_columns/fixtures/review/dup_labels.sav',\
+        "py": "__import__('metacheck.datacheck._columns_codebook', fromlist=['x'])._haven_frame('tests/datacheck_columns/fixtures/review/dup_labels.sav',\
           \ 'sav')"
     "src": "dup_labels.sav"
     "group": "g1"
 - "id": ".scale_typo_of.int_1e5"
   "r": "metacheck:::.scale_typo_of"
-  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "py": "metacheck.datacheck.columns._scale_typo_of"
   "args":
     "v": !!int "100000"
     "lo": !!int "2"
     "hi": !!int "6"
 - "id": ".scale_typo_of.dbl_1e5"
   "r": "metacheck:::.scale_typo_of"
-  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "py": "metacheck.datacheck.columns._scale_typo_of"
   "args":
     "v": !!float "100000.0"
     "lo": !!int "2"
     "hi": !!int "6"
 - "id": ".scale_typo_of.int_neg"
   "r": "metacheck:::.scale_typo_of"
-  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "py": "metacheck.datacheck.columns._scale_typo_of"
   "args":
     "v": !!int "-33"
     "lo": !!int "-3"
     "hi": !!int "3"
 - "id": ".scale_typo_of.int_big"
   "r": "metacheck:::.scale_typo_of"
-  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "py": "metacheck.datacheck.columns._scale_typo_of"
   "args":
     "v": !!int "2147483647"
     "lo": !!int "1"
     "hi": !!int "7"
 - "id": ".scale_typo_of.dbl_1e15"
   "r": "metacheck:::.scale_typo_of"
-  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "py": "metacheck.datacheck.columns._scale_typo_of"
   "args":
     "v": !!float "1000000000000000.0"
     "lo": !!int "1"
     "hi": !!int "7"
 - "id": ".scale_typo_of.dbl_neg_zero_range"
   "r": "metacheck:::.scale_typo_of"
-  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "py": "metacheck.datacheck.columns._scale_typo_of"
   "args":
     "v": !!float "-0.0"
     "lo": !!int "1"
     "hi": !!int "7"
 - "id": ".scale_typo_of.dbl_half"
   "r": "metacheck:::.scale_typo_of"
-  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "py": "metacheck.datacheck.columns._scale_typo_of"
   "args":
     "v": !!float "2.5"
     "lo": !!int "3"
     "hi": !!int "7"
 - "id": "match_column_labels.no_label_col"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df": &id004
       "$df":
@@ -1942,7 +1942,7 @@
         - !!null "null"
 - "id": "match_column_labels.no_label_col_ambiguous"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -1964,7 +1964,7 @@
         - "g2"
 - "id": "match_column_labels.no_source_col"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df": *id004
     "codebook_vars_df":
@@ -1980,7 +1980,7 @@
         - !!null "null"
 - "id": "match_column_labels.numeric_group"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2012,7 +2012,7 @@
         - "3"
 - "id": "match_column_labels.na_group_scoped"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2048,7 +2048,7 @@
         - "g2"
 - "id": "match_column_labels.haven_all_na"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2077,7 +2077,7 @@
         - "structured"
 - "id": "match_column_labels.haven_longest"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2111,7 +2111,7 @@
         - "structured"
 - "id": "match_column_labels.merged_tie"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2137,7 +2137,7 @@
         - !!null "null"
 - "id": "match_column_labels.conflict_na_label"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2163,7 +2163,7 @@
         - !!null "null"
 - "id": "match_column_labels.paper_numeric"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2190,7 +2190,7 @@
         - "1"
 - "id": "match_column_labels.ranges"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2247,7 +2247,7 @@
         - !!null "null"
 - "id": "match_column_labels.ranges_only_invalid"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2269,7 +2269,7 @@
         - !!null "null"
 - "id": "match_column_labels.qsf_fallback"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2330,7 +2330,7 @@
         - "structured"
 - "id": "match_column_labels.qsf_no_parse_method"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2358,7 +2358,7 @@
         - "T"
 - "id": "match_column_labels.qsf_no_value_labels_col"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2384,7 +2384,7 @@
         - "T"
 - "id": "match_column_labels.experiment_group_col"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$df":
@@ -2412,7 +2412,7 @@
         - "g2"
 - "id": "match_column_labels.qsf_numeric_colname"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$expr":
@@ -2443,7 +2443,7 @@
         - "qsf"
 - "id": "match_column_labels.qsf_chr_na_colname"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$expr":
@@ -2453,7 +2453,7 @@
     "codebook_vars_df": *id005
 - "id": "match_column_labels.qsf_na_after_match"
   "r": "match_column_labels"
-  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "py": "metacheck.datacheck.columns.match_column_labels"
   "args":
     "columns_df":
       "$expr":

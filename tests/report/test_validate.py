@@ -7,8 +7,8 @@ import math
 import pandas as pd
 import pytest
 
-from pytacheck.module import ModuleError
-from pytacheck.validate import AccuracyMeasures, accuracy, validate
+from metacheck.module import ModuleError
+from metacheck.validate import AccuracyMeasures, accuracy, validate
 
 
 def test_accuracy():
@@ -83,7 +83,7 @@ def test_validate_with_ground_truth():
 
 def test_validate_stat_p_exact():
     """The R test uses stat_p_exact; run it when that module is available."""
-    from pytacheck.module import module_find
+    from metacheck.module import module_find
 
     try:
         module_find("stat_p_exact")

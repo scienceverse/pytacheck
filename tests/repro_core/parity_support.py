@@ -1,7 +1,7 @@
 """Python side of the ``repro_core`` parity cases that need files, a sandbox or R.
 
 Case code receives a namespace ``m`` with ``m.core``, ``m.docker`` and
-``m.tables`` (the :mod:`pytacheck.repro` modules), ``m.pc`` (pytacheck),
+``m.tables`` (the :mod:`metacheck.repro` modules), ``m.pc`` (pytacheck),
 ``m.pd`` (pandas) and the helpers below. :func:`run` calls it from the
 repository root (the R runner's working directory), so relative fixture
 paths resolve the same way on both sides.
@@ -62,7 +62,7 @@ def files_df(
 
 def run_order_full(files: Any, extra_edges: Any = None) -> list[Any]:
     """``repro_run_order()`` and its three attributes."""
-    from pytacheck.repro.core import repro_run_order
+    from metacheck.repro.core import repro_run_order
 
     out = repro_run_order(files, extra_edges)
     return [out, out.attrs.get("cycle"), out.attrs.get("ambiguous"), out.attrs.get("fuzzy_sources")]
@@ -70,7 +70,7 @@ def run_order_full(files: Any, extra_edges: Any = None) -> list[Any]:
 
 def _listing(root: str) -> list[str]:
     """``sort(list.files(root, recursive = TRUE, all.files = TRUE, include.dirs = TRUE))``."""
-    from pytacheck._r.base import r_sort_key
+    from metacheck._r.base import r_sort_key
 
     out: list[str] = []
     for d, dirs, files in os.walk(root):
@@ -82,7 +82,7 @@ def _listing(root: str) -> list[str]:
 
 def materialize(plan: Any, structure_df: Any) -> dict[str, Any]:
     """``repro_materialize_layout()`` into a fresh directory, with the tree it built."""
-    from pytacheck.repro.core import repro_materialize_layout
+    from metacheck.repro.core import repro_materialize_layout
 
     with tempfile.TemporaryDirectory() as tmp:
         root = os.path.join(tmp, "root")
@@ -106,7 +106,7 @@ def write_scripts(
     code_text_list: Any, rewrite_list: Any, plan: Any, inject_libs: Any = None
 ) -> dict[str, Any]:
     """``repro_write_scripts()`` into a fresh directory; paths shown relative to it."""
-    from pytacheck.repro.core import repro_write_scripts
+    from metacheck.repro.core import repro_write_scripts
 
     with tempfile.TemporaryDirectory() as tmp:
         root = os.path.join(tmp, "root")
@@ -137,7 +137,7 @@ def run_scripts(
     passed. ``elapsed`` is dropped and the directory is shown as ``<root>``.
     """
     need_r()
-    from pytacheck.repro.core import repro_run_scripts
+    from metacheck.repro.core import repro_run_scripts
 
     with tempfile.TemporaryDirectory() as tmp:
         root = os.path.join(tmp, "root")
@@ -207,8 +207,8 @@ def materialize_review() -> dict[str, Any]:
 def _namespace() -> types.SimpleNamespace:
     import pandas as pd
 
-    import pytacheck as pc
-    from pytacheck.repro import core, docker, tables
+    import metacheck as pc
+    from metacheck.repro import core, docker, tables
 
     return types.SimpleNamespace(
         core=core,
@@ -233,7 +233,7 @@ def _namespace() -> types.SimpleNamespace:
 
 def with_options(values: dict[str, Any], fn: Callable[[], Any]) -> Any:
     """``withr::with_options(values, fn())``."""
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with local_options(values):
         return fn()
@@ -241,7 +241,7 @@ def with_options(values: dict[str, Any], fn: Callable[[], Any]) -> Any:
 
 def r_sorted(x: Sequence[Any]) -> list[Any]:
     """R ``sort()`` of a character vector."""
-    from pytacheck._r.base import r_sort_key
+    from metacheck._r.base import r_sort_key
 
     return sorted(x, key=r_sort_key)
 

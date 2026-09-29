@@ -15,8 +15,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck._r import r_sort_key
-from pytacheck.modules.psychds_check import psychds_tree_html
+from metacheck._r import r_sort_key
+from metacheck.modules.psychds_check import psychds_tree_html
 from tests.mod_psychds import parity_support as ps
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -147,7 +147,7 @@ ICU_ORDER = [
 
 
 def test_r_sort_key_follows_icu_root_collation() -> None:
-    from pytacheck.modules.psychds_check import _tolower
+    from metacheck.modules.psychds_check import _tolower
 
     shuffled = sorted(ICU_ORDER, key=lambda s: (len(s), s[::-1]))
     assert sorted(shuffled, key=lambda s: r_sort_key(_tolower(s))) == ICU_ORDER

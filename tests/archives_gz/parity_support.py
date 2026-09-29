@@ -20,10 +20,10 @@ from unittest import mock
 @contextlib.contextmanager
 def offline_safe() -> Iterator[None]:
     """``online()`` is ``True`` and no git credential helper is consulted."""
-    from pytacheck.archives import github
+    from metacheck.archives import github
 
     with (
-        mock.patch("pytacheck.utils.online", lambda *a, **k: True),
+        mock.patch("metacheck.utils.online", lambda *a, **k: True),
         mock.patch.dict(github._TOKEN_CACHE, {"token": None}),
     ):
         yield
@@ -47,7 +47,7 @@ def verify_case() -> Any:
 
     import pandas as pd
 
-    from pytacheck.archives.zenodo import _zenodo_verify_downloads
+    from metacheck.archives.zenodo import _zenodo_verify_downloads
 
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
@@ -74,7 +74,7 @@ def verify_case() -> Any:
 
 def with_option(name: str, fn: Callable[[], Any]) -> Any:
     """``fn()``, then the option *name* restored (R: ``on.exit(options(...))``)."""
-    from pytacheck.utils import get_option, options
+    from metacheck.utils import get_option, options
 
     old = get_option(name)
     try:

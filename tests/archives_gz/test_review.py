@@ -32,7 +32,7 @@ def review() -> Iterator[object]:
 
 
 def test_github_readme_with_nul_stops(review: object) -> None:
-    from pytacheck.archives.github import github_readme
+    from metacheck.archives.github import github_readme
 
     # R: rawToChar() refuses an embedded NUL
     with pytest.raises(ValueError, match="embedded nul"):
@@ -41,7 +41,7 @@ def test_github_readme_with_nul_stops(review: object) -> None:
 
 @pytest.mark.parametrize("repo", ["rv/langarr", "rv/langscalar"])
 def test_github_languages_unnamed_body_stops(review: object, repo: str) -> None:
-    from pytacheck.archives.github import github_languages
+    from metacheck.archives.github import github_languages
 
     # names() of a JSON array/scalar is NULL, a zero-row column for data.frame()
     with pytest.raises(ValueError, match="differing number of rows"):
@@ -49,7 +49,7 @@ def test_github_languages_unnamed_body_stops(review: object, repo: str) -> None:
 
 
 def test_github_tree_files_filter_realigns_on_untyped_entry(review: object) -> None:
-    from pytacheck.archives.github import github_tree_files
+    from metacheck.archives.github import github_tree_files
 
     out = github_tree_files("rv/tree5")
     # Filter() drops the untyped entry's logical(0), shifting later flags:
@@ -60,14 +60,14 @@ def test_github_tree_files_filter_realigns_on_untyped_entry(review: object) -> N
 
 
 def test_github_tree_files_string_size_stops(review: object) -> None:
-    from pytacheck.archives.github import github_tree_files
+    from metacheck.archives.github import github_tree_files
 
     with pytest.raises(TypeError, match="must be type 'double'"):
         github_tree_files("rv/tree6")
 
 
 def test_github_tree_files_vector_falls_back_to_contents(review: object) -> None:
-    from pytacheck.archives.github import github_tree_files
+    from metacheck.archives.github import github_tree_files
 
     out = github_tree_files(["rv/files", "rv/nope"])
     assert out["gated"] is False
@@ -80,7 +80,7 @@ def test_github_tree_files_vector_falls_back_to_contents(review: object) -> None
 
 
 def test_github_info_vector_with_missing_repo_stops(review: object) -> None:
-    from pytacheck.archives.github import github_info
+    from metacheck.archives.github import github_info
 
     with pytest.raises(ValueError, match="differing number of rows: 1, 0"):
         github_info(["rv/files", "rv/nope"])
@@ -92,7 +92,7 @@ def test_github_info_vector_with_missing_repo_stops(review: object) -> None:
 
 
 def test_gitlab_tree_files_untyped_pathless_and_object_nodes(review: object) -> None:
-    from pytacheck.archives.gitlab import gitlab_tree_files
+    from metacheck.archives.gitlab import gitlab_tree_files
 
     out = gitlab_tree_files("rv/glq")
     files = out["files"]
@@ -109,7 +109,7 @@ def test_gitlab_tree_files_untyped_pathless_and_object_nodes(review: object) -> 
 
 
 def test_gitlab_tree_files_vector(review: object) -> None:
-    from pytacheck.archives.gitlab import gitlab_tree_files
+    from metacheck.archives.gitlab import gitlab_tree_files
 
     out = gitlab_tree_files(["rv/glp", "https://gitlab.com/rv/glp"])
     assert out["gated"] is True
@@ -122,7 +122,7 @@ def test_gitlab_tree_files_vector(review: object) -> None:
 def test_pat_setters_accept_length_one_vector(module: str) -> None:
     import importlib
 
-    mod = importlib.import_module(f"pytacheck.archives.{module}")
+    mod = importlib.import_module(f"metacheck.archives.{module}")
     fn = mod.gitlab_pat if module == "gitlab" else mod.zenodo_pat
     assert fn(["tok"]) == "tok"
     assert fn() == "tok"
@@ -136,7 +136,7 @@ def test_pat_setters_accept_length_one_vector(module: str) -> None:
 
 
 def test_zenodo_info_incompatible_licence_types_stop(review: object) -> None:
-    from pytacheck.archives.zenodo import zenodo_info
+    from metacheck.archives.zenodo import zenodo_info
 
     # 5559001's licence is a JSON object (a list column), 5559007's a string
     with pytest.raises(TypeError, match="Can't combine"):
@@ -144,7 +144,7 @@ def test_zenodo_info_incompatible_licence_types_stop(review: object) -> None:
 
 
 def test_zenodo_info_na_in_a_table(review: object) -> None:
-    from pytacheck.archives.zenodo import zenodo_info
+    from metacheck.archives.zenodo import zenodo_info
 
     # U33: metacheck fails on the NA ("row names contain missing values")
     out = zenodo_info(pd.DataFrame({"u": ["5559007", None]}))
@@ -156,7 +156,7 @@ def test_zenodo_info_na_in_a_table(review: object) -> None:
 
 
 def test_zenodo_info_id_col_positions(review: object) -> None:
-    from pytacheck.archives.zenodo import zenodo_info
+    from metacheck.archives.zenodo import zenodo_info
 
     with pytest.raises(IndexError):
         zenodo_info(pd.DataFrame({"u": ["5559007"], "v": ["x"]}), id_col=0)
@@ -173,7 +173,7 @@ def test_zenodo_info_id_col_positions(review: object) -> None:
 
 
 def test_zenodo_license_id_longer_vector_stops() -> None:
-    from pytacheck.archives.zenodo_upload import _zenodo_license_id
+    from metacheck.archives.zenodo_upload import _zenodo_license_id
 
     with pytest.raises(ValueError, match="length = 2"):
         _zenodo_license_id(["MIT License", "x"])
@@ -181,7 +181,7 @@ def test_zenodo_license_id_longer_vector_stops() -> None:
 
 
 def test_jsonlite_body_numbers() -> None:
-    from pytacheck.archives.zenodo_upload import _json_body
+    from metacheck.archives.zenodo_upload import _json_body
 
     body = _json_body(
         {
@@ -203,7 +203,7 @@ def test_jsonlite_body_numbers() -> None:
 
 
 def test_build_metadata_keeps_na_tags_and_blank_creators() -> None:
-    from pytacheck.archives.zenodo_upload import _zenodo_build_metadata
+    from metacheck.archives.zenodo_upload import _zenodo_build_metadata
 
     md = _zenodo_build_metadata({"title": "T", "tags": ["a", None], "creators": ""}, "/tmp/f")
     assert md["keywords"] == ["a", None]
@@ -211,7 +211,7 @@ def test_build_metadata_keeps_na_tags_and_blank_creators() -> None:
 
 
 def test_meta_from_folder_odd_shapes(tmp_path: Path) -> None:
-    from pytacheck.archives.zenodo_upload import _zenodo_meta_from_folder
+    from metacheck.archives.zenodo_upload import _zenodo_meta_from_folder
 
     meta_dir = tmp_path / "_osf_metadata"
     meta_dir.mkdir()
@@ -242,7 +242,7 @@ def test_meta_from_folder_odd_shapes(tmp_path: Path) -> None:
 def test_zenodo_upload_sends_jsonlite_numbers(review: object, upload_dir: Path) -> None:
     import warnings
 
-    from pytacheck.archives.zenodo_upload import zenodo_upload
+    from metacheck.archives.zenodo_upload import zenodo_upload
 
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")

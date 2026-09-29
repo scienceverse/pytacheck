@@ -1,14 +1,14 @@
 # R source -> Python location for the ref_pubpeer and ref_summary modules (see docs/PORTING.md).
 [files]
-"inst/modules/ref_pubpeer.R" = ["src/pytacheck/modules/ref_pubpeer.py"]
-"inst/modules/ref_summary.R" = ["src/pytacheck/modules/ref_summary.py"]
+"inst/modules/ref_pubpeer.R" = ["src/metacheck/modules/ref_pubpeer.py"]
+"inst/modules/ref_summary.R" = ["src/metacheck/modules/ref_summary.py"]
 
 [functions]
-"module:ref_pubpeer" = "pytacheck.modules.ref_pubpeer:ref_pubpeer"
-"module:ref_summary" = "pytacheck.modules.ref_summary:ref_summary"
+"module:ref_pubpeer" = "metacheck.modules.ref_pubpeer:ref_pubpeer"
+"module:ref_summary" = "metacheck.modules.ref_summary:ref_summary"
 # (dplyr::inner_join()/left_join() as used by both modules -- rows in x order, NA keys
 #  matching, int/double keys by value, .x/.y suffixes repeated until unique as in
 #  dplyr:::add_suffixes(), no many-to-many warning inside a module -- is ported as
-#  pytacheck.modules.ref_summary:_join; ref_summary's pivot_longer()/summarise() of
+#  metacheck.modules.ref_summary:_join; ref_summary's pivot_longer()/summarise() of
 #  ref_accuracy's *_mismatch columns, including pivot_longer()'s "Can't combine" type
-#  check, as pytacheck.modules.ref_summary:_accuracy_mismatches)
+#  check, as metacheck.modules.ref_summary:_accuracy_mismatches)

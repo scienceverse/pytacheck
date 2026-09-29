@@ -84,7 +84,7 @@ def _missing_extras() -> list[str]:
     from importlib import metadata
 
     missing: set[str] = set()
-    from pytacheck._version import DISTRIBUTION
+    from metacheck._version import DISTRIBUTION
 
     requirements: list[str] = []
     for dist in (DISTRIBUTION, "pytacheck"):

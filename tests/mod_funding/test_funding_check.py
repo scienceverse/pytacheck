@@ -3,7 +3,7 @@
 Ports ``test_that("funding_check", ...)`` of metacheck's
 ``tests/testthat/test-module-declarations.R`` (and the same checks for the
 over-inclusive variant, which upstream does not test), plus unit tests of the
-rtransparent helpers in :mod:`pytacheck.modules._funding`.
+rtransparent helpers in :mod:`metacheck.modules._funding`.
 """
 
 from __future__ import annotations
@@ -12,8 +12,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.modules import _funding as F
+import metacheck as pc
+from metacheck.modules import _funding as F
 
 FOUND = "This research was funded by UKRI grant #202020."
 NONE = "The funding for arts is not great."
@@ -249,8 +249,8 @@ def test_required_literals() -> None:
 
 
 def test_prefilter_matches_full_scan(psychsci: pc.PaperList) -> None:
-    from pytacheck._r.regex import grepl
-    from pytacheck.text import text_search
+    from metacheck._r.regex import grepl
+    from metacheck.text import text_search
     from tests.mod_funding.make_parity_cases import BATTERY, BATTERY_2
 
     texts = text_search(psychsci)["text"].tolist()

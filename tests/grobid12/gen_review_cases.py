@@ -93,7 +93,7 @@ for name, when in FIXTURES.items():
         {
             "id": f".grobid_to_bibr.{name}",
             "r": ".grobid_to_bibr",
-            "py": "pytacheck.io.grobid._grobid_to_bibr",
+            "py": "metacheck.io.grobid._grobid_to_bibr",
             "args": {"xml_path": {"$file": path}, "schema_version": "12.0"},
             "compare": {"ignore": ignore(when)},
         }
@@ -138,7 +138,7 @@ for name, path in ERRORS.items():
             "args": {
                 "x": expr(
                     f".grobid_to_bibr('{path}', schema_version = '12.0')",
-                    f"__import__('pytacheck.io.grobid', fromlist=['x'])"
+                    f"__import__('metacheck.io.grobid', fromlist=['x'])"
                     f"._grobid_to_bibr(str({H}._path({path!r})), None, '12.0')",
                 )
             },
@@ -156,7 +156,7 @@ r_files = "c(" + ", ".join(f"'{f}'" for f in MODULE_FILES) + ")"
 papers = {
     "$call": {
         "r": "grobid_to_bibr",
-        "py": "pytacheck.io.grobid.grobid_to_bibr",
+        "py": "metacheck.io.grobid.grobid_to_bibr",
         "args": {
             "xml_path": expr(f"file.path(getwd(), {r_files})", f"{H}.paths({MODULE_FILES!r})"),
             "save_path": {"$null": True},

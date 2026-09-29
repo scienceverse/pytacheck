@@ -1,4 +1,4 @@
-"""Fixtures for the reproducibility-check core tests (``pytacheck.repro``)."""
+"""Fixtures for the reproducibility-check core tests (``metacheck.repro``)."""
 
 from __future__ import annotations
 

@@ -14,8 +14,8 @@ from typing import Any
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.modules import _repo_check as rc
+import metacheck as pc
+from metacheck.modules import _repo_check as rc
 from tests.mod_repo_check.parity_support import FIXTURES, in_root, mocked, tp
 
 pytestmark = pytest.mark.filterwarnings("ignore::UserWarning")
@@ -24,7 +24,7 @@ REVIEW = FIXTURES / "review"
 
 
 class RecordingBar:
-    """A stand-in for ``pytacheck.utils.pb()`` that records what is shown."""
+    """A stand-in for ``metacheck.utils.pb()`` that records what is shown."""
 
     def __init__(self, log: list[tuple[str, Any]], total: Any, fmt: str) -> None:
         self.log = log
@@ -41,7 +41,7 @@ class RecordingBar:
 def progress(monkeypatch: pytest.MonkeyPatch) -> list[tuple[str, Any]]:
     log: list[tuple[str, Any]] = []
     monkeypatch.setattr(
-        "pytacheck.utils.pb", lambda total, format="": RecordingBar(log, total, format)
+        "metacheck.utils.pb", lambda total, format="": RecordingBar(log, total, format)
     )
     return log
 
@@ -210,7 +210,7 @@ def test_two_local_folders_keep_their_same_named_files() -> None:
 def test_dedup_is_per_file() -> None:
     # U121: a file is dropped only when the same file (URL and path) was
     # listed before -- not when its URL and its path each occurred in other rows
-    from pytacheck.modules.repo_check import _prepare_files
+    from metacheck.modules.repo_check import _prepare_files
 
     files = pd.DataFrame(
         {
@@ -251,7 +251,7 @@ def test_peeked_zip_members_are_listed_but_not_readmes() -> None:
 def test_join_file_types_gives_one_row_per_file() -> None:
     # U46: an extension listed twice in file_types (json: code, data; html: code,
     # web) takes its first type; R's join repeats the file once per type
-    from pytacheck.fileinfo.types import ext_rows
+    from metacheck.fileinfo.types import ext_rows
 
     files = pd.DataFrame(
         {"file_name": ["a.json", "b.HTML", "c.csv", "noext", None], "file_path": list("abcde")},
@@ -286,7 +286,7 @@ def test_unfound_dspace_items_are_flagged() -> None:
 def test_unfound_dspace7_items_are_flagged_but_empty_ones_are_not(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    import pytacheck.archives.dspace7 as ds7
+    import metacheck.archives.dspace7 as ds7
 
     monkeypatch.setattr(ds7, "_dspace7_file_lists", lambda urls, pb=None: (None, [urls[1]]))
     repos = rc.Repos(rc.repo_rows("p", ["https://x/a", "https://x/b"], "dspace7", rc.NA_SCALAR))

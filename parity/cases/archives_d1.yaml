@@ -5,39 +5,39 @@
 "cases":
 - "id": ".dryad_doi_prefixes"
   "r": "metacheck:::.dryad_doi_prefixes"
-  "py": "pytacheck.archives.dryad._dryad_doi_prefixes"
+  "py": "metacheck.archives.dryad._dryad_doi_prefixes"
   "args": {}
 - "id": ".figshare_vanity_hosts"
   "r": "metacheck:::.figshare_vanity_hosts"
-  "py": "pytacheck.archives.figshare._figshare_vanity_hosts"
+  "py": "metacheck.archives.figshare._figshare_vanity_hosts"
   "args": {}
 - "id": ".figshare_doi_prefix_hosts"
   "r": "metacheck:::.figshare_doi_prefix_hosts"
-  "py": "pytacheck.archives.figshare._figshare_doi_prefix_hosts"
+  "py": "metacheck.archives.figshare._figshare_doi_prefix_hosts"
   "args": {}
 - "id": ".figshare_host_regex"
   "r": "metacheck:::.figshare_host_regex"
-  "py": "pytacheck.archives.figshare._figshare_host_regex"
+  "py": "metacheck.archives.figshare._figshare_host_regex"
   "args": {}
 - "id": ".dataverse_hosts"
   "r": "metacheck:::.dataverse_hosts"
-  "py": "pytacheck.archives.dataverse._dataverse_hosts"
+  "py": "metacheck.archives.dataverse._dataverse_hosts"
   "args": {}
 - "id": ".dataverse_host_regex"
   "r": "metacheck:::.dataverse_host_regex"
-  "py": "pytacheck.archives.dataverse._dataverse_host_regex"
+  "py": "metacheck.archives.dataverse._dataverse_host_regex"
   "args": {}
 - "id": ".dataverse_doi_prefix_hosts"
   "r": "metacheck:::.dataverse_doi_prefix_hosts"
-  "py": "pytacheck.archives.dataverse._dataverse_doi_prefix_hosts"
+  "py": "metacheck.archives.dataverse._dataverse_doi_prefix_hosts"
   "args": {}
 - "id": ".dataverse_doi_prefix_regex"
   "r": "metacheck:::.dataverse_doi_prefix_regex"
-  "py": "pytacheck.archives.dataverse._dataverse_doi_prefix_regex"
+  "py": "metacheck.archives.dataverse._dataverse_doi_prefix_regex"
   "args": {}
 - "id": ".dryad_doi.shapes"
   "r": "metacheck:::.dryad_doi"
-  "py": "pytacheck.archives.dryad._dryad_doi"
+  "py": "metacheck.archives.dryad._dryad_doi"
   "args":
     "dryad_url":
       "$expr":
@@ -45,29 +45,29 @@
         "py": "[\"https://doi.org/10.5061/dryad.j1fd7\", \"http://datadryad.org/stash/dataset/doi:10.5061/dryad.j1fd7\", \"https://datadryad.org/stash/dataset/doi%3A10.5061%2Fdryad.J1FD7\", \"10.5061/DRYAD.ABC\", \"  10.25338/B8N33J  \", \"https://doi.org/10.5068/D14671\", \"https://doi.org/10.6075/j0w37ttw\", \"https://doi.org/10.7941/d18907\", \"doi:10.15146/R3XQ19\", \"https://doi.org/10.9999/unrelated123\", \"\", None, \"10.5061/dryad\", \"datadryad.org/dataset/doi:10.5061/dryad.x1y2z3/\", \"10.253380/xyz\", \"see abc%4gdef 10.5061/dryad.q1\", \"10.5061/dryad.q2%zz\", \"https://doi.org/10.25349/D9WP4K and 10.5061/dryad.second\"]"
 - "id": ".dryad_doi.single"
   "r": "metacheck:::.dryad_doi"
-  "py": "pytacheck.archives.dryad._dryad_doi"
+  "py": "metacheck.archives.dryad._dryad_doi"
   "args":
     "dryad_url": "https://doi.org/10.5061/dryad.j1fd7"
 - "id": ".dryad_doi.empty"
   "r": "metacheck:::.dryad_doi"
-  "py": "pytacheck.archives.dryad._dryad_doi"
+  "py": "metacheck.archives.dryad._dryad_doi"
   "args":
     "dryad_url":
       "$chr": []
 - "id": ".dryad_doi.null"
   "r": "metacheck:::.dryad_doi"
-  "py": "pytacheck.archives.dryad._dryad_doi"
+  "py": "metacheck.archives.dryad._dryad_doi"
   "args":
     "dryad_url":
       "$null": true
 - "id": ".dryad_doi.embedded_nul_error"
   "r": "metacheck:::.dryad_doi"
-  "py": "pytacheck.archives.dryad._dryad_doi"
+  "py": "metacheck.archives.dryad._dryad_doi"
   "args":
     "dryad_url": "10.5061/dryad.a%zzb"
 - "id": ".figshare_id.shapes"
   "r": "metacheck:::.figshare_id"
-  "py": "pytacheck.archives.figshare._figshare_id"
+  "py": "metacheck.archives.figshare._figshare_id"
   "args":
     "figshare_url":
       "$expr":
@@ -75,20 +75,20 @@
         "py": "[\"18093368\", \"https://figshare.com/articles/dataset/some_title/18093368\", \"https://figshare.com/articles/18093368\", \"https://doi.org/10.6084/m9.figshare.18093368\", \"10.6084/m9.figshare.18093368.v1\", \"https://ndownloader.figshare.com/files/12345\", \"https://figshare.com/projects/some_project/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"not-a-figshare-url\", \"\", \"https://figshare.com/articles/PxW_dataset/6934484\", \"https://doi.org/10.26180/19095317.v1\", \"https://doi.org/10.26188/14122688\", \"https://doi.org/10.25375/uct.14618526.v1\", \"https://tandf.figshare.com/articles/journal_contribution/Title/12345678\", \"https://figshare.le.ac.uk/articles/dataset/x/21234567\", \"https://figsh.com/articles/123\", \"https://doi.org/10.6084/m9.figshare.c.1234567\", \"https://doi.org/10.26180/19095317.v1.\", \"https://doi.org/10.17633/rd.brunel.1234567\", \" 18093368 \", \"https://FIGSHARE.COM/ARTICLES/DATASET/X/123\", \"https://figshare.com/articles/dataset/some_title/18093368/2\", \"https://ndownloader.figshare.com/files/12345?private_link=abc\", \"https://sub.figshare.shef.ac.uk/articles/media/Name/99\", \"https://doi.org/10.25375/19095317x\", None]"
 - "id": ".figshare_id.numeric"
   "r": "metacheck:::.figshare_id"
-  "py": "pytacheck.archives.figshare._figshare_id"
+  "py": "metacheck.archives.figshare._figshare_id"
   "args":
     "figshare_url":
       "$dbl":
       - 18093368
 - "id": ".figshare_id.null"
   "r": "metacheck:::.figshare_id"
-  "py": "pytacheck.archives.figshare._figshare_id"
+  "py": "metacheck.archives.figshare._figshare_id"
   "args":
     "figshare_url":
       "$null": true
 - "id": ".figshare_project_id.shapes"
   "r": "metacheck:::.figshare_project_id"
-  "py": "pytacheck.archives.figshare._figshare_project_id"
+  "py": "metacheck.archives.figshare._figshare_project_id"
   "args":
     "figshare_url":
       "$expr":
@@ -96,7 +96,7 @@
         "py": "[\"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/projects/A_Project_With-Punctuation.In.It/999\", \"https://figshare.com/articles/dataset/some_title/18093368\", \"not-a-figshare-url\", \"\", \" https://figshare.com/projects/x/1/ \", \"https://figshare.com/projects/x/y/1\", \"https://figshare.le.ac.uk/projects/Leicester/77\", \"https://FIGSHARE.com/Projects/Name/5\", None]"
 - "id": ".dataverse_parse.testthat"
   "r": "metacheck:::.dataverse_parse"
-  "py": "pytacheck.archives.dataverse._dataverse_parse"
+  "py": "metacheck.archives.dataverse._dataverse_parse"
   "args":
     "url":
       "$expr":
@@ -104,7 +104,7 @@
         "py": "[\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/XYZ999\", \"https://dataverse.harvard.edu/dataset.xhtml?id=12345\", \"https://notdataverse.com/foo\", None]"
 - "id": ".dataverse_parse.realignment_quirk"
   "r": "metacheck:::.dataverse_parse"
-  "py": "pytacheck.archives.dataverse._dataverse_parse"
+  "py": "metacheck.archives.dataverse._dataverse_parse"
   "args":
     "url":
       "$expr":
@@ -112,7 +112,7 @@
         "py": "[\"https://doi.org/10.18167/DVN1/T0DMFJ\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X\", None, \"\", \"https://dataverse.nl/x\"]"
 - "id": ".dataverse_parse.shapes"
   "r": "metacheck:::.dataverse_parse"
-  "py": "pytacheck.archives.dataverse._dataverse_parse"
+  "py": "metacheck.archives.dataverse._dataverse_parse"
   "args":
     "url":
       "$expr":
@@ -120,13 +120,13 @@
         "py": "[\"https://doi.org/10.18167/DVN1/T0DMFJ.\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123&version=1.0\", \"https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/X%2FY\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FZ\", \"HTTPS://DATAVERSE.HARVARD.EDU/dataset.xhtml?PERSISTENTID=DOI:10.7910/DVN/UP\", \"https://dataverse.northwestern.edu/x\", \"https://doi.org/10.17026/dans-abc\", \"https://doi.org/10.9999/x\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/OE9BNP.\", \"https://borealisdata.ca/dataset.xhtml?persistentId=hdl:1880/1234\", \"https://www.sodha.be/dataset.xhtml?persistentId=doi:10.34934/DVN/ABC\", \"https://doi.org/10.6084/m9.figshare.123\"]"
 - "id": ".dataverse_parse.empty"
   "r": "metacheck:::.dataverse_parse"
-  "py": "pytacheck.archives.dataverse._dataverse_parse"
+  "py": "metacheck.archives.dataverse._dataverse_parse"
   "args":
     "url":
       "$chr": []
 - "id": ".dataverse_parse.all_missing"
   "r": "metacheck:::.dataverse_parse"
-  "py": "pytacheck.archives.dataverse._dataverse_parse"
+  "py": "metacheck.archives.dataverse._dataverse_parse"
   "args":
     "url":
       "$expr":
@@ -134,7 +134,7 @@
         "py": "[None, \"\"]"
 - "id": ".dataverse_host_from_doi.shapes"
   "r": "metacheck:::.dataverse_host_from_doi"
-  "py": "pytacheck.archives.dataverse._dataverse_host_from_doi"
+  "py": "metacheck.archives.dataverse._dataverse_host_from_doi"
   "args":
     "doi":
       "$expr":
@@ -142,20 +142,20 @@
         "py": "[\"10.18167/DVN1/T0DMFJ\", \"10.7910/DVN/ABC123\", \"10.9999/unrelated123\", \"10.6084/m9.figshare.1\", \"10.17026/x\", \"10.48733/y\", \"10.58032/z\", None, \"\", \"doi:10.7910/DVN/X\", \"10.26300/abc\"]"
 - "id": "dryad_links.demo"
   "r": "dryad_links"
-  "py": "pytacheck.archives.dryad.dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "dryad_links.psychsci"
   "r": "dryad_links"
-  "py": "pytacheck.archives.dryad.dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
   "args":
     "paper": &id001
       "$read":
       - "upstream/metacheck/tests/testthat/fixtures/psychsci"
 - "id": "dryad_links.none"
   "r": "dryad_links"
-  "py": "pytacheck.archives.dryad.dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
   "args":
     "paper":
       "$test_paper":
@@ -169,18 +169,18 @@
     - "paper_id"
 - "id": "figshare_links.demo"
   "r": "figshare_links"
-  "py": "pytacheck.archives.figshare.figshare_links"
+  "py": "metacheck.archives.figshare.figshare_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "figshare_links.psychsci"
   "r": "figshare_links"
-  "py": "pytacheck.archives.figshare.figshare_links"
+  "py": "metacheck.archives.figshare.figshare_links"
   "args":
     "paper": *id001
 - "id": "figshare_links.none"
   "r": "figshare_links"
-  "py": "pytacheck.archives.figshare.figshare_links"
+  "py": "metacheck.archives.figshare.figshare_links"
   "args":
     "paper":
       "$test_paper":
@@ -192,18 +192,18 @@
   "compare": *id002
 - "id": "dataverse_links.demo"
   "r": "dataverse_links"
-  "py": "pytacheck.archives.dataverse.dataverse_links"
+  "py": "metacheck.archives.dataverse.dataverse_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "dataverse_links.psychsci"
   "r": "dataverse_links"
-  "py": "pytacheck.archives.dataverse.dataverse_links"
+  "py": "metacheck.archives.dataverse.dataverse_links"
   "args":
     "paper": *id001
 - "id": "dataverse_links.none"
   "r": "dataverse_links"
-  "py": "pytacheck.archives.dataverse.dataverse_links"
+  "py": "metacheck.archives.dataverse.dataverse_links"
   "args":
     "paper":
       "$test_paper":
@@ -215,13 +215,13 @@
   "compare": *id002
 - "id": "dryad_links.problem_203020"
   "r": "dryad_links"
-  "py": "pytacheck.archives.dryad.dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
 - "id": "dryad_links.paperlist"
   "r": "dryad_links"
-  "py": "pytacheck.archives.dryad.dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
   "args":
     "paper":
       "$read":
@@ -229,13 +229,13 @@
       - "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
 - "id": "figshare_links.problem_203020"
   "r": "figshare_links"
-  "py": "pytacheck.archives.figshare.figshare_links"
+  "py": "metacheck.archives.figshare.figshare_links"
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
 - "id": "figshare_links.paperlist"
   "r": "figshare_links"
-  "py": "pytacheck.archives.figshare.figshare_links"
+  "py": "metacheck.archives.figshare.figshare_links"
   "args":
     "paper":
       "$read":
@@ -243,13 +243,13 @@
       - "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
 - "id": "dataverse_links.problem_203020"
   "r": "dataverse_links"
-  "py": "pytacheck.archives.dataverse.dataverse_links"
+  "py": "metacheck.archives.dataverse.dataverse_links"
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
 - "id": "dataverse_links.paperlist"
   "r": "dataverse_links"
-  "py": "pytacheck.archives.dataverse.dataverse_links"
+  "py": "metacheck.archives.dataverse.dataverse_links"
   "args":
     "paper":
       "$read":
@@ -257,7 +257,7 @@
       - "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
 - "id": "dryad_links.test_paper"
   "r": "dryad_links"
-  "py": "pytacheck.archives.dryad.dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
   "args":
     "paper":
       "$test_paper":
@@ -277,7 +277,7 @@
   "compare": *id002
 - "id": "dryad_links.all_prefixes"
   "r": "dryad_links"
-  "py": "pytacheck.archives.dryad.dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
   "args":
     "paper":
       "$test_paper":
@@ -300,7 +300,7 @@
   "compare": *id002
 - "id": "figshare_links.test_paper"
   "r": "figshare_links"
-  "py": "pytacheck.archives.figshare.figshare_links"
+  "py": "metacheck.archives.figshare.figshare_links"
   "args":
     "paper":
       "$test_paper":
@@ -321,7 +321,7 @@
   "compare": *id002
 - "id": "dataverse_links.test_paper"
   "r": "dataverse_links"
-  "py": "pytacheck.archives.dataverse.dataverse_links"
+  "py": "metacheck.archives.dataverse.dataverse_links"
   "args":
     "paper":
       "$test_paper":
@@ -354,7 +354,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(dryad_info(dryad_links(test_paper(text = \"see 10.5061/dryad.j1fd7 and 10.5061/dryad.missing\", url = c(\"https://doi.org/10.5061/dryad.j1fd7/\", \"https://doi.org/10.25338/B8N33J\")))), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda m: m.dryad.dryad_info(m.dryad.dryad_links(__import__(\"pytacheck\").test_paper([\"see 10.5061/dryad.j1fd7 and 10.5061/dryad.missing\"], [\"https://doi.org/10.5061/dryad.j1fd7/\", \"https://doi.org/10.25338/B8N33J\"])))"
+        "py": "lambda m: m.dryad.dryad_info(m.dryad.dryad_links(__import__(\"metacheck\").test_paper([\"see 10.5061/dryad.j1fd7 and 10.5061/dryad.missing\"], [\"https://doi.org/10.5061/dryad.j1fd7/\", \"https://doi.org/10.25338/B8N33J\"])))"
   "mock_dir": "tests/archives_d1/mocks"
   "compare": *id002
 - "id": "dryad_info.mock.id_col_name"
@@ -445,7 +445,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(figshare_info(figshare_links(test_paper(url = c(\"https://figshare.com/articles/dataset/some_title/18093368\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\")))), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda m: m.figshare.figshare_info(m.figshare.figshare_links(__import__(\"pytacheck\").test_paper(None, [\"https://figshare.com/articles/dataset/some_title/18093368\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\"])))"
+        "py": "lambda m: m.figshare.figshare_info(m.figshare.figshare_links(__import__(\"metacheck\").test_paper(None, [\"https://figshare.com/articles/dataset/some_title/18093368\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\"])))"
   "mock_dir": "tests/archives_d1/mocks"
   "compare": *id002
 - "id": "figshare_info.mock.no_valid"
@@ -482,7 +482,7 @@
     "x":
       "$expr":
         "r": "testthat::with_mocked_bindings(dataverse_info(dataverse_links(test_paper(text = \"see https://doi.org/10.18167/DVN1/T0DMFJ.\", url = c(\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\")))), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda m: m.dataverse.dataverse_info(m.dataverse.dataverse_links(__import__(\"pytacheck\").test_paper([\"see https://doi.org/10.18167/DVN1/T0DMFJ.\"], [\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\"])))"
+        "py": "lambda m: m.dataverse.dataverse_info(m.dataverse.dataverse_links(__import__(\"metacheck\").test_paper([\"see https://doi.org/10.18167/DVN1/T0DMFJ.\"], [\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\"])))"
   "mock_dir": "tests/archives_d1/mocks"
   "compare": *id002
 - "id": "dataverse_info.mock.no_valid"
@@ -802,7 +802,7 @@
         "py": "lambda m: m.tmp(lambda d: m.dataverse._dataverse_verify_downloads(pd.DataFrame({\"id\": pd.array([], dtype=\"string\"), \"path\": pd.array([], dtype=\"string\")}), d))"
 - "id": "dataverse_pat.set_error"
   "r": "dataverse_pat"
-  "py": "pytacheck.archives.dataverse.dataverse_pat"
+  "py": "metacheck.archives.dataverse.dataverse_pat"
   "args":
     "host": "dataverse.harvard.edu"
     "pat":
@@ -810,21 +810,21 @@
       - 123
 - "id": "figshare_pat.set_error"
   "r": "figshare_pat"
-  "py": "pytacheck.archives.figshare.figshare_pat"
+  "py": "metacheck.archives.figshare.figshare_pat"
   "args":
     "pat":
       "$lgl":
       - true
 - "id": "dryad_pat.set_error"
   "r": "dryad_pat"
-  "py": "pytacheck.archives.dryad.dryad_pat"
+  "py": "metacheck.archives.dryad.dryad_pat"
   "args":
     "pat":
       "$dbl":
       - 1
 - "id": "dryad_auth.no_secret_error"
   "r": "dryad_auth"
-  "py": "pytacheck.archives.dryad.dryad_auth"
+  "py": "metacheck.archives.dryad.dryad_auth"
   "args":
     "client_id": "abc"
 - "id": "dryad_auth.unset"

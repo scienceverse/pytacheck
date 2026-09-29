@@ -1,12 +1,12 @@
-"""Tests for pytacheck.archives.dspace7 (R/archive-dspace7.R has no testthat file upstream)."""
+"""Tests for metacheck.archives.dspace7 (R/archive-dspace7.R has no testthat file upstream)."""
 
 from __future__ import annotations
 
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.dspace7 import (
+import metacheck as pc
+from metacheck.archives.dspace7 import (
     DSPACE7_HOSTS,
     _dspace7_host_regex,
     _dspace7_info,
@@ -105,7 +105,7 @@ def test_file_download_edge_cases(mock_api: object) -> None:
 def test_file_lists_name_the_items_not_found(mock_api: object) -> None:
     # U43: repo_check() reports the items that could not be found; an item
     # without files was found
-    from pytacheck.archives.dspace7 import _dspace7_file_lists
+    from metacheck.archives.dspace7 import _dspace7_file_lists
 
     no_files = "https://scholarworks.umass.edu/items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
     assert _dspace7_file_lists(no_files) == (None, [])

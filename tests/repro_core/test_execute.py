@@ -11,8 +11,8 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.repro import core
-from pytacheck.repro.core import (
+from metacheck.repro import core
+from metacheck.repro.core import (
     MaterialisedRoot,
     repro_install_deps,
     repro_materialize_layout,

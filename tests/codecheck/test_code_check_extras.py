@@ -13,9 +13,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.codecheck import core
-from pytacheck.codecheck._reval import NA, EvalError, RVersion, r_eval
-from pytacheck.codecheck._rparse import parse_exprs
+from metacheck.codecheck import core
+from metacheck.codecheck._reval import NA, EvalError, RVersion, r_eval
+from metacheck.codecheck._rparse import parse_exprs
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPAND = Path(__file__).parent / "fixtures" / "expand"  # copies of statout fixtures

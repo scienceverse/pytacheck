@@ -23,9 +23,9 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck import http
-from pytacheck.archives import download as dlm
-from pytacheck.archives.download import (
+from metacheck import http
+from metacheck.archives import download as dlm
+from metacheck.archives.download import (
     _auth_for_url,
     _download_many_parallel,
     _download_one,
@@ -48,7 +48,7 @@ from pytacheck.archives.download import (
     repo_cache_dir,
     repo_cache_size,
 )
-from pytacheck.utils import get_option, local_options
+from metacheck.utils import get_option, local_options
 
 DATA = Path(__file__).resolve().parent / "data"
 
@@ -367,7 +367,7 @@ def _fill_zip(files: pd.DataFrame, row_idx: list[int], zip_url: str, **kw: Any) 
 
 
 def test_zip_timeout_is_passed_to_zip_transport(monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.osf as osf
+    import metacheck.archives.osf as osf
 
     seen: dict[str, Any] = {}
 
@@ -400,7 +400,7 @@ def test_zip_timeout_for_size() -> None:
 def test_reports_archive_larger_than_selected_files(
     monkeypatch: pytest.MonkeyPatch, messages: list[str]
 ) -> None:
-    import pytacheck.archives.osf as osf
+    import metacheck.archives.osf as osf
 
     monkeypatch.setattr(osf, "osf_check_id", lambda x: "abcde")
     monkeypatch.setattr(
@@ -413,7 +413,7 @@ def test_reports_archive_larger_than_selected_files(
 
 
 def test_osf_decision_scales_with_the_repo_not_the_batch(monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.osf as osf
+    import metacheck.archives.osf as osf
 
     n_decoy = 20000
     decoy = pd.DataFrame(
@@ -455,7 +455,7 @@ def _dryad_files(n: int, doi: str) -> pd.DataFrame:
 def test_dryad_small_dataset_skips_zip(
     monkeypatch: pytest.MonkeyPatch, messages: list[str]
 ) -> None:
-    import pytacheck.archives.dryad as dryad
+    import metacheck.archives.dryad as dryad
 
     def no_zip(*a: Any, **k: Any) -> Any:
         raise AssertionError("zip transport should not be called for a 3-file Dryad dataset")
@@ -478,7 +478,7 @@ def test_dryad_small_dataset_skips_zip(
 
 
 def test_dryad_larger_dataset_uses_zip(monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.dryad as dryad
+    import metacheck.archives.dryad as dryad
 
     seen: dict[str, Any] = {}
 
@@ -499,7 +499,7 @@ def test_dryad_larger_dataset_uses_zip(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_osf_non_osfstorage_rows_fall_back(monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.osf as osf
+    import metacheck.archives.osf as osf
 
     files = pd.DataFrame(
         {
@@ -644,7 +644,7 @@ def test_host_rate_limit_round_trip() -> None:
     _host_rate_limit_record(host, 5)
     remaining = _host_rate_limit_remaining(host)
     assert 4 < remaining <= 5
-    # shared with pytacheck.http's per-host memory
+    # shared with metacheck.http's per-host memory
     assert http.host_reset_at(host) is not None
 
 
@@ -951,7 +951,7 @@ def test_download_zip_to_cache_caps_and_failures(tmp_path: Path, messages: list[
 def test_download_repo_files_github_zip_end_to_end(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import pytacheck.archives.github as gh
+    import metacheck.archives.github as gh
 
     data = _zip_bytes({"README.md": b"# r\n", "code/run.R": b"1\n"}, top="o-r-abc123/")
     files = pd.DataFrame(
@@ -986,7 +986,7 @@ def test_empty_and_null_input() -> None:
 
 
 def test_archive_member_rows(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.zip_peek as zp
+    import metacheck.archives.zip_peek as zp
 
     calls: list[tuple[str, list[str]]] = []
 

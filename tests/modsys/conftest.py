@@ -15,8 +15,8 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.packs.auth import TOKEN_VARS
-from pytacheck.packs.registry import refresh
+from metacheck.packs.auth import TOKEN_VARS
+from metacheck.packs.registry import refresh
 from tests.modsys.helpers import ModSys
 
 #: the token of the environment the tests started in (only the live test uses it)
@@ -56,6 +56,6 @@ def ms(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[ModSys]:
 
 @pytest.fixture
 def paper():
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.test_paper("Nothing much. The effect was marginally significant, p = .06.")

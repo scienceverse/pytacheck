@@ -10,45 +10,45 @@
 # R/stat_helpers.R must be applied to the files listed below.
 #
 # The statcheck R package (1.5.0, a pinned dependency of metacheck, not part of
-# the upstream submodule) is ported in src/pytacheck/stats/statcheck.py (R's
-# nmath/round primitives it relies on in src/pytacheck/stats/_rmath.py); its
+# the upstream submodule) is ported in src/metacheck/stats/statcheck.py (R's
+# nmath/round primitives it relies on in src/metacheck/stats/_rmath.py); its
 # functions are listed with a "statcheck::" prefix. Not ported (porting/skip.toml):
 # its PDF/HTML file front ends, plot.statcheck(), identify.statcheck() and
 # statcheckReport(), none of which metacheck calls.
 
 [files]
-"R/stats.R" = ["src/pytacheck/stats/core.py"]
+"R/stats.R" = ["src/metacheck/stats/core.py"]
 "R/stat_helpers.R" = [
-    "src/pytacheck/stats/helpers.py",
-    "src/pytacheck/statout/stat_output.py",
-    "src/pytacheck/statout/stat_tables.py",
-    "src/pytacheck/statout/match_reported.py",
-    "src/pytacheck/statout/match_table.py",
-    "src/pytacheck/text/extract_tests.py",
+    "src/metacheck/stats/helpers.py",
+    "src/metacheck/statout/stat_output.py",
+    "src/metacheck/statout/stat_tables.py",
+    "src/metacheck/statout/match_reported.py",
+    "src/metacheck/statout/match_table.py",
+    "src/metacheck/text/extract_tests.py",
 ]
-"inst/modules/stat_check.R" = ["src/pytacheck/modules/stat_check.py"]
+"inst/modules/stat_check.R" = ["src/metacheck/modules/stat_check.py"]
 
 [functions]
-stats = "pytacheck.stats.core:stats"
-".r_stat_pattern" = "pytacheck.stats.helpers:_r_stat_pattern"
-".stat_display_value" = "pytacheck.stats.helpers:_stat_display_value"
-".stat_html_escape" = "pytacheck.stats.helpers:_stat_html_escape"
-".stato_strip_variant" = "pytacheck.stats.helpers:_stato_strip_variant"
-"module:stat_check" = "pytacheck.modules.stat_check:stat_check"
-"statcheck::statcheck" = "pytacheck.stats.statcheck:statcheck"
-"statcheck::trim" = "pytacheck.stats.statcheck:trim"
-"statcheck:::summary.statcheck" = "pytacheck.stats.statcheck:summary_statcheck"
-"statcheck:::extract_stats" = "pytacheck.stats.statcheck:extract_stats"
-"statcheck:::extract_pattern" = "pytacheck.stats.statcheck:extract_pattern"
-"statcheck:::extract_df" = "pytacheck.stats.statcheck:extract_df"
-"statcheck:::extract_test_stats" = "pytacheck.stats.statcheck:extract_test_stats"
-"statcheck:::extract_p_value" = "pytacheck.stats.statcheck:extract_p_value"
-"statcheck:::extract_1tail" = "pytacheck.stats.statcheck:extract_1tail"
-"statcheck:::remove_1000_sep" = "pytacheck.stats.statcheck:remove_1000_sep"
-"statcheck:::recover_minus_sign" = "pytacheck.stats.statcheck:recover_minus_sign"
-"statcheck:::compute_p" = "pytacheck.stats.statcheck:compute_p"
-"statcheck:::r2t" = "pytacheck.stats.statcheck:r2t"
-"statcheck:::error_test" = "pytacheck.stats.statcheck:error_test"
-"statcheck:::decision_error_test" = "pytacheck.stats.statcheck:decision_error_test"
-"statcheck:::process_stats" = "pytacheck.stats.statcheck:process_stats"
-"statcheck:::calc_APA_factor" = "pytacheck.stats.statcheck:calc_APA_factor"
+stats = "metacheck.stats.core:stats"
+".r_stat_pattern" = "metacheck.stats.helpers:_r_stat_pattern"
+".stat_display_value" = "metacheck.stats.helpers:_stat_display_value"
+".stat_html_escape" = "metacheck.stats.helpers:_stat_html_escape"
+".stato_strip_variant" = "metacheck.stats.helpers:_stato_strip_variant"
+"module:stat_check" = "metacheck.modules.stat_check:stat_check"
+"statcheck::statcheck" = "metacheck.stats.statcheck:statcheck"
+"statcheck::trim" = "metacheck.stats.statcheck:trim"
+"statcheck:::summary.statcheck" = "metacheck.stats.statcheck:summary_statcheck"
+"statcheck:::extract_stats" = "metacheck.stats.statcheck:extract_stats"
+"statcheck:::extract_pattern" = "metacheck.stats.statcheck:extract_pattern"
+"statcheck:::extract_df" = "metacheck.stats.statcheck:extract_df"
+"statcheck:::extract_test_stats" = "metacheck.stats.statcheck:extract_test_stats"
+"statcheck:::extract_p_value" = "metacheck.stats.statcheck:extract_p_value"
+"statcheck:::extract_1tail" = "metacheck.stats.statcheck:extract_1tail"
+"statcheck:::remove_1000_sep" = "metacheck.stats.statcheck:remove_1000_sep"
+"statcheck:::recover_minus_sign" = "metacheck.stats.statcheck:recover_minus_sign"
+"statcheck:::compute_p" = "metacheck.stats.statcheck:compute_p"
+"statcheck:::r2t" = "metacheck.stats.statcheck:r2t"
+"statcheck:::error_test" = "metacheck.stats.statcheck:error_test"
+"statcheck:::decision_error_test" = "metacheck.stats.statcheck:decision_error_test"
+"statcheck:::process_stats" = "metacheck.stats.statcheck:process_stats"
+"statcheck:::calc_APA_factor" = "metacheck.stats.statcheck:calc_APA_factor"

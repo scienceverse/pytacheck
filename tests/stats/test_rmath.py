@@ -1,4 +1,4 @@
-"""R numeric primitives used by statcheck (pytacheck.stats._rmath); values from R 4.5."""
+"""R numeric primitives used by statcheck (metacheck.stats._rmath); values from R 4.5."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import math
 
 import pytest
 
-from pytacheck.stats._rmath import as_numeric, pchisq, pf, pnorm, pt, r_round, sqrt
+from metacheck.stats._rmath import as_numeric, pchisq, pf, pnorm, pt, r_round, sqrt
 
 
 @pytest.mark.parametrize(

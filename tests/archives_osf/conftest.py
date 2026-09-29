@@ -23,7 +23,7 @@ __all__ = ["osf_mock_path", "replay_osf"]
 @pytest.fixture(autouse=True)
 def _osf_test_options(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[None]:
     """metacheck's test setup: no session listing cache, no token, caches in a temp dir."""
-    from pytacheck import utils
+    from metacheck import utils
 
     monkeypatch.setenv("OSF_PAT", "")
     with utils.local_options(
@@ -52,20 +52,20 @@ _STUB_TYPES = {
 
 @pytest.fixture
 def filetype_available(monkeypatch: pytest.MonkeyPatch) -> bool:
-    """Make ``pytacheck.fileinfo.category.filetype`` importable.
+    """Make ``metacheck.fileinfo.category.filetype`` importable.
 
     The real port belongs to another work item; until it exists a small
     extension-map stub stands in (returns ``False`` so tests can skip
     assertions about exact types).
     """
     try:
-        importlib.import_module("pytacheck.fileinfo.category")
+        importlib.import_module("metacheck.fileinfo.category")
         return True
     except ImportError:
         pass
-    pkg = types.ModuleType("pytacheck.fileinfo")
+    pkg = types.ModuleType("metacheck.fileinfo")
     pkg.__path__ = []  # type: ignore[attr-defined]
-    mod = types.ModuleType("pytacheck.fileinfo.category")
+    mod = types.ModuleType("metacheck.fileinfo.category")
 
     def filetype(filename: list[str]) -> list[str]:
         out = []
@@ -75,17 +75,17 @@ def filetype_available(monkeypatch: pytest.MonkeyPatch) -> bool:
         return out
 
     mod.filetype = filetype  # type: ignore[attr-defined]
-    monkeypatch.setitem(sys.modules, "pytacheck.fileinfo", pkg)
-    monkeypatch.setitem(sys.modules, "pytacheck.fileinfo.category", mod)
+    monkeypatch.setitem(sys.modules, "metacheck.fileinfo", pkg)
+    monkeypatch.setitem(sys.modules, "metacheck.fileinfo.category", mod)
     return False
 
 
 def _stub_download_many_parallel(urls, dests, expected_size=float("nan")):  # type: ignore[no-untyped-def]
-    """Minimal stand-in for ``pytacheck.archives.download._download_many_parallel``."""
+    """Minimal stand-in for ``metacheck.archives.download._download_many_parallel``."""
     import math
     import os
 
-    from pytacheck import http
+    from metacheck import http
 
     sizes = expected_size if isinstance(expected_size, list) else [expected_size] * len(urls)
     errs: list[str | None] = []
@@ -112,18 +112,18 @@ def _stub_download_many_parallel(urls, dests, expected_size=float("nan")):  # ty
 
 @pytest.fixture
 def download_available(monkeypatch: pytest.MonkeyPatch) -> bool:
-    """Make ``pytacheck.archives.download._download_many_parallel`` importable.
+    """Make ``metacheck.archives.download._download_many_parallel`` importable.
 
     Uses the real port when it exists; otherwise a small sequential stand-in
     (returns ``False``).
     """
     try:
-        mod = importlib.import_module("pytacheck.archives.download")
+        mod = importlib.import_module("metacheck.archives.download")
         if hasattr(mod, "_download_many_parallel"):
             return True
     except ImportError:
         pass
-    stub = types.ModuleType("pytacheck.archives.download")
+    stub = types.ModuleType("metacheck.archives.download")
     stub._download_many_parallel = _stub_download_many_parallel  # type: ignore[attr-defined]
-    monkeypatch.setitem(sys.modules, "pytacheck.archives.download", stub)
+    monkeypatch.setitem(sys.modules, "metacheck.archives.download", stub)
     return False

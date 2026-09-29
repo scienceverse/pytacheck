@@ -1,6 +1,6 @@
 # Parity cases for the repo_download work item: R/file_category.R, R/file-naming.R,
-# data/file_types.rda (pytacheck.fileinfo), R/zip-peek.R (pytacheck.archives.zip_peek)
-# and R/repo-download.R (pytacheck.archives.download).
+# data/file_types.rda (metacheck.fileinfo), R/zip-peek.R (metacheck.archives.zip_peek)
+# and R/repo-download.R (metacheck.archives.download).
 #
 # The file-name / file-type cases below are written by hand; the cases after the
 # "BEGIN GENERATED" marker come from tests/repo_download/gen_parity_cases.py.
@@ -11,7 +11,7 @@
 # -- metacheck::file_types (data/file_types.rda) ---------------------------------
 - "id": "file_types.table"
   "r": "identity"
-  "py": "pytacheck.fileinfo.types.file_types"
+  "py": "metacheck.fileinfo.types.file_types"
   "args":
     "x":
       "$expr":
@@ -22,7 +22,7 @@
 # -- filetype() ---------------------------------------------------------------
 - "id": "filetype.examples"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename": ["script.R", "b.json", "c.xyz", "noext", "d.JSON", "e.tar.gz", "f.fasta.gz",
                  "x.", "a.R.", "a..", "...", ".", ".R", "x.C++", "sub/dir/x.Rmd", "x.sav.gz",
@@ -30,60 +30,60 @@
                  "codebook.sas", "codebook.pdf", "x.JASP", "x.por", "x.html", "a b.docx"]
 - "id": "filetype.single"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename": "script.R"
 - "id": "filetype.duplicates"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename": ["a.R", "a.R", "b.csv"]
 - "id": "filetype.na"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename": {"$chr": ["a.R", null]}
 - "id": "filetype.empty"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename": {"$chr": []}
 - "id": "filetype.empty_string_error"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename": {"$chr": [""]}
 - "id": "filetype.every_extension"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename":
       "$expr":
         "r": "paste0('file.', metacheck::file_types$ext)"
-        "py": "['file.' + e for e in __import__('pytacheck.fileinfo.types', fromlist=['x']).file_types()['ext']]"
+        "py": "['file.' + e for e in __import__('metacheck.fileinfo.types', fromlist=['x']).file_types()['ext']]"
 - "id": "filetype.every_extension_upper"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename":
       "$expr":
         "r": "paste0('FILE.', toupper(metacheck::file_types$ext))"
-        "py": "['FILE.' + e.upper() for e in __import__('pytacheck.fileinfo.types', fromlist=['x']).file_types()['ext']]"
+        "py": "['FILE.' + e.upper() for e in __import__('metacheck.fileinfo.types', fromlist=['x']).file_types()['ext']]"
 
 # -- file_category() ------------------------------------------------------------
 - "id": "file_category.vector"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": ["a.csv", "b.R", "codebook.xlsx", "readme.txt", "ambiguous", "file.json"]
 - "id": "file_category.single"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": "analysis.R"
 - "id": "file_category.data_frame"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -92,7 +92,7 @@
         "filetype": ["data", "code", "data", "text", "text", "code;data"]
 - "id": "file_category.edge_cases"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -102,7 +102,7 @@
         "filetype": ["text", "text", "text", "data", "stats", "stats", "stats", "text"]
 - "id": "file_category.compound_types"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": ["sample.fasta.gz", "sample.fa.gz", "sample.fq.gz", "sample.fastq.gz",
                  "x.jasp", "x.por", "c.tar.gz", "random.gz", "sample.dat.gz", "x.sav.gz",
@@ -111,7 +111,7 @@
                  "archive.zip", "slides.pptx", "fig.png", "paper.pdf", "notes.txt"]
 - "id": "file_category.codebook_names"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": ["code book.pdf", "code_book.xlsx", "Race_IAT.public.2025.codebook.csv",
                  "CODE-BOOK.txt", "data_dictionary.csv", "DataDict.xlsx", "data.dict",
@@ -123,20 +123,20 @@
                  "read__me.md", "readme_codebook.csv", "my_readme", "codebook_readme.R"]
 - "id": "file_category.na_and_empty_names"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": {"$chr": ["a.R", null, "", "data.csv"]}
 - "id": "file_category.every_extension"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$expr":
         "r": "paste0('file.', metacheck::file_types$ext)"
-        "py": "['file.' + e for e in __import__('pytacheck.fileinfo.types', fromlist=['x']).file_types()['ext']]"
+        "py": "['file.' + e for e in __import__('metacheck.fileinfo.types', fromlist=['x']).file_types()['ext']]"
 - "id": "file_category.given_filetype"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -146,7 +146,7 @@
         "category": ["codebook", null, null, null, null, null, null, null, "codebook", null]
 - "id": "file_category.osf_like"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -157,7 +157,7 @@
         "category": [null, "data", null, null]
 - "id": "file_category.partial_match"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -165,7 +165,7 @@
         "category_x": [null, "codebook", null]
 - "id": "file_category.ambiguous_partial_match"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -174,7 +174,7 @@
         "filetype_2": ["code", "code"]
 - "id": "file_category.existing_file_category"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -182,29 +182,29 @@
         "name": ["a.R", "README"]
 - "id": "file_category.empty_data_frame"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": {"$df": {}}
 - "id": "file_category.empty_vector"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": {"$chr": []}
 - "id": "file_category.null"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": {"$null": true}
 - "id": "file_category.no_name_error"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
         "x": ["code", "data"]
 - "id": "file_category.no_name_filetype_error"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$df":
@@ -213,7 +213,7 @@
 # -- check_file_naming() --------------------------------------------------------
 - "id": "check_file_naming.mixed"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["my file.csv", "data_2.csv", "data_11.csv", "résumé.txt", "x_20231301.csv",
                   "a b&c.R", "ok.R", "file 1.R", "file 12.R", "naïve data.csv", "日本.csv",
@@ -221,40 +221,40 @@
                   "a'b.R", "UPPER_Case.R", "camelCaseName.R", "under_score-dash.R"]
 - "id": "check_file_naming.clean"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["analysis.R", "data.csv", "README.md", "01_clean.R", "02_model.R"]
 - "id": "check_file_naming.single"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": "my file.R"
 - "id": "check_file_naming.empty"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": {"$chr": []}
 - "id": "check_file_naming.data_type"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["a.R", "b.R", "c.xyz", "d"]
     "data_type": {"$chr": ["unknown", null, "data", "unknown"]}
 - "id": "check_file_naming.data_type_recycled"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["a.R", "b c.R", "d"]
     "data_type": "unknown"
 - "id": "check_file_naming.data_type_short"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["a.R", "b.R", "c.R"]
     "data_type": ["unknown", "code"]
 - "id": "check_file_naming.dates"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["x_20230229.csv", "x_20240229.csv", "00000101.csv", "00000229.csv",
                   "19000229.csv", "20000229.csv", "20231301.csv", "20230001.csv",
@@ -264,7 +264,7 @@
                   "a20230230b20230231.R", "id_123456789.csv"]
 - "id": "check_file_naming.padding"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["pp1.csv", "pp2.csv", "pp10.csv", "pp100.csv", "study1_data.csv",
                   "study2_data.csv", "study12_data.csv", "s01.R", "s2.R", "s003.R",
@@ -272,7 +272,7 @@
                   "fig22.png", "1", "22", "v1.2.3.R", "v1.2.10.R"]
 - "id": "check_file_naming.paths"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["a.R", "b.R", "c.R", "d.R", "e.R"]
     "file_path":
@@ -281,7 +281,7 @@
         "py": "['d' * 101 + '/a.R', 'x\\\\' + 'y' * 120 + '\\\\b.R', 'p' * 230 + '.R', 'q' * 150 + '/' + 'r' * 120 + '.R', 'e.R']"
 - "id": "check_file_naming.long_names"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name":
       "$expr":
@@ -289,12 +289,12 @@
         "py": "['n' * 50 + '.R', 'é' * 49 + '.R', 'm' * 48 + '.R', 'dir/sub/ok.R']"
 - "id": "check_file_naming.na_error"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": {"$chr": ["a.R", null]}
 - "id": "check_file_naming.na_with_long_paths"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": {"$chr": ["a.R", null, "b c.R"]}
     "file_path":
@@ -305,44 +305,44 @@
 # -- internals ------------------------------------------------------------------
 - "id": "file_naming_check_one.clean"
   "r": ".file_naming_check_one"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_one"
+  "py": "metacheck.fileinfo.naming._file_naming_check_one"
   "args":
     "file_name": "analysis.R"
 - "id": "file_naming_check_one.dir_and_dates"
   "r": ".file_naming_check_one"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_one"
+  "py": "metacheck.fileinfo.naming._file_naming_check_one"
   "args":
     "file_name": "sub dir/20230230_1234567890123456.tar.gz"
 - "id": "file_naming_check_one.everything"
   "r": ".file_naming_check_one"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_one"
+  "py": "metacheck.fileinfo.naming._file_naming_check_one"
   "args":
     "file_name": "résumé 20231399.csv"
     "data_type": "unknown"
 - "id": "file_naming_check_one.na"
   "r": ".file_naming_check_one"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_one"
+  "py": "metacheck.fileinfo.naming._file_naming_check_one"
   "args":
     "file_name": {"$chr": [null]}
 - "id": "file_naming_check_padding.examples"
   "r": ".file_naming_check_padding"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_padding"
+  "py": "metacheck.fileinfo.naming._file_naming_check_padding"
   "args":
     "file_names": {"$chr": ["pp1.csv", "pp10.csv", "a12b34.csv", "a12b5.csv", "x1y.csv",
                             "x22y.csv", "x333y.csv", null, "", "123", "7", "dir/pp3.csv"]}
 - "id": "file_naming_check_padding.empty"
   "r": ".file_naming_check_padding"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_padding"
+  "py": "metacheck.fileinfo.naming._file_naming_check_padding"
   "args":
     "file_names": {"$chr": []}
 - "id": "file_naming_check_padding.no_numbers"
   "r": ".file_naming_check_padding"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_padding"
+  "py": "metacheck.fileinfo.naming._file_naming_check_padding"
   "args":
     "file_names": ["a.R", "b.R"]
 - "id": "file_naming_check_length.paths"
   "r": ".file_naming_check_length"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_length"
+  "py": "metacheck.fileinfo.naming._file_naming_check_length"
   "args":
     "file_path":
       "$expr":
@@ -350,17 +350,17 @@
         "py": "['a\\\\b\\\\c.R', 'x' * 120 + '\\\\y.R', '/abc/de', './x', './' + 'y' * 51, 'a//b', 'z' * 101 + '/', '/' + 'w' * 60]"
 - "id": "file_naming_check_length.clean"
   "r": ".file_naming_check_length"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_length"
+  "py": "metacheck.fileinfo.naming._file_naming_check_length"
   "args":
     "file_path": ["a.R", "dir/b.R"]
 - "id": "file_naming_check_length.na_error"
   "r": ".file_naming_check_length"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_length"
+  "py": "metacheck.fileinfo.naming._file_naming_check_length"
   "args":
     "file_path": {"$chr": ["a.R", null]}
 - "id": "file_naming_check_length.na_rows"
   "r": ".file_naming_check_length"
-  "py": "pytacheck.fileinfo.naming._file_naming_check_length"
+  "py": "metacheck.fileinfo.naming._file_naming_check_length"
   "args":
     "file_path":
       "$expr":
@@ -370,24 +370,24 @@
 # -- more file-name / file-type edge cases ---------------------------------------
 - "id": "filetype.unicode_case"
   "r": "filetype"
-  "py": "pytacheck.fileinfo.category.filetype"
+  "py": "metacheck.fileinfo.category.filetype"
   "args":
     "filename": ["a.İNİ", "b.ĶML", "c.ẞ", "d.ﬀ", "e.CSVİ", "f.JSON", "g.Ｒ",
                  "h.Sav", "i.DTA", "j.Rmd", "k.ipynb", "l.qmd", "m.do", "n.sps", "o.omv"]
 - "id": "file_category.list_column_filetype"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents":
       "$call":
         "r": "file_category"
-        "py": "pytacheck.fileinfo.category.file_category"
+        "py": "metacheck.fileinfo.category.file_category"
         "args":
           "contents": ["study1.csv", "README.md", "code/analysis.R", "stats.sps", "x.jasp",
                        "codebook.xlsx", "figure.png", "data.fq.gz", "notes"]
 - "id": "file_category.paths_and_case"
   "r": "file_category"
-  "py": "pytacheck.fileinfo.category.file_category"
+  "py": "metacheck.fileinfo.category.file_category"
   "args":
     "contents": ["sub/dir/data.csv", "README", "ReadMe.md", "read-me", "docs/Codebook.PDF",
                  "DATA.CSV", "Analysis.PY", "model.STAN", "x.Rdata", "x.RDS", "x.sas7bdat",
@@ -395,7 +395,7 @@
                  "tab\tname.csv", "résumé.R", "日本語.csv", "x.MAT", "x.parquet"]
 - "id": "check_file_naming.path_vector"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["a b.R", "c.R", "d.R"]
     "file_path":
@@ -404,7 +404,7 @@
         "py": "['p' * 260 + '.R']"
 - "id": "check_file_naming.special_characters"
   "r": "check_file_naming"
-  "py": "pytacheck.fileinfo.naming.check_file_naming"
+  "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
     "file_name": ["a!b.R", "a@b.R", "a$b.R", "a%b.R", "a^b.R", "a*b.R", "a=b.R", "a[b].R",
                   "a{b}.R", "a|b.R", "a;b.R", "a:b.R", "a<b>.R", "a?b.R", "a\\b.R", "a/b.R",
@@ -414,7 +414,7 @@
 # BEGIN GENERATED by tests/repo_download/gen_parity_cases.py -- do not edit below
 - "id": "le_int.at1_n4"
   "r": ".le_int"
-  "py": "pytacheck.archives.zip_peek._le_int"
+  "py": "metacheck.archives.zip_peek._le_int"
   "args":
     "raw":
       "$expr":
@@ -424,7 +424,7 @@
     "n": 4
 - "id": "le_int.at5_n4"
   "r": ".le_int"
-  "py": "pytacheck.archives.zip_peek._le_int"
+  "py": "metacheck.archives.zip_peek._le_int"
   "args":
     "raw":
       "$expr":
@@ -434,7 +434,7 @@
     "n": 4
 - "id": "le_int.at3_n2"
   "r": ".le_int"
-  "py": "pytacheck.archives.zip_peek._le_int"
+  "py": "metacheck.archives.zip_peek._le_int"
   "args":
     "raw":
       "$expr":
@@ -444,7 +444,7 @@
     "n": 2
 - "id": "le_int.at1_n1"
   "r": ".le_int"
-  "py": "pytacheck.archives.zip_peek._le_int"
+  "py": "metacheck.archives.zip_peek._le_int"
   "args":
     "raw":
       "$expr":
@@ -454,7 +454,7 @@
     "n": 1
 - "id": "le_int.at7_n4"
   "r": ".le_int"
-  "py": "pytacheck.archives.zip_peek._le_int"
+  "py": "metacheck.archives.zip_peek._le_int"
   "args":
     "raw":
       "$expr":
@@ -464,7 +464,7 @@
     "n": 4
 - "id": "le_int.at9_n2"
   "r": ".le_int"
-  "py": "pytacheck.archives.zip_peek._le_int"
+  "py": "metacheck.archives.zip_peek._le_int"
   "args":
     "raw":
       "$expr":
@@ -474,7 +474,7 @@
     "n": 2
 - "id": "crc32.check_value"
   "r": ".crc32"
-  "py": "pytacheck.archives.zip_peek._crc32"
+  "py": "metacheck.archives.zip_peek._crc32"
   "args":
     "bytes":
       "$expr":
@@ -482,7 +482,7 @@
         "py": "b'123456789'"
 - "id": "crc32.empty"
   "r": ".crc32"
-  "py": "pytacheck.archives.zip_peek._crc32"
+  "py": "metacheck.archives.zip_peek._crc32"
   "args":
     "bytes":
       "$expr":
@@ -490,7 +490,7 @@
         "py": "b''"
 - "id": "crc32.fixture"
   "r": ".crc32"
-  "py": "pytacheck.archives.zip_peek._crc32"
+  "py": "metacheck.archives.zip_peek._crc32"
   "args":
     "bytes":
       "$expr":
@@ -498,7 +498,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('mixed.zip')"
 - "id": "zip_crc_ok.match"
   "r": ".zip_crc_ok"
-  "py": "pytacheck.archives.zip_peek._zip_crc_ok"
+  "py": "metacheck.archives.zip_peek._zip_crc_ok"
   "args":
     "bytes":
       "$expr":
@@ -507,7 +507,7 @@
     "crc": 3421780262.0
 - "id": "zip_crc_ok.mismatch"
   "r": ".zip_crc_ok"
-  "py": "pytacheck.archives.zip_peek._zip_crc_ok"
+  "py": "metacheck.archives.zip_peek._zip_crc_ok"
   "args":
     "bytes":
       "$expr":
@@ -516,7 +516,7 @@
     "crc": 12345
 - "id": "zip_crc_ok.na"
   "r": ".zip_crc_ok"
-  "py": "pytacheck.archives.zip_peek._zip_crc_ok"
+  "py": "metacheck.archives.zip_peek._zip_crc_ok"
   "args":
     "bytes":
       "$expr":
@@ -526,7 +526,7 @@
       "$NA": true
 - "id": "zip_crc_ok.near_miss_large"
   "r": ".zip_crc_ok"
-  "py": "pytacheck.archives.zip_peek._zip_crc_ok"
+  "py": "metacheck.archives.zip_peek._zip_crc_ok"
   "args":
     "bytes":
       "$expr":
@@ -535,7 +535,7 @@
     "crc": 3421780300.0
 - "id": "zip_crc_ok.near_miss_far"
   "r": ".zip_crc_ok"
-  "py": "pytacheck.archives.zip_peek._zip_crc_ok"
+  "py": "metacheck.archives.zip_peek._zip_crc_ok"
   "args":
     "bytes":
       "$expr":
@@ -544,7 +544,7 @@
     "crc": 3421790262.0
 - "id": "zip_crc_ok.empty_zero"
   "r": ".zip_crc_ok"
-  "py": "pytacheck.archives.zip_peek._zip_crc_ok"
+  "py": "metacheck.archives.zip_peek._zip_crc_ok"
   "args":
     "bytes":
       "$expr":
@@ -642,7 +642,7 @@
     "x":
       "$call":
         "r": ".zip_inflate_member"
-        "py": "pytacheck.archives.zip_peek._zip_inflate_member"
+        "py": "metacheck.archives.zip_peek._zip_inflate_member"
         "args":
           "comp":
             "$expr":
@@ -657,7 +657,7 @@
     "x":
       "$call":
         "r": ".zip_inflate_member"
-        "py": "pytacheck.archives.zip_peek._zip_inflate_member"
+        "py": "metacheck.archives.zip_peek._zip_inflate_member"
         "args":
           "comp":
             "$expr":
@@ -671,7 +671,7 @@
     "x":
       "$call":
         "r": ".zip_inflate_member"
-        "py": "pytacheck.archives.zip_peek._zip_inflate_member"
+        "py": "metacheck.archives.zip_peek._zip_inflate_member"
         "args":
           "comp":
             "$expr":
@@ -680,7 +680,7 @@
           "method": 12
 - "id": "parse_zip_central_dir.mixed.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -688,7 +688,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('mixed.zip')"
 - "id": "parse_zip_central_dir.big.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -696,7 +696,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('big.zip')"
 - "id": "parse_zip_central_dir.stored.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -704,7 +704,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('stored.zip')"
 - "id": "parse_zip_central_dir.comment.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -712,7 +712,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('comment.zip')"
 - "id": "parse_zip_central_dir.stimuli.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -720,7 +720,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('stimuli.zip')"
 - "id": "parse_zip_central_dir.unicode.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -728,7 +728,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('unicode.zip')"
 - "id": "parse_zip_central_dir.zip64.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -736,7 +736,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('zip64.zip')"
 - "id": "parse_zip_central_dir.empty.zip"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -744,7 +744,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('empty.zip')"
 - "id": "parse_zip_central_dir.notzip.bin"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -752,7 +752,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('notzip.bin')"
 - "id": "parse_zip_central_dir.archive.tar.gz"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -760,7 +760,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('archive.tar.gz')"
 - "id": "parse_zip_central_dir.big.zip.tail22"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -768,7 +768,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('big.zip', tail=22)"
 - "id": "parse_zip_central_dir.big.zip.tail60"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -776,7 +776,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('big.zip', tail=60)"
 - "id": "parse_zip_central_dir.big.zip.tail120"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -784,7 +784,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('big.zip', tail=120)"
 - "id": "parse_zip_central_dir.mixed.zip.tail300"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -793,7 +793,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('mixed.zip', tail=300)"
 - "id": "parse_zip_central_dir.mixed.zip.tail21"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -802,7 +802,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('mixed.zip', tail=21)"
 - "id": "parse_zip_central_dir.comment.zip.tail250"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -811,7 +811,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('comment.zip', tail=250)"
 - "id": "parse_zip_central_dir.mixed.zip.head"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -820,7 +820,7 @@
         "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).raw('mixed.zip', head=1500)"
 - "id": "parse_zip_central_dir.empty_raw"
   "r": ".parse_zip_central_dir"
-  "py": "pytacheck.archives.zip_peek._parse_zip_central_dir"
+  "py": "metacheck.archives.zip_peek._parse_zip_central_dir"
   "args":
     "raw":
       "$expr":
@@ -828,7 +828,7 @@
         "py": "b''"
 - "id": "is_zip.names"
   "r": ".is_zip"
-  "py": "pytacheck.archives.zip_peek._is_zip"
+  "py": "metacheck.archives.zip_peek._is_zip"
   "args":
     "name":
       "$chr":
@@ -856,7 +856,7 @@
       - ""
 - "id": "is_tar_archive.names"
   "r": ".is_tar_archive"
-  "py": "pytacheck.archives.zip_peek._is_tar_archive"
+  "py": "metacheck.archives.zip_peek._is_tar_archive"
   "args":
     "name":
       "$chr":
@@ -884,7 +884,7 @@
       - ""
 - "id": "is_single_compress.names"
   "r": ".is_single_compress"
-  "py": "pytacheck.archives.zip_peek._is_single_compress"
+  "py": "metacheck.archives.zip_peek._is_single_compress"
   "args":
     "name":
       "$chr":
@@ -912,7 +912,7 @@
       - ""
 - "id": "is_readable_archive.names"
   "r": ".is_readable_archive"
-  "py": "pytacheck.archives.zip_peek._is_readable_archive"
+  "py": "metacheck.archives.zip_peek._is_readable_archive"
   "args":
     "name":
       "$chr":
@@ -940,67 +940,67 @@
       - ""
 - "id": "zip_peek.mixed.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/mixed.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.big.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/big.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.stored.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/stored.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.comment.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/comment.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.unicode.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/unicode.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.zip64.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/zip64.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.notzip.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/notzip.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.ignored-range.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/ignored-range.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.refused.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/refused.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.nolength.zip"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/nolength.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_peek.tail_retry"
   "r": "zip_peek"
-  "py": "pytacheck.archives.zip_peek.zip_peek"
+  "py": "metacheck.archives.zip_peek.zip_peek"
   "args":
     "url": "https://mock.example.org/zips/tail-retry.zip"
     "tail_bytes": 50
@@ -1012,7 +1012,7 @@
     "x":
       "$call":
         "r": "metacheck:::.http_range_tail"
-        "py": "pytacheck.archives.zip_peek._http_range_tail"
+        "py": "metacheck.archives.zip_peek._http_range_tail"
         "args":
           "url": "https://mock.example.org/zips/ignored-range.zip"
           "n": 40
@@ -1024,7 +1024,7 @@
     "x":
       "$call":
         "r": "metacheck:::.http_range_tail"
-        "py": "pytacheck.archives.zip_peek._http_range_tail"
+        "py": "metacheck.archives.zip_peek._http_range_tail"
         "args":
           "url": "https://mock.example.org/zips/stimuli.zip"
           "n": 30
@@ -1036,7 +1036,7 @@
     "x":
       "$call":
         "r": "metacheck:::.http_range_tail"
-        "py": "pytacheck.archives.zip_peek._http_range_tail"
+        "py": "metacheck.archives.zip_peek._http_range_tail"
         "args":
           "url": "https://mock.example.org/zips/stimuli.zip"
           "n": 10
@@ -1049,7 +1049,7 @@
     "x":
       "$call":
         "r": "metacheck:::.http_range_bytes"
-        "py": "pytacheck.archives.zip_peek._http_range_bytes"
+        "py": "metacheck.archives.zip_peek._http_range_bytes"
         "args":
           "url": "https://mock.example.org/zips/stimuli.zip"
           "from": 0
@@ -1062,7 +1062,7 @@
     "x":
       "$call":
         "r": "metacheck:::.http_range_bytes"
-        "py": "pytacheck.archives.zip_peek._http_range_bytes"
+        "py": "metacheck.archives.zip_peek._http_range_bytes"
         "args":
           "url": "https://mock.example.org/zips/stimuli.zip"
           "from": 10
@@ -1075,7 +1075,7 @@
     "x":
       "$call":
         "r": "metacheck:::.http_range_bytes"
-        "py": "pytacheck.archives.zip_peek._http_range_bytes"
+        "py": "metacheck.archives.zip_peek._http_range_bytes"
         "args":
           "url": "https://mock.example.org/zips/stimuli.zip"
           "from": 9
@@ -1083,25 +1083,25 @@
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.data"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/mixed.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.stimuli"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/stimuli.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.unreadable"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/notzip.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.skip_everything"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/mixed.zip"
     "skip_types":
@@ -1114,7 +1114,7 @@
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.skip_nothing"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/stimuli.zip"
     "skip_types":
@@ -1122,21 +1122,21 @@
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.skip_data"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/stored.zip"
     "skip_types": "data"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.unicode"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/unicode.zip"
     "skip_types": "materials"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "zip_decision.folder_entries"
   "r": "zip_decision"
-  "py": "pytacheck.archives.zip_peek.zip_decision"
+  "py": "metacheck.archives.zip_peek.zip_decision"
   "args":
     "url": "https://mock.example.org/zips/comment.zip"
     "skip_types": "materials"
@@ -1221,7 +1221,7 @@
     "x":
       "$call":
         "r": ".zip_member_fetch"
-        "py": "pytacheck.archives.zip_peek._zip_member_fetch"
+        "py": "metacheck.archives.zip_peek._zip_member_fetch"
         "args":
           "url": "http://example.invalid/x.zip"
           "entry":
@@ -1245,7 +1245,7 @@
     "x":
       "$call":
         "r": ".zip_member_fetch"
-        "py": "pytacheck.archives.zip_peek._zip_member_fetch"
+        "py": "metacheck.archives.zip_peek._zip_member_fetch"
         "args":
           "url": "http://example.invalid/x.zip"
           "entry":
@@ -1269,7 +1269,7 @@
     "x":
       "$call":
         "r": ".zip_member_fetch"
-        "py": "pytacheck.archives.zip_peek._zip_member_fetch"
+        "py": "metacheck.archives.zip_peek._zip_member_fetch"
         "args":
           "url": "http://example.invalid/x.zip"
           "entry":
@@ -1299,7 +1299,7 @@
     "x":
       "$call":
         "r": ".zip_member_fetch"
-        "py": "pytacheck.archives.zip_peek._zip_member_fetch"
+        "py": "metacheck.archives.zip_peek._zip_member_fetch"
         "args":
           "url": "http://example.invalid/x.zip"
           "entry":
@@ -1542,7 +1542,7 @@
       "minimal": true
 - "id": "repo_cache_rel.url0"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "https://osf.io/abc"
     "file_path":
@@ -1555,7 +1555,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url1"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "http://github.com/o/r"
     "file_path":
@@ -1568,7 +1568,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url2"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": ""
     "file_path":
@@ -1581,7 +1581,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url3"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "___"
     "file_path":
@@ -1594,7 +1594,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url4"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "osf.io/ab c/?x=1"
     "file_path":
@@ -1607,7 +1607,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url5"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "https://zenodo.org/records/123#files"
     "file_path":
@@ -1620,7 +1620,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url6"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "https://doi.org/10.5061/dryad.x1"
     "file_path":
@@ -1633,7 +1633,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url7"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "https://exämple.org/répo"
     "file_path":
@@ -1646,7 +1646,7 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.url8"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url": "::::"
     "file_path":
@@ -1659,14 +1659,14 @@
       - "déjà/vu.txt"
 - "id": "repo_cache_rel.null_repo"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url":
       "$null": true
     "file_path": "x.csv"
 - "id": "repo_cache_rel.na_repo"
   "r": ".repo_cache_rel"
-  "py": "pytacheck.archives.download._repo_cache_rel"
+  "py": "metacheck.archives.download._repo_cache_rel"
   "args":
     "repo_url":
       "$chr":
@@ -1674,7 +1674,7 @@
     "file_path": "x.csv"
 - "id": "zip_timeout_for_size.na"
   "r": ".zip_timeout_for_size"
-  "py": "pytacheck.archives.download._zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
   "args":
     "timeout_s": 120
     "expected_bytes":
@@ -1682,118 +1682,118 @@
       - null
 - "id": "zip_timeout_for_size.zero"
   "r": ".zip_timeout_for_size"
-  "py": "pytacheck.archives.download._zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
   "args":
     "timeout_s": 120
     "expected_bytes": 0
 - "id": "zip_timeout_for_size.negative"
   "r": ".zip_timeout_for_size"
-  "py": "pytacheck.archives.download._zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
   "args":
     "timeout_s": 120
     "expected_bytes": -5
 - "id": "zip_timeout_for_size.small"
   "r": ".zip_timeout_for_size"
-  "py": "pytacheck.archives.download._zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
   "args":
     "timeout_s": 10
     "expected_bytes": 1024
 - "id": "zip_timeout_for_size.large"
   "r": ".zip_timeout_for_size"
-  "py": "pytacheck.archives.download._zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
   "args":
     "timeout_s": 10
     "expected_bytes": 524288000
 - "id": "zip_timeout_for_size.custom_rate"
   "r": ".zip_timeout_for_size"
-  "py": "pytacheck.archives.download._zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
   "args":
     "timeout_s": 10
     "expected_bytes": 524288000
     "min_bytes_per_s": 1048576
 - "id": "zip_timeout_for_size.default"
   "r": ".zip_timeout_for_size"
-  "py": "pytacheck.archives.download._zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
   "args":
     "timeout_s": 60
 - "id": "format_wait_duration.s0_2"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 0.2
 - "id": "format_wait_duration.s5"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 5.0
 - "id": "format_wait_duration.s47_2"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 47.2
 - "id": "format_wait_duration.s59_99"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 59.99
 - "id": "format_wait_duration.s60"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 60.0
 - "id": "format_wait_duration.s740"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 740.0
 - "id": "format_wait_duration.s3599"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 3599.0
 - "id": "format_wait_duration.s3600"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 3600.0
 - "id": "format_wait_duration.s5040"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 5040.0
 - "id": "format_wait_duration.s86400"
   "r": ".format_wait_duration"
-  "py": "pytacheck.archives.download._format_wait_duration"
+  "py": "metacheck.archives.download._format_wait_duration"
   "args":
     "seconds": 86400.0
 - "id": "storage_backoff.a1"
   "r": ".storage_backoff"
-  "py": "pytacheck.archives.download._storage_backoff"
+  "py": "metacheck.archives.download._storage_backoff"
   "args":
     "attempt": 1
 - "id": "storage_backoff.a2"
   "r": ".storage_backoff"
-  "py": "pytacheck.archives.download._storage_backoff"
+  "py": "metacheck.archives.download._storage_backoff"
   "args":
     "attempt": 2
 - "id": "storage_backoff.a3"
   "r": ".storage_backoff"
-  "py": "pytacheck.archives.download._storage_backoff"
+  "py": "metacheck.archives.download._storage_backoff"
   "args":
     "attempt": 3
 - "id": "storage_backoff.a4"
   "r": ".storage_backoff"
-  "py": "pytacheck.archives.download._storage_backoff"
+  "py": "metacheck.archives.download._storage_backoff"
   "args":
     "attempt": 4
 - "id": "storage_backoff.a5"
   "r": ".storage_backoff"
-  "py": "pytacheck.archives.download._storage_backoff"
+  "py": "metacheck.archives.download._storage_backoff"
   "args":
     "attempt": 5
 - "id": "storage_backoff.a6"
   "r": ".storage_backoff"
-  "py": "pytacheck.archives.download._storage_backoff"
+  "py": "metacheck.archives.download._storage_backoff"
   "args":
     "attempt": 6
 - "id": "storage_is_transient.statuses"
@@ -1804,11 +1804,11 @@
       "$expr":
         "r": "vapply(c(200, 206, 301, 403, 404, 429, 500, 501, 502, 503, 504), function(s) metacheck:::.storage_is_transient(httr2::response(status_code\
           \ = s)), logical(1))"
-        "py": "[__import__('pytacheck.archives.download', fromlist=['x'])._storage_is_transient(__import__('httpx').Response(s))\
+        "py": "[__import__('metacheck.archives.download', fromlist=['x'])._storage_is_transient(__import__('httpx').Response(s))\
           \ for s in [200, 206, 301, 403, 404, 429, 500, 501, 502, 503, 504]]"
 - "id": "rate_limit_wait.no_headers"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1826,7 +1826,7 @@
               "x-other": "1"
 - "id": "rate_limit_wait.not_exhausted"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1845,7 +1845,7 @@
               "ratelimit-reset": "99999999999"
 - "id": "rate_limit_wait.bad_reset"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1864,7 +1864,7 @@
               "ratelimit-reset": "not-a-number"
 - "id": "rate_limit_wait.past_reset"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1883,7 +1883,7 @@
             "reset_offset": -60
 - "id": "rate_limit_wait.x_prefix_past"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1902,7 +1902,7 @@
               "x-ratelimit-reset": "1000"
 - "id": "rate_limit_wait.remaining_float_zero"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1921,7 +1921,7 @@
               "ratelimit-reset": "5"
 - "id": "rate_limit_wait.remaining_only"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1939,7 +1939,7 @@
               "ratelimit-remaining": "0"
 - "id": "rate_limit_wait.mixed_prefix"
   "r": ".rate_limit_wait"
-  "py": "pytacheck.archives.download._rate_limit_wait"
+  "py": "metacheck.archives.download._rate_limit_wait"
   "args":
     "resp":
       "$call":
@@ -1958,49 +1958,49 @@
               "ratelimit-reset": "10"
 - "id": "is_login_page.login.html"
   "r": ".is_login_page"
-  "py": "pytacheck.archives.download._is_login_page"
+  "py": "metacheck.archives.download._is_login_page"
   "args":
     "path":
       "$file": "tests/repo_download/data/login.html"
 - "id": "is_login_page.page.html"
   "r": ".is_login_page"
-  "py": "pytacheck.archives.download._is_login_page"
+  "py": "metacheck.archives.download._is_login_page"
   "args":
     "path":
       "$file": "tests/repo_download/data/page.html"
 - "id": "is_login_page.binary.dat"
   "r": ".is_login_page"
-  "py": "pytacheck.archives.download._is_login_page"
+  "py": "metacheck.archives.download._is_login_page"
   "args":
     "path":
       "$file": "tests/repo_download/data/binary.dat"
 - "id": "is_login_page.mixed.zip"
   "r": ".is_login_page"
-  "py": "pytacheck.archives.download._is_login_page"
+  "py": "metacheck.archives.download._is_login_page"
   "args":
     "path":
       "$file": "tests/repo_download/data/mixed.zip"
 - "id": "is_login_page.no-such-file.html"
   "r": ".is_login_page"
-  "py": "pytacheck.archives.download._is_login_page"
+  "py": "metacheck.archives.download._is_login_page"
   "args":
     "path":
       "$file": "tests/repo_download/data/no-such-file.html"
 - "id": "remote_size.mixed.zip"
   "r": ".remote_size"
-  "py": "pytacheck.archives.download._remote_size"
+  "py": "metacheck.archives.download._remote_size"
   "args":
     "url": "https://mock.example.org/zips/mixed.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "remote_size.stimuli.zip"
   "r": ".remote_size"
-  "py": "pytacheck.archives.download._remote_size"
+  "py": "metacheck.archives.download._remote_size"
   "args":
     "url": "https://mock.example.org/zips/stimuli.zip"
   "mock_dir": "tests/repo_download/mocks"
 - "id": "remote_content_length.nolength"
   "r": ".remote_content_length"
-  "py": "pytacheck.archives.download._remote_content_length"
+  "py": "metacheck.archives.download._remote_content_length"
   "args":
     "url": "https://mock.example.org/zips/nolength.zip"
   "mock_dir": "tests/repo_download/mocks"

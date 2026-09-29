@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-import pytacheck as pc
+import metacheck as pc
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -78,6 +78,6 @@ def paper_tables(xml_paths: Sequence[str], tables: Sequence[str]) -> dict[str, A
 
 def bibr12_utc(x: Sequence[Any]) -> list[str | None]:
     """``vapply(x, .bibr12_utc, "")`` (``.bibr12_utc()`` takes one value)."""
-    from pytacheck.io.grobid_bibr12 import _bibr12_utc
+    from metacheck.io.grobid_bibr12 import _bibr12_utc
 
     return [_bibr12_utc(v) for v in x]

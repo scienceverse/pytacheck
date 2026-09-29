@@ -18,14 +18,14 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives import download as dlm
-from pytacheck.archives import zip_peek as zpm
-from pytacheck.archives.download import (
+from metacheck.archives import download as dlm
+from metacheck.archives import zip_peek as zpm
+from metacheck.archives.download import (
     _download_zip_to_cache,
     _HttpError,
     download_repo_files,
 )
-from pytacheck.archives.zip_peek import (
+from metacheck.archives.zip_peek import (
     _expand_tar,
     _expand_zip,
     _is_readable_archive,
@@ -36,8 +36,8 @@ from pytacheck.archives.zip_peek import (
     zip_decision,
     zip_peek,
 )
-from pytacheck.fileinfo import check_file_naming, file_category, filetype
-from pytacheck.utils import local_options
+from metacheck.fileinfo import check_file_naming, file_category, filetype
+from metacheck.utils import local_options
 from tests.repo_download import _review_helpers as rv
 
 REVIEW = Path(__file__).resolve().parent / "data" / "review"
@@ -273,7 +273,7 @@ def test_zip_to_cache_waits_once_unless_the_argument_says_skip(
     url = "https://zip.example.org/b.zip"
     slept: list[float] = []
     monkeypatch.setattr(dlm, "_announce_rate_limit_wait", lambda *a, **k: None)
-    monkeypatch.setattr("pytacheck.http.sleep", lambda s: slept.append(s))
+    monkeypatch.setattr("metacheck.http.sleep", lambda s: slept.append(s))
     limited = httpx.Response(
         429, headers={"ratelimit-remaining": "0", "ratelimit-reset": str(round(time.time()) + 60)}
     )
@@ -324,7 +324,7 @@ def test_zip_peek_cache_is_cleared_by_the_helper() -> None:
 
 
 def test_file_listing_follows_folder_links_but_not_cycles(tmp_path: Path) -> None:
-    from pytacheck.archives.zip_peek import _list_files_all
+    from metacheck.archives.zip_peek import _list_files_all
 
     (tmp_path / "real" / "sub").mkdir(parents=True)
     (tmp_path / "real" / "x.csv").write_text("a\n")

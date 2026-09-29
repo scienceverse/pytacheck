@@ -23,8 +23,8 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives import zip_peek as zp
-from pytacheck.archives.zip_peek import (
+from metacheck.archives import zip_peek as zp
+from metacheck.archives.zip_peek import (
     _crc32,
     _expand_compressed,
     _expand_tar,

@@ -61,17 +61,17 @@ def io_fixtures() -> Path:
 @pytest.fixture
 def online(monkeypatch: pytest.MonkeyPatch) -> None:
     """Pretend the network is up (``online()`` does a DNS lookup)."""
-    import pytacheck.utils
+    import metacheck.utils
 
-    monkeypatch.setattr(pytacheck.utils, "online", lambda *a, **k: True)
+    monkeypatch.setattr(metacheck.utils, "online", lambda *a, **k: True)
 
 
 @pytest.fixture
 def cache_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """A temporary corpus cache directory."""
-    import pytacheck.io.corpus
+    import metacheck.io.corpus
 
     d = tmp_path / "papers"
     d.mkdir()
-    monkeypatch.setattr(pytacheck.io.corpus, "_papers_cache_dir", lambda: d)
+    monkeypatch.setattr(metacheck.io.corpus, "_papers_cache_dir", lambda: d)
     return d

@@ -293,7 +293,7 @@ def fake_regcheck(fake: str = "table") -> Iterator[list[int]]:
             return frame(MOCK_TABLE)
         raise RuntimeError("second prereg failed")
 
-    target = "pytacheck.db.regcheck.regcheck_compare"
+    target = "metacheck.db.regcheck.regcheck_compare"
     if fake in ("real", "refused"):
         yield calls
     elif fake.startswith("http:"):
@@ -318,11 +318,11 @@ def fake_regcheck(fake: str = "table") -> Iterator[list[int]]:
                 request=request,
             )
 
-        with umock.patch("pytacheck.http.request", respond):
+        with umock.patch("metacheck.http.request", respond):
             yield calls
     elif fake in ("connfail", "unauthorized"):
         # R: httr2::req_perform() raising httr2_failure / httr2_http_401;
-        # pytacheck.http.request() returns None / the 401 response instead
+        # metacheck.http.request() returns None / the 401 response instead
         import httpx
 
         def request(method: str, url: str, **kwargs: Any) -> httpx.Response | None:
@@ -331,13 +331,13 @@ def fake_regcheck(fake: str = "table") -> Iterator[list[int]]:
                 return None
             return httpx.Response(401, request=httpx.Request(method, url))
 
-        with umock.patch("pytacheck.http.request", request):
+        with umock.patch("metacheck.http.request", request):
             yield calls
     elif fake in ("echo", "fulltext"):
         echo = _Echo(full=fake == "fulltext")
         with (
-            umock.patch("pytacheck.db.regcheck._regcheck_submit", echo.submit),
-            umock.patch("pytacheck.db.regcheck._regcheck_poll", echo.poll),
+            umock.patch("metacheck.db.regcheck._regcheck_submit", echo.submit),
+            umock.patch("metacheck.db.regcheck._regcheck_poll", echo.poll),
         ):
             yield calls
     else:
@@ -373,7 +373,7 @@ def make_paper(
     paperlist: bool = False,
 ) -> Any:
     """The demo paper, papers read from *read* and/or test papers (a list if several)."""
-    import pytacheck as pc
+    import metacheck as pc
     from tests.mod_prereg.parity_support import plist, tp
 
     items: list[Any] = []
@@ -419,7 +419,7 @@ def run_reg(
     report's tables; with *report*, ``module_report()`` with its R code chunks
     masked; with *catch*, the message of an error instead of raising it.
     """
-    import pytacheck as pc
+    import metacheck as pc
     from tests.mod_prereg.parity_support import mocked
 
     paper = make_paper(papers, demo, read, paperlist)
@@ -437,7 +437,7 @@ def run_reg(
             raise
 
     with (
-        umock.patch("pytacheck.utils.online", return_value=True),
+        umock.patch("metacheck.utils.online", return_value=True),
         env(**variables),
     ):
         with mocked():
@@ -469,7 +469,7 @@ def run_reg(
     if tables:
         return report_tables(mo)
     if report:
-        from pytacheck.report.report import module_report
+        from metacheck.report.report import module_report
 
         return _R_CHUNK.sub("\n<R-CHUNK>\n", module_report(mo))
     return mo
@@ -482,7 +482,7 @@ def identity(x: Any) -> Any:
 
 def report_tables(mo: Any) -> list[pd.DataFrame]:
     """The tables in a module output's report, in report order."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     out: list[pd.DataFrame] = []
 

@@ -8,9 +8,9 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.archives import aspredicted
-from pytacheck.archives.aspredicted import (
+import metacheck as pc
+from metacheck.archives import aspredicted
+from metacheck.archives.aspredicted import (
     _aspredicted_info,
     _html_text2,
     aspredicted_info,
@@ -21,7 +21,7 @@ from pytacheck.archives.aspredicted import (
 @pytest.fixture(autouse=True)
 def _online(monkeypatch: pytest.MonkeyPatch) -> None:
     # skip the DNS check in aspredicted_info(), as the R tests do
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: True)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
 
 
 def test_aspredicted_links(psychsci) -> None:  # type: ignore[no-untyped-def]
@@ -80,7 +80,7 @@ def test_aspredicted_info_table(mock_api: respx.MockRouter) -> None:
 
 
 def test_aspredicted_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(RuntimeError, match="seems to be offline"):
         aspredicted_info("https://aspredicted.org/x")
 

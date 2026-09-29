@@ -8,10 +8,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck.llm as L
-from pytacheck.llm import cache as C
-from pytacheck.llm._rds import EllmerOutput, read_rds, to_python
-from pytacheck.utils import local_options
+import metacheck.llm as L
+from metacheck.llm import cache as C
+from metacheck.llm._rds import EllmerOutput, read_rds, to_python
+from metacheck.utils import local_options
 from tests.httpmock import replay
 from tests.llm.support import FIXTURES, MOCKS
 

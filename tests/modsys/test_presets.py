@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from pytacheck.module import module_run, use
-from pytacheck.presets import (
+from metacheck.module import module_run, use
+from metacheck.presets import (
     DEFAULT_PRESET,
     PresetError,
     Selection,
@@ -95,7 +95,7 @@ def test_select_precedence(lab, monkeypatch, tmp_path, setup, expected) -> None:
     user.write_text(
         json.dumps({**_packs(lab), **({"preset": setup["user"]} if "user" in setup else {})})
     )
-    monkeypatch.setattr("pytacheck.config.user_config_path", lambda: user)
+    monkeypatch.setattr("metacheck.config.user_config_path", lambda: user)
     monkeypatch.delenv("PYTACHECK_CONFIG")
     if "project" in setup:
         (lab.work / "pytacheck.json").write_text(json.dumps({"preset": setup["project"]}))
@@ -252,7 +252,7 @@ def test_replace_of_absent_module_warns(lab) -> None:
 
 
 def test_validate_imports_everything(lab, monkeypatch) -> None:
-    import pytacheck.presets as presets
+    import metacheck.presets as presets
 
     # pretend repo_check is one of metacheck's modules that is not ported yet
     ported = presets._builtin_names()

@@ -446,7 +446,7 @@ The contract (the same one the built-in modules follow):
 Use `get_prev_outputs("other_module", "table")` to read an earlier module's
 output in the same run. Use the helpers pytacheck exports (`text_search`,
 `pytacheck.report.scroll_table`, `collapse_section`, ...); see the built-in
-modules in `src/pytacheck/modules/` for complete examples.
+modules in `src/metacheck/modules/` for complete examples.
 
 ### Papers: bibr 12.x and the older format
 

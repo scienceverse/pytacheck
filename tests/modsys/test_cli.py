@@ -7,9 +7,9 @@ import json
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.cli import main
-from pytacheck.packs import ui
+import metacheck as pc
+from metacheck.cli import main
+from metacheck.packs import ui
 from tests.modsys.helpers import mod_src
 from tests.modsys.storekit import STORE_URL, FakeStore
 
@@ -138,7 +138,7 @@ def test_run_record_and_rerun(lab, ms, capsys, demo_json) -> None:
 
 def test_report(lab, ms, capsys, demo_json) -> None:
     try:
-        from pytacheck.report import report as report_mod
+        from metacheck.report import report as report_mod
 
         report_mod.report  # noqa: B018
     except (ImportError, AttributeError):
@@ -226,7 +226,7 @@ def test_init_hides_only_the_cached_index_warning(ms, monkeypatch, capsys) -> No
         return {}, {}
 
     answers = iter(["1", "2", "u"])
-    monkeypatch.setattr("pytacheck.packs.stores.store_indexes", indexes)
+    monkeypatch.setattr("metacheck.packs.stores.store_indexes", indexes)
     monkeypatch.setattr(ui, "interactive", lambda: True)
     monkeypatch.setattr(ui, "ask", lambda *a, **k: next(answers))
     monkeypatch.setattr(ui, "confirm", lambda *a, **k: True)
@@ -301,5 +301,5 @@ def test_read_and_serve(ms, capsys, monkeypatch, demo_json) -> None:
     calls = []
     monkeypatch.setattr(uvicorn, "run", lambda *a, **k: calls.append((a, k)))
     assert main(["serve", "--port", "8123"]) == 0
-    assert calls == [(("pytacheck.api.app:create_app",), {"factory": True, "host": "127.0.0.1",
+    assert calls == [(("metacheck.api.app:create_app",), {"factory": True, "host": "127.0.0.1",
                                                           "port": 8123})]  # fmt: skip

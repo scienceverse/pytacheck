@@ -13,10 +13,10 @@ import warnings
 import pandas as pd
 import pytest
 
-from pytacheck.stats import _rmath
-from pytacheck.stats._rmath import pchisq, pf, pt, r_pow, r_round
-from pytacheck.stats.core import stats
-from pytacheck.stats.statcheck import (
+from metacheck.stats import _rmath
+from metacheck.stats._rmath import pchisq, pf, pt, r_pow, r_round
+from metacheck.stats.core import stats
+from metacheck.stats.statcheck import (
     RError,
     StatcheckWarning,
     decision_error_test,

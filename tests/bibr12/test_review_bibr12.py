@@ -14,9 +14,9 @@ import orjson
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.io import bibr12
-from pytacheck.papers.io import _field
+import metacheck as pc
+from metacheck.io import bibr12
+from metacheck.papers.io import _field
 
 FX = Path(__file__).resolve().parent / "fixtures"
 

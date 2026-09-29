@@ -12,8 +12,8 @@ import pytest
 @pytest.fixture
 def llm_on(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[None]:
     """``llm_use(TRUE)``, ``llm_model("groq/llama-3.3-70b-versatile")``, cache off."""
-    from pytacheck.llm._rds import RInt
-    from pytacheck.utils import local_options
+    from metacheck.llm._rds import RInt
+    from metacheck.utils import local_options
 
     monkeypatch.setenv("METACHECK_LLM_CACHE_DIR", str(tmp_path / "llmcache"))
     monkeypatch.delenv("PYTACHECK_LLM_CACHE_DIR", raising=False)
@@ -36,7 +36,7 @@ def llm_on(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[None]:
 @pytest.fixture
 def llm_off() -> Iterator[None]:
     """``llm_use(FALSE)``."""
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with local_options({"metacheck.llm.use": False}):
         yield
@@ -45,7 +45,7 @@ def llm_off() -> Iterator[None]:
 @pytest.fixture
 def mock_chat(monkeypatch: pytest.MonkeyPatch) -> Callable[[Any], None]:
     """``local_mocked_bindings(chat = ..., .package = "ellmer")``."""
-    from pytacheck.llm import providers
+    from metacheck.llm import providers
 
     def install(fake: Any) -> None:
         monkeypatch.setattr(providers, "chat", lambda *a, **k: fake)

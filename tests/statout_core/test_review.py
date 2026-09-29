@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout.r_output import (
+from metacheck.statout.r_output import (
     _r_as_numeric,
     _r_dollar,
     _r_dollar_found,
@@ -19,13 +19,13 @@ from pytacheck.statout.r_output import (
     _RError,
     _RNamedList,
 )
-from pytacheck.statout.stat_output import (
+from metacheck.statout.stat_output import (
     _stat_result_ids,
     _stat_sanitize_id,
     stat_output_validate,
     stat_results_long,
 )
-from pytacheck.statout.stat_tables import (
+from metacheck.statout.stat_tables import (
     _ipynb_text,
     _parse_json_text,
     _pb_fields,
@@ -228,14 +228,14 @@ def test_capture_runner_matches_metacheck(script: str, reference_rscript: str, s
     plus ``.r_captures_to_tables()`` / ``.r_merge_captures()`` of it, in the
     parity harness' canonical encoding.
     """
-    from parity.canonical import canonical
-    from parity.compare import Options, compare
-    from pytacheck.statout.r_capture import (
+    from metacheck.statout.r_capture import (
         _r_capture_run,
         _r_captures_to_tables,
         _r_merge_captures,
     )
-    from pytacheck.statout.r_output import read_r_output
+    from metacheck.statout.r_output import read_r_output
+    from parity.canonical import canonical
+    from parity.compare import Options, compare
     from tests.statout_core._helpers import read_lines
 
     expected = json.loads(

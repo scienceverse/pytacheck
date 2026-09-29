@@ -203,7 +203,7 @@
     "paper":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text.text_search"
+        "py": "metacheck.text.text_search"
         "args": {"paper": {"$paper": "demo"}, "pattern": "significant"}
 - "id": "stat_effect_size.review.text_table_no_tests"
   "module": "stat_effect_size"
@@ -211,7 +211,7 @@
     "paper":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text.text_search"
+        "py": "metacheck.text.text_search"
         "args": {"paper": {"$paper": "demo"}, "pattern": "Introduction|design"}
 # ---------------------------------------------------------------- near-integer df, LaTeX labels
 # |df - round(df)| <= 1e-8 counts as an integer df: as.integer() truncates df + 1 and
@@ -342,7 +342,7 @@
     "paper":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text.text_search"
+        "py": "metacheck.text.text_search"
         "args":
           "paper": {"$test_paper": {"text": ["A, t(40) = 2.9, p = .01, d = 0.45 and t(40) = 3.1, d = 0.48.", "B, F(1, 20) = 4.10, ηp² = .17.", "C, t(30) = 2.0."]}}
           "pattern": "[tF]\\([0-9, ]+\\) = [0-9.]+|[dη]p?²? = [0-9.]+"

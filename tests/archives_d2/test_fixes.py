@@ -13,9 +13,9 @@ from pathlib import Path
 import httpx
 import pytest
 
-from pytacheck.archives.fourtu import researchdata4tu_file_download
-from pytacheck.archives.psycharchives import _psycharchives_info, psycharchives_file_download
-from pytacheck.archives.researchbox import _rbox_info, rbox_file_download
+from metacheck.archives.fourtu import researchdata4tu_file_download
+from metacheck.archives.psycharchives import _psycharchives_info, psycharchives_file_download
+from metacheck.archives.researchbox import _rbox_info, rbox_file_download
 
 Serve = Callable[[dict[str, httpx.Response]], list[httpx.Request]]
 
@@ -105,6 +105,6 @@ def test_rbox_empty_page_is_unfound(serve: Serve) -> None:
 def test_4tu_article_url_forms_have_an_id(url: str, expected: str) -> None:
     # metacheck knows only articles/dataset/<title>/<id>: the short articles/_/<id>
     # form and the other item types (software, ...) got no id
-    from pytacheck.archives.fourtu import _researchdata4tu_id
+    from metacheck.archives.fourtu import _researchdata4tu_id
 
     assert _researchdata4tu_id(url) == expected

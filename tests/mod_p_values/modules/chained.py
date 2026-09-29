@@ -6,7 +6,7 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck.module import get_prev_outputs, module
+from metacheck.module import get_prev_outputs, module
 
 
 @module(

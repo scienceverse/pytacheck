@@ -1,8 +1,8 @@
 # R source -> Python location for the ethics_check module (see docs/PORTING.md).
 [files]
-"inst/modules/ethics_check.R" = ["src/pytacheck/modules/ethics_check.py"]
+"inst/modules/ethics_check.R" = ["src/metacheck/modules/ethics_check.py"]
 
 [functions]
-"module:ethics_check" = "pytacheck.modules.ethics_check:ethics_check"
+"module:ethics_check" = "metacheck.modules.ethics_check:ethics_check"
 # the module's live-data helper, .detect_live_data() in R/text-extractors.R, is
-# mapped in porting/map/text_extract.toml (pytacheck.text.extract:_detect_live_data)
+# mapped in porting/map/text_extract.toml (metacheck.text.extract:_detect_live_data)

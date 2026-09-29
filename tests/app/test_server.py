@@ -10,9 +10,9 @@ import pytest
 from gradio.utils import get_upload_folder
 from starlette.testclient import TestClient
 
-import pytacheck as pc
-from pytacheck.app.security import cookie_name
-from pytacheck.app.server import create_app
+import metacheck as pc
+from metacheck.app.security import cookie_name
+from metacheck.app.server import create_app
 
 PORT = 4322
 TOKEN = "s3cret-token"

@@ -12,9 +12,9 @@ import warnings
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_list, module_run
-from pytacheck.report.blocks import ReportTable
+import metacheck as pc
+from metacheck.module import module_list, module_run
+from metacheck.report.blocks import ReportTable
 from tests.mod_ref_db.helpers import demo_no_dois, demo_no_refs, ref_paper, report_tbl
 
 REF_MODULES = ["ref_retraction", "ref_replication", "ref_miscitation"]
@@ -388,7 +388,7 @@ TITLE_CASE = [
 
 def test_to_title_case_matches_r() -> None:
     """Outputs recorded from R 4.5.3 ``tools::toTitleCase()``."""
-    from pytacheck.modules.ref_replication import _to_title_case
+    from metacheck.modules.ref_replication import _to_title_case
 
     inputs = [i for i, _ in TITLE_CASE]
     assert _to_title_case(inputs) == [o for _, o in TITLE_CASE]
@@ -522,7 +522,7 @@ def test_ref_retraction_joins_notices_of_case_variants(doi: str) -> None:
 
 
 def test_ref_replication_matches_doi_case_insensitively() -> None:
-    from pytacheck.db.replications import FLoRA
+    from metacheck.db.replications import FLoRA
 
     lower = FLoRA()["doi_o"].dropna().iloc[0]
     upper = lower.upper()
@@ -535,7 +535,7 @@ def test_ref_replication_matches_doi_case_insensitively() -> None:
 
 
 def test_ref_replication_already_cited_ignores_case() -> None:
-    from pytacheck.db.replications import FLoRA
+    from metacheck.db.replications import FLoRA
 
     flora = FLoRA()
     row = flora.loc[flora["doi_r"].notna() & (flora["doi_r"] != "")].iloc[0]

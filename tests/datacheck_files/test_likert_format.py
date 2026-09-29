@@ -13,7 +13,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 V = json.loads((Path(__file__).parent / "data" / "likert_ref.json").read_text(encoding="utf-8"))
 f = F._detect_likert_scale

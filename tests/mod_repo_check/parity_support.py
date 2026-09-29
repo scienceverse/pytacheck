@@ -73,7 +73,7 @@ class UnexpectedRequest(RuntimeError):
     """httptest2's error for an unrecorded request (class ``httptest2_request``).
 
     It is not an HTTP failure: like in R, it propagates through the HTTP
-    layer (``.batch_query()`` / :func:`pytacheck.http.request` only absorb
+    layer (``.batch_query()`` / :func:`metacheck.http.request` only absorb
     connection failures) and is caught only where metacheck catches any
     error.
     """
@@ -121,8 +121,8 @@ def _env(**values: str) -> Iterator[None]:
 @contextlib.contextmanager
 def mocked(*mock_dirs: str | Path) -> Iterator[respx.MockRouter]:
     """metacheck's test setup around :func:`replay` (see the module docstring)."""
-    from pytacheck import utils
-    from pytacheck.archives import osf
+    from metacheck import utils
+    from metacheck.archives import osf
 
     dirs = mock_dirs or (MOCKS, "apis")
     with (
@@ -136,7 +136,7 @@ def mocked(*mock_dirs: str | Path) -> Iterator[respx.MockRouter]:
                 "metacheck.cache.dir": tmp,
             }
         ),
-        umock.patch("pytacheck.utils.online", return_value=True),
+        umock.patch("metacheck.utils.online", return_value=True),
         replay(*dirs) as router,
     ):
         osf.osf_cache_clear()
@@ -156,7 +156,7 @@ def in_root() -> Iterator[None]:
 
 def tp(url: Sequence[str] | str, paper_id: str, text: Sequence[str] | None = None) -> Any:
     """``test_paper(text, url)`` with a fixed ``paper_id`` (R: ``p$paper_id <- id``)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(text, [url] if isinstance(url, str) else list(url))
     p.paper_id = paper_id
@@ -165,7 +165,7 @@ def tp(url: Sequence[str] | str, paper_id: str, text: Sequence[str] | None = Non
 
 def make_paper(papers: Sequence[Mapping[str, Any]], paperlist: bool = False) -> Any:
     """Test papers (``{"url": [...], "id": ..., "text": [...]}``), a list when several."""
-    import pytacheck as pc
+    import metacheck as pc
 
     items = [tp(p.get("url") or [], p["id"], p.get("text")) for p in papers]
     if paperlist or len(items) > 1:
@@ -191,7 +191,7 @@ def run_repo(
     metacheck's ``apis``). With *tables*, returns the data of the report's
     tables (see :func:`report_tables`).
     """
-    import pytacheck as pc
+    import metacheck as pc
 
     if read:
         got = pc.read([ROOT / r for r in read])
@@ -209,7 +209,7 @@ def run_repo(
     if tables:
         return report_tables(mo)
     if report:
-        from pytacheck.report.report import module_report
+        from metacheck.report.report import module_report
 
         return _R_CHUNK.sub("\n<R-CHUNK>\n", module_report(mo))
     return mo
@@ -217,7 +217,7 @@ def run_repo(
 
 def report_tables(mo: Any) -> list[Any]:
     """The data of the tables in a module output's report, in report order."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     tables: list[Any] = []
 

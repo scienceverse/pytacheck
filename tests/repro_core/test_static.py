@@ -8,8 +8,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.repro import core
-from pytacheck.repro.core import (
+from metacheck.repro import core
+from metacheck.repro.core import (
     repro_defined_vars,
     repro_dependencies,
     repro_file_io,

@@ -1,9 +1,9 @@
-"""Record the pytacheck._r regex calls of a realistic run, for test_regex_replay.py.
+"""Record the metacheck._r regex calls of a realistic run, for test_regex_replay.py.
 
 Reads the fixture papers (metacheck's formats, problems, debruine, psychsci and
 bibr12 fixtures and the demo paper) and runs the offline paper modules (on the
 list and per paper), the extractors, statcheck and text_search on them with the
-network blocked. Every call of a pytacheck._r regex function, and of a method of a
+network blocked. Every call of a metacheck._r regex function, and of a method of a
 pattern compile_r() returned, is recorded with its result: up to 400 distinct
 argument sets per function, pattern and flags (2000 per compiled pattern).
 
@@ -135,7 +135,7 @@ def run_workload() -> None:
     socket.socket.connect = no_network  # type: ignore[method-assign]
     os.environ["PYTACHECK_CONFIG"] = "none"
     os.environ["PYTACHECK_NO_SLEEP"] = "1"
-    import pytacheck as pc
+    import metacheck as pc
 
     papers = [pc.read(f) for f in fixture_papers()]
     plist = pc.PaperList(papers)
@@ -164,9 +164,9 @@ def run_workload() -> None:
 
 def record() -> dict[tuple[Any, ...], dict[str, Any]]:
     """Run the workload with every regex entry point wrapped; the recorded calls."""
-    import pytacheck._r as rpkg
-    import pytacheck._r.base as rbase
-    import pytacheck._r.regex as rx
+    import metacheck._r as rpkg
+    import metacheck._r.base as rbase
+    import metacheck._r.regex as rx
 
     calls: dict[tuple[Any, ...], dict[str, Any]] = defaultdict(dict)
 
@@ -261,7 +261,7 @@ def save(calls: dict[tuple[Any, ...], dict[str, Any]], path: Path = DATA) -> Non
 def load(path: Path = DATA) -> list[list[Any]]:
     """The recorded calls, ``[function, spec, args, kwargs, result]`` each.
 
-    *function* is a pytacheck._r.regex function, or ``compile_r.<method>`` for a
+    *function* is a metacheck._r.regex function, or ``compile_r.<method>`` for a
     method of a compiled pattern, whose compile_r() arguments *spec* gives.
     """
     data = json.loads(lzma.decompress(path.read_bytes()))

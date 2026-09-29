@@ -49,7 +49,7 @@ H = "__import__('tests.bibr12._parity_helpers', fromlist=['x'])"
 # an existing temporary directory (paper_write()'s normalizePath() warns, with the
 # random path, about one that does not exist yet, which would make goldens vary)
 SAVE_DIR_R = "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})"
-B = "__import__('pytacheck.io.bibr12', fromlist=['x'])"
+B = "__import__('metacheck.io.bibr12', fromlist=['x'])"
 
 cases = []
 comments = {}
@@ -118,7 +118,7 @@ for name, path in FIX.items():
         {
             "id": f"read.{name}",
             "r": "read",
-            "py": "pytacheck.read",
+            "py": "metacheck.read",
             "args": {"file_path": {"$file": path}},
         },
         "read(): every 12.x fixture, the whole paper object" if first else None,
@@ -128,7 +128,7 @@ add(
     {
         "id": "read.probe_docx.images",
         "r": "read",
-        "py": "pytacheck.read",
+        "py": "metacheck.read",
         "args": {"file_path": {"$file": FIX["probe_docx"]}, "include_images": True},
     }
 )
@@ -136,7 +136,7 @@ add(
     {
         "id": ".read_bibr12.probe_html",
         "r": "metacheck:::.read_bibr12",
-        "py": "pytacheck.io.bibr12.read_bibr12",
+        "py": "metacheck.io.bibr12.read_bibr12",
         "args": {"file_path": {"$file": FIX["probe_html"]}},
     }
 )
@@ -144,7 +144,7 @@ add(
     {
         "id": ".read_bibr.full",
         "r": "metacheck:::.read_bibr",
-        "py": "pytacheck.papers.io.read_bibr",
+        "py": "metacheck.papers.io.read_bibr",
         "args": {"file_path": {"$file": FIX["full"]}},
     }
 )
@@ -152,7 +152,7 @@ add(
     {
         "id": "read.list",
         "r": "read",
-        "py": "pytacheck.read",
+        "py": "metacheck.read",
         "args": {
             "file_path": expr(
                 "c(" + ", ".join(f"'{p}'" for p in LIST_SMALL) + ")",
@@ -167,7 +167,7 @@ add(
     {
         "id": "read.later_12x",
         "r": "read",
-        "py": "pytacheck.read",
+        "py": "metacheck.read",
         "args": {
             "file_path": expr(
                 "local({json <- jsonlite::read_json('"
@@ -193,7 +193,7 @@ for tag, ver_r, ver_py in [
         {
             "id": f".read_bibr.error.{tag}",
             "r": "metacheck:::.read_bibr",
-            "py": "pytacheck.papers.io.read_bibr",
+            "py": "metacheck.papers.io.read_bibr",
             "args": {
                 "file_path": expr(
                     "local({json <- jsonlite::read_json('" + FIX["probe_html"] + "'); "
@@ -209,7 +209,7 @@ add(
     {
         "id": "read.dir.v11_and_v12",
         "r": "read",
-        "py": "pytacheck.read",
+        "py": "metacheck.read",
         "args": {
             "file_path": expr(
                 "local({d <- tempfile('pc_bibr12_'); dir.create(d); json <- jsonlite::read_json('"
@@ -243,7 +243,7 @@ for tbl in TABLES:
         {
             "id": f"paper_table.list.{tbl}",
             "r": "paper_table",
-            "py": "pytacheck.paper_table",
+            "py": "metacheck.paper_table",
             "args": {"paper": {"$read": LIST}, "table": tbl},
         },
         "paper_table() of every table, over a list of 12.x papers" if first else None,
@@ -255,7 +255,7 @@ for tbl in TABLES:
         {
             "id": f"paper_table.probe_docx.{tbl}",
             "r": "paper_table",
-            "py": "pytacheck.paper_table",
+            "py": "metacheck.paper_table",
             "args": {"paper": {"$paper": FIX["probe_docx"]}, "table": tbl},
         },
         "... of a single paper (images dropped)" if first else None,
@@ -281,7 +281,7 @@ for tbl in [
         {
             "id": f"paper_table.mixed.{tbl}",
             "r": "paper_table",
-            "py": "pytacheck.paper_table",
+            "py": "metacheck.paper_table",
             "args": {"paper": {"$read": MIXED}, "table": tbl},
         },
         "... of a list mixing an older paper (the demo) and 12.x papers" if first else None,
@@ -291,7 +291,7 @@ add(
     {
         "id": "paper_table.list.xref.cols",
         "r": "paper_table",
-        "py": "pytacheck.paper_table",
+        "py": "metacheck.paper_table",
         "args": {
             "paper": {"$read": LIST},
             "table": "xref",
@@ -308,7 +308,7 @@ for name, path in FIX.items():
         {
             "id": f"paper_validate.{name}",
             "r": "paper_validate",
-            "py": "pytacheck.paper_validate",
+            "py": "metacheck.paper_validate",
             "args": {"paper": {"$paper": path}},
         },
         "paper_validate() and ref_table()" if first else None,
@@ -318,7 +318,7 @@ add(
     {
         "id": "paper_validate.demo",
         "r": "paper_validate",
-        "py": "pytacheck.paper_validate",
+        "py": "metacheck.paper_validate",
         "args": {"paper": {"$paper": "demo"}},
     }
 )
@@ -327,7 +327,7 @@ for name, path in FIX.items():
         {
             "id": f"ref_table.{name}",
             "r": "ref_table",
-            "py": "pytacheck.ref_table",
+            "py": "metacheck.ref_table",
             "args": {"paper": {"$paper": path}},
         }
     )
@@ -335,7 +335,7 @@ add(
     {
         "id": "ref_table.list",
         "r": "ref_table",
-        "py": "pytacheck.ref_table",
+        "py": "metacheck.ref_table",
         "args": {"paper": {"$read": LIST}},
     }
 )
@@ -343,7 +343,7 @@ add(
     {
         "id": "ref_table.mixed",
         "r": "ref_table",
-        "py": "pytacheck.ref_table",
+        "py": "metacheck.ref_table",
         "args": {"paper": {"$read": MIXED}},
     }
 )
@@ -351,7 +351,7 @@ add(
     {
         "id": "text_search.PMC4383902.footnote",
         "r": "text_search",
-        "py": "pytacheck.text_search",
+        "py": "metacheck.text_search",
         "args": {
             "paper": {"$paper": FIX["PMC4383902"]},
             "pattern": "list of authors of the Europe PMC Consortium",
@@ -363,7 +363,7 @@ add(
     {
         "id": "text_search.full.caption",
         "r": "text_search",
-        "py": "pytacheck.text_search",
+        "py": "metacheck.text_search",
         "args": {"paper": {"$paper": FIX["full"]}, "pattern": "Figure|Table"},
     }
 )
@@ -374,7 +374,7 @@ add(
     {
         "id": ".is_bibr12.full",
         "r": "metacheck:::.is_bibr12",
-        "py": "pytacheck.io.bibr12._is_bibr12",
+        "py": "metacheck.io.bibr12._is_bibr12",
         "args": {"paper": {"$paper": FIX["full"]}},
     },
     "import-bibr12.R helpers",
@@ -383,7 +383,7 @@ add(
     {
         "id": ".is_bibr12.demo",
         "r": "metacheck:::.is_bibr12",
-        "py": "pytacheck.io.bibr12._is_bibr12",
+        "py": "metacheck.io.bibr12._is_bibr12",
         "args": {"paper": {"$paper": "demo"}},
     }
 )
@@ -391,7 +391,7 @@ add(
     {
         "id": ".bibr12_paper_ids.mixed",
         "r": "metacheck:::.bibr12_paper_ids",
-        "py": "pytacheck.io.bibr12._bibr12_paper_ids",
+        "py": "metacheck.io.bibr12._bibr12_paper_ids",
         "args": {"paper": {"$read": MIXED}},
     }
 )
@@ -399,7 +399,7 @@ add(
     {
         "id": ".bibr12_paper_ids.paper",
         "r": "metacheck:::.bibr12_paper_ids",
-        "py": "pytacheck.io.bibr12._bibr12_paper_ids",
+        "py": "metacheck.io.bibr12._bibr12_paper_ids",
         "args": {"paper": {"$paper": FIX["full"]}},
     }
 )
@@ -407,7 +407,7 @@ add(
     {
         "id": ".bibr12_doi",
         "r": "metacheck:::.bibr12_doi",
-        "py": "pytacheck.io.bibr12._bibr12_doi",
+        "py": "metacheck.io.bibr12._bibr12_doi",
         "args": {
             "x": {
                 "$chr": [
@@ -430,7 +430,7 @@ add(
     {
         "id": ".bibr12_bib_type",
         "r": "metacheck:::.bibr12_bib_type",
-        "py": "pytacheck.io.bibr12._bibr12_bib_type",
+        "py": "metacheck.io.bibr12._bibr12_bib_type",
         "args": {
             "x": {
                 "$chr": [
@@ -501,7 +501,7 @@ add(
     {
         "id": ".bibr12_sha256",
         "r": "metacheck:::.bibr12_sha256",
-        "py": "pytacheck.io.bibr12._bibr12_sha256",
+        "py": "metacheck.io.bibr12._bibr12_sha256",
         "args": {"path": {"$file": FIX["full"]}},
     }
 )
@@ -509,7 +509,7 @@ add(
     {
         "id": ".bibr12_sha256.missing",
         "r": "metacheck:::.bibr12_sha256",
-        "py": "pytacheck.io.bibr12._bibr12_sha256",
+        "py": "metacheck.io.bibr12._bibr12_sha256",
         "args": {"path": {"$file": "no/such/file.pdf"}},
     }
 )
@@ -648,7 +648,7 @@ add(
     {
         "id": "paper_write.error.older_format",
         "r": "paper_write",
-        "py": "pytacheck.paper_write",
+        "py": "metacheck.paper_write",
         "args": {
             "paper": {"$paper": "demo"},
             "save_path": expr(SAVE_DIR_R, f"str({H}._tempdir())"),
@@ -661,7 +661,7 @@ add(
     {
         "id": "paper_write.error.later_12x",
         "r": "paper_write",
-        "py": "pytacheck.paper_write",
+        "py": "metacheck.paper_write",
         "args": {
             "paper": expr(
                 "local({p <- read('"
@@ -678,7 +678,7 @@ add(
     {
         "id": "paper_write.error.version",
         "r": "paper_write",
-        "py": "pytacheck.paper_write",
+        "py": "metacheck.paper_write",
         "args": {
             "paper": {"$paper": FIX["probe_html"]},
             "save_path": expr(SAVE_DIR_R, f"str({H}._tempdir())"),
@@ -695,7 +695,7 @@ for name in ["full", "probe_html", "probe_docx", "inspect"]:
         {
             "id": f".table_tests.{name}",
             "r": "metacheck:::.table_tests",
-            "py": "pytacheck.statout.match_table._table_tests",
+            "py": "metacheck.statout.match_table._table_tests",
             "args": {"paper": {"$paper": FIX[name]}},
         },
         ".table_tests(): 12.x tables use their own caption (not the text of their section)"
@@ -707,7 +707,7 @@ add(
     {
         "id": ".table_tests.correlation_caption",
         "r": "metacheck:::.table_tests",
-        "py": "pytacheck.statout.match_table._table_tests",
+        "py": "metacheck.statout.match_table._table_tests",
         "args": {
             "paper": expr(
                 "local({p <- read('"
@@ -724,7 +724,7 @@ add(
     {
         "id": ".table_tests.correlation_caption.older",
         "r": "metacheck:::.table_tests",
-        "py": "pytacheck.statout.match_table._table_tests",
+        "py": "metacheck.statout.match_table._table_tests",
         "args": {
             "paper": expr(
                 "local({p <- read('"
@@ -773,7 +773,7 @@ add(
     {
         "id": ".table_tests.descriptive_caption",
         "r": "metacheck:::.table_tests",
-        "py": "pytacheck.statout.match_table._table_tests",
+        "py": "metacheck.statout.match_table._table_tests",
         "args": {"paper": expr(R_DESC, f"{H}.descriptive_table()")},
     }
 )

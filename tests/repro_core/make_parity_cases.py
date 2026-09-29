@@ -15,9 +15,9 @@ import yaml
 
 OUT = Path(__file__).resolve().parents[2] / "parity" / "cases" / "repro_core.yaml"
 RUN = "tests.repro_core.parity_support.run"
-CORE = "pytacheck.repro.core"
-DOCKER = "pytacheck.repro.docker"
-TABLES = "pytacheck.repro.tables"
+CORE = "metacheck.repro.core"
+DOCKER = "metacheck.repro.docker"
+TABLES = "metacheck.repro.tables"
 HELPERS = 'source("tests/repro_core/parity_helpers.R", local = TRUE)'
 
 

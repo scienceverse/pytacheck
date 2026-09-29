@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from pytacheck.llm import cap_report
-from pytacheck.llm.cap_prompt import _cap_size_str
+from metacheck.llm import cap_report
+from metacheck.llm.cap_prompt import _cap_size_str
 
 
 def test_cap_report_prints_and_warns(capsys: pytest.CaptureFixture[str]) -> None:

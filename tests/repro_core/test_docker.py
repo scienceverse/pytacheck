@@ -16,8 +16,8 @@ from typing import Any
 import pandas as pd
 import pytest
 
-from pytacheck.repro import docker
-from pytacheck.repro.docker import (
+from metacheck.repro import docker
+from metacheck.repro.docker import (
     repro_docker_available,
     repro_install_deps_docker,
     repro_run_scripts_docker,
@@ -90,7 +90,7 @@ def test_docker_stop_is_best_effort(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_resource_args() -> None:
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     assert docker._repro_docker_resource_args() == []
     with local_options({"metacheck.docker_resource_limits": {"cpus": 2, "memory_gb": 3.5}}):

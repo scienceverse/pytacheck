@@ -6,9 +6,9 @@ import importlib.metadata as md
 
 import pytest
 
-from pytacheck import __version__
-from pytacheck.packs.install import _requires_ok
-from pytacheck.presets import _dependency_ok, _installed_version
+from metacheck import __version__
+from metacheck.packs.install import _requires_ok
+from metacheck.presets import _dependency_ok, _installed_version
 
 
 def _only(monkeypatch: pytest.MonkeyPatch, installed: dict[str, str]) -> None:

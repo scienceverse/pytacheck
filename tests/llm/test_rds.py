@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.llm._rds import (
+from metacheck.llm._rds import (
     RInt,
     RList,
     RVec,

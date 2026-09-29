@@ -227,7 +227,7 @@ SCENARIOS.update(REVIEW_SCENARIOS)
 R_HELPERS = "source('tests/mod_data_check/dc_helpers.R', local = TRUE)"
 PY_HELPERS = "__import__('tests.mod_data_check.helpers', fromlist=['_'])"
 R_ENV = "e <- dc_env()"
-PY_H = "__import__('pytacheck.modules._data_check', fromlist=['_'])"
+PY_H = "__import__('metacheck.modules._data_check', fromlist=['_'])"
 
 IGNORE: list[str] = []
 

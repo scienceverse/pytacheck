@@ -5,7 +5,7 @@ through ``get_prev_outputs()``. The scenarios in
 ``tests/mod_data_check/scenarios.json`` describe such listings (the fixture
 repositories under ``tests/mod_data_check/fixtures/repos`` plus explicit
 rows); :func:`dc_prev` builds the ``repo_check`` output (a
-:class:`~pytacheck.module.ModuleOutput` whose paper is a test paper or paper
+:class:`~metacheck.module.ModuleOutput` whose paper is a test paper or paper
 list with fixed ids), so ``module_run()`` chains data_check onto it exactly as
 in a report pipeline. The R twin is ``tests/mod_data_check/dc_helpers.R``.
 
@@ -138,7 +138,7 @@ def dc_table(name: str) -> pd.DataFrame:
 
 def dc_paper(name: str) -> Any:
     """The scenario's paper (a test paper, a paper list, or papers read from files)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     sc = scenario(name)
     if sc.get("read"):
@@ -162,8 +162,8 @@ def _df(x: dict[str, list[Any]] | None) -> pd.DataFrame | None:
 
 def dc_prev(name: str, paper: Any = None) -> Any:
     """The repo_check output data_check chains onto for scenario *name*."""
-    import pytacheck as pc
-    from pytacheck.module import ModuleOutput
+    import metacheck as pc
+    from metacheck.module import ModuleOutput
 
     sc = scenario(name)
     if paper is None:
@@ -212,7 +212,7 @@ def mock_spec(name: str) -> dict[str, Any]:
 
 def mock_llm(spec: dict[str, Any]) -> Any:
     """An ``llm()`` replacement answering each data_check phase by fixed rules."""
-    from pytacheck._r import grepl, sub
+    from metacheck._r import grepl, sub
 
     def llm(text: Any, system_prompt: Any = None, type: Any = None, text_col: str = "text",
             model: Any = None, params: Any = None, phase: str | None = None, **_: Any) -> Any:  # fmt: skip
@@ -249,8 +249,8 @@ def mock_llm(spec: dict[str, Any]) -> Any:
 
 @contextmanager
 def _llm_mocked(spec: str | None) -> Iterator[None]:
-    from pytacheck.datacheck import files
-    from pytacheck.utils import local_options
+    from metacheck.datacheck import files
+    from metacheck.utils import local_options
 
     if spec is None:
         with local_options({"metacheck.llm.use": False}):
@@ -279,8 +279,8 @@ def dc_run(
     the ``careless`` package installed); *llm* names a mock spec in
     ``fixtures/llm_mock.json`` (LLM on, ``llm()`` mocked).
     """
-    from pytacheck.module import module_run
-    from pytacheck.utils import local_options
+    from metacheck.module import module_run
+    from metacheck.utils import local_options
 
     if prev is None:
         prev = dc_prev(name, paper=paper)
@@ -294,9 +294,9 @@ def dc_run_local(d: str, **kwargs: Any) -> Any:
 
     The real pipeline: ``repo_check`` lists the directory.
     """
-    import pytacheck as pc
-    from pytacheck.module import module_run
-    from pytacheck.utils import local_options
+    import metacheck as pc
+    from metacheck.module import module_run
+    from metacheck.utils import local_options
 
     p = pc.test_paper(["Some text."])
     p.paper_id = "p1"
@@ -354,7 +354,7 @@ def norm_paths(out: Any) -> Any:
 
 def report_tables(out: Any) -> list[pd.DataFrame]:
     """The data of the report's table blocks, in order."""
-    from pytacheck.report import ReportTable
+    from metacheck.report import ReportTable
 
     return [b.data.reset_index(drop=True) for b in out.report if isinstance(b, ReportTable)]
 
@@ -374,7 +374,7 @@ def dc_dv_report(name: str, **kwargs: Any) -> dict[str, Any]:
     """Parity: the prose and table data of the spreadsheet report of a run with
     no readable table (R: the ``dv_report`` of its ``empty()`` return;
     pytacheck ends the module's own report with it, U98)."""
-    from pytacheck.report import ReportTable
+    from metacheck.report import ReportTable
 
     rep = list(dc_run(name, **kwargs).report or [])
     start = next((i for i, b in enumerate(rep) if b == "#### Spreadsheet Formatting"), len(rep))
@@ -387,7 +387,7 @@ def dc_dv_report(name: str, **kwargs: Any) -> dict[str, Any]:
 
 def with_careless(fn: Any, *args: Any, **kwargs: Any) -> Any:
     """Call *fn* with the careless indices available (R: the vendored package loaded)."""
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with local_options({"pytacheck.careless": True}):
         return fn(*args, **kwargs)
@@ -395,7 +395,7 @@ def with_careless(fn: Any, *args: Any, **kwargs: Any) -> Any:
 
 def tree_rows_r(paths: list[Any]) -> pd.DataFrame:
     """``repo_tree_rows()`` with R's 1-based ``leaf_idx``."""
-    from pytacheck.modules._data_check import repo_tree_rows
+    from metacheck.modules._data_check import repo_tree_rows
 
     out = repo_tree_rows(paths)
     out["leaf_idx"] = out["leaf_idx"] + 1
@@ -404,7 +404,7 @@ def tree_rows_r(paths: list[Any]) -> pd.DataFrame:
 
 def q_datetime_fmt(x: list[Any]) -> list[str | None]:
     """``format(.dv_q_datetime(x), "%Y-%m-%d %H:%M:%S")``."""
-    from pytacheck.modules._data_check import dv_q_datetime
+    from metacheck.modules._data_check import dv_q_datetime
 
     return [None if v is None else v.strftime("%Y-%m-%d %H:%M:%S") for v in dv_q_datetime(x)]
 
