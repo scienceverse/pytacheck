@@ -8,20 +8,20 @@ module names are not imports the parser can see.
 
 **Names resolve as in Python.** ``from pkg import name`` gives what
 ``pkg/__init__`` binds to ``name`` at module level (a from-import, ``import x as
-name``, or ``name = other`` for an imported ``other``, also in a
-``TYPE_CHECKING`` block), and only otherwise the submodule ``pkg.name``. So
-``from pytacheck import module`` is the ``module()`` decorator, which the top
-level imports under the name of its module. A name the package binds is still
-read from the package, so the edge goes to the package whose ``__init__`` runs,
-whatever the name resolves to. Only a submodule that the package does not bind,
-or binds to itself, is an edge to the submodule. ``import pytacheck.module``,
-with or without ``as``, is the module, and so is an attribute chain through it:
-a chain reads a submodule before a name the package binds. A chain such as
-``pytacheck.papers.model.Paper`` is one edge, judged by its longest prefix that
-is a module or a name a package binds, like ``from pytacheck.papers.model import
-Paper``. The edge also keeps the last module a bound name is read from:
-``llm`` for ``pytacheck.llm.Paper``, ``papers.model`` for
-``pytacheck.papers.model.Paper``. An import inside a function or class of an
+name``, or ``name = other`` or ``name: T = other`` for an imported ``other``,
+also in a ``TYPE_CHECKING`` block), and only otherwise the submodule
+``pkg.name``. So ``from pytacheck import module`` is the ``module()`` decorator,
+which the top level imports under the name of its module. A name the package
+binds is still read from the package, so the edge goes to the package whose
+``__init__`` runs, whatever the name resolves to. Only a submodule that the
+package does not bind, or binds to itself, is an edge to the submodule. ``import
+pytacheck.module``, with or without ``as``, is the module, and so is an
+attribute chain through it: a chain reads a submodule before a name the package
+binds. A chain such as ``pytacheck.papers.model.Paper`` is one edge, judged by
+its longest prefix that is a module or a name a package binds, like ``from
+pytacheck.papers.model import Paper``. The edge also keeps the last module a
+bound name is read from: ``llm`` for ``pytacheck.llm.Paper``, ``papers.model``
+for ``pytacheck.papers.model.Paper``. An import inside a function or class of an
 ``__init__`` binds nothing in the package. The graph feeds three rules.
 
 **Foundation.** §2.1 says ``core/**`` imports only ``_r``, ``_values``,
@@ -242,12 +242,19 @@ class _Visitor(ast.NodeVisitor):
             self._use((base, alias.name), node.lineno)
             self._bind(alias.asname or alias.name, (base, alias.name))
 
-    def visit_Assign(self, node: ast.Assign) -> None:
+    def _alias(self, targets: list[ast.expr], value: ast.expr | None) -> None:
         # an alias of an imported name binds that name
-        if isinstance(node.value, ast.Name) and node.value.id in self.refs:
-            for target in node.targets:
+        if isinstance(value, ast.Name) and value.id in self.refs:
+            for target in targets:
                 if isinstance(target, ast.Name):
-                    self._bind(target.id, self.refs[node.value.id])
+                    self._bind(target.id, self.refs[value.id])
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        self._alias(node.targets, node.value)
+        self.generic_visit(node)
+
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
+        self._alias([node.target], node.value)
         self.generic_visit(node)
 
     def visit_Call(self, node: ast.Call) -> None:
@@ -791,6 +798,7 @@ SPELLING_FILES = {
         "from pytacheck import text as words\n"
         "from pytacheck.module import module_run as _run\n"
         "run = _run\n"
+        "stage: object = _run\n"
         "import pytacheck.report as paint\n"
         "def f():\n    from pytacheck.report import render\n"
         "class C:\n    from pytacheck.report import shade\n"
@@ -810,6 +818,7 @@ SPELLINGS = [
     ("from pytacheck._r import grepl as g\n", [("_r", "_r.grepl", "_r.regex.grepl")]),
     ("from pytacheck.llm import words\n", [("llm", "llm.words", "text")]),
     ("from pytacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
+    ("from pytacheck.llm import stage\n", [("llm", "llm.stage", "module.module_run")]),
     ("from pytacheck.llm import paint\n", [("llm", "llm.paint", "report")]),
     # an import in a function or class of an __init__ binds nothing in the package
     ("from pytacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
