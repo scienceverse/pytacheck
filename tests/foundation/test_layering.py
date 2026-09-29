@@ -19,21 +19,23 @@ pytacheck.module``, with or without ``as``, is the module, and so is an
 attribute chain through it: a chain reads a submodule before a name the package
 binds. A chain such as ``pytacheck.papers.model.Paper`` is one edge, judged by
 its longest prefix that is a module or a name a package binds, like ``from
-pytacheck.papers.model import Paper``. The edge also keeps the last module a
-bound name is read from: ``llm`` for ``pytacheck.llm.Paper``, ``papers.model``
-for ``pytacheck.papers.model.Paper``. An import inside a function or class of an
-``__init__`` binds nothing in the package. The graph feeds three rules.
+pytacheck.papers.model import Paper``. The edge also keeps each module below the
+top level that a bound name is read from: ``llm`` for ``pytacheck.llm.Paper``,
+``papers.model`` for ``pytacheck.papers.model.Paper``. An import inside a
+function or class of an ``__init__`` binds nothing in the package. The graph
+feeds three rules.
 
 **Foundation.** §2.1 says ``core/**`` imports only ``_r``, ``_values``,
 ``_json``, ``papers.model``, ``papers.schema`` and ``papers.ids``. ``core/`` and
 ``papers/ids.py`` do not exist yet. Today the modules that exist are the
-foundation the core will build on, and they must already keep that promise:
-they import only each other, and nothing else in ``pytacheck``. Attribute
-access counts as an import, so ``pytacheck.text_search(...)``, which loads
-``text`` through the top-level lazy ``__getattr__``, is an upward edge. A chain
-is judged by the name it resolves to and by the module it reads that name from,
-so ``pytacheck.llm.Paper`` is an edge to ``llm``. The top level is judged by the
-name alone, so ``pytacheck.Paper`` is the foundation's ``Paper``.
+foundation the core will build on, and they must already keep that promise: they
+import only each other, and nothing else in ``pytacheck``. Attribute access
+counts as an import, so ``pytacheck.text_search(...)``, which loads ``text``
+through the top-level lazy ``__getattr__``, is an upward edge. A chain is judged
+by the name it resolves to and by each module it reads a bound name from, so
+``pytacheck.llm.Paper`` and ``pytacheck.llm.r.bind_rows`` are edges to ``llm``.
+The top level is judged by the name alone, so ``pytacheck.Paper`` is the
+foundation's ``Paper``.
 
 **Core.** Once ``core/**`` exists it keeps the positive list of §2.1: it imports
 only the foundation above and the core itself. §2.6 adds what ``core/run.py``
@@ -173,7 +175,8 @@ class Edge:
     resolved: str  # what that name is, followed through the __init__ files
     line: int
     note: str = ""  # "type-checking", "importlib" or "attribute"
-    via: str = ""  # for attribute access, the last module a bound name is read from
+    # for attribute access, each module below the top level that a bound name is read from
+    via: tuple[str, ...] = ()
 
 
 def _is_type_checking(test: ast.expr) -> bool:
@@ -319,13 +322,13 @@ class _Names:
         resolved = self.imported(ref)
         # what an import statement names is a module
         is_module = not ref[1] or resolved in self.known
-        via = ""
+        via: tuple[str, ...] = ()
         for attr in attrs:
             value = self.attribute(resolved, is_module, attr)
             if value is None:
                 break
-            if f"{resolved}.{attr}" not in self.known:
-                via = resolved
+            if f"{resolved}.{attr}" not in self.known and resolved != PKG:
+                via += (resolved,)
             written, resolved = f"{written}.{attr}", value
             is_module = value in self.known
         return Edge(rel, module, written, written, resolved, line, "attribute", via)
@@ -383,11 +386,9 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
     for edge in edges:
         symbol = edge.resolved
         if _under(edge.module, FOUNDATION):
-            # a name reached by attribute is judged where it is defined, and by the
+            # a name reached by attribute is judged where it is defined, and by each
             # module it is read from; the top level is judged by the name alone
-            targets = [edge.target]
-            if edge.note == "attribute":
-                targets = [symbol] + ([edge.via] if edge.via != PKG else [])
+            targets = [symbol, *edge.via] if edge.note == "attribute" else [edge.target]
             for target in targets:
                 if _under(target, PKG) and not _under(target, LOWER):
                     found.setdefault(("lower", edge.path, target), edge)
@@ -909,6 +910,8 @@ def test_facades_may_import_the_core(tmp_path: Path) -> None:
         "from pytacheck.llm import r\n",
         "import pytacheck._r\nx = pytacheck.llm.r\n",
         "import pytacheck._r\nx = pytacheck.llm.r.frames\n",
+        # r.bind_rows is read from _r, after r is read from llm
+        "import pytacheck._r\nx = pytacheck.llm.r.bind_rows\n",
         "from pytacheck.llm import Paper\n",
         "import pytacheck._r\nx = pytacheck.llm.Paper\n",
     ],
@@ -920,6 +923,16 @@ def test_foundation_sees_the_package_a_name_is_read_from(tmp_path: Path, source:
         "_json.py": source,
     }
     assert found_in(tmp_path, files) == {("lower", "_json.py", f"{PKG}.llm")}
+
+
+def test_foundation_sees_each_package_a_chain_reads_from(tmp_path: Path) -> None:
+    """``up`` is read from ``_r``, then ``Paper`` from ``llm``, which is above it."""
+    files = {
+        "_r/__init__.py": "from pytacheck import llm as up\n",
+        "llm/__init__.py": "from pytacheck.papers.model import Paper\n",
+        "_json.py": "import pytacheck._r\nx = pytacheck._r.up.Paper\n",
+    }
+    assert ("lower", "_json.py", f"{PKG}.llm") in found_in(tmp_path, files)
 
 
 def test_foundation_modules_import_only_each_other(tmp_path: Path) -> None:
