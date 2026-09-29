@@ -413,7 +413,8 @@ def test_a_run_over_the_time_limit_gets_a_plain_message(env: pytest.MonkeyPatch)
 
 def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch, tmp_path: Path) -> None:
     module = stand_in(env, "counted")
-    log = tmp_path / "runs.log"
+    log = tmp_path / "runs"
+    log.mkdir()
     env.setenv(module.LOG_ENV, str(log))
     shared = create_hosted_app(PORT + 2, config())
     answers: list[str] = []
@@ -447,8 +448,8 @@ def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch, tmp_p
     ]
     running = peak = 0
     events = sorted(
-        (float(stamp), 1 if what == "start" else -1)
-        for what, stamp in (line.split() for line in log.read_text().splitlines())
+        (float(note.read_text()), 1 if note.name.startswith("start") else -1)
+        for note in log.iterdir()
     )
     for _stamp, step in events:
         running += step
@@ -809,29 +810,48 @@ def test_no_token_reaches_the_log(
         real_print(*args, **kwargs)
 
     env.setattr(launch, "print", spy, raising=False)
-    before = _servers()
+    import uvicorn
+
+    servers: list[uvicorn.Server] = []
+    up = threading.Event()
+
+    class Recorded(uvicorn.Server):
+        """The server ``_serve`` makes, handed to the test as it is made and once it is up."""
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            servers.append(self)
+
+        async def startup(self, sockets: Any = None) -> None:
+            await super().startup(sockets)
+            if self.started:
+                up.set()
+
+    env.setattr(uvicorn, "Server", Recorded)
     result: list[int] = []
+    errors: list[BaseException] = []
+
+    def serve() -> None:
+        try:
+            result.append(launch._serve(0, False, cfg))
+        except BaseException as exc:  # shown by the assertion, not lost on the thread
+            errors.append(exc)
+
     # port 0: the server's own socket gets a free port, so no other socket can take it
     # between a probe and the bind
-    thread = threading.Thread(
-        target=lambda: result.append(launch._serve(0, False, cfg)), daemon=True
-    )
+    thread = threading.Thread(target=serve, daemon=True)
     thread.start()
     from pytacheck.app import state as saved
 
-    deadline = time.time() + 30
-    while time.time() < deadline and not any(server.started for server in _fresh(before)):
-        time.sleep(0.05)
-    up = [server for server in _fresh(before) if server.started]
-    assert up
-    found = up[0].servers[0].sockets[0].getsockname()[1]
+    assert up.wait(30), (thread.is_alive(), result, errors, capfd.readouterr())
+    found = servers[0].servers[0].sockets[0].getsockname()[1]
     token = TOKEN_A if hosted else (saved.read_state() or {})["token"]
     headers = {"host": HOST if hosted else f"127.0.0.1:{found}"}
     with httpx.Client(trust_env=False, follow_redirects=False) as tc:
         resp = tc.get(f"http://127.0.0.1:{found}/?token={token}&a=1", headers=headers)
         assert resp.status_code == 303
         tc.get(f"http://127.0.0.1:{found}/healthz", headers=headers)
-    for server in _fresh(before):
+    for server in servers:
         server.should_exit = True
     thread.join(15)
     assert result == [0]
@@ -847,15 +867,3 @@ def test_no_token_reaches_the_log(
     if hosted:
         assert printed and printed[0].get("flush") is True  # a pipe shows it at once
         assert not state_dir.exists() or not any(state_dir.iterdir())
-
-
-def _servers() -> list[Any]:
-    import gc
-
-    import uvicorn
-
-    return [o for o in gc.get_objects() if isinstance(o, uvicorn.Server)]
-
-
-def _fresh(before: list[Any]) -> list[Any]:
-    return [s for s in _servers() if not any(s is old for old in before)]
