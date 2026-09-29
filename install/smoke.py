@@ -7,6 +7,7 @@ token gate on 127.0.0.1. Standard library only, so it runs on any runner.
 import argparse
 import http.cookiejar
 import json
+import os
 import re
 import subprocess
 import sys
@@ -46,6 +47,8 @@ def main() -> int:
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        # Without this a print() that is not flushed waits in a buffer.
+        env={**os.environ, "PYTHONUNBUFFERED": "1"},
     )
     lines: list[str] = []
 
@@ -84,10 +87,17 @@ def main() -> int:
             return 1
         print("/ without the token: 403", flush=True)
 
-        match = next((m for m in map(RUNNING.search, lines) if m), None)
-        if match is None:
-            print("the app did not print its link")
-            return 1
+        # The link can appear a moment after /healthz starts to answer.
+        match = None
+        link_deadline = time.monotonic() + 30
+        while match is None:
+            match = next((m for m in map(RUNNING.search, list(lines)) if m), None)
+            if match is not None:
+                break
+            if proc.poll() is not None or time.monotonic() > link_deadline:
+                print("the app did not print its link")
+                return 1
+            time.sleep(0.2)
         jar = http.cookiejar.CookieJar()
         signed_in = urllib.request.build_opener(no_proxy, urllib.request.HTTPCookieProcessor(jar))
         code = status(signed_in, match.group(1))
