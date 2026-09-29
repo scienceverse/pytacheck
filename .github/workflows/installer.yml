@@ -51,10 +51,6 @@ jobs:
           python-version: "3.12"
       - name: shellcheck
         run: shellcheck -s sh install.sh
-      - name: Constraints file is current
-        run: |
-          uv export --locked --no-hashes --no-dev --extra app --no-emit-project --no-annotate --output-file install/constraints-app.txt
-          git diff --exit-code -- install/constraints-app.txt
       - name: Parse install.ps1
         shell: pwsh
         run: |
@@ -68,6 +64,28 @@ jobs:
         run: |
           uv sync --locked
           uv run pytest -q -p no:cacheprovider tests/install
+
+  # Apart from the checks, so that a stale constraints file (a dependency update
+  # changes uv.lock) does not hide the results of the install jobs.
+  constraints:
+    name: Constraints file is current
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - name: Regenerate and compare
+        run: |
+          uv export --locked --no-hashes --no-dev --extra app --no-emit-project --no-annotate --output-file install/constraints-app.txt
+          if ! git diff --exit-code -- install/constraints-app.txt; then
+            echo "::error::install/constraints-app.txt is out of date. Run the command in install/README.md and commit the result."
+            exit 1
+          fi
 
   local-install:
     name: Install from this checkout (${{ matrix.os }})
@@ -131,15 +149,16 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then app="$METACHECK_HOME/bin/metacheck-app.exe"; else app="$METACHECK_HOME/bin/metacheck-app"; fi
           "$app" --self-test
+      # Uninstall the way users run it: the script arrives on stdin.
       - name: Uninstall
         if: runner.os != 'Windows'
-        run: /bin/sh install.sh --uninstall
+        run: cat install.sh | /bin/sh -s -- --uninstall
       - name: Uninstall
         if: runner.os == 'Windows'
         shell: powershell
         run: |
           $env:METACHECK_UNINSTALL = '1'
-          & "$env:GITHUB_WORKSPACE\install.ps1"
+          Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
       - name: The folder is gone
         shell: bash
         run: |
@@ -158,7 +177,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-      # Only the two scripts are checked out. They run on their own, as they do for users.
+      # Only the two scripts are checked out. They run on their own and arrive
+      # on stdin, as they do for users.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
@@ -172,7 +192,7 @@ jobs:
           METACHECK_NO_LAUNCH: "1"
         run: |
           export METACHECK_HOME="$RUNNER_TEMP/metacheck"
-          /bin/sh install.sh
+          cat install.sh | /bin/sh
           "$METACHECK_HOME/bin/metacheck-app" --self-test
       - name: Install and self-test (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
@@ -181,6 +201,6 @@ jobs:
           METACHECK_NO_LAUNCH: "1"
         run: |
           $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
-          & "$env:GITHUB_WORKSPACE\install.ps1"
+          Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
           & "$env:METACHECK_HOME\bin\metacheck-app.exe" --self-test
           if ($LASTEXITCODE -ne 0) { throw "self-test failed" }

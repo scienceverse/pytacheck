@@ -24,7 +24,9 @@ uv export --locked --no-hashes --no-dev --extra app --no-emit-project --no-annot
 ```
 
 The `installer` workflow runs the same command and fails when the result
-differs from the committed file.
+differs from the committed file. That includes a dependency update that
+changes `uv.lock`: run the command on that branch and commit the file. The
+install jobs run either way.
 
 ## The pinned commit
 
