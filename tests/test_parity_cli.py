@@ -392,6 +392,7 @@ def test_a_link_inside_the_checkout_is_not_repo_twice() -> None:
     spelled = pcanonical.Spellings(("/home/j/pt",), ("/src",), ())
     assert spelled.apply("/home/j/pt/src/pytacheck/x.py") == "<repo>/src/pytacheck/x.py"
     assert spelled.apply("/src/pytacheck/x.py") == "<repo>/pytacheck/x.py"
+    assert spelled.apply("./src/x.py") == "./src/x.py"  # a relative path is not the link
 
 
 def test_report_module_paths_are_removed_whatever_their_case(monkeypatch) -> None:
@@ -445,9 +446,11 @@ def test_case_paths_stay_inside_the_checkout(tmp_path, monkeypatch) -> None:
         pcases.decode({"$read": ["fixtures/a.txt", "leak/paper.json"]})
 
 
-def _linked_checkout(tmp_path: Path) -> tuple[Path, Path]:
+def _linked_checkout(
+    tmp_path: Path, root_name: str = "root", shared_dir: str = "shared"
+) -> tuple[Path, Path]:
     """A checkout whose upstream/metacheck is a symlink to another checkout's."""
-    root, shared = tmp_path / "root", tmp_path / "shared" / "metacheck"
+    root, shared = tmp_path / root_name, tmp_path / shared_dir / "metacheck"
     (shared / "tests").mkdir(parents=True)
     (shared / "tests" / "a.txt").write_text("a")
     (root / "upstream").mkdir(parents=True)
@@ -475,6 +478,34 @@ def test_a_symlinked_submodule_is_repo_too(tmp_path, monkeypatch) -> None:
     }
     assert pcanonical.portable(f"{real}/tests/a.txt") == "<repo>/upstream/metacheck/tests/a.txt"
     assert pcanonical.portable("/elsewhere/a.txt") == "/elsewhere/a.txt"
+
+
+def test_a_linked_submodule_is_replaced_before_the_checkout(tmp_path, monkeypatch) -> None:
+    from dataclasses import dataclass, field
+
+    import pandas as pd
+
+    from tests.mod_code import helpers
+
+    # the shared tree's path starts with the checkout's path as text: "pt" and "pt2"
+    root, shared = _linked_checkout(tmp_path, "pt", "pt2")
+    where = f"{os.path.realpath(shared)}/tests/a.txt"
+    want = "<repo>/upstream/metacheck/tests/a.txt"
+    spelled = pcanonical.Spellings.of(root)
+    monkeypatch.setattr(pcanonical, "_SPELLINGS", spelled)
+    assert pcanonical.portable(where) == want
+    assert pcanonical.portable({"t": "chr", "v": [where]}) == {"t": "chr", "v": [want]}
+    assert spelled.apply(where) == want
+    monkeypatch.setattr(helpers, "ROOT", root)
+
+    @dataclass(frozen=True)
+    class Output:
+        table: pd.DataFrame
+        extras: dict = field(default_factory=dict)
+
+    table = pd.DataFrame({"file_location": [where]})
+    got = helpers.cc_norm(Output(table)).table["file_location"].tolist()
+    assert got == ["<ROOT>/upstream/metacheck/tests/a.txt"]
 
 
 def test_case_paths_may_go_through_a_symlinked_submodule(tmp_path, monkeypatch) -> None:
