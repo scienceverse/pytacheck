@@ -101,7 +101,7 @@ Dates are planning targets for this project's own releases. A simulation at 3 ag
   - DOCS-ROADMAP: this roadmap and the design-doc pointers.
 - **Status on 29 Sep:**
   - Merged: #20 (V-2), #21 (C-S1's follow-ups: `store add` and `store remove` lose `--project`, and an ignored project store no longer breaks `init` or `config`), #22 (S-4's follow-up: names that end in a newline are refused), #24 (the first part of BIBR-12X-a), #25 (V-1) and #26 (TRUST-1).
-  - Open: #23 (SERVE-AUTH, which waits until the operators of hosted services have been told).
+  - Open: #23 (SERVE-AUTH, which waits until the operators of hosted services have been told) and #27 (a follow-up to #24: a log that cannot be written never fails the caller).
   - In review, with PRs to follow: H-11 and H-14.
 - **Exit criteria:**
   - main CI is green.

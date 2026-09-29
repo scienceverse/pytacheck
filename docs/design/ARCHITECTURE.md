@@ -458,11 +458,11 @@ def stack(*row_lists) -> list[dict]: ...        # concatenates lists
 - The parity harness calls compat, so the public-function cases need no change.
 - The "Permanent façades" list below moves into compat unchanged. Its contract to store modules does not change.
 
-**Roadmap (proposed; depends on D12).** [ROADMAP.md](ROADMAP.md) §2 and the FACADE-SUNSET package propose a different rule for which façades stay permanent. This section is unchanged until D12 is answered.
-
 **Declarative pattern checks in TOML are deferred** (decision 2 (decided 2026-09-28: (c)), revision 3 review). A check that is only patterns, section filters and a traffic-light rule could be a TOML file compiled to `pytacheck.doc`, but nothing needs it yet: the porting translator writes `.py` against `pytacheck.doc` (ECOSYSTEM.md §5.2), and the maintainer's goal is fewer lines. It is built when a store author or the translator needs it, and then becomes the translator's preferred output for pattern-only modules. §2.13's "four module forms" rejection holds: there is one form, a Python check.
 
 **Permanent façades**, with R semantics and DataFrame results, never deleted: `module`, `module_run`, `get_prev_outputs`; `text_search` (pattern-major order, first match wins, `exclude`, every `return_` mode); `paper_table`, `ref_table`, `paper_id`, `text_expand`, `extract_*`, `json_expand`, `stats`; `_r.frames.bind_rows` and `count`; `report.scroll_table`, `collapse_section`; `test_paper`, `demopaper`, `read`; `Paper`/`PaperList` access.
+
+**Roadmap (proposed; depends on D12).** [ROADMAP.md](ROADMAP.md) §2 and the FACADE-SUNSET package propose replacing this rule and the deprecated top-level re-exports above: façades that store packs and templates use stay in compat, with an end date reviewed at 1.0, and the others warn from 0.5 and go no earlier than 1.0. This section is unchanged until D12 is answered.
 
 **`text_search` for character vectors with several patterns returns results** (lane 5's U-entries; Review B-15), covering `text_search.vector.multi`, `.multi.one_hit`, `.multi.no_hits`, `.multi.exclude.three`, `.four` and `.three_empty`, and `text_search.demo.multi.exclude.three` and `.four`. Invalid arguments raise Python errors with pytacheck's own messages, compared by presence. The spike's replays of dplyr's "`...` must be empty" and R's "unused argument (…)" are deleted.
 
@@ -1054,7 +1054,7 @@ CLOSE                                                                 ███�
 
 ### 4.5 Coexistence, deletion and ownership rules
 
-**Roadmap (proposed; depends on D01, D04 and D12).** These rules apply in whichever milestone a package lands in ([ROADMAP.md](ROADMAP.md) §3). The paths are those before the rename: with D04 answered (a), RENAME-1 moves `src/pytacheck` to `src/metacheck`. The rule that public façades are never deleted is a separate proposal (D12).
+**Roadmap (proposed; depends on D01, D04 and D12).** These rules apply in whichever milestone a package lands in ([ROADMAP.md](ROADMAP.md) §3). The paths are those before the rename: with D04 answered (a), RENAME-1 moves `src/pytacheck` to `src/metacheck`. D12 proposes replacing the rule that public façades are never deleted (§2.10).
 
 **Coexistence.** One shipped implementation per module and no runtime switch. Mixed chains just work: `_assemble` normalises a dict, a DataFrame or a `Result`, and unmigrated modules call the façades on the same Doc and RefIndex.
 
@@ -1190,7 +1190,7 @@ Network- and LLM-bound workloads keep BATCH_DESIGN §4.1's gains (rolling window
 - **Re-summed (E; proposed with [ROADMAP.md](ROADMAP.md) §9):** REPO_FETCH.md's CACHE package adds ≈ 700 lines (`cache/**`; E, not yet sized from a prototype: upstream-apis.md put an HTTP store alone at 250-400, and CACHE adds the blob store, the ledger and the Redis backend). It removes at most ≈ 250 of the 266 lines in `archives/info_cache.py` (156) and `archives/cache.py` (110), because `repo_info_cache()`, `repo_info_cache_clear()` and `metacheck_cache_info()` stay public, and the download and LLM caches still resolve their directories there. That is ≈ +450 net or more **(E)**, inside the 88-97k range. Decision 22 (decided 2026-09-27: (a2)) defers the Redis backend, so these figures are an upper bound. Counted here: ≈ 93,300 + 450 = **≈ 93,750**, before the items below.
 - **Decision 3 (b)** adds corpus mode's `batch/views.py` and E2's `ModuleSpec.batch` field: ≈ 150-250 lines (E, from BL-8's content; not yet sized from a prototype), inside the 88-97k range. The rest of `batch/**`, which BATCH-b creates, has no row in this ledger or in §3.6's tree yet. ROADMAP.md proposes to move corpus mode to after 1.0 (D18). D18 also moves PORT to after 1.0, and the `port/` row (≈ 1,260 lines) is inside the ≈ 93,300 total. If D18 is answered (a), `port/` and corpus mode leave the 1.0 count, and the total falls from ≈ 93,750 to about 92,500 (93,750 − 1,260). Until then both stay in it, and the total is ≈ 93,900-94,000 (93,750 plus corpus mode's ≈ 150-250).
 - **Decision 2:** the ≈ +380-460 lines of the DECL package (a) are not in the ledger. Decision 2 is (c) since 2026-09-28, so the count needs no change.
-- **Not yet counted (D19):** `zenodo_upload` already leaves under decision 16 (a) (§3.5), so it is not counted again. D19 (ROADMAP.md, extends decision 16) adds statout's HTML exporters and keeps the reproducibility check. Their rows are counted once D19 is answered.
+- **Not yet counted (D19):** `zenodo_upload` already leaves under decision 16 (a) (§3.5), so it is not counted again. D19 (ROADMAP.md, extends decision 16) proposes that statout's HTML exporters leave the package too, and keeps the reproducibility check. Their rows are counted once D19 is answered.
 - **Product code:** ROADMAP §9 puts the product work of 0.5 (the service, settings, setup, the local GUI, sign-in and the extraction client) at about 2-3k lines. Apart from `api/web.py`, this ledger has no row for it. The ledger is re-summed when those packages are sized.
 - **Interim targets (proposed; ROADMAP §9):** the ledger's figures are for 1.0. Between now and then:
 
@@ -1199,7 +1199,7 @@ Network- and LLM-bound workloads keep BATCH_DESIGN §4.1's gains (rolling window
   | Today (main, 00ef3a21) | 126,556 | counted later than the ledger's 125,800 |
   | 0.5 | at most 130k | a cap while the product code is added, not a cut |
   | 0.6 | 95-100k | after the core and the waves |
-  | 1.0 | 89-93k | rev 3's ≈ 93,300 (range 88-97k) stands as the reference. The ledger above sums to ≈ 93,750 before product code, or about 92,500 if D18 is answered (a). Only in the second case is it inside 89-93k; otherwise ROADMAP §9's ratchets and named reductions have to close the gap |
+  | 1.0 | 89-93k | rev 3's ≈ 93,300 (range 88-97k) stands as the reference. The ledger above sums to ≈ 93,900-94,000 before product code (≈ 93,750 plus corpus mode), or about 92,500 if D18 is answered (a). Only in the second case is it inside 89-93k; otherwise ROADMAP §9's ratchets and named reductions have to close the gap |
 
   The floor after the post-freeze clean-ups is about 80k lines.
 - **Not in the ledger:** parity data (140 MB in 9,745 files under `parity/`, **M3**), which the mark migration and the retired cases shrink but which is not code.
