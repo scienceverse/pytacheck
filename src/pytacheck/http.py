@@ -41,10 +41,12 @@ __all__ = [
     "RETRY_STATUSES",
     "Throttle",
     "batch_query",
+    "check_interrupt",
     "client",
     "client_for",
     "close_client",
     "host_reset_at",
+    "interruptible",
     "request",
     "resp_json",
     "skip_on_api_limit",
@@ -60,14 +62,47 @@ _client_h1: httpx.Client | None = None
 _H1_HOSTS = ("osf.io",)
 _client_lock = threading.Lock()
 _skip_limit: ContextVar[bool] = ContextVar("pytacheck_skip_on_api_limit", default=False)
+#: Called before each request, each downloaded chunk and during waits; it raises to end them.
+#: Set per context by :func:`interruptible`, so an application can stop one running job.
+_interrupt: ContextVar[Callable[[], None] | None] = ContextVar("pytacheck_interrupt", default=None)
 _host_reset: dict[str, float] = {}
 _reset_lock = threading.Lock()
 
 
+@contextlib.contextmanager
+def interruptible(check: Callable[[], None]) -> Iterator[None]:
+    """Run a block whose requests and waits call *check*; *check* raises to end them.
+
+    Threads started with ``copy_context()`` (as the library's own pools are) inherit it.
+    """
+    token = _interrupt.set(check)
+    try:
+        yield
+    finally:
+        _interrupt.reset(token)
+
+
+def check_interrupt() -> None:
+    """Raise what the enclosing :func:`interruptible` block's check raises (else nothing)."""
+    check = _interrupt.get()
+    if check is not None:
+        check()
+
+
 def sleep(seconds: float) -> None:
-    """``Sys.sleep()`` that the test suite can switch off (``PYTACHECK_NO_SLEEP``)."""
+    """``Sys.sleep()`` that the test suite can switch off (``PYTACHECK_NO_SLEEP``).
+
+    Inside :func:`interruptible` it wakes every quarter second to look for an interrupt.
+    """
     if seconds > 0 and not os.environ.get("PYTACHECK_NO_SLEEP"):
-        time.sleep(seconds)
+        if _interrupt.get() is None:
+            time.sleep(seconds)
+            return
+        end = time.monotonic() + seconds
+        while (left := end - time.monotonic()) > 0:
+            check_interrupt()
+            time.sleep(min(left, 0.25))
+        check_interrupt()
 
 
 def _user_agent() -> str:
@@ -232,6 +267,7 @@ def request(
     session = http or client_for(url)
     resp: httpx.Response | None = None
     for attempt in range(1, max_tries + 1):
+        check_interrupt()
         reset = host_reset_at(host)
         if reset is not None:
             if skipping_api_limits():
