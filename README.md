@@ -1,10 +1,10 @@
-# pytacheck
+# metacheck (Python)
 
 **Check research outputs for best practices — in Python.**
 
 **Try it:** a preview app that runs on your own computer, installed with one command. See [docs/TRY.md](docs/TRY.md).
 
-pytacheck is a fast, Python-native port of ScienceVerse's
+metacheck (Python) is a fast, Python-native port of ScienceVerse's
 [metacheck](https://github.com/scienceverse/metacheck) R package, designed to work
 hand in hand with [bibr](https://bibr.org). It follows metacheck's `dev` branch (for now
 `dev` plus pull request [#423](https://github.com/scienceverse/metacheck/pull/423), which
@@ -21,9 +21,27 @@ rather than copied, and nothing invented ([the accuracy contract](docs/PORTING.m
 ## Install
 
 ```bash
-pip install pytacheck                 # core: bibr JSON / Grobid XML input
-pip install "pytacheck[bibr]"         # + extract PDF/DOCX/HTML with bibr, in-process
-pip install "pytacheck[all]"          # + bibr, data-file readers, REST API, charset detection
+pip install --pre metacheck           # core: bibr JSON / Grobid XML input
+pip install --pre "metacheck[bibr]"   # + extract PDF/DOCX/HTML with bibr, in-process
+pip install --pre "metacheck[all]"    # + bibr, data-file readers, REST API, charset detection
+```
+
+The package is on PyPI as `metacheck` and is a pre-release for now, so pip needs `--pre`.
+The Python module is still called `pytacheck` (`import pytacheck`) and so is one of the
+commands; `metacheck` is the same command.
+
+To try the app in your browser, with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uv tool install --prerelease allow "metacheck[app]"
+metacheck-app
+```
+
+If you do not use Python, one line installs the app; see [docs/TRY.md](docs/TRY.md).
+On a Mac or Linux:
+
+```bash
+curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh
 ```
 
 Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/scienceverse/pytacheck run paper.json -m all_p_values`.
@@ -33,7 +51,7 @@ Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/scienceverse/pytacheck 
 ```python
 import pytacheck as pc
 
-paper = pc.read("paper.json")          # bibr JSON, Grobid XML — or a PDF with pytacheck[bibr]
+paper = pc.read("paper.json")          # bibr JSON, Grobid XML — or a PDF with metacheck[bibr]
 pc.paper_write(paper, "checked")        # a bibr 12.0 paper is saved as a bibr 12.0 file
 pc.module_list()                        # available checks
 out = pc.module_run(paper, "marginal")

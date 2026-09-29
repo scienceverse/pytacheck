@@ -1,10 +1,25 @@
 # Changelog
 
-pytacheck versions track the metacheck release they are in parity with:
-`X.Y.Z` = metacheck `X.Y.Z`, with a fourth component (`X.Y.Z.N`) for
-pytacheck-only releases. The pinned metacheck commit is in `parity/UPSTREAM.toml`.
+This is the Python version of metacheck. It has its own version line, starting
+at 0.4.0 (0.4.0a1 is the first release); the version does not follow the R
+package's. The R commit each release is compared against is in
+`parity/UPSTREAM.toml` and in the notes of the release.
 
 ## Unreleased
+
+## 0.4.0a1 (first release on PyPI)
+
+First release on PyPI, as `metacheck` (`pip install --pre metacheck`). It is a
+pre-release. The import name is still `pytacheck` and so is one of the
+commands; `metacheck` is the same command, and `python -m pytacheck` works.
+Compared against the R package at commit `b239264` (metacheck 0.3.1 at `85c8c87`
+plus scienceverse/metacheck#423, which the port targets ahead of its merge).
+
+- The app and the installer: `metacheck-app` and `metacheck[app]`; a one-line
+  installer for people who do not use Python (docs/TRY.md).
+- Packs that require `pytacheck` find the installed `metacheck`.
+- `pyyaml` is now a core dependency (codecheck reads YAML).
+- NOTICE and CITATION.cff credit the R package and its authors.
 
 Complete rebuild as a parity-tested Python port of metacheck `dev`
 (`85c8c87`, metacheck 0.3.1) plus scienceverse/metacheck#423 (`b239264`,
@@ -24,7 +39,7 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
 
 ### App
 
-- `metacheck-app` (also `pytacheck app`, extra `pytacheck[app]`): a local Gradio page
+- `metacheck-app` (also `pytacheck app`, extra `metacheck[app]`): a local Gradio page
   that checks a PDF, GROBID XML or bibr JSON file and shows the results table and the
   report. It listens on 127.0.0.1 only, behind a per-launch token, and a second start
   reuses the running app. `--self-test` checks the demo paper without a server.
