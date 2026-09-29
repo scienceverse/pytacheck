@@ -128,6 +128,38 @@ def _repo_cache_dir() -> str:
     )
 
 
+_STALE_TEMP_AGE_S = 6 * 3600
+_swept = False
+
+
+def _sweep_repo_cache_once() -> None:
+    """Once per process, remove temporary files that a killed run left in the repo cache.
+
+    A hosted run's process can be ended mid-write; its temporary file (see
+    :mod:`pytacheck.archives._atomic`) would otherwise stay for good. Only files
+    older than 6 hours are removed; the cache folder is not created; never raises.
+    """
+    global _swept
+    if _swept:
+        return
+    _swept = True
+    try:
+        from pytacheck.archives._atomic import sweep_stale
+        from pytacheck.archives.cache import _metacheck_cache_root
+        from pytacheck.utils import get_option
+
+        override = get_option("metacheck.repo_cache.dir")
+        root = (
+            str(override)
+            if override is not None and str(override) != ""
+            else os.path.join(_metacheck_cache_root(), ".metacheck_repo_cache")
+        )
+        if os.path.isdir(root):
+            sweep_stale(root, _STALE_TEMP_AGE_S)
+    except Exception:  # noqa: S110 - a sweep must never fail a run
+        pass
+
+
 def _scalar(x: Any, what: str = "x") -> Any:
     """A length-1 vector argument as its value (R's scalar ``if()`` conditions)."""
     if isinstance(x, str | bytes) or x is None or not isinstance(x, Sequence | Iterable):
@@ -1425,6 +1457,7 @@ def download_repo_files(
     if rel_path is None:
         rel_path = list(file_names)
     rel_path = [fn if p is None else p for p, fn in zip(rel_path, file_names, strict=True)]
+    _sweep_repo_cache_once()
     cache_paths = [_safe_write_path(cache_path(repo_urls[i], rel_path[i])) or "" for i in range(n)]
     df[".cache_path"] = pd.Series(cache_paths, dtype=object)
 

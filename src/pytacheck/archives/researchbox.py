@@ -10,13 +10,14 @@ repository file cache.
 from __future__ import annotations
 
 import os
+import shutil
 import warnings
 from typing import Any
 
 import pandas as pd
 
 from pytacheck._r import is_na
-from pytacheck.archives._atomic import atomic_write
+from pytacheck.archives._atomic import atomic_write, staged_dir
 
 __all__ = ["rbox_file_download", "rbox_info", "rbox_links"]
 
@@ -347,9 +348,11 @@ def rbox_file_download(rb_url: Any, pb: Any = None) -> pd.DataFrame | None:
                 )
                 return None
 
-            os.makedirs(out_dir, exist_ok=True)
             _tick(bar, f"Unzipping into: {out_dir}")
-            _unzip(zip_path, out_dir)
+            if os.path.isdir(out_dir):  # no files in it: left by a run that never got to write
+                shutil.rmtree(out_dir, ignore_errors=True)
+            with staged_dir(out_dir) as stage:  # out_dir appears only once the unzip ended
+                _unzip(zip_path, stage)
 
         files_rel = _list_files(out_dir)
         if not files_rel:

@@ -21,7 +21,6 @@ All requests go through the storage retry policy and host authentication of
 
 from __future__ import annotations
 
-import contextlib
 import os
 import threading
 import warnings
@@ -30,7 +29,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from pytacheck._r import grepl, gsub, is_na, strsplit, sub
-from pytacheck.archives._atomic import atomic_write
+from pytacheck.archives._atomic import atomic_write, staged_dir
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -831,12 +830,11 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
             if not _minizip_can_open(fp, info):
                 warnings.warn("zip file is corrupt", stacklevel=3)
                 return
-            stack = contextlib.ExitStack()
             try:
-                fout = stack.enter_context(atomic_write(out))
+                fout = open(out, "wb")  # noqa: SIM115
             except OSError as e:
                 raise RuntimeError(f"cannot open file '{os.fsdecode(out)}': {e.strerror}") from e
-            with stack, zf.open(info) as src:
+            with fout, zf.open(info) as src:
                 src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
                 shutil.copyfileobj(src, fout)
 
@@ -867,7 +865,8 @@ def _expand_zip(
         return empty
     if not os.path.isdir(dest):
         try:
-            _unzip_all(zip_path, dest)
+            with staged_dir(dest) as stage:  # dest appears only once the extraction ended
+                _unzip_all(zip_path, stage)
         except Exception:  # noqa: S110 - R: tryCatch(unzip(...), error = NULL)
             pass
     return _archive_rows(dest, zip_row, os.path.basename(zip_path), skip_types)
@@ -921,7 +920,8 @@ def _expand_tar(
         return empty
     if not os.path.isdir(dest):
         try:
-            _untar_all(tar_path, dest)
+            with staged_dir(dest) as stage:  # dest appears only once the extraction ended
+                _untar_all(tar_path, stage)
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
     return _archive_rows(dest, tar_row, os.path.basename(tar_path), skip_types)
