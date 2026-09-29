@@ -7,6 +7,10 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### bibr server client
+
+- `convert_bibr(backend="bibr")` and `convert()` (with `BIBR_URL` and `BIBR_API_KEY`) use bibr serve's job API and the hosted service in front of it: submit to `/papers/jobs`, poll, fetch the result, honour `Retry-After` on a 429 (bounded), read a 409 on the result as not ready, explain 401/403/413/415, and never send the token over plain http except to localhost or across a redirect. `"selfhosted"` now sends the token and waits out a 429; the readiness check accepts an anonymous bibr serve (docs/BIBR.md section 3, docs/UPSTREAM_ISSUES.md D59).
+
 ## 0.4.0a1 (first release on PyPI)
 
 First release on PyPI, as `metacheck` (`pip install "metacheck>=0.4.0a1"`). It is a
@@ -40,10 +44,6 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
   metacheck's recorded API fixtures in tests.
 - CLI (`pytacheck`), Docker images (with and without bibr), and a scheduled
   upstream-sync workflow that ports new metacheck commits automatically.
-
-### bibr server client
-
-- `convert_bibr(backend="bibr")` and `convert()` (with `BIBR_URL` and `BIBR_API_KEY`) use bibr serve's job API and the hosted service in front of it: submit to `/papers/jobs`, poll, fetch the result, honour `Retry-After` on a 429 (bounded), read a 409 on the result as not ready, explain 401/403/413/415, and never send the token over plain http except to localhost or across a redirect. `"selfhosted"` now sends the token and waits out a 429; the readiness check accepts an anonymous bibr serve (docs/BIBR.md section 3, docs/UPSTREAM_ISSUES.md D59).
 
 ### App
 
