@@ -9,7 +9,6 @@ import logging
 import multiprocessing
 import operator
 import os
-import socket
 import threading
 import time
 from collections.abc import Iterator
@@ -700,11 +699,10 @@ def test_no_token_reaches_the_log(
     env.setattr(launch, "print", spy, raising=False)
     before = _servers()
     result: list[int] = []
-    with socket.socket() as probe:
-        probe.bind(("127.0.0.1", 0))
-        port = probe.getsockname()[1]
+    # port 0: the server's own socket gets a free port, so no other socket can take it
+    # between a probe and the bind
     thread = threading.Thread(
-        target=lambda: result.append(launch._serve(port, False, cfg)), daemon=True
+        target=lambda: result.append(launch._serve(0, False, cfg)), daemon=True
     )
     thread.start()
     from pytacheck.app import state as saved
@@ -712,8 +710,9 @@ def test_no_token_reaches_the_log(
     deadline = time.time() + 30
     while time.time() < deadline and not any(server.started for server in _fresh(before)):
         time.sleep(0.05)
-    assert any(server.started for server in _fresh(before))
-    found = port
+    up = [server for server in _fresh(before) if server.started]
+    assert up
+    found = up[0].servers[0].sockets[0].getsockname()[1]
     token = TOKEN_A if hosted else (saved.read_state() or {})["token"]
     headers = {"host": HOST if hosted else f"127.0.0.1:{found}"}
     with httpx.Client(trust_env=False, follow_redirects=False) as tc:
