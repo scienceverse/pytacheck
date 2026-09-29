@@ -55,10 +55,15 @@ main() {
     [ -n "${HOME:-}" ] || die "HOME is not set. Set METACHECK_HOME to the folder to use."
     METACHECK_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/metacheck"
   fi
-  root="$METACHECK_HOME"
-  while [ "${#root}" -gt 1 ] && [ "${root%/}" != "$root" ]; do
-    root="${root%/}"
-  done
+  # Gives one folder one spelling: repeated and trailing slashes go.
+  tidy() {
+    t="$(printf '%s\n' "$1" | sed 's|//*|/|g')"
+    while [ "${#t}" -gt 1 ] && [ "${t%/}" != "$t" ]; do
+      t="${t%/}"
+    done
+    printf '%s\n' "$t"
+  }
+  root="$(tidy "$METACHECK_HOME")"
 
   # Refuses any folder that is not clearly ours before anything is removed.
   check_root() {
@@ -68,7 +73,17 @@ main() {
       /*) ;;
       *) die "METACHECK_HOME must be an absolute path: $root" ;;
     esac
-    [ "$root" != "${HOME:-}" ] || die "METACHECK_HOME is your home folder; refusing to continue."
+    case "/$root/" in
+      */./* | */../*) die "METACHECK_HOME must not contain . or .. parts: $root" ;;
+    esac
+    if [ -n "${HOME:-}" ]; then
+      [ "$root" != "$(tidy "$HOME")" ] || die "METACHECK_HOME is your home folder; refusing to continue."
+      # The same folder under another name (a link, for instance).
+      home_real="$(cd "$HOME" 2>/dev/null && pwd -P || true)"
+      root_real="$(cd "$root" 2>/dev/null && pwd -P || true)"
+      [ -z "$root_real" ] || [ "$root_real" != "$home_real" ] ||
+        die "METACHECK_HOME is your home folder; refusing to continue."
+    fi
     case "$root" in
       */metacheck) ;;
       *) die "METACHECK_HOME must end in a folder named metacheck: $root" ;;
@@ -81,26 +96,37 @@ main() {
   uv_bin="$uv_dir/uv"
   bin_dir="$root/bin"
   app="$bin_dir/metacheck-app"
+  # Written at install time. Uninstall removes nothing from a folder without it.
+  marker="$root/.metacheck-installer"
 
-  # Every uv setting that could reach outside the folder is pinned here.
+  # Every uv setting that could reach outside the folder is pinned here, and
+  # the ones that change how Python or the packages are chosen are dropped.
   # The bin folder goes on PATH for uv only, so uv does not warn that it is missing.
   run_uv() {
-    env \
-      PATH="$bin_dir:$PATH" \
-      UV_CACHE_DIR="$root/cache" \
-      UV_PYTHON_INSTALL_DIR="$root/python" \
-      UV_TOOL_DIR="$root/tools" \
-      UV_TOOL_BIN_DIR="$bin_dir" \
-      UV_PYTHON_INSTALL_BIN=0 \
-      UV_PYTHON_INSTALL_REGISTRY=0 \
-      UV_NO_MODIFY_PATH=1 \
-      UV_NO_CONFIG=1 \
-      "$uv_bin" "$@"
+    (
+      unset UV_PYTHON UV_PYTHON_PREFERENCE UV_MANAGED_PYTHON UV_NO_MANAGED_PYTHON \
+        UV_OFFLINE UV_CONSTRAINT UV_BUILD_CONSTRAINT UV_OVERRIDE UV_EXCLUDE_NEWER \
+        UV_PRERELEASE UV_RESOLUTION UV_NO_BUILD UV_NO_BINARY UV_FROZEN UV_LOCKED
+      exec env \
+        PATH="$bin_dir:$PATH" \
+        UV_CACHE_DIR="$root/cache" \
+        UV_PYTHON_INSTALL_DIR="$root/python" \
+        UV_PYTHON_DOWNLOADS=automatic \
+        UV_TOOL_DIR="$root/tools" \
+        UV_TOOL_BIN_DIR="$bin_dir" \
+        UV_PYTHON_INSTALL_BIN=0 \
+        UV_PYTHON_INSTALL_REGISTRY=0 \
+        UV_NO_MODIFY_PATH=1 \
+        UV_NO_CONFIG=1 \
+        "$uv_bin" "$@"
+    )
   }
 
   if [ "$uninstall" = "1" ]; then
     if [ ! -d "$root" ]; then
       say "Nothing to remove: $root does not exist."
+    elif [ ! -f "$marker" ]; then
+      die "$root was not made by this installer (it has no .metacheck-installer file). Nothing was removed."
     else
       if [ -x "$uv_bin" ]; then
         run_uv tool uninstall "$TOOL" >/dev/null 2>&1 || true
@@ -108,17 +134,24 @@ main() {
       for sub in uv python tools bin cache; do
         rm -rf "${root:?}/$sub"
       done
-      if ! rmdir "$root" 2>/dev/null; then
-        say "Left $root in place: it holds files the installer did not create."
+      rm -f "$marker"
+      if rmdir "$root" 2>/dev/null; then
+        say "Removed metacheck from $root."
+      else
+        say "Left $root in place: it holds files the installer did not create. Everything else is removed."
       fi
-      say "Removed metacheck from $root."
     fi
+    state=""
     case "$(uname -s)" in
       Darwin) settings="$HOME/Library/Application Support/pytacheck" ;;
-      *) settings="${XDG_CONFIG_HOME:-$HOME/.config}/pytacheck" ;;
+      *)
+        settings="${XDG_CONFIG_HOME:-$HOME/.config}/pytacheck"
+        state="${XDG_STATE_HOME:-$HOME/.local/state}/pytacheck"
+        ;;
     esac
     say "The app's own settings are kept in $settings."
-    say "Delete that folder too if you want them gone."
+    [ -z "$state" ] || say "Its state file is kept in $state."
+    say "Delete them too if you want them gone."
     return 0
   fi
 
@@ -143,7 +176,8 @@ main() {
         *) die "unsupported CPU: $cpu on Linux. Please tell us at $ISSUES_URL" ;;
       esac
       libc="gnu"
-      if ls /lib/ld-musl-* /usr/lib/ld-musl-* >/dev/null 2>&1; then
+      # Each place on its own: ls fails when either glob matches nothing.
+      if ls /lib/ld-musl-* >/dev/null 2>&1 || ls /usr/lib/ld-musl-* >/dev/null 2>&1; then
         libc="musl"
       fi
       target="$arch-unknown-linux-$libc"
@@ -179,9 +213,12 @@ main() {
   }
 
   tmp="$(mktemp -d "${TMPDIR:-/tmp}/metacheck.XXXXXX")"
-  trap 'rm -rf "$tmp"' EXIT INT TERM
+  trap 'rm -rf "$tmp"' EXIT
+  trap 'rm -rf "$tmp"; exit 130' INT
+  trap 'rm -rf "$tmp"; exit 143' TERM
 
   mkdir -p "$root" "$uv_dir" "$bin_dir"
+  : >"$marker"
 
   # uv: download and check it, unless the right version is already here.
   have_uv=0
@@ -218,7 +255,7 @@ main() {
   fi
 
   say "Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ..."
-  if ! run_uv tool install --managed-python --python 3.12 --force "$spec" -c "$constraints"; then
+  if ! run_uv tool install --managed-python --python 3.12 "$spec" -c "$constraints"; then
     die "the install failed. If it keeps failing, please tell us at $ISSUES_URL"
   fi
   [ -x "$app" ] || die "the install finished but $app is missing. Please tell us at $ISSUES_URL"

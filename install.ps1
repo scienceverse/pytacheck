@@ -62,8 +62,11 @@ function Install-Metacheck {
     if (-not $root.Trim()) { Fail 'METACHECK_HOME is empty; refusing to continue.' }
     if ($root.Length -gt [System.IO.Path]::GetPathRoot($root).Length) { $root = $root.TrimEnd('\', '/') }
     if (-not [System.IO.Path]::IsPathRooted($root)) { Fail "METACHECK_HOME must be an absolute path: $root" }
+    # One folder, one spelling: this resolves "." and "..", and repeated slashes.
+    $root = [System.IO.Path]::GetFullPath($root)
+    if ($root.Length -gt [System.IO.Path]::GetPathRoot($root).Length) { $root = $root.TrimEnd('\', '/') }
     if ($root -eq [System.IO.Path]::GetPathRoot($root)) { Fail "METACHECK_HOME is a drive root; refusing to continue: $root" }
-    if ($env:USERPROFILE -and ($root -ieq $env:USERPROFILE.TrimEnd('\', '/'))) {
+    if ($env:USERPROFILE -and ($root -ieq [System.IO.Path]::GetFullPath($env:USERPROFILE).TrimEnd('\', '/'))) {
         Fail 'METACHECK_HOME is your home folder; refusing to continue.'
     }
     if ((Split-Path -Leaf $root) -ine 'metacheck') { Fail "METACHECK_HOME must end in a folder named metacheck: $root" }
@@ -75,9 +78,13 @@ function Install-Metacheck {
     $uvBin = Join-Path $uvDir 'uv.exe'
     $binDir = Join-Path $root 'bin'
     $app = Join-Path $binDir 'metacheck-app.exe'
+    # Written at install time. Uninstall removes nothing from a folder without it.
+    $marker = Join-Path $root '.metacheck-installer'
 
     # Every uv setting that could reach outside the folder is pinned here, for
-    # this run only. The caller's own values come back in the finally block.
+    # this run only, and the ones that change how Python or the packages are
+    # chosen are dropped ($null). The caller's own values come back in the
+    # finally block.
     $uvEnv = [ordered]@{
         UV_CACHE_DIR                 = Join-Path $root 'cache'
         UV_PYTHON_INSTALL_DIR        = Join-Path $root 'python'
@@ -87,6 +94,12 @@ function Install-Metacheck {
         UV_PYTHON_INSTALL_REGISTRY   = '0'
         UV_NO_MODIFY_PATH            = '1'
         UV_NO_CONFIG                 = '1'
+        UV_PYTHON_DOWNLOADS          = 'automatic'
+    }
+    foreach ($name in 'UV_PYTHON', 'UV_PYTHON_PREFERENCE', 'UV_MANAGED_PYTHON', 'UV_NO_MANAGED_PYTHON',
+        'UV_OFFLINE', 'UV_CONSTRAINT', 'UV_BUILD_CONSTRAINT', 'UV_OVERRIDE', 'UV_EXCLUDE_NEWER',
+        'UV_PRERELEASE', 'UV_RESOLUTION', 'UV_NO_BUILD', 'UV_NO_BINARY', 'UV_FROZEN', 'UV_LOCKED') {
+        $uvEnv[$name] = $null
     }
     $saved = @{}
     $savedPath = $env:PATH
@@ -118,6 +131,8 @@ function Install-Metacheck {
         if ($uninstall) {
             if (-not (Test-Path -LiteralPath $root)) {
                 Say "Nothing to remove: $root does not exist."
+            } elseif (-not (Test-Path -LiteralPath $marker)) {
+                Fail "$root was not made by this installer (it has no .metacheck-installer file). Nothing was removed."
             } else {
                 if (Test-Path -LiteralPath $uvBin) {
                     $null = Invoke-Uv tool uninstall $Tool 2>$null
@@ -132,11 +147,12 @@ function Install-Metacheck {
                         }
                     }
                 }
+                Remove-Item -LiteralPath $marker -Force
                 if (@(Get-ChildItem -LiteralPath $root -Force).Count -eq 0) {
                     Remove-Item -LiteralPath $root -Force
                     Say "Removed metacheck from $root."
                 } else {
-                    Say "Left $root in place: it holds files the installer did not create."
+                    Say "Left $root in place: it holds files the installer did not create. Everything else is removed."
                 }
             }
             Say "The app's own settings are kept in $(Join-Path $env:LOCALAPPDATA 'pytacheck\pytacheck')."
@@ -155,6 +171,7 @@ function Install-Metacheck {
         $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("metacheck." + [System.Guid]::NewGuid().ToString('N'))
         $null = New-Item -ItemType Directory -Path $tmp
         $null = New-Item -ItemType Directory -Force -Path $root, $uvDir, $binDir
+        $null = New-Item -ItemType File -Force -Path $marker
 
         # uv: download and check it, unless the right version is already here.
         $haveUv = $false
@@ -199,7 +216,7 @@ function Install-Metacheck {
         }
 
         Say 'Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ...'
-        $code = Invoke-Uv tool install --managed-python --python 3.12 --force $spec -c $constraints
+        $code = Invoke-Uv tool install --managed-python --python 3.12 $spec -c $constraints
         if ($code -ne 0) { Fail "the install failed. If it keeps failing, please tell us at $IssuesUrl" }
         if (-not (Test-Path -LiteralPath $app)) { Fail "the install finished but $app is missing. Please tell us at $IssuesUrl" }
     } finally {
