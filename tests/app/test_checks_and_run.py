@@ -122,7 +122,9 @@ def test_markup_in_a_paper_cannot_load_anything_in_the_report(tmp_path: Path) ->
     needle = "This paper demonstrates"
     assert needle in text
     evil = tmp_path / "evil.json"
-    evil.write_text(text.replace(needle, "<script>fetch('http://x.example')</script>", 1))
+    evil.write_text(
+        text.replace(needle, "<script>fetch('http://x.example')</script>", 1), encoding="utf-8"
+    )
     analysis = run.check_paper(evil, workdir=tmp_path)
     assert "<script>fetch('http://x.example')</script>" in analysis.html  # unescaped, as in R
     frame = ui.report_frame(analysis.html)

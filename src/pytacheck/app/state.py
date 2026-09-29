@@ -61,9 +61,25 @@ def remove_state(port: int) -> None:
 
 
 def _alive(pid: int) -> bool:
-    """Whether a process with this id runs (assumed on Windows, where signal 0 kills)."""
+    """Whether a process with this id runs."""
     if sys.platform == "win32":
-        return True
+        # os.kill(pid, 0) ends the process on Windows, so ask the kernel instead
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.OpenProcess.restype = wintypes.HANDLE
+        kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            return ctypes.get_last_error() == 5  # ERROR_ACCESS_DENIED: it runs, as another user
+        try:
+            code = wintypes.DWORD()
+            if not kernel32.GetExitCodeProcess(handle, ctypes.byref(code)):
+                return True
+            return code.value == 259  # STILL_ACTIVE
+        finally:
+            kernel32.CloseHandle(handle)
     try:
         os.kill(pid, 0)
     except ProcessLookupError:
