@@ -8,11 +8,12 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.packs.install import pack_install
+from pytacheck.packs.install import pack_install, pack_show
 from pytacheck.packs.manifest import PackError
-from pytacheck.packs.registry import get_pack
+from pytacheck.packs.registry import get_pack, load_module
 from pytacheck.packs.stores import find_entry, store_update
 from pytacheck.packs.tree import INSTALL_RECORD, tree_sha256
+from pytacheck.provenance import module_provenance
 from tests.modsys.helpers import REV_A, mod_src
 from tests.modsys.storekit import (
     INDEX_URL,
@@ -207,6 +208,44 @@ def test_a_listed_install_record_gives_trust_store_even_for_a_bare_pin(ms) -> No
     ms.pin("demo", {"rev": REV_A})
     pack = get_pack("demo")
     assert (pack.trust, pack.store, pack.reviewed) == ("store", "pytacheck", "2026-09-01")
+
+
+FORK = {"github": "evil/fork", "subdir": "packs/demo"}
+
+
+def test_a_store_pack_reports_the_recorded_source_not_the_pins(ms) -> None:
+    # the pin names a fork at the listed commit, over files the store index vouched for
+    ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, reviewed="2026-09-01", pin=False)
+    tree = _record(ms, REV_A)["tree_sha256"]
+    ms.pin("demo", {"source": FORK, "rev": REV_A, "tree_sha256": tree, "store": "pytacheck"})
+    pack = get_pack("demo")
+    assert pack.trust == "store"
+    assert pack.source == {"github": "someone/demo", "rev": REV_A}
+    assert pack_show("demo")["source"] == {"github": "someone/demo", "rev": REV_A}
+    prov = module_provenance(load_module(pack, "hello"))
+    assert (prov["trust"], prov["source"]) == ("store", {"github": "someone/demo", "rev": REV_A})
+
+
+def test_a_store_pack_still_has_its_rev_and_tree_checked_against_the_pin(ms) -> None:
+    ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, pin=False)
+    ms.pin("demo", {"source": FORK, "rev": REV_A, "tree_sha256": "0" * 64})
+    with pytest.raises(PackError, match="does not match its pin"):
+        get_pack("demo")
+
+
+def test_an_unlisted_pack_reports_the_pins_source_first(ms) -> None:
+    ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, store=None, pin=False)
+    tree = _record(ms, REV_A)["tree_sha256"]
+    ms.pin("demo", {"source": FORK, "rev": REV_A, "tree_sha256": tree})
+    pack = get_pack("demo")
+    assert pack.trust == "unlisted"
+    assert pack.source == {**FORK, "rev": REV_A}
+
+
+def test_an_unlisted_pack_without_a_pinned_source_reports_the_recorded_one(ms) -> None:
+    ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, store=None, pin=False)
+    ms.pin("demo", {"rev": REV_A})
+    assert get_pack("demo").source == {"github": "someone/demo", "rev": REV_A}
 
 
 def test_files_first_installed_as_unlisted_become_store_once_listed(store, ms) -> None:

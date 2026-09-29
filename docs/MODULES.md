@@ -230,9 +230,10 @@ Each pack has a trust label: `builtin`, `store` (listed and pinned by a store),
 A pin that names a store does not make a pack `store`: any config file can say
 that. `pack install` gives the label only when the named store's index lists
 that pack name, source, commit and tree hash, and it writes the result to the
-install record. The label a run reports is read from that record. A pin for a
-commit the store does not list, or one whose files differ from the listed hash,
-is installed as `unlisted` (the consent card says so), and so is a pin whose
+install record. The label a run reports is read from that record, and so is the
+source of a `store` pack, whatever source its pin names. An `unlisted` pack
+reports the source its pin names. A pin for a commit the store does not list,
+or one whose files differ from the listed hash, is installed as `unlisted` (the consent card says so), and so is a pin whose
 store cannot be reached. A store lists one commit of a pack, so a team lock file
 that pins an older commit installs as `unlisted` once the store moves on. If the
 cached index is out of date, `pack install` fetches it again before it decides

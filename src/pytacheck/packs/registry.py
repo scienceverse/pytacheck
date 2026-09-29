@@ -246,9 +246,15 @@ def _installed_pack(name: str, pin: Mapping[str, Any], origin: str) -> Pack:
                 f"({key} {record[key]} != {pin[key]}); reinstall it with `pytacheck pack install`"
             )
     rev = pin.get("rev") or record.get("rev")
+    # the label comes from the install record, which `pack install` wrote after it checked
+    # the store index; a pin is only a claim (a project config can carry anyone's)
+    store = record.get("store")
+    # so a store pack reports the source the store listed, as the record has it. An unlisted
+    # pack reports the pin's source first: it is what the user asked for, and the label says
+    # nobody checked it
+    raw = dict((record.get("source") if store else pin.get("source") or record.get("source")) or {})
     # a pin or record from before credentials in URLs were refused: never passed on
     # (to run records, `pack show`), the files are still checked against rev and tree
-    raw = dict(pin.get("source") or record.get("source") or {})
     source = clean_source(raw)
     if source != raw:
         warnings.warn(
@@ -259,9 +265,6 @@ def _installed_pack(name: str, pin: Mapping[str, Any], origin: str) -> Pack:
         )
     if rev:
         source.setdefault("rev", rev)
-    # the label comes from the install record, which `pack install` wrote after it checked
-    # the store index; a pin is only a claim (a project config can carry anyone's)
-    store = record.get("store")
     return Pack.from_manifest(
         manifest,
         root=root,
