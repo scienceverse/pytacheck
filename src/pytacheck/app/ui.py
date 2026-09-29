@@ -111,12 +111,25 @@ CSS = (
     "var(--border-color-primary);border-radius:8px;text-decoration:none;font-weight:600}"
 )
 EXPIRED = "Your upload is no longer on the server. Upload the paper again."
+DATA_TOO_SLOW = (
+    "The data check took longer than this server allows, so it was stopped. "
+    "The other results are complete."
+)
 FAILED = "Something went wrong while checking this paper. Try the demo paper or another file."
 
 
 def here(text: str, hosted: bool) -> str:
     """A text for the page; on a shared server the files are checked there, not locally."""
-    return text.replace("this computer", "this server") if hosted else text
+    if not hosted:
+        return text
+    return text.replace("this computer", "this server").replace("This computer", "This server")
+
+
+def data_budget(time_limit: float) -> tuple[float, float]:
+    """Seconds a hosted run gives its data check (from the start of the run's process), and
+    seconds to wait for it to stop. The rest of the time limit writes the report."""
+    budget = max(time_limit - 60, time_limit * 0.8)
+    return budget, min(30.0, (time_limit - budget) / 2)
 
 
 def analyse_upload(
@@ -125,33 +138,44 @@ def analyse_upload(
     data: bool,
     reader: str,
     key: str,
+    workdir: str,
+    stop_data_at: float,
+    grace: float,
     progress: Callable[[float, str], None],
 ) -> Analysis:
-    """One hosted run, in its own process: the report stays in the scratch folder.
+    """One hosted run, in its own process. The server makes ``workdir`` and removes it, so a
+    run ended at the time limit leaves no report behind.
 
     The data check runs here too, after the fast checks, and its progress text goes to
-    ``progress``: the time limit of the run covers both.
+    ``progress``. At ``stop_data_at`` (a ``time.time()`` value, set before the process
+    started) it is stopped, waited for ``grace`` seconds, and the other results come back
+    with its row saying so.
     """
     if not Path(path).is_file():
         raise UserError(EXPIRED)
-    with scratch_dir() as work:
-        started = begin(
-            path,
-            online=online,
-            data=data,
-            workdir=Path(work),
-            progress=progress,
-            pdf=reader,
-            bibr_key=key,
-        )
-        if not data:
-            return started.analysis
-        job = started.data_job()
-        begun = time.monotonic()
-        job.start()
-        while not job.wait(1.0):
-            progress(0.95, data_status(job, begun, hosted=True))
-        return started.finish(job)
+    started = begin(
+        path,
+        online=online,
+        data=data,
+        workdir=Path(workdir),
+        progress=progress,
+        pdf=reader,
+        bibr_key=key,
+    )
+    if not data:
+        return started.analysis
+    job = started.data_job()
+    begun = time.monotonic()
+    job.start()
+    while not job.wait(1.0):
+        if time.time() > stop_data_at:
+            job.stop()
+            job.wait(grace)
+            if job.output is None:
+                job.error = TimeoutError(DATA_TOO_SLOW)
+            break
+        progress(0.95, data_status(job, begun, hosted=True))
+    return started.finish(job)
 
 
 def report_frame(page: str) -> str:
@@ -274,20 +298,26 @@ def build_app(
         path: str, online: bool, data: bool, reader: str, key: str, progress: Any
     ) -> tuple[Any, ...]:
         """The whole run, data check included, in its own process under the time limit."""
-        assert jobs is not None
+        assert jobs is not None and hosted is not None
         try:
-            analysis = jobs.run(
-                analyse_upload,
-                path,
-                online,
-                data,
-                reader,
-                key,
-                # the demo paper is part of the package: only an upload is deleted
-                upload=None if Path(path).resolve() == _demo_path() else path,
-                on_timeout=lambda: gr.Error(hosting.TOO_SLOW, print_exception=False),
-                on_progress=lambda fraction, text: progress(fraction, desc=text),
-            )
+            budget, grace = data_budget(hosted.job_timeout)
+            # made here, not in the run's process: a process ended at the limit cleans up nothing
+            with scratch_dir() as work:
+                analysis = jobs.run(
+                    analyse_upload,
+                    path,
+                    online,
+                    data,
+                    reader,
+                    key,
+                    work,
+                    time.time() + budget,
+                    grace,
+                    # the demo paper is part of the package: only an upload is deleted
+                    upload=None if Path(path).resolve() == _demo_path() else path,
+                    on_timeout=lambda: gr.Error(hosting.TOO_SLOW, print_exception=False),
+                    on_progress=lambda fraction, text: progress(fraction, desc=text),
+                )
         except UserError as exc:
             raise gr.Error(str(exc), print_exception=False) from exc
         except gr.Error:
@@ -539,7 +569,8 @@ def build_app(
                 api_visibility="private",
             )
         reader.change(on_reader, reader, keys, api_visibility="private")
-        forget.click(on_forget, None, [note, forget], api_visibility="private")
+        if remember_keys:  # a shared server has no saved key, and nobody may remove one
+            forget.click(on_forget, None, [note, forget], api_visibility="private")
     if hosted:
         app.queue(
             **{

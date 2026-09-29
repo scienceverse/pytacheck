@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import functools
+import importlib
 import json
 import logging
 import multiprocessing
 import operator
+import os
 import socket
 import threading
 import time
@@ -31,11 +34,22 @@ PORT = 7861
 
 
 @pytest.fixture(autouse=True, scope="module")
-def _fork_runs() -> Iterator[None]:
-    """Runs start by fork here, so a patched ``ui.check_paper`` reaches the run's process."""
+def _runs() -> Iterator[None]:
+    """Runs start by fork where there is one (faster) and by spawn elsewhere (Windows). The
+    stand-ins in ``_hosted_jobs`` reach the run's process either way."""
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(hosting, "START_METHOD", "fork")
+        mp.syspath_prepend(str(Path(__file__).parent))
+        # METACHECK_TEST_START=spawn runs them the Windows way on any system
+        default = "fork" if hasattr(os, "fork") else "spawn"
+        mp.setattr(hosting, "START_METHOD", os.environ.get("METACHECK_TEST_START", default))
         yield
+
+
+def stand_in(env: pytest.MonkeyPatch, kind: str) -> Any:
+    """Make the next hosted runs use the stand-in ``kind`` of ``_hosted_jobs`` for ``begin``."""
+    module = importlib.import_module("_hosted_jobs")
+    env.setattr(ui, "analyse_upload", functools.partial(module.run_as, kind))
+    return module
 
 
 @pytest.fixture
@@ -359,7 +373,7 @@ def test_a_run_leaves_nothing_behind(client: TestClient) -> None:
 
 
 def test_a_run_over_the_time_limit_gets_a_plain_message(env: pytest.MonkeyPatch) -> None:
-    env.setattr(ui, "begin", lambda *_a, **_k: time.sleep(30))
+    stand_in(env, "sleep")
     tight = create_hosted_app(PORT + 1, config(job_timeout=0.5))
     with TestClient(tight, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
@@ -372,33 +386,10 @@ def test_a_run_over_the_time_limit_gets_a_plain_message(env: pytest.MonkeyPatch)
     assert not multiprocessing.active_children()  # the run was stopped, not abandoned
 
 
-def _analysis(*_a: Any, **_k: Any) -> Any:
-    from pytacheck.app.run import Analysis
-
-    return Analysis("x", [], "<p>x</p>", Path("x_report.html"), 0.1)
-
-
-def _started(*_a: Any, **_k: Any) -> Any:
-    """What ``begin`` gives back, for a run without the data check."""
-    from types import SimpleNamespace
-
-    return SimpleNamespace(analysis=_analysis())
-
-
-def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch) -> None:
-    running = multiprocessing.Value("i", 0)
-    peak = multiprocessing.Value("i", 0)
-
-    def counted(*_a: Any, **_k: Any) -> Any:
-        with running.get_lock():
-            running.value += 1
-            peak.value = max(peak.value, running.value)
-        time.sleep(0.6)
-        with running.get_lock():
-            running.value -= 1
-        return _started()
-
-    env.setattr(ui, "begin", counted)
+def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    module = stand_in(env, "counted")
+    log = tmp_path / "runs.log"
+    env.setenv(module.LOG_ENV, str(log))
     shared = create_hosted_app(PORT + 2, config())
     answers: list[str] = []
     tc = TestClient(shared, base_url=BASE, follow_redirects=False)
@@ -429,7 +420,15 @@ def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch) -> No
     assert all("Ran 0 checks" in a for a in answers), [
         a[-300:] for a in answers if "Ran 0 checks" not in a
     ]
-    assert peak.value == 2
+    running = peak = 0
+    events = sorted(
+        (float(stamp), 1 if what == "start" else -1)
+        for what, stamp in (line.split() for line in log.read_text().splitlines())
+    )
+    for _stamp, step in events:
+        running += step
+        peak = max(peak, running)
+    assert len(events) == 12 and peak == 2
 
 
 def _join_demo(client: TestClient, fn_index: int, session: str) -> str:
@@ -445,7 +444,7 @@ def _join_demo(client: TestClient, fn_index: int, session: str) -> str:
 
 
 def test_the_upload_field_is_cleared_after_a_run(env: pytest.MonkeyPatch) -> None:
-    env.setattr(ui, "begin", _started)
+    stand_in(env, "started")
     shared = create_hosted_app(PORT + 3, config())
     with TestClient(shared, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
@@ -460,66 +459,78 @@ def test_the_upload_field_is_cleared_after_a_run(env: pytest.MonkeyPatch) -> Non
         assert ui.EXPIRED in _join(tc, fn, gone, "h4")
 
 
+def _join_with_data(client: TestClient, path: str, session: str) -> str:
+    body = {
+        "data": [
+            {"path": path, "meta": {"_type": "gradio.FileData"}},
+            False,
+            True,  # the data check
+            "grobid",
+            "",
+            False,
+        ],
+        "fn_index": _fn_index(client),
+        "session_hash": session,
+    }
+    assert client.post("/gradio_api/queue/join", json=body).status_code == 200
+    text = ""
+    with client.stream("GET", "/gradio_api/queue/data", params={"session_hash": session}) as s:
+        for line in s.iter_lines():
+            text += line
+            if '"process_completed"' in line:
+                break
+    return text
+
+
 def test_a_hosted_run_includes_the_data_check(env: pytest.MonkeyPatch) -> None:
     """On a shared server the data check is part of the run: one answer, with its row."""
-    from types import SimpleNamespace
-
-    from pytacheck.app.run import Analysis, Row
-
-    seen: dict[str, Any] = {}
-
-    class Job:
-        message = "Downloading data.csv"
-
-        def __init__(self) -> None:
-            self.waits = 0
-
-        def start(self) -> None:
-            seen["started"] = True
-
-        def wait(self, _timeout: float) -> bool:
-            # long enough for Gradio to send the progress text of each wait
-            time.sleep(0.5)
-            self.waits += 1
-            return self.waits > 3
-
-    def begin(*_a: Any, **kw: Any) -> Any:
-        seen.update(kw)
-        row = Row("data_check", "Data check", "Experimental", "2 data files checked")
-        done = Analysis("x", [row], "<p>x</p>", Path("x_report.html"), 0.1)
-        return SimpleNamespace(
-            analysis=_analysis(), data_job=Job, finish=lambda job: done if job.waits else None
-        )
-
-    env.setattr(ui, "begin", begin)
+    stand_in(env, "with_data")
     shared = create_hosted_app(PORT + 4, config())
     with TestClient(shared, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
-        body = {
-            "data": [
-                {"path": _upload(tc, "h5"), "meta": {"_type": "gradio.FileData"}},
-                False,
-                True,  # the data check
-                "grobid",
-                "",
-                False,
-            ],
-            "fn_index": _fn_index(tc),
-            "session_hash": "h5",
-        }
-        assert tc.post("/gradio_api/queue/join", json=body).status_code == 200
-        text = ""
-        with tc.stream("GET", "/gradio_api/queue/data", params={"session_hash": "h5"}) as s:
-            for line in s.iter_lines():
-                text += line
-                if '"process_completed"' in line:
-                    break
+        text = _join_with_data(tc, _upload(tc, "h5"), "h5")
     done = next(ln for ln in text.split("data: ") if '"process_completed"' in ln)
     output = json.loads(done)["output"]["data"]
     assert "2 data files checked" in json.dumps(output)
     assert "Checking the shared data files" in text  # its progress reached the page
     assert "Downloading data.csv" in text
     assert output[-3] == "" and output[-2]["visible"] is False  # no status line, no Stop
+
+
+def test_a_slow_data_check_is_stopped_before_the_limit(env: pytest.MonkeyPatch) -> None:
+    """The other results come back, and the data check's row says why it has no result."""
+    stand_in(env, "slow_data")
+    budget, grace = ui.data_budget(10)
+    assert (budget, grace) == (8, 1)
+    assert ui.data_budget(900) == (840, 30)
+    tight = create_hosted_app(PORT + 5, config(job_timeout=10))
+    with TestClient(tight, base_url=BASE, follow_redirects=False) as tc:
+        tc.get(f"/?token={TOKEN_A}")
+        text = _join_with_data(tc, _upload(tc, "h6"), "h6")
+    assert hosting.TOO_SLOW not in text
+    done = next(ln for ln in text.split("data: ") if '"process_completed"' in ln)
+    assert ui.DATA_TOO_SLOW in json.dumps(json.loads(done)["output"]["data"])
+
+
+def test_a_run_at_the_limit_leaves_no_report_behind(
+    env: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """The scratch folder is the server's: it goes even when the run's process is killed."""
+    made: list[Path] = []
+    real = ui.scratch_dir
+
+    def scratch() -> Any:
+        folder = real()
+        made.append(Path(folder.name))
+        return folder
+
+    env.setattr(ui, "scratch_dir", scratch)
+    stand_in(env, "sleep")
+    tight = create_hosted_app(PORT + 6, config(job_timeout=0.5))
+    with TestClient(tight, base_url=BASE, follow_redirects=False) as tc:
+        tc.get(f"/?token={TOKEN_A}")
+        assert hosting.TOO_SLOW in _join(tc, _fn_index(tc), _upload(tc, "h7"), "h7")
+    assert made and not any(folder.exists() for folder in made)
 
 
 def test_a_shared_server_never_offers_a_saved_key(env: pytest.MonkeyPatch) -> None:
