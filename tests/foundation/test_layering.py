@@ -11,13 +11,18 @@ module names are not imports the parser can see.
 name``, or ``name = other`` for an imported ``other``, also in a
 ``TYPE_CHECKING`` block), and only otherwise the submodule ``pkg.name``. So
 ``from pytacheck import module`` is the ``module()`` decorator, which the top
-level imports under the name of its module. ``import pytacheck.module``, with or
-without ``as``, is the module, and so is an attribute chain through it: a chain
-reads a submodule before a name the package binds. A chain such as
+level imports under the name of its module. A name the package binds is still
+read from the package, so the edge goes to the package whose ``__init__`` runs,
+whatever the name resolves to. Only a submodule that the package does not bind,
+or binds to itself, is an edge to the submodule. ``import pytacheck.module``,
+with or without ``as``, is the module, and so is an attribute chain through it:
+a chain reads a submodule before a name the package binds. A chain such as
 ``pytacheck.papers.model.Paper`` is one edge, judged by its longest prefix that
 is a module or a name a package binds, like ``from pytacheck.papers.model import
-Paper``. An import inside a function or class of an ``__init__`` binds nothing
-in the package. The graph feeds three rules.
+Paper``. The edge also keeps the last module a bound name is read from:
+``llm`` for ``pytacheck.llm.Paper``, ``papers.model`` for
+``pytacheck.papers.model.Paper``. An import inside a function or class of an
+``__init__`` binds nothing in the package. The graph feeds three rules.
 
 **Foundation.** §2.1 says ``core/**`` imports only ``_r``, ``_values``,
 ``_json``, ``papers.model``, ``papers.schema`` and ``papers.ids``. ``core/`` and
@@ -25,7 +30,10 @@ in the package. The graph feeds three rules.
 foundation the core will build on, and they must already keep that promise:
 they import only each other, and nothing else in ``pytacheck``. Attribute
 access counts as an import, so ``pytacheck.text_search(...)``, which loads
-``text`` through the top-level lazy ``__getattr__``, is an upward edge.
+``text`` through the top-level lazy ``__getattr__``, is an upward edge. A chain
+is judged by the name it resolves to and by the module it reads that name from,
+so ``pytacheck.llm.Paper`` is an edge to ``llm``. The top level is judged by the
+name alone, so ``pytacheck.Paper`` is the foundation's ``Paper``.
 
 **Core.** Once ``core/**`` exists it keeps the positive list of §2.1: it imports
 only the foundation above and the core itself. §2.6 adds what ``core/run.py``
@@ -45,7 +53,9 @@ run.py too, the lint also names the layers §2.1 says the core never imports
 (``text``, ``modules``, ``report``, ``api``, ``cli``, ``archives``,
 ``datacheck``, ``codecheck``), ``pytacheck.doc``, and the permanent façades of
 §2.10, because the façades import the core, never the reverse. These are found
-through re-exports too. The façades in ``pytacheck.module`` are banned as names
+through re-exports too, both ways: ``from pytacheck.report import config`` is
+reported as ``report``, and ``from pytacheck.llm import thing`` as ``report``
+when ``llm`` binds ``thing`` to something in ``report``. The façades in ``pytacheck.module`` are banned as names
 (``module``, ``module_run`` and ``get_prev_outputs``). A package's ``__init__``
 is not an import edge of its submodules.
 
@@ -156,11 +166,14 @@ Ref = tuple[str, str]
 class Edge:
     path: str  # relative to the package root
     module: str  # dotted name of the importing file
-    target: str  # module that is loaded; for attribute access, the name as written
+    # module whose code runs: for a from-import, the package unless the name is a
+    # submodule it does not bind; for attribute access, the name as written
+    target: str
     symbol: str  # what is named, as written, which may be a name inside the target
     resolved: str  # what that name is, followed through the __init__ files
     line: int
     note: str = ""  # "type-checking", "importlib" or "attribute"
+    via: str = ""  # for attribute access, the last module a bound name is read from
 
 
 def _is_type_checking(test: ast.expr) -> bool:
@@ -289,7 +302,8 @@ class _Names:
     def edge(self, rel: str, module: str, ref: Ref, line: int, note: str) -> Edge:
         symbol = f"{ref[0]}.{ref[1]}" if ref[1] else ref[0]
         resolved = self.imported(ref)
-        target = resolved if resolved in self.known else ref[0]
+        # a name the package binds runs its __init__, whatever the name resolves to
+        target = symbol if resolved == symbol and symbol in self.known else ref[0]
         return Edge(rel, module, target, symbol, resolved, line, note)
 
     def chain(self, rel: str, module: str, ref: Ref, attrs: tuple[str, ...], line: int) -> Edge:
@@ -298,13 +312,16 @@ class _Names:
         resolved = self.imported(ref)
         # what an import statement names is a module
         is_module = not ref[1] or resolved in self.known
+        via = ""
         for attr in attrs:
             value = self.attribute(resolved, is_module, attr)
             if value is None:
                 break
+            if f"{resolved}.{attr}" not in self.known:
+                via = resolved
             written, resolved = f"{written}.{attr}", value
             is_module = value in self.known
-        return Edge(rel, module, written, written, resolved, line, "attribute")
+        return Edge(rel, module, written, written, resolved, line, "attribute", via)
 
 
 def _exports(bound: dict[str, Ref]) -> dict[str, str]:
@@ -358,10 +375,15 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
     found: dict[tuple[str, str, str], Edge] = {}
     for edge in edges:
         symbol = edge.resolved
-        # a name reached by attribute is judged where it is defined
-        target = symbol if edge.note == "attribute" else edge.target
-        if _under(edge.module, FOUNDATION) and _under(target, PKG) and not _under(target, LOWER):
-            found.setdefault(("lower", edge.path, target), edge)
+        if _under(edge.module, FOUNDATION):
+            # a name reached by attribute is judged where it is defined, and by the
+            # module it is read from; the top level is judged by the name alone
+            targets = [edge.target]
+            if edge.note == "attribute":
+                targets = [symbol] + ([edge.via] if edge.via != PKG else [])
+            for target in targets:
+                if _under(target, PKG) and not _under(target, LOWER):
+                    found.setdefault(("lower", edge.path, target), edge)
         if _under(edge.module, CORE):
             layers = [
                 layer
@@ -668,6 +690,15 @@ def test_run_py_may_not_reach_a_banned_layer_through_a_reexport(tmp_path: Path, 
     assert found_in(tmp_path, files) == {("core", "core/run.py", f"{PKG}.{layer}")}
 
 
+@pytest.mark.parametrize(
+    "init", ["from pytacheck import config\n", "import pytacheck.config as config\n"]
+)
+def test_a_reexport_is_reported_under_the_banned_layer(tmp_path: Path, init: str) -> None:
+    """``config`` is in the run context, but reading it from ``report`` runs ``report``."""
+    files = {"report/__init__.py": init, "core/run.py": "from pytacheck.report import config\n"}
+    assert found_in(tmp_path, files) == {("core", "core/run.py", f"{PKG}.report")}
+
+
 def test_only_an_init_file_reexports_names(tmp_path: Path) -> None:
     files = {
         "llm/__init__.py": "def render(): ...\n",
@@ -764,7 +795,7 @@ SPELLINGS = [
     ("from pytacheck import module\n", [("", "module", "module.module")]),
     ("from pytacheck import text_search\n", [("", "text_search", "text.search.text_search")]),
     ("from pytacheck._r import grepl as g\n", [("_r", "_r.grepl", "_r.regex.grepl")]),
-    ("from pytacheck.llm import words\n", [("text", "llm.words", "text")]),
+    ("from pytacheck.llm import words\n", [("llm", "llm.words", "text")]),
     ("from pytacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
     ("from pytacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
     ("from pytacheck import unbound\n", [("", "unbound", "unbound")]),
@@ -844,6 +875,25 @@ def test_facades_may_import_the_core(tmp_path: Path) -> None:
         "text/extract.py": "from pytacheck.core.doc import Doc\nfrom pytacheck.core import doc\n"
     }
     assert found_in(tmp_path, files) == set()
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "from pytacheck.llm import r\n",
+        "import pytacheck._r\nx = pytacheck.llm.r\n",
+        "import pytacheck._r\nx = pytacheck.llm.r.frames\n",
+        "from pytacheck.llm import Paper\n",
+        "import pytacheck._r\nx = pytacheck.llm.Paper\n",
+    ],
+)
+def test_foundation_sees_the_package_a_name_is_read_from(tmp_path: Path, source: str) -> None:
+    """A name that ``llm`` binds runs ``llm/__init__``, even when it is in the foundation."""
+    files = {
+        "llm/__init__.py": "from pytacheck import _r as r\nfrom pytacheck.papers.model import Paper\n",
+        "_json.py": source,
+    }
+    assert found_in(tmp_path, files) == {("lower", "_json.py", f"{PKG}.llm")}
 
 
 def test_foundation_modules_import_only_each_other(tmp_path: Path) -> None:
