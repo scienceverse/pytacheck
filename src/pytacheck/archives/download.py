@@ -500,7 +500,7 @@ def _perform_once(
         return _file_response(method, url, path)
     headers = dict(spec.get("headers") or {})
     to = httpx.Timeout(timeout if timeout is not None else 60.0, connect=20.0)
-    client = http.client()
+    client = http.client_for(url)
     follow = not spec.get("unrestricted_auth")
     try:
         for _hop in range(20):
