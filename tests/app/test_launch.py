@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import os
+import signal
 import socket
 import stat
+import subprocess
 import sys
 import threading
 import time
@@ -12,10 +14,11 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+import orjson
 import pytest
 import uvicorn
 from starlette.applications import Starlette
-from starlette.responses import PlainTextResponse
+from starlette.responses import PlainTextResponse, RedirectResponse
 from starlette.routing import Route
 
 from pytacheck import cli
@@ -84,6 +87,45 @@ def test_find_running_needs_the_right_token(guarded_server: int) -> None:
     assert saved.find_running() == {"port": guarded_server, "token": "right", "pid": os.getpid()}
 
 
+def test_a_dead_process_makes_the_state_stale(guarded_server: int, state_dir: Path) -> None:
+    gone = subprocess.Popen([sys.executable, "-c", "pass"])
+    gone.wait()
+    saved.write_state(guarded_server, "right", pid=gone.pid)
+    assert saved.find_running() is None
+    assert not (state_dir / "app.json").exists()
+
+
+@pytest.fixture
+def foreign_server() -> Any:
+    """Some other program on the port: it answers 303 and sets a cookie of its own."""
+
+    async def anything(_request: Any) -> RedirectResponse:
+        response = RedirectResponse("/", status_code=303)
+        response.set_cookie("x", "y")
+        return response
+
+    sock = socket.socket()
+    sock.bind(("127.0.0.1", 0))
+    sock.listen()
+    server = uvicorn.Server(
+        uvicorn.Config(Starlette(routes=[Route("/", anything)]), log_level="error")
+    )
+    thread = threading.Thread(target=server.run, kwargs={"sockets": [sock]}, daemon=True)
+    thread.start()
+    while not server.started:
+        time.sleep(0.01)
+    yield sock.getsockname()[1]
+    server.should_exit = True
+    thread.join(5)
+    sock.close()
+
+
+def test_another_program_on_the_port_is_not_our_app(foreign_server: int, state_dir: Path) -> None:
+    saved.write_state(foreign_server, "stale-token")  # the pid is alive: it is this process
+    assert saved.find_running() is None
+    assert not (state_dir / "app.json").exists()
+
+
 def test_find_running_when_nothing_listens(state_dir: Path) -> None:
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
@@ -101,7 +143,12 @@ def test_second_start_reuses_the_running_app(
     monkeypatch.setattr(launch, "_serve", lambda *_a: pytest.fail("started a second app"))
     assert main([]) == 0
     url = f"http://127.0.0.1:{guarded_server}/?token=right"
-    assert opened == [url]
+    page = saved.state_path().with_name("open.html")
+    assert opened == [page.as_uri()]  # the token link never goes into a process list
+    assert url not in opened[0]
+    assert url in page.read_text(encoding="utf-8")
+    if sys.platform != "win32":
+        assert stat.S_IMODE(page.stat().st_mode) == 0o600
     out = capsys.readouterr().out
     assert f"metacheck is running at {url}" in out
     assert "Keep this window open while you use it. Press Ctrl+C here to stop it." in out
@@ -240,3 +287,49 @@ def server_thread_stop(thread: threading.Thread) -> None:
             obj.should_exit = True
     thread.join(15)
     assert not thread.is_alive()
+
+
+def test_gradio_keeps_its_files_in_a_private_folder(monkeypatch: pytest.MonkeyPatch) -> None:
+    from gradio.utils import get_upload_folder
+
+    monkeypatch.setenv("GRADIO_TEMP_DIR", "unset-by-the-test")
+    folder = launch.private_gradio_dir()
+    try:
+        assert get_upload_folder() == str(folder)
+        if sys.platform != "win32":
+            assert stat.S_IMODE(folder.stat().st_mode) == 0o700
+    finally:
+        folder.rmdir()
+
+
+@pytest.mark.skipif(not hasattr(signal, "SIGHUP"), reason="no SIGHUP on this system")
+def test_closing_the_terminal_cleans_up(tmp_path: Path) -> None:
+    """SIGHUP is what a closed terminal window sends."""
+    env = {**os.environ, "XDG_STATE_HOME": str(tmp_path / "state"), "TMPDIR": str(tmp_path)}
+    code = "from pytacheck.app import main; raise SystemExit(main(['--no-browser']))"
+    proc = subprocess.Popen(
+        [sys.executable, "-c", code], env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    state_file = tmp_path / "state" / "pytacheck" / "app.json"
+    try:
+        deadline = time.time() + 60
+        while time.time() < deadline and not state_file.exists():
+            time.sleep(0.05)
+        assert state_file.exists()
+        port = orjson.loads(state_file.read_bytes())["port"]
+        while time.time() < deadline:
+            try:
+                if (
+                    httpx.get(f"http://127.0.0.1:{port}/healthz", trust_env=False).status_code
+                    == 200
+                ):
+                    break
+            except httpx.HTTPError:
+                time.sleep(0.05)
+        assert list(tmp_path.glob("metacheck-app-gradio-*"))
+        proc.send_signal(signal.SIGHUP)
+        assert proc.wait(30) == 0
+    finally:
+        proc.kill()
+    assert not state_file.exists()
+    assert not list(tmp_path.glob("metacheck-app-gradio-*"))

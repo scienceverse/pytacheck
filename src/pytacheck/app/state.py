@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -59,12 +60,40 @@ def remove_state(port: int) -> None:
             state_path().unlink()
 
 
+def _alive(pid: int) -> bool:
+    """Whether a process with this id runs (assumed on Windows, where signal 0 kills)."""
+    if sys.platform == "win32":
+        return True
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except OSError:  # exists, but belongs to someone else
+        return True
+    return True
+
+
+def _drop() -> None:
+    with contextlib.suppress(OSError):
+        state_path().unlink()
+
+
 def find_running() -> State | None:
-    """The saved state when an app answers there with the saved token, else ``None``."""
+    """The saved state when our app runs there with the saved token, else ``None``.
+
+    The saved process must be alive, and the answer must set exactly this app's cookie
+    with the saved token: another program on the port must not receive the browser.
+    A file that fails either test is removed.
+    """
     import httpx
+
+    from pytacheck.app.security import cookie_name
 
     state = read_state()
     if state is None:
+        return None
+    if not _alive(state["pid"]):
+        _drop()
         return None
     try:
         # trust_env=False: a proxy setting must not intercept a request to this computer
@@ -74,4 +103,7 @@ def find_running() -> State | None:
             )
     except httpx.HTTPError:
         return None
-    return state if resp.status_code == 303 and resp.cookies else None
+    if resp.status_code == 303 and resp.cookies.get(cookie_name(state["port"])) == state["token"]:
+        return state
+    _drop()
+    return None

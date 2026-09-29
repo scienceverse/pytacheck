@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import html
 import importlib.util
 import os
 import secrets
+import shutil
 import signal
 import socket
 import sys
@@ -62,11 +64,47 @@ def _url(port: int, token: str) -> str:
     return f"http://{HOST}:{port}/?token={token}"
 
 
+def _launcher_page(url: str) -> Path:
+    """A page that only sends the browser on to ``url``, readable by this user only.
+
+    Handing the browser the token link directly would put the token in the process list,
+    where other users of this computer can read it.
+    """
+    page = saved.state_path().with_name("open.html")
+    page.parent.mkdir(parents=True, exist_ok=True)
+    quoted = html.escape(url, quote=True)
+    body = (
+        f'<!doctype html><meta charset=utf-8><meta http-equiv=refresh content="0;url={quoted}">'
+        f'<title>metacheck</title><p>Opening metacheck. <a href="{quoted}">Continue</a></p>'
+    )
+    fd = os.open(page, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        fh.write(body)
+    return page
+
+
+def _open_browser(url: str) -> None:
+    try:
+        webbrowser.open(_launcher_page(url).as_uri())
+    except OSError:
+        webbrowser.open(url)
+
+
 def _announce(url: str, open_browser: bool) -> None:
     print(f"metacheck is running at {url}", flush=True)
     print("Keep this window open while you use it. Press Ctrl+C here to stop it.", flush=True)
     if open_browser:
-        webbrowser.open(url)
+        _open_browser(url)
+
+
+def private_gradio_dir() -> Path:
+    """A folder only this user can read for Gradio's copies of uploads and reports.
+
+    Set before gradio is imported: by default Gradio uses a shared ``/tmp/gradio``.
+    """
+    folder = Path(tempfile.mkdtemp(prefix="metacheck-app-gradio-"))
+    os.environ["GRADIO_TEMP_DIR"] = str(folder)
+    return folder
 
 
 def _warm_up() -> None:
@@ -96,14 +134,15 @@ def _bind(port: int) -> socket.socket:
 def _serve(port: int, open_browser: bool) -> int:
     import uvicorn
 
-    from pytacheck.app.server import create_app
-    from pytacheck.config import verbose
-
     try:
         sock = _bind(port)
     except OSError as exc:
         print(f"Port {port} is not available ({exc.strerror or exc}). Try another --port.")
         return 1
+    gradio_dir = private_gradio_dir()
+    from pytacheck.app.server import create_app
+    from pytacheck.config import verbose
+
     port = sock.getsockname()[1]
     token = secrets.token_urlsafe(32)
     verbose(False)
@@ -120,6 +159,8 @@ def _serve(port: int, open_browser: bool) -> int:
     threading.Thread(target=when_up, daemon=True).start()
     if threading.current_thread() is threading.main_thread():
         signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
+        if hasattr(signal, "SIGHUP"):  # closing the terminal window
+            signal.signal(signal.SIGHUP, lambda *_: setattr(server, "should_exit", True))
     try:
         server.run(sockets=[sock])
     except (KeyboardInterrupt, SystemExit):
@@ -127,6 +168,11 @@ def _serve(port: int, open_browser: bool) -> int:
     finally:
         sock.close()
         saved.remove_state(port)
+        with contextlib.suppress(OSError):
+            saved.state_path().with_name("open.html").unlink()
+        shutil.rmtree(gradio_dir, ignore_errors=True)
+        if os.environ.get("GRADIO_TEMP_DIR") == str(gradio_dir):
+            del os.environ["GRADIO_TEMP_DIR"]
     return 0
 
 
