@@ -26,7 +26,9 @@ main() {
   UV_VERSION="0.12.20"
   UV_URL="https://github.com/astral-sh/uv/releases/download/$UV_VERSION"
   ISSUES_URL="https://github.com/scienceverse/pytacheck/issues"
-  TOOL="pytacheck"
+  TOOL="metacheck"
+  # Installs before 0.4.0a1 named the tool pytacheck.
+  OLD_TOOL="pytacheck"
 
   say() { printf '%s\n' "$*"; }
   die() {
@@ -252,6 +254,11 @@ main() {
       die "could not download the constraints file for $ref. Check your internet connection."
   elif [ ! -f "$constraints" ]; then
     die "METACHECK_CONSTRAINTS is not a file: $constraints"
+  fi
+
+  # An install under the old tool name owns the same commands, so it goes first.
+  if [ -d "$root/tools/$OLD_TOOL" ]; then
+    run_uv tool uninstall "$OLD_TOOL" >/dev/null 2>&1 || true
   fi
 
   say "Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ..."

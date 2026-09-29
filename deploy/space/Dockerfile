@@ -2,7 +2,7 @@
 #
 #   docker build --build-arg REF=<commit> -t metacheck-app deploy/space
 #
-# REF is the commit of pytacheck to install. It is required, and a full commit hash keeps
+# REF is the commit of this repository to install. It is required, and a full commit hash keeps
 # the build the same every time. The footer of the page links to this commit.
 #
 # The base image is pinned by digest, so a build gives the same system every time. To pick up
@@ -24,7 +24,7 @@ ENV VIRTUAL_ENV=/opt/metacheck
 ENV PATH=/opt/metacheck/bin:$PATH
 RUN uv venv "$VIRTUAL_ENV" && \
     uv pip install --no-cache -c /tmp/constraints-app.txt \
-      "pytacheck[app] @ https://github.com/scienceverse/pytacheck/archive/${REF}.tar.gz" && \
+      "metacheck[app] @ https://github.com/scienceverse/pytacheck/archive/${REF}.tar.gz" && \
     rm /tmp/constraints-app.txt
 
 # Spaces run the app as user 1000

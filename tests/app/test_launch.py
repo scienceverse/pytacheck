@@ -213,7 +213,7 @@ def test_missing_extra_exits_2(
     monkeypatch.setattr(launch.importlib.util, "find_spec", lambda _name: None)
     assert main([]) == 2
     assert capsys.readouterr().err.strip() == (
-        "The app needs the app extra: pip install 'pytacheck[app]'"
+        "The app needs the app extra: pip install 'metacheck[app]>=0.4.0a1'"
     )
 
 

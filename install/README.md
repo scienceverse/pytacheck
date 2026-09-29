@@ -8,7 +8,7 @@ the app. [docs/TRY.md](../docs/TRY.md) is the page for users.
 
 | File | What it is |
 |---|---|
-| `constraints-app.txt` | The exact version of every dependency of `pytacheck[app]`. Generated from `uv.lock`; never edited by hand. |
+| `constraints-app.txt` | The exact version of every dependency of `metacheck[app]`. Generated from `uv.lock`; never edited by hand. |
 | `smoke.py` | Starts an installed `metacheck-app` and checks the self-test, `/healthz` and the token gate. Used by CI. |
 | `ui_smoke.py` | Starts an installed `metacheck-app` and clicks through the page in Chromium (Playwright): the demo paper, then an uploaded file. Fails on a console error or a request to any host but 127.0.0.1, and saves a screenshot. Used by CI; `--browser-path` uses a Chromium you already have. |
 

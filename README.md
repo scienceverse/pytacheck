@@ -26,7 +26,8 @@ pip install "metacheck[bibr]>=0.4.0a1"     # + extract PDF/DOCX/HTML with bibr, 
 pip install "metacheck[all]>=0.4.0a1"      # + bibr, data-file readers, REST API, charset detection
 ```
 
-The package is on PyPI as `metacheck` and is a pre-release for now, so the requirement names the pre-release (`>=0.4.0a1`); this lets pip and uv pick it
+The package is on PyPI as `metacheck` and is a pre-release for now, so the
+requirement names the pre-release (`>=0.4.0a1`); this lets pip and uv pick it
 for metacheck only, not for its dependencies. If you installed `pytacheck` from GitHub
 before, run `pip uninstall pytacheck` first: the old and the new package share files.
 The Python module is still called `pytacheck` (`import pytacheck`) and so is one of the

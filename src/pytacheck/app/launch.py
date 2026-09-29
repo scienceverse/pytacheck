@@ -23,7 +23,7 @@ from typing import Any
 from pytacheck.app import hosted as hosting
 from pytacheck.app import state as saved
 
-MISSING_EXTRA = "The app needs the app extra: pip install 'pytacheck[app]'"
+MISSING_EXTRA = "The app needs the app extra: pip install 'metacheck[app]>=0.4.0a1'"
 HOST = "127.0.0.1"
 
 

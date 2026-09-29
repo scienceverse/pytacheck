@@ -27,7 +27,9 @@ function Install-Metacheck {
     $UvVersion = '0.12.20'
     $UvUrl = "https://github.com/astral-sh/uv/releases/download/$UvVersion"
     $IssuesUrl = 'https://github.com/scienceverse/pytacheck/issues'
-    $Tool = 'pytacheck'
+    $Tool = 'metacheck'
+    # Installs before 0.4.0a1 named the tool pytacheck.
+    $OldTool = 'pytacheck'
 
     # SHA-256 of each uv archive, from the .sha256 files of the uv release.
     $UvSha = @{
@@ -213,6 +215,11 @@ function Install-Metacheck {
             }
         } elseif (-not (Test-Path -LiteralPath $constraints -PathType Leaf)) {
             Fail "METACHECK_CONSTRAINTS is not a file: $constraints"
+        }
+
+        # An install under the old tool name owns the same commands, so it goes first.
+        if (Test-Path -LiteralPath (Join-Path $root "tools\$OldTool")) {
+            $null = Invoke-Uv tool uninstall $OldTool 2>$null
         }
 
         Say 'Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ...'
