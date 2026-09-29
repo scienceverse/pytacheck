@@ -18,6 +18,7 @@ Examples::
     pytacheck store build . --check                  # store CI
     pytacheck read paper.pdf -o paper.json           # extract with bibr, save JSON
     pytacheck serve --port 8000                      # REST API (pytacheck[api])
+    pytacheck app                                    # the local app in your browser (pytacheck[app])
     pytacheck version
 
 Selection flags (run, report): ``-m`` modules (in order), ``--preset``,
@@ -465,6 +466,12 @@ def cmd_serve(ns: argparse.Namespace) -> int:
         )
     uvicorn.run("pytacheck.api.app:create_app", factory=True, host=ns.host, port=ns.port)
     return 0
+
+
+def cmd_app(ns: argparse.Namespace) -> int:
+    from pytacheck.app import main as app_main
+
+    return app_main(ns.rest)
 
 
 def cmd_version(_: argparse.Namespace) -> int:
@@ -990,6 +997,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.set_defaults(func=cmd_serve)
 
+    p = sub.add_parser(
+        "app",
+        help="open the local app in your browser",
+        add_help=False,
+        description="Same as the metacheck-app command; see 'pytacheck app --help'.",
+    )
+    p.add_argument("rest", nargs=argparse.REMAINDER, help="passed to metacheck-app")
+    p.set_defaults(func=cmd_app)
+
     p = sub.add_parser("version", help="show versions")
     p.set_defaults(func=cmd_version)
     return parser
@@ -999,7 +1015,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     from pytacheck.config import ConfigError
     from pytacheck.module import ModuleError
 
-    ns = build_parser().parse_args(argv)
+    args = list(sys.argv[1:] if argv is None else argv)
+    if args[:1] == ["app"]:  # its flags (--help, --version, ...) belong to metacheck-app
+        return cmd_app(argparse.Namespace(rest=args[1:]))
+    ns = build_parser().parse_args(args)
     with warnings.catch_warnings():
         warnings.showwarning = _show_warning  # restored on exit
         try:

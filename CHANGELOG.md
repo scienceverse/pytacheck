@@ -22,6 +22,13 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
 - CLI (`pytacheck`), Docker images (with and without bibr), and a scheduled
   upstream-sync workflow that ports new metacheck commits automatically.
 
+### App
+
+- `metacheck-app` (also `pytacheck app`, extra `pytacheck[app]`): a local Gradio page
+  that checks a PDF, GROBID XML or bibr JSON file and shows the results table and the
+  report. It listens on 127.0.0.1 only, behind a per-launch token, and a second start
+  reuses the running app. `--self-test` checks the demo paper without a server.
+
 ### Parity harness
 
 - Accuracy contract (docs/PORTING.md section 1): pytacheck is checked against
