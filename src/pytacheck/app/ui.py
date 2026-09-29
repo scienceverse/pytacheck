@@ -7,12 +7,14 @@ import html
 import shutil
 import tempfile
 import threading
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import quote
 
 import gradio as gr
 
+from pytacheck.app import hosted as hosting
 from pytacheck.app.checks import validated_checks
 from pytacheck.app.run import Analysis, UserError, check_paper, scratch_dir
 
@@ -87,7 +89,16 @@ CSS = (
     "#download-report a{display:inline-block;padding:8px 16px;border:1px solid "
     "var(--border-color-primary);border-radius:8px;text-decoration:none;font-weight:600}"
 )
+EXPIRED = "Your upload is no longer on the server. Upload the paper again."
 FAILED = "Something went wrong while checking this paper. Try the demo paper or another file."
+
+
+def analyse_upload(path: str, online: bool, progress: Callable[[float, str], None]) -> Analysis:
+    """One hosted run, in its own process: the report stays in the scratch folder."""
+    if not Path(path).is_file():
+        raise UserError(EXPIRED)
+    with scratch_dir() as work:
+        return check_paper(path, online=online, workdir=Path(work), progress=progress)
 
 
 def report_frame(page: str) -> str:
@@ -137,25 +148,45 @@ def _summary(analysis: Analysis) -> str:
     return f"Ran {n} checks on **{analysis.name}** in {analysis.seconds:.1f} s."
 
 
-def build_app(sessions: Sessions | None = None) -> gr.Blocks:
+def build_app(
+    sessions: Sessions | None = None, hosted: hosting.HostedConfig | None = None
+) -> gr.Blocks:
+    """The page. ``hosted`` adds the limits and texts of the shared server."""
     from pytacheck._version import __version__
 
     sessions = sessions or Sessions()
+    jobs = hosting.JobRunner(hosted.job_timeout) if hosted else None
+
+    def analyse(path: str, online: bool, session: str, progress: Any) -> Analysis:
+        with scratch_dir() as work:
+            return check_paper(
+                path,
+                online=online,
+                workdir=Path(work),
+                report_dir=sessions.folder(session),
+                progress=lambda fraction, text: progress(fraction, desc=text),
+            )
 
     def run(path: str | None, online: bool, session: str, progress: Any) -> tuple[Any, ...]:
         if not path:
             raise gr.Error("Upload a paper first, or use the demo paper.", print_exception=False)
         try:
-            with scratch_dir() as work:
-                analysis = check_paper(
+            if jobs is None:
+                analysis = analyse(path, online, session, progress)
+            else:
+                analysis = jobs.run(
+                    analyse_upload,
                     path,
-                    online=online,
-                    workdir=Path(work),
-                    report_dir=sessions.folder(session),
-                    progress=lambda fraction, text: progress(fraction, desc=text),
+                    online,
+                    # the demo paper is part of the package: only an upload is deleted
+                    upload=None if Path(path).resolve() == _demo_path() else path,
+                    on_timeout=lambda: gr.Error(hosting.TOO_SLOW, print_exception=False),
+                    on_progress=lambda fraction, text: progress(fraction, desc=text),
                 )
         except UserError as exc:
             raise gr.Error(str(exc), print_exception=False) from exc
+        except gr.Error:
+            raise
         except Exception as exc:
             raise gr.Error(FAILED) from exc
         return (
@@ -163,7 +194,9 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
             _summary(analysis),
             [row.cells() for row in analysis.rows],
             report_frame(analysis.html),
-            _download_link(session, analysis.report_path),
+            hosting.data_link(analysis.report_path.name, analysis.html)
+            if hosted
+            else _download_link(session, analysis.report_path),
         )
 
     def on_check(
@@ -172,7 +205,9 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
     ) -> tuple[Any, ...]:
-        return run(upload, online, request.session_hash or "", progress)
+        shown = run(upload, online, request.session_hash or "", progress)
+        # hosted: the upload is deleted after its run, so the field is cleared as well
+        return (*shown, None) if hosted else shown
 
     def on_demo(
         online: bool,
@@ -181,9 +216,15 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
     ) -> tuple[Any, ...]:
         from pytacheck.papers.io import demofile
 
-        return run(str(demofile("json")), online, request.session_hash or "", progress)
+        shown = run(str(demofile("json")), online, request.session_hash or "", progress)
+        return (*shown, gr.skip()) if hosted else shown
 
-    with gr.Blocks(**BLOCKS_KWARGS) as app:
+    blocks_kwargs = (
+        {**BLOCKS_KWARGS, "delete_cache": hosting.sweep(hosted.job_timeout)}
+        if hosted
+        else BLOCKS_KWARGS
+    )
+    with gr.Blocks(**blocks_kwargs) as app:
         gr.Markdown(f"# metacheck\n\nPython version, preview {__version__}")
         gr.Markdown(INTRO)
         upload = gr.File(
@@ -191,7 +232,10 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
             file_types=[".pdf", ".xml", ".json"],
             type="filepath",
         )
-        gr.Markdown(PRIVACY)
+        if hosted:
+            gr.Markdown(hosting.HOSTED_NOTE)
+        # a visitor's own computer is not where the files are checked
+        gr.Markdown(PRIVACY.replace("this computer", "this server") if hosted else PRIVACY)
         with gr.Row():
             check = gr.Button("Check my paper", variant="primary")
             demo = gr.Button("Try the demo paper")
@@ -219,12 +263,45 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
             )
             gr.Markdown(f"**Experimental checks.** {ABOUT_EXPERIMENTAL}")
         gr.Markdown(CREDIT)
+        if hosted:
+            gr.Markdown(hosting.footer(__version__, hosted.commit))
 
         outputs = [results, summary, table, frame, download]
-        check.click(on_check, [upload, online], outputs, api_visibility="private")
-        demo.click(on_demo, [online], outputs, api_visibility="private")
-    app.queue(**QUEUE_KWARGS)
+        # one shared limit: each button on its own would allow the full number of runs
+        limits: dict[str, Any] = (
+            {"concurrency_id": "paper", "concurrency_limit": hosting.MAX_RUNS} if hosted else {}
+        )
+        check.click(
+            on_check,
+            [upload, online],
+            [*outputs, upload] if hosted else outputs,
+            api_visibility="private",
+            **limits,
+        )
+        demo.click(
+            on_demo,
+            [online],
+            [*outputs, upload] if hosted else outputs,
+            api_visibility="private",
+            **limits,
+        )
+    if hosted:
+        app.queue(
+            **{
+                **QUEUE_KWARGS,
+                "default_concurrency_limit": hosting.MAX_RUNS,
+                "max_size": hosting.MAX_QUEUE,
+            }
+        )
+    else:
+        app.queue(**QUEUE_KWARGS)
     return cast(gr.Blocks, app)
+
+
+def _demo_path() -> Path:
+    from pytacheck.papers.io import demofile
+
+    return Path(demofile("json")).resolve()
 
 
 def theme() -> Any:
