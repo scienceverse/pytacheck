@@ -478,8 +478,10 @@ def test_a_hosted_run_includes_the_data_check(env: pytest.MonkeyPatch) -> None:
             seen["started"] = True
 
         def wait(self, _timeout: float) -> bool:
+            # long enough for Gradio to send the progress text of each wait
+            time.sleep(0.5)
             self.waits += 1
-            return self.waits > 1
+            return self.waits > 3
 
     def begin(*_a: Any, **kw: Any) -> Any:
         seen.update(kw)
