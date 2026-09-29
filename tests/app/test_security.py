@@ -33,6 +33,7 @@ def client() -> TestClient:
         routes=[
             Route("/", page),
             Route("/gradio_api/file={rest:path}", page),
+            Route("/gradio_api/file/{rest:path}", page),
             WebSocketRoute("/ws", socket),
         ]
     )
@@ -104,6 +105,71 @@ def test_remote_file_urls_get_404(client: TestClient) -> None:
     assert client.get("/gradio_api/file=http://example.com/x").status_code == 404
     assert client.get("/gradio_api/file=%2F%2Fexample.com/x").status_code == 404
     assert client.get("/gradio_api/file=/tmp/x.txt").status_code == 200
+
+
+def test_the_deprecated_file_route_gets_the_same_guard(client: TestClient) -> None:
+    client.get(f"/?token={TOKEN}")
+    for tail in (
+        "https://example.com/",
+        "HTTPS://example.com/",
+        "http://example.com/",
+        "https%3A%2F%2Fexample.com%2F",
+        "%2F%2Fexample.com/x",
+    ):
+        assert client.get(f"/gradio_api/file/{tail}").status_code == 404, tail
+        assert client.get(f"/gradio_api/file={tail}").status_code == 404, tail
+    assert client.get("/gradio_api/file/tmp/x.txt").status_code == 200
+
+
+@pytest.mark.parametrize(
+    "cookie",
+    [
+        'prefs={"a":1}; {name}={token}',
+        "msg=hello world; {name}={token}",
+        '{name}={token}; prefs={"a":1}; other=a b\\c "d"',
+        "x=1;{name}={token};y=2",
+    ],
+)
+def test_other_cookies_do_not_lock_the_person_out(client: TestClient, cookie: str) -> None:
+    header = cookie.replace("{name}", cookie_name(PORT)).replace("{token}", TOKEN)
+    assert client.get("/", headers={"cookie": header}).status_code == 200
+
+
+def test_requests_that_another_origin_starts_are_refused(client: TestClient) -> None:
+    good = {"cookie": f"{cookie_name(PORT)}={TOKEN}"}
+    assert client.get("/", headers=good).status_code == 200
+    for origin in (
+        "http://127.0.0.1:9999",
+        "http://evil.example",
+        "null",
+        "https://127.0.0.1:4321",
+    ):
+        assert client.get("/", headers={**good, "origin": origin}).status_code == 403, origin
+    for origin in (f"http://127.0.0.1:{PORT}", f"http://localhost:{PORT}"):
+        assert client.get("/", headers={**good, "origin": origin}).status_code == 200, origin
+
+
+def test_fetches_from_a_page_on_another_port_are_refused(client: TestClient) -> None:
+    good = {"cookie": f"{cookie_name(PORT)}={TOKEN}"}
+    for site in ("same-site", "cross-site"):
+        fetch = {**good, "sec-fetch-site": site, "sec-fetch-mode": "cors"}
+        assert client.get("/", headers=fetch).status_code == 403, site
+        assert client.post("/", headers=fetch).status_code == 403, site
+    for site in ("same-origin", "none"):
+        assert client.get("/", headers={**good, "sec-fetch-site": site}).status_code == 200, site
+    # a plain page load from another site cannot read the answer, and the launcher needs it
+    load = {
+        "sec-fetch-site": "cross-site",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-dest": "document",
+    }
+    resp = client.get(f"/?a=1&token={TOKEN}", headers=load)
+    # a redirect would keep the foreign site, and the strict cookie would not be sent
+    assert resp.status_code == 200
+    assert 'http-equiv=refresh content="0;url=/?a=1"' in resp.text
+    assert resp.headers["set-cookie"].startswith(f"{cookie_name(PORT)}={TOKEN}")
+    assert client.get("/", headers={**good, **load}).status_code == 200
+    assert client.post("/", headers={**good, **load}).status_code == 403
 
 
 def test_websocket_needs_the_cookie(client: TestClient) -> None:
