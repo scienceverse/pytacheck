@@ -46,6 +46,13 @@ def json_response(body: Any, status: int = 200) -> Callable[[httpx.Request], htt
     return lambda _request: httpx.Response(status, json=body)
 
 
+@pytest.fixture(autouse=True)
+def _no_bibr_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The bibr server variables of the developer's shell must not steer these tests."""
+    for name in ("BIBR_URL", "BIBR_API_URL", "BIBR_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+
+
 @pytest.fixture
 def io_fixtures() -> Path:
     return IO_FIXTURES

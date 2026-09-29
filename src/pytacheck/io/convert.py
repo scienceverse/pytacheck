@@ -4,6 +4,8 @@ Both bibr and Grobid convert PDFs; only bibr converts DOC/DOCX; Grobid TEI
 XML files are converted with ``grobid_to_bibr()``. With ``method="auto"``
 a local Grobid (``localhost:8070``) or bibr (``localhost:8000``) server is
 preferred, then the first live server of metacheck's online priority list.
+A bibr server named in ``BIBR_URL`` (with ``BIBR_API_KEY``) comes before all of
+those, for ``method="auto"`` and ``method="bibr"`` (pytacheck's addition; D59).
 """
 
 from __future__ import annotations
@@ -92,13 +94,16 @@ def convert(
         With Grobid, whether to keep the intermediate XML files.
     **kwargs:
         Passed on to ``convert_bibr()`` / ``convert_grobid()`` (``api_url``,
-        ``api_key``, ``start_page``, ...).
+        ``api_key``, ``start_page``, ...). With ``BIBR_URL`` set (and no
+        ``api_url`` or other ``backend`` passed), ``method="auto"`` and
+        ``method="bibr"`` use that server through ``convert_bibr(backend="bibr")``;
+        ``BIBR_API_URL`` does not steer ``convert()``.
 
     Returns
     -------
     The path(s) to the JSON file(s).
     """
-    from pytacheck.io.bibr_convert import _bibr_isalive, convert_bibr
+    from pytacheck.io.bibr_convert import _bibr_isalive, _bibr_steering_url, convert_bibr
     from pytacheck.io.grobid import _grobid_isalive, convert_grobid, grobid_to_bibr
 
     args: dict[str, Any] = dict(kwargs)
@@ -130,6 +135,16 @@ def convert(
 
     method = match_arg(method, _METHODS)
 
+    # a bibr server that was asked for (BIBR_URL) beats guessing: no probe, so a wrong address
+    # or token is reported as it is instead of falling back to another service
+    if method in ("auto", "bibr") and args.get("api_url") is None:
+        configured = _bibr_steering_url()
+        if configured and args.get("backend") in (None, "auto", "bibr"):
+            _message("Using the bibr server in BIBR_URL")
+            method = "bibr"
+            args["api_url"] = configured
+            args["backend"] = "bibr"
+
     # auto-detect method: local grobid > local bibr > online priority list
     if method == "auto":
         grobid_local_url = "http://localhost:8070"
@@ -142,6 +157,9 @@ def convert(
             _message("Using local bibr")
             method = "bibr"
             args["api_url"] = bibr_local_url
+            # a bibr serve, whatever SCIVRS_API_KEY says: the platform's job queue is not there
+            if args.get("backend") in (None, "auto"):
+                args["backend"] = "selfhosted"
 
     # XML is converted locally: no server is needed (metacheck still looks one
     # up, so converting XML fails offline; U18)
