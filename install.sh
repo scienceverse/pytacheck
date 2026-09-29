@@ -79,8 +79,8 @@ main() {
     if [ -n "${HOME:-}" ]; then
       [ "$root" != "$(tidy "$HOME")" ] || die "METACHECK_HOME is your home folder; refusing to continue."
       # The same folder under another name (a link, for instance).
-      home_real="$(cd "$HOME" 2>/dev/null && pwd -P || true)"
-      root_real="$(cd "$root" 2>/dev/null && pwd -P || true)"
+      home_real="$(cd "$HOME" 2>/dev/null && pwd -P)" || home_real=""
+      root_real="$(cd "$root" 2>/dev/null && pwd -P)" || root_real=""
       [ -z "$root_real" ] || [ "$root_real" != "$home_real" ] ||
         die "METACHECK_HOME is your home folder; refusing to continue."
     fi
