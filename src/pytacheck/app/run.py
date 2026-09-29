@@ -12,7 +12,7 @@ import tempfile
 import threading
 import time
 import warnings
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -27,6 +27,7 @@ __all__ = [
     "check_paper",
     "find_grobid",
     "grobid_servers",
+    "live_servers",
     "read_paper",
     "report_filename",
 ]
@@ -47,6 +48,11 @@ BAD_PAPER = (
     "This file could not be read as a paper. Check that it is a PDF, GROBID XML or bibr JSON."
 )
 BAD_PDF = "The PDF server could not read this PDF. Try another copy of the paper."
+NO_TEXT = "No text was found in this file, so there is nothing to check."
+NO_TEXT_PDF = "No text was found in this PDF. Is it a scanned image?"
+
+#: status texts of a busy server (the reason phrases of 429, 502, 503 and 504): try the next
+BUSY = ("Too Many Requests", "Bad Gateway", "Service Unavailable", "Gateway Timeout")
 
 #: traffic light -> the word shown in the table
 LIGHTS = {
@@ -121,8 +127,8 @@ def grobid_servers() -> list[str]:
     return list(GROBID_SERVERS)
 
 
-def find_grobid(servers: Sequence[str] | None = None) -> str:
-    """The first GROBID server that says it is alive (a short timeout for each)."""
+def live_servers(servers: Sequence[str] | None = None) -> Iterator[str]:
+    """The GROBID servers that say they are alive, in order (a short timeout for each)."""
     import httpx
 
     for url in servers if servers is not None else grobid_servers():
@@ -131,25 +137,36 @@ def find_grobid(servers: Sequence[str] | None = None) -> str:
         except httpx.HTTPError:
             continue
         if resp.status_code == 200:
-            return url
+            yield url
+
+
+def find_grobid(servers: Sequence[str] | None = None) -> str:
+    """The first GROBID server that says it is alive."""
+    for url in live_servers(servers):
+        return url
     raise UserError(NO_SERVER)
 
 
 def _convert_pdf(path: Path, workdir: Path) -> Path:
     import pytacheck as pc
 
-    server = find_grobid()
-    try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            out = pc.convert(path, save_path=workdir, method="grobid", api_url=server)
-    except (ConnectionError, OSError) as exc:
-        raise UserError(NO_SERVER) from exc
-    except Exception as exc:
-        raise UserError(BAD_PDF) from exc
-    if not out:
-        raise UserError(BAD_PDF)
-    return Path(str(out[0] if isinstance(out, list | tuple) else out))
+    for server in live_servers():
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                out = pc.convert(path, save_path=workdir, method="grobid", api_url=server)
+        except (ConnectionError, OSError):
+            continue
+        except RuntimeError as exc:
+            if str(exc) in BUSY:
+                continue
+            raise UserError(BAD_PDF) from exc
+        except Exception as exc:
+            raise UserError(BAD_PDF) from exc
+        if not out:
+            raise UserError(BAD_PDF)
+        return Path(str(out[0] if isinstance(out, list | tuple) else out))
+    raise UserError(NO_SERVER)
 
 
 def read_paper(path: str | os.PathLike[str], workdir: Path) -> Any:
@@ -170,6 +187,8 @@ def read_paper(path: str | os.PathLike[str], workdir: Path) -> Any:
         raise UserError(BAD_PAPER) from exc
     if not isinstance(paper, pc.Paper):
         raise UserError(BAD_PAPER)
+    if len(pc.search_text(paper, ".*")) == 0:
+        raise UserError(NO_TEXT_PDF if suffix == ".pdf" else NO_TEXT)
     return paper
 
 
@@ -186,6 +205,7 @@ def check_paper(
     ``workdir`` is scratch space for the PDF conversion. ``report_dir`` (default
     ``workdir``) gets the report file.
     """
+    import pytacheck as pc
     from pytacheck.module import run_session, use
     from pytacheck.report.report import render_module_outputs, report_module_run
 
@@ -196,6 +216,9 @@ def check_paper(
     paper = read_paper(source, workdir)
     tick(0.3, "Running the checks")
     names = selected_checks(online)
+    if "ref_accuracy" in names and len(pc.paper_table(paper, "bib_match")) == 0:
+        # only a paper file that carries CrossRef matches (the bundled JSON) can be checked
+        names.remove("ref_accuracy")
     with _RUN_LOCK, use(allow_local=False), run_session(), warnings.catch_warnings():
         warnings.simplefilter("ignore")
         outputs = report_module_run(paper, names)

@@ -1,10 +1,10 @@
-"""Which checks the demo app runs, in three fixed sets."""
+"""Which checks the demo app runs, in four fixed sets."""
 
 from __future__ import annotations
 
 from functools import cache
 
-#: Extra checks that need no network and no AI and finish in well under a second on
+#: Extra checks that need no network and no external service and finish in well under a second on
 #: the demo paper (measured one by one).
 FAST_OFFLINE: dict[str, str] = {
     "stat_check": "recomputes p values from test statistics; 0.2 s",
@@ -12,7 +12,8 @@ FAST_OFFLINE: dict[str, str] = {
     "coi_check": "text search only",
     "ethics_check": "text search only",
     "open_practices": "text search only",
-    "ref_accuracy": "uses the reference matches in the paper file, no lookup",
+    "ref_accuracy": "uses the reference matches in the paper file, no lookup; left out of a "
+    "paper that has none (only the bundled demo JSON has them)",
     "ref_replication": "uses a database that ships with the package",
     "ref_retraction": "uses a database that ships with the package",
     "ref_consistency": "compares citations with the reference list",
@@ -31,12 +32,17 @@ ONLINE: dict[str, str] = {
 NEVER: dict[str, str] = {
     "code_check": "downloads code repositories (333 s on the demo paper)",
     "repo_check": "downloads repository listings (46 s on the demo paper)",
-    "data_check": "downloads data files and needs an AI key",
-    "codebook_check": "downloads data files and needs an AI key",
-    "psychds_check": "downloads data files and needs an AI key",
+    "data_check": "downloads data files and needs a key for an external service",
+    "codebook_check": "downloads data files and needs a key for an external service",
+    "psychds_check": "downloads data files and needs a key for an external service",
     "reproducibility_check": "downloads data files",
     "reg_check": "needs a local RegCheck server",
-    "causal_claims": "sends the title and abstract to a third-party model server",
+    "causal_claims": "sends the title and abstract to an external text-classification server",
+}
+
+#: Fast and offline, so they would fit the default set, but left out because they add
+#: little to the page. Kept apart from NEVER: adding one is a choice, not a limit.
+NOT_SHOWN: dict[str, str] = {
     "all_p_values": "lists p values; the p value checks above cover them",
     "all_urls": "lists links only; has no result of its own",
     "coi_check_oi": "variant of coi_check",
