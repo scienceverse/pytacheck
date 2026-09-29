@@ -4,7 +4,10 @@
 #
 # REF is the commit of pytacheck to install. It is required, and a full commit hash keeps
 # the build the same every time. The footer of the page links to this commit.
-FROM python:3.12-slim
+#
+# The base image is pinned by digest, so a build gives the same system every time. To pick up
+# security fixes, look up the digest of the current python:3.12-slim and change it here.
+FROM python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f
 
 ARG REF=set-REF-to-a-commit-hash
 ARG UV_VERSION=0.9.8
@@ -30,6 +33,8 @@ USER user
 WORKDIR /home/user
 
 ENV METACHECK_APP_COMMIT=${REF}
+# so that the start-up line shows in the log at once
+ENV PYTHONUNBUFFERED=1
 EXPOSE 7860
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
   CMD python -c "import urllib.request as u; u.urlopen('http://127.0.0.1:7860/healthz', timeout=4)"

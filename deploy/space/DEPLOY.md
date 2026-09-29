@@ -4,7 +4,7 @@ This is for a link that a few people open in a browser, with nothing to install.
 
 ## On a Hugging Face Space
 
-1. Create a new Space. Choose the Docker SDK and make the Space private.
+1. Create a new Space. Choose the Docker SDK. Make the Space public: the access tokens are what keep people out, and the files in this folder hold no secrets. A private Space opens only for members of your Hugging Face organisation who are signed in to Hugging Face, so people with a token link could not open it.
 2. Copy `README.md` and `Dockerfile` from this folder into the Space.
 3. In the `Dockerfile`, or as a build variable named `REF` in the Space settings, set `REF` to the commit of pytacheck to install. Use a full commit hash.
 4. In the Space settings, add these secrets:
@@ -12,6 +12,8 @@ This is for a link that a few people open in a browser, with nothing to install.
    - `SCIVRS_API_KEY` (optional): a key for the bibr service, used for PDFs.
    - `OSF_PAT` (optional): an OSF token for the checks that look up OSF pages.
 5. The Space sets `SPACE_HOST` itself, and the app allows that host name only.
+
+Send people the direct address of the Space, which is the `SPACE_HOST` value (shown as the direct URL in the Space's embed settings, and ending in `.hf.space`). Do not send the `huggingface.co/spaces/...` page: it shows the app inside another site's frame, and the app refuses that.
 
 ## One link per person
 
@@ -27,7 +29,7 @@ Put all tokens in `METACHECK_APP_TOKENS`, separated by commas. Send each person 
 https://<host>/?token=<their token>
 ```
 
-The first visit stores a cookie and takes the token out of the address bar. After that the person can open the plain address `https://<host>/` on that browser.
+The first visit stores a cookie and takes the token out of the address bar. The cookie lasts until the browser is closed, and it is not sent when someone clicks a plain link from a mail or a chat. Tell people to keep their link and to open it each time.
 
 ## Take a link away
 
@@ -35,18 +37,24 @@ Remove that person's token from `METACHECK_APP_TOKENS` and restart the Space. Th
 
 ## What the server keeps
 
-An uploaded paper and its report are deleted when the check ends. The report goes to the browser as a download link inside the page. The server keeps no log of tokens or papers. At most 2 checks run at a time and at most 10 wait. A check that takes longer than `METACHECK_APP_JOB_TIMEOUT` seconds (default 900) is stopped with a plain message.
+An uploaded paper and its report are deleted when the check ends. The report goes to the browser as a download link inside the page. The server keeps no log of tokens or papers. At most 2 checks run at a time and at most 10 wait. A check that takes longer than `METACHECK_APP_JOB_TIMEOUT` seconds (default 900) is stopped and its process ended, and the person gets a plain message.
 
 ## Any other host
 
-Build the image with the commit to install, then run it. Put it behind a proxy that serves https, and set the host name people use in `METACHECK_APP_HOSTS` (comma-separated for several).
+Build the image with the commit to install, then run it behind a proxy that serves https. Set the host name people use in `METACHECK_APP_HOSTS` (comma-separated for several).
 
 ```sh
 docker build --build-arg REF=<commit> -t metacheck-app deploy/space
-docker run --rm -p 7860:7860 \
+docker run --rm -p 127.0.0.1:7860:7860 \
   -e METACHECK_APP_TOKENS=<token>,<another token> \
   -e METACHECK_APP_HOSTS=<host name> \
   metacheck-app
 ```
+
+Use `-p 127.0.0.1:7860:7860` when the proxy runs on the same machine, so that the container cannot be reached around it over plain http. The proxy must:
+
+- pass the `Host` header unchanged (in nginx: `proxy_set_header Host $host;`). The app checks that header only and answers 403 to any other name.
+- set `X-Forwarded-Proto https`.
+- turn off response buffering, because the page gets its progress as a stream (in nginx: `proxy_buffering off;`).
 
 Without `METACHECK_APP_TOKENS` or a host name the app refuses to start. Cookies are marked Secure, so the link has to be opened over https.
