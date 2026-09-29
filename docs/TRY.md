@@ -10,10 +10,22 @@ This is a preview of metacheck in Python. It runs on your own computer: you give
 curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh
 ```
 
+If it says `curl` is not found, use this line instead:
+
+```sh
+wget -qO- https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh
+```
+
 **On Windows.** Open PowerShell and paste this line:
 
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex"
+```
+
+If it says `Could not create SSL/TLS secure channel`, paste this line in the PowerShell window that is already open:
+
+```powershell
+[Net.ServicePointManager]::SecurityProtocol = 'Tls12'; irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex
 ```
 
 ## What happens
@@ -48,12 +60,20 @@ About PDFs: a PDF is turned into text by the public GROBID server at TU Eindhove
 
 Run the same install line again. It takes a few seconds the second time. You can also run the app from its folder: `metacheck-app` in the `bin` folder.
 
+If the first window is still open, the app is still running. Use the link printed in that window, and close it before you run the install line again.
+
 ## Remove it
 
 **On a Mac or Linux:**
 
 ```sh
 curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --uninstall
+```
+
+Without `curl`:
+
+```sh
+wget -qO- https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --uninstall
 ```
 
 **On Windows:**
@@ -66,7 +86,7 @@ Remove-Item Env:METACHECK_UNINSTALL
 
 The last line clears the setting, so that the install line works again.
 
-This removes the folder above. The app's own settings stay where they are. The uninstall message tells you where.
+This removes the folder above. The app's own settings and state file stay where they are. The uninstall message tells you where.
 
 ## Something wrong?
 
