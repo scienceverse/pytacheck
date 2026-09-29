@@ -78,6 +78,7 @@ These decide the launch list (§3.1). Pytacheck should record the team's answers
 ### 1.4 The real store today
 
 `scienceverse/pytacheck-modules` at 23736aa (main, after pytacheck-modules#1 merged on 2026-09-27) **(M)**:
+- **Update, 2026-09-29.** Both repositories have been public since 2026-09-28. pytacheck-modules#4 moved the store checks to GitHub-hosted runners, and pytacheck-modules#5 removed the `PYTACHECK_READ_TOKEN` handling from `check.yml` and the README's note about a private store. Both main runs after them passed, and the index job found index.json up to date. Fork PRs still get no CI run. The bullets below describe 23736aa.
 - **Two packs.** `clinical_trials` (MIT, one module `trial_registration`, with tests) and `fields` (CC0-1.0, presets only: `general`, `psychology`, `medicine`, `open-science`).
 - **The store repository is private too.** Its README says: "While this store is private, pytacheck needs read access to it: set PYTACHECK_GITHUB_TOKEN (or GH_TOKEN / GITHUB_TOKEN)". Every index.json entry points at `scienceverse/pytacheck-modules`. So today every store user goes through the token fetch chain in `stores.py:223-295`, and outside researchers cannot fork it to contribute.
 - **CI passes.** pytacheck-modules#1 (merged 2026-09-27) moved `check.yml` to a self-hosted runner and gave `PYTACHECK_READ_TOKEN` only to the two "Install pytacheck" steps (`check.yml:86-87`, `:150-151`), as an HTTP header scoped to `scienceverse/pytacheck`. It is no longer in the workflow-level `env`. The secret is set, and every run since 09:11 UTC on 2026-09-27 passed, including the push to main after the merge and pytacheck-modules#2. The `check` job still runs pack code and tests with `contents: read` (§6 item 5), and it skips PRs from forks (`check.yml:59-61`), so an outside contributor gets no CI run.
@@ -571,7 +572,7 @@ The install card gains one line: "ported from owner/repo (MIT); consent by @aaut
 
 ## 6. The real store: proposed fixes
 
-Status on 2026-09-28: rows 1, 2, 3 and 5 are partly done, through pytacheck-modules#1 (merged 2026-09-27), #2 and #3 (both merged 2026-09-28). The other rows are open.
+Status on 2026-09-29: both repositories are public, and store CI runs on GitHub-hosted runners without a read token (pytacheck-modules#4 and #5, both merged 2026-09-29). Row 3 is done: after those merges the index job on main, run from the public repository, found index.json up to date. Rows 1, 2 and 5 are partly done, through pytacheck-modules#1 to #5. What is left of them: CI for fork PRs (row 1), the derived scaffold pin (row 2) and a `check` job with `permissions: {}` (row 5). The other rows are open.
 
 | # | Fix | Where |
 |---|---|---|

@@ -100,9 +100,9 @@ Dates are planning targets for this project's own releases. A simulation at 3 ag
   - REF-ARCHIVE: record the digest of the pinned R reference image once it is archived in a second location.
   - DOCS-ROADMAP: this roadmap and the design-doc pointers.
 - **Status on 29 Sep:**
-  - Merged: #20 (V-2), #21 (C-S1's follow-ups: `store add` and `store remove` lose `--project`, and an ignored project store no longer breaks `init` or `config`), #22 (S-4's follow-up: names that end in a newline are refused), #24 (the first part of BIBR-12X-a), #25 (V-1) and #26 (TRUST-1).
-  - Open: #23 (SERVE-AUTH, which waits until the operators of hosted services have been told) and #27 (a follow-up to #24: a log that cannot be written never fails the caller).
-  - In review, with PRs to follow: H-11 and H-14.
+  - Merged: #20 (V-2), #21 (C-S1's follow-ups: `store add` and `store remove` lose `--project`, and an ignored project store no longer breaks `init` or `config`), #22 (S-4's follow-up: names that end in a newline are refused), #24 (the first part of BIBR-12X-a), #25 (V-1), #26 (TRUST-1), #27 (a follow-up to #24: a log that cannot be written never fails the caller), #28 (this roadmap), #29 (H-11), #30 (H-14), #31 (`lastlog()` returns `None` for a log that cannot be created) and #32 (a store pack reports the source in its install record, not its pin's).
+  - Store: pytacheck-modules#4 (store CI on GitHub-hosted runners) and #5 (no read token) are merged.
+  - Open: #23 (SERVE-AUTH, which waits until the operators of hosted services have been told) and #33 (H-11's follow-up: the `file_location` ignores in `mod_repo_check` go, and the area is re-locked).
 - **Exit criteria:**
   - main CI is green.
   - CODEOWNERS covers `canon.toml` and the five validated checks.
@@ -770,4 +770,4 @@ Phase A is re-classified against this roadmap. The full table is in Appendix A.
 | S-13b | rescope | PA-STORE | Store CI additions without the fields pack's depends. |
 | D-1 | done | #17 | Plan corrections and the phase A answers. |
 
-Totals: done 12 PRs (36 h), accelerate 9 (32 h), keep 22 (64.5 h), rescope 24 (66.75 h), defer 13 (51.5 h), drop 2 (4 h); 82 PRs, 254.75 h. Active: 55 PRs, 163.25 h. The classes and totals are as drawn up on 28 Sep. Since then V-2 has merged as #20, C-S1's and S-4's follow-ups as #21 and #22, the first part of BIBR-12X-a as #24, V-1 as #25 and TRUST-1 as #26. SERVE-AUTH (#23) is open, and H-11 and H-14 are in review. "Lands in" names the package or bundle of this roadmap that carries the PR; a number is the merged PR. Rev 3's wave packages (HARNESS-NET, REFS, LINKS, DATA-b and CODE-b) sit inside WAVES-PAPER and WAVES-REPO.
+Totals: done 12 PRs (36 h), accelerate 9 (32 h), keep 22 (64.5 h), rescope 24 (66.75 h), defer 13 (51.5 h), drop 2 (4 h); 82 PRs, 254.75 h. Active: 55 PRs, 163.25 h. The classes and totals are as drawn up on 28 Sep. Since then V-2 has merged as #20, C-S1's and S-4's follow-ups as #21 and #22, the first part of BIBR-12X-a as #24, V-1 as #25 and TRUST-1 as #26. H-11 has merged as #29 and H-14 as #30. SERVE-AUTH (#23) is open. "Lands in" names the package or bundle of this roadmap that carries the PR; a number is the merged PR. Rev 3's wave packages (HARNESS-NET, REFS, LINKS, DATA-b and CODE-b) sit inside WAVES-PAPER and WAVES-REPO.
