@@ -577,6 +577,16 @@ def found_in(tmp_path: Path, files: dict[str, str]) -> set[tuple[str, str, str]]
         ("import pytacheck.api as api\n", "api"),
         ("import importlib\nimportlib.import_module('pytacheck.archives.osf')\n", "archives"),
         ("__import__('pytacheck.cli')\n", "cli"),
+        # a call or a subscript inside an attribute chain is still read
+        (
+            "import importlib\nimportlib.import_module('pytacheck.text.search').text_search('x')\n",
+            "text",
+        ),
+        (
+            "import importlib\n(importlib.import_module('pytacheck.report'),)[0].render()\n",
+            "report",
+        ),
+        ("from pytacheck.text import *\n", "text"),
         ("from pytacheck.datacheck import x\n", "datacheck"),
         ("from pytacheck.codecheck import x\n", "codecheck"),
         (
@@ -781,7 +791,10 @@ SPELLING_FILES = {
         "from pytacheck import text as words\n"
         "from pytacheck.module import module_run as _run\n"
         "run = _run\n"
+        "import pytacheck.report as paint\n"
         "def f():\n    from pytacheck.report import render\n"
+        "class C:\n    from pytacheck.report import shade\n"
+        "async def g():\n    from pytacheck.report import tint\n"
     ),
 }
 SPELLINGS = [
@@ -797,7 +810,11 @@ SPELLINGS = [
     ("from pytacheck._r import grepl as g\n", [("_r", "_r.grepl", "_r.regex.grepl")]),
     ("from pytacheck.llm import words\n", [("llm", "llm.words", "text")]),
     ("from pytacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
+    ("from pytacheck.llm import paint\n", [("llm", "llm.paint", "report")]),
+    # an import in a function or class of an __init__ binds nothing in the package
     ("from pytacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
+    ("from pytacheck.llm import shade\n", [("llm", "llm.shade", "llm.shade")]),
+    ("from pytacheck.llm import tint\n", [("llm", "llm.tint", "llm.tint")]),
     ("from pytacheck import unbound\n", [("", "unbound", "unbound")]),
     # attribute chains
     (
