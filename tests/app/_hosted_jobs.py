@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import os
 import time
+import uuid
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -20,7 +21,8 @@ from pytacheck.app.run import Analysis, Row
 
 #: the real one, taken before a test replaces it
 REAL = ui.analyse_upload
-#: a file each counted run writes its start and end to
+#: a folder each counted run writes its start and end to, one file each: processes that
+#: append to one file at the same moment can overwrite each other's line on Windows
 LOG_ENV = "METACHECK_TEST_RUN_LOG"
 
 
@@ -37,13 +39,15 @@ def sleep(*_a: Any, **_k: Any) -> Any:
     time.sleep(30)
 
 
+def _note(what: str) -> None:
+    (Path(os.environ[LOG_ENV]) / f"{what}-{uuid.uuid4().hex}").write_text(str(time.time()))
+
+
 def counted(*_a: Any, **_k: Any) -> Any:
-    with open(os.environ[LOG_ENV], "a", encoding="utf-8") as fh:
-        fh.write(f"start {time.time()}\n")
+    _note("start")
     # longer than a spawned process takes to start, so two runs surely overlap
     time.sleep(2.5)
-    with open(os.environ[LOG_ENV], "a", encoding="utf-8") as fh:
-        fh.write(f"end {time.time()}\n")
+    _note("end")
     return started()
 
 
