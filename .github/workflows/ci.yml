@@ -1,11 +1,11 @@
 name: CI
 
 # Linux jobs run on the self-hosted runner named by the CI_RUNNER variable
-# (pytacheck-fridge-ci: the fridge runner) when the repository is private and
-# the code comes from this repository (not a fork); otherwise, and whenever
-# CI_RUNNER is unset, on GitHub's runners. The macOS and Windows test legs run
-# only when the Linux jobs are GitHub-hosted too: the fridge runner is Linux
-# only, and a private repository pays for GitHub's runners. A self-hosted
+# when the repository is private and the code comes from this repository (not
+# a fork); otherwise, and whenever CI_RUNNER is unset, on GitHub's runners. The
+# macOS and Windows test legs run only when the Linux jobs are GitHub-hosted
+# too: the self-hosted runner is Linux only, and a private repository pays for
+# GitHub's runners. A self-hosted
 # runner keeps its workspace, caches and home directory between jobs, so
 # scratch files go to $RUNNER_TEMP (emptied per job), not /tmp, and no step
 # changes the runner user's global configuration.
@@ -27,8 +27,8 @@ env:
   UV_VERSION: "0.9.8"
   PRIMARY_PYTHON: "3.12"
   # Only uv's own Python builds. uv otherwise takes an installed interpreter of
-  # the requested version over downloading one, and the fridge runner's Debian
-  # python3.13 comes without headers, so sdists such as cdifflib (in the bibr
+  # the requested version over downloading one, and a system python3.13 can
+  # come without headers, so sdists such as cdifflib (in the bibr
   # extra) fail to build against it.
   UV_PYTHON_PREFERENCE: only-managed
 
