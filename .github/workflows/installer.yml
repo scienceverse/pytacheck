@@ -233,3 +233,66 @@ jobs:
           Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
           & "$env:METACHECK_HOME\bin\metacheck-app.exe" --self-test
           if ($LASTEXITCODE -ne 0) { throw "self-test failed" }
+
+  # An earlier preview installed the app as a uv tool named pytacheck. The
+  # installer takes that install over, and keeps it when the new install fails.
+  upgrade:
+    name: Upgrade an earlier install (${{ matrix.os }})
+    needs: checks
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      METACHECK_NO_LAUNCH: "1"
+      # the last installer that installed the tool as pytacheck
+      OLD_INSTALLER: https://raw.githubusercontent.com/scienceverse/pytacheck/b4ac3e5b98e7e0135653ab3c7f42a916dbf5b436
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            install.sh
+            install.ps1
+          sparse-checkout-cone-mode: false
+      - name: Upgrade (Linux and macOS)
+        if: runner.os != 'Windows'
+        run: |
+          export METACHECK_HOME="$RUNNER_TEMP/metacheck"
+          app="$METACHECK_HOME/bin/metacheck-app"
+          old="$METACHECK_HOME/tools/pytacheck"
+          curl -LsSf "$OLD_INSTALLER/install.sh" | /bin/sh
+          [ -d "$old" ] || { echo "::error::the earlier installer left no pytacheck tool"; exit 1; }
+          if METACHECK_SPEC="metacheck[app] @ file://$RUNNER_TEMP/missing" /bin/sh install.sh; then
+            echo "::error::an install that cannot find the app succeeded"; exit 1
+          fi
+          [ -d "$old" ] || { echo "::error::the failed install removed the earlier app"; exit 1; }
+          "$app" --self-test
+          /bin/sh install.sh
+          [ ! -e "$old" ] || { echo "::error::the earlier tool is still there"; exit 1; }
+          [ -d "$METACHECK_HOME/tools/metacheck" ] || { echo "::error::no metacheck tool"; exit 1; }
+          "$app" --self-test
+      - name: Upgrade (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
+          $app = Join-Path $env:METACHECK_HOME 'bin\metacheck-app.exe'
+          $old = Join-Path $env:METACHECK_HOME 'tools\pytacheck'
+          Invoke-RestMethod "$env:OLD_INSTALLER/install.ps1" | Invoke-Expression
+          if (-not (Test-Path -LiteralPath $old)) { throw "the earlier installer left no pytacheck tool" }
+          $env:METACHECK_SPEC = "metacheck[app] @ " + ([System.Uri](Join-Path $env:RUNNER_TEMP 'missing')).AbsoluteUri
+          $failed = $false
+          try { & "$env:GITHUB_WORKSPACE\install.ps1" } catch { $failed = $true; Write-Host $_ }
+          Remove-Item Env:METACHECK_SPEC
+          if (-not $failed) { throw "an install that cannot find the app succeeded" }
+          if (-not (Test-Path -LiteralPath $old)) { throw "the failed install removed the earlier app" }
+          & $app --self-test
+          if ($LASTEXITCODE -ne 0) { throw "the earlier app no longer works" }
+          & "$env:GITHUB_WORKSPACE\install.ps1"
+          if (Test-Path -LiteralPath $old) { throw "the earlier tool is still there" }
+          if (-not (Test-Path -LiteralPath (Join-Path $env:METACHECK_HOME 'tools\metacheck'))) { throw "no metacheck tool" }
+          & $app --self-test
+          if ($LASTEXITCODE -ne 0) { throw "self-test failed" }

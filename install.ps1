@@ -217,15 +217,40 @@ function Install-Metacheck {
             Fail "METACHECK_CONSTRAINTS is not a file: $constraints"
         }
 
-        # An install under the old tool name owns the same commands, so it goes first.
-        if (Test-Path -LiteralPath (Join-Path $root "tools\$OldTool")) {
-            $null = Invoke-Uv tool uninstall $OldTool 2>$null
-        }
+        # An install under the old tool name owns the same commands. It stays until
+        # the new one is in, so a failed install leaves the app that worked; --force
+        # lets the new tool take over those commands.
+        $oldDir = Join-Path $root "tools\$OldTool"
+        $force = @()
+        if (Test-Path -LiteralPath $oldDir) { $force = @('--force') }
 
         Say 'Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ...'
-        $code = Invoke-Uv tool install --managed-python --python 3.12 $spec -c $constraints
-        if ($code -ne 0) { Fail "the install failed. If it keeps failing, please tell us at $IssuesUrl" }
+        $code = Invoke-Uv tool install @force --managed-python --python 3.12 $spec -c $constraints
+        if ($code -ne 0) {
+            if ($force.Count -gt 0) { Fail "the install failed. The earlier version is still installed. If it keeps failing, please tell us at $IssuesUrl" }
+            Fail "the install failed. If it keeps failing, please tell us at $IssuesUrl"
+        }
         if (-not (Test-Path -LiteralPath $app)) { Fail "the install finished but $app is missing. Please tell us at $IssuesUrl" }
+
+        # The old tool is not needed any more. Its folder holds its only record, so it
+        # goes with Remove-Item, not uv tool uninstall (that would remove the commands
+        # the new tool now owns). Commands only the old tool had go too.
+        if ($force.Count -gt 0) {
+            $oldReceipt = Join-Path $oldDir 'uv-receipt.toml'
+            $newReceipt = Join-Path $root "tools\$Tool\uv-receipt.toml"
+            if ((Test-Path -LiteralPath $oldReceipt) -and (Test-Path -LiteralPath $newReceipt)) {
+                $newText = Get-Content -LiteralPath $newReceipt -Raw
+                foreach ($m in [regex]::Matches((Get-Content -LiteralPath $oldReceipt -Raw), 'install-path = ["'']([^"'']+)["'']')) {
+                    $leaf = ($m.Groups[1].Value -split '[\\/]')[-1]
+                    $old = Join-Path $binDir $leaf
+                    if ($leaf -and -not $newText.Contains($leaf) -and (Test-Path -LiteralPath $old)) {
+                        Remove-Item -LiteralPath $old -Force -ErrorAction SilentlyContinue
+                    }
+                }
+            }
+            # a file still in use stays; the next install removes it
+            Remove-Item -LiteralPath $oldDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
     } finally {
         foreach ($name in $uvEnv.Keys) { [Environment]::SetEnvironmentVariable($name, $saved[$name], 'Process') }
         $env:PATH = $savedPath

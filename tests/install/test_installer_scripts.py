@@ -369,3 +369,96 @@ def test_smoke_waits_for_the_link_and_reads_unflushed_output(tmp_path):
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert "token link and cookie: 200" in result.stdout
+
+
+# A stand-in uv that keeps uv's real layout: tools/<name>/ holds the tool and its
+# receipt, bin/ holds links into it, and a link that belongs to another tool is
+# only replaced with --force.
+FAKE_UV_TOOLS = """\
+#!/bin/sh
+case "$1" in
+  --version) echo "uv 0.12.20" ;;
+  tool)
+    echo "$@" >>"$UV_TOOL_BIN_DIR/../calls"
+    force=0
+    for a in "$@"; do [ "$a" = "--force" ] && force=1; done
+    if [ -n "${FAKE_UV_FAIL:-}" ]; then
+      echo "error: no network" >&2
+      exit 1
+    fi
+    mkdir -p "$UV_TOOL_DIR/metacheck/bin" "$UV_TOOL_BIN_DIR"
+    : >"$UV_TOOL_DIR/metacheck/uv-receipt.toml"
+    printf '#!/bin/sh\\necho NEW\\n' >"$UV_TOOL_DIR/metacheck/bin/metacheck-app"
+    chmod 755 "$UV_TOOL_DIR/metacheck/bin/metacheck-app"
+    if [ -e "$UV_TOOL_BIN_DIR/metacheck-app" ] || [ -L "$UV_TOOL_BIN_DIR/metacheck-app" ]; then
+      if [ "$force" = "0" ]; then
+        echo "error: executable already exists: metacheck-app" >&2
+        exit 1
+      fi
+      rm -f "$UV_TOOL_BIN_DIR/metacheck-app"
+    fi
+    ln -s "$UV_TOOL_DIR/metacheck/bin/metacheck-app" "$UV_TOOL_BIN_DIR/metacheck-app"
+    ;;
+esac
+"""
+
+
+def _old_tool_env(tmp_path, **extra):
+    """A folder as an installer before 0.4.0a1 left it: tool pytacheck with two commands."""
+    root, env = _fake_install_env(tmp_path, **extra)
+    (root / "uv" / "uv").write_text(FAKE_UV_TOOLS)
+    old = root / "tools" / "pytacheck"
+    (old / "bin").mkdir(parents=True)
+    (old / "uv-receipt.toml").write_text("[tool]\n")
+    (root / "bin").mkdir()
+    for name in ("metacheck-app", "pytacheck-extra"):
+        script = old / "bin" / name
+        script.write_text("#!/bin/sh\necho OLD\n")
+        script.chmod(0o755)
+        (root / "bin" / name).symlink_to(script)
+    return root, env
+
+
+def _run_installer(env):
+    return subprocess.run(["sh", str(SH)], env=env, capture_output=True, text=True, timeout=60)
+
+
+@needs_sh
+def test_old_tool_is_replaced_once_the_new_one_is_in(tmp_path):
+    root, env = _old_tool_env(tmp_path)
+    result = _run_installer(env)
+    assert result.returncode == 0, result.stderr
+    assert not (root / "tools" / "pytacheck").exists()
+    assert (root / "tools" / "metacheck").is_dir()
+    assert "--force" in (root / "calls").read_text()
+    assert "uninstall" not in (root / "calls").read_text()
+    out = subprocess.run([str(root / "bin" / "metacheck-app")], capture_output=True, text=True)
+    assert out.stdout.strip() == "NEW"
+    # a command only the old tool had would point at nothing
+    assert not (root / "bin" / "pytacheck-extra").is_symlink()
+
+
+@needs_sh
+def test_old_tool_stays_when_the_new_install_fails(tmp_path):
+    root, env = _old_tool_env(tmp_path, FAKE_UV_FAIL="1")
+    result = _run_installer(env)
+    assert result.returncode != 0
+    assert "the install failed" in result.stderr
+    assert "earlier version is still installed" in result.stderr
+    assert (root / "tools" / "pytacheck" / "uv-receipt.toml").exists()
+    for name in ("metacheck-app", "pytacheck-extra"):
+        out = subprocess.run([str(root / "bin" / name)], capture_output=True, text=True)
+        assert out.stdout.strip() == "OLD"
+
+
+@needs_sh
+def test_fresh_install_has_no_force(tmp_path):
+    root, env = _fake_install_env(tmp_path)
+    (root / "uv" / "uv").write_text(FAKE_UV_TOOLS)
+    result = _run_installer(env)
+    assert result.returncode == 0, result.stderr
+    assert "--force" not in (root / "calls").read_text()
+    assert (root / "tools" / "metacheck").is_dir()
+    failing = _run_installer({**env, "FAKE_UV_FAIL": "1"})
+    assert failing.returncode != 0
+    assert "earlier version" not in failing.stderr
