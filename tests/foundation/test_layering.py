@@ -4,7 +4,20 @@ The test parses every file under ``src/pytacheck`` with ``ast`` and collects eac
 import wherever it sits: at module level, in a function, in a ``TYPE_CHECKING``
 block, as ``from . import x``, or as a constant string given to
 ``importlib.import_module`` or ``__import__``. Lazy-export maps and computed
-module names are not imports the parser can see. The graph feeds three rules.
+module names are not imports the parser can see.
+
+**Names resolve as in Python.** ``from pkg import name`` gives what
+``pkg/__init__`` binds to ``name`` at module level (a from-import, ``import x as
+name``, or ``name = other`` for an imported ``other``, also in a
+``TYPE_CHECKING`` block), and only otherwise the submodule ``pkg.name``. So
+``from pytacheck import module`` is the ``module()`` decorator, which the top
+level imports under the name of its module. ``import pytacheck.module``, with or
+without ``as``, is the module, and so is an attribute chain through it: a chain
+reads a submodule before a name the package binds. A chain such as
+``pytacheck.papers.model.Paper`` is one edge, judged by its longest prefix that
+is a module or a name a package binds, like ``from pytacheck.papers.model import
+Paper``. An import inside a function or class of an ``__init__`` binds nothing
+in the package. The graph feeds three rules.
 
 **Foundation.** §2.1 says ``core/**`` imports only ``_r``, ``_values``,
 ``_json``, ``papers.model``, ``papers.schema`` and ``papers.ids``. ``core/`` and
@@ -33,10 +46,8 @@ run.py too, the lint also names the layers §2.1 says the core never imports
 ``datacheck``, ``codecheck``), ``pytacheck.doc``, and the permanent façades of
 §2.10, because the façades import the core, never the reverse. These are found
 through re-exports too. The façades in ``pytacheck.module`` are banned as names
-(``module``, ``module_run`` and ``get_prev_outputs``). A name that is a module
-is always that module, never a name some ``__init__`` re-exports under it, so
-``import pytacheck.module`` is the module, not the ``module()`` decorator. A
-package's ``__init__`` is not an import edge of its submodules.
+(``module``, ``module_run`` and ``get_prev_outputs``). A package's ``__init__``
+is not an import edge of its submodules.
 
 **Migrated modules.** A check module (a file under ``modules/``) that imports
 ``pytacheck.doc`` counts as migrated. It may not use ``text.search``,
@@ -136,12 +147,18 @@ def _under(name: str, prefixes: tuple[str, ...] | str) -> bool:
     return any(name == p or name.startswith(p + ".") for p in prefixes)
 
 
+# (module, name): what ``from module import name`` gives, or the module itself when
+# name is ""
+Ref = tuple[str, str]
+
+
 @dataclass(frozen=True)
 class Edge:
     path: str  # relative to the package root
     module: str  # dotted name of the importing file
-    target: str  # module that is loaded
-    symbol: str  # what is named, which may be a name inside the target
+    target: str  # module that is loaded; for attribute access, the name as written
+    symbol: str  # what is named, as written, which may be a name inside the target
+    resolved: str  # what that name is, followed through the __init__ files
     line: int
     note: str = ""  # "type-checking", "importlib" or "attribute"
 
@@ -153,18 +170,24 @@ def _is_type_checking(test: ast.expr) -> bool:
 
 
 class _Visitor(ast.NodeVisitor):
-    def __init__(self, path: str, module: str, package: str, known: set[str]) -> None:
-        self.path, self.module, self.package, self.known = path, module, package, known
-        self.edges: list[Edge] = []
-        self.bindings: dict[str, str] = {}
-        self.reexports: dict[str, str] = {}  # only for an __init__ file
-        self.chains: list[tuple[list[str], int]] = []
+    def __init__(self, package: str, is_package: bool) -> None:
+        self.package, self.is_package = package, is_package
+        self.refs: dict[str, Ref] = {}  # local name -> what it is bound to
+        self.exports: dict[str, Ref] = {}  # what an __init__ binds at module level
+        self.uses: list[tuple[Ref, int, str]] = []
+        self.chains: list[tuple[str, tuple[str, ...], int]] = []
         self.type_checking = 0
+        self.scope = 0
 
-    def _edge(self, target: str, symbol: str, line: int, note: str = "") -> None:
+    def _use(self, ref: Ref, line: int, note: str = "") -> None:
         if self.type_checking and not note:
             note = "type-checking"
-        self.edges.append(Edge(self.path, self.module, target, symbol, line, note))
+        self.uses.append((ref, line, note))
+
+    def _bind(self, name: str, ref: Ref) -> None:
+        self.refs[name] = ref
+        if self.is_package and not self.scope:
+            self.exports[f"{self.package}.{name}"] = ref
 
     def visit_If(self, node: ast.If) -> None:
         if not _is_type_checking(node.test):
@@ -177,12 +200,19 @@ class _Visitor(ast.NodeVisitor):
         for child in node.orelse:
             self.visit(child)
 
+    def _visit_scope(self, node: ast.AST) -> None:
+        self.scope += 1
+        self.generic_visit(node)
+        self.scope -= 1
+
+    visit_FunctionDef = visit_AsyncFunctionDef = visit_ClassDef = _visit_scope
+
     def visit_Import(self, node: ast.Import) -> None:
         for alias in node.names:
             if not _under(alias.name, PKG):
                 continue
-            self._edge(alias.name, alias.name, node.lineno)
-            self.bindings[alias.asname or PKG] = alias.name if alias.asname else PKG
+            self._use((alias.name, ""), node.lineno)
+            self._bind(alias.asname or PKG, (alias.name if alias.asname else PKG, ""))
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
         base = node.module or ""
@@ -193,15 +223,19 @@ class _Visitor(ast.NodeVisitor):
         if not _under(base, PKG):
             return
         for alias in node.names:
-            symbol = base if alias.name == "*" else f"{base}.{alias.name}"
-            self._edge(symbol if symbol in self.known else base, symbol, node.lineno)
-            if alias.name != "*":
-                bound = alias.asname or alias.name
-                self.bindings[bound] = symbol
-                name = f"{self.package}.{bound}"
-                # a name that is a module stays that module
-                if name != symbol and name not in self.known:
-                    self.reexports[name] = symbol
+            if alias.name == "*":
+                self._use((base, ""), node.lineno)
+                continue
+            self._use((base, alias.name), node.lineno)
+            self._bind(alias.asname or alias.name, (base, alias.name))
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        # an alias of an imported name binds that name
+        if isinstance(node.value, ast.Name) and node.value.id in self.refs:
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    self._bind(target.id, self.refs[node.value.id])
+        self.generic_visit(node)
 
     def visit_Call(self, node: ast.Call) -> None:
         func = node.func
@@ -213,58 +247,109 @@ class _Visitor(ast.NodeVisitor):
                 and isinstance(arg.value, str)
                 and _under(arg.value, PKG)
             ):
-                self._edge(arg.value, arg.value, node.lineno, "importlib")
+                self._use((arg.value, ""), node.lineno, "importlib")
         self.generic_visit(node)
 
     def visit_Attribute(self, node: ast.Attribute) -> None:
+        # the whole chain is one use; its prefixes are not visited on their own
         chain = [node.attr]
         inner: ast.expr = node.value
         while isinstance(inner, ast.Attribute):
             chain.append(inner.attr)
             inner = inner.value
         if isinstance(inner, ast.Name):
-            self.chains.append(([inner.id, *reversed(chain)], node.lineno))
-        self.generic_visit(node)
+            self.chains.append((inner.id, tuple(reversed(chain)), node.lineno))
+        self.visit(inner)
+
+
+@dataclass(frozen=True)
+class _Names:
+    """How Python resolves a name, given the modules and what each ``__init__`` binds."""
+
+    known: frozenset[str]
+    exports: dict[str, str]
+
+    def imported(self, ref: Ref) -> str:
+        """``from module import name`` gives what the package binds, else the submodule."""
+        module, name = ref
+        return self.exports.get(f"{module}.{name}", f"{module}.{name}") if name else module
+
+    def attribute(self, value: str, is_module: bool, name: str) -> str | None:
+        """``value.name`` is a submodule first, then what the package binds.
+
+        ``None`` means the attribute is read from a value, not from a module.
+        """
+        full = f"{value}.{name}"
+        if full in self.known:
+            return full
+        if full in self.exports:
+            return self.exports[full]
+        return full if is_module else None
+
+    def edge(self, rel: str, module: str, ref: Ref, line: int, note: str) -> Edge:
+        symbol = f"{ref[0]}.{ref[1]}" if ref[1] else ref[0]
+        resolved = self.imported(ref)
+        target = resolved if resolved in self.known else ref[0]
+        return Edge(rel, module, target, symbol, resolved, line, note)
+
+    def chain(self, rel: str, module: str, ref: Ref, attrs: tuple[str, ...], line: int) -> Edge:
+        """An attribute chain, judged once by its longest prefix that is a module or a bound name."""
+        written = f"{ref[0]}.{ref[1]}" if ref[1] else ref[0]
+        resolved = self.imported(ref)
+        # what an import statement names is a module
+        is_module = not ref[1] or resolved in self.known
+        for attr in attrs:
+            value = self.attribute(resolved, is_module, attr)
+            if value is None:
+                break
+            written, resolved = f"{written}.{attr}", value
+            is_module = value in self.known
+        return Edge(rel, module, written, written, resolved, line, "attribute")
+
+
+def _exports(bound: dict[str, Ref]) -> dict[str, str]:
+    """Where each name a package binds resolves to, followed through the other packages."""
+
+    def follow(key: str, seen: frozenset[str]) -> str:
+        module, name = bound[key]
+        if not name:
+            return module
+        full = f"{module}.{name}"
+        # ``from . import x`` in an __init__ binds the submodule
+        return follow(full, seen | {full}) if full in bound and full not in seen else full
+
+    return {key: follow(key, frozenset({key})) for key in bound}
 
 
 def build(root: Path) -> tuple[list[Edge], dict[str, str]]:
-    """The import edges of every file under *root*, and the names each package re-exports."""
+    """The import edges of every file under *root*, and what the ``__init__`` files bind."""
     files = sorted(root.rglob("*.py"))
-    modules: dict[Path, tuple[str, bool]] = {}
+    visited: list[tuple[str, str, _Visitor]] = []
+    bound: dict[str, Ref] = {}
     for path in files:
         parts = list(path.relative_to(root.parent).with_suffix("").parts)
         is_package = parts[-1] == "__init__"
-        modules[path] = (".".join(parts[:-1] if is_package else parts), is_package)
-    known = {name for name, _ in modules.values()}
-    edges: list[Edge] = []
-    reexports: dict[str, str] = {}
-    for path, (module, is_package) in modules.items():
-        package = module if is_package else module.rpartition(".")[0]
-        rel = path.relative_to(root).as_posix()
-        visitor = _Visitor(rel, module, package, known)
+        module = ".".join(parts[:-1] if is_package else parts)
+        visitor = _Visitor(module if is_package else module.rpartition(".")[0], is_package)
         visitor.visit(ast.parse(path.read_text(encoding="utf-8"), filename=str(path)))
-        edges += visitor.edges
-        for parts, line in visitor.chains:
-            if parts[0] in visitor.bindings:
-                symbol = ".".join([visitor.bindings[parts[0]], *parts[1:]])
-                edges.append(Edge(rel, module, symbol, symbol, line, "attribute"))
-        if is_package:
-            reexports.update(visitor.reexports)
-    return edges, reexports
-
-
-def _resolve(symbol: str, reexports: dict[str, str]) -> str:
-    """Follow a name through the packages that re-export it to where it is defined."""
-    for _ in range(10):
-        if symbol not in reexports:
-            return symbol
-        symbol = reexports[symbol]
-    return symbol
+        visited.append((path.relative_to(root).as_posix(), module, visitor))
+        bound.update(visitor.exports)
+    exports = _exports(bound)
+    names = _Names(frozenset(module for _, module, _ in visited), exports)
+    edges: list[Edge] = []
+    for rel, module, visitor in visited:
+        edges += [names.edge(rel, module, ref, line, note) for ref, line, note in visitor.uses]
+        edges += [
+            names.chain(rel, module, visitor.refs[name], attrs, line)
+            for name, attrs, line in visitor.chains
+            if name in visitor.refs
+        ]
+    return edges, exports
 
 
 def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
     """Every layering violation under *root*, keyed like ``ALLOWED``."""
-    edges, reexports = build(root)
+    edges, _ = build(root)
     migrated = {
         e.path
         for e in edges
@@ -272,7 +357,7 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
     }
     found: dict[tuple[str, str, str], Edge] = {}
     for edge in edges:
-        symbol = _resolve(edge.symbol, reexports)
+        symbol = edge.resolved
         # a name reached by attribute is judged where it is defined
         target = symbol if edge.note == "attribute" else edge.target
         if _under(edge.module, FOUNDATION) and _under(target, PKG) and not _under(target, LOWER):
@@ -295,8 +380,7 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
                 and not _under(name, allowed)
                 and not (run and name in RUN_NAMESPACES)
             ):
-                key = name if edge.note == "attribute" else edge.target
-                found.setdefault(("core", edge.path, key), edge)
+                found.setdefault(("core", edge.path, edge.target), edge)
         if edge.path in migrated:
             for banned in BANNED:
                 if _under(symbol, banned):
@@ -387,13 +471,17 @@ def test_layer_problems_are_seen_in_both_directions(tmp_path: Path) -> None:
 
 
 def test_graph_sees_the_real_imports() -> None:
-    edges, reexports = build(SRC)
+    edges, exports = build(SRC)
     seen = {(e.module, e.target) for e in edges}
     assert (f"{PKG}.papers.model", f"{PKG}.papers.schema") in seen
     assert any(e.note == "importlib" for e in edges)
-    assert reexports[f"{PKG}._r.grepl"] == f"{PKG}._r.regex.grepl"
-    # the root imports the module() decorator, but pytacheck.module stays the module
-    assert f"{PKG}.module" not in reexports
+    assert exports[f"{PKG}._r.grepl"] == f"{PKG}._r.regex.grepl"
+    # the root binds the module() decorator to the name of its module
+    assert exports[f"{PKG}.module"] == f"{PKG}.module.module"
+    # report/__init__ imports its own submodule report
+    assert exports[f"{PKG}.report.report"] == f"{PKG}.report.report"
+    # an import inside a function binds nothing in the package
+    assert f"{PKG}.archives.report_message" not in exports
     # function-level imports are in the graph
     assert any(e.path == "papers/io.py" and e.target == f"{PKG}.io.bibr12" for e in edges)
 
@@ -475,6 +563,7 @@ def found_in(tmp_path: Path, files: dict[str, str]) -> set[tuple[str, str, str]]
         ),
         # reached by attribute through the lazy top-level __getattr__
         ("import pytacheck._r.regex\nx = pytacheck.text_search(1)\n", "text"),
+        ("import pytacheck\nx = pytacheck.text_search.__name__\n", "text"),
         # the façades import the core, never the reverse
         ("from pytacheck.papers.tables import paper_table\n", "papers.tables"),
         ("from pytacheck.papers import tables\n", "papers.tables"),
@@ -518,6 +607,9 @@ def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
         ("from pytacheck.text.search import text_search\n", "text"),
         ("from pytacheck.module import module_run\n", "module.module_run"),
         ("from pytacheck.module import module\n", "module.module"),
+        # the root binds the module() decorator to the name of its module
+        ("from pytacheck import module\n\n@module('x')\ndef f(): ...\n", "module.module"),
+        ("from pytacheck import module\nspec = module.module_find('x')\n", "module.module"),
         ("import pytacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
         ("from pytacheck import test_paper\n", "papers.io.test_paper"),
         ("from pytacheck import demopaper\n", "papers.io.demopaper"),
@@ -595,6 +687,8 @@ def test_core_may_import_the_foundation(tmp_path: Path) -> None:
         "from pytacheck.papers import model, schema, ids\n"
         "from pytacheck.papers.ids import paper_id\n"
         "from pytacheck.core.doc import Doc\n"
+        "import pytacheck.papers.model\n"
+        "x = pytacheck.papers.model.Paper\n"
         "from . import doc\n"
         "from .doc import Doc\n"
         "import importlib\n"
@@ -618,29 +712,107 @@ def test_core_may_import_what_the_run_context_needs(tmp_path: Path) -> None:
         "u.local_options({})\n"
         "from pytacheck.packs import registry\n"
         "from pytacheck.packs.registry import overlay\n"
+        "import pytacheck.packs.registry\n"
+        "pytacheck.packs.registry.registry()\n"
         "from pytacheck.module import ModuleSpec, ModuleError, module_find\n"
         "from pytacheck.module import use, use_setting, use_snapshot, use_restore\n"
         "from pytacheck._r.regex import detector\n"
         "from pytacheck.core.output import Result\n"
     )
-    assert found_in(tmp_path, {"core/run.py": source}) == set()
+    files = {"packs/registry.py": "def registry(): ...\n", "core/run.py": source}
+    assert found_in(tmp_path, files) == set()
 
 
-# the root re-exports the module() decorator under the name of its module
+# a name that is a module, however it is spelled, and the key it is flagged under
 MODULE_SPELLINGS = [
-    "import pytacheck.module\n",
-    "import pytacheck.module as m\nspec = m.module_find('x')\n",
-    "import pytacheck.config\nspec = pytacheck.module.module_find('x')\n",
-    "from pytacheck import module\nspec = module.module_find('x')\n",
+    ("import pytacheck.module\n", "module"),
+    ("import pytacheck.module as m\nspec = m.module_find('x')\n", "module"),
+    ("import pytacheck.config\nspec = pytacheck.module.module_find('x')\n", "module.module_find"),
 ]
 
 
-@pytest.mark.parametrize("source", MODULE_SPELLINGS)
-def test_a_module_name_is_the_module_not_a_reexport(tmp_path: Path, source: str) -> None:
+@pytest.mark.parametrize(("source", "key"), MODULE_SPELLINGS)
+def test_a_module_name_is_the_module_not_a_reexport(tmp_path: Path, source: str, key: str) -> None:
     assert found_in(tmp_path / "run", {"core/run.py": source}) == set()
     found = found_in(tmp_path / "other", {"core/facets.py": source})
-    assert ("core", "core/facets.py", f"{PKG}.module") in found
+    assert ("core", "core/facets.py", f"{PKG}.{key}") in found
     assert ("core", "core/facets.py", f"{PKG}.module.module") not in found
+
+
+# How each spelling resolves, as Python does it. A from-import gives what the
+# package's __init__ binds, and only otherwise the submodule. An import statement
+# and an attribute chain give the submodule first. A chain is one edge, judged by
+# its longest prefix that is a module or a name a package binds. Each row lists
+# the edges of the source as (target, symbol, resolved).
+SPELLING_FILES = {
+    "packs/registry.py": "def registry(): ...\n",
+    "llm/__init__.py": (
+        "from pytacheck import text as words\n"
+        "from pytacheck.module import module_run as _run\n"
+        "run = _run\n"
+        "def f():\n    from pytacheck.report import render\n"
+    ),
+}
+SPELLINGS = [
+    # import, and import as
+    ("import pytacheck.module\n", [("module", "module", "module")]),
+    ("import pytacheck.module as m\n", [("module", "module", "module")]),
+    # from-import of a submodule the package does not bind
+    ("from pytacheck.papers import model\n", [("papers.model", "papers.model", "papers.model")]),
+    ("from pytacheck._r import regex\n", [("_r.regex", "_r.regex", "_r.regex")]),
+    # from-import of a name the package binds, also when it shadows a submodule
+    ("from pytacheck import module\n", [("", "module", "module.module")]),
+    ("from pytacheck import text_search\n", [("", "text_search", "text.search.text_search")]),
+    ("from pytacheck._r import grepl as g\n", [("_r", "_r.grepl", "_r.regex.grepl")]),
+    ("from pytacheck.llm import words\n", [("text", "llm.words", "text")]),
+    ("from pytacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
+    ("from pytacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
+    ("from pytacheck import unbound\n", [("", "unbound", "unbound")]),
+    # attribute chains
+    (
+        "import pytacheck.module as m\nm.module_find('x')\n",
+        [
+            ("module", "module", "module"),
+            ("module.module_find", "module.module_find", "module.module_find"),
+        ],
+    ),
+    (
+        "import pytacheck\npytacheck.module.module_find('x')\n",
+        [("", "", ""), ("module.module_find", "module.module_find", "module.module_find")],
+    ),
+    (
+        "from pytacheck import module\nmodule.module_find('x')\n",
+        [("", "module", "module.module"), ("module", "module", "module.module")],
+    ),
+    (
+        "import pytacheck\npytacheck.papers.model.Paper.x\n",
+        [("", "", ""), ("papers.model.Paper", "papers.model.Paper", "papers.model.Paper")],
+    ),
+    (
+        "import pytacheck\npytacheck.packs.registry.registry()\n",
+        [
+            ("", "", ""),
+            ("packs.registry.registry", "packs.registry.registry", "packs.registry.registry"),
+        ],
+    ),
+    (
+        "import pytacheck\npytacheck.text_search.__name__\n",
+        [("", "", ""), ("text_search", "text_search", "text.search.text_search")],
+    ),
+]
+
+
+def _dotted(name: str) -> str:
+    return f"{PKG}.{name}" if name else PKG
+
+
+@pytest.mark.parametrize(("source", "expected"), SPELLINGS)
+def test_each_spelling_resolves_as_python_does(
+    tmp_path: Path, source: str, expected: list[tuple[str, str, str]]
+) -> None:
+    edges, _ = build(tree(tmp_path, {**BASE, **SPELLING_FILES, "probe.py": source}))
+    found = [(e.target, e.symbol, e.resolved) for e in edges if e.path == "probe.py"]
+    assert found == [tuple(map(_dotted, row)) for row in expected]
 
 
 def test_layer_names_match_whole_components(tmp_path: Path) -> None:
@@ -683,6 +855,7 @@ def test_foundation_modules_import_only_each_other(tmp_path: Path) -> None:
             "papers/schema.py": "def f():\n    from pytacheck.text import search\n",
             "_json.py": "from pytacheck import log\n",
             "_r/base2.py": "import pytacheck._r.regex\nx = pytacheck.text_search(1)\n",
+            "_r/base3.py": "import pytacheck.papers.model\nx = pytacheck.papers.model.Paper\n",
             # papers.tables is above the foundation, so it may import text
             "papers/tables.py": "from pytacheck.text.search import text_search\n",
         },
