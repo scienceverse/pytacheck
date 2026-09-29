@@ -13,15 +13,28 @@ hashed as ``sha256sum`` lines, so it equals::
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
+from typing import Any
 
 from metacheck.provenance import _sha_cache, file_sha256
 
-__all__ = ["INSTALL_RECORD", "TREE_ALGORITHM", "file_sha256", "tree_files", "tree_sha256"]
+__all__ = [
+    "INSTALL_RECORD",
+    "INSTALL_RECORDS",
+    "TREE_ALGORITHM",
+    "file_sha256",
+    "tree_files",
+    "tree_sha256",
+]
 
 TREE_ALGORITHM = "pytacheck-tree-v1"
+#: the install record written into each installed pack folder (renamed with the data folders)
 INSTALL_RECORD = ".pytacheck-install.json"
+#: every install record name, read in this order (the written one first); never hashed,
+#: never taken from a pack source
+INSTALL_RECORDS = (INSTALL_RECORD, ".metacheck-install.json")
 _SKIP_DIRS = frozenset({".git", "__pycache__"})
 
 
@@ -37,13 +50,26 @@ def tree_files(root: str | os.PathLike[str]) -> list[str]:
     for folder, dirs, files in os.walk(base):
         dirs[:] = [d for d in dirs if d not in _SKIP_DIRS]
         for name in files:
-            if name.endswith(".pyc") or name == INSTALL_RECORD:
+            if name.endswith(".pyc") or name in INSTALL_RECORDS:
                 continue
             full = os.path.join(folder, name)
             if os.path.islink(full) or not os.path.isfile(full):
                 continue  # regular files only, like `find -type f`
             out.append(Path(os.path.relpath(full, base)).as_posix())
     return sorted(out, key=lambda p: p.encode("utf-8", "surrogateescape"))
+
+
+def read_install_record(root: str | os.PathLike[str]) -> dict[str, Any]:
+    """The install record of an installed pack folder (``{}`` if there is none or it is broken)."""
+    for name in INSTALL_RECORDS:
+        try:
+            data = json.loads((Path(root) / name).read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            continue
+        except (OSError, ValueError):
+            return {}
+        return data if isinstance(data, dict) else {}
+    return {}
 
 
 def tree_sha256(root: str | os.PathLike[str]) -> str:

@@ -165,7 +165,9 @@ def _sha(spec: ModuleSpec) -> str | None:
 
 def _is_pack_module(spec: ModuleSpec) -> bool:
     modname = getattr(spec.func, "__module__", None) or ""
-    return bool(spec.pack) or modname.startswith("pytacheck_packs.")
+    from metacheck.module import PACK_ROOTS
+
+    return bool(spec.pack) or modname.startswith(tuple(r + "." for r in PACK_ROOTS))
 
 
 def module_provenance(spec: ModuleSpec, args: Mapping[str, Any] | None = None) -> dict[str, Any]:

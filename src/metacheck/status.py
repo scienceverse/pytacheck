@@ -35,7 +35,14 @@ from importlib import resources
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from metacheck.module import ModuleError, ModuleSpec, _allow_local, _builtin_names, _locate
+from metacheck.module import (
+    ModuleError,
+    ModuleSpec,
+    _allow_local,
+    _builtin_names,
+    _locate,
+    spec_of,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -493,8 +500,8 @@ def _origin(ref: Any) -> tuple[str, Pack | None, str]:
     """``(registry ref, pack, source)`` of a module ref, spec or decorated function."""
     from metacheck.packs.registry import builtin_pack, pack_for_spec
 
-    if callable(ref) and hasattr(ref, "__pytacheck_module__"):
-        ref = ref.__pytacheck_module__
+    if callable(ref) and (spec := spec_of(ref)) is not None:
+        ref = spec
     if isinstance(ref, ModuleSpec):
         pack = pack_for_spec(ref) if ref.pack else None
         if pack is None:

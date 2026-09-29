@@ -56,7 +56,13 @@ from metacheck.packs.registry import (
 )
 from metacheck.packs.registry import refresh as forget_cached_packs
 from metacheck.packs.scan import FileScan, module_metadata, scan_file, scan_tree
-from metacheck.packs.tree import INSTALL_RECORD, file_sha256, tree_files, tree_sha256
+from metacheck.packs.tree import (
+    INSTALL_RECORD,
+    file_sha256,
+    read_install_record,
+    tree_files,
+    tree_sha256,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -123,11 +129,7 @@ def _rmtree(path: Path) -> None:
 
 
 def _read_record(root: Path) -> dict[str, Any]:
-    try:
-        data = json.loads((root / INSTALL_RECORD).read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {}
-    return data if isinstance(data, dict) else {}
+    return read_install_record(root)
 
 
 def _record_matches(root: Path, rev: str | None, tree: str | None) -> bool:
@@ -155,13 +157,28 @@ def missing_dependencies(requirements: Any) -> list[str]:
 def _pip_command(missing: list[str]) -> str:
     import shlex
 
-    return "pip install " + " ".join(shlex.quote(d) for d in missing)
+    return "pip install " + " ".join(shlex.quote(_self_as_metacheck(d)) for d in missing)
+
+
+def _self_as_metacheck(req: str) -> str:
+    """``pytacheck>=0.3`` as ``metacheck>=0.3``: the package installs as metacheck."""
+    m = re.match(r"\s*([A-Za-z0-9][A-Za-z0-9._-]*)", req)
+    if m and re.sub(r"[-_.]+", "-", m.group(1)).lower() == "pytacheck":
+        return "metacheck" + req[m.end() :]
+    return req
+
+
+def _norm_name(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
 
 
 def _requires_ok(requires: Mapping[str, str]) -> list[str]:
     """Unmet ``requires`` entries (``{"pytacheck": ">=0.3.1"}``), as readable strings."""
     out = []
+    names = {_norm_name(n) for n in requires}
     for name, spec in requires.items():
+        if _norm_name(name) == "pytacheck" and "metacheck" in names:
+            continue  # requires.metacheck is the one that counts
         req = f"{name}{spec}" if spec and spec[0] in "<>=!~" else f"{name} {spec}".strip()
         try:
             ok = not missing_dependencies([req.replace(" ", "")])
@@ -474,7 +491,7 @@ def _print_scan(scans: list[FileScan]) -> None:
         shown = [
             f"[bold red]{escape(i)}[/]" if i in risky else escape(i)
             for i in s.imports
-            if not i.startswith("metacheck.") or i in risky
+            if not i.startswith(("metacheck.", "pytacheck.")) or i in risky
         ]
         calls = [f"[bold red]{escape(n)}[/]" for n, _ in s.risky if n.endswith("()")]
         table.add_row(escape(s.path), ", ".join(shown + calls) or "[dim]-[/]")

@@ -38,6 +38,9 @@ from metacheck._r.frames import bind_rows
 __all__ = ["capture_module_tables", "collect_module_tables"]
 
 _FORMAT = "pytacheck.module_tables"
+#: how a saved dataclass ``type`` string starts (the package's name when this format
+#: was defined); the decoder reads it and the new name, both through the same module
+_TYPE_ROOT = "pytacheck."
 _VERSION = 1
 
 # Non-result elements of a module output (``.module_output_plumbing``) and the
@@ -139,9 +142,10 @@ def _encode(x: Any) -> Any:
     if dataclasses.is_dataclass(x) and not isinstance(x, type):
         cls = type(x)
         if cls.__module__.startswith("metacheck."):
+            where = _TYPE_ROOT + cls.__module__.removeprefix("metacheck.")
             return {
                 "$dataclass": {
-                    "type": f"{cls.__module__}:{cls.__qualname__}",
+                    "type": f"{where}:{cls.__qualname__}",
                     "fields": {
                         f.name: _encode(getattr(x, f.name)) for f in dataclasses.fields(x) if f.init
                     },
@@ -246,9 +250,9 @@ def _decode_dataclass(spec: Mapping[str, Any]) -> Any:
     """A pytacheck dataclass (e.g. a report table block); its fields if it cannot be rebuilt."""
     fields = {k: _decode(v) for k, v in (spec.get("fields") or {}).items()}
     module_name, _, qualname = str(spec.get("type", "")).partition(":")
-    if module_name.startswith("metacheck."):
-        try:
-            obj: Any = importlib.import_module(module_name)
+    if module_name.startswith(("pytacheck.", "metacheck.")):
+        try:  # the real name, so that decoding never imports through the old one
+            obj: Any = importlib.import_module("metacheck." + module_name.partition(".")[2])
             for part in qualname.split("."):
                 obj = getattr(obj, part)
             if isinstance(obj, type) and dataclasses.is_dataclass(obj):

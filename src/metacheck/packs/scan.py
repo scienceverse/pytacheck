@@ -26,6 +26,14 @@ __all__ = [
     "scan_tree",
 ]
 
+#: the package's import names: both are first-party, and both forms are flagged
+FIRST_PARTY = ("metacheck", "pytacheck")
+
+
+def _both(sub: str) -> tuple[str, ...]:
+    return tuple(f"{p}.{sub}" for p in FIRST_PARTY)
+
+
 #: Imports worth a second look, and why (shown on the consent card).
 RISKY_MODULES: dict[str, str] = {
     "subprocess": "runs programs",
@@ -41,7 +49,7 @@ RISKY_MODULES: dict[str, str] = {
     "http.client": "network (HTTP)",
     "ftplib": "network",
     "smtplib": "network (mail)",
-    "metacheck.http": "network (HTTP)",
+    **dict.fromkeys(_both("http"), "network (HTTP)"),
     "ctypes": "native code",
     "cffi": "native code",
     "pickle": "unpickling can run code",
@@ -64,7 +72,7 @@ RISKY_CALLS: dict[str, str] = {
 }
 #: Imports that mean a module talks to the network (``pack check`` wants ``requires=["network"]``).
 NETWORK_MODULES = (
-    "metacheck.http",
+    *_both("http"),
     "httpx",
     "requests",
     "urllib",
@@ -73,6 +81,11 @@ NETWORK_MODULES = (
     "http.client",
     "socket",
 )
+#: first-party helpers that ``pack check`` asks about: they query online services or LLMs
+HELPER_MODULES: dict[str, str] = {
+    **dict.fromkeys(_both("db") + _both("archives"), "network"),
+    **dict.fromkeys(_both("llm"), "llm"),
+}
 _SKIP_DIRS = frozenset({".git", "__pycache__"})
 
 
@@ -120,6 +133,39 @@ def _imports(tree: ast.AST) -> tuple[list[str], list[str]]:
     return list(dict.fromkeys(mods)), list(dict.fromkeys(names))
 
 
+def _attribute_imports(tree: ast.AST, risky: list[tuple[str, str]], hits: set[str]) -> list[str]:
+    """First-party submodules reached as attributes: ``import pytacheck as pc; pc.http.get()``.
+
+    Adds ``(name, reason)`` to *risky* for risky ones and returns the helper and risky names.
+    """
+    aliases: dict[str, str] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                if a.asname is not None:
+                    if a.name in FIRST_PARTY:
+                        aliases[a.asname] = a.name
+                elif (root := a.name.split(".")[0]) in FIRST_PARTY:
+                    aliases[root] = root  # `import X.io` binds X as well
+    out: list[str] = []
+    if not aliases:
+        return out
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.Attribute)
+            and isinstance(node.value, ast.Name)
+            and node.value.id in aliases
+        ):
+            name = f"{aliases[node.value.id]}.{node.attr}"
+            hit = _matches(name, RISKY_MODULES)
+            if hit is not None and hit not in hits:
+                hits.add(hit)
+                risky.append((name, RISKY_MODULES[hit]))
+            if hit is not None or _matches(name, HELPER_MODULES):
+                out.append(name)
+    return out
+
+
 def scan_file(path: str | os.PathLike[str], rel: str | None = None) -> FileScan:
     """Scan one Python file (never imported)."""
     p = Path(path)
@@ -140,7 +186,8 @@ def scan_file(path: str | os.PathLike[str], rel: str | None = None) -> FileScan:
         if hit is not None and hit not in hits:
             hits.add(hit)
             risky.append((name, RISKY_MODULES[hit]))
-    imports = list(dict.fromkeys([*imports, *(n for n, _ in risky if n in names)]))
+    kept = [n for n in names if _matches(n, HELPER_MODULES) or any(n == r for r, _ in risky)]
+    imports = list(dict.fromkeys([*imports, *kept, *_attribute_imports(tree, risky, hits)]))
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue

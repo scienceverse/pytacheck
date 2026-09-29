@@ -35,7 +35,7 @@ from urllib.parse import quote, urlsplit
 
 from metacheck.packs.auth import AUTH_HELP, DownloadError, github_token, redact
 from metacheck.packs.manifest import PackError
-from metacheck.packs.tree import INSTALL_RECORD
+from metacheck.packs.tree import INSTALL_RECORDS
 
 __all__ = [
     "HOSTS",
@@ -70,7 +70,7 @@ _NATIVE_SUFFIXES = (".so", ".pyd")
 def _skipped(parts: tuple[str, ...] | list[str]) -> bool:
     """Whether a pack file is left out of the tree hash (and so is never installed)."""
     name = parts[-1]
-    return any(p in _SKIP_DIRS for p in parts) or name.endswith(".pyc") or name == INSTALL_RECORD
+    return any(p in _SKIP_DIRS for p in parts) or name.endswith(".pyc") or name in INSTALL_RECORDS
 
 
 def _refuse_native(rel: str) -> None:

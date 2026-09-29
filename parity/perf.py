@@ -223,7 +223,9 @@ def _label(module: Any) -> str:
         return module
     if isinstance(module, os.PathLike):
         return Path(module).stem
-    spec = getattr(module, "__pytacheck_module__", module)
+    from metacheck.module import spec_of
+
+    spec = spec_of(module) or module
     return str(getattr(spec, "name", None) or getattr(module, "__name__", module))
 
 

@@ -52,23 +52,8 @@ why = "installs from before 0.4.0a1 are the distribution pytacheck"
 [[rule]]
 action = "keep"
 files = "src/metacheck/presets.py"
-match = 'SELF_NAMES = frozenset\(\{"metacheck", "pytacheck"\}\)'
-count = 1
-why = "requires.pytacheck and a dependency named pytacheck mean this package"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/packs/install.py"
 match = '== "pytacheck"'
-count = 2
-why = "requires.pytacheck: metacheck wins when both are named; the pip hint installs metacheck"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/packs/check.py"
-match = '\{"metacheck", "pytacheck"\}'
-count = 1
-why = "pack check warns when requires names both"
+why = "requires.pytacheck and a dependency named pytacheck mean this package (contract point; edited by hand)"
 
 [[rule]]
 action = "keep"
@@ -174,16 +159,8 @@ why = "format id of saved module tables"
 [[rule]]
 action = "keep"
 files = "src/metacheck/repro/tables.py"
-match = '_TYPE_ROOT = "pytacheck\."'
-count = 1
-why = "saved dataclass types keep the prefix 0.4.0a1 reads; RENAME-3 switches it with the format id"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/repro/tables.py"
-match = 'module_name\.startswith\(\("pytacheck\.", "metacheck\."\)\)'
-count = 1
-why = "the decoder rebuilds dataclass types saved under either name"
+match = 'module_name\.startswith\(\("metacheck\.", "pytacheck\."\)\)'
+why = "the decoder also rebuilds dataclass types written by 0.4.0a1 (contract point; added by hand)"
 
 [[rule]]
 action = "rewrite"
@@ -323,9 +300,8 @@ why = "the alias package is built, linted, measured and type-checked too"
 [[rule]]
 action = "keep"
 files = "src/metacheck/packs/install.py"
-match = 'i\.startswith\(\("metacheck\.", "pytacheck\."\)\)'
-count = 1
-why = "the consent card's first-party filter accepts both forms"
+match = 'i\.startswith\(\(?FIRST_PARTY|"pytacheck\.", "metacheck\."|"metacheck\.", "pytacheck\."'
+why = "the consent card's first-party filter accepts both forms (contract point; added by hand)"
 
 [[rule]]
 action = "rewrite"
@@ -336,9 +312,8 @@ why = "first-party filter (commit 4 adds the old form back)"
 [[rule]]
 action = "keep"
 files = "src/metacheck/packs/scan.py"
-match = 'FIRST_PARTY = \("metacheck", "pytacheck"\)|``import pytacheck as pc; pc\.http'
-count = 2
-why = "both import names are first-party, and pc.http is found through either"
+match = 'FIRST_PARTY = .*"pytacheck"'
+why = "both import names are first-party"
 
 # --- code that must follow the package
 

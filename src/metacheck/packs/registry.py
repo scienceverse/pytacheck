@@ -26,7 +26,6 @@ import importlib
 import importlib.abc
 import importlib.machinery
 import importlib.util
-import json
 import os
 import re
 import sys
@@ -40,7 +39,15 @@ from pathlib import Path
 from typing import Any
 
 from metacheck.config import Config, data_dir, load_config
-from metacheck.module import ModuleError, ModuleSpec, _spec_from_pymodule
+from metacheck.module import (
+    PACK_ATTRS,
+    PACK_ROOTS,
+    ModuleError,
+    ModuleSpec,
+    _spec_from_pymodule,
+    set_spec,
+    spec_of,
+)
 from metacheck.packs.auth import clean_source
 from metacheck.packs.manifest import (
     MODULE_NAME_RE,
@@ -50,12 +57,13 @@ from metacheck.packs.manifest import (
     validate_manifest,
     validate_pack_name,
 )
-from metacheck.packs.tree import INSTALL_RECORD, clear_cache, file_sha256
+from metacheck.packs.tree import INSTALL_RECORD, clear_cache, file_sha256, read_install_record
 from metacheck.provenance import builtin_source
 
 __all__ = [
     "ENTRY_POINT_GROUP",
     "PACKAGE_ROOT",
+    "PACK_ROOTS",
     "Registry",
     "active_packs",
     "builtin_pack",
@@ -73,6 +81,7 @@ __all__ = [
 ]
 
 ENTRY_POINT_GROUP = "pytacheck.packs"
+#: the import root pack modules are served under (PACK_ROOTS lists every root recognised)
 PACKAGE_ROOT = "pytacheck_packs"
 _HEX12 = re.compile(r"^[0-9a-f]{12,64}$")
 _IGNORED_DIRS = frozenset({".git", "__pycache__", "data", "tests"})
@@ -105,7 +114,7 @@ class _PackageLoader(importlib.abc.Loader):
         return None
 
     def exec_module(self, module: Any) -> None:
-        module.__pytacheck_pack__ = self.pack
+        setattr(module, PACK_ATTRS[0], self.pack)  # the written name; readers accept both
 
 
 class _SourceLoader(importlib.machinery.SourceFileLoader):
@@ -215,11 +224,7 @@ def install_dir(name: str, pin: Mapping[str, Any]) -> Path:
 
 
 def _read_record(root: Path) -> dict[str, Any]:
-    try:
-        data = json.loads((root / INSTALL_RECORD).read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {}
-    return data if isinstance(data, dict) else {}
+    return read_install_record(root)
 
 
 def _installed_pack(name: str, pin: Mapping[str, Any], origin: str) -> Pack:
@@ -552,8 +557,8 @@ def load_module(pack: Pack, name: str) -> ModuleSpec:
     if spec.pack != pack.name:
         spec = replace(spec, pack=pack.name)
         func = spec.func
-        if getattr(func, "__pytacheck_module__", None) is not None:
-            func.__pytacheck_module__ = spec  # type: ignore[attr-defined]
+        if spec_of(func) is not None:
+            set_spec(func, spec)
     return spec
 
 

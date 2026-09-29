@@ -25,8 +25,9 @@ from __future__ import annotations
 import copy
 import functools
 import os
+import re
 import warnings
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Any
@@ -51,7 +52,6 @@ __all__ = [
     "run_issues",
 ]
 
-_NETWORKISH = ("metacheck.db", "metacheck.archives")  # pytacheck helpers that call APIs
 _VALIDATION_NUMBERS = ("papers", "instances", "tp", "fp", "fn", "tn")
 
 
@@ -289,7 +289,16 @@ def _manifest_issues(manifest: dict[str, Any]) -> list[CheckIssue]:
     unknown = [f for f in manifest.get("fields", []) if f not in FIELDS]
     if unknown:
         out.append(_warn("manifest", "pack.json", f"fields outside the vocabulary: {unknown}"))
-    unmet = _requires_ok(manifest.get("requires") or {})
+    requires = manifest.get("requires") or {}
+    if {_norm(n) for n in requires} >= {"metacheck", "pytacheck"}:
+        out.append(
+            _warn(
+                "requires",
+                "pack.json",
+                "requires names both metacheck and pytacheck; only metacheck is checked",
+            )
+        )
+    unmet = _requires_ok(requires)
     if unmet:
         out.append(_warn("requires", "pack.json", f"requires {unmet}, which is not installed"))
     missing = missing_dependencies(manifest.get("dependencies"))
@@ -304,8 +313,20 @@ def _manifest_issues(manifest: dict[str, Any]) -> list[CheckIssue]:
     return out
 
 
+def _norm(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def _helper(name: str, helpers: Mapping[str, str]) -> str | None:
+    """What a first-party helper import needs (``network`` or ``llm``), or None."""
+    for prefix, need in helpers.items():
+        if name == prefix or name.startswith(prefix + "."):
+            return need
+    return None
+
+
 def _static_issues(root: Path, name: str, meta: dict[str, Any] | None) -> list[CheckIssue]:
-    from metacheck.packs.scan import network_imports, scan_file
+    from metacheck.packs.scan import HELPER_MODULES, network_imports, scan_file
 
     where = f"module {name}"
     out: list[CheckIssue] = []
@@ -324,7 +345,7 @@ def _static_issues(root: Path, name: str, meta: dict[str, Any] | None) -> list[C
                 f"imports {', '.join(net)} but does not declare requires=['network']",
             )
         )
-    helpers = [i for i in scan.imports if any(i.startswith(p) for p in _NETWORKISH)]
+    helpers = [i for i in scan.imports if _helper(i, HELPER_MODULES) == "network"]
     if helpers and "network" not in requires:
         out.append(
             _warn(
@@ -334,8 +355,9 @@ def _static_issues(root: Path, name: str, meta: dict[str, Any] | None) -> list[C
                 "declare requires=['network'] if it does",
             )
         )
-    if any(i.startswith("metacheck.llm") for i in scan.imports) and "llm" not in requires:
-        out.append(_warn("llm", where, "uses metacheck.llm: declare requires=['llm']"))
+    llm = [i for i in scan.imports if _helper(i, HELPER_MODULES) == "llm"]
+    if llm and "llm" not in requires:
+        out.append(_warn("llm", where, f"uses {', '.join(llm)}: declare requires=['llm']"))
     return out
 
 

@@ -180,19 +180,44 @@ def module(
             requires=tuple(dict.fromkeys(caps)),
             validation=dict(validation) if validation is not None else None,
         )
-        func.__pytacheck_module__ = spec  # type: ignore[attr-defined]
+        set_spec(func, spec)
         return func
 
     return decorate
+
+
+#: attributes that carry a decorated function's ModuleSpec, read in this order. Only
+#: the first, the name 0.4.0a1 uses, is written; the second is read so that the
+#: written name can change later without breaking functions decorated before.
+SPEC_ATTRS = ("__pytacheck_module__", "__metacheck_module__")
+#: attributes of a synthetic pack package that name its pack (the same rule)
+PACK_ATTRS = ("__pytacheck_pack__", "__metacheck_pack__")
+#: import roots of pack modules: the one packs are served under, then its new name
+#: (recognised, not served yet). ``metacheck.packs.registry`` re-exports it.
+PACK_ROOTS = ("pytacheck_packs", "metacheck_packs")
+
+
+def set_spec(func: Any, spec: ModuleSpec) -> None:
+    """Attach *spec* to *func* (under the written name, ``SPEC_ATTRS[0]``)."""
+    setattr(func, SPEC_ATTRS[0], spec)
+
+
+def spec_of(obj: Any) -> ModuleSpec | None:
+    """The ModuleSpec attached to *obj* by ``@module`` (either attribute name), or None."""
+    for attr in SPEC_ATTRS:
+        spec = getattr(obj, attr, None)
+        if isinstance(spec, ModuleSpec):
+            return spec
+    return None
 
 
 def _pack_of(modname: str) -> str | None:
     """The pack of a Python module name (``metacheck.modules.*`` is ``metacheck``)."""
     if modname.startswith("metacheck.modules."):
         return "metacheck"
-    if modname.startswith("pytacheck_packs."):
+    if modname.startswith(tuple(r + "." for r in PACK_ROOTS)):
         pkg = sys.modules.get(".".join(modname.split(".")[:2]))
-        return getattr(pkg, "__pytacheck_pack__", None)
+        return next((v for a in PACK_ATTRS if (v := getattr(pkg, a, None)) is not None), None)
     return None
 
 
@@ -405,11 +430,9 @@ def _builtin_names() -> tuple[str, ...]:
 
 def _spec_from_pymodule(pymod: Any, name: str) -> ModuleSpec:
     candidates: list[ModuleSpec] = [
-        obj.__pytacheck_module__
+        spec
         for obj in vars(pymod).values()
-        if callable(obj)
-        and hasattr(obj, "__pytacheck_module__")
-        and obj.__module__ == pymod.__name__
+        if callable(obj) and (spec := spec_of(obj)) is not None and obj.__module__ == pymod.__name__
     ]
     for spec in candidates:
         if spec.name == name:
@@ -557,8 +580,8 @@ def module_find(name: str | Path | ModuleSpec | Callable[..., Any]) -> ModuleSpe
     """Resolve a module name, ``pack::name`` ref, path, spec or decorated function to its spec."""
     if isinstance(name, ModuleSpec):
         return name
-    if callable(name) and hasattr(name, "__pytacheck_module__"):
-        return name.__pytacheck_module__  # type: ignore[no-any-return]
+    if callable(name) and (found := spec_of(name)) is not None:
+        return found
     kind, where = _locate(str(name))
     if kind == "builtin":
         pymod = importlib.import_module(f"metacheck.modules.{where}")
@@ -569,8 +592,8 @@ def module_find(name: str | Path | ModuleSpec | Callable[..., Any]) -> ModuleSpe
         return load_module(*where)
     if kind == "entry_point":
         obj = where.load()
-        if hasattr(obj, "__pytacheck_module__"):
-            return obj.__pytacheck_module__  # type: ignore[no-any-return]
+        if (found := spec_of(obj)) is not None:
+            return found
         return _spec_from_pymodule(obj, str(name))
     return _load_file(where)
 

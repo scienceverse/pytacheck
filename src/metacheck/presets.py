@@ -44,6 +44,7 @@ from metacheck.module import (
     _builtin_names,
     _locate,
     module_find,
+    spec_of,
     split_ref,
     use_setting,
 )
@@ -148,8 +149,8 @@ def label(ref: Any) -> str:
     """The label a ref runs under: the bare module name (a path's file stem)."""
     if isinstance(ref, ModuleSpec):
         return ref.name
-    if callable(ref) and hasattr(ref, "__pytacheck_module__"):
-        return ref.__pytacheck_module__.name  # type: ignore[no-any-return]
+    if callable(ref) and (spec := spec_of(ref)) is not None:
+        return spec.name
     text = str(ref)
     qualified = split_ref(text)
     if qualified is not None:
@@ -203,6 +204,10 @@ def _qualified(ref: str) -> str | None:
     return f"{where[0].name}::{ref}" if kind == "pack" else None
 
 
+#: names a pack uses for this package in ``requires`` and ``dependencies`` (normalised)
+SELF_NAMES = frozenset({"metacheck", "pytacheck"})
+
+
 def _installed_version(name: str) -> str:
     """The installed version of a distribution; PackageNotFoundError if there is none.
 
@@ -210,10 +215,10 @@ def _installed_version(name: str) -> str:
     dependency). It is installed as ``metacheck`` (0.4.0a1 on), so that name
     is looked up first, and an old install as ``pytacheck`` still counts.
     """
-    if re.sub(r"[-_.]+", "-", name).lower() == "pytacheck":
-        from metacheck._version import DISTRIBUTION
+    if re.sub(r"[-_.]+", "-", name).lower() in SELF_NAMES:
+        from metacheck._version import _OLD_DISTRIBUTION, DISTRIBUTION
 
-        for alias in (DISTRIBUTION, name):
+        for alias in (DISTRIBUTION, _OLD_DISTRIBUTION):
             try:
                 return importlib.metadata.version(alias)
             except importlib.metadata.PackageNotFoundError:

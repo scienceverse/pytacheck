@@ -254,7 +254,9 @@ def _label(module: Any) -> str:
     """The name a module's output is filed under (R: the ``modules`` entry itself)."""
     if isinstance(module, str | os.PathLike):
         return os.fspath(module)
-    spec = getattr(module, "__pytacheck_module__", module)
+    from metacheck.module import spec_of
+
+    spec = spec_of(module) or module
     return str(getattr(spec, "name", module))
 
 
