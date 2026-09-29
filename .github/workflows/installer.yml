@@ -1,0 +1,206 @@
+name: Installer
+
+# The one-command installer (install.sh, install.ps1) and its constraints file.
+# GitHub's own runners only: the macOS and Windows legs need them, and a fresh
+# machine is what an install test is about.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - install.sh
+      - install.ps1
+      - install/**
+      - src/pytacheck/app/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/installer.yml
+  pull_request:
+    paths:
+      - install.sh
+      - install.ps1
+      - install/**
+      - src/pytacheck/app/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/installer.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.12.20"
+
+jobs:
+  checks:
+    name: Script checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - name: shellcheck
+        run: shellcheck -s sh install.sh
+      - name: Parse install.ps1
+        shell: pwsh
+        run: |
+          $errors = $null
+          $null = [System.Management.Automation.Language.Parser]::ParseFile("$PWD/install.ps1", [ref]$null, [ref]$errors)
+          if ($errors) {
+            $errors | ForEach-Object { Write-Error $_.ToString() }
+            exit 1
+          }
+      - name: Script tests
+        run: |
+          uv sync --locked
+          uv run pytest -q -p no:cacheprovider tests/install
+
+  # Apart from the checks, so that a stale constraints file (a dependency update
+  # changes uv.lock) does not hide the results of the install jobs.
+  constraints:
+    name: Constraints file is current
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - name: Regenerate and compare
+        run: |
+          uv export --locked --no-hashes --no-dev --extra app --no-emit-project --no-annotate --output-file install/constraints-app.txt
+          if ! git diff --exit-code -- install/constraints-app.txt; then
+            echo "::error::install/constraints-app.txt is out of date. Run the command in install/README.md and commit the result."
+            exit 1
+          fi
+
+  local-install:
+    name: Install from this checkout (${{ matrix.os }})
+    needs: checks
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Install (Linux and macOS)
+        if: runner.os != 'Windows'
+        run: |
+          export METACHECK_HOME="$RUNNER_TEMP/metacheck"
+          export METACHECK_NO_LAUNCH=1
+          export METACHECK_SPEC="pytacheck[app] @ file://$GITHUB_WORKSPACE"
+          export METACHECK_CONSTRAINTS="$GITHUB_WORKSPACE/install/constraints-app.txt"
+          echo "METACHECK_HOME=$METACHECK_HOME" >> "$GITHUB_ENV"
+          echo "METACHECK_SPEC=$METACHECK_SPEC" >> "$GITHUB_ENV"
+          echo "METACHECK_CONSTRAINTS=$METACHECK_CONSTRAINTS" >> "$GITHUB_ENV"
+          echo "METACHECK_NO_LAUNCH=1" >> "$GITHUB_ENV"
+          time /bin/sh install.sh
+      - name: Install (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $home_dir = Join-Path $env:RUNNER_TEMP 'metacheck'
+          $uri = ([System.Uri]$env:GITHUB_WORKSPACE).AbsoluteUri
+          $vars = @{
+            METACHECK_HOME        = $home_dir
+            METACHECK_NO_LAUNCH   = '1'
+            METACHECK_SPEC        = "pytacheck[app] @ $uri"
+            METACHECK_CONSTRAINTS = Join-Path $env:GITHUB_WORKSPACE 'install\constraints-app.txt'
+          }
+          foreach ($name in $vars.Keys) {
+            Add-Content -Path $env:GITHUB_ENV -Value "$name=$($vars[$name])"
+            Set-Item -Path "Env:$name" -Value $vars[$name]
+          }
+          Measure-Command { & "$env:GITHUB_WORKSPACE\install.ps1" } | Select-Object TotalSeconds
+      - name: Installed size
+        shell: bash
+        run: du -sh "$METACHECK_HOME"
+      - name: Self-test, start, sign in
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then app="$METACHECK_HOME/bin/metacheck-app.exe"; else app="$METACHECK_HOME/bin/metacheck-app"; fi
+          python3 install/smoke.py "$app" --port 8765
+      - name: Install again
+        if: runner.os != 'Windows'
+        run: time /bin/sh install.sh
+      - name: Install again
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: Measure-Command { & "$env:GITHUB_WORKSPACE\install.ps1" } | Select-Object TotalSeconds
+      - name: Self-test after the second install
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then app="$METACHECK_HOME/bin/metacheck-app.exe"; else app="$METACHECK_HOME/bin/metacheck-app"; fi
+          "$app" --self-test
+      # Uninstall the way users run it: the script arrives on stdin.
+      - name: Uninstall
+        if: runner.os != 'Windows'
+        run: cat install.sh | /bin/sh -s -- --uninstall
+      - name: Uninstall
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $env:METACHECK_UNINSTALL = '1'
+          Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
+      - name: The folder is gone
+        shell: bash
+        run: |
+          if [ -e "$METACHECK_HOME" ]; then
+            echo "left behind:" && ls -la "$METACHECK_HOME"
+            exit 1
+          fi
+
+  pinned-install:
+    name: Install the pinned commit (${{ matrix.os }})
+    needs: checks
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      # Only the two scripts are checked out. They run on their own and arrive
+      # on stdin, as they do for users.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            install.sh
+            install.ps1
+          sparse-checkout-cone-mode: false
+      - name: Install and self-test (Linux and macOS)
+        if: runner.os != 'Windows'
+        env:
+          METACHECK_NO_LAUNCH: "1"
+        run: |
+          export METACHECK_HOME="$RUNNER_TEMP/metacheck"
+          cat install.sh | /bin/sh
+          "$METACHECK_HOME/bin/metacheck-app" --self-test
+      - name: Install and self-test (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          METACHECK_NO_LAUNCH: "1"
+        run: |
+          $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
+          Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
+          & "$env:METACHECK_HOME\bin\metacheck-app.exe" --self-test
+          if ($LASTEXITCODE -ne 0) { throw "self-test failed" }
