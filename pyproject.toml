@@ -4,7 +4,7 @@ name = "metacheck"
 # the first release). The version does not follow the R package's. The R commit
 # each release is compared against is recorded in parity/UPSTREAM.toml and named
 # in the release notes (CHANGELOG.md).
-version = "0.4.0a1"
+version = "0.4.0a2.dev0"
 description = "Check research outputs for best practices: the Python version of metacheck, a fast, parity-tested port of the ScienceVerse R package."
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
