@@ -20,6 +20,9 @@ not descriptions of the shipped code. (Earlier designs:
 - [REPO_FETCH.md](REPO_FETCH.md): repository fetches (where the ~40 s
   goes, batching per host, OSF's rate limits), a cache store across runs
   with an optional Redis/Valkey tier, and why it is not shared with bibr.
+- [ROADMAP.md](ROADMAP.md): the proposed order of the work from the rest of
+  phase A to 1.0 (milestones, work packages, the validation plan and the open
+  decisions D01-D20). It is a proposal until the maintainer answers them.
 
 Paths under `scratchpad/` in these documents refer to the session's
 working directory where the measurements were taken; the evidence that

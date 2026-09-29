@@ -185,6 +185,7 @@ This covers the three groups asked for: the team's validated modules, the team's
 - **`metrics`** carries evidence that is not count-based, such as ref_accuracy's. It is only an example of the form: ref_accuracy is a candidate, not certified (§3.1, Q6).
 - **`settings`** records how the module was configured when measured. For an LLM module it holds a digest of the model id, prompt and response schema. A run with other settings shows the status with a note ("validated without an LLM"), and a server under `validated` runs it only with the certified settings.
 - **`server_safe`** is set by the team after a timed run on the server's limits, and it is the one source for "server-safe" in both packages (§3.4, §7 item 4). With the scienceverse Platform on the public side (the maintainer, 2026-09-27), the server whose limits count is the Platform's (§3.4, §8).
+- **Extractor** (proposed, [ROADMAP.md](ROADMAP.md) §2 and §4 (EXTRACT-PROV)): an evidence record also says which extraction it covers, with the engine, the producer's version and build, and the export schema version. A run on another extraction shows the status with a note, as for `settings`.
 
 ### 2.5 Binding a certification to code
 
@@ -206,6 +207,12 @@ A certification holds only for the code it measured. There is one binding per ki
 2. **On what.** The team's full-paper ground truth for each module (Q8), run paper by paper, so paper-level false positives (flags on uncoded sentences) are counted. `validate()` (`src/pytacheck/validate.py:302`) turns each ground-truth text into its own test paper, which can reproduce TP and FN but not those FP, so it is not enough on its own. If the corpus cannot be redistributed, the team runs the rerun privately and commits the result.
 3. **Tolerance.** Each of TP, FP and FN within 5% of the certified count, or ±2 when the count is under 40 (E; the team sets the number). Outside it, the result goes to a validator as new evidence, not an automatic extension.
 4. **If no rerun happens in time.** The last certified release keeps its label for one further release, with the note "validated on 0.4.0, not re-measured on 0.5.0". After that it falls to experimental. A server whose validated set would become empty falls back to the last snapshot's validated list with a warning; it never raises `PresetError` on every request.
+
+**Proposed changes ([ROADMAP.md](ROADMAP.md) §5.2, §5.4 to §5.6; final text once D07 and D08 are answered and the metacheck team agrees).**
+- **Step 4, grace (D07).** The one-release grace does not apply to provisional entries until the bridge, the re-measurement of the validated checks on this implementation with the team's labelled papers.
+- **The Band A rule (D07).** A Band A change in a validated check needs a validator's sign-off and, where a public labelled set exists, a passing validation subset.
+- **After the bridge (D08; ROADMAP §5.4).** A check outside tolerance drops to experimental and shows "measured below the published rates".
+- **Step 3, tolerance (D08).** D08's rule replaces the 5% or ±2 rule once the team agrees. It also adds the re-measurement triggers: a change to a validated check's code closure, pattern files or data; a change to an LLM check's model, prompt or schema; a new extractor version; and a dependency change that touches the closure.
 
 ### 2.6 Field scope
 
@@ -623,6 +630,8 @@ The design needs work or agreement from people outside pytacheck. The pytacheck 
 | A named validator for the per-release rerun (§2.5) | the first pytacheck release after TIERS | the one-release grace of §2.5 step 4, then experimental |
 | The R side of §7 | none; optional | pytacheck ships its own snapshot; metacheck keeps its `<validation>` blocks |
 | Agreement to replace the public Shiny server, and a cutover date (decision 20 (decided 2026-09-27: (a))) | before the Gradio server goes public | the Shiny server stays in place; the Gradio app ships as the `pytacheck[app]` extra only. With the scienceverse Platform on the public side, the cutover would be the Platform's (§8) |
+
+Proposed (D07, [ROADMAP.md](ROADMAP.md) §5.6): the fallback badge wording in the first row becomes the provisional wording, which says that the error rates are as published for the R package, that the R version and PDF pipeline they were measured with are not recorded, and that they are not yet re-measured on this version.
 
 ---
 

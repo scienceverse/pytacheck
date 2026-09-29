@@ -462,6 +462,8 @@ def stack(*row_lists) -> list[dict]: ...        # concatenates lists
 
 **Permanent façades**, with R semantics and DataFrame results, never deleted: `module`, `module_run`, `get_prev_outputs`; `text_search` (pattern-major order, first match wins, `exclude`, every `return_` mode); `paper_table`, `ref_table`, `paper_id`, `text_expand`, `extract_*`, `json_expand`, `stats`; `_r.frames.bind_rows` and `count`; `report.scroll_table`, `collapse_section`; `test_paper`, `demopaper`, `read`; `Paper`/`PaperList` access.
 
+**Roadmap (proposed; depends on D12).** [ROADMAP.md](ROADMAP.md) §2 and the FACADE-SUNSET package propose replacing this rule and the deprecated top-level re-exports above: façades that store packs and templates use stay in compat, with an end date reviewed at 1.0, and the others warn from 0.5 and go no earlier than 1.0. This section is unchanged until D12 is answered.
+
 **`text_search` for character vectors with several patterns returns results** (lane 5's U-entries; Review B-15), covering `text_search.vector.multi`, `.multi.one_hit`, `.multi.no_hits`, `.multi.exclude.three`, `.four` and `.three_empty`, and `text_search.demo.multi.exclude.three` and `.four`. Invalid arguments raise Python errors with pytacheck's own messages, compared by presence. The spike's replays of dplyr's "`...` must be empty" and R's "unused argument (…)" are deleted.
 
 **The author API** is `pytacheck.doc`: `Docs`, `Doc`, `Pat`, `PatternSet`, `patterns`, `Hits`, `Result`, `Summary`, `Schema`, `sentence_rows`, `stack`, `plural`, `facets`, and `testing.document(*sentences, section="method", references=(), paper_id="test")`. It stays provisional until 1.0 and is snapshot-tested.
@@ -879,6 +881,8 @@ Both show the report in a sandboxed `<iframe srcdoc>`, where the report's own JS
 
 ### 4.3 Work packages
 
+**Roadmap (proposed; depends on D01).** [ROADMAP.md](ROADMAP.md) puts the validation tooling, the rename, the installer and the GUI before CORE-1, so that CORE-1 and the waves become milestone M8 (0.6), grouped as CORE-1, WAVES-PAPER, WAVES-REPO, SERVICES-WAVE and MODSYS-COMPAT (ROADMAP §3 and §4). WEB's hosted pieces become WEB-HOSTED (M8), and STORE-2b stays in M8. It proposes moving PORT and corpus mode (BL-8) to after 1.0 (D18). The packages below are rev 3's. ROADMAP §4 splits or rescopes some of them (WEB, BATCH-b, STORE-2b, PORT, HARNESS-NET). Their content, days, order and placement are rev 3's until D01 is answered.
+
 Each package has one owner and **exclusive file ownership** while active (§4.5 lists the shared files). Efforts are agent-days **(E)**. Each package also carries the gates of §3.3 that name it.
 
 **SNAP** (1 d). Files: `tests/snapshots/**`, `scripts/record_snapshots.py`. Gates: snapshots reproduce on base twice, byte-identical; both fixtures recorded. Depends on: none (lane 2 has merged).
@@ -983,6 +987,8 @@ Files held by CORE: `core/**`, `pytacheck/doc/**`, `_r/**`, `papers/**`, `text/s
 
 Revision 3 runs in four phases. They overlap: a phase is defined by what it delivers, not by its dates.
 
+**Roadmap (proposed; depends on D01).** [ROADMAP.md](ROADMAP.md) §3 replaces the phases and the critical-path figures below with milestones M0 to M11. Phase A is trimmed and its PR list is re-classified (done, accelerate, keep, rescope, defer, drop) in ROADMAP Appendix A. Stop point 2 moves to before CORE-1 starts; stop points 1 and 3 stay. The phases, days and critical path below are rev 3's until D01 is answered.
+
 | Phase | Days | Packages | Delivers | Stop point |
 |---|---|---|---|---|
 | **A, contract and ecosystem** | 0-13 | SNAP, HARNESS, HARNESS-v2, HARNESS-NET, SPIKE-2, TIERS, STORE-2a | the three fidelity bands, enforced by the harness; status labels, policies and presets; the store fixes and catalog. TIERS and STORE-2a can ship in a release on their own (0.4, §4.6), before any module is rewritten | after SPIKE-2 (day 2); at day 11.5, when the user reviews the deviation rows that the mark migration produced and the metacheck team's answers (ECOSYSTEM.md §8.1). Without the answers, phase A still closes, with a provisional snapshot |
@@ -1048,6 +1054,8 @@ CLOSE                                                                 ███�
 
 ### 4.5 Coexistence, deletion and ownership rules
 
+**Roadmap (proposed; depends on D01, D04 and D12).** These rules apply in whichever milestone a package lands in ([ROADMAP.md](ROADMAP.md) §3). The paths are those before the rename: with D04 answered (a), RENAME-1 moves `src/pytacheck` to `src/metacheck`. D12 proposes replacing the rule that public façades are never deleted (§2.10).
+
 **Coexistence.** One shipped implementation per module and no runtime switch. Mixed chains just work: `_assemble` normalises a dict, a DataFrame or a `Result`, and unmigrated modules call the façades on the same Doc and RefIndex.
 
 **Deletion.** A module's private R machinery goes in that module's migration PR (the snapshots are the oracle). Façade internals go in CORE 1b after the differential suites pass, and the grouped-mode helpers only after SPIKE-2's V5. Emulation stacks go in the PR that switches the adapter, after that lane's corpus gate passes. Public façades are never deleted. Private-helper parity cases (1,497) are re-pointed or retired under H0-13's ratchet, with `porting/symbols.json` and `porting/modules.toml` updated in the same PR. Until HARNESS-v2 closes (day 13), it re-points CORE-1b's cases as CORE-1b's change requests; after that, each deleting PR re-points or retires its own.
@@ -1075,6 +1083,8 @@ CLOSE                                                                 ███�
 | `porting/symbols.json` | One sorted entry per line, so parallel edits merge line by line |
 
 ### 4.6 Releases
+
+**Roadmap (proposed; depends on D01, D05 and D06).** [ROADMAP.md](ROADMAP.md) §3 and §8 propose a different release line, on the version line of D05: 0.4.0a1 (M2), 0.4.0 with the validation harness (M3), 0.5.0b1 with the installer and the GUI (M4), 0.5.0 with faster repository checks (M5), 0.6 with the core and the waves (M8) and 1.0 (M10, which needs the bridge). The table below is rev 3's until then. ECOSYSTEM.md §2.5 has the matching proposals on re-certification (D07, D08).
 
 The tree is at 0.3.1.dev1. The rewrite ships in four minor releases, so users meet breaking changes in small, documented steps. Each release has a CHANGELOG entry and a `docs/MIGRATING.md` section that lists every breaking change, its replacement and one before/after example.
 
@@ -1177,8 +1187,21 @@ Network- and LLM-bound workloads keep BATCH_DESIGN §4.1's gains (rolling window
 
 - **Like for like:** revision 2's plan on the same sweeps is ≈ 103,000; relaxed fidelity removes ≈ 11,000 more (§3.5's ≈ 11,150). The rest of the difference to 93,300 is the smaller core and `packs/`, less the new status, compat, port and web lines.
 - **Net:** the sweeps take out ≈ 36,300 lines, `packs/` ≈ 1,000, and the additions put back ≈ 4,900 (core 2,500, status 600, compat 300, port 1,260, web 215).
-- **Not yet summed:** REPO_FETCH.md's CACHE package adds ≈ 700 lines (`cache/**`; E, not yet sized from a prototype: upstream-apis.md put an HTTP store alone at 250-400, and CACHE adds the blob store, the ledger and the Redis backend). It removes at most ≈ 250 of the 266 lines in `archives/info_cache.py` (156) and `archives/cache.py` (110), because `repo_info_cache()`, `repo_info_cache_clear()` and `metacheck_cache_info()` stay public, and the download and LLM caches still resolve their directories there. That is ≈ +450 net or more **(E)**, inside the 88-97k range. Decision 22 (decided 2026-09-27: (a2)) defers the Redis backend, so these figures are an upper bound until the total is re-summed.
-- **Decision 3 (b)** adds corpus mode's `batch/views.py` and E2's `ModuleSpec.batch` field: ≈ 150-250 lines (E, from BL-8's content; not yet sized from a prototype), inside the 88-97k range. The rest of `batch/**`, which BATCH-b creates, has no row in this ledger or in §3.6's tree yet.
+- **Re-summed (E; proposed with [ROADMAP.md](ROADMAP.md) §9):** REPO_FETCH.md's CACHE package adds ≈ 700 lines (`cache/**`; E, not yet sized from a prototype: upstream-apis.md put an HTTP store alone at 250-400, and CACHE adds the blob store, the ledger and the Redis backend). It removes at most ≈ 250 of the 266 lines in `archives/info_cache.py` (156) and `archives/cache.py` (110), because `repo_info_cache()`, `repo_info_cache_clear()` and `metacheck_cache_info()` stay public, and the download and LLM caches still resolve their directories there. That is ≈ +450 net or more **(E)**, inside the 88-97k range. Decision 22 (decided 2026-09-27: (a2)) defers the Redis backend, so these figures are an upper bound. Counted here: ≈ 93,300 + 450 = **≈ 93,750**, before the items below.
+- **Decision 3 (b)** adds corpus mode's `batch/views.py` and E2's `ModuleSpec.batch` field: ≈ 150-250 lines (E, from BL-8's content; not yet sized from a prototype), inside the 88-97k range. The rest of `batch/**`, which BATCH-b creates, has no row in this ledger or in §3.6's tree yet. ROADMAP.md proposes to move corpus mode to after 1.0 (D18). D18 also moves PORT to after 1.0, and the `port/` row (≈ 1,260 lines) is inside the ≈ 93,300 total. If D18 is answered (a), `port/` and corpus mode leave the 1.0 count, and the total falls from ≈ 93,750 to about 92,500 (93,750 − 1,260). Until then both stay in it, and the total is ≈ 93,900-94,000 (93,750 plus corpus mode's ≈ 150-250).
+- **Decision 2:** the ≈ +380-460 lines of the DECL package (a) are not in the ledger. Decision 2 is (c) since 2026-09-28, so the count needs no change.
+- **Not yet counted (D19):** `zenodo_upload` already leaves under decision 16 (a) (§3.5), so it is not counted again. D19 (ROADMAP.md, extends decision 16) proposes that statout's HTML exporters leave the package too, and keeps the reproducibility check. Their rows are counted once D19 is answered.
+- **Product code:** ROADMAP §9 puts the product work of 0.5 (the service, settings, setup, the local GUI, sign-in and the extraction client) at about 2-3k lines. Apart from `api/web.py`, this ledger has no row for it. The ledger is re-summed when those packages are sized.
+- **Interim targets (proposed; ROADMAP §9):** the ledger's figures are for 1.0. Between now and then:
+
+  | Release | `src` lines | Note |
+  |---|---|---|
+  | Today (main, 00ef3a21) | 126,556 | counted later than the ledger's 125,800 |
+  | 0.5 | at most 130k | a cap while the product code is added, not a cut |
+  | 0.6 | 95-100k | after the core and the waves |
+  | 1.0 | 89-93k | rev 3's ≈ 93,300 (range 88-97k) stands as the reference. The ledger above sums to ≈ 93,900-94,000 before product code (≈ 93,750 plus corpus mode), or about 92,500 if D18 is answered (a). Only in the second case is it inside 89-93k; otherwise ROADMAP §9's ratchets and named reductions have to close the gap |
+
+  The floor after the post-freeze clean-ups is about 80k lines.
 - **Not in the ledger:** parity data (140 MB in 9,745 files under `parity/`, **M3**), which the mark migration and the retired cases shrink but which is not code.
 
 ### 5.4 Where the time goes after CORE-0 (C)
