@@ -21,6 +21,7 @@ All requests go through the storage retry policy and host authentication of
 
 from __future__ import annotations
 
+import contextlib
 import os
 import threading
 import warnings
@@ -29,6 +30,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from pytacheck._r import grepl, gsub, is_na, strsplit, sub
+from pytacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -539,7 +541,7 @@ def _zip_fetch_members(
         except OSError:
             pass
         try:
-            with open(target, "wb") as fh:
+            with atomic_write(target) as fh:
                 fh.write(data)
         except OSError:
             continue
@@ -829,11 +831,12 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
             if not _minizip_can_open(fp, info):
                 warnings.warn("zip file is corrupt", stacklevel=3)
                 return
+            stack = contextlib.ExitStack()
             try:
-                fout = open(out, "wb")  # noqa: SIM115
+                fout = stack.enter_context(atomic_write(out))
             except OSError as e:
                 raise RuntimeError(f"cannot open file '{os.fsdecode(out)}': {e.strerror}") from e
-            with fout, zf.open(info) as src:
+            with stack, zf.open(info) as src:
                 src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
                 shutil.copyfileobj(src, fout)
 
@@ -970,7 +973,7 @@ def _expand_compressed(
     if not os.path.exists(out):
         try:
             os.makedirs(dest, exist_ok=True)
-            with _open_compressed(gz_path, ext) as con, open(out, "wb") as oc:
+            with _open_compressed(gz_path, ext) as con, atomic_write(out) as oc:
                 while True:
                     chunk = con.read(1048576)
                     if not chunk:

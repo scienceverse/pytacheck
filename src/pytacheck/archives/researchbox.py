@@ -16,6 +16,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r import is_na
+from pytacheck.archives._atomic import atomic_write
 
 __all__ = ["rbox_file_download", "rbox_info", "rbox_links"]
 
@@ -409,7 +410,7 @@ def _download_zip(file_ids: list[Any], box_id: str, reference: str, path: str) -
             headers=headers,
             content=json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8"),
         ) as resp:
-            with open(path, "wb") as fh:
+            with atomic_write(path) as fh:
                 for chunk in resp.iter_bytes():
                     fh.write(chunk)
             return int(resp.status_code)

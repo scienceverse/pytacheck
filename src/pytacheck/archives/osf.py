@@ -40,6 +40,7 @@ from pytacheck._r import (
     strsplit,
     sub,
 )
+from pytacheck.archives._atomic import atomic_write
 
 __all__ = [
     "OsfResult",
@@ -858,7 +859,7 @@ def _stream_to_file(url: str, path: str, timeout_s: float = 1800, max_tries: int
             ) as resp:
                 status = resp.status_code
                 if status == 200 or not is_transient(resp) or attempt == max_tries:
-                    with open(path, "wb") as fh:
+                    with atomic_write(path) as fh:
                         for chunk in resp.iter_bytes():
                             fh.write(chunk)
                     return status

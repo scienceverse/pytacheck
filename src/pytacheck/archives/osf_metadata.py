@@ -18,6 +18,7 @@ from typing import Any, cast
 import pandas as pd
 
 from pytacheck._r import is_na, plural
+from pytacheck.archives._atomic import atomic_write
 
 #: R/archive-osf-metadata.R::.osf_meta_dir
 _OSF_META_DIR = "_osf_metadata"
@@ -59,7 +60,7 @@ def _get_request(url: str, accept: str | None = None) -> Any:
 def _write_lines(text: str | list[str], path: str) -> None:
     """R ``writeLines(x, path, useBytes = TRUE)``."""
     lines = [text] if isinstance(text, str) else text
-    with open(path, "wb") as fh:
+    with atomic_write(path) as fh:
         for line in lines:
             fh.write(("NA" if line is None else line).encode("utf-8") + b"\n")
 

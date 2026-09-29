@@ -39,6 +39,7 @@ from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
 from pytacheck._r import grepl, gsub, is_na, plural, sub
+from pytacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -468,7 +469,7 @@ def _file_response(method: str, url: str, path: str | None) -> Any:
             f"! Could not read a file:// file:\nCould not open file {local}"
         ) from e
     if path is not None:
-        with open(path, "wb") as fh:
+        with atomic_write(path) as fh:
             fh.write(body)
         body = b""
     resp = httpx.Response(
@@ -516,7 +517,7 @@ def _perform_once(
             break
         try:
             if path is not None:
-                with open(path, "wb") as fh:
+                with atomic_write(path) as fh:
                     for chunk in resp.iter_bytes(chunk_size=1 << 20):
                         http.check_interrupt()
                         fh.write(chunk)
@@ -1283,7 +1284,7 @@ def _download_zip_to_cache(
                     continue
                 try:
                     os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
-                    with open(dest, "wb") as fh:
+                    with atomic_write(dest) as fh:
                         fh.write(data)
                 except OSError:
                     continue
