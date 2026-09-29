@@ -491,7 +491,9 @@ def _is_symbol(root: Path, name: str) -> bool:
 
 
 def test_layer_problems_are_seen_in_both_directions(tmp_path: Path) -> None:
-    root = tree(tmp_path, {**BASE, "doc/__init__.py": "", "compat.py": ""})
+    # a name that is mentioned but not defined is gone
+    module = BASE["module.py"] + "# get_prev_outputs is gone\n"
+    root = tree(tmp_path, {**BASE, "doc/__init__.py": "", "compat.py": "", "module.py": module})
     problems = layer_problems(root)
     for name in sorted(NOT_YET):
         assert f"{name} exists now: remove it from NOT_YET" in problems
@@ -595,6 +597,8 @@ def found_in(tmp_path: Path, files: dict[str, str]) -> set[tuple[str, str, str]]
             "report",
         ),
         ("from pytacheck.text import *\n", "text"),
+        # the test of an if statement is read too
+        ("import pytacheck\nif pytacheck.text_search('x'):\n    pass\n", "text"),
         ("from pytacheck.datacheck import x\n", "datacheck"),
         ("from pytacheck.codecheck import x\n", "codecheck"),
         (
@@ -709,11 +713,21 @@ def test_run_py_may_not_reach_a_banned_layer_through_a_reexport(tmp_path: Path, 
 
 
 @pytest.mark.parametrize(
-    "init", ["from pytacheck import config\n", "import pytacheck.config as config\n"]
+    ("package", "init"),
+    [
+        ("report", "from pytacheck import config\n"),
+        ("report", "import pytacheck.config as config\n"),
+        ("report.blocks", "from pytacheck import config\n"),
+    ],
 )
-def test_a_reexport_is_reported_under_the_banned_layer(tmp_path: Path, init: str) -> None:
+def test_a_reexport_is_reported_under_the_banned_layer(
+    tmp_path: Path, package: str, init: str
+) -> None:
     """``config`` is in the run context, but reading it from ``report`` runs ``report``."""
-    files = {"report/__init__.py": init, "core/run.py": "from pytacheck.report import config\n"}
+    files = {
+        f"{package.replace('.', '/')}/__init__.py": init,
+        "core/run.py": f"from pytacheck.{package} import config\n",
+    }
     assert found_in(tmp_path, files) == {("core", "core/run.py", f"{PKG}.report")}
 
 
@@ -800,6 +814,7 @@ SPELLING_FILES = {
         "from pytacheck.module import module_run as _run\n"
         "run = _run\n"
         "stage: object = _run\n"
+        "step = walk = _run\n"
         "import pytacheck.report as paint\n"
         "def f():\n    from pytacheck.report import render\n"
         "class C:\n    from pytacheck.report import shade\n"
@@ -820,6 +835,7 @@ SPELLINGS = [
     ("from pytacheck.llm import words\n", [("llm", "llm.words", "text")]),
     ("from pytacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
     ("from pytacheck.llm import stage\n", [("llm", "llm.stage", "module.module_run")]),
+    ("from pytacheck.llm import walk\n", [("llm", "llm.walk", "module.module_run")]),
     ("from pytacheck.llm import paint\n", [("llm", "llm.paint", "report")]),
     # an import in a function or class of an __init__ binds nothing in the package
     ("from pytacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
@@ -1041,6 +1057,14 @@ def test_facades_that_import_doc_are_not_migrated_modules(tmp_path: Path) -> Non
     assert found_in(tmp_path, files) == set()
 
 
+def test_a_doc_name_defined_in_the_core_marks_a_module_as_migrated(tmp_path: Path) -> None:
+    files = {
+        "doc/__init__.py": "from pytacheck.core.doc import Doc\n",
+        "modules/m.py": MIGRATED + "from pytacheck._r.frames import count\n",
+    }
+    assert ("migrated", "modules/m.py", f"{PKG}._r.frames") in found_in(tmp_path, files)
+
+
 def test_from_pytacheck_import_doc_marks_a_module_as_migrated(tmp_path: Path) -> None:
     source = "from pytacheck import doc\nfrom pytacheck._r.frames import count\n"
     assert ("migrated", "modules/m.py", f"{PKG}._r.frames") in found_in(
@@ -1064,6 +1088,19 @@ def test_ratchet_fails_on_a_new_violation(tmp_path: Path) -> None:
     new, stale = ratchet(violations(root), {})
     assert new == [f"core: core/facets.py:1 imports {PKG}.text.search.x"]
     assert stale == []
+
+
+@pytest.mark.parametrize(
+    "guard",
+    [
+        "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n",
+        "import typing\nif typing.TYPE_CHECKING:\n",
+    ],
+)
+def test_ratchet_names_a_type_checking_import(tmp_path: Path, guard: str) -> None:
+    source = guard + "    from pytacheck.text.search import x\n"
+    new, _ = ratchet(violations(tree(tmp_path, {**BASE, "core/facets.py": source})), {})
+    assert new == [f"core: core/facets.py:3 imports {PKG}.text.search.x (type-checking)"]
 
 
 def test_ratchet_accepts_an_allowed_violation(tmp_path: Path) -> None:
