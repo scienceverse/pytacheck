@@ -105,7 +105,7 @@ jobs:
         run: |
           export METACHECK_HOME="$RUNNER_TEMP/metacheck"
           export METACHECK_NO_LAUNCH=1
-          export METACHECK_SPEC="pytacheck[app] @ file://$GITHUB_WORKSPACE"
+          export METACHECK_SPEC="metacheck[app] @ file://$GITHUB_WORKSPACE"
           export METACHECK_CONSTRAINTS="$GITHUB_WORKSPACE/install/constraints-app.txt"
           echo "METACHECK_HOME=$METACHECK_HOME" >> "$GITHUB_ENV"
           echo "METACHECK_SPEC=$METACHECK_SPEC" >> "$GITHUB_ENV"
@@ -121,7 +121,7 @@ jobs:
           $vars = @{
             METACHECK_HOME        = $home_dir
             METACHECK_NO_LAUNCH   = '1'
-            METACHECK_SPEC        = "pytacheck[app] @ $uri"
+            METACHECK_SPEC        = "metacheck[app] @ $uri"
             METACHECK_CONSTRAINTS = Join-Path $env:GITHUB_WORKSPACE 'install\constraints-app.txt'
           }
           foreach ($name in $vars.Keys) {

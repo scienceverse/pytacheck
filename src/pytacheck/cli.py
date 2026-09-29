@@ -9,7 +9,7 @@ Examples::
     pytacheck run paper.json                         # the configured preset (or metacheck's default)
     pytacheck run paper.json -m all_p_values -m marginal
     pytacheck run paper.json --preset psych -a power.seed=1 --record run.json
-    pytacheck run paper.pdf -m marginal --json       # PDFs need pytacheck[bibr]
+    pytacheck run paper.pdf -m marginal --json       # PDFs need metacheck[bibr]
     pytacheck report paper.json -o report.html
     pytacheck rerun run.json paper.json              # replay a run record
     pytacheck pack search trial --field medicine     # browse the store
@@ -17,8 +17,8 @@ Examples::
     pytacheck pack new mypack && pytacheck pack check mypack
     pytacheck store build . --check                  # store CI
     pytacheck read paper.pdf -o paper.json           # extract with bibr, save JSON
-    pytacheck serve --port 8000                      # REST API (pytacheck[api])
-    pytacheck app                                    # the local app in your browser (pytacheck[app])
+    pytacheck serve --port 8000                      # REST API (metacheck[api])
+    pytacheck app                                    # the local app in your browser (metacheck[app])
     pytacheck version
 
 Selection flags (run, report): ``-m`` modules (in order), ``--preset``,
@@ -443,7 +443,7 @@ def cmd_serve(ns: argparse.Namespace) -> int:
     try:
         import uvicorn
     except ImportError:
-        print('The API needs the api extra: pip install "pytacheck[api]"', file=sys.stderr)
+        print('The API needs the api extra: pip install "metacheck[api]"', file=sys.stderr)
         return 2
     from pytacheck.api.app import API_KEY_ENV, ApiConfigError, api_key, is_loopback
 

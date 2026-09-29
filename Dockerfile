@@ -27,7 +27,7 @@ RUN if [ "$WITH_BIBR" = "1" ]; then \
       rm -rf /var/lib/apt/lists/*; \
     fi
 WORKDIR /src
-COPY pyproject.toml uv.lock README.md LICENSE.md ./
+COPY pyproject.toml uv.lock README.md LICENSE.md NOTICE ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     extras="--extra data --extra api"; \
     if [ "$WITH_BIBR" = "1" ]; then extras="$extras --extra bibr"; fi; \

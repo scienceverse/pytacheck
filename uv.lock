@@ -6,10 +6,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform == 'win32'",
     "python_full_version < '3.12' and sys_platform == 'emscripten'",
@@ -841,10 +841,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
@@ -2498,6 +2498,131 @@ wheels = [
 ]
 
 [[package]]
+name = "metacheck"
+version = "0.4.0a1"
+source = { editable = "." }
+dependencies = [
+    { name = "h2" },
+    { name = "httpx", extra = ["http2"] },
+    { name = "lxml" },
+    { name = "markdown-it-py" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "orjson" },
+    { name = "packaging" },
+    { name = "pandas" },
+    { name = "platformdirs" },
+    { name = "python-calamine" },
+    { name = "pyyaml" },
+    { name = "regex" },
+    { name = "rich" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "bibr" },
+    { name = "chardet" },
+    { name = "fastapi" },
+    { name = "matplotlib" },
+    { name = "pypdf" },
+    { name = "pyreadstat" },
+    { name = "python-multipart" },
+    { name = "snowballstemmer" },
+    { name = "uvicorn", extra = ["standard"] },
+    { name = "xlrd" },
+]
+api = [
+    { name = "fastapi" },
+    { name = "python-multipart" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+app = [
+    { name = "gradio" },
+]
+bibr = [
+    { name = "bibr" },
+]
+charset = [
+    { name = "chardet" },
+]
+data = [
+    { name = "matplotlib" },
+    { name = "pypdf" },
+    { name = "pyreadstat" },
+    { name = "snowballstemmer" },
+    { name = "xlrd" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "hypothesis" },
+    { name = "lxml-stubs" },
+    { name = "mypy" },
+    { name = "openpyxl" },
+    { name = "pandas-stubs" },
+    { name = "pip-audit" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-benchmark" },
+    { name = "pytest-cov" },
+    { name = "pytest-xdist" },
+    { name = "respx" },
+    { name = "ruff" },
+    { name = "types-regex" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "bibr", marker = "extra == 'bibr'", specifier = ">=0.5.1" },
+    { name = "chardet", marker = "extra == 'charset'", specifier = ">=7" },
+    { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.115" },
+    { name = "gradio", marker = "extra == 'app'", specifier = ">=6.28,<7" },
+    { name = "h2", specifier = ">=4.4.1" },
+    { name = "httpx", extras = ["http2"], specifier = ">=0.28.1,<1" },
+    { name = "lxml", specifier = ">=5.3" },
+    { name = "markdown-it-py", specifier = ">=3.0" },
+    { name = "matplotlib", marker = "extra == 'data'", specifier = ">=3.8" },
+    { name = "metacheck", extras = ["bibr", "data", "api", "charset"], marker = "extra == 'all'" },
+    { name = "numpy", specifier = ">=1.26" },
+    { name = "orjson", specifier = ">=3.10" },
+    { name = "packaging", specifier = ">=24" },
+    { name = "pandas", specifier = ">=3.0" },
+    { name = "platformdirs", specifier = ">=4.2" },
+    { name = "pypdf", marker = "extra == 'data'", specifier = ">=5.0" },
+    { name = "pyreadstat", marker = "extra == 'data'", specifier = ">=1.2.7" },
+    { name = "python-calamine", specifier = ">=0.8" },
+    { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.31" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "regex", specifier = ">=2024.9.11" },
+    { name = "rich", specifier = ">=13.7" },
+    { name = "scipy", specifier = ">=1.13" },
+    { name = "snowballstemmer", marker = "extra == 'data'", specifier = ">=2.2" },
+    { name = "uvicorn", extras = ["standard"], marker = "extra == 'api'", specifier = ">=0.30" },
+    { name = "xlrd", marker = "extra == 'data'", specifier = ">=2.0.1" },
+]
+provides-extras = ["bibr", "data", "api", "app", "charset", "all"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "hypothesis", specifier = ">=6.112" },
+    { name = "lxml-stubs", specifier = ">=0.5" },
+    { name = "mypy", specifier = ">=1.15" },
+    { name = "openpyxl", specifier = ">=3.1" },
+    { name = "pandas-stubs", specifier = ">=2.2" },
+    { name = "pip-audit", specifier = ">=2.7" },
+    { name = "pre-commit", specifier = ">=4.0" },
+    { name = "pytest", specifier = ">=8.3" },
+    { name = "pytest-benchmark", specifier = ">=5.1" },
+    { name = "pytest-cov", specifier = ">=6.0" },
+    { name = "pytest-xdist", specifier = ">=3.6" },
+    { name = "respx", specifier = ">=0.22" },
+    { name = "ruff", specifier = ">=0.8.0" },
+    { name = "types-regex", specifier = ">=2024.9" },
+]
+
+[[package]]
 name = "mpmath"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2880,10 +3005,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/13/01/11703282db468b85f6f7b8c7f22d058de5970d5c7e60a3a8aaa313c3de36/numpy-2.5.3.tar.gz", hash = "sha256:df2d5874ff183595a4ba404edd04f6bd9b5505c1d7708573f6a6c17489a67563", size = 20791231, upload-time = "2026-09-06T16:27:47.073Z" }
@@ -3718,129 +3843,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/f2/3a/c58518c19dbb3b27d52dba7e386ab6ebbd7f1018657d4286f89e5add1d63/pyreadstat-1.3.6-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:1b4f32d4a8ef996a5c3ee6ba2d6790a0ca93e7a4c1f7611e94e610d945e0788b", size = 2573814, upload-time = "2026-08-12T13:03:16.779Z" },
     { url = "https://files.pythonhosted.org/packages/ab/a3/3f233e2036329ffc6d96b8d6bd854c757558aad32390ad34dfddf528bc2a/pyreadstat-1.3.6-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c8d665437b39d4788c2854f09b352ada9e70e166dd96ab68225b81214abe8645", size = 2641549, upload-time = "2026-08-12T13:03:19.889Z" },
     { url = "https://files.pythonhosted.org/packages/af/96/ae391570291876b3b53c53b4c9032a432e04c3c67b30fc1bab8b61d796f6/pyreadstat-1.3.6-cp314-cp314-win_amd64.whl", hash = "sha256:822551e12c83c4e8e0f757060297b459d38bfb3860bb6c7419f71288ddd94690", size = 2054905, upload-time = "2026-08-12T13:03:21.803Z" },
-]
-
-[[package]]
-name = "pytacheck"
-version = "0.3.1.dev1"
-source = { editable = "." }
-dependencies = [
-    { name = "h2" },
-    { name = "httpx", extra = ["http2"] },
-    { name = "lxml" },
-    { name = "markdown-it-py" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "orjson" },
-    { name = "pandas" },
-    { name = "platformdirs" },
-    { name = "python-calamine" },
-    { name = "regex" },
-    { name = "rich" },
-    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-]
-
-[package.optional-dependencies]
-all = [
-    { name = "bibr" },
-    { name = "chardet" },
-    { name = "fastapi" },
-    { name = "matplotlib" },
-    { name = "pypdf" },
-    { name = "pyreadstat" },
-    { name = "python-multipart" },
-    { name = "snowballstemmer" },
-    { name = "uvicorn", extra = ["standard"] },
-    { name = "xlrd" },
-]
-api = [
-    { name = "fastapi" },
-    { name = "python-multipart" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-app = [
-    { name = "gradio" },
-]
-bibr = [
-    { name = "bibr" },
-]
-charset = [
-    { name = "chardet" },
-]
-data = [
-    { name = "matplotlib" },
-    { name = "pypdf" },
-    { name = "pyreadstat" },
-    { name = "snowballstemmer" },
-    { name = "xlrd" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "hypothesis" },
-    { name = "lxml-stubs" },
-    { name = "mypy" },
-    { name = "openpyxl" },
-    { name = "pandas-stubs" },
-    { name = "pip-audit" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-benchmark" },
-    { name = "pytest-cov" },
-    { name = "pytest-xdist" },
-    { name = "pyyaml" },
-    { name = "respx" },
-    { name = "ruff" },
-    { name = "types-regex" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "bibr", marker = "extra == 'bibr'", specifier = ">=0.5.1" },
-    { name = "chardet", marker = "extra == 'charset'", specifier = ">=7" },
-    { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.115" },
-    { name = "gradio", marker = "extra == 'app'", specifier = ">=6.28,<7" },
-    { name = "h2", specifier = ">=4.4.1" },
-    { name = "httpx", extras = ["http2"], specifier = ">=0.28.1" },
-    { name = "lxml", specifier = ">=5.3" },
-    { name = "markdown-it-py", specifier = ">=3.0" },
-    { name = "matplotlib", marker = "extra == 'data'", specifier = ">=3.8" },
-    { name = "numpy", specifier = ">=1.26" },
-    { name = "orjson", specifier = ">=3.10" },
-    { name = "pandas", specifier = ">=3.0" },
-    { name = "platformdirs", specifier = ">=4.2" },
-    { name = "pypdf", marker = "extra == 'data'", specifier = ">=5.0" },
-    { name = "pyreadstat", marker = "extra == 'data'", specifier = ">=1.2.7" },
-    { name = "pytacheck", extras = ["bibr", "data", "api", "charset"], marker = "extra == 'all'" },
-    { name = "python-calamine", specifier = ">=0.8" },
-    { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.31" },
-    { name = "regex", specifier = ">=2024.9.11" },
-    { name = "rich", specifier = ">=13.7" },
-    { name = "scipy", specifier = ">=1.13" },
-    { name = "snowballstemmer", marker = "extra == 'data'", specifier = ">=2.2" },
-    { name = "uvicorn", extras = ["standard"], marker = "extra == 'api'", specifier = ">=0.30" },
-    { name = "xlrd", marker = "extra == 'data'", specifier = ">=2.0.1" },
-]
-provides-extras = ["bibr", "data", "api", "app", "charset", "all"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "hypothesis", specifier = ">=6.112" },
-    { name = "lxml-stubs", specifier = ">=0.5" },
-    { name = "mypy", specifier = ">=1.15" },
-    { name = "openpyxl", specifier = ">=3.1" },
-    { name = "pandas-stubs", specifier = ">=2.2" },
-    { name = "pip-audit", specifier = ">=2.7" },
-    { name = "pre-commit", specifier = ">=4.0" },
-    { name = "pytest", specifier = ">=8.3" },
-    { name = "pytest-benchmark", specifier = ">=5.1" },
-    { name = "pytest-cov", specifier = ">=6.0" },
-    { name = "pytest-xdist", specifier = ">=3.6" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "respx", specifier = ">=0.22" },
-    { name = "ruff", specifier = ">=0.8.0" },
-    { name = "types-regex", specifier = ">=2024.9" },
 ]
 
 [[package]]
@@ -4703,10 +4705,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [

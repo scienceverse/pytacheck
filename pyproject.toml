@@ -1,14 +1,15 @@
 [project]
-name = "pytacheck"
-# Versioning: the first three components track the metacheck release this
-# build is in parity with (see parity/UPSTREAM.toml); a fourth component
-# (e.g. 0.3.1.1) marks pytacheck-only releases on top of the same upstream.
-version = "0.3.1.dev1"
-description = "Check research outputs for best practices: a fast, Python-native, parity-tested port of ScienceVerse metacheck."
+name = "metacheck"
+# Versioning: this port has its own version line, starting at 0.4.0 (0.4.0a1 is
+# the first release). The version does not follow the R package's. The R commit
+# each release is compared against is recorded in parity/UPSTREAM.toml and named
+# in the release notes (CHANGELOG.md).
+version = "0.4.0a1"
+description = "Check research outputs for best practices: the Python version of metacheck, a fast, parity-tested port of the ScienceVerse R package."
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
 license = "AGPL-3.0-or-later"
-license-files = ["LICENSE.md"]
+license-files = ["LICENSE.md", "NOTICE"]
 authors = [
     { name = "Scienceverse", email = "jakub@jakubwerner.com" },
 ]
@@ -40,12 +41,15 @@ dependencies = [
     # spreadsheet cells (.xlsx, .xls, .ods) through calamine, a small Rust
     # library that pandas also uses as a read_excel engine
     "python-calamine>=0.8",
-    "httpx[http2]>=0.28.1",
+    "httpx[http2]>=0.28.1,<1",
+    "packaging>=24",
     "h2>=4.4.1",
     "lxml>=5.3",
     "markdown-it-py>=3.0",
     "platformdirs>=4.2",
     "rich>=13.7",
+    # codecheck reads YAML (Quarto/R Markdown headers, codecheck.yml)
+    "pyyaml>=6.0.2",
 ]
 
 [project.optional-dependencies]
@@ -75,17 +79,18 @@ api = [
 app = ["gradio>=6.28,<7"]
 # Character-set detection for files that are not UTF-8 (chardet, 0BSD since 7.0).
 charset = ["chardet>=7"]
-all = ["pytacheck[bibr,data,api,charset]"]
+all = ["metacheck[bibr,data,api,charset]"]
 
 [project.urls]
 Homepage = "https://github.com/scienceverse/pytacheck"
 Documentation = "https://github.com/scienceverse/pytacheck#readme"
-Repository = "https://github.com/scienceverse/pytacheck"
+Source = "https://github.com/scienceverse/pytacheck"
 Issues = "https://github.com/scienceverse/pytacheck/issues"
 Changelog = "https://github.com/scienceverse/pytacheck/blob/main/CHANGELOG.md"
 Upstream = "https://github.com/scienceverse/metacheck"
 
 [project.scripts]
+metacheck = "pytacheck.cli:main"
 pytacheck = "pytacheck.cli:main"
 metacheck-app = "pytacheck.app:main"
 
@@ -97,7 +102,7 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/pytacheck", "/README.md", "/LICENSE.md", "/CHANGELOG.md", "/pyproject.toml"]
+include = ["/src/pytacheck", "/README.md", "/LICENSE.md", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/pyproject.toml"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pytacheck"]
@@ -110,7 +115,6 @@ dev = [
     "pytest-benchmark>=5.1",
     "hypothesis>=6.112",
     "respx>=0.22",
-    "pyyaml>=6.0.2",
     "ruff>=0.8.0",
     "mypy>=1.15",
     "pandas-stubs>=2.2",

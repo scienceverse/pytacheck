@@ -96,7 +96,8 @@ jobs:
           image="${IMAGE,,}"
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             v="${GITHUB_REF_NAME#v}"
-            echo "tags=$image:$v${{ matrix.suffix }},$image:latest${{ matrix.suffix }}" >> "$GITHUB_OUTPUT"
+            if [[ "$v" =~ [0-9](a|b|rc)[0-9]+$ ]]; then latest=""; else latest=",$image:latest${{ matrix.suffix }}"; fi
+            echo "tags=$image:$v${{ matrix.suffix }}$latest" >> "$GITHUB_OUTPUT"
           else
             echo "tags=$image:edge${{ matrix.suffix }}" >> "$GITHUB_OUTPUT"
           fi

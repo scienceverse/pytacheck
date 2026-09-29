@@ -6,7 +6,7 @@ JSON schema pytacheck works on. There are three ways to combine them.
 ## 1. In-process (recommended)
 
 ```bash
-pip install "pytacheck[bibr]"
+pip install "metacheck[bibr]>=0.4.0a1"
 bibr setup            # once: models, OCR/LLM configuration (see bibr's docs)
 ```
 

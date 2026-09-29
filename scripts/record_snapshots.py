@@ -84,7 +84,16 @@ def _missing_extras() -> list[str]:
     from importlib import metadata
 
     missing: set[str] = set()
-    for requirement in metadata.requires("pytacheck") or []:
+    from pytacheck._version import DISTRIBUTION
+
+    requirements: list[str] = []
+    for dist in (DISTRIBUTION, "pytacheck"):
+        try:
+            requirements = metadata.requires(dist) or []
+            break
+        except metadata.PackageNotFoundError:
+            continue
+    for requirement in requirements:
         if "extra ==" not in requirement:
             continue
         name = re.split(r"[\s\[<>=!~;]", requirement, maxsplit=1)[0]
