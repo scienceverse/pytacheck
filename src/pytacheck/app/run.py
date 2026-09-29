@@ -6,7 +6,10 @@ import gradio; problems the person can fix are raised as :class:`UserError`.
 
 from __future__ import annotations
 
+import base64
+import contextlib
 import contextvars
+import hashlib
 import os
 import re
 import sys
@@ -34,7 +37,9 @@ __all__ = [
     "find_grobid",
     "grobid_servers",
     "live_servers",
+    "protect",
     "read_paper",
+    "report_csp",
     "report_filename",
 ]
 
@@ -70,8 +75,11 @@ LIGHTS = {
     "fail": "Failed",
 }
 
-#: checks run one at a time: the button and the warm-up thread share the library's caches
+#: the fast checks run one at a time: the button and the warm-up thread share the library's caches
 _RUN_LOCK = threading.Lock()
+#: one data check at a time: it sets library options for its whole run. The fast checks never
+#: wait for it.
+_DATA_LOCK = threading.Lock()
 
 Progress = Callable[[float, str], None]
 
@@ -105,6 +113,32 @@ def report_filename(name: str) -> str:
     """``<paper name>_report.html`` with only safe characters in the name."""
     stem = re.sub(r"[^A-Za-z0-9._-]+", "_", name).strip("._-") or "paper"
     return f"{stem[:80]}_report.html"
+
+
+def _script_hash() -> str:
+    """The CSP source for the report's one inline script (the template's, not the paper's)."""
+    from pytacheck.report.render import _asset
+
+    digest = hashlib.sha256(f"\n{_asset('report.js')}\n".encode()).digest()
+    return f"'sha256-{base64.b64encode(digest).decode()}'"
+
+
+def report_csp() -> str:
+    """The report needs no outside resource. Only its own script may run, so a script or an
+    event handler that came in with a paper or a data file does not."""
+    return (
+        f"default-src 'none'; script-src {_script_hash()}; style-src 'unsafe-inline'; "
+        "img-src data:; font-src data:"
+    )
+
+
+def protect(page: str) -> str:
+    """The report page with its Content-Security-Policy, at the top of its head."""
+    meta = f'<meta http-equiv="Content-Security-Policy" content="{report_csp()}">'
+    head = re.search(r"<head[^>]*>", page, re.IGNORECASE)
+    if head is None:
+        return meta + page
+    return page[: head.end()] + meta + page[head.end() :]
 
 
 def _plain(text: Any) -> str:
@@ -209,7 +243,10 @@ def read_paper(
     if not isinstance(paper, pc.Paper):
         raise UserError(bibr.BAD_FORMAT if from_bibr else BAD_PAPER)
     if len(pc.search_text(paper, ".*")) == 0:
-        raise UserError(NO_TEXT_PDF if suffix == ".pdf" else NO_TEXT)
+        # an answer without text may be a format this version does not know
+        raise UserError(
+            bibr.BAD_FORMAT if from_bibr else NO_TEXT_PDF if suffix == ".pdf" else NO_TEXT
+        )
     return paper
 
 
@@ -221,19 +258,30 @@ class Stopped(BaseException):
 #: the data check whose thread (or a pool thread it started) is running this code
 _JOB: contextvars.ContextVar[DataJob | None] = contextvars.ContextVar("app_data_job", default=None)
 _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+#: a warning as Python prints it: ``file:line: XWarning: text`` and the source line
+_WARNING = re.compile(r"^.*:\d+: \w*Warning: ", re.MULTILINE)
+#: what the library prints that says nothing to the person
+_NOISE = ("are cached in", "repo_cache_clear")
+
+WAITING = "Waiting for another data check to finish."
+OFFLINE = "The data files could not be reached. Check the internet connection and try again."
+#: a place that answers if the computer is online; any answer will do
+PROBES = ("https://api.osf.io/v2/", "https://github.com")
 
 
 class _Stderr:
     """``sys.stderr`` while a data check runs: what it prints goes to the job, not the console."""
 
-    def __init__(self, real: Any) -> None:
+    def __init__(self, real: Any, quiet: bool) -> None:
         self.real = real
+        self.quiet = quiet  # drop what other threads print: the app runs with messages off
 
     def write(self, text: str) -> int:
         job = _JOB.get()
         if job is None:
-            return int(self.real.write(text))
-        job.note(text)
+            return len(text) if self.quiet else int(self.real.write(text))
+        if not _WARNING.search(text):
+            job.note(text)
         return len(text)
 
     def isatty(self) -> bool:
@@ -251,16 +299,38 @@ def _latest(text: str) -> str:
     bar = re.match(r"^(.*?)\s*\[[^\]]*\]\s*(\d+/\d+)?", last)
     if bar and "[" in last:
         last = f"{bar.group(1)} ({bar.group(2)})" if bar.group(2) else bar.group(1)
-    return re.sub(r"^\(?[-\\|/]\)?\s+", "", last)[:160].strip()
+    last = re.sub(r"^\(?[-\\|/]\)?\s+", "", last)[:160].strip()
+    if last.startswith(":") or any(mark in last for mark in _NOISE):
+        return ""  # a bar with no name, or a note about the cache folder
+    return last
 
 
-def data_cache_dir() -> Path | None:
-    """Where downloaded data files are kept between runs (``None``: the library's own place)."""
+def cache_root() -> Path | None:
+    """The folder for all the library's caches (``None``: as the person set it up)."""
     if os.environ.get("PYTACHECK_CACHE_DIR"):
         return None
     import platformdirs
 
-    return Path(platformdirs.user_cache_dir("pytacheck")) / "repo-files"
+    return Path(platformdirs.user_cache_dir("pytacheck"))
+
+
+def data_cache_dir() -> Path | None:
+    """Where downloaded data files are kept between runs (``None``: the library's own place)."""
+    root = cache_root()
+    return root / "repo-files" if root else None
+
+
+def _online() -> bool:
+    """Whether the computer reaches the internet (an answer of any kind counts)."""
+    import httpx
+
+    for url in PROBES:
+        try:
+            httpx.head(url, timeout=5.0, follow_redirects=True)
+        except httpx.HTTPError:
+            continue
+        return True
+    return False
 
 
 class DataJob:
@@ -288,52 +358,80 @@ class DataJob:
         return self.done
 
     def stop(self) -> None:
-        """Ask the check to stop. It stops the next time the library prints a progress text."""
+        """Ask the check to stop. It stops before its next request, download chunk or wait."""
         self._stop.set()
 
-    def note(self, text: str) -> None:
+    def interrupt(self) -> None:
         if self._stop.is_set():
             raise Stopped
+
+    def note(self, text: str) -> None:
+        self.interrupt()
         latest = _latest(text)
         if latest:
             self.message = latest
 
     def _run(self) -> None:
-        from pytacheck.module import run_session, use
-        from pytacheck.report.report import report_module_run
-        from pytacheck.utils import local_options
-
         token = _JOB.set(self)
-        real = sys.stderr
         try:
-            if self._stop.is_set():
-                raise Stopped
-            folder = data_cache_dir()
-            options = {"metacheck.repo_cache.dir": str(folder)} if folder else {}
-            with _RUN_LOCK:
-                if self._stop.is_set():
-                    raise Stopped
-                sys.stderr = _Stderr(real)
-                try:
-                    with (
-                        use(allow_local=False),
-                        run_session(),
-                        local_options(options),
-                        warnings.catch_warnings(),
-                    ):
-                        warnings.simplefilter("ignore")
-                        outputs = report_module_run(
-                            self.paper, list(DATA), args={"data_check": {"cache": True}}
-                        )
-                finally:
-                    sys.stderr = real
-            self.output = outputs.get("data_check")
+            self._take_turn()
+            try:
+                self._check()
+            finally:
+                _DATA_LOCK.release()
         except Stopped:
             self.stopped = True
         except Exception as exc:
             self.error = exc
         finally:
             _JOB.reset(token)
+
+    def _take_turn(self) -> None:
+        if not _DATA_LOCK.acquire(blocking=False):
+            self.message = WAITING
+            while not _DATA_LOCK.acquire(timeout=0.25):
+                self.interrupt()
+        try:
+            self.interrupt()
+        except Stopped:
+            _DATA_LOCK.release()
+            raise
+        self.message = ""
+
+    def _check(self) -> None:
+        from pytacheck import http
+        from pytacheck.config import verbose
+        from pytacheck.module import run_session, use
+        from pytacheck.report.report import report_module_run
+        from pytacheck.utils import local_options
+
+        if not _online():
+            raise OSError(OFFLINE)
+        root, folder = cache_root(), data_cache_dir()
+        options = {"metacheck.cache.dir": str(root)} if root else {}
+        if folder:
+            options["metacheck.repo_cache.dir"] = str(folder)
+        real, was = sys.stderr, verbose()
+        with contextlib.ExitStack() as stack:
+            # listings are fetched fresh every run: only the downloaded files are kept
+            listings = stack.enter_context(tempfile.TemporaryDirectory(prefix="metacheck-app-"))
+            options["metacheck.repo_info_cache.dir"] = listings
+            stack.enter_context(local_options(options))
+            stack.enter_context(use(allow_local=False))
+            stack.enter_context(run_session())
+            stack.enter_context(http.interruptible(self.interrupt))
+            # the library prints its progress to stderr only when messages are on; the job
+            # reads them there and the console does not see them
+            verbose(True)
+            sys.stderr = _Stderr(real, quiet=not was)
+            try:
+                outputs = report_module_run(
+                    self.paper, list(DATA), args={"data_check": {"cache": True}}
+                )
+            finally:
+                sys.stderr = real
+                verbose(was)
+        self.output = outputs.get("data_check")
 
 
 class Run:
@@ -385,7 +483,7 @@ class Run:
             page = render_module_outputs(outputs, self.paper)
         self.target.mkdir(parents=True, exist_ok=True)
         report_path = self.target / report_filename(self.source.stem)
-        report_path.write_text(page, encoding="utf-8")
+        report_path.write_text(protect(page), encoding="utf-8")
         seconds = time.perf_counter() - self.start
         return Analysis(self.source.stem, rows, page, report_path, seconds, pending)
 

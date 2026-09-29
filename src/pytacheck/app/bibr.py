@@ -87,9 +87,16 @@ def show_key(key: str) -> str:
     return f"…{key[-4:]}" if len(key) > 8 else "…"
 
 
-def resolve_key(typed: str | None) -> str:
-    """The key to use: the environment's, else the typed one, else the remembered one."""
-    return os.environ.get(KEY_ENV, "").strip() or (typed or "").strip() or load_key()
+def resolve_key(typed: str | None, *, remembered: bool = True) -> str:
+    """The key to use: the environment's, else the typed one, else the remembered one.
+
+    ``remembered=False`` never reads the saved key: a server shared by several people has none.
+    """
+    return (
+        os.environ.get(KEY_ENV, "").strip()
+        or (typed or "").strip()
+        or (load_key() if remembered else "")
+    )
 
 
 def _list_urls() -> list[str] | None:
@@ -161,7 +168,9 @@ def convert_pdf(path: Path, workdir: Path, key: str) -> Path:
         status = _status(exc)
         if status in (401, 403):
             raise UserError(REFUSED) from None
-        if status is None or status >= 500:
+        if status == 404:
+            raise UserError(NOT_FOUND) from None  # a wrong address
+        if status is None or status == 429 or status >= 500:
             if status is None and str(exc).startswith("Job "):
                 raise UserError(BAD_PDF) from None
             raise UserError(UNAVAILABLE) from None

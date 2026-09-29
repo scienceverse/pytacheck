@@ -5,6 +5,7 @@ The check itself is replaced by a fake: nothing here reaches the network.
 
 from __future__ import annotations
 
+import sys
 import threading
 import time
 from pathlib import Path
@@ -14,8 +15,10 @@ from typing import Any
 import pytest
 
 import pytacheck as pc
+from pytacheck import http
 from pytacheck.app import run, ui
 from pytacheck.app.launch import main
+from pytacheck.config import verbose
 from pytacheck.module import ModuleOutput
 from pytacheck.report import report as report_module
 from pytacheck.report.report import ReportOutput
@@ -53,6 +56,7 @@ class Fake:
 
         assert report_module_run is real
         monkeypatch.setattr(report_module, "report_module_run", fake)
+        monkeypatch.setattr(run, "_online", lambda: True)
 
 
 @pytest.fixture
@@ -82,7 +86,10 @@ def test_the_result_is_a_row_and_part_of_the_report(fake: Fake, tmp_path: Path) 
     assert row.result == "Green: We classified 3 files."
     assert len(analysis.rows) == len(run.selected_checks()) + 1
     assert "The data check found 3 files." in analysis.html
-    assert analysis.report_path.read_text(encoding="utf-8").strip() == analysis.html.strip()
+    assert (
+        analysis.report_path.read_text(encoding="utf-8").strip()
+        == run.protect(analysis.html).strip()
+    )
     assert analysis.data_pending is False
 
 
@@ -175,18 +182,17 @@ def test_stderr_is_put_back(fake: Fake, tmp_path: Path) -> None:
     assert sys.stderr is before
 
 
-def _fn(name: str) -> Any:
+def _handlers() -> dict[str, Any]:
     blocks = ui.build_app()
-    return {fn.name: fn.fn for fn in blocks.fns.values()}[name]
+    return {fn.name: fn.fn for fn in blocks.fns.values()}
 
 
-def _handlers() -> tuple[Any, Any]:
-    blocks = ui.build_app()
-    fns = {fn.name: fn.fn for fn in blocks.fns.values()}
-    return fns["on_demo"], fns["on_stop"]
+def _demo(fns: dict[str, Any], session: str, data: bool = True) -> tuple[Any, ...]:
+    request = SimpleNamespace(session_hash=session)
+    return fns["on_demo"](False, data, "grobid", "", False, request, lambda *_a, **_k: None)
 
 
-def test_the_page_shows_the_fast_results_first(fake: Fake) -> None:
+def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
     release = threading.Event()
 
     def body() -> ModuleOutput:
@@ -195,17 +201,16 @@ def test_the_page_shows_the_fast_results_first(fake: Fake) -> None:
         return _output()
 
     fake.body = body
-    on_demo, _stop = _handlers()
-    request = SimpleNamespace(session_hash="s1")
-    steps = on_demo(False, True, "grobid", "", False, request, lambda *_a, **_k: None)
-    results, summary, table, frame, _download, status, stop = next(steps)
+    fns = _handlers()
+    results, summary, table, frame, _download, status, stop = _demo(fns, "s1")
     assert results["visible"] is True and stop["visible"] is True
     assert "Ran 16 checks" in summary and len(table) == 16
     assert "The other results are ready" in status and "still running" in status
     assert "Data Check" not in frame
+    steps = fns["follow"](SimpleNamespace(session_hash="s1"))
     later = next(steps)  # the status line is kept alive while it runs
     assert "still running" in later[5]
-    assert "Downloading https://osf.io/pngda as zip (25 files)..." in later[5]
+    assert ui.plain_markdown("Downloading https://osf.io/pngda as zip (25 files)...") in later[5]
     release.set()
     final = list(steps)[-1]
     _results, summary, table, frame, _download, status, stop = final
@@ -218,20 +223,18 @@ def test_the_page_shows_the_fast_results_first(fake: Fake) -> None:
 def test_the_stop_button_keeps_the_fast_results(fake: Fake) -> None:
     def body() -> ModuleOutput:
         while True:
-            message("Downloading a file")
+            http.check_interrupt()
             time.sleep(0.01)
 
     fake.body = body
-    on_demo, on_stop = _handlers()
-    request = SimpleNamespace(session_hash="s2")
-    steps = on_demo(False, True, "grobid", "", False, request, lambda *_a, **_k: None)
-    first = next(steps)
+    fns = _handlers()
+    first = _demo(fns, "s2")
     assert first[6]["visible"] is True
-    status, stop = on_stop(request)
+    steps = fns["follow"](SimpleNamespace(session_hash="s2"))
+    assert "still running" in next(steps)[5]
+    status, stop = fns["on_stop"](SimpleNamespace(session_hash="s2"))
     assert status == ui.STOPPED and stop["visible"] is False
-    rest = list(steps)
-    assert rest[-1][5] == ui.STOPPED  # nothing replaces the fast results
-    assert all("Data Check" not in str(step[2]) for step in rest)
+    assert list(steps) == []  # nothing replaces the fast results or the status
 
 
 def test_a_failed_data_check_says_so_and_keeps_the_page(fake: Fake) -> None:
@@ -239,12 +242,42 @@ def test_a_failed_data_check_says_so_and_keeps_the_page(fake: Fake) -> None:
         raise OSError("no route")
 
     fake.body = boom
-    on_demo, _stop = _handlers()
-    request = SimpleNamespace(session_hash="s3")
-    steps = list(on_demo(False, True, "grobid", "", False, request, lambda *_a, **_k: None))
+    fns = _handlers()
+    _demo(fns, "s3")
+    steps = list(fns["follow"](SimpleNamespace(session_hash="s3")))
     *_, table, _frame, _download, status, _stop_button = steps[-1]
     assert table[-1][2] == "Failed: no route"
     assert status == ui.DATA_FAILED
+
+
+def test_the_same_button_works_again_and_a_new_check_ends_the_old_one(fake: Fake) -> None:
+    started: list[threading.Event] = []
+
+    def body() -> ModuleOutput:
+        me = threading.Event()
+        started.append(me)
+        while not me.is_set():
+            http.check_interrupt()
+            time.sleep(0.01)
+        return _output()
+
+    fake.body = body
+    fns = _handlers()
+    _demo(fns, "s4")
+    old = fns["follow"](SimpleNamespace(session_hash="s4"))
+    assert "still running" in next(old)[5]
+    begun = time.monotonic()
+    _demo(fns, "s4", data=False)  # the click returned before, so it can be pressed again
+    assert time.monotonic() - begun < 30
+    assert list(old) == []  # the old check is over and shows nothing more
+    assert fns["follow"](SimpleNamespace(session_hash="s4")).__next__()[5] is not None
+
+
+def test_status_text_from_outside_is_shown_as_text() -> None:
+    job = SimpleNamespace(message='Could not get <img src="https:evil.example/p.png">.csv [x](y)')
+    line = ui.data_status(job, time.monotonic())  # type: ignore[arg-type]
+    assert "<img" not in line.replace("\\<img", "")
+    assert "\\<img src" in line and "\\[x\\]\\(y\\)" in line
 
 
 def test_the_box_is_ticked_and_named(fake: Fake) -> None:
@@ -258,3 +291,170 @@ def test_the_box_is_ticked_and_named(fake: Fake) -> None:
     )
     buttons = [b.value for b in blocks.blocks.values() if type(b).__name__ == "Button"]
     assert "Stop the data check" in buttons
+
+
+# -- what the job does to the library ----------------------------------------------------
+
+
+def _job(tmp_path: Path) -> run.DataJob:
+    return run.begin(pc.demofile("json"), data=True, workdir=tmp_path).data_job()
+
+
+def test_progress_reaches_the_job_although_messages_are_off(fake: Fake, tmp_path: Path) -> None:
+    seen: list[str] = []
+
+    def body() -> ModuleOutput:
+        message("Downloaded files are cached in /some/where and reused (repo_cache_clear())")
+        message("Downloading https://osf.io/pngda as zip (25 files)...")
+        seen.append(job.message)
+        return _output()
+
+    fake.body = body
+    verbose(False)  # as the running app has it
+    try:
+        job = _job(tmp_path)
+        job.start()
+        job.wait()
+        assert verbose() is False  # put back
+    finally:
+        verbose(True)
+    assert seen == ["Downloading https://osf.io/pngda as zip (25 files)..."]
+
+
+def test_stop_ends_a_check_that_prints_nothing(
+    fake: Fake, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("PYTACHECK_NO_SLEEP", raising=False)
+
+    def body() -> ModuleOutput:
+        while True:
+            http.sleep(30)  # a wait between tries, or a slow download
+
+    fake.body = body
+    verbose(False)
+    try:
+        job = _job(tmp_path)
+        job.start()
+        assert not job.wait(0.3)
+        job.stop()
+        assert job.wait(5)
+    finally:
+        verbose(True)
+    assert job.stopped and job.output is None and job.error is None
+
+
+def test_the_fast_checks_do_not_wait_for_the_data_check(fake: Fake, tmp_path: Path) -> None:
+    release = threading.Event()
+
+    def body() -> ModuleOutput:
+        release.wait(20)
+        return _output()
+
+    fake.body = body
+    job = _job(tmp_path)
+    job.start()
+    try:
+        assert not job.wait(0.3)
+        begun = time.monotonic()
+        run.check_paper(pc.demofile("json"), workdir=tmp_path / "other")
+        assert time.monotonic() - begun < 15 and not job.done
+    finally:
+        release.set()
+        job.wait(5)
+
+
+def test_a_second_data_check_waits_its_turn_and_can_be_stopped(fake: Fake, tmp_path: Path) -> None:
+    release = threading.Event()
+    fake.body = lambda: (release.wait(20), _output())[1]
+    first, second = _job(tmp_path), _job(tmp_path)
+    first.start()
+    second.start()
+    try:
+        deadline = time.monotonic() + 5
+        while second.message != run.WAITING and time.monotonic() < deadline:
+            time.sleep(0.05)
+        assert second.message == run.WAITING
+        second.stop()
+        assert second.wait(5) and second.stopped
+        assert not first.done
+    finally:
+        release.set()
+        first.wait(5)
+
+
+def test_all_caches_are_in_the_user_folder_not_the_working_folder(
+    fake: Fake, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from pytacheck.archives.cache import _metacheck_cache_root
+    from pytacheck.archives.info_cache import _repo_info_cache_dir
+
+    monkeypatch.delenv("PYTACHECK_CACHE_DIR", raising=False)
+    seen: dict[str, Any] = {}
+
+    def body() -> ModuleOutput:
+        seen["root"] = _metacheck_cache_root()
+        seen["listings"] = _repo_info_cache_dir()
+        return _output()
+
+    fake.body = body
+    work = tmp_path / "cwd"
+    work.mkdir()
+    monkeypatch.chdir(work)
+    run.check_paper(pc.demofile("json"), data=True, workdir=tmp_path)
+    assert Path(seen["root"]) == tmp_path / "cache"
+    assert not Path(seen["listings"]).is_relative_to(work)
+    assert not Path(seen["listings"]).exists()  # listings are not kept
+    assert list(work.iterdir()) == []
+    assert get_option("metacheck.cache.dir") is None
+    assert get_option("metacheck.repo_info_cache.dir") is None
+
+
+def test_no_internet_is_a_failed_row(
+    fake: Fake, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(run, "_online", lambda: False)
+    analysis = run.check_paper(pc.demofile("json"), data=True, workdir=tmp_path)
+    assert not fake.calls
+    assert analysis.rows[-1].result == f"Failed: {run.OFFLINE}"
+    assert len(analysis.rows) > 5
+
+
+def test_a_warning_is_not_a_progress_text(fake: Fake, tmp_path: Path) -> None:
+    seen: list[str] = []
+
+    def body() -> ModuleOutput:
+        message("Downloading a file")
+        sys.stderr.write("/x/y.py:3: DeprecationWarning: old\n  warnings.warn(x)\n")
+        seen.append(job.message)
+        return _output()
+
+    fake.body = body
+    job = _job(tmp_path)
+    job.start()
+    job.wait()
+    assert seen == ["Downloading a file"]
+
+
+class _Halt(BaseException):
+    pass
+
+
+def _halt() -> None:
+    raise _Halt
+
+
+def test_a_request_or_a_download_ends_when_the_check_says_so() -> None:
+    import respx
+
+    from pytacheck.archives.download import _perform_once
+
+    with respx.mock(assert_all_called=False) as router:
+        route = router.get("https://files.example.test/a.csv").respond(200, content=b"a,b\n1,2\n")
+        assert http.request("GET", "https://files.example.test/a.csv") is not None
+        with http.interruptible(_halt):
+            with pytest.raises(_Halt):
+                http.request("GET", "https://files.example.test/a.csv")
+            with pytest.raises(_Halt):
+                _perform_once({"method": "GET", "url": "https://files.example.test/a.csv"})
+        assert route.call_count == 1
+    http.check_interrupt()  # outside the block nothing happens

@@ -126,6 +126,31 @@ def test_a_service_that_cannot_be_reached(server: FakeBibr, tmp_path: Path) -> N
         check(tmp_path)
 
 
+@pytest.mark.parametrize("status", [429])
+def test_a_busy_service_is_not_the_papers_fault(
+    server: FakeBibr, tmp_path: Path, status: int
+) -> None:
+    server.submit = httpx.Response(status)
+    with pytest.raises(run.UserError, match="not available right now"):
+        check(tmp_path)
+
+
+def test_a_wrong_address_is_not_the_papers_fault(server: FakeBibr, tmp_path: Path) -> None:
+    server.submit = httpx.Response(404)
+    with pytest.raises(run.UserError) as info:
+        check(tmp_path)
+    assert str(info.value) == bibr.NOT_FOUND
+
+
+def test_an_answer_with_no_version_or_text_is_an_unreadable_format(
+    router: respx.MockRouter, tmp_path: Path
+) -> None:
+    FakeBibr(router, orjson.dumps({"title": "x"}))
+    with pytest.raises(run.UserError) as info:
+        check(tmp_path)
+    assert str(info.value) == bibr.BAD_FORMAT
+
+
 def test_a_format_this_version_cannot_read(router: respx.MockRouter, tmp_path: Path) -> None:
     FakeBibr(router, orjson.dumps({"schema_version": "99.0", "text": "x"}))
     with pytest.raises(run.UserError) as info:
@@ -281,10 +306,10 @@ def _handlers() -> dict[str, Any]:
 
 def _on_check(fns: dict[str, Any], path: Path, key: str, remember: bool) -> list[tuple[Any, ...]]:
     request = SimpleNamespace(session_hash="b1")
-    steps = fns["on_check"](
+    step = fns["on_check"](
         str(path), False, False, "bibr", key, remember, request, lambda *_a, **_k: None
     )
-    return list(steps)
+    return [step]
 
 
 def test_the_privacy_text_follows_the_choice() -> None:
@@ -338,3 +363,49 @@ def test_the_key_of_the_settings_is_used_and_never_copied(
     _on_check(_handlers(), _pdf(tmp_path), "", remember=True)
     assert server.requests[0].headers["authorization"] == "Bearer env-key-abcdef"
     assert not bibr.key_path().exists()
+
+
+def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_path: Path) -> None:
+    import gradio as gr
+
+    bibr.save_key("someone-elses-key-7890")
+    assert bibr.resolve_key("", remembered=False) == ""
+    assert bibr.resolve_key("typed-key-abcdef", remembered=False) == "typed-key-abcdef"
+    assert "7890" not in ui.key_note(False)
+    blocks = ui.build_app(remember_keys=False)
+    fns = {fn.name: fn.fn for fn in blocks.fns.values()}
+    assert fns["on_reader"]("bibr")[3]["visible"] is False
+    with pytest.raises(gr.Error, match="Enter your bibr key"):
+        fns["on_check"](
+            str(_pdf(tmp_path)),
+            False,
+            False,
+            "bibr",
+            "",
+            False,
+            SimpleNamespace(session_hash="b2"),
+            lambda *_a, **_k: None,
+        )
+    assert not server.requests
+    step = fns["on_check"](
+        str(_pdf(tmp_path)),
+        False,
+        False,
+        "bibr",
+        "typed-key-abcdef",
+        True,  # asked to remember, but this server does not
+        SimpleNamespace(session_hash="b2"),
+        lambda *_a, **_k: None,
+    )
+    assert step[1].startswith("Ran ")
+    assert bibr.load_key() == "someone-elses-key-7890"  # untouched
+
+
+def test_the_note_and_the_forget_button_follow_a_successful_check() -> None:
+    blocks = ui.build_app()
+    targets = [
+        [b._id for b in dep.outputs]
+        for dep in blocks.fns.values()
+        if dep.name == "on_reader" and dep.targets and dep.targets[0][1] == "success"
+    ]
+    assert targets, "on_reader must run after a check"

@@ -5,11 +5,13 @@ from __future__ import annotations
 import atexit
 import html
 import os
+import re
 import shutil
 import tempfile
 import threading
 import time
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import quote
@@ -18,7 +20,7 @@ import gradio as gr
 
 from pytacheck.app import bibr
 from pytacheck.app.checks import validated_checks
-from pytacheck.app.run import Analysis, DataJob, UserError, begin, scratch_dir
+from pytacheck.app.run import Analysis, DataJob, Run, UserError, begin, protect, scratch_dir
 
 __all__ = [
     "ABOUT_DATA",
@@ -27,7 +29,6 @@ __all__ = [
     "BLOCKS_KWARGS",
     "MOUNT_KWARGS",
     "QUEUE_KWARGS",
-    "REPORT_CSP",
     "REPORT_SANDBOX",
     "Sessions",
     "build_app",
@@ -56,13 +57,6 @@ MOUNT_KWARGS: dict[str, Any] = {
 #: Nothing more: no same-origin access, no forms, no navigation of this page. Tested in
 #: Chromium: with "allow-scripts" alone the report's script works but its links do not.
 REPORT_SANDBOX = "allow-scripts allow-popups allow-popups-to-escape-sandbox"
-
-#: The report needs no outside resource. A paper's text reaches it unescaped (as in R), so
-#: this stops a script or a stylesheet in a paper from loading or sending anything.
-REPORT_CSP = (
-    "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; "
-    "img-src data:; font-src data:"
-)
 
 ABOUT_VALIDATED = (
     "Error rates as published in the documentation of R metacheck 0.3.1. The R version "
@@ -119,13 +113,11 @@ FAILED = "Something went wrong while checking this paper. Try the demo paper or 
 
 
 def report_frame(page: str) -> str:
-    """The report inside a sandboxed iframe, with a policy that blocks outside requests."""
-    meta = f'<meta http-equiv="Content-Security-Policy" content="{REPORT_CSP}">'
-    page = meta + page
+    """The report inside a sandboxed iframe, under a policy that lets only its own script run."""
     return (
         f'<iframe title="Report" sandbox="{REPORT_SANDBOX}" '
         'style="width:100%;height:75vh;border:0;background:#fff" '
-        f'srcdoc="{html.escape(page, quote=True)}"></iframe>'
+        f'srcdoc="{html.escape(protect(page), quote=True)}"></iframe>'
     )
 
 
@@ -169,14 +161,19 @@ def privacy_text(reader: str) -> str:
     return PRIVACY_BIBR if reader == "bibr" else PRIVACY
 
 
-def key_note() -> str:
+def key_note(remembered: bool = True) -> str:
     """What to say under the key field."""
     if os.environ.get(bibr.KEY_ENV, "").strip():
         return KEY_ENV_NOTE
-    saved = bibr.load_key()
+    saved = bibr.load_key() if remembered else ""
     if saved:
         return f"A key is saved on this computer ({bibr.show_key(saved)}). {KEY_ONLY_BIBR}"
     return KEY_ONLY_BIBR
+
+
+def plain_markdown(text: str) -> str:
+    """Text from outside as Markdown that shows it as it is: no tags, links or emphasis."""
+    return re.sub(r"([\\`*_{}\[\]()#+\-.!|~<>&])", r"\\\1", text)
 
 
 def data_status(job: DataJob, started: float) -> str:
@@ -185,14 +182,25 @@ def data_status(job: DataJob, started: float) -> str:
         "The other results are ready. The data check is still running "
         f"({time.monotonic() - started:.0f} s)."
     )
-    return f"{text} {job.message}" if job.message else text
+    return f"{text} {plain_markdown(job.message)}" if job.message else text
 
 
-def build_app(sessions: Sessions | None = None) -> gr.Blocks:
+@dataclass(frozen=True)
+class Pending:
+    """A data check that runs for one browser session, after its fast results are shown."""
+
+    run: Run
+    job: DataJob
+    started: float
+
+
+def build_app(sessions: Sessions | None = None, *, remember_keys: bool = True) -> gr.Blocks:
+    """The page. ``remember_keys=False`` (for a server shared by several people) never saves a
+    bibr key and never offers one that was saved."""
     from pytacheck._version import __version__
 
     sessions = sessions or Sessions()
-    jobs: dict[str, DataJob] = {}
+    pending: dict[str, Pending] = {}
 
     def page(analysis: Analysis, session: str) -> tuple[Any, ...]:
         return (
@@ -203,6 +211,12 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
             _download_link(session, analysis.report_path),
         )
 
+    def leave(session: str) -> None:
+        """End the data check this session has running (a new check or Stop replaces it)."""
+        old = pending.pop(session, None)
+        if old is not None:
+            old.job.stop()
+
     def run(
         path: str | None,
         online: bool,
@@ -212,9 +226,10 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
         remember: bool,
         session: str,
         progress: Any,
-    ) -> Iterator[tuple[Any, ...]]:
+    ) -> tuple[Any, ...]:
         if not path:
             raise gr.Error("Upload a paper first, or use the demo paper.", print_exception=False)
+        leave(session)
         use_bibr = reader == "bibr"
         try:
             with scratch_dir() as work:
@@ -226,7 +241,7 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
                     report_dir=sessions.folder(session),
                     progress=lambda fraction, text: progress(fraction, desc=text),
                     pdf=reader,
-                    bibr_key=bibr.resolve_key(key) if use_bibr else "",
+                    bibr_key=bibr.resolve_key(key, remembered=remember_keys) if use_bibr else "",
                 )
         except UserError as exc:
             raise gr.Error(str(exc), print_exception=False) from exc
@@ -234,32 +249,53 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
             raise gr.Error(FAILED) from exc
         # only a key that just worked for a PDF is saved; the key from the settings never is
         env_key = os.environ.get(bibr.KEY_ENV, "").strip()
-        if use_bibr and remember and key.strip() and path.lower().endswith(".pdf") and not env_key:
+        if (
+            remember_keys
+            and use_bibr
+            and remember
+            and key.strip()
+            and path.lower().endswith(".pdf")
+            and not env_key
+        ):
             bibr.save_key(key.strip())
         if not data:
-            yield (*page(started.analysis, session), "", gr.update(visible=False))
-            return
+            return (*page(started.analysis, session), "", gr.update(visible=False))
         job = started.data_job()
-        jobs[session] = job
+        entry = Pending(started, job, time.monotonic())
+        pending[session] = entry
         job.start()
-        clock = time.monotonic()
-        try:
-            yield (
-                *page(started.analysis, session),
-                data_status(job, clock),
-                gr.update(visible=True),
-            )
-            while not job.wait(1.0):
-                yield (*(gr.skip() for _ in range(5)), data_status(job, clock), gr.skip())
-        finally:
-            if jobs.get(session) is job:
-                del jobs[session]
-            if not job.done:
-                job.stop()  # the person left or pressed stop
-        if job.stopped:
-            yield (*(gr.skip() for _ in range(5)), STOPPED, gr.update(visible=False))
+        return (
+            *page(started.analysis, session),
+            data_status(job, entry.started),
+            gr.update(visible=True),
+        )
+
+    def follow(request: gr.Request) -> Iterator[tuple[Any, ...]]:
+        """The data check of this session: keep the status line alive, then show the result."""
+        session = request.session_hash or ""
+        entry = pending.get(session)
+        skip = tuple(gr.skip() for _ in range(5))
+        if entry is None:
+            yield (*skip, gr.skip(), gr.skip())
             return
-        final = started.finish(job)
+        job = entry.job
+        try:
+            while not job.wait(1.0):
+                if pending.get(session) is not entry:
+                    return  # a new check or Stop took over
+                yield (*skip, data_status(job, entry.started), gr.skip())
+            mine = pending.get(session) is entry
+        finally:
+            if pending.get(session) is entry:
+                del pending[session]
+            if not job.done:
+                job.stop()  # the person left
+        if not mine:
+            return
+        if job.stopped:
+            yield (*skip, STOPPED, gr.update(visible=False))
+            return
+        final = entry.run.finish(job)
         failed = job.error is not None or (
             job.output is not None and job.output.traffic_light == "fail"
         )
@@ -274,8 +310,8 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
         remember: bool,
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
-    ) -> Iterator[tuple[Any, ...]]:
-        yield from run(
+    ) -> tuple[Any, ...]:
+        return run(
             upload, online, data, reader, key, remember, request.session_hash or "", progress
         )
 
@@ -287,10 +323,10 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
         remember: bool,
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
-    ) -> Iterator[tuple[Any, ...]]:
+    ) -> tuple[Any, ...]:
         from pytacheck.papers.io import demofile
 
-        yield from run(
+        return run(
             str(demofile("json")),
             online,
             data,
@@ -302,22 +338,20 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
         )
 
     def on_stop(request: gr.Request) -> tuple[Any, ...]:
-        job = jobs.get(request.session_hash or "")
-        if job is not None:
-            job.stop()
+        leave(request.session_hash or "")
         return STOPPED, gr.update(visible=False)
 
     def on_reader(reader: str) -> tuple[Any, ...]:
         return (
             gr.update(visible=reader == "bibr"),
             privacy_text(reader),
-            key_note(),
-            gr.update(visible=bool(bibr.load_key())),
+            key_note(remember_keys),
+            gr.update(visible=remember_keys and bool(bibr.load_key())),
         )
 
     def on_forget() -> tuple[Any, ...]:
         bibr.forget_key()
-        return key_note(), gr.update(visible=False)
+        return key_note(remember_keys), gr.update(visible=False)
 
     with gr.Blocks(**BLOCKS_KWARGS) as app:
         gr.Markdown(f"# metacheck\n\nPython version, preview {__version__}")
@@ -330,7 +364,9 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
         reader = gr.Radio(READERS, value="grobid", label="Read PDFs with")
         with gr.Group(visible=False) as key_group:
             key = gr.Textbox(label="Your bibr key", type="password")
-            remember = gr.Checkbox(label="Remember the key on this computer", value=False)
+            remember = gr.Checkbox(
+                label="Remember the key on this computer", value=False, visible=remember_keys
+            )
             note = gr.Markdown(KEY_ONLY_BIBR)
             forget = gr.Button("Forget the saved key", size="sm", visible=False)
         privacy = gr.Markdown(PRIVACY)
@@ -368,21 +404,30 @@ def build_app(sessions: Sessions | None = None) -> gr.Blocks:
 
         outputs = [results, summary, table, frame, download, status, stop]
         inputs = [online, data, reader, key, remember]
-        started = [
+        keys = [key_group, privacy, note, forget]
+        # a click ends with the fast results; the data check goes on in a second event, so
+        # that the same button works again and a new check or Stop can end it
+        clicked = [
             check.click(on_check, [upload, *inputs], outputs, api_visibility="private"),
             demo.click(on_demo, inputs, outputs, api_visibility="private"),
         ]
+        following = []
+        for event in clicked:
+            following.append(
+                event.success(
+                    follow, None, outputs, concurrency_limit=None, api_visibility="private"
+                )
+            )
+            event.success(on_reader, reader, keys, concurrency_limit=None, api_visibility="private")
         stop.click(
             on_stop,
             None,
             [status, stop],
-            cancels=cast(Any, started),
+            cancels=cast(Any, following),
             concurrency_limit=None,
             api_visibility="private",
         )
-        reader.change(
-            on_reader, reader, [key_group, privacy, note, forget], api_visibility="private"
-        )
+        reader.change(on_reader, reader, keys, api_visibility="private")
         forget.click(on_forget, None, [note, forget], api_visibility="private")
     app.queue(**QUEUE_KWARGS)
     return cast(gr.Blocks, app)
