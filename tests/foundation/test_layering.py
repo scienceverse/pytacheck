@@ -34,8 +34,9 @@ counts as an import, so ``pytacheck.text_search(...)``, which loads ``text``
 through the top-level lazy ``__getattr__``, is an upward edge. A chain is judged
 by the name it resolves to and by each module it reads a bound name from, so
 ``pytacheck.llm.Paper`` and ``pytacheck.llm.r.bind_rows`` are edges to ``llm``.
-The top level is judged by the name alone, so ``pytacheck.Paper`` is the
-foundation's ``Paper``.
+A from-import is judged the same way: by the package it runs, and by the name it
+resolves to when that package is in the foundation. The top level is judged by
+the name alone, so ``pytacheck.Paper`` is the foundation's ``Paper``.
 
 **Core.** Once ``core/**`` exists it keeps the positive list of §2.1: it imports
 only the foundation above and the core itself. §2.6 adds what ``core/run.py``
@@ -46,7 +47,8 @@ needs for settings and caches: ``config``, ``llm``, the cache store (``cache``),
 and from ``packs`` only ``registry``, so run.py may not import a runner built on
 ``execute()``, such as ``run_session`` or ``pack check``. It may import
 ``pytacheck.module`` or ``pytacheck.utils`` as a namespace; each name it then
-uses is judged on its own. Where §2.1 and §2.6 collide, §2.6 wins, but only
+uses is judged on its own. A star import of either is reported, since the names
+it binds are used bare. Where §2.1 and §2.6 collide, §2.6 wins, but only
 for run.py and only for those names. The positive list judges a name as it is
 written. The top level is a façade: ``from pytacheck import x`` is reported
 under x's layer when that layer is banned below, and as an import of the top
@@ -240,7 +242,7 @@ class _Visitor(ast.NodeVisitor):
             return
         for alias in node.names:
             if alias.name == "*":
-                self._use((base, ""), node.lineno)
+                self._use((base, "*"), node.lineno)
                 continue
             self._use((base, alias.name), node.lineno)
             self._bind(alias.asname or alias.name, (base, alias.name))
@@ -387,8 +389,13 @@ def violations(root: Path) -> dict[tuple[str, str, str], Edge]:
         symbol = edge.resolved
         if _under(edge.module, FOUNDATION):
             # a name reached by attribute is judged where it is defined, and by each
-            # module it is read from; the top level is judged by the name alone
-            targets = [symbol, *edge.via] if edge.note == "attribute" else [edge.target]
+            # module it is read from; a from-import is judged like that chain: by the
+            # package it runs, and by the name when the package is in the foundation;
+            # the top level is judged by the name alone
+            if edge.note == "attribute":
+                targets = [symbol, *edge.via]
+            else:
+                targets = [edge.target] + ([symbol] if _under(edge.target, LOWER) else [])
             for target in targets:
                 if _under(target, PKG) and not _under(target, LOWER):
                     found.setdefault(("lower", edge.path, target), edge)
@@ -672,6 +679,9 @@ def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
         ("import pytacheck.module as m\nm.run_session()\n", "module.run_session"),
         # utils is there for the options overlay alone
         ("from pytacheck.utils import left_join\n", "utils"),
+        # a star import of a whole module binds names that are used bare
+        ("from pytacheck.module import *\n", "module"),
+        ("from pytacheck.utils import *\n", "utils"),
         ("import pytacheck.utils as u\nu.online()\n", "utils.online"),
     ],
 )
@@ -836,6 +846,7 @@ SPELLINGS = [
     ("from pytacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
     ("from pytacheck.llm import stage\n", [("llm", "llm.stage", "module.module_run")]),
     ("from pytacheck.llm import walk\n", [("llm", "llm.walk", "module.module_run")]),
+    ("from pytacheck.llm import step\n", [("llm", "llm.step", "module.module_run")]),
     ("from pytacheck.llm import paint\n", [("llm", "llm.paint", "report")]),
     # an import in a function or class of an __init__ binds nothing in the package
     ("from pytacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
@@ -949,6 +960,21 @@ def test_foundation_sees_each_package_a_chain_reads_from(tmp_path: Path) -> None
         "_json.py": "import pytacheck._r\nx = pytacheck._r.up.Paper\n",
     }
     assert ("lower", "_json.py", f"{PKG}.llm") in found_in(tmp_path, files)
+
+
+@pytest.mark.parametrize(
+    ("init", "layer"),
+    [
+        ("import pytacheck.text.search as ts\n", "text.search"),
+        ("from pytacheck.text.search import text_search as ts\n", "text.search.text_search"),
+    ],
+)
+def test_foundation_judges_a_from_import_like_a_chain(
+    tmp_path: Path, init: str, layer: str
+) -> None:
+    """``ts`` is read from ``_r``, which binds it to a module above the foundation."""
+    files = {"_r/__init__.py": init, "_json.py": "from pytacheck._r import ts\n"}
+    assert ("lower", "_json.py", f"{PKG}.{layer}") in found_in(tmp_path, files)
 
 
 def test_foundation_modules_import_only_each_other(tmp_path: Path) -> None:
