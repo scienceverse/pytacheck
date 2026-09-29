@@ -71,6 +71,8 @@ api = [
     "uvicorn[standard]>=0.30",
     "python-multipart>=0.0.31",
 ]
+# The local demo app: `metacheck-app` opens a Gradio page in the browser.
+app = ["gradio>=6.28,<7"]
 # Character-set detection for files that are not UTF-8 (chardet, 0BSD since 7.0).
 charset = ["chardet>=7"]
 all = ["pytacheck[bibr,data,api,charset]"]
@@ -85,6 +87,7 @@ Upstream = "https://github.com/scienceverse/metacheck"
 
 [project.scripts]
 pytacheck = "pytacheck.cli:main"
+metacheck-app = "pytacheck.app:main"
 
 [project.entry-points."pytacheck.modules"]
 # Third-party packages can register modules under this entry-point group.

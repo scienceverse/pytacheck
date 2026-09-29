@@ -2,6 +2,8 @@
 
 **Check research outputs for best practices — in Python.**
 
+**Try it:** a preview app that runs on your own computer, installed with one command. See [docs/TRY.md](docs/TRY.md).
+
 pytacheck is a fast, Python-native port of ScienceVerse's
 [metacheck](https://github.com/scienceverse/metacheck) R package, designed to work
 hand in hand with [bibr](https://bibr.org). It follows metacheck's `dev` branch (for now

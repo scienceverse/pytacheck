@@ -1,0 +1,146 @@
+"""Guards for the local server: Host check, per-launch token, remote-file block.
+
+A pure ASGI middleware, so it also covers websockets and Gradio's own routes.
+
+Browsers send a cookie for 127.0.0.1 to every port, so another program on this computer
+that a person visits in the same browser can see the token cookie. Nothing in a plain-http
+cookie prevents that. The guard therefore also refuses requests that another local page
+starts (``Origin`` and ``Sec-Fetch-Site``), and the app only reads files that were
+uploaded through the page.
+"""
+
+from __future__ import annotations
+
+import html
+import secrets
+from urllib.parse import parse_qsl, quote, urlencode
+
+from starlette.requests import cookie_parser
+from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
+from starlette.types import ASGIApp, Receive, Scope, Send
+
+__all__ = ["DENIED_PAGE", "TokenGuard", "cookie_name"]
+
+DENIED_PAGE = (
+    "<!doctype html><html lang=en><meta charset=utf-8><title>metacheck</title>"
+    "<body style='font-family:sans-serif;max-width:32rem;margin:4rem auto;padding:0 1rem'>"
+    "<p>Open metacheck from the link that the metacheck-app command printed.</p></body></html>"
+)
+HEALTH_PATH = "/healthz"
+#: Gradio fetches a remote URL when asked for ``/gradio_api/file=<url>`` or, on its
+#: deprecated route, ``/gradio_api/file/<url>``
+FILE_ROUTES = ("/gradio_api/file=", "/gradio_api/file/")
+#: ``Sec-Fetch-Site`` values of a request that another page starts
+FOREIGN_SITES = ("same-site", "cross-site")
+
+
+def cookie_name(port: int) -> str:
+    """Cookies are shared between ports on one host, so each port gets its own name."""
+    return f"metacheck_{port}"
+
+
+class TokenGuard:
+    def __init__(self, app: ASGIApp, *, port: int, token: str) -> None:
+        self.app = app
+        self.token = token
+        self.cookie = cookie_name(port)
+        self.hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
+        self.origins = {f"http://{host}" for host in self.hosts}
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] not in ("http", "websocket"):
+            await self.app(scope, receive, send)
+            return
+        headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope["headers"]}
+        if headers.get("host", "").lower() not in self.hosts:
+            await self._deny(scope, receive, send)
+            return
+        path = scope["path"]
+        if scope["type"] == "http" and path == HEALTH_PATH:
+            await JSONResponse({"ok": True})(scope, receive, send)
+            return
+        if self._foreign(scope, headers):
+            await self._deny(scope, receive, send)
+            return
+        query = parse_qsl(scope["query_string"].decode("latin-1"), keep_blank_values=True)
+        given = next((v for k, v in query if k == "token"), None)
+        if given is not None and self._same(given):
+            if scope["type"] == "http":
+                await self._redirect(scope, query, headers)(scope, receive, send)
+            else:
+                await self._deny(scope, receive, send)
+            return
+        # lenient, like Starlette's own: another program's cookie must not lock us out
+        value = cookie_parser(headers.get("cookie", "")).get(self.cookie)
+        if value is None or not self._same(value):
+            await self._deny(scope, receive, send)
+            return
+        if self._remote_file(path):
+            await self._not_found(scope, receive, send)
+            return
+        await self.app(scope, receive, send)
+
+    def _foreign(self, scope: Scope, headers: dict[str, str]) -> bool:
+        """True for a request that a page on another origin started."""
+        origin = headers.get("origin")
+        if origin is not None and origin.lower() not in self.origins:
+            return True
+        if headers.get("sec-fetch-site") in FOREIGN_SITES:
+            # A plain page load may come from elsewhere (the launcher's local redirect
+            # page, or a link). The page cannot read the answer.
+            page_load = (
+                scope["type"] == "http"
+                and scope["method"] in ("GET", "HEAD")
+                and headers.get("sec-fetch-mode") == "navigate"
+                and headers.get("sec-fetch-dest") == "document"
+            )
+            return not page_load
+        return False
+
+    @staticmethod
+    def _remote_file(path: str) -> bool:
+        """True for a file route that is asked to fetch a URL."""
+        lower = path.lower()
+        for route in FILE_ROUTES:
+            if route in lower:
+                tail = lower.split(route, 1)[1]
+                return "http:" in tail or "https:" in tail or "//" in tail
+        return False
+
+    def _same(self, value: str) -> bool:
+        return secrets.compare_digest(value.encode("utf-8"), self.token.encode("utf-8"))
+
+    def _redirect(
+        self, scope: Scope, query: list[tuple[str, str]], headers: dict[str, str]
+    ) -> Response:
+        rest = urlencode([(k, v) for k, v in query if k != "token"])
+        target = quote(scope["path"]) + (f"?{rest}" if rest else "")
+        response: Response
+        if headers.get("sec-fetch-site") in FOREIGN_SITES:
+            # A redirect keeps the site of the request that started it, so the browser
+            # would not send the strict cookie on the next step. A page of ours starts it.
+            page = (
+                f"<!doctype html><meta charset=utf-8>"
+                f'<meta http-equiv=refresh content="0;url={html.escape(target, quote=True)}">'
+            )
+            response = HTMLResponse(page)
+        else:
+            response = RedirectResponse(target, status_code=303)
+        response.set_cookie(
+            self.cookie, self.token, httponly=True, samesite="strict", path="/", secure=False
+        )
+        response.headers["Referrer-Policy"] = "no-referrer"
+        return response
+
+    async def _deny(self, scope: Scope, receive: Receive, send: Send) -> None:
+        await self._refuse(scope, receive, send, HTMLResponse(DENIED_PAGE, status_code=403))
+
+    async def _not_found(self, scope: Scope, receive: Receive, send: Send) -> None:
+        await self._refuse(scope, receive, send, JSONResponse({"detail": "Not found"}, 404))
+
+    @staticmethod
+    async def _refuse(scope: Scope, receive: Receive, send: Send, response: Response) -> None:
+        if scope["type"] == "websocket":
+            await send({"type": "websocket.close", "code": 1008})
+            return
+        await response(scope, receive, send)
