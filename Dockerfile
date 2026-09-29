@@ -6,7 +6,8 @@
 #   docker build -t pytacheck:bibr --build-arg WITH_BIBR=1 .      # + bibr, reads PDF/DOCX directly
 #
 #   docker run --rm -v "$PWD:/work" pytacheck run paper.json -m all_p_values
-#   docker run --rm -p 8000:8000 pytacheck serve --host 0.0.0.0
+#   docker run --rm -p 8000:8000 -e PYTACHECK_API_KEY pytacheck serve --host 0.0.0.0
+#                                 (a key of 32+ characters; without one, serve refuses 0.0.0.0)
 #   --build-arg BASE_IMAGE=public.ecr.aws/docker/library/python:3.12-slim   # a Docker Hub mirror
 ARG PYTHON_VERSION=3.12
 ARG BASE_IMAGE=python:${PYTHON_VERSION}-slim

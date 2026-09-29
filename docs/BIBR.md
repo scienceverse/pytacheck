@@ -83,8 +83,13 @@ For a shared, warm extraction service use bibr's server (or the Scienceverse
 platform) with `convert_bibr()`, or run both services with Docker:
 
 ```bash
-docker compose up        # pytacheck API on :8000, bibr on :8001
+export PYTACHECK_API_KEY=...   # 32 or more characters; see API.md
+docker compose up              # pytacheck API on :8000, bibr on 127.0.0.1:8001
 ```
+
+Every compose command needs `PYTACHECK_API_KEY` (a `.env` file next to
+`docker-compose.yml` works; see API.md). bibr has no key, so its port is published on
+the loopback address only.
 
 The `pytacheck:<version>-bibr` image bundles bibr so the API accepts PDF uploads
 directly.

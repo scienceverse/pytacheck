@@ -101,7 +101,8 @@ pytacheck pack new my-checks                     # write your own
 
 Installed packs are pinned to a commit and a file hash, every result records
 which code produced it, and `pytacheck rerun run.json paper.json` replays a run.
-See [docs/MODULES.md](docs/MODULES.md) for the user and author guides.
+See [docs/MODULES.md](docs/MODULES.md) for the user and author guides and
+[docs/API.md](docs/API.md) for the REST API and its API key.
 
 ## How it relates to metacheck
 

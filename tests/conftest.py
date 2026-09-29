@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
 # packs from the real data dir, unless the caller set these explicitly.
 _CALLER_DATA_DIR = os.environ.get("PYTACHECK_DATA_DIR")
 os.environ.setdefault("PYTACHECK_CONFIG", "none")
+os.environ.pop("PYTACHECK_API_KEY", None)  # the API tests start without a key
 
 UPSTREAM = ROOT / "upstream" / "metacheck"
 FIXTURES = UPSTREAM / "tests" / "testthat" / "fixtures"

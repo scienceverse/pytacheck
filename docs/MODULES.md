@@ -315,7 +315,8 @@ config at all), `PYTACHECK_DATA_DIR` (installed packs and store caches),
 `PYTACHECK_PRESET`, `PYTACHECK_STORE_URL` (a mirror for the `pytacheck` store),
 `PYTACHECK_GITHUB_TOKEN` (read access to private GitHub stores and packs; see
 below) and, for the API, `PYTACHECK_API_MAX_CHECKS` (how many uploads are checked at
-once; default: the number of CPUs).
+once; default: the number of CPUs) and `PYTACHECK_API_KEY` (see
+[API.md](API.md)).
 
 **Stores.** The store `pytacheck` is built in. Add your lab's or institute's to
 your user config (a project's `pytacheck.json` cannot hold stores):
