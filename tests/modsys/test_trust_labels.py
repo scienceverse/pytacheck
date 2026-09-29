@@ -226,9 +226,18 @@ def test_a_store_pack_reports_the_recorded_source_not_the_pins(ms) -> None:
     assert (prov["trust"], prov["source"]) == ("store", {"github": "someone/demo", "rev": REV_A})
 
 
-def test_a_store_pack_still_has_its_rev_and_tree_checked_against_the_pin(ms) -> None:
+def test_a_store_pack_still_has_its_tree_checked_against_the_pin(ms) -> None:
     ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, pin=False)
     ms.pin("demo", {"source": FORK, "rev": REV_A, "tree_sha256": "0" * 64})
+    with pytest.raises(PackError, match="does not match its pin"):
+        get_pack("demo")
+
+
+def test_a_store_pack_still_has_its_rev_checked_against_the_pin(ms) -> None:
+    ms.install("demo", {"hello": mod_src("hello")}, rev=REV_A, pin=False)
+    tree = _record(ms, REV_A)["tree_sha256"]
+    # the same first 12 digits, so the pin finds the same folder, but another commit
+    ms.pin("demo", {"source": FORK, "rev": REV_A[:12] + "b" * 28, "tree_sha256": tree})
     with pytest.raises(PackError, match="does not match its pin"):
         get_pack("demo")
 
