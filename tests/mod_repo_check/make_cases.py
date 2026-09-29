@@ -35,7 +35,7 @@ DEMO_JSON = "upstream/metacheck/inst/demos/to_err_is_human.json"
 BIBR12 = "upstream/metacheck/tests/testthat/fixtures/bibr12/"
 
 # the file_location column is never compared in these four cases: R raises an error
-# (the nameless ones), or the row count differs (U121) and the comparison stops there
+# (the nameless ones), or the row count differs (U121), so no column values are compared
 NO_TABLE_COMPARE = ["table.file_location"]
 
 
