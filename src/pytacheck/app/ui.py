@@ -9,6 +9,7 @@ import tempfile
 import threading
 from pathlib import Path
 from typing import Any, cast
+from urllib.parse import quote
 
 import gradio as gr
 
@@ -21,7 +22,9 @@ __all__ = [
     "BLOCKS_KWARGS",
     "MOUNT_KWARGS",
     "QUEUE_KWARGS",
+    "REPORT_CSP",
     "REPORT_SANDBOX",
+    "Sessions",
     "build_app",
     "report_frame",
 ]
@@ -49,6 +52,13 @@ MOUNT_KWARGS: dict[str, Any] = {
 #: Chromium: with "allow-scripts" alone the report's script works but its links do not.
 REPORT_SANDBOX = "allow-scripts allow-popups allow-popups-to-escape-sandbox"
 
+#: The report needs no outside resource. A paper's text reaches it unescaped (as in R), so
+#: this stops a script or a stylesheet in a paper from loading or sending anything.
+REPORT_CSP = (
+    "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; "
+    "img-src data:; font-src data:"
+)
+
 ABOUT_VALIDATED = (
     "Error rates as published in the documentation of R metacheck 0.3.1. The R version "
     "and PDF pipeline they were measured with are not recorded. Not yet re-measured on "
@@ -64,19 +74,26 @@ INTRO = (
 )
 PRIVACY = (
     "PDFs are turned into text by the public GROBID server at TU Eindhoven, which R "
-    "metacheck also uses, so a PDF you upload is sent there. XML and JSON files are "
-    "checked on this computer."
+    "metacheck also uses, so a PDF you upload is sent there. If that server does not "
+    "answer, the PDF goes to a public GROBID server hosted on Hugging Face instead. "
+    "XML and JSON files are checked on this computer."
 )
 CREDIT = (
     "metacheck is by Lisa DeBruine, Cristian Mesquida, Jakub Werner, Daniel Lakens and "
     f"contributors. This is the Python version: [{REPO_URL}]({REPO_URL})."
 )
-CSS = ".gradio-container{max-width:1100px !important} #report-frame iframe{width:100%}"
+CSS = (
+    ".gradio-container{max-width:1100px !important} #report-frame iframe{width:100%} "
+    "#download-report a{display:inline-block;padding:8px 16px;border:1px solid "
+    "var(--border-color-primary);border-radius:8px;text-decoration:none;font-weight:600}"
+)
 FAILED = "Something went wrong while checking this paper. Try the demo paper or another file."
 
 
 def report_frame(page: str) -> str:
-    """The report inside a sandboxed iframe."""
+    """The report inside a sandboxed iframe, with a policy that blocks outside requests."""
+    meta = f'<meta http-equiv="Content-Security-Policy" content="{REPORT_CSP}">'
+    page = meta + page
     return (
         f'<iframe title="Report" sandbox="{REPORT_SANDBOX}" '
         'style="width:100%;height:75vh;border:0;background:#fff" '
@@ -84,20 +101,35 @@ def report_frame(page: str) -> str:
     )
 
 
-class _Sessions:
+class Sessions:
     """One temporary folder per browser session for the report file to download."""
 
     def __init__(self) -> None:
-        self._root = Path(tempfile.mkdtemp(prefix="metacheck-app-reports-"))
+        self.root = Path(tempfile.mkdtemp(prefix="metacheck-app-reports-"))
         self._lock = threading.Lock()
-        atexit.register(shutil.rmtree, self._root, ignore_errors=True)
+        atexit.register(shutil.rmtree, self.root, ignore_errors=True)
+
+    @staticmethod
+    def safe(session: str) -> str:
+        return "".join(c for c in session if c.isalnum()) or "session"
 
     def folder(self, session: str) -> Path:
         """A fresh folder for this session; the session's previous one is removed."""
-        safe = "".join(c for c in session if c.isalnum()) or "session"
         with self._lock:
-            shutil.rmtree(self._root / safe, ignore_errors=True)
-            return self._root / safe
+            shutil.rmtree(self.root / self.safe(session), ignore_errors=True)
+            return self.root / self.safe(session)
+
+    def file(self, session: str, name: str) -> Path | None:
+        """The report ``name`` of this session, if it is there."""
+        path = (self.root / self.safe(session) / name).resolve()
+        if path.is_relative_to(self.root.resolve()) and path.is_file():
+            return path
+        return None
+
+
+def _download_link(session: str, path: Path) -> str:
+    href = f"/report/{Sessions.safe(session)}/{quote(path.name)}"
+    return f'<a href="{href}" download="{html.escape(path.name)}">Download the report</a>'
 
 
 def _summary(analysis: Analysis) -> str:
@@ -105,14 +137,14 @@ def _summary(analysis: Analysis) -> str:
     return f"Ran {n} checks on **{analysis.name}** in {analysis.seconds:.1f} s."
 
 
-def build_app() -> gr.Blocks:
+def build_app(sessions: Sessions | None = None) -> gr.Blocks:
     from pytacheck._version import __version__
 
-    sessions = _Sessions()
+    sessions = sessions or Sessions()
 
     def run(path: str | None, online: bool, session: str, progress: Any) -> tuple[Any, ...]:
         if not path:
-            raise gr.Error("Upload a paper first, or use the demo paper.")
+            raise gr.Error("Upload a paper first, or use the demo paper.", print_exception=False)
         try:
             with scratch_dir() as work:
                 analysis = check_paper(
@@ -123,7 +155,7 @@ def build_app() -> gr.Blocks:
                     progress=lambda fraction, text: progress(fraction, desc=text),
                 )
         except UserError as exc:
-            raise gr.Error(str(exc)) from exc
+            raise gr.Error(str(exc), print_exception=False) from exc
         except Exception as exc:
             raise gr.Error(FAILED) from exc
         return (
@@ -131,7 +163,7 @@ def build_app() -> gr.Blocks:
             _summary(analysis),
             [row.cells() for row in analysis.rows],
             report_frame(analysis.html),
-            gr.DownloadButton(value=str(analysis.report_path), visible=True),
+            _download_link(session, analysis.report_path),
         )
 
     def on_check(
@@ -177,8 +209,10 @@ def build_app() -> gr.Blocks:
                 wrap=True,
                 column_widths=["22%", "12%", "66%"],
             )
-            frame = gr.HTML(label="Report", elem_id="report-frame")
-            download = gr.DownloadButton("Download the report", visible=False)
+            frame = gr.HTML(label="Report", elem_id="report-frame", js_on_load=None)
+            download = gr.HTML(
+                label="Download the report", elem_id="download-report", js_on_load=None
+            )
         with gr.Accordion("About these checks", open=False):
             gr.Markdown(
                 f"**Validated checks** ({', '.join(validated_checks())}). {ABOUT_VALIDATED}"

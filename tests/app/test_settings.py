@@ -101,3 +101,9 @@ def test_text_of_the_page(blocks: gr.Blocks) -> None:
     assert "Try the demo paper" in values
     assert ui.PRIVACY.startswith("PDFs are turned into text by the public GROBID server")
     assert os.environ.get("GRADIO_ANALYTICS_ENABLED") in (None, "False")
+
+
+def test_html_parts_run_no_script_on_load(blocks: gr.Blocks) -> None:
+    parts = [b for b in blocks.blocks.values() if isinstance(b, gr.HTML)]
+    assert parts
+    assert all(part.js_on_load is None for part in parts)
