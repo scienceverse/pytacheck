@@ -6,15 +6,12 @@ name: Docker
 # Tags: edge (main), X.Y.Z and latest (release tags).
 #
 # Runs on the runner the CI_RUNNER variable names, by the rule in ci.yml, else
-# on GitHub's runners. The self-hosted fridge runner (pytacheck-fridge-ci) is a
-# shared service host: the runner has its own OS user and its own rootless
-# Docker daemon; everything that user runs, containers and BuildKit included,
-# is capped at 4 CPUs and 16 GB, and BuildKit asks for 4 CPUs and 12 GB of that.
-# There the arm64 half of the pushed image runs under the host's QEMU binfmt
-# handler (a rootless daemon cannot register one). The Docker daemon persists
-# between jobs, so the image loaded for testing gets a per-run tag and is
-# removed at the end, and the GHCR login goes to a per-job Docker client config
-# instead of the runner user's ~/.docker.
+# on GitHub's runners. BuildKit asks for 4 CPUs and 12 GB. On a self-hosted
+# runner with a rootless Docker daemon, the arm64 half of the pushed image runs
+# under the host's QEMU binfmt handler (a rootless daemon cannot register one),
+# and the daemon persists between jobs, so the image loaded for testing gets a
+# per-run tag and is removed at the end, and the GHCR login goes to a per-job
+# Docker client config instead of the runner user's ~/.docker.
 
 on:
   push:
@@ -87,8 +84,8 @@ jobs:
           fi
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.0.0
         with:
-          # inside the fridge runner user's slice cap (4 CPUs, 16 GB); on a
-          # smaller hosted VM only an upper bound
+          # a cap for a self-hosted runner; on a smaller hosted VM only an
+          # upper bound
           driver-opts: memory=12g,cpu-quota=400000,cpu-period=100000
       - name: Tags
         id: tags

@@ -5,11 +5,11 @@ name: Release
 # workflow on pypi.org first (Project > Publishing).
 #
 # Building and the GitHub release run on the runner the CI_RUNNER variable
-# names, by the rule in ci.yml (the self-hosted fridge runner), else on GitHub's
-# runners. The PyPI upload stays on a GitHub-hosted runner: PyPA supports
-# gh-action-pypi-publish there, and its recommended split is to build on a
-# self-hosted runner and publish the artifact from a GitHub-hosted one. Only
-# tag pushes and manual runs trigger this workflow, never fork PRs.
+# names, by the rule in ci.yml, else on GitHub's runners. The PyPI upload stays
+# on a GitHub-hosted runner: PyPA supports gh-action-pypi-publish there, and its
+# recommended split is to build on a self-hosted runner and publish the artifact
+# from a GitHub-hosted one. Only tag pushes and manual runs trigger this
+# workflow, never fork PRs.
 
 on:
   push:

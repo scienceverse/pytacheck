@@ -11,8 +11,8 @@ name: Parity (R reference)
 # goldens depend on the C library. The conda-forge R uses glibc's character
 # tables, so deparse() keeps or escapes a character by the Unicode version of
 # the glibc it runs on. The goldens are glibc 2.39's (Ubuntu 24.04, Unicode
-# 15.1, which pytacheck.report.render reproduces); the fridge runner's own
-# Debian glibc 2.41 (Unicode 16) prints U+1FAE9 and U+0897 where 2.39 escapes
+# 15.1, which pytacheck.report.render reproduces); a newer glibc such as
+# Debian's 2.41 (Unicode 16) prints U+1FAE9 and U+0897 where 2.39 escapes
 # them. The container starts bare, so the job installs the few host tools it
 # needs and sets the UTF-8 locale GitHub's Ubuntu runners have.
 
@@ -48,8 +48,8 @@ jobs:
       && vars.CI_RUNNER || 'ubuntu-latest' }}
     container: ubuntu:noble-20260911@sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffbb1bf33ca3 # the goldens' glibc (see the header)
     # 30-40 minutes usually, but `parity generate` runs the areas one at a time
-    # and the fridge runner is shared: under other load the job has taken just
-    # over 60 minutes with every step passing
+    # and on a busy runner the job has taken just over 60 minutes with every
+    # step passing
     timeout-minutes: 120
     env:
       UV_PYTHON_PREFERENCE: only-managed # as in ci.yml
