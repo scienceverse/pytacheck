@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import multiprocessing
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import pytest
 
@@ -221,25 +221,32 @@ def test_a_quarantined_case_that_passes_is_a_pass(tree, tmp_path, monkeypatch) -
 
 
 def test_every_failing_status_can_be_quarantined(tree, tmp_path, monkeypatch) -> None:
-    def quarantined(case: str) -> None:
+    def quarantined(case: str, status: str, *argv: str) -> None:
         area = case.partition("/")[0]
         _quarantine(tmp_path, monkeypatch)
-        status, by_case = _report(tmp_path, "--area", area)
-        wanted = by_case[case]["status"]
-        assert (status, wanted) == (1, wanted) and wanted in ("xpass", "unlocked", "missing")
+        got, by_case = _report(tmp_path, "--area", area, *argv)
+        assert (got, by_case[case]["status"]) == (1, status)
         _quarantine(tmp_path, monkeypatch, case)
-        status, by_case = _report(tmp_path, "--area", area)
-        assert (status, by_case[case]["status"]) == (0, "quarantined")
+        got, by_case = _report(tmp_path, "--area", area, *argv)
+        assert (got, by_case[case]["status"]) == (0, "quarantined")
 
     # xpass: an expected failure that now matches R
     tree.area("alpha", _case("same", "a"), _case("marked", "a", mark=True))
-    quarantined("alpha/marked")
+    quarantined("alpha/marked", "xpass")
     # unlocked: marked, and without a lock entry
     tree.area("alpha", _case("same", "a"), _case("marked", "b", mark=True))
-    quarantined("alpha/marked")
+    quarantined("alpha/marked", "unlocked")
+    # r_changed: R's golden changed after the case was locked
+    assert parity_main.main(["lock"]) == 0
+    golden = {"ok": True, "error": None, "value": {"t": "chr", "v": ["z"]}}
+    (tree.golden / "alpha" / "marked.json").write_text(json.dumps(golden))
+    quarantined("alpha/marked", "r_changed", "--strict")
     # missing: no golden
     (tree.golden / "beta" / "same.json").unlink()
-    quarantined("beta/same")
+    quarantined("beta/same", "missing")
+    # error: R returns a value and Python raises
+    tree.area("beta", "  - id: same\n    py: int\n    args: {x: {$chr: [a]}}\n")
+    quarantined("beta/same", "error")
 
 
 def test_a_quarantine_entry_naming_no_case_fails_check(tree, tmp_path, monkeypatch, capsys) -> None:
@@ -251,6 +258,16 @@ def test_a_quarantine_entry_naming_no_case_fails_check(tree, tmp_path, monkeypat
     # the entries of areas that were not selected are not judged
     assert _report(tmp_path, "--area", "alpha_review")[0] == 0
     assert _report(tmp_path, "--area", "beta")[0] == 1
+
+
+def test_the_summary_lists_quarantine_entries_naming_no_case(tree, tmp_path, monkeypatch) -> None:
+    _quarantine(tmp_path, monkeypatch, "beta/gone")
+    summary = tmp_path / "summary.md"
+    assert _report(tmp_path, "--md", str(summary), "--area", "beta")[0] == 1
+    assert "## Quarantine entries that name no case\n\n- `beta/gone`\n" in summary.read_text()
+    _quarantine(tmp_path, monkeypatch)
+    assert _report(tmp_path, "--md", str(summary), "--area", "beta")[0] == 0
+    assert "name no case" not in summary.read_text()
 
 
 def test_lock_ignores_the_quarantine(tree, tmp_path, monkeypatch, capsys) -> None:
@@ -327,16 +344,20 @@ def test_check_and_lock_stop_when_the_checkout_lacks_its_setup(
     monkeypatch.setattr(parity_main, "environment_problems", _ENVIRONMENT_PROBLEMS)
     monkeypatch.setattr(parity_main, "ROOT", tmp_path)  # no upstream/metacheck here
     monkeypatch.setattr(parity_main.importlib.util, "find_spec", lambda name: None)
-    for command in ("check", "lock"):
-        assert parity_main.main([command]) == 2
-        err = capsys.readouterr().err
-        assert "upstream/metacheck is empty" in err
-        assert "git submodule update --init" in err
-        assert "pyreadstat, xlrd, snowballstemmer not installed" in err
-        assert "uv sync --locked --all-extras" in err
+    submodule = tmp_path / "upstream" / "metacheck"
+    # not there at all, and empty, as git leaves it in a fresh worktree
+    for exists in (False, True):
+        if exists:
+            submodule.mkdir(parents=True)
+        for command in ("check", "lock"):
+            assert parity_main.main([command]) == 2
+            err = capsys.readouterr().err
+            assert "upstream/metacheck is empty" in err
+            assert "git submodule update --init" in err
+            assert "pyreadstat, xlrd, snowballstemmer not installed" in err
+            assert "uv sync --locked --all-extras" in err
     assert not (tmp_path / "parity").exists()  # nothing ran
-    (tmp_path / "upstream" / "metacheck").mkdir(parents=True)
-    (tmp_path / "upstream" / "metacheck" / "DESCRIPTION").write_text("Package: metacheck\n")
+    (submodule / "DESCRIPTION").write_text("Package: metacheck\n")
     monkeypatch.setattr(parity_main.importlib.util, "find_spec", lambda name: object())
     assert parity_main.environment_problems() == []
 
@@ -377,7 +398,8 @@ def test_report_module_paths_are_removed_whatever_their_case(monkeypatch) -> Non
     from tests.report import parity_helpers
 
     # the report writes the anchor of a module from its lower-cased path
-    monkeypatch.setattr(parity_helpers, "MODULES", Path("/tmp/Work-H/tests/report/modules"))
+    modules = PurePosixPath("/tmp/Work-H/tests/report/modules")  # spelled so on every OS
+    monkeypatch.setattr(parity_helpers, "MODULES", modules)
     text = (
         "[a](#/tmp/work-h/tests/report/modules/rp_error.py) "
         "[b](#/tmp/Work-H/tests/report/modules/rp_ok.py)"

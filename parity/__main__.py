@@ -704,7 +704,7 @@ def cmd_check(ns: argparse.Namespace) -> int:
     if unknown:
         print(f"{len(unknown)} quarantine entries name no case: {', '.join(unknown)}")
     if ns.md:
-        text = markdown_summary(results, stale, elapsed)
+        text = markdown_summary(results, stale, unknown, elapsed)
         if ns.md == "-":
             print(text)
         else:
@@ -774,7 +774,9 @@ def _cell(text: str) -> str:
     return text.replace("|", "\\|").replace("\n", " ")[:200]
 
 
-def markdown_summary(results: list[CaseResult], stale: list[str], elapsed: float) -> str:
+def markdown_summary(
+    results: list[CaseResult], stale: list[str], unknown: list[str], elapsed: float
+) -> str:
     """A Markdown summary of a check: statuses by tier, marks by tier, kind and ref,
     and the cases that fail or warn."""
     counts = _count(results)
@@ -833,6 +835,8 @@ def markdown_summary(results: list[CaseResult], stale: list[str], elapsed: float
                 out.append(f"| ... and {len(picked) - 200} more | | | |")
     if stale:
         out += ["", "## Stale lock entries", ""] + [f"- `{k}`" for k in stale]
+    if unknown:
+        out += ["", "## Quarantine entries that name no case", ""] + [f"- `{k}`" for k in unknown]
     return "\n".join(out) + "\n"
 
 

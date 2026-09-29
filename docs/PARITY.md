@@ -61,7 +61,8 @@ an area without a case file is an error), runs them in `--jobs N` processes (`0`
 one per CPU), writes a per-case JSON report (`--report PATH`; by default a new
 `parity/_out/report-<time>-<pid>.json`, so runs side by side do not overwrite each
 other) and, with `--md [PATH]`, a Markdown summary: statuses by tier and the marked
-cases grouped by tier, kind and ref. It prints only the cases that fail or warn
+cases grouped by tier, kind and ref, and the stale lock entries and quarantine entries
+that name no case. It prints only the cases that fail or warn
 (`-v` prints every case, with what it printed) and exits non-zero on any failing
 status, a stale lock entry, a quarantine entry that names no case, or a file left
 in the repository root.
