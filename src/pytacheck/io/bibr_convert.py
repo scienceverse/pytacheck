@@ -1,9 +1,17 @@
 """Remote bibr conversion client (port of ``R/import-bibr.R``).
 
 ``convert_bibr()`` sends documents (PDF, DOC, DOCX) to a bibr extraction
-server -- the Scienceverse platform (job queue, API key) or a self-hosted
-bibr instance -- and saves the returned bibr JSON. The in-process bibr
-integration (no server) lives in :mod:`pytacheck.io.bibr`.
+server and saves the returned bibr JSON. Three kinds of server are spoken to:
+
+* ``"scivrs"``: the Scienceverse platform (its own ``/jobs`` queue, API key);
+* ``"selfhosted"``: one synchronous ``POST /papers/extract`` to ``bibr serve``;
+* ``"bibr"``: the job API of ``bibr serve`` (``POST /papers/jobs``, then
+  ``GET /papers/jobs/{id}`` and ``/result``) with a bearer token, which is
+  also what the hosted service (bibr-gate: the same paths, personal tokens)
+  offers. Configured with ``BIBR_URL`` and ``BIBR_API_KEY``. This backend is
+  pytacheck's addition (docs/UPSTREAM_ISSUES.md D59); metacheck has none.
+
+The in-process bibr integration (no server) lives in :mod:`pytacheck.io.bibr`.
 
 Also here: the author helpers ``format_bib_authors()``,
 ``.coerce_bib_authors()`` and ``.parse_author_string()``.
@@ -11,13 +19,18 @@ Also here: the author helpers ``format_bib_authors()``,
 
 from __future__ import annotations
 
+import email.utils
 import math
 import os
+import re
+import time
 import warnings
 from collections.abc import Sequence
+from dataclasses import dataclass, field
 from os import PathLike
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote, urlsplit, urlunsplit
 
 import pandas as pd
 
@@ -25,11 +38,19 @@ from pytacheck._r.base import as_character, trimws
 from pytacheck._r.regex import grepl, gsub, strsplit
 from pytacheck.log import logger
 
-__all__ = ["convert_bibr", "format_bib_authors"]
+__all__ = ["BibrRequestError", "convert_bibr", "format_bib_authors"]
 
 PathLikeStr = str | PathLike[str]
 
-_BACKENDS = ("auto", "scivrs", "selfhosted")
+_BACKENDS = ("auto", "scivrs", "selfhosted", "bibr")
+
+#: environment variables of the ``"bibr"`` backend (``BIBR_API_URL`` is the name bibr's own
+#: example clients read; ``BIBR_URL`` wins when both are set)
+BIBR_URL_ENV = ("BIBR_URL", "BIBR_API_URL")
+BIBR_KEY_ENV = "BIBR_API_KEY"
+_BIBR_DEFAULT_URL = "http://localhost:8000"
+#: consecutive failed status polls (no answer, 502, 503, 504) before a job is given up on
+_MAX_POLL_FAILURES = 5
 
 
 def _na(x: Any) -> bool:
@@ -124,11 +145,399 @@ def _http_error(resp: Any) -> RuntimeError:
 
 def _url_append(api_url: str, *parts: str) -> str:
     """``httr2::req_url_path_append()``."""
-    from urllib.parse import urlsplit, urlunsplit
-
     u = urlsplit(api_url)
     path = u.path.rstrip("/") + "/" + "/".join(p.strip("/") for p in parts)
     return urlunsplit((u.scheme, u.netloc, path, u.query, u.fragment))
+
+
+# ---------------------------------------------------------------------------
+# bibr serve and bibr-gate (backends "bibr" and "selfhosted")
+# ---------------------------------------------------------------------------
+
+
+class BibrRequestError(RuntimeError):
+    """An HTTP error from a bibr server: ``status_code``, the server's ``detail`` text and,
+    for a rate limit, the ``retry_after`` seconds it asked for."""
+
+    def __init__(
+        self,
+        message: str,
+        status_code: int | None = None,
+        detail: str = "",
+        retry_after: float | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+        self.detail = detail
+        self.retry_after = retry_after
+
+
+def _env(name: str) -> str:
+    return os.environ.get(name, "").strip()
+
+
+def _bibr_env_url() -> str:
+    """The server named in ``BIBR_URL`` (or ``BIBR_API_URL``); ``""`` when neither is set."""
+    for name in BIBR_URL_ENV:
+        value = _env(name)
+        if value:
+            return value
+    return ""
+
+
+def _is_loopback(host: str) -> bool:
+    import ipaddress
+
+    host = host.strip("[]").rstrip(".").lower()
+    if host == "localhost" or host.endswith(".localhost"):
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def _may_send_token(api_url: str) -> bool:
+    """A bearer token may go to https, or to http on a loopback host, and nowhere else."""
+    parts = urlsplit(api_url)
+    if parts.scheme == "https":
+        return True
+    return parts.scheme == "http" and _is_loopback(parts.hostname or "")
+
+
+def _check_bibr_target(api_url: str, api_key: str | None) -> None:
+    """Refuse an address that is not http(s), and a token that would cross the network in clear."""
+    parts = urlsplit(api_url)
+    if parts.scheme not in ("http", "https") or not parts.hostname:
+        raise ValueError(
+            "The bibr server address must start with http:// or https:// and name a host "
+            "(set BIBR_URL, or pass api_url)."
+        )
+    if api_key and not _may_send_token(api_url):
+        raise ValueError(
+            f"Refusing to send the bibr API token over plain http to {parts.hostname}. "
+            "Use an https:// address; plain http is accepted only for localhost, 127.0.0.1 "
+            "and ::1."
+        )
+
+
+def _clean(text: object, limit: int = 300) -> str:
+    """One printable line of at most *limit* characters (text from a server is untrusted)."""
+    line = re.sub(r"\s+", " ", "".join(c if c.isprintable() else " " for c in str(text))).strip()
+    return line if len(line) <= limit else line[: limit - 3] + "..."
+
+
+def _json_object(resp: Any) -> dict[str, Any]:
+    """The JSON object in a response body; ``{}`` for anything else."""
+    from pytacheck._json import loads
+
+    try:
+        body = loads(resp.content)
+    except ValueError:
+        return {}
+    return body if isinstance(body, dict) else {}
+
+
+def _server_detail(resp: Any) -> str:
+    """What the server said about an error: the ``detail``, ``message`` or ``error`` of a
+    JSON body (bibr answers ``{"detail": ...}``; its job errors add an ``error_code``)."""
+    body = _json_object(resp)
+    for key in ("detail", "message", "error"):
+        value = body.get(key)
+        code = None
+        if isinstance(value, dict):
+            code = value.get("error_code")
+            value = value.get("message") or value.get("detail") or value.get("error")
+        if value:
+            return _clean(f"{value} ({code})" if code else value)
+    return ""
+
+
+_HINTS: dict[int, str] = {
+    400: "The server rejected the request as malformed.",
+    401: "The token was rejected: it is missing, mistyped, expired or revoked. "
+    "Check BIBR_API_KEY (or api_key).",
+    403: "The request was refused: the token is not allowed to use this server, or a proxy "
+    "in front of it blocked the request.",
+    404: "Not found: the job has expired or was evicted (bibr keeps jobs for an hour by "
+    "default), or BIBR_URL is not the address of the bibr API.",
+    413: "The file is larger than the server accepts (bibr's limit is 50 MiB per file).",
+    415: "The server does not accept this kind of file (the hosted service takes PDF files only).",
+    422: "bibr could not process this document; sending the same file again fails the same way.",
+    429: "The server is busy, or a quota is used up.",
+    500: "The server failed while handling the request.",
+    502: "The server, or the service behind it, is not available.",
+    503: "The server is not available (or its job store is); try again later.",
+    504: "The server timed out.",
+    507: "The server has no room to store the upload.",
+}
+
+
+def _bibr_error(
+    resp: Any,
+    doing: str,
+    api_key: str | None,
+    *,
+    retry_after: float | None = None,
+    gave_up: bool = False,
+) -> BibrRequestError:
+    """The error for an unwanted response, in words: status, what it means, what the server said.
+
+    *doing* completes "while ...". The token never appears in the message.
+    """
+    status = int(resp.status_code)
+    desc = _status_desc(status)
+    parts = [f"HTTP {status} {desc} while {doing}." if desc else f"HTTP {status} while {doing}."]
+    if 300 <= status < 400:
+        target = urlsplit(resp.headers.get("location", ""))
+        shown = f"{target.scheme}://{target.hostname or ''}{target.path}" if target.scheme else ""
+        parts.append(
+            f"The server redirected the request{' to ' + _clean(shown, 120) if shown else ''}. "
+            "pytacheck does not follow redirects here, so the token stays with the host you "
+            "configured: set BIBR_URL to the address it redirects to."
+        )
+    elif status == 401 and not api_key:
+        parts.append("No API token was sent: set BIBR_API_KEY or pass api_key.")
+    elif status in _HINTS:
+        parts.append(_HINTS[status])
+    if gave_up and status == 429:
+        parts.append(
+            f"It asks to wait {retry_after:g} s, which is more than pytacheck will."
+            if retry_after is not None
+            else "Still busy after the allowed number of retries."
+        )
+    detail = _server_detail(resp)
+    if detail and api_key and len(api_key) >= 8:
+        detail = detail.replace(api_key, "***")
+    if detail:
+        parts.append(f'The server said: "{detail}".')
+    return BibrRequestError(" ".join(parts), status, detail, retry_after)
+
+
+def _retry_after(resp: Any) -> float | None:
+    """Seconds a ``Retry-After`` header asks for (delay-seconds or an HTTP date), else ``None``."""
+    value = (resp.headers.get("retry-after") or "").strip()
+    if not value:
+        return None
+    try:
+        seconds = float(value)
+    except ValueError:
+        try:
+            when = email.utils.parsedate_to_datetime(value)
+        except (TypeError, ValueError):
+            return None
+        return max(0.0, when.timestamp() - time.time())
+    return seconds if math.isfinite(seconds) and seconds >= 0 else None
+
+
+@dataclass
+class _Session:
+    """One document's dealings with a bibr server: address, token and the waiting budget.
+
+    ``timeout`` is the total time (seconds) to wait for a job, back-offs included.
+    ``waited`` counts requested sleeps, so the budget is exact when sleeping is switched
+    off (``PYTACHECK_NO_SLEEP``); real elapsed time counts too.
+    """
+
+    api_url: str
+    api_key: str | None
+    timeout: float
+    max_retries: int
+    max_retry_wait: float
+    follow_redirects: bool = True
+    waited: float = 0.0
+    started: float = field(default_factory=time.monotonic)
+
+    @property
+    def headers(self) -> dict[str, str]:
+        headers = {"Accept": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+        return headers
+
+    @property
+    def elapsed(self) -> float:
+        return max(self.waited, time.monotonic() - self.started)
+
+    def sleep(self, seconds: float) -> None:
+        from pytacheck import http
+
+        http.sleep(seconds)
+        self.waited += seconds
+
+
+def _bibr_call(
+    sess: _Session,
+    method: str,
+    url: str,
+    doing: str,
+    *,
+    allow_no_response: bool = False,
+    **kwargs: Any,
+) -> Any:
+    """One request to a bibr server.
+
+    A 429 is retried after the ``Retry-After`` it names (else after 1, 2, 4, ... s), at most
+    ``max_retries`` times, never waiting longer than ``max_retry_wait`` for one retry nor
+    past the session's ``timeout``. A 429 means nothing was done, so a retry cannot
+    duplicate work. Every other status is returned as it is: the shared layer's own retries
+    are switched off, because they wait out any ``Retry-After``, however long it is.
+    Returns ``None`` for no answer when *allow_no_response*, else raises.
+    """
+    from pytacheck import http
+
+    retries = 0
+    while True:
+        resp = http.request(
+            method,
+            url,
+            max_tries=1,
+            retry_statuses=(),
+            headers=sess.headers,
+            follow_redirects=sess.follow_redirects,
+            **kwargs,
+        )
+        if resp is None:
+            if allow_no_response:
+                return None
+            raise ConnectionError(f"Failed to perform HTTP request to {sess.api_url}")
+        if 300 <= resp.status_code < 400 and not sess.follow_redirects:
+            raise _bibr_error(resp, doing, sess.api_key)
+        if resp.status_code != 429:
+            return resp
+        asked = _retry_after(resp)
+        wait = asked if asked is not None else min(2.0**retries, 30.0)
+        if (
+            retries >= sess.max_retries
+            or wait > sess.max_retry_wait
+            or sess.elapsed + wait > sess.timeout
+        ):
+            raise _bibr_error(resp, doing, sess.api_key, retry_after=asked, gave_up=True)
+        sess.sleep(wait)
+        retries += 1
+
+
+def _bibr_submit(
+    sess: _Session,
+    file_path: str,
+    include_figures: bool,
+    start_page: float | None,
+    end_page: float | None,
+) -> str:
+    """``POST /papers/jobs``: 202 ``{job_id, status, status_url}``. Returns the job id."""
+    resp = _bibr_call(
+        sess,
+        "POST",
+        _url_append(sess.api_url, "papers", "jobs"),
+        "submitting the job",
+        files=_form(file_path, include_figures, start_page, end_page),
+        timeout=60,
+    )
+    if resp.status_code >= 400:
+        raise _bibr_error(resp, "submitting the job", sess.api_key)
+    job_id = _json_object(resp).get("job_id")
+    if resp.status_code not in (200, 202) or not isinstance(job_id, str | int) or not job_id:
+        logger("convert_bibr", "submission failed")
+        raise RuntimeError(
+            f"Job submission failed (HTTP {resp.status_code}): {_clean(resp.text, 200)}"
+        )
+    return str(job_id)
+
+
+def _job_error(status: dict[str, Any]) -> str:
+    """Why a job failed, from its status (``error`` holds bibr's ``{message, error_code}``
+    or ``{detail}``)."""
+    error = status.get("error")
+    code = None
+    if isinstance(error, dict):
+        code = error.get("error_code") or error.get("kind")
+        error = error.get("message") or error.get("detail") or error.get("error")
+    text = _clean(error) if error else "unknown error"
+    return f"{text} ({code})" if code else text
+
+
+def _bibr_result(resp: Any) -> bytes:
+    """The body of a finished job's result, checked to be a JSON object (a paper)."""
+    if not _json_object(resp):
+        raise RuntimeError(
+            "The bibr server answered the result request with something that is not a paper "
+            "(a JSON object was expected). Is BIBR_URL the address of the bibr API?"
+        )
+    return bytes(resp.content)
+
+
+def _bibr_await_result(sess: _Session, job_id: str, poll_interval: float) -> bytes:
+    """Poll ``GET /papers/jobs/{id}`` (queued, running, succeeded or failed) with a growing
+    delay, then fetch ``/result``. A 409 from ``/result`` means not finished yet: keep
+    polling. A status poll that gets no answer, or a 502, 503 or 504, is tolerated a few
+    times in a row.
+
+    The job path is built from the job id and the configured address; the ``status_url`` in
+    the server's answer is not followed, which keeps the token on the host it was meant for.
+    """
+    job_url = _url_append(sess.api_url, "papers", "jobs", quote(job_id, safe=""))
+    doing = f"checking job {_clean(job_id, 60)}"
+    fetching = f"fetching the result of job {_clean(job_id, 60)}"
+    delay = poll_interval
+    failures = 0
+    state: Any = None
+    while True:
+        resp = _bibr_call(sess, "GET", job_url, doing, allow_no_response=True, timeout=30)
+        if resp is None or resp.status_code in (502, 503, 504):
+            failures += 1
+            if failures > _MAX_POLL_FAILURES:
+                if resp is None:
+                    raise ConnectionError(f"Failed to perform HTTP request to {sess.api_url}")
+                raise _bibr_error(resp, doing, sess.api_key)
+        elif resp.status_code >= 400:
+            raise _bibr_error(resp, doing, sess.api_key)
+        else:
+            failures = 0
+            status = _json_object(resp)
+            state = status.get("status")
+            if state == "failed":
+                error = _job_error(status)
+                logger("convert_bibr", {"job_id": job_id, "error": error})
+                raise RuntimeError(f"Job {job_id} failed: {error}")
+            if state == "succeeded":
+                rresp = _bibr_call(
+                    sess, "GET", _url_append(job_url, "result"), fetching, timeout=300
+                )
+                if rresp.status_code == 200:
+                    return _bibr_result(rresp)
+                if rresp.status_code != 409:
+                    raise _bibr_error(rresp, fetching, sess.api_key)
+        if sess.elapsed >= sess.timeout:
+            logger("convert_bibr", {"job_id": job_id, "error": "timeout"})
+            raise TimeoutError(
+                f"Job {job_id} timed out after {as_character(sess.timeout)}s "
+                f"(last status: {as_character(state) if state is not None else ''}); "
+                "it may still finish on the server"
+            )
+        # the last wait ends at the deadline, so that one final poll can still see the job done
+        sess.sleep(min(delay, max(sess.timeout - sess.elapsed, 0.0)))
+        delay = min(delay * 1.5, max(poll_interval, 10.0))
+
+
+def _bibr_request_bibr(
+    file_path: str,
+    api_url: str,
+    api_key: str | None,
+    include_figures: bool,
+    start_page: float | None,
+    end_page: float | None,
+    poll_interval: float,
+    timeout: float,
+    max_retries: int = 5,
+    max_retry_wait: float = 120,
+) -> bytes:
+    """The ``"bibr"`` backend: submit a job to ``bibr serve`` (or bibr-gate), poll it, get the
+    result. Not a port: metacheck has no such backend."""
+    sess = _Session(
+        api_url, api_key or None, timeout, max_retries, max_retry_wait, follow_redirects=False
+    )
+    job_id = _bibr_submit(sess, file_path, include_figures, start_page, end_page)
+    return _bibr_await_result(sess, job_id, poll_interval)
 
 
 # ---------------------------------------------------------------------------
@@ -147,19 +556,40 @@ def convert_bibr(
     end_page: float = math.inf,
     poll_interval: float = 2,
     timeout: float = 600,
+    max_retries: int = 5,
+    max_retry_wait: float = 120,
 ) -> Any:
     """Port of ``R/import-bibr.R::convert_bibr()``: convert documents with a bibr server.
 
-    ``backend="auto"`` uses the Scienceverse platform (``"scivrs"``) when an
-    API key is given or ``SCIVRS_API_KEY`` is set, else a self-hosted bibr
-    (``"selfhosted"``, default ``http://localhost:8000``). Pages are 1-based;
-    ``end_page=math.inf`` means all pages. Returns the saved JSON path, or
-    a list of paths (``None`` for failures) for several files or a directory.
+    ``backend`` names the kind of server:
+
+    * ``"scivrs"``: the Scienceverse platform (its ``/jobs`` queue, ``api_key`` or
+      ``SCIVRS_API_KEY``; default ``https://platform.metacheck.app``);
+    * ``"selfhosted"``: one synchronous ``POST /papers/extract`` to a ``bibr serve``
+      (default ``http://localhost:8000``), with a bearer token when ``api_key`` (or
+      ``BIBR_API_KEY``) is set;
+    * ``"bibr"``: the job API of ``bibr serve`` and of the hosted service in front of it
+      (bibr-gate): ``POST /papers/jobs``, poll ``/papers/jobs/{id}``, fetch ``/result``.
+      Address and token come from ``api_url``/``api_key`` or ``BIBR_URL``/``BIBR_API_KEY``
+      (default address ``http://localhost:8000``, no token). A token is never sent over
+      plain http, except to localhost, 127.0.0.1 and ::1.
+
+    ``backend="auto"`` uses ``"bibr"`` when ``BIBR_URL`` (or ``BIBR_API_URL``) is set and
+    no ``api_url`` is given, or when only ``BIBR_API_KEY`` is set; else ``"scivrs"``
+    when an API key is given or ``SCIVRS_API_KEY`` is set; else ``"selfhosted"``.
+
+    A 429 answer (``"bibr"`` and ``"selfhosted"``) is retried after its ``Retry-After``
+    seconds, up to ``max_retries`` times and never waiting more than ``max_retry_wait``
+    seconds for one retry; ``timeout`` (seconds) bounds the whole wait for a job.
+
+    Pages are 1-based; ``end_page=math.inf`` means all pages. Returns the saved JSON
+    path, or a list of paths (``None`` for failures) for several files or a directory;
+    a 401 or 403 (a token every later file would be refused with) stops a list at once.
     """
     backend = _match_arg(backend, _BACKENDS)
     env_key = os.environ.get("SCIVRS_API_KEY", "")
     if backend == "auto":
-        backend = "scivrs" if api_key is not None or env_key else "selfhosted"
+        backend = _auto_backend(api_key, api_url, env_key)
 
     if backend == "scivrs" and api_key is None:
         api_key = env_key
@@ -168,11 +598,19 @@ def convert_bibr(
                 "API key not set. Set the SCIVRS_API_KEY environment variable or pass "
                 "api_key directly."
             )
+    elif backend in ("bibr", "selfhosted") and api_key is None:
+        api_key = _env(BIBR_KEY_ENV) or None
 
     if api_url is None:
-        api_url = (
-            "https://platform.metacheck.app" if backend == "scivrs" else "http://localhost:8000"
-        )
+        if backend == "scivrs":
+            api_url = "https://platform.metacheck.app"
+        elif backend == "bibr":
+            api_url = _bibr_env_url() or _BIBR_DEFAULT_URL
+        else:
+            api_url = _BIBR_DEFAULT_URL
+    # once, before any file: a list would otherwise log the same refusal for each file
+    if backend == "bibr" or (backend == "selfhosted" and api_key):
+        _check_bibr_target(api_url, api_key)
 
     paths: list[str] = (
         [os.fspath(file_path)]
@@ -200,8 +638,15 @@ def convert_bibr(
                         end_page=end_page,
                         poll_interval=poll_interval,
                         timeout=timeout,
+                        max_retries=max_retries,
+                        max_retry_wait=max_retry_wait,
                     )
                 )
+            except BibrRequestError as exc:
+                if exc.status_code in (401, 403):
+                    raise
+                logger("convert_bibr", str(exc))
+                out.append(None)
             except Exception as exc:
                 logger("convert_bibr", str(exc))
                 out.append(None)
@@ -222,9 +667,40 @@ def convert_bibr(
             poll_interval,
             timeout,
         )
+    elif backend == "bibr":
+        contents = _bibr_request_bibr(
+            paths[0],
+            api_url,
+            api_key,
+            include_figures,
+            zb_start,
+            zb_end,
+            poll_interval,
+            timeout,
+            max_retries,
+            max_retry_wait,
+        )
     else:
-        contents = _bibr_request_selfhosted(paths[0], api_url, include_figures, zb_start, zb_end)
+        contents = _bibr_request_selfhosted(
+            paths[0],
+            api_url,
+            include_figures,
+            zb_start,
+            zb_end,
+            api_key=api_key,
+            timeout=timeout,
+            max_retries=max_retries,
+            max_retry_wait=max_retry_wait,
+        )
     return _bibr_save_result(contents, paths[0], save_path)
+
+
+def _auto_backend(api_key: str | None, api_url: str | None, env_key: str) -> str:
+    """The ``backend="auto"`` choice (see :func:`convert_bibr`). Arguments beat the
+    environment: a ``BIBR_*`` variable picks ``"bibr"`` only for what was not passed."""
+    if api_url is None and (_bibr_env_url() or (api_key is None and _env(BIBR_KEY_ENV))):
+        return "bibr"
+    return "scivrs" if api_key is not None or env_key else "selfhosted"
 
 
 def _form(
@@ -322,25 +798,33 @@ def _bibr_request_selfhosted(
     include_figures: bool,
     start_page: float | None,
     end_page: float | None,
+    *,
+    api_key: str | None = None,
+    timeout: float = 600,
+    max_retries: int = 5,
+    max_retry_wait: float = 120,
 ) -> bytes:
-    """Port of ``R/import-bibr.R::.bibr_request_selfhosted()``: one direct extraction."""
-    from pytacheck import http
+    """Port of ``R/import-bibr.R::.bibr_request_selfhosted()``: one direct extraction.
 
-    resp = http.request(
+    Sends ``Authorization: Bearer`` when *api_key* is given (a ``bibr serve`` with
+    ``AUTH_API_KEY`` answers 401 without it; metacheck sends none) and waits out a 429
+    (upload admission limit) as the ``"bibr"`` backend does.
+    """
+    sess = _Session(api_url, api_key or None, timeout, max_retries, max_retry_wait)
+    resp = _bibr_call(
+        sess,
         "POST",
         _url_append(api_url, "papers", "extract"),
-        max_tries=1,
+        "extracting the paper",
         files=_form(file_path, include_figures, start_page, end_page),
         timeout=300,
     )
-    if resp is None:
-        raise ConnectionError(f"Failed to perform HTTP request to {api_url}")
     if resp.status_code >= 400:
-        raise _http_error(resp)
+        raise _bibr_error(resp, "extracting the paper", sess.api_key)
     if resp.status_code != 200:
         msg = _status_desc(resp.status_code) or "NA"
         raise RuntimeError(f"Bibr request failed with status code: {resp.status_code}\n{msg}")
-    return resp.content
+    return bytes(resp.content)
 
 
 def _bibr_save_result(contents: bytes, file_path: PathLikeStr, save_path: PathLikeStr) -> str:
@@ -361,13 +845,21 @@ def _bibr_isalive(
 
     ``api_key`` defaults to the ``SCIVRS_API_KEY`` environment variable (an
     empty key still sends an ``Authorization`` header, as in R); ``None``
-    sends none.
+    sends none. A non-empty key is not sent over plain http to a host other than
+    localhost: ``/ready`` is public, so the probe works without it.
+
+    Ready means ``status == "ready"``. An anonymous ``bibr serve`` answers only that
+    (``{"status": "ready"}``: ``checks`` and ``build_sha`` are for authenticated callers,
+    as is the platform's ``checks.bibr``), so a ``checks.bibr`` is only held against the
+    server when it is there and not ``"ok"`` (metacheck requires it).
     """
     from pytacheck import http
 
     if api_key == "__env__":
         api_key = os.environ.get("SCIVRS_API_KEY", "")
     headers = {} if api_key is None else {"Authorization": f"Bearer {api_key}"}
+    if api_key and not _may_send_token(api_url):
+        headers = {}
     failure = None
     try:
         resp = http.request(
@@ -404,9 +896,11 @@ def _bibr_isalive(
             raise RuntimeError("The server is running, but the API key is not valid")
         return False
 
-    body = resp.json()
-    checks = body.get("checks") or {}
-    if body.get("status") != "ready" or checks.get("bibr") != "ok":
+    body = _json_object(resp)
+    checks = body.get("checks")
+    if not isinstance(checks, dict):
+        checks = {}
+    if body.get("status") != "ready" or checks.get("bibr", "ok") != "ok":
         if error:
             raise RuntimeError(f"The server is running, but BIBR is not ready{status}")
         return False
