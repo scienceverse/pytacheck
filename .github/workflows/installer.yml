@@ -35,6 +35,7 @@ concurrency:
 
 env:
   UV_VERSION: "0.12.20"
+  PLAYWRIGHT_VERSION: "1.63.0"
 
 jobs:
   checks:
@@ -137,6 +138,34 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then app="$METACHECK_HOME/bin/metacheck-app.exe"; else app="$METACHECK_HOME/bin/metacheck-app"; fi
           python3 install/smoke.py "$app" --port 8765
+      # The page in a real browser, started from the installed app as a person
+      # would. The browser and its driver live in a venv apart from the app.
+      - name: Browser click-through (Linux and macOS)
+        if: runner.os != 'Windows'
+        run: |
+          python3 -m venv "$RUNNER_TEMP/browser"
+          "$RUNNER_TEMP/browser/bin/pip" install --quiet playwright==$PLAYWRIGHT_VERSION
+          if [ "$RUNNER_OS" = "Linux" ]; then deps="--with-deps"; else deps=""; fi
+          "$RUNNER_TEMP/browser/bin/playwright" install $deps chromium
+          "$RUNNER_TEMP/browser/bin/python" install/ui_smoke.py "$METACHECK_HOME/bin/metacheck-app" --shots "$RUNNER_TEMP/ui-smoke"
+      - name: Browser click-through (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $venv = Join-Path $env:RUNNER_TEMP 'browser'
+          python -m venv $venv
+          & "$venv\Scripts\pip.exe" install --quiet "playwright==$env:PLAYWRIGHT_VERSION"
+          & "$venv\Scripts\playwright.exe" install chromium
+          if ($LASTEXITCODE -ne 0) { throw "browser download failed" }
+          & "$venv\Scripts\python.exe" install\ui_smoke.py "$env:METACHECK_HOME\bin\metacheck-app.exe" --shots (Join-Path $env:RUNNER_TEMP 'ui-smoke')
+          if ($LASTEXITCODE -ne 0) { throw "click-through failed" }
+      - name: Keep the screenshot
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ui-smoke-${{ matrix.os }}
+          path: ${{ runner.temp }}/ui-smoke
+          if-no-files-found: ignore
       - name: Install again
         if: runner.os != 'Windows'
         run: time /bin/sh install.sh
