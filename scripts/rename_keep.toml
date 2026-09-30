@@ -15,7 +15,13 @@
 #                that is not drift
 #   why          the reason, and the package that renames it later, if any
 #
-# RENAME-2, RENAME-3 and RENAME-4 remove entries as they rename these names.
+# RENAME-2 and RENAME-4 remove entries as they rename these names. RENAME-3's
+# entries are resolved: the names it renamed are gone from this list or have new
+# reasons. The platformdirs folder names are kept by decision; they are already
+# separate from R's folders. The other old names it leaves in place (the install
+# record, the pack root and markers, the logger names, and the old run-record, format
+# and option names that are still read) stay until the alias sunset, when the old
+# spellings are removed.
 
 # --- entry-point groups: read as they are; no metacheck.* twin (decision 13 (a), STORE-2b)
 
@@ -118,7 +124,7 @@ match = '"state" / "pytacheck"'
 count = 1
 why = "platformdirs state folder name; kept by decision; already separate from R's"
 
-# --- run records and the registry (RENAME-3, REG-RENAME)
+# --- run records and the registry (alias sunset, REG-RENAME)
 
 [[rule]]
 action = "keep"
@@ -141,7 +147,7 @@ match = '"pytacheck"'
 count = 6
 why = "registry key implementations.py.pytacheck; REG-RENAME"
 
-# --- format ids and produced names (RENAME-3, REG-RENAME, EXTRACT-PROV)
+# --- format ids and produced names (alias sunset, REG-RENAME, EXTRACT-PROV)
 
 [[rule]]
 action = "keep"
@@ -212,7 +218,7 @@ match = 'f"pytacheck/\{__version__\}'
 count = 1
 why = "User-Agent product token; changing it is a separate decision (the URL stays the repository)"
 
-# --- option keys (RENAME-3 adds aliases)
+# --- option keys (the old names are accepted as aliases)
 
 [[rule]]
 action = "keep"

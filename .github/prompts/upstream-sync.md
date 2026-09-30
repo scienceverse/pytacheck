@@ -30,6 +30,8 @@ Then port the upstream changes:
 - If upstream changed the paper JSON schema, copy `inst/schema/paper.json` into
   `src/metacheck/resources/schema/`; if demos changed, copy `inst/demos/*`.
 
+The import package is `metacheck` (`src/metacheck`); new code never uses `pytacheck` spellings, except the platform folder name, which stays `pytacheck` by decision: never rename a `platformdirs` call. Environment variables are read only through `metacheck._env` (add a row to `ENV_VARS`, with a `METACHECK_` name only for new settings). Before finishing, run `python scripts/rename_to_metacheck.py --check --strict`.
+
 Done means all of these pass:
     uv run python -m parity check --jobs 0
     uv run python -m parity accuracy --gate

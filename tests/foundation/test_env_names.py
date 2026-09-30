@@ -7,8 +7,8 @@
 
 * ``getLogger(`` is called only in ``_logging.py`` and in ``packs/auth.py``, and never with
   ``__name__``: every other module asks ``get_logger()`` for its logger.
-
-The lint for the documentation table comes with the commit that adds the documentation.
+* The table in ``docs/ENVIRONMENT.md`` lists exactly the settings of ``ENV_VARS``, in the same
+  order, with the same names in the same rank, and marks the secret and the shared ones.
 """
 
 from __future__ import annotations
@@ -22,6 +22,7 @@ import metacheck
 from metacheck._env import ENV_VARS
 
 SRC = Path(metacheck.__file__).resolve().parent
+ENVIRONMENT_MD = Path(__file__).resolve().parents[2] / "docs" / "ENVIRONMENT.md"
 
 _NAME = re.compile(r"^(PYTACHECK|METACHECK)_[A-Z0-9_]+$")
 
@@ -122,3 +123,35 @@ def test_no_logger_is_named_after_its_module() -> None:
     # records would come out under metacheck.<module>, and not reach handlers set on pytacheck
     offenders = [f"{module}:{line}" for module, line, dunder in _getlogger_calls() if dunder]
     assert not offenders, "getLogger(__name__) is not allowed: " + ", ".join(offenders)
+
+
+def _documented_table(text: str) -> list[tuple[str, list[str], str]]:
+    """``(setting, names in the order listed, notes)`` for each row of the table of the doc.
+
+    The table is the one under the heading ``## The table``; a row starts with the setting in
+    backticks, and its second cell lists the variable names in backticks.
+    """
+    _, _, after = text.partition("\n## The table\n")
+    table = after.split("\n#", 1)[0]  # up to the next heading
+    rows = []
+    for line in table.splitlines():
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        setting = re.fullmatch(r"`([A-Z0-9_]+)`", cells[0]) if len(cells) >= 4 else None
+        if setting is not None:
+            rows.append((setting[1], re.findall(r"`([A-Z0-9_]+)`", cells[1]), cells[3]))
+    return rows
+
+
+def test_the_documented_table_lists_the_settings_names_and_ranks_of_the_code() -> None:
+    documented = _documented_table(ENVIRONMENT_MD.read_text(encoding="utf-8"))
+    # the settings and their order, then each setting's names in lookup order
+    assert [key for key, _, _ in documented] == list(ENV_VARS)
+    for key, names, _ in documented:
+        assert tuple(names) == ENV_VARS[key].names, f"{key}: names or their order differ"
+
+
+def test_the_documented_table_marks_the_secret_and_the_shared_settings() -> None:
+    for key, _, notes in _documented_table(ENVIRONMENT_MD.read_text(encoding="utf-8")):
+        var = ENV_VARS[key]
+        assert notes.startswith("secret") == var.secret, f"{key}: secret mark differs"
+        assert ("shared with R" in notes) == var.shared_with_r, f"{key}: shared mark differs"

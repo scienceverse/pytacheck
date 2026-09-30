@@ -369,7 +369,11 @@ record the bug as a U-entry and add the mark to your lane's divergences file.
 * **Isolated.** Each case gets a fresh `PYTACHECK_CACHE_DIR`, so no case sees what
   another cached, and runs with no user or project configuration
   (`PYTACHECK_CONFIG=none`). What it prints is kept out of the terminal (`-v` shows
-  it; the report keeps it for failing cases).
+  it; the report keeps it for failing cases). The harness folds any `METACHECK_*`
+  twin of these variables into its `PYTACHECK_*` name at start-up, so a setting in
+  your shell cannot shadow the harness's folders. The R image scripts read only
+  `PYTACHECK_R_IMAGE`, and `benchmarks/compare_r.py` reads only `PYTACHECK_RSCRIPT`.
+  Environment variables and folders: see [ENVIRONMENT.md](ENVIRONMENT.md).
 * **Out of the checkout.** A case must not write into the repository: give functions
   that save files (`paper_write()`, `grobid_to_bibr()`, `convert()`, ...) a temporary
   `save_path`, because metacheck's default `"."` is the repository root when the

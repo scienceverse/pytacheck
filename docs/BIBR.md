@@ -185,5 +185,7 @@ Every compose command needs `PYTACHECK_API_KEY` (a `.env` file next to
 `docker-compose.yml` works; see API.md). bibr has no key, so its port is published on
 the loopback address only.
 
+Environment variables and folders: see [ENVIRONMENT.md](ENVIRONMENT.md).
+
 The `pytacheck:<version>-bibr` image bundles bibr so the API accepts PDF uploads
 directly.
