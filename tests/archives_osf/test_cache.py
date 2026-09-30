@@ -96,7 +96,7 @@ def test_repo_info_cache_roundtrip(tmp_path: Path) -> None:
         Path(_repo_info_cache_path("osf", "bad")).write_bytes(b"not json")
         assert _repo_info_cache_get("osf", "bad") is None
         Path(_repo_info_cache_path("osf", "old")).write_bytes(
-            b'{"format": "pytacheck.repo_info_cache", "version": 0, "value": 1}'
+            b'{"format": "metacheck.repo_info_cache", "version": 0, "value": 1}'
         )
         assert _repo_info_cache_get("osf", "old") is None
         (tmp_path / "info" / "other.txt").write_text("keep")

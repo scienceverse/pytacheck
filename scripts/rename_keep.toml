@@ -123,16 +123,9 @@ why = "platformdirs state folder name; kept by decision; already separate from R
 [[rule]]
 action = "keep"
 files = "src/metacheck/provenance.py"
-match = '^    pytacheck: str$|^\s+pytacheck=__version__,$|"pytacheck": self\.pytacheck'
-count = 4
-why = "run record field `pytacheck` (the version); RENAME-3 renames it to `version`"
-
-[[rule]]
-action = "keep"
-files = "tests/modsys/test_runrecord.py"
-match = '"pytacheck"'
+match = '"pytacheck": "version"|def pytacheck\(self\)'
 count = 2
-why = "run record field; RENAME-3"
+why = "old run-record key read from pytacheck.run/1 records, and the read-only property for 0.4.0a1 code; removed with the alias"
 
 [[rule]]
 action = "keep"
@@ -153,50 +146,15 @@ why = "registry key implementations.py.pytacheck; REG-RENAME"
 [[rule]]
 action = "keep"
 files = "src/metacheck/repro/tables.py"
-match = '_FORMAT = "pytacheck\.module_tables"'
-count = 1
-why = "format id of saved module tables; RENAME-3 reads both forms"
-
-[[rule]]
-action = "keep"
-files = "tests/repro_core/test_tables.py"
-match = '"pytacheck\.module_tables"'
-count = 2
-why = "format id of saved module tables"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/repro/tables.py"
-match = '_TYPE_ROOT = "pytacheck\."'
-count = 1
-why = "saved dataclass types keep the prefix 0.4.0a1 reads; RENAME-3 switches it with the format id"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/repro/tables.py"
 match = 'module_name\.startswith\(\("pytacheck\.", "metacheck\."\)\)'
 count = 1
-why = "the decoder rebuilds dataclass types saved under either name"
+why = "the decoder rebuilds dataclass types saved under either name (tables saved up to RENAME-3)"
 
 [[rule]]
 action = "rewrite"
 files = "src/metacheck/repro/tables.py"
 match = '(cls\.__module__|module_name)\.startswith\("pytacheck\."\)'
 why = "dataclasses now live under metacheck.*"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/archives/info_cache.py"
-match = '_FORMAT = "pytacheck\.repo_info_cache"'
-count = 1
-why = "format id of the repo-info cache; entries written by 0.4.0a1 must stay hits; RENAME-3 reads both forms"
-
-[[rule]]
-action = "keep"
-files = "tests/archives_osf/test_cache.py"
-match = '"format": "pytacheck\.repo_info_cache"'
-count = 1
-why = "format id of the repo-info cache; RENAME-3"
 
 [[rule]]
 action = "keep"

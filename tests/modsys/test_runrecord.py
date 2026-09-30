@@ -1,4 +1,4 @@
-"""Run records (pytacheck.run/1), run_modules() failure handling, and rerun()."""
+"""Run records (metacheck.run/2), run_modules() failure handling, and rerun()."""
 
 from __future__ import annotations
 
@@ -12,7 +12,14 @@ from metacheck._version import UPSTREAM, __version__
 from metacheck.module import ModuleError, ModuleOutput
 from metacheck.packs.install import pack_remove
 from metacheck.presets import select
-from metacheck.provenance import RUN_SCHEMA, ModuleChain, RunRecord, rerun, run_modules
+from metacheck.provenance import (
+    RUN_SCHEMA,
+    RUN_SCHEMAS,
+    ModuleChain,
+    RunRecord,
+    rerun,
+    run_modules,
+)
 from tests.modsys.helpers import REV_A, mod_src
 from tests.modsys.storekit import codeload, dir_files, tarball
 
@@ -69,11 +76,15 @@ def test_run_record_contents(lab, paper) -> None:
         record = run_modules(paper, sel).run_record
     d = record.to_dict()
     assert list(d) == [
-        "schema", "created", "pytacheck", "metacheck", "python", "platform", "preset",
+        "schema", "created", "version", "r_reference", "python", "platform", "preset",
         "preset_source", "offline", "dropped", "papers", "modules", "environment",
     ]  # fmt: skip
-    assert d["schema"] == RUN_SCHEMA and d["pytacheck"] == __version__
-    assert d["metacheck"] == {"version": UPSTREAM["version"], "commit": UPSTREAM["commit"][:10]}
+    assert d["schema"] == RUN_SCHEMA == "metacheck.run/2" and d["version"] == __version__
+    assert d["r_reference"] == {
+        "version": UPSTREAM["version"],
+        "commit": UPSTREAM["commit"][:10],
+    }
+    assert (record.version, record.r_reference) == (d["version"], d["r_reference"])
     assert d["platform"] == sys.platform
     assert (d["preset"], d["preset_source"], d["offline"]) == ("lab::chain", "argument", True)
     assert d["dropped"] == ["lab::online"]
@@ -96,14 +107,27 @@ def test_round_trips(lab, paper, tmp_path) -> None:
     assert RunRecord.read(path.read_text()) == record
     assert RunRecord.read(record.to_dict()) == record
     html = f"<html><body><p>report</p>{record.to_html()}</body></html>"
-    assert '<script type="application/json" id="pytacheck-run">' in html
+    assert '<script type="application/json" id="metacheck-run">' in html
     assert RunRecord.from_html(html) == record
     (tmp_path / "report.html").write_text(html)
     assert RunRecord.read(tmp_path / "report.html") == record
-    with pytest.raises(ModuleError, match="Not a pytacheck run record"):
+    with pytest.raises(ModuleError, match="Not a metacheck run record"):
         RunRecord.read({"schema": "other"})
+    with pytest.raises(ModuleError, match="Not a metacheck run record"):
+        RunRecord.from_dict(["not", "a", "record"])  # type: ignore[arg-type]
     with pytest.raises(ModuleError, match="no embedded"):
         RunRecord.from_html("<html></html>")
+
+
+def test_schema_ids_and_unknown_keys(paper) -> None:
+    assert RUN_SCHEMAS[0] == RUN_SCHEMA and len(RUN_SCHEMAS) == len(set(RUN_SCHEMAS))
+    record = RunRecord.build([], papers=paper)
+    # later versions add keys without a new schema id: they are ignored
+    data = {**record.to_dict(), "extraction": {"tool": "x"}}
+    assert RunRecord.read(data) == record
+    # the fields keep their positions, so positional construction still works
+    again = RunRecord(record.created, record.version, record.r_reference, record.python, "x")
+    assert again.to_dict()["version"] == record.version and again.platform == "x"
 
 
 def test_record_escapes_script_endings(paper) -> None:

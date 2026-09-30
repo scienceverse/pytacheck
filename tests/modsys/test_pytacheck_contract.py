@@ -2,7 +2,9 @@
 
 The rename script leaves this file alone (``tests/*test_pytacheck_*.py``), so the
 old spellings below stay as they are. Each name that is written as well as read is
-written in its old form only and read in both forms, old first.
+written in its old form only and read in both forms, old first, except where 0.4.0a1
+meets the new form cleanly: run records, saved tables and repo-info cache entries are
+written in the new form (0.4.0a1 refuses, skips or misses them) and read in both.
 """
 
 from __future__ import annotations
@@ -233,20 +235,76 @@ def test_saved_tables_of_0_4_0a1_decode_without_the_old_name() -> None:
     assert out.stdout.split("\n")[1:] == ["True []", ""], out.stdout
 
 
-def test_saved_tables_name_dataclasses_as_0_4_0a1_did() -> None:
-    """A 0.4.0a1 reader rebuilds only pytacheck.* types, so that is what is written."""
+def test_saved_tables_name_dataclasses_as_metacheck() -> None:
+    """New tables name their types ``metacheck.*``, under the new format id, so a
+    0.4.0a1 reader skips the file instead of reading those types as plain dicts."""
     from metacheck.report.blocks import ReportTable
 
     obj = ReportTable(**_fields(ReportTable))  # type: ignore[arg-type]
     encoded = tables._encode(obj)
-    assert encoded["$dataclass"]["type"] == "pytacheck.report.blocks:ReportTable"
+    assert encoded["$dataclass"]["type"] == "metacheck.report.blocks:ReportTable"
     assert type(tables._decode(encoded)) is ReportTable
+
+
+#: a table file as 0.4.0a1's ``capture_module_tables()`` wrote it (one module, whose
+#: report is a ReportTable)
+_TABLES_0_4_0A1 = (
+    b'{"format": "pytacheck.module_tables", "version": 1, "paper_id": "p", '
+    b'"generated": "2026-09-30T14:11:31+0200", "summary_table": null, '
+    b'"modules": {"m": {"table": {"$df": {"names": ["x"], '
+    b'"columns": [{"dtype": "int64", "data": [1, 2]}], "nrow": 2, "index": null, '
+    b'"attrs": null}}, "report": {"$dataclass": {"type": "pytacheck.report.blocks:ReportTable", '
+    b'"fields": {"data": {"$df": {"names": ["x"], '
+    b'"columns": [{"dtype": "int64", "data": [1, 2]}], "nrow": 2, "index": null, '
+    b'"attrs": null}}, "colwidths": "auto", "maxrows": 2, "escape": false, "column": "body", '
+    b'"options": {}}}}, "traffic_light": "info", "summary_text": "s", "summary_table": null}}}'
+)
+
+
+def test_saved_tables_of_0_4_0a1_are_read_with_their_dataclasses(tmp_path: Path) -> None:
+    import pandas as pd
+
+    from metacheck.report.blocks import ReportTable
+
+    (tmp_path / "p.json").write_bytes(_TABLES_0_4_0A1)
+    loaded = tables._load_module_tables(tmp_path, "p", None)
+    assert loaded is not None and loaded.module == "m"
+    assert type(loaded.report) is ReportTable
+    pd.testing.assert_frame_equal(loaded.report.data, pd.DataFrame({"x": [1, 2]}))
+    pd.testing.assert_frame_equal(loaded.table, pd.DataFrame({"x": [1, 2]}))
+
+
+def test_saved_tables_are_written_under_the_new_id(tmp_path: Path) -> None:
+    import pandas as pd
+
+    from metacheck.module import ModuleOutput
+    from metacheck.report.blocks import ReportTable
+
+    df = pd.DataFrame({"x": [1, 2]})
+    mo = ModuleOutput(
+        module="m", title="m", section="results", table=df,
+        report=ReportTable(data=df), traffic_light="info", summary_text="s",
+    )  # fmt: skip
+    raw = json.loads(Path(tables.capture_module_tables([mo], tmp_path, paper_id="p")).read_bytes())
+    assert (raw["format"], raw["version"]) == ("metacheck.module_tables", 1)
+    report = raw["modules"]["m"]["report"]["$dataclass"]
+    assert report["type"] == "metacheck.report.blocks:ReportTable"
+    assert type(tables._load_module_tables(tmp_path, "p", None).report) is ReportTable
 
 
 # --- the repo-info cache --------------------------------------------------------
 
+#: an entry as 0.4.0a1's ``_repo_info_cache_put()`` wrote it
+_REPO_INFO_0_4_0A1 = (
+    b'{"format":"pytacheck.repo_info_cache","version":1,"value":{"$df":{"names":["name","size"],'
+    b'"columns":[{"dtype":"str","data":["a.csv"]},{"dtype":"int64","data":[3]}],"nrow":1,'
+    b'"index":null,"attrs":null}}}'
+)
+
 
 def test_repo_info_cache_entries_written_by_0_4_0a1_are_hits(tmp_path: Path) -> None:
+    import pandas as pd
+
     from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_path
     from metacheck.utils import local_options
 
@@ -255,6 +313,202 @@ def test_repo_info_cache_entries_written_by_0_4_0a1_are_hits(tmp_path: Path) -> 
             b'{"format": "pytacheck.repo_info_cache", "version": 1, "value": 1}'
         )
         assert _repo_info_cache_get("osf", "old") == 1
+        Path(_repo_info_cache_path("osf", "listing")).write_bytes(_REPO_INFO_0_4_0A1)
+        pd.testing.assert_frame_equal(
+            _repo_info_cache_get("osf", "listing"),
+            pd.DataFrame({"name": ["a.csv"], "size": [3]}),
+        )
+
+
+def test_repo_info_cache_entries_of_another_version_are_misses(tmp_path: Path) -> None:
+    from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_path
+    from metacheck.utils import local_options
+
+    with local_options({"metacheck.repo_info_cache.dir": str(tmp_path / "info")}):
+        for fmt in ("pytacheck.repo_info_cache", "metacheck.repo_info_cache"):
+            Path(_repo_info_cache_path("osf", "old")).write_bytes(
+                json.dumps({"format": fmt, "version": 0, "value": 1}).encode()
+            )
+            assert _repo_info_cache_get("osf", "old") is None, fmt
+
+
+def test_repo_info_cache_entries_are_written_under_the_new_id(tmp_path: Path) -> None:
+    import pandas as pd
+
+    from metacheck.archives.info_cache import (
+        _repo_info_cache_get,
+        _repo_info_cache_path,
+        _repo_info_cache_put,
+    )
+    from metacheck.utils import local_options
+
+    value = pd.DataFrame({"name": ["a.csv"], "size": [3]})
+    with local_options({"metacheck.repo_info_cache.dir": str(tmp_path / "info")}):
+        _repo_info_cache_put("osf", "new", value)
+        raw = json.loads(Path(_repo_info_cache_path("osf", "new")).read_bytes())
+        assert (raw["format"], raw["version"]) == ("metacheck.repo_info_cache", 1)
+        pd.testing.assert_frame_equal(_repo_info_cache_get("osf", "new"), value)
+
+
+# --- run records --------------------------------------------------------------
+
+#: a run record exactly as 0.4.0a1 wrote it (``RunRecord.write`` after
+#: ``run_modules(paper, ["marginal"])``)
+_RUN_0_4_0A1 = b"""{
+  "schema": "pytacheck.run/1",
+  "created": "2026-09-30T12:10:56Z",
+  "pytacheck": "0.4.0a1",
+  "metacheck": {
+    "version": "0.3.1",
+    "commit": "b239264f6b"
+  },
+  "python": "3.12.14",
+  "platform": "linux",
+  "preset": null,
+  "preset_source": null,
+  "offline": false,
+  "dropped": [],
+  "papers": [
+    "4a3f4986edd80c"
+  ],
+  "modules": [
+    {
+      "id": "metacheck::marginal",
+      "name": "marginal",
+      "pack": "metacheck",
+      "version": "0.4.0a1",
+      "trust": "builtin",
+      "reviewed": null,
+      "source": {
+        "builtin": "pytacheck 0.4.0a1",
+        "upstream": "0.3.1@b239264f6b"
+      },
+      "sha256": "7e59f50cc70de4a3235677ecc30bc2be0a0e8ca53c1cc499d3cb4a485262d30d",
+      "modified": false,
+      "args": {},
+      "requires": [],
+      "status": "ok"
+    }
+  ],
+  "environment": {
+    "bibr": "0.5.1"
+  }
+}
+"""
+
+#: the same record as 0.4.0a1's ``RunRecord.to_html()`` embedded it in a page
+_RUN_0_4_0A1_HTML = (
+    b"<html><body><p>report</p>"
+    b'<script type="application/json" id="pytacheck-run">{"schema": "pytacheck.run/1", '
+    b'"created": "2026-09-30T12:10:56Z", "pytacheck": "0.4.0a1", '
+    b'"metacheck": {"version": "0.3.1", "commit": "b239264f6b"}, "python": "3.12.14", '
+    b'"platform": "linux", "preset": null, "preset_source": null, "offline": false, '
+    b'"dropped": [], "papers": ["4a3f4986edd80c"], '
+    b'"modules": [{"id": "metacheck::marginal", "name": "marginal", "pack": "metacheck", '
+    b'"version": "0.4.0a1", "trust": "builtin", "reviewed": null, '
+    b'"source": {"builtin": "pytacheck 0.4.0a1", "upstream": "0.3.1@b239264f6b"}, '
+    b'"sha256": "7e59f50cc70de4a3235677ecc30bc2be0a0e8ca53c1cc499d3cb4a485262d30d", '
+    b'"modified": false, "args": {}, "requires": [], "status": "ok"}], '
+    b'"environment": {"bibr": "0.5.1"}}</script>'
+    b"</body></html>\n"
+)
+
+
+@pytest.mark.parametrize(
+    ("name", "data"),
+    [("run.json", _RUN_0_4_0A1), ("report.html", _RUN_0_4_0A1_HTML)],
+    ids=["json", "html"],
+)
+def test_run_records_of_0_4_0a1_are_read_and_replayed(
+    tmp_path: Path, paper, name: str, data: bytes
+) -> None:
+    from metacheck.provenance import RUN_SCHEMA, RunRecord, rerun
+
+    path = tmp_path / name
+    path.write_bytes(data)
+    record = RunRecord.read(path)
+    assert record.schema == RUN_SCHEMA
+    assert record.version == "0.4.0a1"
+    assert record.r_reference == {"version": "0.3.1", "commit": "b239264f6b"}
+    assert [m["id"] for m in record.modules] == ["metacheck::marginal"]
+    assert RunRecord.read(path.read_text(encoding="utf-8")) == record
+    with pytest.warns(UserWarning, match="the record used 0.4.0a1"):
+        chain = rerun(path, paper)
+    assert [o.module for o in chain] == ["marginal"]
+    assert chain.run_record is not None and chain.run_record.schema == RUN_SCHEMA
+
+
+def test_run_records_of_0_4_0a1_are_upgraded(tmp_path: Path) -> None:
+    from metacheck.provenance import RUN_SCHEMAS, RunRecord
+
+    assert RUN_SCHEMAS == ("metacheck.run/2", "pytacheck.run/1")
+    data = json.loads(_RUN_0_4_0A1)
+    record = RunRecord.read(data)
+    assert data["schema"] == "pytacheck.run/1" and "pytacheck" in data, "the input is not changed"
+    d = record.to_dict()
+    assert d["schema"] == "metacheck.run/2"
+    assert list(d)[:5] == ["schema", "created", "version", "r_reference", "python"]
+    assert "pytacheck" not in d and "metacheck" not in d
+    assert (d["version"], d["r_reference"]) == (data["pytacheck"], data["metacheck"])
+    # written again, it is a new record (never an old label over the new keys)
+    written = json.loads(record.write(tmp_path / "again.json").read_text(encoding="utf-8"))
+    assert written["schema"] == "metacheck.run/2" and "pytacheck" not in written
+    assert RunRecord.read(tmp_path / "again.json") == record
+
+
+def test_run_records_keep_the_old_field_names_read_only() -> None:
+    from metacheck.provenance import RunRecord
+
+    record = RunRecord.read(json.loads(_RUN_0_4_0A1))
+    assert record.pytacheck == record.version == "0.4.0a1"
+    assert record.metacheck == record.r_reference == {"version": "0.3.1", "commit": "b239264f6b"}
+    with pytest.raises(AttributeError):
+        record.pytacheck = "1.0"  # type: ignore[misc]
+    with pytest.raises(AttributeError):
+        record.metacheck = {}  # type: ignore[misc]
+
+
+def test_run_records_with_old_and_new_keys_take_the_new_ones() -> None:
+    from metacheck.provenance import RunRecord
+
+    data = json.loads(_RUN_0_4_0A1)
+    both = {**data, "version": "9.9", "r_reference": {"version": "x", "commit": "y"}}
+    record = RunRecord.read(both)
+    assert (record.version, record.r_reference) == ("9.9", {"version": "x", "commit": "y"})
+    # a new record's unknown keys are ignored, the old names included
+    new = {**record.to_dict(), "pytacheck": "0.0.1", "metacheck": {}}
+    assert RunRecord.read(new) == record
+
+
+def test_run_records_never_write_the_old_schema_id(tmp_path: Path) -> None:
+    """Whatever ``schema`` a record object holds, the new keys go out under the new id."""
+    import dataclasses
+
+    from metacheck.provenance import RunRecord
+
+    record = dataclasses.replace(RunRecord.read(json.loads(_RUN_0_4_0A1)), schema="pytacheck.run/1")
+    assert record.to_dict()["schema"] == "metacheck.run/2"
+    assert json.loads(record.to_json())["schema"] == "metacheck.run/2"
+    assert '"schema": "metacheck.run/2"' in record.to_html()
+    written = json.loads(record.write(tmp_path / "run.json").read_text(encoding="utf-8"))
+    assert written["schema"] == "metacheck.run/2" and "version" in written
+    assert RunRecord.read(tmp_path / "run.json").version == "0.4.0a1"
+
+
+@pytest.mark.parametrize("schema", ["pytacheck.run/2", "metacheck.run/1", "other", None])
+def test_run_records_of_another_schema_are_refused(schema: str | None) -> None:
+    from metacheck.module import ModuleError
+    from metacheck.provenance import RunRecord
+
+    data = {**json.loads(_RUN_0_4_0A1), "schema": schema}
+    with pytest.raises(
+        ModuleError,
+        match=r"^Not a metacheck run record \(schema metacheck\.run/2 or pytacheck\.run/1\)$",
+    ):
+        RunRecord.read(data)
+    del data["schema"]
+    with pytest.raises(ModuleError, match="Not a metacheck run record"):
+        RunRecord.read(data)
 
 
 # --- the loggers ----------------------------------------------------------------

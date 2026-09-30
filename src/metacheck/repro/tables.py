@@ -37,10 +37,13 @@ from metacheck._r.frames import bind_rows
 
 __all__ = ["capture_module_tables", "collect_module_tables"]
 
-_FORMAT = "pytacheck.module_tables"
-#: how a saved dataclass ``type`` string starts (the package's name when this format
-#: was defined); the decoder reads it and the new name, both through the same module
-_TYPE_ROOT = "pytacheck."
+_FORMAT = "metacheck.module_tables"
+#: read as well: tables saved up to RENAME-3 (0.4.0a1 included)
+_OLD_FORMAT = "pytacheck.module_tables"
+#: how a saved dataclass ``type`` string starts; the decoder also reads the old root,
+#: both through the same module. It changes only together with the format id, so that
+#: an older version never reads new types as plain dicts.
+_TYPE_ROOT = "metacheck."
 _VERSION = 1
 
 # Non-result elements of a module output (``.module_output_plumbing``) and the
@@ -247,7 +250,8 @@ def _decode(x: Any) -> Any:
 
 
 def _decode_dataclass(spec: Mapping[str, Any]) -> Any:
-    """A pytacheck dataclass (e.g. a report table block); its fields if it cannot be rebuilt."""
+    """A package dataclass (e.g. a report table block) saved under either type root;
+    its fields if it cannot be rebuilt."""
     fields = {k: _decode(v) for k, v in (spec.get("fields") or {}).items()}
     module_name, _, qualname = str(spec.get("type", "")).partition(":")
     if module_name.startswith(("pytacheck.", "metacheck.")):
@@ -355,7 +359,7 @@ def _read_saved(path: str | os.PathLike[str]) -> dict[str, Any] | None:
             saved = _from_r(read_rds(p))
         else:
             raw = json.loads(p.read_text(encoding="utf-8"))
-            if not isinstance(raw, dict) or raw.get("format") != _FORMAT:
+            if not isinstance(raw, dict) or raw.get("format") not in (_FORMAT, _OLD_FORMAT):
                 return None
             saved = _decode(raw)
     except Exception:
