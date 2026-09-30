@@ -377,8 +377,8 @@ def _fn_index(client: TestClient) -> int:
 def _upload(client: TestClient, extra: str) -> str:
     """An upload; a different ``extra`` makes a different file (Gradio names it by its hash).
 
-    Each test uses its own ``extra``: tests in other workers delete their uploads, and an
-    upload with the same content would be the same file.
+    Each test uses its own ``extra``: a hosted run deletes its upload, and an upload with
+    the same content would be the same file.
     """
     body = pc.demofile("json").read_bytes() + extra.encode()
     files = {"files": ("paper.json", body, "application/json")}
