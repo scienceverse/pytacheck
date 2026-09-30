@@ -31,6 +31,8 @@ from collections.abc import Iterable, Mapping, Sequence
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, cast
 
+from metacheck._env import env_get
+
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
@@ -1682,7 +1684,7 @@ def _llm_workers() -> int:
     """
     from metacheck.utils import get_option
 
-    value = get_option("pytacheck.llm.workers") or os.environ.get("PYTACHECK_LLM_WORKERS") or 1
+    value = get_option("pytacheck.llm.workers") or env_get("LLM_WORKERS") or 1
     try:
         return max(1, int(value))
     except (TypeError, ValueError):

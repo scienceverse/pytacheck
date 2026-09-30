@@ -38,6 +38,7 @@ from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
+from metacheck._env import env_get
 from metacheck._r import grepl, gsub, is_na, plural, sub
 from metacheck.archives._atomic import atomic_write
 
@@ -333,7 +334,7 @@ def repo_cache_clear(repo_url: Any = None, quiet: bool = False) -> float:
         and _in_tests()
         and get_option("metacheck.repo_cache.dir") is None
         and get_option("metacheck.cache.dir") is None
-        and not os.environ.get("PYTACHECK_CACHE_DIR")
+        and not env_get("CACHE_DIR")
     ):
         raise RuntimeError(
             "repo_cache_clear() refused to empty the cache during tests without a "

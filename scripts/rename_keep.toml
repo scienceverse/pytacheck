@@ -109,14 +109,14 @@ match = 'RESERVED_PACK_NAMES = frozenset\(\{.*"pytacheck"'
 count = 1
 why = "pytacheck stays a reserved pack name"
 
-# --- platformdirs folder names split over lines, and paths under them (RENAME-3)
+# --- platformdirs folder names split over lines, and paths under them (kept by decision; already separate from R's)
 
 [[rule]]
 action = "keep"
 files = "tests/app/test_launch.py"
 match = '"state" / "pytacheck"'
 count = 1
-why = "platformdirs state folder name; RENAME-3"
+why = "platformdirs state folder name; kept by decision; already separate from R's"
 
 # --- run records and the registry (RENAME-3, REG-RENAME)
 

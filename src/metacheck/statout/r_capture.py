@@ -37,6 +37,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from metacheck._env import env_get
 from metacheck._r.regex import grepl
 
 __all__: list[str] = []
@@ -425,8 +426,9 @@ class RSubprocessTimeout(RSubprocessError):
 
 
 def _rscript(rscript: str | None = None) -> str | None:
-    """Path of ``Rscript`` (``PYTACHECK_RSCRIPT``, then ``PATH``) or ``None``."""
-    return rscript or os.environ.get("PYTACHECK_RSCRIPT") or shutil.which("Rscript")
+    """Path of ``Rscript`` (``METACHECK_RSCRIPT``, ``PYTACHECK_RSCRIPT``, then ``PATH``)
+    or ``None``."""
+    return rscript or env_get("RSCRIPT") or shutil.which("Rscript")
 
 
 def _open_sink(path: str | os.PathLike[str] | None) -> Any:

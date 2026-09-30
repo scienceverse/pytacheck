@@ -30,6 +30,8 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from metacheck._env import env_get
+
 __all__ = ["llm_cache", "llm_cache_clear"]
 
 
@@ -59,9 +61,7 @@ def llm_cache_clear() -> int:
 
 def _llm_cache_dir() -> str:
     """Port of ``.llm_cache_dir()``: the LLM cache folder (created if needed)."""
-    override = os.environ.get("PYTACHECK_LLM_CACHE_DIR", "") or os.environ.get(
-        "METACHECK_LLM_CACHE_DIR", ""
-    )
+    override = env_get("LLM_CACHE_DIR") or ""
     try:
         from metacheck.archives.cache import _metacheck_cache_subdir
     except ImportError:  # pragma: no cover - archives port not available

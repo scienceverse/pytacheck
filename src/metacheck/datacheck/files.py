@@ -59,6 +59,7 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 
+from metacheck._env import env_get
 from metacheck._r.base import plural, slashed, trimws
 from metacheck._r.regex import compile_r, gregexpr_all, grepl, gsub, regexec, strsplit, sub
 from metacheck.datacheck._files_registry import EXT_REGISTRY
@@ -2067,10 +2068,10 @@ def rscript_path() -> str | None:
     """Path to an ``Rscript`` executable (``rscript_path()``).
 
     R returns the running installation's Rscript. pytacheck has no R of its
-    own: this is ``$PYTACHECK_RSCRIPT`` or the first ``Rscript`` on ``PATH``
+    own: this is ``$METACHECK_RSCRIPT``, ``$PYTACHECK_RSCRIPT`` or the first ``Rscript`` on ``PATH``
     (``None`` when there is none). pytacheck itself never needs it.
     """
-    env = os.environ.get("PYTACHECK_RSCRIPT")
+    env = env_get("RSCRIPT")
     if env:
         return env
     return shutil.which("Rscript.exe" if sys.platform == "win32" else "Rscript")

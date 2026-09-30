@@ -14,6 +14,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from metacheck._env import env_get
+
 __all__ = ["metacheck_cache_info"]
 
 
@@ -24,7 +26,7 @@ def _metacheck_cache_root() -> str:
     opt = get_option("metacheck.cache.dir")
     if opt:
         return str(opt)
-    return os.environ.get("PYTACHECK_CACHE_DIR") or os.getcwd()
+    return env_get("CACHE_DIR") or os.getcwd()
 
 
 def _metacheck_cache_subdir(subdir: str, override: str | os.PathLike[str] | None = None) -> str:

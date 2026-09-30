@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import shutil
 from pathlib import Path
 
@@ -9,6 +10,8 @@ import pandas as pd
 import pytest
 
 import metacheck.llm as L
+from metacheck import _env
+from metacheck._logging import get_logger
 from metacheck.llm import cache as C
 from metacheck.llm._rds import EllmerOutput, read_rds, to_python
 from metacheck.utils import local_options
@@ -107,6 +110,27 @@ def test_cache_dir_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.delenv("METACHECK_LLM_CACHE_DIR")
     with local_options({"metacheck.cache.dir": str(tmp_path / "root")}):
         assert Path(C._llm_cache_dir()) == (tmp_path / "root" / ".metacheck_llm_cache").resolve()
+
+
+def test_cache_dir_env_with_both_names_set_logs_only_a_debug_record(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    # this package's name wins; the other one is R's shared name, so a different setting
+    # there is expected and is no warning
+    _env._reset_warned()
+    monkeypatch.setenv("METACHECK_LLM_CACHE_DIR", str(tmp_path / "m"))
+    monkeypatch.setenv("PYTACHECK_LLM_CACHE_DIR", str(tmp_path / "p"))
+    with caplog.at_level(logging.DEBUG, logger=get_logger().name):
+        assert Path(C._llm_cache_dir()) == (tmp_path / "p").resolve()
+        assert Path(C._llm_cache_dir()) == (tmp_path / "p").resolve()
+    records = [r for r in caplog.records if r.name == get_logger().name]
+    assert [(r.levelno, r.getMessage()) for r in records] == [
+        (
+            logging.DEBUG,
+            "PYTACHECK_LLM_CACHE_DIR is set, so METACHECK_LLM_CACHE_DIR is ignored",
+        )
+    ]
+    assert str(tmp_path) not in caplog.text
 
 
 def test_unreadable_cache_entry_is_a_miss(cache_dir: Path) -> None:

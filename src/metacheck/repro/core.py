@@ -17,7 +17,7 @@ declared packages into a throwaway library (:func:`repro_install_deps`) and
 run each script in an isolated ``Rscript`` subprocess
 (:func:`repro_run_scripts`) -- the analogue of metacheck's ``callr::r()``.
 Running the authors' R code genuinely needs R: ``Rscript`` is taken from
-``PYTACHECK_RSCRIPT``, else from ``PATH``.
+``METACHECK_RSCRIPT`` (or ``PYTACHECK_RSCRIPT``), else from ``PATH``.
 
 Tables with R list columns hold Python lists in ``object`` columns; R
 attributes on a returned data frame are kept in ``DataFrame.attrs``.
@@ -41,6 +41,7 @@ from typing import Any, cast
 
 import pandas as pd
 
+from metacheck._env import env_get
 from metacheck._r.base import as_character, r_sort_key, slashed, trimws
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import (
@@ -212,8 +213,8 @@ def _message(*parts: Any) -> None:
 
 
 def _rscript() -> str | None:
-    """``Rscript``: ``PYTACHECK_RSCRIPT``, else the first one on ``PATH``."""
-    return os.environ.get("PYTACHECK_RSCRIPT") or shutil.which("Rscript")
+    """``Rscript``: ``METACHECK_RSCRIPT`` (or ``PYTACHECK_RSCRIPT``), else the first on ``PATH``."""
+    return env_get("RSCRIPT") or shutil.which("Rscript")
 
 
 def _r_string(x: str | None) -> str:

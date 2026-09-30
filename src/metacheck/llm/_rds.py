@@ -33,6 +33,8 @@ import struct
 from collections.abc import Iterable, Mapping
 from typing import TYPE_CHECKING, Any
 
+from metacheck._env import env_get
+
 if TYPE_CHECKING:
     import pandas as pd
 
@@ -176,7 +178,7 @@ def _obj_equal(a: Any, b: Any) -> bool:
 
 
 def _r_version_int() -> int:
-    ver: Any = os.environ.get("PYTACHECK_R_SERIALIZE_VERSION")
+    ver: Any = env_get("R_SERIALIZE_VERSION")
     try:
         from metacheck.utils import get_option
 
