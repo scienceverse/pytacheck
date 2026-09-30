@@ -90,3 +90,17 @@ def test_a_broken_rules_file_is_a_usage_error(
     rules.write_text(body, encoding="utf-8")
     assert script.main(["--check", "--rules", str(rules)]) == 2
     assert "error:" in capsys.readouterr().err
+
+
+def test_apply_without_ruff_stops_before_it_changes_anything(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], script: Any
+) -> None:
+    moved: list[Any] = []
+    real_git = script.git
+    # --apply wants a clean work tree; this test must not depend on one
+    monkeypatch.setattr(script, "git", lambda *a: "" if a[0] == "status" else real_git(*a))
+    monkeypatch.setattr(script, "_ruff_missing", lambda: "ruff is not installed for python")
+    monkeypatch.setattr(script, "do_move", lambda *args: moved.append(args))
+    assert script.main(["--apply"]) == 2
+    assert "nothing was moved or rewritten" in capsys.readouterr().err
+    assert moved == []

@@ -10,6 +10,10 @@ must be kept by a rule; an occurrence no rule covers is an error, so a new
     python scripts/rename_to_metacheck.py --check   # report; exit 1 if anything is pending
     python scripts/rename_to_metacheck.py --apply   # move and rewrite; a second run is a no-op
 
+Run it with the project's Python (``uv run --frozen python ...``, or the ``.venv``
+of a synced checkout): ``--apply`` sorts the imports with ruff afterwards, and stops
+before it changes anything if ruff is not there.
+
 ``--rules FILE`` uses another rules file: a branch from before the rename uses
 ``scripts/rename_keep.pre.toml``, the rules the rename commit was made with.
 
@@ -18,12 +22,13 @@ convert its merge base and its tip the same way, then carry over only the
 difference between the two (a plain rebase lets git's rename detection mix the
 branch with the rename)::
 
+    PY="$PWD/.venv/bin/python"   # in a synced checkout of main: a Python with ruff
     git worktree add --detach ../conv-base "$(git merge-base origin/main <branch>)"
     git worktree add --detach ../conv-tip <branch>
     # in each of the two worktrees:
     git checkout origin/main -- scripts/rename_to_metacheck.py scripts/rename_keep.pre.toml
     git commit -m "take the rename script"        # --apply needs a clean tree
-    python scripts/rename_to_metacheck.py --apply --rules scripts/rename_keep.pre.toml
+    "$PY" scripts/rename_to_metacheck.py --apply --rules scripts/rename_keep.pre.toml
     git add -u && git commit -m "apply the rename (generated)"
     # then, with B and T the new HEADs of conv-base and conv-tip:
     c=$(git commit-tree "T^{tree}" -p B -m "<the branch's change>")
@@ -705,6 +710,19 @@ def tier_of(path: str) -> str:
     return "paths"
 
 
+def _ruff_missing() -> str | None:
+    """Why ruff cannot run under this Python, if it cannot; asked before anything changes."""
+    try:
+        done = subprocess.run(
+            [sys.executable, "-m", "ruff", "--version"], cwd=ROOT, capture_output=True, check=False
+        )
+    except OSError as exc:
+        return f"ruff could not run: {exc}"
+    if done.returncode != 0:
+        return f"ruff is not installed for {sys.executable}"
+    return None
+
+
 def _ruff(files: list[str]) -> str | None:
     """Sort imports and format *files*; the reason if ruff is missing or fails."""
     base = [sys.executable, "-m", "ruff"]
@@ -815,6 +833,14 @@ def run(ns: argparse.Namespace) -> int:
 
     ruff_error = None
     if apply and not blocked:
+        missing = None if ns.no_ruff else _ruff_missing()
+        if missing:
+            print(
+                f"error: {missing} (use the project's Python, or --no-ruff); "
+                "nothing was moved or rewritten",
+                file=sys.stderr,
+            )
+            return 2
         try:
             moves = plan_move(state)
         except MoveError as exc:
