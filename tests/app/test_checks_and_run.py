@@ -308,13 +308,29 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     assert results["visible"] is True
     assert status == "" and stop["visible"] is False
     assert "Ran 16 checks" in summary
-    assert [row[1] for row in table].count("Validated") == 5
+    assert list(table.data["Status"]).count("Validated") == 5
     assert frame.startswith('<iframe title="Report" sandbox="allow-scripts')
     assert "srcdoc=" in frame
     assert 'href="/report/abc123/to_err_is_human_report.html"' in download
     assert "Download the report" in download
     assert steps[0] == "Reading the paper"
     on_demo(False, False, "grobid", "", False, request, progress)  # a second run works
+
+
+def test_result_cells_are_coloured_by_traffic_light() -> None:
+    from metacheck.app.run import Row
+    from metacheck.app.ui import table_value
+
+    rows = [
+        Row("a", "A", "Validated", "Red: bad"),
+        Row("b", "B", "Validated", "Yellow: look"),
+        Row("c", "C", "Validated", "Green: fine"),
+        Row("d", "D", "Validated", "Info: note"),
+    ]
+    styles = table_value(rows)._compute().ctx
+    colours = {r: dict(styles[(r, 2)]).get("background-color") for r in range(4)}
+    assert colours[0].startswith("rgba(220") and colours[1].startswith("rgba(234")
+    assert colours[2].startswith("rgba(34") and colours[3] is None
 
 
 def test_check_button_needs_a_file_and_words_errors_plainly() -> None:
