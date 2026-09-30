@@ -567,3 +567,15 @@ def test_the_note_and_the_forget_button_follow_a_successful_check() -> None:
         if dep.name == "on_reader" and dep.targets and dep.targets[0][1] == "success"
     ]
     assert targets, "on_reader must run after a check"
+
+
+def test_the_page_links_scienceverse_and_the_three_repositories() -> None:
+    top = ui.header("1.0")
+    assert "1.0" in top and ui.INTRO in top
+    for url in (
+        "https://www.scienceverse.org/",
+        "https://github.com/scienceverse/metacheck",
+        "https://github.com/scienceverse/pytacheck",
+        "https://github.com/scienceverse/bibr",
+    ):
+        assert f'href="{url}"' in top
