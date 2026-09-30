@@ -38,9 +38,11 @@ __all__ = [
 
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 SCIENCEVERSE_URL = "https://www.scienceverse.org/"
+BIBR_DEMO_URL = "https://try.bibr.org/"
 #: The links at the top and bottom of the page: (label, url).
 LINKS = (
     ("ScienceVerse", SCIENCEVERSE_URL),
+    ("bibr demo", BIBR_DEMO_URL),
     ("Metacheck (R) on GitHub", "https://github.com/scienceverse/metacheck"),
     ("Pytacheck on GitHub", REPO_URL),
     ("bibr on GitHub", "https://github.com/scienceverse/bibr"),
@@ -114,7 +116,7 @@ CREDIT = (
     f"contributors. This is the Python version: [{REPO_URL}]({REPO_URL})."
 )
 CSS = (
-    ".gradio-container{max-width:1100px !important} #report-frame iframe{width:100%} "
+    ".gradio-container{max-width:1100px !important;margin:0 auto !important} #report-frame iframe{width:100%} "
     "#download-report a{display:inline-block;padding:8px 16px;border:1px solid "
     "var(--border-color-primary);border-radius:8px;text-decoration:none;font-weight:600} "
     "#mc-header{padding:12px 0 4px} "
