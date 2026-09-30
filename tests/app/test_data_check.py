@@ -204,7 +204,7 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
     fns = _handlers()
     results, summary, table, frame, _download, status, stop = _demo(fns, "s1")
     assert results["visible"] is True and stop["visible"] is True
-    assert "Ran 16 checks" in summary and len(table) == 16
+    assert "Ran 16 checks" in summary and len(table.data) == 16
     assert "The other results are ready" in status and "still running" in status
     assert "Data Check" not in frame
     steps = fns["follow"](SimpleNamespace(session_hash="s1"))
@@ -214,8 +214,8 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
     release.set()
     final = list(steps)[-1]
     _results, summary, table, frame, _download, status, stop = final
-    assert table[-1][0] == "Data Check" and table[-1][2].startswith("Green")
-    assert len(table) == 17 and "Ran 17 checks" in summary
+    assert table.data.iloc[-1, 0] == "Data Check" and table.data.iloc[-1, 2].startswith("Green")
+    assert len(table.data) == 17 and "Ran 17 checks" in summary
     assert "The data check found 3 files." in frame
     assert status == "" and stop["visible"] is False
 
@@ -246,7 +246,7 @@ def test_a_failed_data_check_says_so_and_keeps_the_page(fake: Fake) -> None:
     _demo(fns, "s3")
     steps = list(fns["follow"](SimpleNamespace(session_hash="s3")))
     *_, table, _frame, _download, status, _stop_button = steps[-1]
-    assert table[-1][2] == "Failed: no route"
+    assert table.data.iloc[-1, 2] == "Failed: no route"
     assert status == ui.DATA_FAILED
 
 
