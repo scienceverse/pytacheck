@@ -49,6 +49,8 @@ package's. The R commit each release is compared against is in
 
 ### The app
 
+- The page has a header with the version and links to ScienceVerse and the Metacheck, Pytacheck and bibr repositories on GitHub, repeated under the credit line. The online and data options sit above the buttons they apply to, the bibr key field is hidden where the server supplies the key (that key wins over a typed one), and result cells are coloured by their traffic light (the word stays, so colour is never the only signal).
+- The page starts on the bibr reader where the server supplies the bibr key (`SCIVRS_API_KEY`), as a hosted server does, and on GROBID otherwise, since GROBID needs no key.
 - The bibr option talks to bibr serve and the hosted bibr service in front of it: it sends a PDF to `/papers/jobs`. Before, it sent every PDF to the Scienceverse platform's `/jobs`, which those services answer with 404, so the page said the bibr service could not be found. `PYTACHECK_BIBR_BACKEND=scivrs` says that the address in `PYTACHECK_BIBR_URL` is the platform. For an address from metacheck's public server list, the entry's `protocol` decides; without one, an entry whose `api_key` is `SCIVRS_API_KEY` is the platform, and any other entry is bibr serve. A hosted server does not start with a `PYTACHECK_BIBR_BACKEND` other than `bibr` or `scivrs`, or with a `PYTACHECK_BIBR_URL` that cannot work, such as plain http to another machine for bibr (deploy/space/DEPLOY.md).
 
 ## 0.4.0a1 (first release on PyPI)

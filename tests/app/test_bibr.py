@@ -457,7 +457,37 @@ def test_the_choices_are_named() -> None:
         "GROBID (public server at TU Eindhoven)",
         "bibr (the scienceverse service; needs a key)",
     ]
-    assert ui.READERS[0][1] == "grobid"  # the default
+
+
+def _start(blocks: Any) -> dict[str, Any]:
+    """The reader, key box and privacy text as the page first shows them."""
+    parts = {c["id"]: c for c in blocks.get_config_file()["components"]}
+    radio = next(c for c in parts.values() if c["props"].get("label") == "Read PDFs with")
+    group = next(c for c in parts.values() if c["type"] == "group")
+    texts = [c["props"].get("value") for c in parts.values() if c["type"] == "markdown"]
+    return {
+        "reader": radio["props"]["value"],
+        "key_box": group["props"].get("visible"),
+        "texts": texts,
+    }
+
+
+def test_grobid_is_the_default_without_a_key_on_this_computer() -> None:
+    assert ui.default_reader() == "grobid"
+    first = _start(ui.build_app())
+    assert first["reader"] == "grobid" and first["key_box"] is False
+    assert ui.PRIVACY in first["texts"] and ui.PRIVACY_BIBR not in first["texts"]
+
+
+def test_bibr_is_the_default_where_this_computer_supplies_the_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(bibr.KEY_ENV, KEY)
+    assert ui.default_reader() == "bibr"
+    first = _start(ui.build_app())
+    assert first["reader"] == "bibr" and first["key_box"] is True
+    assert ui.PRIVACY_BIBR in first["texts"] and ui.PRIVACY not in first["texts"]
+    assert ui.KEY_ENV_NOTE in first["texts"]  # no key to type
 
 
 def test_a_remembered_key_is_saved_after_it_worked(server: FakeBibr, tmp_path: Path) -> None:
@@ -537,3 +567,16 @@ def test_the_note_and_the_forget_button_follow_a_successful_check() -> None:
         if dep.name == "on_reader" and dep.targets and dep.targets[0][1] == "success"
     ]
     assert targets, "on_reader must run after a check"
+
+
+def test_the_page_links_scienceverse_and_the_three_repositories() -> None:
+    top = ui.header("1.0")
+    assert "1.0" in top and ui.INTRO in top
+    for url in (
+        "https://www.scienceverse.org/",
+        "https://try.bibr.org/",
+        "https://github.com/scienceverse/metacheck",
+        "https://github.com/scienceverse/pytacheck",
+        "https://github.com/scienceverse/bibr",
+    ):
+        assert f'href="{url}"' in top

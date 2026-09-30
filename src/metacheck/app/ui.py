@@ -37,6 +37,16 @@ __all__ = [
 ]
 
 REPO_URL = "https://github.com/scienceverse/pytacheck"
+SCIENCEVERSE_URL = "https://www.scienceverse.org/"
+BIBR_DEMO_URL = "https://try.bibr.org/"
+#: The links at the top and bottom of the page: (label, url).
+LINKS = (
+    ("ScienceVerse", SCIENCEVERSE_URL),
+    ("bibr demo", BIBR_DEMO_URL),
+    ("Metacheck (R) on GitHub", "https://github.com/scienceverse/metacheck"),
+    ("Pytacheck on GitHub", REPO_URL),
+    ("bibr on GitHub", "https://github.com/scienceverse/bibr"),
+)
 #: [seconds between sweeps, age in seconds] for files Gradio made
 BLOCKS_KWARGS: dict[str, Any] = {
     "analytics_enabled": False,
@@ -106,9 +116,24 @@ CREDIT = (
     f"contributors. This is the Python version: [{REPO_URL}]({REPO_URL})."
 )
 CSS = (
-    ".gradio-container{max-width:1100px !important} #report-frame iframe{width:100%} "
+    ".gradio-container{max-width:1100px !important;margin:0 auto !important} #report-frame iframe{width:100%} "
     "#download-report a{display:inline-block;padding:8px 16px;border:1px solid "
-    "var(--border-color-primary);border-radius:8px;text-decoration:none;font-weight:600}"
+    "var(--border-color-primary);border-radius:8px;text-decoration:none;font-weight:600} "
+    "#mc-header{padding:12px 0 4px} "
+    "#mc-header h1{font-size:2.2rem;line-height:1.15;margin:0;letter-spacing:-0.02em} "
+    "#mc-header .mc-version{display:inline-block;vertical-align:middle;margin-left:10px;"
+    "font-size:0.8rem;font-weight:600;padding:2px 10px;border-radius:999px;"
+    "border:1px solid var(--color-accent);color:var(--color-accent)} "
+    "#mc-header p.mc-intro{font-size:1.05rem;margin:8px 0 0;max-width:46rem} "
+    ".mc-links{display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 0 !important;"
+    "padding:0 !important;list-style:none !important;font-size:0.9rem} "
+    ".mc-links li{margin:0 !important;padding:0 !important} "
+    ".mc-links li::before{content:none !important} "
+    ".mc-links a{color:var(--link-text-color, var(--color-accent));text-decoration:none;"
+    "font-weight:600} .mc-links a:hover{text-decoration:underline} "
+    "#mc-footer{border-top:1px solid var(--border-color-primary);margin-top:8px;"
+    "padding-top:12px;font-size:0.9rem;color:var(--body-text-color-subdued)} "
+    "#mc-footer p{margin:0 0 6px}"
 )
 EXPIRED = "Your upload is no longer on the server. Upload the paper again."
 DATA_TOO_SLOW = (
@@ -116,6 +141,23 @@ DATA_TOO_SLOW = (
     "The other results are complete."
 )
 FAILED = "Something went wrong while checking this paper. Try the demo paper or another file."
+
+
+def _links() -> str:
+    items = "".join(
+        f'<li><a href="{html.escape(url)}" target="_blank" rel="noopener">{html.escape(label)}</a>'
+        "</li>"
+        for label, url in LINKS
+    )
+    return f'<ul class="mc-links">{items}</ul>'
+
+
+def header(version: str) -> str:
+    """The page's title, version, one line on what it does, and the project links."""
+    return (
+        f'<h1>metacheck <span class="mc-version">Python preview {html.escape(version)}</span>'
+        f'</h1><p class="mc-intro">{html.escape(INTRO)}</p>{_links()}'
+    )
 
 
 def here(text: str, hosted: bool) -> str:
@@ -248,6 +290,12 @@ def table_value(rows: list[Row]) -> Any:
 def _summary(analysis: Analysis) -> str:
     n = len(analysis.rows)
     return f"Ran {n} checks on **{analysis.name}** in {analysis.seconds:.1f} s."
+
+
+def default_reader() -> str:
+    """The reader a page starts with: bibr where this computer supplies the bibr key
+    (``SCIVRS_API_KEY``, as a hosted server does), else GROBID, which needs no key."""
+    return "bibr" if os.environ.get(bibr.KEY_ENV, "").strip() else "grobid"
 
 
 def privacy_text(reader: str, hosted: bool = False) -> str:
@@ -507,8 +555,7 @@ def build_app(
         else BLOCKS_KWARGS
     )
     with gr.Blocks(**blocks_kwargs) as app:
-        gr.Markdown(f"# metacheck\n\nPython version, preview {__version__}")
-        gr.Markdown(INTRO)
+        gr.HTML(header(__version__), elem_id="mc-header", js_on_load=None)
         upload = gr.File(
             label="Your paper (PDF, GROBID XML or bibr JSON)",
             file_types=[".pdf", ".xml", ".json"],
@@ -516,26 +563,38 @@ def build_app(
         )
         if hosted:
             gr.Markdown(hosting.HOSTED_NOTE)
-        reader = gr.Radio(READERS, value="grobid", label="Read PDFs with")
-        with gr.Group(visible=False) as key_group:
-            key = gr.Textbox(label="Your bibr key", type="password")
+        first = default_reader()
+        reader = gr.Radio(READERS, value=first, label="Read PDFs with")
+        with gr.Group(visible=first == "bibr") as key_group:
+            # the key of this computer wins over a typed one, so there is nothing to type then
+            key = gr.Textbox(
+                label="Your bibr key",
+                type="password",
+                visible=not os.environ.get(bibr.KEY_ENV, "").strip(),
+            )
             remember = gr.Checkbox(
                 label=here("Remember the key on this computer", shared),
                 value=False,
                 visible=remember_keys,
             )
-            note = gr.Markdown(KEY_ONLY_BIBR)
-            forget = gr.Button("Forget the saved key", size="sm", visible=False)
+            note = gr.Markdown(
+                key_note(remember_keys, shared) if first == "bibr" else KEY_ONLY_BIBR
+            )
+            forget = gr.Button(
+                "Forget the saved key",
+                size="sm",
+                visible=first == "bibr" and remember_keys and bool(bibr.load_key()),
+            )
         # a visitor's own computer is not where the files are checked
-        privacy = gr.Markdown(privacy_text("grobid", shared))
-        with gr.Row():
-            check = gr.Button("Check my paper", variant="primary")
-            demo = gr.Button("Try the demo paper")
+        privacy = gr.Markdown(privacy_text(first, shared))
         online = gr.Checkbox(
             label="Also run the online checks (slower: they look things up on the web)",
             value=False,
         )
         data = gr.Checkbox(label=DATA_LABEL, value=True)
+        with gr.Row():
+            check = gr.Button("Check my paper", variant="primary", size="lg")
+            demo = gr.Button("Try the demo paper", size="lg")
         with gr.Column(visible=False) as results:
             summary = gr.Markdown()
             status = gr.Markdown()
@@ -558,9 +617,11 @@ def build_app(
             )
             gr.Markdown(f"**Experimental checks.** {ABOUT_EXPERIMENTAL}")
             gr.Markdown(here(ABOUT_DATA, shared))
-        gr.Markdown(CREDIT)
-        if hosted:
-            gr.Markdown(hosting.footer(__version__, hosted.commit))
+        with gr.Column(elem_id="mc-footer"):
+            gr.Markdown(CREDIT)
+            if hosted:
+                gr.Markdown(hosting.footer(__version__, hosted.commit))
+            gr.HTML(_links(), js_on_load=None)
 
         outputs = [results, summary, table, frame, download, status, stop]
         inputs = [online, data, reader, key, remember]
