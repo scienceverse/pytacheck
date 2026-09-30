@@ -57,9 +57,22 @@ _options: dict[str, Any] = {}
 _options_lock = threading.Lock()
 _MISSING = object()
 
+#: old spellings of the Python-only options (read and set as the new name)
+_OPTION_ALIASES = {
+    "pytacheck.careless": "metacheck.careless",
+    "pytacheck.r_serialize_version": "metacheck.r_serialize_version",
+    "pytacheck.llm.workers": "metacheck.llm.workers",
+}
+
+
+def _canon(name: str) -> str:
+    """The name an option is stored under: an old spelling maps to its new name."""
+    return _OPTION_ALIASES.get(name, name)
+
 
 def get_option(name: str, default: Any = None) -> Any:
-    """R ``getOption(name, default)`` over pytacheck's option store."""
+    """R ``getOption(name, default)`` over metacheck's option store."""
+    name = _canon(name)
     with _options_lock:
         if name in _options:
             return _options[name]
@@ -71,19 +84,24 @@ def options(values: Mapping[str, Any] | None = None, /, **kwargs: Any) -> dict[s
 
     Option names contain dots, so pass a mapping
     (``options({"metacheck.osf.delay": 1})``); keyword arguments are also
-    accepted with ``_`` standing for ``.``. Setting a value to ``None``
+    accepted with every ``_`` standing for ``.`` (so a name that itself
+    contains ``_`` needs the mapping). Setting a value to ``None``
     removes the option (R ``options(x = NULL)``), restoring its default.
+
+    An old spelling (see ``_OPTION_ALIASES``) sets the same option as its new
+    name; the previous values come back keyed as the caller spelled them.
     """
     new = dict(values or {})
     new.update({k.replace("_", "."): v for k, v in kwargs.items()})
     old: dict[str, Any] = {}
     with _options_lock:
+        for key in new:
+            old[key] = _options.get(_canon(key))
         for key, value in new.items():
-            old[key] = _options.get(key)
             if value is None:
-                _options.pop(key, None)
+                _options.pop(_canon(key), None)
             else:
-                _options[key] = value
+                _options[_canon(key)] = value
     return old
 
 
@@ -91,7 +109,9 @@ def options(values: Mapping[str, Any] | None = None, /, **kwargs: Any) -> dict[s
 def local_options(values: Mapping[str, Any]) -> Iterator[None]:
     """Temporarily set options (``withr::local_options``)."""
     with _options_lock:
-        saved = {k: _options.get(k, _MISSING) for k in values}
+        saved: dict[str, Any] = {}
+        for k in values:
+            saved.setdefault(_canon(k), _options.get(_canon(k), _MISSING))
     options(values)
     try:
         yield

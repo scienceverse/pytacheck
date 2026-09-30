@@ -219,7 +219,7 @@ action = "keep"
 files = "*.py"
 match = 'pytacheck\.(careless|r_serialize_version|llm\.workers)\b'
 count = 14
-why = "option keys set by users; RENAME-3 adds metacheck.* aliases"
+why = "old option names, still accepted as aliases; removed with the alias"
 
 # --- logger names (kept until RENAME-3; see the spec)
 

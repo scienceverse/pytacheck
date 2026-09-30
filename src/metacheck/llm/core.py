@@ -1679,12 +1679,13 @@ def _plain_answers(responses: Sequence[Any]) -> list[Any]:
 def _llm_workers() -> int:
     """Concurrent LLM requests per ``llm()`` call (pytacheck extension; default 1).
 
-    Set the ``pytacheck.llm.workers`` option or ``PYTACHECK_LLM_WORKERS`` to
+    Set the ``metacheck.llm.workers`` option (the old spelling
+    ``pytacheck.llm.workers`` also works) or ``PYTACHECK_LLM_WORKERS`` to
     send several texts at once; results, caching and errors are unchanged.
     """
     from metacheck.utils import get_option
 
-    value = get_option("pytacheck.llm.workers") or env_get("LLM_WORKERS") or 1
+    value = get_option("metacheck.llm.workers") or env_get("LLM_WORKERS") or 1
     try:
         return max(1, int(value))
     except (TypeError, ValueError):

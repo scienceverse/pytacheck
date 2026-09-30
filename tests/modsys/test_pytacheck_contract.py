@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 
 from metacheck import module as modmod
+from metacheck import utils
 from metacheck.packs import install, registry, scan, tree
 from metacheck.repro import tables
 from tests.modsys.helpers import REV_A, mod_src
@@ -556,6 +557,143 @@ def test_a_handler_on_metacheck_receives_the_pytacheck_records() -> None:
         top.removeHandler(handler)
         for logger, level in levels.items():
             logger.setLevel(level)
+
+
+# --- the option keys ----------------------------------------------------------
+
+OPTION_PAIRS = [
+    ("pytacheck.careless", "metacheck.careless"),
+    ("pytacheck.r_serialize_version", "metacheck.r_serialize_version"),
+    ("pytacheck.llm.workers", "metacheck.llm.workers"),
+]
+OPTION_IDS = [new for _, new in OPTION_PAIRS]
+
+
+@pytest.fixture
+def clean_options():
+    """Leave the option store as found, whatever a test sets."""
+    names = [n for pair in OPTION_PAIRS for n in pair]
+    with utils._options_lock:
+        saved = {n: utils._options[n] for n in names if n in utils._options}
+        for n in names:
+            utils._options.pop(n, None)
+    yield
+    with utils._options_lock:
+        for n in names:
+            utils._options.pop(n, None)
+        utils._options.update(saved)
+
+
+def test_the_option_aliases_are_exactly_the_three_python_only_options() -> None:
+    assert dict(OPTION_PAIRS) == utils._OPTION_ALIASES
+    assert utils._canon("metacheck.osf.api") == "metacheck.osf.api"
+
+
+@pytest.mark.parametrize(("old", "new"), OPTION_PAIRS, ids=OPTION_IDS)
+def test_an_old_option_spelling_sets_and_gets_the_new_option(old, new, clean_options) -> None:
+    utils.options({old: "x"})
+    assert utils.get_option(old) == "x"
+    assert utils.get_option(new) == "x"
+    assert utils._options[new] == "x"
+    assert old not in utils._options  # one stored name, never both
+    utils.options({new: "y"})
+    assert utils.get_option(old) == "y"
+    assert utils.get_option(new) == "y"
+    utils.options({old: None})  # NULL through the old spelling removes it
+    assert utils.get_option(new) is None
+    assert utils.get_option(old) is None
+
+
+@pytest.mark.parametrize(("old", "new"), OPTION_PAIRS, ids=OPTION_IDS)
+def test_an_option_default_reaches_both_spellings(old, new, clean_options) -> None:
+    assert utils.get_option(old, "dflt") == "dflt"
+    assert utils.get_option(new, "dflt") == "dflt"
+    utils.options({old: False})  # a falsy value is still a value, not the default
+    assert utils.get_option(new, "dflt") is False
+    assert utils.get_option(old, "dflt") is False
+
+
+@pytest.mark.parametrize(("old", "new"), OPTION_PAIRS, ids=OPTION_IDS)
+def test_options_returns_the_old_values_keyed_as_spelled(old, new, clean_options) -> None:
+    assert utils.options({old: 1}) == {old: None}
+    assert utils.options({new: 2}) == {new: 1}  # set as old, asked as new
+    assert utils.options({old: 3}) == {old: 2}  # set as new, asked as old
+    assert utils.options({old: None}) == {old: 3}
+    assert utils.options({new: 4}) == {new: None}
+
+
+def test_options_with_both_spellings_in_one_call_reports_the_values_before_it(
+    clean_options,
+) -> None:
+    utils.options({"metacheck.careless": "a"})
+    old = utils.options({"pytacheck.careless": "b", "metacheck.careless": "c"})
+    assert old == {"pytacheck.careless": "a", "metacheck.careless": "a"}
+    assert utils.get_option("metacheck.careless") == "c"
+
+
+@pytest.mark.parametrize(("old", "new"), OPTION_PAIRS, ids=OPTION_IDS)
+@pytest.mark.parametrize(("setter", "restorer"), [(0, 0), (0, 1), (1, 0), (1, 1)])
+def test_local_options_restores_under_either_spelling(
+    old, new, setter, restorer, clean_options
+) -> None:
+    """Set with one spelling inside, and have it restored by the same or the other:
+    an option that was unset goes back to unset, and a value comes back."""
+    spell = (old, new)
+    for before in (None, "kept"):
+        if before is not None:
+            utils.options({spell[restorer]: before})
+        with utils.local_options({spell[setter]: "inside"}):
+            assert utils.get_option(old) == "inside"
+            assert utils.get_option(new) == "inside"
+        assert utils.get_option(old) == before
+        assert utils.get_option(new) == before
+        assert old not in utils._options
+        utils.options({new: None})
+
+
+@pytest.mark.parametrize(("old", "new"), OPTION_PAIRS, ids=OPTION_IDS)
+def test_local_options_nests_across_spellings(old, new, clean_options) -> None:
+    with utils.local_options({old: 1}):
+        with utils.local_options({new: 2}):
+            assert utils.get_option(old) == 2
+        assert utils.get_option(new) == 1
+    assert utils.get_option(old) is None
+
+
+def test_local_options_restores_when_the_body_raises(clean_options) -> None:
+    utils.options({"metacheck.careless": True})
+    with pytest.raises(RuntimeError), utils.local_options({"pytacheck.careless": False}):
+        assert utils.get_option("metacheck.careless") is False
+        raise RuntimeError
+    assert utils.get_option("pytacheck.careless") is True
+
+
+def test_the_readers_see_an_option_set_under_the_old_spelling(clean_options, monkeypatch) -> None:
+    """The three readers ask for the new names; the old spelling reaches them."""
+    from metacheck._env import env_names
+    from metacheck.llm import _rds
+    from metacheck.llm.core import _llm_workers
+    from metacheck.modules._data_check import _careless_available
+
+    assert _careless_available() is True
+    with utils.local_options({"pytacheck.careless": False}):
+        assert _careless_available() is False
+    with utils.local_options({"metacheck.careless": False}):
+        assert _careless_available() is False
+
+    with utils.local_options({"pytacheck.llm.workers": 4}):
+        assert _llm_workers() == 4
+    with utils.local_options({"metacheck.llm.workers": 3}):
+        assert _llm_workers() == 3
+
+    for name in env_names("R_SERIALIZE_VERSION"):
+        monkeypatch.delenv(name, raising=False)
+    v430 = 4 * 65536 + 3 * 256
+    assert _rds._r_version_int() != v430
+    with utils.local_options({"pytacheck.r_serialize_version": "4.3.0"}):
+        assert _rds._r_version_int() == v430
+    with utils.local_options({"metacheck.r_serialize_version": "4.3.0"}):
+        assert _rds._r_version_int() == v430
 
 
 # --- the command --------------------------------------------------------------

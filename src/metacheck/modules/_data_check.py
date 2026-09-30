@@ -648,12 +648,12 @@ def _careless_available() -> bool:
 
     metacheck needs the suggested ``careless`` package; pytacheck ports its
     ``longstring()`` and ``irv()``, so they are always available unless the
-    option ``pytacheck.careless`` is ``FALSE`` (metacheck without
-    ``careless`` installed).
+    option ``metacheck.careless`` (the old spelling ``pytacheck.careless`` also
+    works) is ``FALSE`` (metacheck without ``careless`` installed).
     """
     from metacheck.utils import get_option
 
-    return bool(get_option("pytacheck.careless", True))
+    return bool(get_option("metacheck.careless", True))
 
 
 def _as_num_chr(x: Any) -> list[float | None]:

@@ -374,7 +374,8 @@ def data_check(
 
     Careless responding needs metacheck's suggested ``careless`` package in R;
     pytacheck ports its ``longstring()``/``irv()``, so the screen always runs
-    unless the option ``pytacheck.careless`` is ``False`` (then, as metacheck
+    unless the option ``metacheck.careless`` (the old spelling
+    ``pytacheck.careless`` also works) is ``False`` (then, as metacheck
     without ``careless``, the report says the check was skipped). The
     distribution figure (``plot_distributions = TRUE``; ggplot2 in R) is
     drawn with matplotlib when it is installed.

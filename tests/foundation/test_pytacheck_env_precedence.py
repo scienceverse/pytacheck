@@ -5,8 +5,8 @@ option, then the variables in table order, then the default. Each case here sets
 names of the variable to something else and shows that the option or argument still wins.
 
 The file name is excluded by the rename guard (``tests/*test_pytacheck_*.py``): the options
-of the language model and of the R version still carry the old spelling, which this file
-may name. (Their new spelling, with the old one as an alias, comes with the option commit.)
+of the language model and of the R version are set here under their old spelling, which
+this file may name: the option store reads it as an alias of the new one.
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ def option(monkeypatch: pytest.MonkeyPatch) -> Any:
             monkeypatch.delenv(name, raising=False)
     store: dict[str, Any] = {}
     monkeypatch.setattr(utils, "_options", store)
-    return store.update
+    return utils.options  # through the store's own setter, so an old spelling is an alias
 
 
 def _both(monkeypatch: pytest.MonkeyPatch, key: str, first: str, second: str) -> None:
