@@ -1,6 +1,6 @@
 """The package layers of ARCHITECTURE.md §2.1 hold, derived from the imports (gate G6).
 
-The test parses every file under ``src/pytacheck`` with ``ast`` and collects each
+The test parses every file under ``src/metacheck`` with ``ast`` and collects each
 import wherever it sits: at module level, in a function, in a ``TYPE_CHECKING``
 block, as ``from . import x``, or as a constant string given to
 ``importlib.import_module`` or ``__import__``. Lazy-export maps and computed
@@ -10,18 +10,18 @@ module names are not imports the parser can see.
 ``pkg/__init__`` binds to ``name`` at module level (a from-import, ``import x as
 name``, or ``name = other`` or ``name: T = other`` for an imported ``other``,
 also in a ``TYPE_CHECKING`` block), and only otherwise the submodule
-``pkg.name``. So ``from pytacheck import module`` is the ``module()`` decorator,
+``pkg.name``. So ``from metacheck import module`` is the ``module()`` decorator,
 which the top level imports under the name of its module. A name the package
 binds is still read from the package, so the edge goes to the package whose
 ``__init__`` runs, whatever the name resolves to. Only a submodule that the
 package does not bind, or binds to itself, is an edge to the submodule. ``import
-pytacheck.module``, with or without ``as``, is the module, and so is an
+metacheck.module``, with or without ``as``, is the module, and so is an
 attribute chain through it: a chain reads a submodule before a name the package
-binds. A chain such as ``pytacheck.papers.model.Paper`` is one edge, judged by
+binds. A chain such as ``metacheck.papers.model.Paper`` is one edge, judged by
 its longest prefix that is a module or a name a package binds, like ``from
-pytacheck.papers.model import Paper``. The edge also keeps each module below the
-top level that a bound name is read from: ``llm`` for ``pytacheck.llm.Paper``,
-``papers.model`` for ``pytacheck.papers.model.Paper``. An import inside a
+metacheck.papers.model import Paper``. The edge also keeps each module below the
+top level that a bound name is read from: ``llm`` for ``metacheck.llm.Paper``,
+``papers.model`` for ``metacheck.papers.model.Paper``. An import inside a
 function or class of an ``__init__`` binds nothing in the package. The graph
 feeds three rules.
 
@@ -29,50 +29,50 @@ feeds three rules.
 ``_json``, ``papers.model``, ``papers.schema`` and ``papers.ids``. ``core/`` and
 ``papers/ids.py`` do not exist yet. Today the modules that exist are the
 foundation the core will build on, and they must already keep that promise: they
-import only each other, and nothing else in ``pytacheck``. Attribute access
-counts as an import, so ``pytacheck.text_search(...)``, which loads ``text``
+import only each other, and nothing else in ``metacheck``. Attribute access
+counts as an import, so ``metacheck.text_search(...)``, which loads ``text``
 through the top-level lazy ``__getattr__``, is an upward edge. A chain is judged
 by the name it resolves to and by each module it reads a bound name from, so
-``pytacheck.llm.Paper`` and ``pytacheck.llm.r.bind_rows`` are edges to ``llm``.
+``metacheck.llm.Paper`` and ``metacheck.llm.r.bind_rows`` are edges to ``llm``.
 A from-import is judged the same way: by the package it runs, and by the name it
 resolves to when that package is in the foundation. At the top level only a
-chain is judged by the name alone, so ``pytacheck.Paper`` is the foundation's
-``Paper``, while ``from pytacheck import Paper`` is an import of the top level.
+chain is judged by the name alone, so ``metacheck.Paper`` is the foundation's
+``Paper``, while ``from metacheck import Paper`` is an import of the top level.
 
 **Core.** Once ``core/**`` exists it keeps the positive list of §2.1: it imports
 only the foundation above and the core itself. §2.6 adds what ``core/run.py``
 needs for settings and caches: ``config``, ``llm``, the cache store (``cache``),
 ``repository``, the options overlay in ``utils`` (L6-1), the packs overlay in
-``packs.registry``, and from ``pytacheck.module`` the resolver and ``use()``
-(L5-7). From ``utils`` and ``pytacheck.module`` only those names are allowed,
+``packs.registry``, and from ``metacheck.module`` the resolver and ``use()``
+(L5-7). From ``utils`` and ``metacheck.module`` only those names are allowed,
 and from ``packs`` only ``registry``, so run.py may not import a runner built on
 ``execute()``, such as ``run_session`` or ``pack check``. It may import
-``pytacheck.module`` or ``pytacheck.utils`` as a namespace; each name it then
+``metacheck.module`` or ``metacheck.utils`` as a namespace; each name it then
 uses is judged on its own. A star import of either is reported, since the names
 it binds are used bare. Where §2.1 and §2.6 collide, §2.6 wins, but only
 for run.py and only for those names. The positive list judges a name as it is
-written. The top level is a façade: ``from pytacheck import x`` is reported
+written. The top level is a façade: ``from metacheck import x`` is reported
 under x's layer when that layer is banned below, and as an import of the top
 level otherwise, even when x is defined in the foundation. In any core file,
 run.py too, the lint also names the layers §2.1 says the core never imports
 (``text``, ``modules``, ``report``, ``api``, ``cli``, ``archives``,
-``datacheck``, ``codecheck``), ``pytacheck.doc``, and the permanent façades of
+``datacheck``, ``codecheck``), ``metacheck.doc``, and the permanent façades of
 §2.10, because the façades import the core, never the reverse. These are found
-through re-exports too, both ways: ``from pytacheck.report import config`` is
-reported as ``report``, and ``from pytacheck.llm import thing`` as ``report``
-when ``llm`` binds ``thing`` to something in ``report``. The façades in ``pytacheck.module`` are banned as names
+through re-exports too, both ways: ``from metacheck.report import config`` is
+reported as ``report``, and ``from metacheck.llm import thing`` as ``report``
+when ``llm`` binds ``thing`` to something in ``report``. The façades in ``metacheck.module`` are banned as names
 (``module``, ``module_run`` and ``get_prev_outputs``). A package's ``__init__``
 is not an import edge of its submodules.
 
 **Migrated modules.** A check module (a file under ``modules/``) that imports
-``pytacheck.doc`` counts as migrated. It may not use ``text.search``,
+``metacheck.doc`` counts as migrated. It may not use ``text.search``,
 ``papers.tables``, ``_r.frames`` or ``_r.regex.grepl``, however it reaches them:
 a module import, a name imported from a package that re-exports it (found in the
 ``__init__`` files), or attribute access such as ``regex.grepl``. Only an import
 statement marks a module as migrated, also one in a ``TYPE_CHECKING`` block;
-attribute access to ``pytacheck.doc`` does not. Façades such as ``compat`` or
+attribute access to ``metacheck.doc`` does not. Façades such as ``compat`` or
 the top-level ``__init__`` re-export the old names on purpose, so the rule does
-not apply to them. ``pytacheck.doc`` does not exist yet, so this rule finds
+not apply to them. ``metacheck.doc`` does not exist yet, so this rule finds
 nothing today and is exercised on synthetic trees.
 
 There is no rule for YAML modules (decision 2 is (c)).
@@ -93,7 +93,7 @@ from pathlib import Path
 
 import pytest
 
-PKG = "pytacheck"
+PKG = "metacheck"
 SRC = Path(__file__).resolve().parents[2] / "src" / PKG
 
 
@@ -133,7 +133,7 @@ RUN_CONTEXT = _names(
 )
 # modules run.py may import whole, for the names above that live in them
 RUN_NAMESPACES = _names("utils", "module")
-# the permanent façades (§2.10); the ones in pytacheck.module are banned as names
+# the permanent façades (§2.10); the ones in metacheck.module are banned as names
 FACADES = _names(
     "papers.tables",
     "papers.io.test_paper",
@@ -151,7 +151,7 @@ BANNED = _names("text.search", "papers.tables", "_r.frames", "_r.regex.grepl")
 # named by §2.1 but not written yet
 NOT_YET = frozenset(_names("core", "doc", "papers.ids", "compat"))
 
-# (rule, file under src/pytacheck, banned target) -> why it is still there. It
+# (rule, file under src/metacheck, banned target) -> why it is still there. It
 # holds today's violations and only shrinks; a new need changes the design first.
 ALLOWED: dict[tuple[str, str, str], str] = {}
 
@@ -545,7 +545,7 @@ def tree(tmp_path: Path, files: dict[str, str]) -> Path:
 BASE = {
     "text/search.py": "def text_search(): ...\n",
     "text/json_expand.py": "def as_numeric(): ...\n",
-    "text/__init__.py": "from pytacheck.text.search import text_search\n",
+    "text/__init__.py": "from metacheck.text.search import text_search\n",
     "papers/tables.py": "",
     "papers/model.py": "",
     "papers/schema.py": "",
@@ -556,7 +556,7 @@ BASE = {
     "_r/frames.py": "def bind_rows(): ...\n",
     "_r/regex.py": "def grepl(): ...\n",
     "_r/__init__.py": (
-        "from pytacheck._r.frames import bind_rows\nfrom pytacheck._r.regex import grepl\n"
+        "from metacheck._r.frames import bind_rows\nfrom metacheck._r.regex import grepl\n"
     ),
     "config.py": "",
     "log.py": "",
@@ -566,12 +566,12 @@ BASE = {
     "__init__.py": (
         "from typing import TYPE_CHECKING\n"
         "if TYPE_CHECKING:\n"
-        "    from pytacheck.text import text_search\n"
+        "    from metacheck.text import text_search\n"
         # as in the real package: the decorator has the name of its module
-        "    from pytacheck.module import module, module_run\n"
-        "    from pytacheck.io.read import read\n"
-        "    from pytacheck.papers.io import demopaper, test_paper\n"
-        "    from pytacheck.papers.model import Paper\n"
+        "    from metacheck.module import module, module_run\n"
+        "    from metacheck.io.read import read\n"
+        "    from metacheck.papers.io import demopaper, test_paper\n"
+        "    from metacheck.papers.model import Paper\n"
     ),
     "io/read.py": "def read(): ...\n",
 }
@@ -585,67 +585,67 @@ def found_in(tmp_path: Path, files: dict[str, str]) -> set[tuple[str, str, str]]
     ("source", "layer"),
     [
         # the two the design review found in the first core
-        ("from pytacheck.text.search import _legacy_text_frame\n", "text"),
-        ("from pytacheck.text.json_expand import as_numeric\n", "text"),
-        ("import pytacheck.modules.ethics_check\n", "modules"),
-        ("def f():\n    from pytacheck.report import x\n", "report"),
+        ("from metacheck.text.search import _legacy_text_frame\n", "text"),
+        ("from metacheck.text.json_expand import as_numeric\n", "text"),
+        ("import metacheck.modules.ethics_check\n", "modules"),
+        ("def f():\n    from metacheck.report import x\n", "report"),
         ("from ..text import search\n", "text"),
         ("from .. import text\n", "text"),
-        ("from pytacheck import text_search\n", "text"),
-        ("import pytacheck.api as api\n", "api"),
-        ("import importlib\nimportlib.import_module('pytacheck.archives.osf')\n", "archives"),
-        ("__import__('pytacheck.cli')\n", "cli"),
+        ("from metacheck import text_search\n", "text"),
+        ("import metacheck.api as api\n", "api"),
+        ("import importlib\nimportlib.import_module('metacheck.archives.osf')\n", "archives"),
+        ("__import__('metacheck.cli')\n", "cli"),
         # a call or a subscript inside an attribute chain is still read
         (
-            "import importlib\nimportlib.import_module('pytacheck.text.search').text_search('x')\n",
+            "import importlib\nimportlib.import_module('metacheck.text.search').text_search('x')\n",
             "text",
         ),
         (
-            "import importlib\n(importlib.import_module('pytacheck.report'),)[0].render()\n",
+            "import importlib\n(importlib.import_module('metacheck.report'),)[0].render()\n",
             "report",
         ),
-        ("from pytacheck.text import *\n", "text"),
+        ("from metacheck.text import *\n", "text"),
         # the test of an if statement is read too
-        ("import pytacheck\nif pytacheck.text_search('x'):\n    pass\n", "text"),
-        ("from pytacheck.datacheck import x\n", "datacheck"),
-        ("from pytacheck.codecheck import x\n", "codecheck"),
+        ("import metacheck\nif metacheck.text_search('x'):\n    pass\n", "text"),
+        ("from metacheck.datacheck import x\n", "datacheck"),
+        ("from metacheck.codecheck import x\n", "codecheck"),
         (
-            "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import pytacheck.report\n",
+            "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import metacheck.report\n",
             "report",
         ),
         # reached by attribute through the lazy top-level __getattr__
-        ("import pytacheck._r.regex\nx = pytacheck.text_search(1)\n", "text"),
-        ("import pytacheck\nx = pytacheck.text_search.__name__\n", "text"),
+        ("import metacheck._r.regex\nx = metacheck.text_search(1)\n", "text"),
+        ("import metacheck\nx = metacheck.text_search.__name__\n", "text"),
         # the façades import the core, never the reverse
-        ("from pytacheck.papers.tables import paper_table\n", "papers.tables"),
-        ("from pytacheck.papers import tables\n", "papers.tables"),
-        ("from pytacheck.stats import stats\n", "stats"),
-        ("from pytacheck import stats\n", "stats"),
-        ("from pytacheck.io.read import read\n", "io.read"),
-        ("from pytacheck import read\n", "io.read"),
-        ("from pytacheck.compat import paper_table\n", "compat"),
-        ("from pytacheck.module import module_run\n", "module.module_run"),
-        ("from pytacheck import module_run as run\n", "module.module_run"),
-        ("import pytacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
-        ("from pytacheck.module import module\n", "module.module"),
-        ("from pytacheck import test_paper\n", "papers.io.test_paper"),
-        ("from pytacheck.papers.io import demopaper\n", "papers.io.demopaper"),
+        ("from metacheck.papers.tables import paper_table\n", "papers.tables"),
+        ("from metacheck.papers import tables\n", "papers.tables"),
+        ("from metacheck.stats import stats\n", "stats"),
+        ("from metacheck import stats\n", "stats"),
+        ("from metacheck.io.read import read\n", "io.read"),
+        ("from metacheck import read\n", "io.read"),
+        ("from metacheck.compat import paper_table\n", "compat"),
+        ("from metacheck.module import module_run\n", "module.module_run"),
+        ("from metacheck import module_run as run\n", "module.module_run"),
+        ("import metacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
+        ("from metacheck.module import module\n", "module.module"),
+        ("from metacheck import test_paper\n", "papers.io.test_paper"),
+        ("from metacheck.papers.io import demopaper\n", "papers.io.demopaper"),
         # anything not on the positive list
-        ("from pytacheck.presets import preset\n", "presets"),
-        ("import pytacheck.fileinfo\n", "fileinfo"),
-        ("from pytacheck.io.grobid import x\n", "io.grobid"),
-        ("from pytacheck.provenance import module_provenance\n", "provenance"),
-        ("from pytacheck import not_reexported\n", ""),
-        ("import pytacheck\n", ""),
+        ("from metacheck.presets import preset\n", "presets"),
+        ("import metacheck.fileinfo\n", "fileinfo"),
+        ("from metacheck.io.grobid import x\n", "io.grobid"),
+        ("from metacheck.provenance import module_provenance\n", "provenance"),
+        ("from metacheck import not_reexported\n", ""),
+        ("import metacheck\n", ""),
         # the top level is a façade, even for a name defined in the foundation
-        ("from pytacheck import Paper\n", ""),
-        ("import pytacheck._r\nx = pytacheck.Paper\n", "Paper"),
+        ("from metacheck import Paper\n", ""),
+        ("import metacheck._r\nx = metacheck.Paper\n", "Paper"),
         # the run context is for core/run.py alone
-        ("from pytacheck.config import email\n", "config"),
-        ("from pytacheck.module import module_find\n", "module"),
-        ("import pytacheck.module\n", "module"),
-        ("from pytacheck.utils import local_options\n", "utils"),
-        ("from pytacheck.packs.registry import overlay\n", "packs.registry"),
+        ("from metacheck.config import email\n", "config"),
+        ("from metacheck.module import module_find\n", "module"),
+        ("import metacheck.module\n", "module"),
+        ("from metacheck.utils import local_options\n", "utils"),
+        ("from metacheck.packs.registry import overlay\n", "packs.registry"),
     ],
 )
 def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
@@ -656,34 +656,34 @@ def test_core_may_not_reach_up(tmp_path: Path, source: str, layer: str) -> None:
 @pytest.mark.parametrize(
     ("source", "layer"),
     [
-        ("from pytacheck.text.search import text_search\n", "text"),
-        ("from pytacheck.module import module_run\n", "module.module_run"),
-        ("from pytacheck.module import module\n", "module.module"),
+        ("from metacheck.text.search import text_search\n", "text"),
+        ("from metacheck.module import module_run\n", "module.module_run"),
+        ("from metacheck.module import module\n", "module.module"),
         # the root binds the module() decorator to the name of its module
-        ("from pytacheck import module\n\n@module('x')\ndef f(): ...\n", "module.module"),
-        ("from pytacheck import module\nspec = module.module_find('x')\n", "module.module"),
-        ("import pytacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
-        ("from pytacheck import test_paper\n", "papers.io.test_paper"),
-        ("from pytacheck import demopaper\n", "papers.io.demopaper"),
-        ("from pytacheck.stats import stats\n", "stats"),
-        ("import pytacheck.db\n", "db"),
-        ("from pytacheck.presets import preset\n", "presets"),
-        ("from pytacheck.archives import osf_pat\n", "archives"),
-        ("import pytacheck\n", ""),
+        ("from metacheck import module\n\n@module('x')\ndef f(): ...\n", "module.module"),
+        ("from metacheck import module\nspec = module.module_find('x')\n", "module.module"),
+        ("import metacheck.module as m\nm.get_prev_outputs('a', 'b')\n", "module.get_prev_outputs"),
+        ("from metacheck import test_paper\n", "papers.io.test_paper"),
+        ("from metacheck import demopaper\n", "papers.io.demopaper"),
+        ("from metacheck.stats import stats\n", "stats"),
+        ("import metacheck.db\n", "db"),
+        ("from metacheck.presets import preset\n", "presets"),
+        ("from metacheck.archives import osf_pat\n", "archives"),
+        ("import metacheck\n", ""),
         # runners built on execute() are not in the run context
-        ("from pytacheck.batch import run_batch\n", "batch"),
-        ("from pytacheck.packs.check import pack_check\n", "packs.check"),
-        ("from pytacheck.packs import check\n", "packs"),
-        ("from pytacheck.packs import pack_check\n", "packs"),
-        ("from pytacheck.module import run_session\n", "module"),
-        ("from pytacheck.module import module_run_each\n", "module"),
-        ("import pytacheck.module as m\nm.run_session()\n", "module.run_session"),
+        ("from metacheck.batch import run_batch\n", "batch"),
+        ("from metacheck.packs.check import pack_check\n", "packs.check"),
+        ("from metacheck.packs import check\n", "packs"),
+        ("from metacheck.packs import pack_check\n", "packs"),
+        ("from metacheck.module import run_session\n", "module"),
+        ("from metacheck.module import module_run_each\n", "module"),
+        ("import metacheck.module as m\nm.run_session()\n", "module.run_session"),
         # utils is there for the options overlay alone
-        ("from pytacheck.utils import left_join\n", "utils"),
+        ("from metacheck.utils import left_join\n", "utils"),
         # a star import of a whole module binds names that are used bare
-        ("from pytacheck.module import *\n", "module"),
-        ("from pytacheck.utils import *\n", "utils"),
-        ("import pytacheck.utils as u\nu.online()\n", "utils.online"),
+        ("from metacheck.module import *\n", "module"),
+        ("from metacheck.utils import *\n", "utils"),
+        ("import metacheck.utils as u\nu.online()\n", "utils.online"),
     ],
 )
 def test_run_py_may_not_go_beyond_the_run_context(tmp_path: Path, source: str, layer: str) -> None:
@@ -718,7 +718,7 @@ def test_run_py_may_not_reach_a_banned_layer_through_a_reexport(tmp_path: Path, 
     package, _, name = f"{PKG}.{layer}".rpartition(".")
     files = {
         "llm/__init__.py": f"from {package} import {name} as thing\n",
-        "core/run.py": "from pytacheck.llm import thing\n",
+        "core/run.py": "from metacheck.llm import thing\n",
     }
     assert found_in(tmp_path, files) == {("core", "core/run.py", f"{PKG}.{layer}")}
 
@@ -726,9 +726,9 @@ def test_run_py_may_not_reach_a_banned_layer_through_a_reexport(tmp_path: Path, 
 @pytest.mark.parametrize(
     ("package", "init"),
     [
-        ("report", "from pytacheck import config\n"),
-        ("report", "import pytacheck.config as config\n"),
-        ("report.blocks", "from pytacheck import config\n"),
+        ("report", "from metacheck import config\n"),
+        ("report", "import metacheck.config as config\n"),
+        ("report.blocks", "from metacheck import config\n"),
     ],
 )
 def test_a_reexport_is_reported_under_the_banned_layer(
@@ -737,7 +737,7 @@ def test_a_reexport_is_reported_under_the_banned_layer(
     """``config`` is in the run context, but reading it from ``report`` runs ``report``."""
     files = {
         f"{package.replace('.', '/')}/__init__.py": init,
-        "core/run.py": f"from pytacheck.{package} import config\n",
+        "core/run.py": f"from metacheck.{package} import config\n",
     }
     assert found_in(tmp_path, files) == {("core", "core/run.py", f"{PKG}.report")}
 
@@ -745,28 +745,28 @@ def test_a_reexport_is_reported_under_the_banned_layer(
 def test_only_an_init_file_reexports_names(tmp_path: Path) -> None:
     files = {
         "llm/__init__.py": "def render(): ...\n",
-        "llm/providers.py": "from pytacheck.report import render\n",
-        "core/run.py": "from pytacheck.llm import render\n",
+        "llm/providers.py": "from metacheck.report import render\n",
+        "core/run.py": "from metacheck.llm import render\n",
     }
     assert found_in(tmp_path, files) == set()
 
 
 def test_core_may_import_the_foundation(tmp_path: Path) -> None:
     source = (
-        "import pytacheck._r.regex\n"
-        "from pytacheck._r import regex, frames\n"
-        "from pytacheck._values import as_float\n"
-        "from pytacheck import _json\n"
-        "from pytacheck.papers.model import Paper\n"
-        "from pytacheck.papers import model, schema, ids\n"
-        "from pytacheck.papers.ids import paper_id\n"
-        "from pytacheck.core.doc import Doc\n"
-        "import pytacheck.papers.model\n"
-        "x = pytacheck.papers.model.Paper\n"
+        "import metacheck._r.regex\n"
+        "from metacheck._r import regex, frames\n"
+        "from metacheck._values import as_float\n"
+        "from metacheck import _json\n"
+        "from metacheck.papers.model import Paper\n"
+        "from metacheck.papers import model, schema, ids\n"
+        "from metacheck.papers.ids import paper_id\n"
+        "from metacheck.core.doc import Doc\n"
+        "import metacheck.papers.model\n"
+        "x = metacheck.papers.model.Paper\n"
         "from . import doc\n"
         "from .doc import Doc\n"
         "import importlib\n"
-        "importlib.import_module('pytacheck.core.hits')\n"
+        "importlib.import_module('metacheck.core.hits')\n"
         "importlib.import_module(name)\n"
         "import numpy\n"
     )
@@ -776,22 +776,22 @@ def test_core_may_import_the_foundation(tmp_path: Path) -> None:
 def test_core_may_import_what_the_run_context_needs(tmp_path: Path) -> None:
     """§2.6 gives ``core/run.py`` settings, caches and the resolved module specs."""
     source = (
-        "from pytacheck.llm import LLMSettings\n"
-        "from pytacheck.config import email\n"
-        "from pytacheck.cache import CacheStore\n"
-        "from pytacheck.repository import RepoIndex\n"
-        "from pytacheck.utils import get_option, options, local_options\n"
-        "from pytacheck.utils import options_snapshot, options_restore\n"
-        "import pytacheck.utils as u\n"
+        "from metacheck.llm import LLMSettings\n"
+        "from metacheck.config import email\n"
+        "from metacheck.cache import CacheStore\n"
+        "from metacheck.repository import RepoIndex\n"
+        "from metacheck.utils import get_option, options, local_options\n"
+        "from metacheck.utils import options_snapshot, options_restore\n"
+        "import metacheck.utils as u\n"
         "u.local_options({})\n"
-        "from pytacheck.packs import registry\n"
-        "from pytacheck.packs.registry import overlay\n"
-        "import pytacheck.packs.registry\n"
-        "pytacheck.packs.registry.registry()\n"
-        "from pytacheck.module import ModuleSpec, ModuleError, module_find\n"
-        "from pytacheck.module import use, use_setting, use_snapshot, use_restore\n"
-        "from pytacheck._r.regex import detector\n"
-        "from pytacheck.core.output import Result\n"
+        "from metacheck.packs import registry\n"
+        "from metacheck.packs.registry import overlay\n"
+        "import metacheck.packs.registry\n"
+        "metacheck.packs.registry.registry()\n"
+        "from metacheck.module import ModuleSpec, ModuleError, module_find\n"
+        "from metacheck.module import use, use_setting, use_snapshot, use_restore\n"
+        "from metacheck._r.regex import detector\n"
+        "from metacheck.core.output import Result\n"
     )
     files = {"packs/registry.py": "def registry(): ...\n", "core/run.py": source}
     assert found_in(tmp_path, files) == set()
@@ -799,9 +799,9 @@ def test_core_may_import_what_the_run_context_needs(tmp_path: Path) -> None:
 
 # a name that is a module, however it is spelled, and the key it is flagged under
 MODULE_SPELLINGS = [
-    ("import pytacheck.module\n", "module"),
-    ("import pytacheck.module as m\nspec = m.module_find('x')\n", "module"),
-    ("import pytacheck.config\nspec = pytacheck.module.module_find('x')\n", "module.module_find"),
+    ("import metacheck.module\n", "module"),
+    ("import metacheck.module as m\nspec = m.module_find('x')\n", "module"),
+    ("import metacheck.config\nspec = metacheck.module.module_find('x')\n", "module.module_find"),
 ]
 
 
@@ -821,68 +821,68 @@ def test_a_module_name_is_the_module_not_a_reexport(tmp_path: Path, source: str,
 SPELLING_FILES = {
     "packs/registry.py": "def registry(): ...\n",
     "llm/__init__.py": (
-        "from pytacheck import text as words\n"
-        "from pytacheck.module import module_run as _run\n"
+        "from metacheck import text as words\n"
+        "from metacheck.module import module_run as _run\n"
         "run = _run\n"
         "stage: object = _run\n"
         "step = walk = _run\n"
-        "import pytacheck.report as paint\n"
-        "def f():\n    from pytacheck.report import render\n"
-        "class C:\n    from pytacheck.report import shade\n"
-        "async def g():\n    from pytacheck.report import tint\n"
+        "import metacheck.report as paint\n"
+        "def f():\n    from metacheck.report import render\n"
+        "class C:\n    from metacheck.report import shade\n"
+        "async def g():\n    from metacheck.report import tint\n"
     ),
 }
 SPELLINGS = [
     # import, and import as
-    ("import pytacheck.module\n", [("module", "module", "module")]),
-    ("import pytacheck.module as m\n", [("module", "module", "module")]),
+    ("import metacheck.module\n", [("module", "module", "module")]),
+    ("import metacheck.module as m\n", [("module", "module", "module")]),
     # from-import of a submodule the package does not bind
-    ("from pytacheck.papers import model\n", [("papers.model", "papers.model", "papers.model")]),
-    ("from pytacheck._r import regex\n", [("_r.regex", "_r.regex", "_r.regex")]),
+    ("from metacheck.papers import model\n", [("papers.model", "papers.model", "papers.model")]),
+    ("from metacheck._r import regex\n", [("_r.regex", "_r.regex", "_r.regex")]),
     # from-import of a name the package binds, also when it shadows a submodule
-    ("from pytacheck import module\n", [("", "module", "module.module")]),
-    ("from pytacheck import text_search\n", [("", "text_search", "text.search.text_search")]),
-    ("from pytacheck._r import grepl as g\n", [("_r", "_r.grepl", "_r.regex.grepl")]),
-    ("from pytacheck.llm import words\n", [("llm", "llm.words", "text")]),
-    ("from pytacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
-    ("from pytacheck.llm import stage\n", [("llm", "llm.stage", "module.module_run")]),
-    ("from pytacheck.llm import walk\n", [("llm", "llm.walk", "module.module_run")]),
-    ("from pytacheck.llm import step\n", [("llm", "llm.step", "module.module_run")]),
-    ("from pytacheck.llm import paint\n", [("llm", "llm.paint", "report")]),
+    ("from metacheck import module\n", [("", "module", "module.module")]),
+    ("from metacheck import text_search\n", [("", "text_search", "text.search.text_search")]),
+    ("from metacheck._r import grepl as g\n", [("_r", "_r.grepl", "_r.regex.grepl")]),
+    ("from metacheck.llm import words\n", [("llm", "llm.words", "text")]),
+    ("from metacheck.llm import run\n", [("llm", "llm.run", "module.module_run")]),
+    ("from metacheck.llm import stage\n", [("llm", "llm.stage", "module.module_run")]),
+    ("from metacheck.llm import walk\n", [("llm", "llm.walk", "module.module_run")]),
+    ("from metacheck.llm import step\n", [("llm", "llm.step", "module.module_run")]),
+    ("from metacheck.llm import paint\n", [("llm", "llm.paint", "report")]),
     # an import in a function or class of an __init__ binds nothing in the package
-    ("from pytacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
-    ("from pytacheck.llm import shade\n", [("llm", "llm.shade", "llm.shade")]),
-    ("from pytacheck.llm import tint\n", [("llm", "llm.tint", "llm.tint")]),
-    ("from pytacheck import unbound\n", [("", "unbound", "unbound")]),
+    ("from metacheck.llm import render\n", [("llm", "llm.render", "llm.render")]),
+    ("from metacheck.llm import shade\n", [("llm", "llm.shade", "llm.shade")]),
+    ("from metacheck.llm import tint\n", [("llm", "llm.tint", "llm.tint")]),
+    ("from metacheck import unbound\n", [("", "unbound", "unbound")]),
     # attribute chains
     (
-        "import pytacheck.module as m\nm.module_find('x')\n",
+        "import metacheck.module as m\nm.module_find('x')\n",
         [
             ("module", "module", "module"),
             ("module.module_find", "module.module_find", "module.module_find"),
         ],
     ),
     (
-        "import pytacheck\npytacheck.module.module_find('x')\n",
+        "import metacheck\nmetacheck.module.module_find('x')\n",
         [("", "", ""), ("module.module_find", "module.module_find", "module.module_find")],
     ),
     (
-        "from pytacheck import module\nmodule.module_find('x')\n",
+        "from metacheck import module\nmodule.module_find('x')\n",
         [("", "module", "module.module"), ("module", "module", "module.module")],
     ),
     (
-        "import pytacheck\npytacheck.papers.model.Paper.x\n",
+        "import metacheck\nmetacheck.papers.model.Paper.x\n",
         [("", "", ""), ("papers.model.Paper", "papers.model.Paper", "papers.model.Paper")],
     ),
     (
-        "import pytacheck\npytacheck.packs.registry.registry()\n",
+        "import metacheck\nmetacheck.packs.registry.registry()\n",
         [
             ("", "", ""),
             ("packs.registry.registry", "packs.registry.registry", "packs.registry.registry"),
         ],
     ),
     (
-        "import pytacheck\npytacheck.text_search.__name__\n",
+        "import metacheck\nmetacheck.text_search.__name__\n",
         [("", "", ""), ("text_search", "text_search", "text.search.text_search")],
     ),
 ]
@@ -903,10 +903,10 @@ def test_each_spelling_resolves_as_python_does(
 
 def test_layer_names_match_whole_components(tmp_path: Path) -> None:
     files = {
-        "_values_extra.py": "from pytacheck.config import options\n",
-        "core/facets.py": "import pytacheck.textual\nfrom pytacheck._values_extra import x\n",
-        "_json.py": "from pytacheck._values_extra import x\n",
-        "core_helpers.py": "from pytacheck.text.search import text_search\n",
+        "_values_extra.py": "from metacheck.config import options\n",
+        "core/facets.py": "import metacheck.textual\nfrom metacheck._values_extra import x\n",
+        "_json.py": "from metacheck._values_extra import x\n",
+        "core_helpers.py": "from metacheck.text.search import text_search\n",
     }
     # the positive list flags them under their own names, not as text or _values
     assert found_in(tmp_path, files) == {
@@ -919,7 +919,7 @@ def test_layer_names_match_whole_components(tmp_path: Path) -> None:
 def test_type_checking_else_branch_is_runtime(tmp_path: Path) -> None:
     source = (
         "from typing import TYPE_CHECKING\n"
-        "if TYPE_CHECKING:\n    pass\nelse:\n    import pytacheck.report\n"
+        "if TYPE_CHECKING:\n    pass\nelse:\n    import metacheck.report\n"
     )
     found = violations(tree(tmp_path, {**BASE, "core/facets.py": source}))
     assert found[("core", "core/facets.py", f"{PKG}.report")].note == ""
@@ -927,7 +927,7 @@ def test_type_checking_else_branch_is_runtime(tmp_path: Path) -> None:
 
 def test_facades_may_import_the_core(tmp_path: Path) -> None:
     files = {
-        "text/extract.py": "from pytacheck.core.doc import Doc\nfrom pytacheck.core import doc\n"
+        "text/extract.py": "from metacheck.core.doc import Doc\nfrom metacheck.core import doc\n"
     }
     assert found_in(tmp_path, files) == set()
 
@@ -935,19 +935,19 @@ def test_facades_may_import_the_core(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     "source",
     [
-        "from pytacheck.llm import r\n",
-        "import pytacheck._r\nx = pytacheck.llm.r\n",
-        "import pytacheck._r\nx = pytacheck.llm.r.frames\n",
+        "from metacheck.llm import r\n",
+        "import metacheck._r\nx = metacheck.llm.r\n",
+        "import metacheck._r\nx = metacheck.llm.r.frames\n",
         # r.bind_rows is read from _r, after r is read from llm
-        "import pytacheck._r\nx = pytacheck.llm.r.bind_rows\n",
-        "from pytacheck.llm import Paper\n",
-        "import pytacheck._r\nx = pytacheck.llm.Paper\n",
+        "import metacheck._r\nx = metacheck.llm.r.bind_rows\n",
+        "from metacheck.llm import Paper\n",
+        "import metacheck._r\nx = metacheck.llm.Paper\n",
     ],
 )
 def test_foundation_sees_the_package_a_name_is_read_from(tmp_path: Path, source: str) -> None:
     """A name that ``llm`` binds runs ``llm/__init__``, even when it is in the foundation."""
     files = {
-        "llm/__init__.py": "from pytacheck import _r as r\nfrom pytacheck.papers.model import Paper\n",
+        "llm/__init__.py": "from metacheck import _r as r\nfrom metacheck.papers.model import Paper\n",
         "_json.py": source,
     }
     assert found_in(tmp_path, files) == {("lower", "_json.py", f"{PKG}.llm")}
@@ -956,9 +956,9 @@ def test_foundation_sees_the_package_a_name_is_read_from(tmp_path: Path, source:
 def test_foundation_sees_each_package_a_chain_reads_from(tmp_path: Path) -> None:
     """``up`` is read from ``_r``, then ``Paper`` from ``llm``, which is above it."""
     files = {
-        "_r/__init__.py": "from pytacheck import llm as up\n",
-        "llm/__init__.py": "from pytacheck.papers.model import Paper\n",
-        "_json.py": "import pytacheck._r\nx = pytacheck._r.up.Paper\n",
+        "_r/__init__.py": "from metacheck import llm as up\n",
+        "llm/__init__.py": "from metacheck.papers.model import Paper\n",
+        "_json.py": "import metacheck._r\nx = metacheck._r.up.Paper\n",
     }
     assert ("lower", "_json.py", f"{PKG}.llm") in found_in(tmp_path, files)
 
@@ -966,15 +966,15 @@ def test_foundation_sees_each_package_a_chain_reads_from(tmp_path: Path) -> None
 @pytest.mark.parametrize(
     ("init", "layer"),
     [
-        ("import pytacheck.text.search as ts\n", "text.search"),
-        ("from pytacheck.text.search import text_search as ts\n", "text.search.text_search"),
+        ("import metacheck.text.search as ts\n", "text.search"),
+        ("from metacheck.text.search import text_search as ts\n", "text.search.text_search"),
     ],
 )
 def test_foundation_judges_a_from_import_like_a_chain(
     tmp_path: Path, init: str, layer: str
 ) -> None:
     """``ts`` is read from ``_r``, which binds it to a module above the foundation."""
-    files = {"_r/__init__.py": init, "_json.py": "from pytacheck._r import ts\n"}
+    files = {"_r/__init__.py": init, "_json.py": "from metacheck._r import ts\n"}
     assert ("lower", "_json.py", f"{PKG}.{layer}") in found_in(tmp_path, files)
 
 
@@ -982,14 +982,14 @@ def test_foundation_modules_import_only_each_other(tmp_path: Path) -> None:
     found = found_in(
         tmp_path,
         {
-            "_r/base.py": "from pytacheck._r.regex import is_na\n",
-            "_values.py": "from pytacheck.config import options\n",
-            "papers/schema.py": "def f():\n    from pytacheck.text import search\n",
-            "_json.py": "from pytacheck import log\n",
-            "_r/base2.py": "import pytacheck._r.regex\nx = pytacheck.text_search(1)\n",
-            "_r/base3.py": "import pytacheck.papers.model\nx = pytacheck.papers.model.Paper\n",
+            "_r/base.py": "from metacheck._r.regex import is_na\n",
+            "_values.py": "from metacheck.config import options\n",
+            "papers/schema.py": "def f():\n    from metacheck.text import search\n",
+            "_json.py": "from metacheck import log\n",
+            "_r/base2.py": "import metacheck._r.regex\nx = metacheck.text_search(1)\n",
+            "_r/base3.py": "import metacheck.papers.model\nx = metacheck.papers.model.Paper\n",
             # papers.tables is above the foundation, so it may import text
-            "papers/tables.py": "from pytacheck.text.search import text_search\n",
+            "papers/tables.py": "from metacheck.text.search import text_search\n",
         },
     )
     assert found == {
@@ -1000,29 +1000,29 @@ def test_foundation_modules_import_only_each_other(tmp_path: Path) -> None:
     }
 
 
-MIGRATED = "from pytacheck.doc import Doc\n"
+MIGRATED = "from metacheck.doc import Doc\n"
 
 
 @pytest.mark.parametrize(
     ("source", "target"),
     [
-        ("from pytacheck.text.search import text_search\n", "text.search"),
-        ("from pytacheck.text import search\n", "text.search"),
-        ("import pytacheck.text.search as s\n", "text.search"),
-        ("from pytacheck.text import text_search\n", "text.search"),
-        ("from pytacheck.papers.tables import paper_table\n", "papers.tables"),
-        ("from pytacheck.papers import tables\n", "papers.tables"),
-        ("from pytacheck._r.frames import bind_rows\n", "_r.frames"),
-        ("from pytacheck._r import frames\n", "_r.frames"),
-        ("from pytacheck._r import bind_rows\n", "_r.frames"),
-        ("from pytacheck._r.regex import grepl\n", "_r.regex.grepl"),
-        ("from pytacheck._r import grepl\n", "_r.regex.grepl"),
-        ("from pytacheck._r.regex import grepl as g\n", "_r.regex.grepl"),
-        ("from pytacheck._r import regex\nregex.grepl('a', 'b')\n", "_r.regex.grepl"),
-        ("import pytacheck._r.regex as rx\nrx.grepl('a', 'b')\n", "_r.regex.grepl"),
-        ("import pytacheck\npytacheck._r.regex.grepl('a', 'b')\n", "_r.regex.grepl"),
-        ("def f():\n    from pytacheck._r.frames import count\n", "_r.frames"),
-        ("import importlib\nimportlib.import_module('pytacheck._r.frames')\n", "_r.frames"),
+        ("from metacheck.text.search import text_search\n", "text.search"),
+        ("from metacheck.text import search\n", "text.search"),
+        ("import metacheck.text.search as s\n", "text.search"),
+        ("from metacheck.text import text_search\n", "text.search"),
+        ("from metacheck.papers.tables import paper_table\n", "papers.tables"),
+        ("from metacheck.papers import tables\n", "papers.tables"),
+        ("from metacheck._r.frames import bind_rows\n", "_r.frames"),
+        ("from metacheck._r import frames\n", "_r.frames"),
+        ("from metacheck._r import bind_rows\n", "_r.frames"),
+        ("from metacheck._r.regex import grepl\n", "_r.regex.grepl"),
+        ("from metacheck._r import grepl\n", "_r.regex.grepl"),
+        ("from metacheck._r.regex import grepl as g\n", "_r.regex.grepl"),
+        ("from metacheck._r import regex\nregex.grepl('a', 'b')\n", "_r.regex.grepl"),
+        ("import metacheck._r.regex as rx\nrx.grepl('a', 'b')\n", "_r.regex.grepl"),
+        ("import metacheck\nmetacheck._r.regex.grepl('a', 'b')\n", "_r.regex.grepl"),
+        ("def f():\n    from metacheck._r.frames import count\n", "_r.frames"),
+        ("import importlib\nimportlib.import_module('metacheck._r.frames')\n", "_r.frames"),
     ],
 )
 def test_migrated_module_may_not_use_the_old_helpers(
@@ -1036,13 +1036,13 @@ def test_migrated_module_may_not_use_the_old_helpers(
     "source",
     [
         MIGRATED,
-        MIGRATED + "from pytacheck._r.regex import gsub, regexec\n",
-        MIGRATED + "from pytacheck._r import regex\nregex.gsub('a', 'b', 'c')\n",
-        MIGRATED + "from pytacheck.text import extract\n",
-        MIGRATED + "from pytacheck.papers.model import Paper\n",
-        "from pytacheck import doc\n",
-        "from pytacheck import doc\nfrom pytacheck.core.doc import Doc\n",
-        "from pytacheck.text.search import text_search\nfrom pytacheck._r.regex import grepl\n",
+        MIGRATED + "from metacheck._r.regex import gsub, regexec\n",
+        MIGRATED + "from metacheck._r import regex\nregex.gsub('a', 'b', 'c')\n",
+        MIGRATED + "from metacheck.text import extract\n",
+        MIGRATED + "from metacheck.papers.model import Paper\n",
+        "from metacheck import doc\n",
+        "from metacheck import doc\nfrom metacheck.core.doc import Doc\n",
+        "from metacheck.text.search import text_search\nfrom metacheck._r.regex import grepl\n",
     ],
 )
 def test_migrated_rule_is_derived_from_the_doc_import(tmp_path: Path, source: str) -> None:
@@ -1052,8 +1052,8 @@ def test_migrated_rule_is_derived_from_the_doc_import(tmp_path: Path, source: st
 def test_a_type_checking_doc_import_marks_a_module_as_migrated(tmp_path: Path) -> None:
     source = (
         "from typing import TYPE_CHECKING\n"
-        "if TYPE_CHECKING:\n    from pytacheck.doc import Doc\n"
-        "from pytacheck._r.frames import count\n"
+        "if TYPE_CHECKING:\n    from metacheck.doc import Doc\n"
+        "from metacheck._r.frames import count\n"
     )
     assert ("migrated", "modules/m.py", f"{PKG}._r.frames") in found_in(
         tmp_path, {"modules/m.py": source}
@@ -1061,39 +1061,39 @@ def test_a_type_checking_doc_import_marks_a_module_as_migrated(tmp_path: Path) -
 
 
 def test_doc_attribute_access_does_not_mark_a_module_as_migrated(tmp_path: Path) -> None:
-    source = "import pytacheck\nx = pytacheck.doc.Doc\nfrom pytacheck._r.frames import count\n"
+    source = "import metacheck\nx = metacheck.doc.Doc\nfrom metacheck._r.frames import count\n"
     assert found_in(tmp_path, {"modules/m.py": source}) == set()
 
 
 def test_facades_that_import_doc_are_not_migrated_modules(tmp_path: Path) -> None:
     reexports = (
-        "from pytacheck.text.search import text_search\n"
-        "from pytacheck.papers.tables import paper_table\n"
-        "from pytacheck._r import bind_rows\n"
+        "from metacheck.text.search import text_search\n"
+        "from metacheck.papers.tables import paper_table\n"
+        "from metacheck._r import bind_rows\n"
     )
     files = {
-        "compat.py": "from pytacheck.doc import Result\n" + reexports,
+        "compat.py": "from metacheck.doc import Result\n" + reexports,
         "__init__.py": (
             "from typing import TYPE_CHECKING\n"
-            "if TYPE_CHECKING:\n    from pytacheck.doc import Doc\n"
-            "    from pytacheck.text import text_search\n"
-            "    from pytacheck.module import module_run\n"
+            "if TYPE_CHECKING:\n    from metacheck.doc import Doc\n"
+            "    from metacheck.text import text_search\n"
+            "    from metacheck.module import module_run\n"
         ),
-        "report/blocks.py": "from pytacheck.doc import Result\n" + reexports,
+        "report/blocks.py": "from metacheck.doc import Result\n" + reexports,
     }
     assert found_in(tmp_path, files) == set()
 
 
 def test_a_doc_name_defined_in_the_core_marks_a_module_as_migrated(tmp_path: Path) -> None:
     files = {
-        "doc/__init__.py": "from pytacheck.core.doc import Doc\n",
-        "modules/m.py": MIGRATED + "from pytacheck._r.frames import count\n",
+        "doc/__init__.py": "from metacheck.core.doc import Doc\n",
+        "modules/m.py": MIGRATED + "from metacheck._r.frames import count\n",
     }
     assert ("migrated", "modules/m.py", f"{PKG}._r.frames") in found_in(tmp_path, files)
 
 
-def test_from_pytacheck_import_doc_marks_a_module_as_migrated(tmp_path: Path) -> None:
-    source = "from pytacheck import doc\nfrom pytacheck._r.frames import count\n"
+def test_from_metacheck_import_doc_marks_a_module_as_migrated(tmp_path: Path) -> None:
+    source = "from metacheck import doc\nfrom metacheck._r.frames import count\n"
     assert ("migrated", "modules/m.py", f"{PKG}._r.frames") in found_in(
         tmp_path, {"modules/m.py": source}
     )
@@ -1101,8 +1101,8 @@ def test_from_pytacheck_import_doc_marks_a_module_as_migrated(tmp_path: Path) ->
 
 def test_doc_and_core_files_are_not_migrated_modules(tmp_path: Path) -> None:
     files = {
-        "doc/__init__.py": "from pytacheck._r.frames import count\nfrom pytacheck.core.doc import Doc\n",
-        "core/hits.py": "from pytacheck.doc import Doc\nfrom pytacheck._r.frames import count\n",
+        "doc/__init__.py": "from metacheck._r.frames import count\nfrom metacheck.core.doc import Doc\n",
+        "core/hits.py": "from metacheck.doc import Doc\nfrom metacheck._r.frames import count\n",
     }
     found = found_in(tmp_path, files)
     assert {key for key in found if key[0] == "migrated"} == set()
@@ -1111,7 +1111,7 @@ def test_doc_and_core_files_are_not_migrated_modules(tmp_path: Path) -> None:
 
 
 def test_ratchet_fails_on_a_new_violation(tmp_path: Path) -> None:
-    root = tree(tmp_path, {**BASE, "core/facets.py": "from pytacheck.text.search import x\n"})
+    root = tree(tmp_path, {**BASE, "core/facets.py": "from metacheck.text.search import x\n"})
     new, stale = ratchet(violations(root), {})
     assert new == [f"core: core/facets.py:1 imports {PKG}.text.search.x"]
     assert stale == []
@@ -1125,19 +1125,19 @@ def test_ratchet_fails_on_a_new_violation(tmp_path: Path) -> None:
     ],
 )
 def test_ratchet_names_a_type_checking_import(tmp_path: Path, guard: str) -> None:
-    source = guard + "    from pytacheck.text.search import x\n"
+    source = guard + "    from metacheck.text.search import x\n"
     new, _ = ratchet(violations(tree(tmp_path, {**BASE, "core/facets.py": source})), {})
     assert new == [f"core: core/facets.py:3 imports {PKG}.text.search.x (type-checking)"]
 
 
 def test_ratchet_accepts_an_allowed_violation(tmp_path: Path) -> None:
-    root = tree(tmp_path, {**BASE, "core/facets.py": "from pytacheck.text.search import x\n"})
+    root = tree(tmp_path, {**BASE, "core/facets.py": "from metacheck.text.search import x\n"})
     allowed = {("core", "core/facets.py", f"{PKG}.text"): "moves in CORE-1b"}
     assert ratchet(violations(root), allowed) == ([], [])
 
 
 def test_ratchet_fails_on_an_entry_that_is_no_longer_needed(tmp_path: Path) -> None:
-    root = tree(tmp_path, {**BASE, "core/facets.py": "from pytacheck._values import as_float\n"})
+    root = tree(tmp_path, {**BASE, "core/facets.py": "from metacheck._values import as_float\n"})
     allowed = {("core", "core/facets.py", f"{PKG}.text"): "moves in CORE-1b"}
     new, stale = ratchet(violations(root), allowed)
     assert new == []

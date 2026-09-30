@@ -4,7 +4,7 @@ code_check reads the repository file listing of an earlier ``repo_check`` (or
 ``data_check``) run through ``get_prev_outputs()``. The scenarios in
 ``tests/mod_code/scenarios.json`` describe such listings (local fixture
 directories and explicit rows); :func:`cc_prev` builds the ``repo_check``
-output (a :class:`~pytacheck.module.ModuleOutput` whose paper is a test paper
+output (a :class:`~metacheck.module.ModuleOutput` whose paper is a test paper
 or paper list with fixed ids), so ``module_run()`` chains code_check onto it
 exactly as in a report pipeline -- as metacheck's own tests do. The R twin is
 ``tests/mod_code/cc_helpers.R``.
@@ -125,7 +125,7 @@ def cc_table(name: str) -> pd.DataFrame:
 
 def cc_paper(name: str, text: list[str] | None = None) -> Any:
     """The scenario's test paper (or paper list), with fixed ids."""
-    import pytacheck as pc
+    import metacheck as pc
 
     sc = scenario(name)
     if sc.get("demo"):
@@ -143,7 +143,7 @@ def cc_paper(name: str, text: list[str] | None = None) -> Any:
 
 
 def _output(module: str, paper: Any, pids: list[str], prev: dict[str, Any], **items: Any) -> Any:
-    from pytacheck.module import ModuleOutput
+    from metacheck.module import ModuleOutput
 
     table = items.pop("table", None)
     return ModuleOutput(
@@ -173,7 +173,7 @@ def cc_prev(name: str, paper: Any = None) -> Any:
     repo = _output("repo_check", paper, pids, {}, table=table)
     if "structure" not in sc:
         return repo
-    from pytacheck._r.frames import bind_rows
+    from metacheck._r.frames import bind_rows
 
     structure = bind_rows([table, _frame(sc["structure"], sc.get("drop", []))])
     stripped = replace(repo, paper=None, summary_table=None, prev_outputs={})
@@ -184,14 +184,14 @@ def cc_prev(name: str, paper: Any = None) -> Any:
 
 def cc_run(name: str, **kwargs: Any) -> Any:
     """``module_run(<repo_check output>, "code_check", ...)``."""
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     return module_run(cc_prev(name), "code_check", **kwargs)
 
 
 def report_tables(out: Any) -> list[pd.DataFrame]:
     """The data of the report's table blocks, in order."""
-    from pytacheck.report import ReportTable
+    from metacheck.report import ReportTable
 
     return [b.data.reset_index(drop=True) for b in out.report if isinstance(b, ReportTable)]
 
@@ -239,7 +239,7 @@ def fake_repo_check(
     table: pd.DataFrame | None, paper: Any = None, pids: list[str] | None = None
 ) -> Any:
     """A repo_check output holding *table*, for ``module_run(<it>, "code_check")``."""
-    import pytacheck as pc
+    import metacheck as pc
 
     if paper is None:
         paper = pc.test_paper(["Some text."])
@@ -251,7 +251,7 @@ def fake_repo_check(
 
 def run_dir(path: str | os.PathLike[str], **kwargs: Any) -> Any:
     """code_check on every file under *path* (the ``local_path`` tests' listing)."""
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     return module_run(fake_repo_check(dir_listing(path)), "code_check", **kwargs)
 
@@ -265,8 +265,8 @@ def cc_norm(mo: Any) -> Any:
     """
     from dataclasses import replace
 
+    from metacheck._r.regex import sub
     from parity.canonical import linked_trees
-    from pytacheck._r.regex import sub
 
     root = str(ROOT)
     # a submodule that is a symlink to another checkout's: R's checkout holds it
@@ -302,7 +302,7 @@ def cc_errors(name: str, **kwargs: Any) -> list[str | None] | None:
     ('<cwd>')`` suffix (which pytacheck's ``code_read()`` does not add yet) is
     dropped: the cases check which path code_check hands to the reader.
     """
-    from pytacheck._r.regex import sub
+    from metacheck._r.regex import sub
 
     table = cc_norm(cc_run(name, **kwargs)).table
     if "error" not in table.columns:
@@ -322,7 +322,7 @@ def cc_manifest(name: str, file: bool = False, **kwargs: Any) -> dict[str, Any]:
     """
     import tempfile
 
-    from pytacheck._r.base import r_sorted
+    from metacheck._r.base import r_sorted
 
     with tempfile.TemporaryDirectory(prefix="manifest") as d:
         target = os.path.join(d, "one.manifest.json") if file else d
@@ -334,8 +334,8 @@ def cc_manifest(name: str, file: bool = False, **kwargs: Any) -> dict[str, Any]:
 
 def cc_local(path: str, **kwargs: Any) -> Any:
     """code_check with *local_path* (a fresh repo_check of it), R's ``cc_local()``."""
-    import pytacheck as pc
-    from pytacheck.module import module_run
+    import metacheck as pc
+    from metacheck.module import module_run
 
     paper = pc.test_paper(["Some text."])
     paper.paper_id = "p1"

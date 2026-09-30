@@ -10,10 +10,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleError, ModuleOutput, module_info, module_run
-from pytacheck.report import report as report_pkg
-from pytacheck.report.report import (
+import metacheck as pc
+from metacheck.module import ModuleError, ModuleOutput, module_info, module_run
+from metacheck.report import report as report_pkg
+from metacheck.report.report import (
     DEFAULT_MODULES,
     ReportList,
     ReportOutput,
@@ -31,17 +31,17 @@ PSYCHSCI = (
 
 
 def test_exports(tmp_path, demo):
-    import pytacheck.report
+    import metacheck.report
 
-    # pytacheck.report.report is the submodule (the CLI reads report_mod.report)
+    # metacheck.report.report is the submodule (the CLI reads report_mod.report)
     # and calling it calls report()
     assert report_pkg.report is report
     assert callable(report_pkg)
     rep = report_pkg(demo, "marginal", tmp_path / "s.md", "md")
     assert rep.save_path == str(tmp_path / "s.md")
-    assert pytacheck.report.report_module_run is report_module_run
+    assert metacheck.report.report_module_run is report_module_run
     # the subpackage is callable, so pc.report(...) works whichever it resolves to
-    rep = pytacheck.report(demo, "marginal", tmp_path / "r.md", "md")
+    rep = metacheck.report(demo, "marginal", tmp_path / "r.md", "md")
     assert rep.save_path == str(tmp_path / "r.md")
 
 
@@ -74,7 +74,7 @@ def test_bad_paper_without_output_file_writes_nothing(tmp_path, monkeypatch):
 
 def test_rendering_error(tmp_path, demo, monkeypatch):
     """A render failure saves the qmd, warns, and returns the qmd path."""
-    rr = importlib.import_module("pytacheck.report.report")
+    rr = importlib.import_module("metacheck.report.report")
 
     def boom(*args, **kwargs):
         raise RuntimeError("render failed")
@@ -143,7 +143,7 @@ def test_report_paperlist(tmp_path):
 
 def test_report_paperlist_error_is_a_warning(tmp_path, monkeypatch):
     paper = pc.read([PSYCHSCI / "0956797613520608.json", PSYCHSCI / "0956797614522816.json"])
-    rr = importlib.import_module("pytacheck.report.report")
+    rr = importlib.import_module("metacheck.report.report")
 
     calls = {"n": 0}
     real = rr.report_module_run
@@ -265,7 +265,7 @@ def test_module_report_howitworks(demo, test_module):
 
 
 _DESCRIBED = """
-from pytacheck.module import module
+from metacheck.module import module
 
 
 @module(
@@ -279,7 +279,7 @@ def rp_described(paper):
 """
 
 _BLUE = """
-from pytacheck.module import module
+from metacheck.module import module
 
 
 @module(title="Blue Module", description="d", keywords=["general"])
@@ -314,7 +314,7 @@ def test_module_report_undefined_traffic_light(tmp_path):
 
 
 _TWO_PART = """
-from pytacheck.module import module
+from metacheck.module import module
 
 
 @module(title="Two Part Module", description="d", keywords=["general"])
@@ -344,7 +344,7 @@ def test_report_qmd_without_paper():
 
 def test_module_report_two_authors_on_one_line():
     # U6: R's greedy email gsub cut "A (\\email{..}) and B (\\email{..})" to "A"
-    from pytacheck.report.report import _strip_email
+    from metacheck.report.report import _strip_email
 
     line = "Lisa DeBruine (\\email{lisa@x.org}) and Daniel Lakens (\\email{d@y.nl})"
     assert _strip_email(line) == "Lisa DeBruine and Daniel Lakens"
@@ -492,8 +492,8 @@ def test_report_list_str(tmp_path):
 
 
 def test_cli_report(tmp_path, demo):
-    from pytacheck.cli import main
-    from pytacheck.papers.io import demofile
+    from metacheck.cli import main
+    from metacheck.papers.io import demofile
 
     out = tmp_path / "cli.html"
     rc = main(["report", str(demofile()), "-m", "marginal", "-o", str(out), "-f", "html"])

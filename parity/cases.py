@@ -6,7 +6,7 @@ A case file ``parity/cases/<area>.yaml`` looks like::
     cases:
       - id: text_search.demo.significant   # golden: parity/golden/text/<id>.json
         r: text_search                     # function in the metacheck namespace
-        py: pytacheck.text.text_search     # dotted path of the Python port
+        py: metacheck.text.text_search     # dotted path of the Python port
         args:                              # R argument names; see below
           paper: {$paper: demo}
           pattern: significant
@@ -776,7 +776,7 @@ def _import_named_modules(expr: str) -> None:
     without this a case would pass or fail with what earlier cases in the same
     process imported (``check --jobs`` and ``pytest -n`` order cases differently)."""
     for m in _PC_PATH.finditer(expr):
-        obj: Any = importlib.import_module("pytacheck")
+        obj: Any = importlib.import_module("metacheck")
         for part in m.group(1).split(".")[1:]:
             name = f"{obj.__name__}.{part}"
             if not hasattr(obj, part):  # never import over an attribute (pc.read)
@@ -820,7 +820,7 @@ def decode(x: Any) -> Any:
     import numpy as np
     import pandas as pd
 
-    import pytacheck as pc
+    import metacheck as pc
 
     if isinstance(x, dict) and len(x) == 1 and next(iter(x)).startswith("$"):
         key, val = next(iter(x.items()))
@@ -896,11 +896,11 @@ def _mock_dir(spec: dict[str, Any]) -> Any:
 METACHECK_DEFAULTS: tuple[tuple[str, str, str, Any], ...] = (
     # bibr export schema 12.0 is pytacheck's paper format; metacheck's read()
     # and grobid_to_bibr() convert Grobid TEI to its older format
-    ("pytacheck.io.read", "read", "schema_version", None),
-    ("pytacheck.io.grobid", "grobid_to_bibr", "schema_version", None),
+    ("metacheck.io.read", "read", "schema_version", None),
+    ("metacheck.io.grobid", "grobid_to_bibr", "schema_version", None),
     # metacheck's paper_write() saves the paper object unless schema_version =
     # "12.0"; pytacheck's "auto" writes a 12.x paper as a 12.0 file
-    ("pytacheck.papers.io", "paper_write", "schema_version", None),
+    ("metacheck.papers.io", "paper_write", "schema_version", None),
 )
 
 
@@ -951,7 +951,7 @@ def parity_id(n: int) -> str:
 def deterministic_ids() -> Iterator[None]:
     """Number id-less papers ``parity_id(1)``, ``parity_id(2)``, ... instead of
     hashing the time, as the R runner does."""
-    from pytacheck.papers import model
+    from metacheck.papers import model
 
     counter = iter(range(1, 1 << 62))
     saved = model._random_id
@@ -1193,7 +1193,7 @@ def _run_python(case: Case) -> Any:
     spec = case.spec
     args = decode_args(spec.get("args") or {}, spec.get("py_args"), spec.get("py_drop"))
     if "module" in spec:
-        from pytacheck.module import module_run
+        from metacheck.module import module_run
 
         paper = args.pop("paper")
         return module_run(paper, spec["module"], **args)

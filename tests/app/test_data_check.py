@@ -14,15 +14,15 @@ from typing import Any
 
 import pytest
 
-import pytacheck as pc
-from pytacheck import http
-from pytacheck.app import run, ui
-from pytacheck.app.launch import main
-from pytacheck.config import verbose
-from pytacheck.module import ModuleOutput
-from pytacheck.report import report as report_module
-from pytacheck.report.report import ReportOutput
-from pytacheck.utils import get_option, message
+import metacheck as pc
+from metacheck import http
+from metacheck.app import run, ui
+from metacheck.app.launch import main
+from metacheck.config import verbose
+from metacheck.module import ModuleOutput
+from metacheck.report import report as report_module
+from metacheck.report.report import ReportOutput
+from metacheck.utils import get_option, message
 
 
 def _output(light: str = "green", summary: str = "We classified 3 files.") -> ModuleOutput:
@@ -385,8 +385,8 @@ def test_a_second_data_check_waits_its_turn_and_can_be_stopped(fake: Fake, tmp_p
 def test_all_caches_are_in_the_user_folder_not_the_working_folder(
     fake: Fake, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pytacheck.archives.cache import _metacheck_cache_root
-    from pytacheck.archives.info_cache import _repo_info_cache_dir
+    from metacheck.archives.cache import _metacheck_cache_root
+    from metacheck.archives.info_cache import _repo_info_cache_dir
 
     monkeypatch.delenv("PYTACHECK_CACHE_DIR", raising=False)
     seen: dict[str, Any] = {}
@@ -446,7 +446,7 @@ def _halt() -> None:
 def test_a_request_or_a_download_ends_when_the_check_says_so() -> None:
     import respx
 
-    from pytacheck.archives.download import _perform_once
+    from metacheck.archives.download import _perform_once
 
     with respx.mock(assert_all_called=False) as router:
         route = router.get("https://files.example.test/a.csv").respond(200, content=b"a,b\n1,2\n")

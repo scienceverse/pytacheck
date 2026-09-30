@@ -10,10 +10,10 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck.llm as L
-from pytacheck.llm import core, providers
-from pytacheck.llm.providers import LLMError
-from pytacheck.utils import get_option, local_options, options
+import metacheck.llm as L
+from metacheck.llm import core, providers
+from metacheck.llm.providers import LLMError
+from metacheck.utils import get_option, local_options, options
 from tests.httpmock import replay
 from tests.llm.support import MOCKS, FakeChat
 
@@ -380,9 +380,9 @@ def test_llm_model_list(upstream_dir: Path) -> None:
 def test_llm_model_list_groq(upstream_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import datetime as dt
 
-    import pytacheck.utils
+    import metacheck.utils
 
-    monkeypatch.setattr(pytacheck.utils, "online", lambda *a, **k: True)
+    monkeypatch.setattr(metacheck.utils, "online", lambda *a, **k: True)
     with pytest.raises(TypeError):
         core._llm_model_list_groq(1)  # type: ignore[call-arg]
     with replay("apis"):

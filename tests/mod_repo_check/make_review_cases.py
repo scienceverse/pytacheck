@@ -46,7 +46,7 @@ SIZE_R = (
     "character(1))"
 ).format(", ".join(repr(float(s)) for s in SIZES))
 SIZE_PY = (
-    "[__import__('pytacheck.modules._repo_check', fromlist=['size_label']).size_label(x) "
+    "[__import__('metacheck.modules._repo_check', fromlist=['size_label']).size_label(x) "
     "for x in [{}, None, -1.0, float('inf'), float('nan')]]"
 ).format(", ".join(repr(float(s)) for s in SIZES))
 

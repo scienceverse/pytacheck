@@ -97,8 +97,8 @@ def test_report_keeps_the_empty_block_of_a_missing_sample_size_table() -> None:
 def test_empty_paperlist_has_an_empty_summary() -> None:
     # U79: R's data.frame(paper_id = NULL, preregistration = 0) stops
     # ("arguments imply differing number of rows: 0, 1")
-    import pytacheck as pc
-    from pytacheck.modules.prereg_check import _no_prereg_summary
+    import metacheck as pc
+    from metacheck.modules.prereg_check import _no_prereg_summary
 
     summary = _no_prereg_summary(pc.PaperList([]))
     assert summary.columns.tolist() == ["paper_id", "preregistration"]
@@ -120,7 +120,7 @@ def test_paper_without_info_runs(module: str, summary_text: str) -> None:
     # U79: paper() has no info row, so paper_id() is empty and R's
     # data.frame(paper_id = NULL, ...) stops ("arguments imply differing number
     # of rows: 0, 1"; reg_check runs prereg_check)
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.paper()
     mo = pc.module_run(paper, module)
@@ -130,7 +130,7 @@ def test_paper_without_info_runs(module: str, summary_text: str) -> None:
 
 
 def test_deparse_str_uses_r_escapes() -> None:
-    from pytacheck.modules._prereg import _deparse_str
+    from metacheck.modules._prereg import _deparse_str
 
     # expected values from R 4.5 deparse() in a UTF-8 locale
     assert _deparse_str("a\ab\bc\fd\ve\x01f\x7fg") == r'"a\ab\bc\fd\ve\001f\177g"'
@@ -143,7 +143,7 @@ def test_deparse_str_uses_r_escapes() -> None:
 
 
 def test_non_string_schema_labels_are_coerced_like_r() -> None:
-    from pytacheck.modules._prereg import osf_blocks_labels, osf_pages_labels
+    from metacheck.modules._prereg import osf_blocks_labels, osf_pages_labels
 
     blocks = []
     for text in (2024, True, 1.5, 100000.0, 3000000000, None, False):
@@ -174,7 +174,7 @@ def test_scalar_labels_end_up_as_slugged_fields() -> None:
 
 
 def test_label_with_ffff() -> None:
-    from pytacheck.modules._prereg import osf_label_to_field
+    from metacheck.modules._prereg import osf_label_to_field
 
     # U111: R's utf8towcs() rejects U+FFFE/U+FFFF, which stopped the module;
     # like other noncharacters they are kept

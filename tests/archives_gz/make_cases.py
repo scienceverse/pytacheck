@@ -16,10 +16,10 @@ MK = "tests/archives_gz/mocks"
 MKF = "tests/archives_gz/mocks_fail"
 UP = "tests/archives_gz/fixtures/upload"
 PS = "tests.archives_gz.parity_support.run"
-GH = "pytacheck.archives.github"
-GL = "pytacheck.archives.gitlab"
-ZE = "pytacheck.archives.zenodo"
-ZU = "pytacheck.archives.zenodo_upload"
+GH = "metacheck.archives.github"
+GL = "metacheck.archives.gitlab"
+ZE = "metacheck.archives.zenodo"
+ZU = "metacheck.archives.zenodo_upload"
 IGN_PID = {"ignore": ["paper_id"]}
 PSYCH = {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci"]}
 

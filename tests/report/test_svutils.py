@@ -6,8 +6,8 @@ import io
 
 import pytest
 
-from pytacheck.config import verbose
-from pytacheck.utils import ProgressBar, message, pb, suppress_messages
+from metacheck.config import verbose
+from metacheck.utils import ProgressBar, message, pb, suppress_messages
 
 
 @pytest.fixture(autouse=True)

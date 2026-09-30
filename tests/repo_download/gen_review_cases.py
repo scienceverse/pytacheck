@@ -65,7 +65,7 @@ def fuzz_names() -> list[str]:
     """~800 file names: documentation/data/code words x separators x extensions."""
     import random
 
-    from pytacheck.fileinfo.types import file_types
+    from metacheck.fileinfo.types import file_types
 
     rng = random.Random(20260925)
     exts = file_types()["ext"].tolist()
@@ -638,7 +638,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {"file_name": {"$expr": {"r": bad_r, "py": bad_py}}},
         }
     )
@@ -646,7 +646,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming_path",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {
                 "file_name": "ok.csv",
                 "file_path": {"$expr": {"r": '"d\\x82/ok.csv"', "py": '"d\\udc82/ok.csv"'}},
@@ -657,7 +657,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming_dir_only",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {
                 "file_name": {"$expr": {"r": '"d\\x82/ok.csv"', "py": '"d\\udc82/ok.csv"'}},
                 "file_path": "d/ok.csv",
@@ -668,7 +668,7 @@ def main() -> None:
         {
             "id": "invalid.is_readable_archive",
             "r": "metacheck:::.is_readable_archive",
-            "py": "pytacheck.archives.zip_peek._is_readable_archive",
+            "py": "metacheck.archives.zip_peek._is_readable_archive",
             "args": {
                 "name": {
                     "$expr": {
@@ -703,7 +703,7 @@ def main() -> None:
         {
             "id": "check_file_naming.odd_paths",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {"file_name": odd},
         }
     )
@@ -711,7 +711,7 @@ def main() -> None:
         {
             "id": "check_file_naming.odd_paths_as_path",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {"file_name": [f"f{i}.csv" for i in range(len(odd))], "file_path": odd},
         }
     )
@@ -722,7 +722,7 @@ def main() -> None:
         {
             "id": "file_category.generated_names",
             "r": "file_category",
-            "py": "pytacheck.fileinfo.category.file_category",
+            "py": "metacheck.fileinfo.category.file_category",
             "args": {"contents": names},
         }
     )
@@ -730,7 +730,7 @@ def main() -> None:
         {
             "id": "filetype.generated_names",
             "r": "filetype",
-            "py": "pytacheck.fileinfo.category.filetype",
+            "py": "metacheck.fileinfo.category.filetype",
             "args": {"filename": names},
         }
     )
@@ -738,7 +738,7 @@ def main() -> None:
         {
             "id": "check_file_naming.generated_names",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {
                 "file_name": names,
                 "data_type": {"$chr": ["unknown", "data", None, "code", "unknown"]},

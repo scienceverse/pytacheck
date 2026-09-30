@@ -341,9 +341,9 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
     R's parser is pytacheck's port (``PYTACHECK_R_PARSER=python``), so the
     results do not depend on whether an R is installed.
     """
-    import pytacheck as pc
+    import metacheck as pc
+    from metacheck.module import module_run
     from parity.canonical import canonical
-    from pytacheck.module import module_run
     from tests.httpmock import no_network
 
     papers: dict[str, Any] = {}

@@ -390,8 +390,8 @@ def test_the_checkout_is_repo_however_it_is_reached(tmp_path, monkeypatch) -> No
 def test_a_link_inside_the_checkout_is_not_repo_twice() -> None:
     # "/src" is a link to the checkout, which has a src folder of its own
     spelled = pcanonical.Spellings(("/home/j/pt",), ("/src",), ())
-    assert spelled.apply("/home/j/pt/src/pytacheck/x.py") == "<repo>/src/pytacheck/x.py"
-    assert spelled.apply("/src/pytacheck/x.py") == "<repo>/pytacheck/x.py"
+    assert spelled.apply("/home/j/pt/src/metacheck/x.py") == "<repo>/src/metacheck/x.py"
+    assert spelled.apply("/src/metacheck/x.py") == "<repo>/metacheck/x.py"
     assert spelled.apply("./src/x.py") == "./src/x.py"  # a relative path is not the link
 
 

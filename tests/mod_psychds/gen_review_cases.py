@@ -370,7 +370,7 @@ def chain_case(name: str) -> dict[str, Any]:
 
 def via_case(name: str, module: str) -> dict[str, Any]:
     """psychds_check chained after *module*, which ran on the fake data_check output."""
-    py_run = "__import__('pytacheck.module', fromlist=['_']).module_run"
+    py_run = "__import__('metacheck.module', fromlist=['_']).module_run"
     return {
         "id": f"psychds_check.review.{name}.via_{module}",
         "module": "psychds_check",

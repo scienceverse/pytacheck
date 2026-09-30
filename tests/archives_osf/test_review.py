@@ -15,17 +15,17 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck._r import slashed
-from pytacheck.archives.osf import (
+from metacheck._r import slashed
+from metacheck.archives.osf import (
     _normalize,
     _r_basename,
     _r_dirname,
     osf_check_id,
     osf_type,
 )
-from pytacheck.archives.osf_all import _osf_walk_nodes
-from pytacheck.archives.osf_helpers import _osf_parse_response
-from pytacheck.archives.osf_metadata import _metadata_json, _osf_metadata_download
+from metacheck.archives.osf_all import _osf_walk_nodes
+from metacheck.archives.osf_helpers import _osf_parse_response
+from metacheck.archives.osf_metadata import _metadata_json, _osf_metadata_download
 
 
 def _single(data: dict, content_type: str | None = "application/vnd.api+json") -> httpx.Response:
@@ -113,7 +113,7 @@ def test_parse_missing_type_and_id() -> None:
 
 
 def test_parse_rejects_non_listings() -> None:
-    from pytacheck.archives.osf import _osf_error_result
+    from metacheck.archives.osf import _osf_error_result
 
     with pytest.raises(TypeError, match="HTTP response"):
         _osf_parse_response({"id": "a", "type": "nodes"})
@@ -149,7 +149,7 @@ def test_normalize_keeps_missing_paths_relative(tmp_path: Path) -> None:
 
 
 def test_local_files_empty_vector_errors() -> None:
-    from pytacheck.archives.local import local_files
+    from metacheck.archives.local import local_files
 
     with pytest.raises(ValueError, match="length zero"):
         local_files([])
@@ -218,9 +218,9 @@ def test_links_on_an_empty_paper_list() -> None:
     """R: osf_links(paperlist()) is 0 x 3 (with a warning), aspredicted_links() 0 x 0."""
     import warnings
 
-    from pytacheck.archives.aspredicted import aspredicted_links
-    from pytacheck.archives.osf import osf_links
-    from pytacheck.papers import PaperList
+    from metacheck.archives.aspredicted import aspredicted_links
+    from metacheck.archives.osf import osf_links
+    from metacheck.papers import PaperList
 
     with pytest.warns(UserWarning, match="uninitialised column: `href`"):
         osf = osf_links(PaperList([]))
@@ -233,7 +233,7 @@ def test_links_on_an_empty_paper_list() -> None:
 
 def test_metadata_json_numbers_as_jsonlite_writes_them() -> None:
     """jsonlite's num_to_char(digits = 4), values checked in R."""
-    from pytacheck.archives.osf_metadata import _num_to_char
+    from metacheck.archives.osf_metadata import _num_to_char
 
     cases = [
         (0.000012345, "0"),
@@ -262,7 +262,7 @@ def test_metadata_json_numbers_as_jsonlite_writes_them() -> None:
 
 def test_metadata_json_simplifies_mixed_arrays_as_jsonlite() -> None:
     """write_json(fromJSON(simplifyVector = TRUE)) of mixed arrays, checked in R."""
-    from pytacheck.archives.osf_metadata import _metadata_json
+    from metacheck.archives.osf_metadata import _metadata_json
 
     def tags(value: object) -> str:
         return _metadata_json({"tags": value}).split('"tags": ', 1)[1].rsplit("\n}", 1)[0]

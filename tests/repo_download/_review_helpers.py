@@ -27,7 +27,7 @@ DATA = HERE / "data"
 
 
 def _bytes_text(x: Any) -> Any:
-    from pytacheck.fileinfo._strings import as_bytes_text
+    from metacheck.fileinfo._strings import as_bytes_text
 
     return as_bytes_text(x) if isinstance(x, str) else x
 
@@ -94,7 +94,7 @@ def _handler(routes: list[dict[str, Any]]) -> Callable[[Any], Any]:
 def _served(routes: list[dict[str, Any]]) -> Iterator[None]:
     import respx
 
-    from pytacheck.archives import zip_peek
+    from metacheck.archives import zip_peek
 
     zip_peek._ZIP_PEEK_CACHE.clear()
     try:
@@ -112,13 +112,13 @@ def serve(routes: list[dict[str, Any]], fn: Callable[..., Any], *args: Any, **kw
 
 
 def peek(routes: list[dict[str, Any]], url: str, **kw: Any) -> Any:
-    from pytacheck.archives.zip_peek import zip_peek
+    from metacheck.archives.zip_peek import zip_peek
 
     return _df_bytes(serve(routes, zip_peek, url, **kw))
 
 
 def decision(routes: list[dict[str, Any]], url: str, **kw: Any) -> Any:
-    from pytacheck.archives.zip_peek import zip_decision
+    from metacheck.archives.zip_peek import zip_decision
 
     out = serve(routes, zip_decision, url, **kw)
     out["contents"] = _df_bytes(out["contents"])
@@ -128,7 +128,7 @@ def decision(routes: list[dict[str, Any]], url: str, **kw: Any) -> Any:
 
 
 def _sorted_files(d: str) -> list[str]:
-    from pytacheck._r import r_sorted
+    from metacheck._r import r_sorted
 
     found = [
         os.path.relpath(os.path.join(root, f), d)
@@ -148,7 +148,7 @@ def _size(p: str) -> float:
 def fetch(
     routes: list[dict[str, Any]], url: str, names: Any = None, verify: bool = True
 ) -> dict[str, Any]:
-    from pytacheck.archives.zip_peek import _zip_fetch_members
+    from metacheck.archives.zip_peek import _zip_fetch_members
 
     d = tempfile.mkdtemp(prefix="rv_")
     try:
@@ -172,7 +172,7 @@ def fetch(
 
 
 def member(routes: list[dict[str, Any]], url: str, name: str, verify: bool = True) -> Any:
-    from pytacheck.archives.zip_peek import _crc32, _zip_member_fetch, zip_peek
+    from metacheck.archives.zip_peek import _crc32, _zip_member_fetch, zip_peek
 
     def run() -> Any:
         cd = zip_peek(url)
@@ -186,7 +186,7 @@ def member(routes: list[dict[str, Any]], url: str, name: str, verify: bool = Tru
 
 
 def cd(fixture: str) -> Any:
-    from pytacheck.archives.zip_peek import _parse_zip_central_dir
+    from metacheck.archives.zip_peek import _parse_zip_central_dir
 
     return _df_bytes(_parse_zip_central_dir((DATA / fixture).read_bytes()))
 
@@ -198,8 +198,8 @@ def download(
     disk: bool = True,
     **kw: Any,
 ) -> dict[str, Any]:
-    from pytacheck.archives.download import download_repo_files
-    from pytacheck.utils import get_option, options
+    from metacheck.archives.download import download_repo_files
+    from metacheck.utils import get_option, options
 
     sess = tempfile.mkdtemp(prefix="rv_sess_")
     shutil.rmtree(sess)
@@ -238,7 +238,7 @@ def download(
 
 
 def expand(fn: str, fixture: str, skip_types: Any = "materials") -> Any:
-    from pytacheck.archives import zip_peek
+    from metacheck.archives import zip_peek
 
     d = tempfile.mkdtemp(prefix="rv_")
     try:
@@ -271,13 +271,13 @@ def expand(fn: str, fixture: str, skip_types: Any = "materials") -> Any:
 
 
 def category(x: Any) -> Any:
-    from pytacheck.fileinfo.category import file_category
+    from metacheck.fileinfo.category import file_category
 
     return _df_bytes(file_category(x))
 
 
 def filetype(x: Any) -> Any:
-    from pytacheck.fileinfo.category import filetype as ft
+    from metacheck.fileinfo.category import filetype as ft
 
     out = ft(x)
     out.index = pd.Index([_bytes_text(v) for v in out.index], dtype=object)

@@ -16,8 +16,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
-from pytacheck.app import ui
-from pytacheck.app.run import Analysis, Row
+from metacheck.app import ui
+from metacheck.app.run import Analysis, Row
 
 #: the real one, taken before a test replaces it
 REAL = ui.analyse_upload

@@ -1,0 +1,455 @@
+# Decisions for scripts/rename_to_metacheck.py (RENAME-1).
+#
+# Every occurrence of "pytacheck" that the script's generic rules do not
+# classify must be covered here, or the script fails. An entry covers each
+# occurrence inside a match of `match` (a Python regex, searched in each line)
+# in the files matching `files` (fnmatch; `*` also matches `/`). Paths are the
+# paths after the move (src/metacheck/...). The first matching entry wins, and
+# entries come before the generic rules.
+#
+#   action       "keep": the occurrence stays "pytacheck";
+#                "rewrite": it becomes "metacheck"
+#   count        exact number of occurrences the entry must cover (omit it for
+#                entries that also cover lines edited by hand after the run);
+#                a rewrite entry covers nothing once it has been applied, and
+#                that is not drift
+#   why          the reason, and the package that renames it later, if any
+#
+# RENAME-2, RENAME-3 and RENAME-4 remove entries as they rename these names.
+
+# --- entry-point groups: read as they are; no metacheck.* twin (decision 13 (a), STORE-2b)
+
+[[rule]]
+action = "keep"
+files = "pyproject.toml"
+match = '\[project\.entry-points\."pytacheck\.modules"\]'
+count = 1
+why = "entry-point group declared for legacy module plugins"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/module.py"
+match = 'group="pytacheck\.modules"|^``pytacheck\.modules``\), ``\./|legacy ``pytacheck\.modules`` entry points'
+count = 3
+why = "entry-point group pytacheck.modules"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/packs/registry.py"
+match = 'ENTRY_POINT_GROUP = "pytacheck\.packs"|registering the ``pytacheck\.packs``'
+count = 2
+why = "entry-point group pytacheck.packs"
+
+# --- distribution names (the old distribution is still accepted)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/_version.py"
+match = '_OLD_DISTRIBUTION = "pytacheck"|; "pytacheck" is what installs'
+count = 2
+why = "installs from before 0.4.0a1 are the distribution pytacheck"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/presets.py"
+match = 'SELF_NAMES = frozenset\(\{"metacheck", "pytacheck"\}\)'
+count = 1
+why = "requires.pytacheck and a dependency named pytacheck mean this package"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/packs/install.py"
+match = '== "pytacheck"'
+count = 2
+why = "requires.pytacheck: metacheck wins when both are named; the pip hint installs metacheck"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/packs/check.py"
+match = '\{"metacheck", "pytacheck"\}'
+count = 1
+why = "pack check warns when requires names both"
+
+[[rule]]
+action = "keep"
+files = "scripts/record_snapshots.py"
+match = '\(DISTRIBUTION, "pytacheck"\)'
+count = 1
+why = "old distribution name"
+
+[[rule]]
+action = "keep"
+files = "tests/modsys/test_distribution_name.py"
+match = '_installed_version\("(?i:pytacheck)"\)|_dependency_ok\("pytacheck|\{"pytacheck": |\["pytacheck>=|\{"pytacheck": "0'
+count = 10
+why = "tests that requires.pytacheck still means this package (kept in the old form)"
+
+[[rule]]
+action = "keep"
+files = "tests/install/test_installer_scripts.py"
+match = '"METACHECK_SPEC": "pytacheck"|"tools" / "pytacheck"'
+count = 4
+why = "the pre-0.4.0a1 uv tool the installers remove"
+
+# --- store id (RENAME-2)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/config.py"
+match = 'BUILTIN_STORE = "pytacheck"'
+count = 1
+why = "store id; RENAME-2 renames it to scienceverse"
+
+# --- reserved pack names
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/packs/manifest.py"
+match = 'RESERVED_PACK_NAMES = frozenset\(\{.*"pytacheck"'
+count = 1
+why = "pytacheck stays a reserved pack name"
+
+# --- platformdirs folder names split over lines, and paths under them (RENAME-3)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/config.py"
+match = '^\s*"pytacheck", "scienceverse"$'
+count = 1
+why = "platformdirs cache folder name (call split over lines); RENAME-3"
+
+[[rule]]
+action = "keep"
+files = "tests/app/test_launch.py"
+match = '"state" / "pytacheck"'
+count = 1
+why = "platformdirs state folder name; RENAME-3"
+
+# --- run records and the registry (RENAME-3, REG-RENAME)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/provenance.py"
+match = '^    pytacheck: str$|^\s+pytacheck=__version__,$|"pytacheck": self\.pytacheck'
+count = 4
+why = "run record field `pytacheck` (the version); RENAME-3 renames it to `version`"
+
+[[rule]]
+action = "keep"
+files = "tests/modsys/test_runrecord.py"
+match = '"pytacheck"'
+count = 2
+why = "run record field; RENAME-3"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/status.py"
+match = '"pytacheck"|\.py\.pytacheck"'
+count = 5
+why = "registry key implementations.py.pytacheck; REG-RENAME"
+
+[[rule]]
+action = "keep"
+files = "tests/status/test_*.py"
+match = '"pytacheck"'
+count = 6
+why = "registry key implementations.py.pytacheck; REG-RENAME"
+
+# --- format ids and produced names (RENAME-3, REG-RENAME, EXTRACT-PROV)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/repro/tables.py"
+match = '_FORMAT = "pytacheck\.module_tables"'
+count = 1
+why = "format id of saved module tables; RENAME-3 reads both forms"
+
+[[rule]]
+action = "keep"
+files = "tests/repro_core/test_tables.py"
+match = '"pytacheck\.module_tables"'
+count = 2
+why = "format id of saved module tables"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/repro/tables.py"
+match = '_TYPE_ROOT = "pytacheck\."'
+count = 1
+why = "saved dataclass types keep the prefix 0.4.0a1 reads; RENAME-3 switches it with the format id"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/repro/tables.py"
+match = 'module_name\.startswith\(\("pytacheck\.", "metacheck\."\)\)'
+count = 1
+why = "the decoder rebuilds dataclass types saved under either name"
+
+[[rule]]
+action = "rewrite"
+files = "src/metacheck/repro/tables.py"
+match = '(cls\.__module__|module_name)\.startswith\("pytacheck\."\)'
+why = "dataclasses now live under metacheck.*"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/archives/info_cache.py"
+match = '_FORMAT = "pytacheck\.repo_info_cache"'
+count = 1
+why = "format id of the repo-info cache; entries written by 0.4.0a1 must stay hits; RENAME-3 reads both forms"
+
+[[rule]]
+action = "keep"
+files = "tests/archives_osf/test_cache.py"
+match = '"format": "pytacheck\.repo_info_cache"'
+count = 1
+why = "format id of the repo-info cache; RENAME-3"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/io/bibr12.py"
+match = '"name": "pytacheck"'
+count = 1
+why = "converter name in bibr 12 exports (tells Python-made files from R's); REG-RENAME / EXTRACT-PROV"
+
+[[rule]]
+action = "keep"
+files = "tests/bibr12/test_import_bibr12.py"
+match = '"name": "pytacheck"'
+count = 1
+why = "converter name"
+
+[[rule]]
+action = "keep"
+files = "tests/grobid12/test_import_grobid_bibr12.py"
+match = '"name": "pytacheck"|\["name"\] == "pytacheck"'
+count = 2
+why = "converter name"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/datacheck/files.py"
+match = '"name": "pytacheck"'
+count = 1
+why = "software name in data manifests; REG-RENAME / EXTRACT-PROV"
+
+[[rule]]
+action = "keep"
+files = "tests/datacheck_files/test_data_manifest.py"
+match = '== "pytacheck"'
+count = 2
+why = "software name in data manifests"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/report/report.py"
+match = 'renderer: str = "pytacheck"|\("pytacheck", "quarto"\)'
+count = 3
+why = "public renderer value; a second spelling may be added later"
+
+[[rule]]
+action = "keep"
+files = "tests/report/test_render.py"
+match = '"pytacheck" in html'
+count = 1
+why = "the report's generator line says pytacheck until RENAME-4"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/http.py"
+match = 'f"pytacheck/\{__version__\}'
+count = 1
+why = "User-Agent product token; changing it is a separate decision (the URL stays the repository)"
+
+# --- option keys (RENAME-3 adds aliases)
+
+[[rule]]
+action = "keep"
+files = "*.py"
+match = 'pytacheck\.(careless|r_serialize_version|llm\.workers)\b'
+count = 14
+why = "option keys set by users; RENAME-3 adds metacheck.* aliases"
+
+# --- logger names (kept until RENAME-3; see the spec)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/log.py"
+match = 'getLogger\("pytacheck"\)'
+count = 1
+why = "logger name; RENAME-3"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/api/app.py"
+match = 'getLogger\("pytacheck\.api"\)'
+count = 1
+why = "logger name; RENAME-3"
+
+[[rule]]
+action = "keep"
+files = "tests/*.py"
+match = 'logger="pytacheck(\.api)?"'
+count = 3
+why = "logger names"
+
+# --- the command name
+
+[[rule]]
+action = "keep"
+files = "pyproject.toml"
+match = '^pytacheck = "'
+count = 1
+why = "the pytacheck command stays"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/cli.py"
+match = 'prog="pytacheck"'
+count = 1
+why = "the help and usage name stay pytacheck for both commands; RENAME-4"
+
+# --- build configuration after the script's transforms
+
+[[rule]]
+action = "keep"
+files = "pyproject.toml"
+match = '"/?src/metacheck", "/?src/pytacheck"|\["metacheck", "pytacheck"'
+count = 5
+why = "the alias package is built, linted, measured and type-checked too"
+
+# --- the pack scanner and the consent card: both forms (contract point; edited by hand)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/packs/install.py"
+match = 'i\.startswith\(\("metacheck\.", "pytacheck\."\)\)'
+count = 1
+why = "the consent card's first-party filter accepts both forms"
+
+[[rule]]
+action = "rewrite"
+files = "src/metacheck/packs/install.py"
+match = 'i\.startswith\("pytacheck\."\)'
+why = "first-party filter (commit 4 adds the old form back)"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/packs/scan.py"
+match = 'FIRST_PARTY = \("metacheck", "pytacheck"\)|``import pytacheck as pc; pc\.http'
+count = 2
+why = "both import names are first-party, and pc.http is found through either"
+
+# --- code that must follow the package
+
+[[rule]]
+action = "rewrite"
+files = "src/metacheck/packs/registry.py"
+match = 'package="pytacheck\.modules"'
+count = 1
+why = "the package of the built-in modules (not the entry-point group)"
+
+[[rule]]
+action = "rewrite"
+files = "src/metacheck/packs/__init__.py"
+match = "module 'pytacheck\\.packs' has no attribute"
+count = 1
+why = "the error names this module (not the entry-point group)"
+
+[[rule]]
+action = "rewrite"
+files = "tests/modsys/test_builtin_presets.py"
+match = 'files\("pytacheck\.modules"\)'
+count = 1
+why = "resources of the built-in modules package (not the entry-point group)"
+
+[[rule]]
+action = "rewrite"
+files = "tests/modsys/test_manifest_tree.py"
+match = "'pytacheck\\.packs'( not)? in sys\\.modules"
+count = 3
+why = "whether the packs subpackage was imported (not the entry-point group)"
+
+[[rule]]
+action = "rewrite"
+files = "src/metacheck/__init__.py"
+match = "module 'pytacheck' has no attribute"
+why = "the error names this module"
+
+[[rule]]
+action = "rewrite"
+files = "scripts/sync_exports.py"
+match = '"pytacheck": "utilities"|return "pytacheck"$'
+why = "section key: the top-level package"
+
+[[rule]]
+action = "rewrite"
+files = "tests/modsys/test_scan.py"
+match = '^\s+"pytacheck",$'
+why = "the imported module in the expected scan result"
+
+[[rule]]
+action = "rewrite"
+files = "tests/foundation/test_layering.py"
+match = 'pytacheck\.(?:llm\.(?:Paper|r)\b|doc\b|compat\b|batch\b|papers\.ids\b|core\b|cache\b|repository\b|textual\b|_values_extra\b|_r\.up\b)|^PKG = "pytacheck"$|nothing else in ``pytacheck``|test_from_pytacheck_import_doc'
+count = 38
+why = "the layering lint walks the package and its fixtures name modules of it that are not written yet"
+
+[[rule]]
+action = "rewrite"
+files = "tests/scripts/test_upstream_sync.py"
+match = 'pytacheck\.x:bar'
+why = "a porting symbol in the fixture tree"
+
+[[rule]]
+action = "keep"
+files = "tests/scripts/test_upstream_sync.py"
+match = 'tmp_path / "pytacheck"'
+count = 1
+why = "the checkout folder name (the repository stays pytacheck)"
+
+[[rule]]
+action = "rewrite"
+files = "tests/test_parity_cli.py"
+match = '"<repo>/pytacheck/x\.py"'
+why = "follows the rewritten input path"
+
+[[rule]]
+action = "rewrite"
+files = "parity/cases/*.yaml"
+match = '^\s*pytacheck\\"\)'
+why = "__import__(\"pytacheck\") split over two lines of a case"
+
+[[rule]]
+action = "rewrite"
+files = "porting/symbols.json"
+match = '"pytacheck\.report\.app:'
+why = "porting target of a function that is not ported yet"
+
+[[rule]]
+action = "rewrite"
+files = "scripts/porting_symbols.py"
+match = '"pytacheck\.report\.app"'
+why = "porting target of a function that is not ported yet"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/io/corpus.py"
+match = 'pytacheck/pandas/Python'
+count = 1
+why = "prose"
+
+# --- last: the store id in the module-system tests (after the specific entries above)
+
+[[rule]]
+action = "keep"
+files = "tests/modsys/*.py"
+match = '''(?x)
+    (?<!import_module\()(?<!find_spec\()(?<!importorskip\()(?<!__import__\()
+    (?<!sys\.modules,\ )(?<!"-m",\ )"pytacheck"(?=\s*[:,)\]}]|$) (?# a store id as a value or key)
+  | "pytacheck/demo            (?# a STORE/NAME reference)
+  | "stores\.pytacheck"        (?# a config key path)
+  | "stores"\s*/\s*"pytacheck" (?# the store cache folder)
+  | match="pytacheck/demo'''
+count = 81
+why = "store id in pins, records, config and store indexes; RENAME-2"

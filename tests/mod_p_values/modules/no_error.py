@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from pytacheck._r.frames import count
-from pytacheck.module import module
-from pytacheck.text import text_search
+from metacheck._r.frames import count
+from metacheck.module import module
+from metacheck.text import text_search
 
 
 @module(

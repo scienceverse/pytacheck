@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pytacheck.module import module
+from metacheck.module import module
 
 
 @module(title="No Details Module", keywords=["general"])

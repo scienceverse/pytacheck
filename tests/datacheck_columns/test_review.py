@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck.columns import (
+from metacheck.datacheck.columns import (
     _decode_value_labels,
     _missing_from_value_labels,
     data_col_stats,

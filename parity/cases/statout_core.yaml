@@ -6,7 +6,7 @@
 - "id": "read_r_output.analysis.code_lines"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "an untitled one-line result takes the source label as its analysis, as documented (R: NA)"}
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": &analysis_out
       "$call":
@@ -21,12 +21,12 @@
         "args": {"con": {"$file": "tests/statout_core/data/analysis.R"}}
 - "id": "read_r_output.analysis.no_code_lines"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": *analysis_out
 - "id": "read_r_output.analysis.single_string"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$expr":
@@ -35,7 +35,7 @@
     "code_lines": *analysis_code
 - "id": "read_r_output.model_chain"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$call":
@@ -50,7 +50,7 @@
         "args": {"con": {"$file": "tests/statout_core/data/model_chain.R"}}
 - "id": "read_r_output.synthetic.lines"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": &synthetic_out
       "$call":
@@ -64,7 +64,7 @@
         "args": {"con": {"$file": "tests/statout_core/data/synthetic.R"}}
 - "id": "read_r_output.synthetic.string"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$expr":
@@ -73,27 +73,27 @@
     "code_lines": *synthetic_code
 - "id": "read_r_output.synthetic.no_code_lines"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": *synthetic_out
 - "id": "read_r_output.null"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": {"$null": true}
 - "id": "read_r_output.empty"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": {"$chr": []}
 - "id": "read_r_output.empty_string"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": ""
 - "id": "read_r_output.oneline.title_groups"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$chr":
@@ -108,14 +108,14 @@
       - "total = 5, hello = 3, rho = 0.5, tau ~ 0.2"
 - "id": "read_r_output.no_match"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$chr": ["Nothing to see here.", "Just prose, no statistics.", ""]
     "code_lines": {"$chr": ["x <- 1"]}
 - "id": "read_r_output.no_prompts_with_code"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$chr":
@@ -123,7 +123,7 @@
     "code_lines": {"$chr": ["t.test(x)"]}
 - "id": "read_r_output.tables.tricky"
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$chr":
@@ -150,71 +150,71 @@
 # ---------------------------------------------------------------------------
 - "id": "read_stat_tables.jasp.structured"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp"}}
 - "id": "read_stat_tables.omv.structured"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/sample.omv"}}
 - "id": "read_stat_tables.jasp.html_only"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/html_only.jasp"}}
 - "id": "read_stat_tables.omv.html_only"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/html_only.omv"}}
 - "id": "read_stat_tables.html.custom"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "a table row without any content is dropped (R's df[NA, ] adds a row of NAs)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/custom_html.jasp"}}
 - "id": "read_stat_tables.not_zip"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U137", "reason": "a file that is not a zip archive has no tables (R: basename(NULL) error)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/not_zip.jasp"}}
 - "id": "read_stat_tables.missing_file"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": "no_such_file.jasp"}
 - "id": "read_stat_tables.ipynb.python"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_python.ipynb"}}
 - "id": "read_stat_tables.ipynb.r"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a printed result class, as metacheck intends (R: NA)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb"}}
 - "id": "read_stat_tables.ipynb.mixed"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a printed result class, as metacheck intends (R: NA)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/notebook_mixed.ipynb"}}
 - "id": "read_stat_tables.ipynb.not_notebook"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/not_a_notebook.ipynb"}}
 - "id": "read_stat_tables.ipynb.array"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/array.ipynb"}}
 - "id": "read_stat_tables.ipynb.stripped"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/stripped.ipynb"}}
 # ---------------------------------------------------------------------------
 # r-capture.R (parent side)
 # ---------------------------------------------------------------------------
 - "id": "r_captures_to_tables.capture_script"
   "r": "metacheck:::.r_captures_to_tables"
-  "py": "pytacheck.statout.r_capture._r_captures_to_tables"
+  "py": "metacheck.statout.r_capture._r_captures_to_tables"
   "args":
     "caps": &caps
       "$expr":
         "r": "jsonlite::fromJSON('tests/statout_core/data/capture_script.captures.json', simplifyVector = FALSE)"
-        "py": "__import__('pytacheck.statout.r_capture', fromlist=['_']). _read_captures(__import__('tests.statout_core._helpers', fromlist=['x']).DATA / 'capture_script.captures.json')"
+        "py": "__import__('metacheck.statout.r_capture', fromlist=['_']). _read_captures(__import__('tests.statout_core._helpers', fromlist=['x']).DATA / 'capture_script.captures.json')"
     "source_label": "capture_script.R"
     "code_lines": &capture_code
       "$call":
@@ -223,13 +223,13 @@
         "args": {"con": {"$file": "tests/statout_core/data/capture_script.R"}}
 - "id": "r_captures_to_tables.no_code_lines"
   "r": "metacheck:::.r_captures_to_tables"
-  "py": "pytacheck.statout.r_capture._r_captures_to_tables"
+  "py": "metacheck.statout.r_capture._r_captures_to_tables"
   "args":
     "caps": *caps
 - "id": "r_captures_to_tables.synthetic"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U140", "reason": "a capture without a source line has line_seq 1, as in .r_merge_captures() (R: NA)"}
   "r": "metacheck:::.r_captures_to_tables"
-  "py": "pytacheck.statout.r_capture._r_captures_to_tables"
+  "py": "metacheck.statout.r_capture._r_captures_to_tables"
   "args":
     "caps":
       "$expr":
@@ -237,21 +237,21 @@
         "py": "[{'analysis': 'x', 'method': 'Kruskal-Wallis rank sum test', 'rows': [{'label': 'a', 'stats': {'H': 2.5, 'p': 1e-20, 'big': 1e15, 'whole': 113.0, 'inf': float('inf'), 's': 'Inf', 'neg': -0.000012345678901234567}}, {'stats': {'H': 3.0, 'label': 7.0}}]}, {'analysis': 'y', 'rows': []}, {'rows': [{'label': 'r', 'stats': {}}], 'line': 3}, {'analysis': 'z', 'method': 'Fisher', 'rows': [{'label': None, 'stats': {'p': 0.5}}], 'line': 3, 'call_text': 'fisher.test(tab)'}, {'analysis': 'w', 'rows': [{'label': 'q', 'stats': {'p': 0.5}}], 'call_text': 'm |> summary()'}]"
 - "id": "r_captures_to_tables.null"
   "r": "metacheck:::.r_captures_to_tables"
-  "py": "pytacheck.statout.r_capture._r_captures_to_tables"
+  "py": "metacheck.statout.r_capture._r_captures_to_tables"
   "args": {"caps": {"$null": true}}
 - "id": "r_merge_captures.capture_script"
   "r": "metacheck:::.r_merge_captures"
-  "py": "pytacheck.statout.r_capture._r_merge_captures"
+  "py": "metacheck.statout.r_capture._r_merge_captures"
   "args":
     "cap_tabs": &cap_tabs
       "$call":
         "r": "metacheck:::.r_captures_to_tables"
-        "py": "pytacheck.statout.r_capture._r_captures_to_tables"
+        "py": "metacheck.statout.r_capture._r_captures_to_tables"
         "args": {"caps": *caps, "source_label": "capture_script.R", "code_lines": *capture_code}
     "txt_tabs": &txt_tabs
       "$call":
         "r": "read_r_output"
-        "py": "pytacheck.statout.r_output.read_r_output"
+        "py": "metacheck.statout.r_output.read_r_output"
         "args":
           "text":
             "$call":
@@ -263,21 +263,21 @@
 - "id": "r_merge_captures.no_captures"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "an untitled one-line result takes the script name as its analysis, as documented (R: NA)"}
   "r": "metacheck:::.r_merge_captures"
-  "py": "pytacheck.statout.r_capture._r_merge_captures"
+  "py": "metacheck.statout.r_capture._r_merge_captures"
   "args": {"cap_tabs": {"$null": true}, "txt_tabs": *txt_tabs}
 - "id": "r_merge_captures.no_text"
   "r": "metacheck:::.r_merge_captures"
-  "py": "pytacheck.statout.r_capture._r_merge_captures"
+  "py": "metacheck.statout.r_capture._r_merge_captures"
   "args": {"cap_tabs": *cap_tabs, "txt_tabs": {"$list": []}}
 - "id": "r_merge_captures.text_without_lines"
   "r": "metacheck:::.r_merge_captures"
-  "py": "pytacheck.statout.r_capture._r_merge_captures"
+  "py": "metacheck.statout.r_capture._r_merge_captures"
   "args":
     "cap_tabs": *cap_tabs
     "txt_tabs":
       "$call":
         "r": "read_r_output"
-        "py": "pytacheck.statout.r_output.read_r_output"
+        "py": "metacheck.statout.r_output.read_r_output"
         "args":
           "text":
             "$call":
@@ -291,7 +291,7 @@
     "x":
       "$expr":
         "r": "vapply(list('Shapiro-Wilk normality test', 'Wilcoxon rank sum exact test', 'Mann-Whitney', 'Kruskal-Wallis rank sum test', 'Bartlett test of homogeneity of variances', \"Fisher's Exact Test for Count Data\", \"McNemar's Chi-squared test\", \"Pearson's Chi-squared test\", 'chi-square', '1-sample proportions test', 'Kolmogorov-Smirnov test', 'Friedman rank sum test', 'F test to compare two variances', \"Pearson's product-moment correlation\", 'Welch Two Sample t-test', 'Exact binomial test', '', NA, NULL, 'KOLMOGOROV'), metacheck:::.r_method_to_fn, character(1))"
-        "py": "[__import__('pytacheck.statout.r_capture', fromlist=['_'])._r_method_to_fn(m) for m in ['Shapiro-Wilk normality test', 'Wilcoxon rank sum exact test', 'Mann-Whitney', 'Kruskal-Wallis rank sum test', 'Bartlett test of homogeneity of variances', \"Fisher's Exact Test for Count Data\", \"McNemar's Chi-squared test\", \"Pearson's Chi-squared test\", 'chi-square', '1-sample proportions test', 'Kolmogorov-Smirnov test', 'Friedman rank sum test', 'F test to compare two variances', \"Pearson's product-moment correlation\", 'Welch Two Sample t-test', 'Exact binomial test', '', None, None, 'KOLMOGOROV']]"
+        "py": "[__import__('metacheck.statout.r_capture', fromlist=['_'])._r_method_to_fn(m) for m in ['Shapiro-Wilk normality test', 'Wilcoxon rank sum exact test', 'Mann-Whitney', 'Kruskal-Wallis rank sum test', 'Bartlett test of homogeneity of variances', \"Fisher's Exact Test for Count Data\", \"McNemar's Chi-squared test\", \"Pearson's Chi-squared test\", 'chi-square', '1-sample proportions test', 'Kolmogorov-Smirnov test', 'Friedman rank sum test', 'F test to compare two variances', \"Pearson's product-moment correlation\", 'Welch Two Sample t-test', 'Exact binomial test', '', None, None, 'KOLMOGOROV']]"
 # ---------------------------------------------------------------------------
 # r-output.R internals
 # ---------------------------------------------------------------------------
@@ -302,7 +302,7 @@
     "x":
       "$expr":
         "r": "vapply(c('shapiro.test(x)', 'wilcox.test (x, y)', 'res <- t.test(a ~ b)', 'with(d, T.TEST(x))', 'wilcox.test(x); t.test(y)', 'cohen.d(x, g)', 'effectsize::cohens_d(y ~ g)', 'rm_d <- repeated_measures_d(x)', 'd %>% t_test(score ~ group)', 'rstatix::wilcox_test(d, y ~ g)', 'cor_test(d, a, b)', 'dt.test(x)', 'mytest(x)', '', 'summary(lm(y ~ x))', 'x.t.test(x)', 'kruskal_test(d, y ~ g); shapiro_test(d, y)'), metacheck:::.r_call_fn, character(1), USE.NAMES = FALSE)"
-        "py": "[__import__('pytacheck.statout.r_output', fromlist=['_'])._r_call_fn(s) for s in ['shapiro.test(x)', 'wilcox.test (x, y)', 'res <- t.test(a ~ b)', 'with(d, T.TEST(x))', 'wilcox.test(x); t.test(y)', 'cohen.d(x, g)', 'effectsize::cohens_d(y ~ g)', 'rm_d <- repeated_measures_d(x)', 'd %>% t_test(score ~ group)', 'rstatix::wilcox_test(d, y ~ g)', 'cor_test(d, a, b)', 'dt.test(x)', 'mytest(x)', '', 'summary(lm(y ~ x))', 'x.t.test(x)', 'kruskal_test(d, y ~ g); shapiro_test(d, y)']]"
+        "py": "[__import__('metacheck.statout.r_output', fromlist=['_'])._r_call_fn(s) for s in ['shapiro.test(x)', 'wilcox.test (x, y)', 'res <- t.test(a ~ b)', 'with(d, T.TEST(x))', 'wilcox.test(x); t.test(y)', 'cohen.d(x, g)', 'effectsize::cohens_d(y ~ g)', 'rm_d <- repeated_measures_d(x)', 'd %>% t_test(score ~ group)', 'rstatix::wilcox_test(d, y ~ g)', 'cor_test(d, a, b)', 'dt.test(x)', 'mytest(x)', '', 'summary(lm(y ~ x))', 'x.t.test(x)', 'kruskal_test(d, y ~ g); shapiro_test(d, y)']]"
 - "id": "r_is_preview_call.all"
   "r": "base::identity"
   "py": "copy.copy"
@@ -310,7 +310,7 @@
     "x":
       "$expr":
         "r": "vapply(c('head(df)', 'utils::head(df, 3)', 'dplyr::glimpse(d)', 'print(summary(m))', 'View(d)', 'names (d)', 'x <- head(d)', 'summary(d)', '', 'base::nrow(d)', 'stats::head(d)', 'headache(x)'), metacheck:::.r_is_preview_call, logical(1), USE.NAMES = FALSE)"
-        "py": "[__import__('pytacheck.statout.r_output', fromlist=['_'])._r_is_preview_call(s) for s in ['head(df)', 'utils::head(df, 3)', 'dplyr::glimpse(d)', 'print(summary(m))', 'View(d)', 'names (d)', 'x <- head(d)', 'summary(d)', '', 'base::nrow(d)', 'stats::head(d)', 'headache(x)']]"
+        "py": "[__import__('metacheck.statout.r_output', fromlist=['_'])._r_is_preview_call(s) for s in ['head(df)', 'utils::head(df, 3)', 'dplyr::glimpse(d)', 'print(summary(m))', 'View(d)', 'names (d)', 'x <- head(d)', 'summary(d)', '', 'base::nrow(d)', 'stats::head(d)', 'headache(x)']]"
 - "id": "r_call_object_ref.all"
   "r": "base::identity"
   "py": "copy.copy"
@@ -318,18 +318,18 @@
     "x":
       "$expr":
         "r": "vapply(c('summary(m_vid)', 'm_vid <- lmer(y ~ x)', 'm_vid', 'm_vid |> summary()', 'm_vid %>% eta_squared()', 'eta_squared(mc_model$anova_table$F[1])', 'emmeans(specs = \"team\", object = mc_model)', 'summary(update(m_vid, . ~ . - x))', 'get.ci(mc_model$anova_table$`num Df`[1], conf.level = .95)', 'x == 5', 'f(\"a(b\", m)', 'f(x == 1, m)', 'f(g(1), m[[\"a\"]])', 'f(1, 2)', '5', 'f(unbalanced', 'x = 3', 'a$b$c', 'a[1, 2]', 'fit[[1]]', 'a + b', 'f(\"s\\\\\"q\", m)', '  mod2  ', 'f()', 'plot(x ~ y)', 'y ~ x', 'f(d[\"a\", ], z)', 'f({x}, y)', 'x == 5 & f(y)', 'summary(m)$coef'), metacheck:::.r_call_object_ref, character(1), USE.NAMES = FALSE)"
-        "py": "[__import__('pytacheck.statout.r_output', fromlist=['_'])._r_call_object_ref(s) for s in ['summary(m_vid)', 'm_vid <- lmer(y ~ x)', 'm_vid', 'm_vid |> summary()', 'm_vid %>% eta_squared()', 'eta_squared(mc_model$anova_table$F[1])', 'emmeans(specs = \"team\", object = mc_model)', 'summary(update(m_vid, . ~ . - x))', 'get.ci(mc_model$anova_table$`num Df`[1], conf.level = .95)', 'x == 5', 'f(\"a(b\", m)', 'f(x == 1, m)', 'f(g(1), m[[\"a\"]])', 'f(1, 2)', '5', 'f(unbalanced', 'x = 3', 'a$b$c', 'a[1, 2]', 'fit[[1]]', 'a + b', 'f(\"s\\\\\"q\", m)', '  mod2  ', 'f()', 'plot(x ~ y)', 'y ~ x', 'f(d[\"a\", ], z)', 'f({x}, y)', 'x == 5 & f(y)', 'summary(m)$coef']]"
+        "py": "[__import__('metacheck.statout.r_output', fromlist=['_'])._r_call_object_ref(s) for s in ['summary(m_vid)', 'm_vid <- lmer(y ~ x)', 'm_vid', 'm_vid |> summary()', 'm_vid %>% eta_squared()', 'eta_squared(mc_model$anova_table$F[1])', 'emmeans(specs = \"team\", object = mc_model)', 'summary(update(m_vid, . ~ . - x))', 'get.ci(mc_model$anova_table$`num Df`[1], conf.level = .95)', 'x == 5', 'f(\"a(b\", m)', 'f(x == 1, m)', 'f(g(1), m[[\"a\"]])', 'f(1, 2)', '5', 'f(unbalanced', 'x = 3', 'a$b$c', 'a[1, 2]', 'fit[[1]]', 'a + b', 'f(\"s\\\\\"q\", m)', '  mod2  ', 'f()', 'plot(x ~ y)', 'y ~ x', 'f(d[\"a\", ], z)', 'f({x}, y)', 'x == 5 & f(y)', 'summary(m)$coef']]"
 - "id": "repro_split_args.nested"
   "r": "metacheck:::.repro_split_args"
-  "py": "pytacheck.statout.r_output._repro_split_args"
+  "py": "metacheck.statout.r_output._repro_split_args"
   "args": {"args_text": "a, f(b, c), \"x,y\", d[1, 2], {e, f}, 'g\\'h, i', last"}
 - "id": "repro_split_args.empty"
   "r": "metacheck:::.repro_split_args"
-  "py": "pytacheck.statout.r_output._repro_split_args"
+  "py": "metacheck.statout.r_output._repro_split_args"
   "args": {"args_text": ""}
 - "id": "repro_split_args.trailing_comma"
   "r": "metacheck:::.repro_split_args"
-  "py": "pytacheck.statout.r_output._repro_split_args"
+  "py": "metacheck.statout.r_output._repro_split_args"
   "args": {"args_text": "x,"}
 - "id": "r_root_ref_map.chains"
   "r": "base::as.list"
@@ -338,7 +338,7 @@
    "x":
     "$call":
      "r": "metacheck:::.r_root_ref_map"
-     "py": "pytacheck.statout.r_output._r_root_ref_map"
+     "py": "metacheck.statout.r_output._r_root_ref_map"
      "args":
       "code_lines":
        "$chr":
@@ -355,12 +355,12 @@
        - "m_vid <- update(m0)"
 - "id": "r_root_ref_map.empty"
   "r": "metacheck:::.r_root_ref_map"
-  "py": "pytacheck.statout.r_output._r_root_ref_map"
+  "py": "metacheck.statout.r_output._r_root_ref_map"
   "args": {"code_lines": {"$chr": ["x <- 5", "print(x)"]}}
 - "id": "r_echo_chunks.continuations"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U140", "reason": "only the '+' lines right after the '>' line are the statement; an output line starting with '+' stays output"}
   "r": "metacheck:::.r_echo_chunks"
-  "py": "pytacheck.statout.r_output._r_echo_chunks"
+  "py": "metacheck.statout.r_output._r_echo_chunks"
   "args":
     "lines":
       "$chr":
@@ -380,13 +380,13 @@
       "$chr": ["x <- c(1,", "  2)", "x", "y <- 1", "summary(m)", "no_space"]
 - "id": "r_echo_chunks.no_prompts"
   "r": "metacheck:::.r_echo_chunks"
-  "py": "pytacheck.statout.r_output._r_echo_chunks"
+  "py": "metacheck.statout.r_output._r_echo_chunks"
   "args":
     "lines": {"$chr": ["a", "b"]}
     "code_lines": {"$chr": ["a"]}
 - "id": "r_output_tables.statsmodels"
   "r": "metacheck:::.r_output_tables"
-  "py": "pytacheck.statout.r_output._r_output_tables"
+  "py": "metacheck.statout.r_output._r_output_tables"
   "args":
     "lines":
       "$chr":
@@ -399,18 +399,18 @@
 - "id": "r_output_oneline.direct"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "an untitled one-line result takes source_label as its analysis, as documented (R: NA)"}
   "r": "metacheck:::.r_output_oneline"
-  "py": "pytacheck.statout.r_output._r_output_oneline"
+  "py": "metacheck.statout.r_output._r_output_oneline"
   "args":
     "lines": {"$chr": ["χ²(2) = 5.99, p = .05", "ηp² ≈ 0.13", "t ≤ 1.2e-3", "d = -0.5 and r (30) >= 0.2"]}
     "source_label": "lab"
 - "id": "r_output_cohend.direct"
   "r": "metacheck:::.r_output_cohend"
-  "py": "pytacheck.statout.r_output._r_output_cohend"
+  "py": "metacheck.statout.r_output._r_output_cohend"
   "args":
     "lines": {"$chr": ["d estimate: -1.2e-1 (small)", "95 percent confidence interval:", "     lower      upper", "-0.5 NA", "  D Estimate: 0.9 (large)  ", "90 percent confidence interval:"]}
 - "id": "r_output_effectsize_d.direct"
   "r": "metacheck:::.r_output_effectsize_d"
-  "py": "pytacheck.statout.r_output._r_output_effectsize_d"
+  "py": "metacheck.statout.r_output._r_output_effectsize_d"
   "args":
     "lines": {"$chr": ["COHEN'S D | 95% CI", "---", "0.1 | [0.0, 0.2]", "Hedges g|", "-", "1e-2|[-1,1]", "Glass delta", "---", "x"]}
 # ---------------------------------------------------------------------------
@@ -423,7 +423,7 @@
     "x":
       "$expr":
         "r": "vapply(list(113, 1e15, 1e14, 123456789012345, 0.000632, 6.58e-72, 1/3, -0, -2.5, Inf, -Inf, NaN, NA_real_, 8L, 0.1 + 0.2, 1e-5, 100000, 1234567.1, 2^53, -1e20, 0.15, 1.005, 99999999999999.9), metacheck:::.stat_num_to_chr, character(1))"
-        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._stat_num_to_chr(v) for v in [113.0, 1e15, 1e14, 123456789012345.0, 0.000632, 6.58e-72, 1/3, -0.0, -2.5, float('inf'), float('-inf'), float('nan'), None, 8, 0.1 + 0.2, 1e-5, 100000.0, 1234567.1, 2.0**53, -1e20, 0.15, 1.005, 99999999999999.9]]"
+        "py": "[__import__('metacheck.statout.stat_tables', fromlist=['_'])._stat_num_to_chr(v) for v in [113.0, 1e15, 1e14, 123456789012345.0, 0.000632, 6.58e-72, 1/3, -0.0, -2.5, float('inf'), float('-inf'), float('nan'), None, 8, 0.1 + 0.2, 1e-5, 100000.0, 1234567.1, 2.0**53, -1e20, 0.15, 1.005, 99999999999999.9]]"
 - "id": "jasp_clean_colname.all"
   "r": "base::identity"
   "py": "copy.copy"
@@ -431,22 +431,22 @@
     "x":
       "$expr":
         "r": "vapply(list('JaspColumn_.21._Encoded_pearson_p.value', 'JaspColumn_.1._Encoded_x_Encoded_y', 'plain', 'JaspColumn_.3._Encoded_', '', NULL, 5), metacheck:::.jasp_clean_colname, character(1))"
-        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._jasp_clean_colname(v) for v in ['JaspColumn_.21._Encoded_pearson_p.value', 'JaspColumn_.1._Encoded_x_Encoded_y', 'plain', 'JaspColumn_.3._Encoded_', '', None, 5.0]]"
+        "py": "[__import__('metacheck.statout.stat_tables', fromlist=['_'])._jasp_clean_colname(v) for v in ['JaspColumn_.21._Encoded_pearson_p.value', 'JaspColumn_.1._Encoded_x_Encoded_y', 'plain', 'JaspColumn_.3._Encoded_', '', None, 5.0]]"
 - "id": "pb_varint.multi"
   "r": "metacheck:::.pb_varint"
-  "py": "pytacheck.statout.stat_tables._pb_varint"
+  "py": "metacheck.statout.stat_tables._pb_varint"
   "args":
     "raw": {"$expr": {"r": "as.raw(c(0x96, 0x01, 0x05))", "py": "bytes([0x96, 0x01, 0x05])"}}
     "pos": 1
 - "id": "pb_varint.negative"
   "r": "metacheck:::.pb_varint"
-  "py": "pytacheck.statout.stat_tables._pb_varint"
+  "py": "metacheck.statout.stat_tables._pb_varint"
   "args":
     "raw": {"$expr": {"r": "as.raw(c(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01))", "py": "bytes([0xff] * 9 + [0x01])"}}
     "pos": 1
 - "id": "pb_varint.truncated"
   "r": "metacheck:::.pb_varint"
-  "py": "pytacheck.statout.stat_tables._pb_varint"
+  "py": "metacheck.statout.stat_tables._pb_varint"
   "args":
     "raw": {"$expr": {"r": "as.raw(c(0x01, 0x80))", "py": "bytes([0x01, 0x80])"}}
     "pos": 2
@@ -457,26 +457,26 @@
     "x":
       "$expr":
         "r": "lapply(metacheck:::.pb_fields(c(as.raw(c(0x08, 0x96, 0x01, 0x12, 0x03)), charToRaw('abc'), as.raw(0x19), writeBin(2.5, raw(), size = 8, endian = 'little'), as.raw(0x25), writeBin(1.5, raw(), size = 4, endian = 'little'), as.raw(c(0x2a, 0x00)))), function(f) { if (is.raw(f$value)) f$value <- as.character(f$value); f })"
-        "py": "[{**f, 'value': [f'{b:02x}' for b in f['value']]} if isinstance(f['value'], bytes) else f for f in __import__('pytacheck.statout.stat_tables', fromlist=['_'])._pb_fields(bytes([0x08, 0x96, 0x01, 0x12, 0x03]) + b'abc' + bytes([0x19]) + __import__('struct').pack('<d', 2.5) + bytes([0x25]) + __import__('struct').pack('<f', 1.5) + bytes([0x2a, 0x00]))]"
+        "py": "[{**f, 'value': [f'{b:02x}' for b in f['value']]} if isinstance(f['value'], bytes) else f for f in __import__('metacheck.statout.stat_tables', fromlist=['_'])._pb_fields(bytes([0x08, 0x96, 0x01, 0x12, 0x03]) + b'abc' + bytes([0x19]) + __import__('struct').pack('<d', 2.5) + bytes([0x25]) + __import__('struct').pack('<f', 1.5) + bytes([0x2a, 0x00]))]"
 - "id": "pb_fields.malformed_len"
   "r": "metacheck:::.pb_fields"
-  "py": "pytacheck.statout.stat_tables._pb_fields"
+  "py": "metacheck.statout.stat_tables._pb_fields"
   "args": {"raw": {"$expr": {"r": "as.raw(c(0x12, 0x05, 0x61))", "py": "bytes([0x12, 0x05, 0x61])"}}}
 - "id": "pb_fields.zero_key"
   "r": "metacheck:::.pb_fields"
-  "py": "pytacheck.statout.stat_tables._pb_fields"
+  "py": "metacheck.statout.stat_tables._pb_fields"
   "args": {"raw": {"$expr": {"r": "as.raw(c(0x00, 0x01))", "py": "bytes([0x00, 0x01])"}}}
 - "id": "pb_fields.group_wire"
   "r": "metacheck:::.pb_fields"
-  "py": "pytacheck.statout.stat_tables._pb_fields"
+  "py": "metacheck.statout.stat_tables._pb_fields"
   "args": {"raw": {"$expr": {"r": "as.raw(c(0x0b, 0x01))", "py": "bytes([0x0b, 0x01])"}}}
 - "id": "pb_fields.short_fixed64"
   "r": "metacheck:::.pb_fields"
-  "py": "pytacheck.statout.stat_tables._pb_fields"
+  "py": "metacheck.statout.stat_tables._pb_fields"
   "args": {"raw": {"$expr": {"r": "as.raw(c(0x09, 0x01, 0x02))", "py": "bytes([0x09, 0x01, 0x02])"}}}
 - "id": "pb_fields.empty"
   "r": "metacheck:::.pb_fields"
-  "py": "pytacheck.statout.stat_tables._pb_fields"
+  "py": "metacheck.statout.stat_tables._pb_fields"
   "args": {"raw": {"$expr": {"r": "raw(0)", "py": "b''"}}}
 - "id": "jmv_cell.values"
   "r": "base::identity"
@@ -485,10 +485,10 @@
     "x":
       "$expr":
         "r": "vapply(list(as.raw(c(0x08, 0x71)), c(as.raw(0x11), writeBin(0.000632, raw(), size = 8, endian = 'little')), c(as.raw(c(0x1a, 0x02)), charToRaw('hi')), as.raw(c(0x20, 0x01)), raw(0), as.raw(c(0x08, 0xff, 0xff, 0xff, 0xff, 0x0f)), as.raw(c(0x08, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01)), as.raw(c(0x00))), metacheck:::.jmv_cell, character(1))"
-        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._jmv_cell(b) for b in [bytes([0x08, 0x71]), bytes([0x11]) + __import__('struct').pack('<d', 0.000632), bytes([0x1a, 0x02]) + b'hi', bytes([0x20, 0x01]), b'', bytes([0x08, 0xff, 0xff, 0xff, 0xff, 0x0f]), bytes([0x08, 0xfe] + [0xff] * 8 + [0x01]), bytes([0x00])]]"
+        "py": "[__import__('metacheck.statout.stat_tables', fromlist=['_'])._jmv_cell(b) for b in [bytes([0x08, 0x71]), bytes([0x11]) + __import__('struct').pack('<d', 0.000632), bytes([0x1a, 0x02]) + b'hi', bytes([0x20, 0x01]), b'', bytes([0x08, 0xff, 0xff, 0xff, 0xff, 0x0f]), bytes([0x08, 0xfe] + [0xff] * 8 + [0x01]), bytes([0x00])]]"
 - "id": "jmv_pivot_wide_descriptives.crosstab"
   "r": "metacheck:::.jmv_pivot_wide_descriptives"
-  "py": "pytacheck.statout.stat_tables._jmv_pivot_wide_descriptives"
+  "py": "metacheck.statout.stat_tables._jmv_pivot_wide_descriptives"
   "args":
     "df":
       "$df":
@@ -502,7 +502,7 @@
         "name": ["n1", "n2"]
 - "id": "jmv_pivot_wide_descriptives.no_brackets"
   "r": "metacheck:::.jmv_pivot_wide_descriptives"
-  "py": "pytacheck.statout.stat_tables._jmv_pivot_wide_descriptives"
+  "py": "metacheck.statout.stat_tables._jmv_pivot_wide_descriptives"
   "args":
     "df":
       "$df":
@@ -515,7 +515,7 @@
     "x":
       "$expr":
         "r": "vapply(list('<Figure size 432x288 with 1 Axes>', 'plot without title', 'Plot Without Title', \"<AxesSubplot: xlabel='cond'>\", '0%|          | 0/200 [00:00<?, ?it/s]', '45%|####5     | 90/200', c('/opt/py/x.py:6832: RuntimeWarning: overflow', '  return np.exp(x)'), '', c('  ', ''), 'TtestResult(statistic=4.897732993778993, pvalue=6.750826167315465e-05, df=22)', c('       T  dof alternative     p-val', '  4.898   22   two-sided  0.00007'), 'Generalized linear mixed model fit by maximum likelihood (Laplace)', c('Traceback (most recent call last)', 'x'), c('a', 'b', '<Figure size 1x1 with 1 Axes>'), 'x | y | 3.2it/s'), metacheck:::.ipynb_is_noise, logical(1))"
-        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._ipynb_is_noise(v) for v in [['<Figure size 432x288 with 1 Axes>'], ['plot without title'], ['Plot Without Title'], [\"<AxesSubplot: xlabel='cond'>\"], ['0%|          | 0/200 [00:00<?, ?it/s]'], ['45%|####5     | 90/200'], ['/opt/py/x.py:6832: RuntimeWarning: overflow', '  return np.exp(x)'], [''], ['  ', ''], ['TtestResult(statistic=4.897732993778993, pvalue=6.750826167315465e-05, df=22)'], ['       T  dof alternative     p-val', '  4.898   22   two-sided  0.00007'], ['Generalized linear mixed model fit by maximum likelihood (Laplace)'], ['Traceback (most recent call last)', 'x'], ['a', 'b', '<Figure size 1x1 with 1 Axes>'], ['x | y | 3.2it/s']]]"
+        "py": "[__import__('metacheck.statout.stat_tables', fromlist=['_'])._ipynb_is_noise(v) for v in [['<Figure size 432x288 with 1 Axes>'], ['plot without title'], ['Plot Without Title'], [\"<AxesSubplot: xlabel='cond'>\"], ['0%|          | 0/200 [00:00<?, ?it/s]'], ['45%|####5     | 90/200'], ['/opt/py/x.py:6832: RuntimeWarning: overflow', '  return np.exp(x)'], [''], ['  ', ''], ['TtestResult(statistic=4.897732993778993, pvalue=6.750826167315465e-05, df=22)'], ['       T  dof alternative     p-val', '  4.898   22   two-sided  0.00007'], ['Generalized linear mixed model fit by maximum likelihood (Laplace)'], ['Traceback (most recent call last)', 'x'], ['a', 'b', '<Figure size 1x1 with 1 Axes>'], ['x | y | 3.2it/s']]]"
 - "id": "ipynb_result_class.all"
   "r": "base::identity"
   "py": "copy.copy"
@@ -523,7 +523,7 @@
     "x":
       "$expr":
         "r": "vapply(c('TtestResult(statistic=1)', 'x = Ttest_indResult (statistic=2)', 'LinregressResult(slope=1)', 'no class here', 'Result(x)', '_Result(1)', 'aResultb(1)'), metacheck:::.ipynb_result_class, character(1), USE.NAMES = FALSE)"
-        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._ipynb_result_class(v) for v in ['TtestResult(statistic=1)', 'x = Ttest_indResult (statistic=2)', 'LinregressResult(slope=1)', 'no class here', 'Result(x)', '_Result(1)', 'aResultb(1)']]"
+        "py": "[__import__('metacheck.statout.stat_tables', fromlist=['_'])._ipynb_result_class(v) for v in ['TtestResult(statistic=1)', 'x = Ttest_indResult (statistic=2)', 'LinregressResult(slope=1)', 'no class here', 'Result(x)', '_Result(1)', 'aResultb(1)']]"
 - "id": "ipynb_strip_numpy_scalars.all"
   "r": "base::identity"
   "py": "copy.copy"
@@ -531,11 +531,11 @@
     "x":
       "$expr":
         "r": "vapply(c('a=np.float64(5.98), b=np.int64(149)', 'np.uint8(3) np.float(2.5) np.int32(-1)', 'np.float64((1))', 'xnp.float64(1)', 'np.complex128(1)'), metacheck:::.ipynb_strip_numpy_scalars, character(1), USE.NAMES = FALSE)"
-        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._ipynb_strip_numpy_scalars(v) for v in ['a=np.float64(5.98), b=np.int64(149)', 'np.uint8(3) np.float(2.5) np.int32(-1)', 'np.float64((1))', 'xnp.float64(1)', 'np.complex128(1)']]"
+        "py": "[__import__('metacheck.statout.stat_tables', fromlist=['_'])._ipynb_strip_numpy_scalars(v) for v in ['a=np.float64(5.98), b=np.int64(149)', 'np.uint8(3) np.float(2.5) np.int32(-1)', 'np.float64((1))', 'xnp.float64(1)', 'np.complex128(1)']]"
 - "id": "ipynb_stat_line.classes"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a printed result class, as metacheck intends (R: NA)"}
   "r": "metacheck:::.ipynb_stat_line"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_line"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_line"
   "args":
     "lines":
       "$chr":
@@ -547,11 +547,11 @@
       - "t = 2.1, p = .04"
 - "id": "ipynb_stat_line.none"
   "r": "metacheck:::.ipynb_stat_line"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_line"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_line"
   "args": {"lines": {"$chr": ["nothing here", "at all"]}}
 - "id": "ipynb_stat_kv.full"
   "r": "metacheck:::.ipynb_stat_kv"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_kv"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_kv"
   "args":
     "lines":
       "$chr":
@@ -566,19 +566,19 @@
       - "Covariance Type:            nonrobust"
 - "id": "ipynb_stat_kv.prose"
   "r": "metacheck:::.ipynb_stat_kv"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_kv"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_kv"
   "args": {"lines": {"$chr": ["This model fit the data reasonably well."]}}
 - "id": "ipynb_stat_kv.only_model"
   "r": "metacheck:::.ipynb_stat_kv"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_kv"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_kv"
   "args": {"lines": {"$chr": ["Dep. Variable: Square Footage   R-squared: 0.844"]}}
 - "id": "ipynb_stat_kv.only_metadata"
   "r": "metacheck:::.ipynb_stat_kv"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_kv"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_kv"
   "args": {"lines": {"$chr": ["Model:   OLS   Method:   Least Squares"]}}
 - "id": "ipynb_stat_table.summary"
   "r": "metacheck:::.ipynb_stat_table"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_table"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_table"
   "args":
     "lines":
       "$chr":
@@ -594,11 +594,11 @@
       - "Number of Occupants        -188.2184     20.093     -9.367      0.000    -228.118    -148.318"
 - "id": "ipynb_stat_table.prose"
   "r": "metacheck:::.ipynb_stat_table"
-  "py": "pytacheck.statout.stat_tables._ipynb_stat_table"
+  "py": "metacheck.statout.stat_tables._ipynb_stat_table"
   "args": {"lines": {"$chr": ["This model fit the data reasonably well."]}}
 - "id": "jasp_table_to_df.cells"
   "r": "metacheck:::.jasp_table_to_df"
-  "py": "pytacheck.statout.stat_tables._jasp_table_to_df"
+  "py": "metacheck.statout.stat_tables._jasp_table_to_df"
   "args":
     "fields":
       "$expr":
@@ -613,114 +613,114 @@
 # ---------------------------------------------------------------------------
 - "id": "stat_results_long.jasp"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &jasp_tabs
       "$call":
         "r": "read_stat_tables"
-        "py": "pytacheck.statout.stat_tables.read_stat_tables"
+        "py": "metacheck.statout.stat_tables.read_stat_tables"
         "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp"}}
     "paper_id": "10.1234/abc"
     "source_file": "sample.jasp"
 - "id": "stat_results_long.omv"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &omv_tabs
       "$call":
         "r": "read_stat_tables"
-        "py": "pytacheck.statout.stat_tables.read_stat_tables"
+        "py": "metacheck.statout.stat_tables.read_stat_tables"
         "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/sample.omv"}}
     "source_file": "sample.omv"
 - "id": "stat_results_long.html"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &html_tabs
       "$call":
         "r": "read_stat_tables"
-        "py": "pytacheck.statout.stat_tables.read_stat_tables"
+        "py": "metacheck.statout.stat_tables.read_stat_tables"
         "args": {"path": {"$file": "tests/statout_core/data/custom_html.jasp"}}
 - "id": "stat_results_long.html_only_omv"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables":
       "$call":
         "r": "read_stat_tables"
-        "py": "pytacheck.statout.stat_tables.read_stat_tables"
+        "py": "metacheck.statout.stat_tables.read_stat_tables"
         "args": {"path": {"$file": "tests/statout_core/data/html_only.omv"}}
     "source_file": "html_only.omv"
 - "id": "stat_results_long.notebook_python"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &nb_tabs
       "$call":
         "r": "read_stat_tables"
-        "py": "pytacheck.statout.stat_tables.read_stat_tables"
+        "py": "metacheck.statout.stat_tables.read_stat_tables"
         "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_python.ipynb"}}
     "source_file": "notebook_python.ipynb"
 - "id": "stat_results_long.notebook_mixed"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &nbmixed_tabs
       "$call":
         "r": "read_stat_tables"
-        "py": "pytacheck.statout.stat_tables.read_stat_tables"
+        "py": "metacheck.statout.stat_tables.read_stat_tables"
         "args": {"path": {"$file": "tests/statout_core/data/notebook_mixed.ipynb"}}
     "source_file": "notebook_mixed.ipynb"
 - "id": "stat_results_long.r_analysis"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &r_tabs
       "$call":
         "r": "read_r_output"
-        "py": "pytacheck.statout.r_output.read_r_output"
+        "py": "metacheck.statout.r_output.read_r_output"
         "args": {"text": *analysis_out, "code_lines": *analysis_code}
     "paper_id": "p1"
     "source_file": "analysis.R"
 - "id": "stat_results_long.r_no_lines"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables":
       "$call":
         "r": "read_r_output"
-        "py": "pytacheck.statout.r_output.read_r_output"
+        "py": "metacheck.statout.r_output.read_r_output"
         "args": {"text": *analysis_out}
 - "id": "stat_results_long.synthetic"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &syn_tabs
       "$call":
         "r": "read_r_output"
-        "py": "pytacheck.statout.r_output.read_r_output"
+        "py": "metacheck.statout.r_output.read_r_output"
         "args": {"text": *synthetic_out, "code_lines": *synthetic_code}
     "source_file": "synthetic.R"
 - "id": "stat_results_long.captures"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &cap_merged
       "$call":
         "r": "metacheck:::.r_merge_captures"
-        "py": "pytacheck.statout.r_capture._r_merge_captures"
+        "py": "metacheck.statout.r_capture._r_merge_captures"
         "args": {"cap_tabs": *cap_tabs, "txt_tabs": *txt_tabs}
     "source_file": "capture_script.R"
 - "id": "stat_results_long.special"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &special_tabs
       "$expr":
@@ -730,47 +730,47 @@
     "source_file": "odd name.SPV"
 - "id": "stat_results_long.null"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args": {"tables": {"$null": true}}
 - "id": "stat_results_long.empty_list"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args": {"tables": {"$list": []}, "source_file": "x.R"}
 - "id": "stat_output_json.jasp"
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *jasp_tabs, "paper_id": "10.1234/abc", "source_file": "sample.jasp"}
 - "id": "stat_output_json.omv"
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *omv_tabs, "source_file": "sample.omv"}
 - "id": "stat_output_json.html"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *html_tabs, "source_file": "custom_html.JASP"}
 - "id": "stat_output_json.notebook"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *nbmixed_tabs, "source_file": "notebook_mixed.ipynb"}
 - "id": "stat_output_json.r_analysis"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *r_tabs, "paper_id": "p1", "source_file": "analysis.R"}
 - "id": "stat_output_json.synthetic"
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *syn_tabs, "source_file": "synthetic.r"}
 - "id": "stat_output_json.captures"
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *cap_merged, "source_file": "capture_script.R"}
 - "id": "stat_output_json.special"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *special_tabs}
 - "id": "stat_output_json.formats"
   "r": "base::identity"
@@ -779,10 +779,10 @@
     "x":
       "$expr":
         "r": "vapply(c('a.omv', 'a.JASP', 'a.spv', 'a.smcl', 'a.out', 'a.R', 'a.r', 'a.do', 'jasp'), function(f) metacheck::stat_output_json(list(list(data = data.frame(p = '0.5'))), source_file = f)$source_format, character(1), USE.NAMES = FALSE)"
-        "py": "[__import__('pytacheck.statout.stat_output', fromlist=['_']).stat_output_json([{'data': pd.DataFrame({'p': ['0.5']}, dtype='string')}], source_file=f)['source_format'] for f in ['a.omv', 'a.JASP', 'a.spv', 'a.smcl', 'a.out', 'a.R', 'a.r', 'a.do', 'jasp']]"
+        "py": "[__import__('metacheck.statout.stat_output', fromlist=['_']).stat_output_json([{'data': pd.DataFrame({'p': ['0.5']}, dtype='string')}], source_file=f)['source_format'] for f in ['a.omv', 'a.JASP', 'a.spv', 'a.smcl', 'a.out', 'a.R', 'a.r', 'a.do', 'jasp']]"
 - "id": "stat_output_json.no_values"
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args":
     "tables":
       "$expr":
@@ -790,67 +790,67 @@
         "py": "[{'analysis': 'x', 'data': pd.DataFrame({'a': ['x', 'y']}, dtype='string')}, {'analysis': 'y', 'data': pd.DataFrame({'p': ['.']}, dtype='string')}]"
 - "id": "stat_output_json.null"
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": {"$null": true}}
 - "id": "stat_output_validate.valid_doc"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args":
     "doc":
       "$call":
         "r": "stat_output_json"
-        "py": "pytacheck.statout.stat_output.stat_output_json"
+        "py": "metacheck.statout.stat_output.stat_output_json"
         "args": {"tables": *jasp_tabs, "paper_id": "10.1234/abc", "source_file": "sample.jasp"}
 - "id": "stat_output_validate.json_string"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U136", "reason": "a JSON string is validated (R's textConnection() cannot be read by jsonlite: always 'not valid JSON')"}
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args":
     "doc": "{\"schema\": \"metacheck-statistical-output\", \"schema_version\": \"1.0\", \"paper_id\": \"x\", \"source_file\": null, \"source_format\": \"R\", \"analyses\": [{\"analysis\": \"A\", \"results\": [{\"result_id\": \"r1\", \"values\": {\"t\": {\"value\": 2.1}, \"p\": {\"stato_iri\": \"x\"}, \"q\": null, \"z\": [1]}}, {\"values\": []}, {\"result_id\": \"\", \"values\": {\"a\": {\"value\": null}}}, {\"result_id\": 7, \"values\": [1, 2]}]}, {\"results\": []}, {\"analysis\": null, \"results\": {}}, {\"analysis\": \"B\"}]}"
 - "id": "stat_output_validate.file_mixed"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_mixed.json"}}
 - "id": "stat_output_validate.file_missing_top"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_missing_top.json"}}
 - "id": "stat_output_validate.file_named"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_named.json"}}
 - "id": "stat_output_validate.file_array"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_array.json"}}
 - "id": "stat_output_validate.file_analyses_string"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_analyses_string.json"}}
 - "id": "stat_output_validate.file_scalar"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_scalar.json"}}
 - "id": "stat_output_validate.file_invalid"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_invalid.json"}}
 - "id": "stat_output_validate.file_value_atomic"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_value_atomic.json"}}
 - "id": "stat_output_validate.string_bug"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U136", "reason": "a JSON string is validated (R's textConnection() cannot be read by jsonlite: always 'not valid JSON')"}
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": "{\"schema\": \"x\"}"}
 - "id": "stat_output_validate.file"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/stat_output.json"}}
 - "id": "stat_output_validate.list_input"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args":
     "doc":
       "$expr":
@@ -863,10 +863,10 @@
     "x":
       "$expr":
         "r": "local({ root <- tempfile('sow'); tabs <- metacheck::read_stat_tables('upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp'); rtabs <- metacheck::read_r_output(readLines('tests/statout_core/data/synthetic.Rout'), code_lines = readLines('tests/statout_core/data/synthetic.R')); so <- list(list(file = 'sample.jasp', json = metacheck::stat_output_json(tabs, paper_id = 'p', source_file = 'sample.jasp'), long = metacheck::stat_results_long(tabs, paper_id = 'p', source_file = 'sample.jasp')), list(file = 'dir/synthetic.R', json = metacheck::stat_output_json(rtabs, source_file = 'synthetic.R'), long = metacheck::stat_results_long(rtabs, source_file = 'synthetic.R')), list(file = 'empty.R', json = NULL, long = metacheck::stat_results_long(list()))); out <- metacheck::stat_output_write(so, root); fs <- sort(list.files(out)); c(list(basename(out), fs), lapply(fs, function(f) readLines(file.path(out, f)))) })"
-        "py": "(lambda so_mod, st, ro, h, tempfile: (lambda root, tabs, rtabs: (lambda out: [__import__('os').path.basename(out), sorted(__import__('os').listdir(out))] + [h.read_lines(__import__('os').path.join(out, f)) for f in sorted(__import__('os').listdir(out))])(so_mod.stat_output_write([{'file': 'sample.jasp', 'json': so_mod.stat_output_json(tabs, paper_id='p', source_file='sample.jasp'), 'long': so_mod.stat_results_long(tabs, paper_id='p', source_file='sample.jasp')}, {'file': 'dir/synthetic.R', 'json': so_mod.stat_output_json(rtabs, source_file='synthetic.R'), 'long': so_mod.stat_results_long(rtabs, source_file='synthetic.R')}, {'file': 'empty.R', 'json': None, 'long': so_mod.stat_results_long([])}], root)))(tempfile.mkdtemp(), st.read_stat_tables(str(h.DATA.parents[2] / 'upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp')), ro.read_r_output(h.read_lines(h.DATA / 'synthetic.Rout'), code_lines=h.read_lines(h.DATA / 'synthetic.R'))))(__import__('pytacheck.statout.stat_output', fromlist=['_']), __import__('pytacheck.statout.stat_tables', fromlist=['_']), __import__('pytacheck.statout.r_output', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']), __import__('tempfile'))"
+        "py": "(lambda so_mod, st, ro, h, tempfile: (lambda root, tabs, rtabs: (lambda out: [__import__('os').path.basename(out), sorted(__import__('os').listdir(out))] + [h.read_lines(__import__('os').path.join(out, f)) for f in sorted(__import__('os').listdir(out))])(so_mod.stat_output_write([{'file': 'sample.jasp', 'json': so_mod.stat_output_json(tabs, paper_id='p', source_file='sample.jasp'), 'long': so_mod.stat_results_long(tabs, paper_id='p', source_file='sample.jasp')}, {'file': 'dir/synthetic.R', 'json': so_mod.stat_output_json(rtabs, source_file='synthetic.R'), 'long': so_mod.stat_results_long(rtabs, source_file='synthetic.R')}, {'file': 'empty.R', 'json': None, 'long': so_mod.stat_results_long([])}], root)))(tempfile.mkdtemp(), st.read_stat_tables(str(h.DATA.parents[2] / 'upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp')), ro.read_r_output(h.read_lines(h.DATA / 'synthetic.Rout'), code_lines=h.read_lines(h.DATA / 'synthetic.R'))))(__import__('metacheck.statout.stat_output', fromlist=['_']), __import__('metacheck.statout.stat_tables', fromlist=['_']), __import__('metacheck.statout.r_output', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']), __import__('tempfile'))"
 - "id": "stat_output_write.nothing"
   "r": "stat_output_write"
-  "py": "pytacheck.statout.stat_output.stat_output_write"
+  "py": "metacheck.statout.stat_output.stat_output_write"
   "args":
     "stat_output":
       "$expr":
@@ -875,40 +875,40 @@
     "root": "/nonexistent/should/not/be/created"
 - "id": "stat_output_write.null"
   "r": "stat_output_write"
-  "py": "pytacheck.statout.stat_output.stat_output_write"
+  "py": "metacheck.statout.stat_output.stat_output_write"
   "args": {"stat_output": {"$null": true}, "root": "/nonexistent/should/not/be/created"}
 - "id": "read_stat_tables.spv.modern"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U148", "reason": "a template value is rendered ('3', 'a of 2.5, b'), not left as '^1'"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/modern.spv"}}
 - "id": "read_stat_tables.spv.legacy"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/legacy.spv"}}
 - "id": "read_stat_tables.spv.charts"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U144", "reason": "a box plot backed by case data decodes (R's is_na_like() always errors)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/charts.spv"}}
 - "id": "stat_results_long.spv"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U144", "reason": "the case-data box plot decodes and template values are rendered (U148)"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables":
       "$expr":
         "r": "c(metacheck::read_stat_tables('tests/statout_core/data/modern.spv'), metacheck::read_stat_tables('tests/statout_core/data/legacy.spv'), metacheck::read_stat_tables('tests/statout_core/data/charts.spv'))"
-        "py": "(lambda st, d: st.read_stat_tables(d / 'modern.spv') + st.read_stat_tables(d / 'legacy.spv') + st.read_stat_tables(d / 'charts.spv'))(__import__('pytacheck.statout.stat_tables', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']).DATA)"
+        "py": "(lambda st, d: st.read_stat_tables(d / 'modern.spv') + st.read_stat_tables(d / 'legacy.spv') + st.read_stat_tables(d / 'charts.spv'))(__import__('metacheck.statout.stat_tables', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']).DATA)"
     "paper_id": "p"
     "source_file": "output.spv"
 - "id": "stat_output_json.spv"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U144", "reason": "the case-data box plot decodes and template values are rendered (U148)"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args":
     "tables":
       "$expr":
         "r": "c(metacheck::read_stat_tables('tests/statout_core/data/modern.spv'), metacheck::read_stat_tables('tests/statout_core/data/charts.spv'))"
-        "py": "(lambda st, d: st.read_stat_tables(d / 'modern.spv') + st.read_stat_tables(d / 'charts.spv'))(__import__('pytacheck.statout.stat_tables', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']).DATA)"
+        "py": "(lambda st, d: st.read_stat_tables(d / 'modern.spv') + st.read_stat_tables(d / 'charts.spv'))(__import__('metacheck.statout.stat_tables', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']).DATA)"
     "source_file": "output.spv"

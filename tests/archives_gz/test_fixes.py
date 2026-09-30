@@ -13,9 +13,9 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.archives import github
-from pytacheck.archives.github import github_files, github_languages
-from pytacheck.archives.zenodo import _zenodo_info
+from metacheck.archives import github
+from metacheck.archives.github import github_files, github_languages
+from metacheck.archives.zenodo import _zenodo_info
 
 JSON = {"Content-Type": "application/json"}
 
@@ -114,7 +114,7 @@ def test_links_of_an_empty_paper_list(fn: str) -> None:
     # U79: the url table of an empty paper list has no columns; the (empty) link
     # table still has href (R's github_links()/gitlab_links() have none, so
     # repo_check() stops; pytacheck's zenodo_links() indexed it)
-    import pytacheck as pc
+    import metacheck as pc
 
     links = getattr(pc, fn)(pc.PaperList([]))
     assert len(links) == 0

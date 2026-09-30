@@ -1,11 +1,11 @@
 # Convert metacheck's bundled databases (inst/databases/*.Rds) into the
-# dependency-free files pytacheck ships (src/pytacheck/resources/databases/).
+# dependency-free files pytacheck ships (src/metacheck/resources/databases/).
 #
 # Usage (from the repository root, with the R reference installation):
 #
 #   Rscript scripts/convert_databases.R [<metacheck dir>] [<output dir>]
 #
-# Defaults: upstream/metacheck and src/pytacheck/resources/databases.
+# Defaults: upstream/metacheck and src/metacheck/resources/databases.
 #
 # Each <name>.Rds data frame becomes <name>.json.gz: gzip-compressed UTF-8
 # JSON of the form
@@ -25,7 +25,7 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 src <- if (length(args) >= 1) args[[1]] else "upstream/metacheck"
-out <- if (length(args) >= 2) args[[2]] else "src/pytacheck/resources/databases"
+out <- if (length(args) >= 2) args[[2]] else "src/metacheck/resources/databases"
 
 db_dir <- file.path(src, "inst", "databases")
 if (!dir.exists(db_dir)) stop("No databases directory at ", db_dir)

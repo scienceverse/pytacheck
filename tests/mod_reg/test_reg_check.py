@@ -16,9 +16,9 @@ from unittest import mock as umock
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.modules.reg_check import prereg_row_text
-from pytacheck.report.blocks import ReportTable
+import metacheck as pc
+from metacheck.modules.reg_check import prereg_row_text
+from metacheck.report.blocks import ReportTable
 from tests.mod_prereg.parity_support import mocked, tp
 from tests.mod_reg.parity_support import MOCK_TABLE, env, fake_regcheck, frame, run_reg
 
@@ -30,7 +30,7 @@ def recorded(fake: str = "table") -> Iterator[list[int]]:
     """Recorded OSF/AsPredicted responses and a fake RegCheck server."""
     with (
         mocked(),
-        umock.patch("pytacheck.utils.online", return_value=True),
+        umock.patch("metacheck.utils.online", return_value=True),
         env(REGCHECK_API_TOKEN="", REGCHECK_BASE_URL=""),
         fake_regcheck(fake) as calls,
     ):
@@ -39,7 +39,7 @@ def recorded(fake: str = "table") -> Iterator[list[int]]:
 
 @contextlib.contextmanager
 def verbose_on() -> Iterator[None]:
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     old = verbose()
     verbose(True)
@@ -232,7 +232,7 @@ def test_arguments_are_passed_to_regcheck_compare() -> None:
         seen.append((args, kwargs))
         return frame(MOCK_TABLE)
 
-    with recorded("real"), umock.patch("pytacheck.db.regcheck.regcheck_compare", fake):
+    with recorded("real"), umock.patch("metacheck.db.regcheck.regcheck_compare", fake):
         pc.module_run(paper, "reg_check", client="groq", base_url="http://x", dimensions=dims)
 
     assert len(seen) == 1
@@ -250,7 +250,7 @@ def test_inputs_are_not_mutated() -> None:
     shared = frame(MOCK_TABLE)
     with (
         recorded("real"),
-        umock.patch("pytacheck.db.regcheck.regcheck_compare", return_value=shared),
+        umock.patch("metacheck.db.regcheck.regcheck_compare", return_value=shared),
     ):
         prereg_out = pc.module_run(paper, "prereg_check")
         prereg_out.table = pd.concat([prereg_out.table, prereg_out.table], ignore_index=True)
@@ -327,8 +327,8 @@ def test_chained_prereg_without_table_runs_prereg_check_again() -> None:
     prereg_out = pc.module_run(paper, "prereg_check")
     assert prereg_out.table is None
     with umock.patch(
-        "pytacheck.module.module_run", wraps=pc.module_run
-    ) as spy:  # reg_check imports module_run lazily from pytacheck.module
+        "metacheck.module.module_run", wraps=pc.module_run
+    ) as spy:  # reg_check imports module_run lazily from metacheck.module
         mo = pc.module_run(prereg_out, "reg_check")
     assert [c.args[1] for c in spy.call_args_list] == ["prereg_check"]
     assert mo.traffic_light == "na"
@@ -364,7 +364,7 @@ def test_tables_via_run_reg() -> None:
 
 
 def test_tolower_is_rs_per_character_mapping() -> None:
-    from pytacheck.modules.reg_check import _tolower
+    from metacheck.modules.reg_check import _tolower
 
     # R (glibc towlower): U+0130 -> "i" and no final-sigma rule
     assert _tolower("MİSSİNG") == "missing"
@@ -464,7 +464,7 @@ def test_missing_regcheck_columns_raise_like_data_frame(fake: str, lengths: str)
 
 
 def test_data_frame_recycles_and_checks_lengths() -> None:
-    from pytacheck.modules.reg_check import _data_frame
+    from metacheck.modules.reg_check import _data_frame
 
     df = _data_frame({"a": ["x", "y"], "b": ["z"]})
     assert df["b"].tolist() == ["z", "z"]

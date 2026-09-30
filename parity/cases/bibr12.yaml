@@ -10,381 +10,381 @@ cases:
 # read(): every 12.x fixture, the whole paper object
 - "id": "read.PMC4383902"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json"}
 - "id": "read.full"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": "read.preprint"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"}
 - "id": "read.probe_docx"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
 - "id": "read.probe_html"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
 - "id": "read.pyfull"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "tests/fixtures/bibr_v12_full.json"}
 - "id": "read.inspect"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "tests/fixtures/bibr_v12_inspect.json"}
 - "id": "read.probe_docx.images"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "include_images": true
 - "id": ".read_bibr12.probe_html"
   "r": "metacheck:::.read_bibr12"
-  "py": "pytacheck.io.bibr12.read_bibr12"
+  "py": "metacheck.io.bibr12.read_bibr12"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
 - "id": ".read_bibr.full"
   "r": "metacheck:::.read_bibr"
-  "py": "pytacheck.papers.io.read_bibr"
+  "py": "metacheck.papers.io.read_bibr"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": "read.list"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$expr": {"r": "c('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'tests/fixtures/bibr_v12_inspect.json')", "py": "[__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_inspect.json')]"}}
 # schema versions: a later 12.x reads (unknown keys ignored); 11.x, 13.x and non-12 versions stop
 - "id": "read.later_12x"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$expr": {"r": "local({json <- jsonlite::read_json('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); json$schema_version <- '12.1'; json$new_table <- list(list(new_id = 1L)); json$metadata$new_field <- 'new'; json$text[[1]]$new_field <- 'new'; json$extraction$new_block <- list(new_field = 'new'); path <- file.path(tempfile('pc_bibr12_'), 'probe_html.json'); dir.create(dirname(path)); jsonlite::write_json(json, path, auto_unbox = TRUE, null = 'null', digits = NA); path})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).later_12x('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json')"}}
 - "id": ".read_bibr.error.v11"
   "r": "metacheck:::.read_bibr"
-  "py": "pytacheck.papers.io.read_bibr"
+  "py": "metacheck.papers.io.read_bibr"
   "args":
     "file_path": {"$expr": {"r": "local({json <- jsonlite::read_json('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); json$schema_version <- '11.0'; path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); jsonlite::write_json(json, path, auto_unbox = TRUE, null = 'null', digits = NA); path})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).json_variant('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'v.json', schema_version='11.0')"}}
 - "id": ".read_bibr.error.v13"
   "r": "metacheck:::.read_bibr"
-  "py": "pytacheck.papers.io.read_bibr"
+  "py": "metacheck.papers.io.read_bibr"
   "args":
     "file_path": {"$expr": {"r": "local({json <- jsonlite::read_json('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); json$schema_version <- '13.0'; path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); jsonlite::write_json(json, path, auto_unbox = TRUE, null = 'null', digits = NA); path})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).json_variant('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'v.json', schema_version='13.0')"}}
 - "id": ".read_bibr.error.v12_number"
   "r": "metacheck:::.read_bibr"
-  "py": "pytacheck.papers.io.read_bibr"
+  "py": "metacheck.papers.io.read_bibr"
   "args":
     "file_path": {"$expr": {"r": "local({json <- jsonlite::read_json('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); json$schema_version <- 12; path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); jsonlite::write_json(json, path, auto_unbox = TRUE, null = 'null', digits = NA); path})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).json_variant('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'v.json', schema_version=12)"}}
 - "id": ".read_bibr.error.v10_root"
   "r": "metacheck:::.read_bibr"
-  "py": "pytacheck.papers.io.read_bibr"
+  "py": "metacheck.papers.io.read_bibr"
   "args":
     "file_path": {"$expr": {"r": "local({json <- jsonlite::read_json('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); json$schema_version <- '10.3'; path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); jsonlite::write_json(json, path, auto_unbox = TRUE, null = 'null', digits = NA); path})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).json_variant('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'v.json', schema_version='10.3')"}}
 # read() of a directory with a bibr 11.0 file and a 12.0 file
 - "id": "read.dir.v11_and_v12"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); json <- jsonlite::read_json('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); jsonlite::write_json(json, file.path(d, 'a_v12.json'), auto_unbox = TRUE, null = 'null', digits = NA); json$schema_version <- '11.0'; jsonlite::write_json(json, file.path(d, 'b_v11.json'), auto_unbox = TRUE, null = 'null', digits = NA); d})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).mixed_dir()"}}
   "known_divergence": {"kind": "deliberate", "ref": "D6", "reason": "metacheck's read() of several files fails as soon as one cannot be read (U18, U21: read() returns NULL for it and paperlist() rejects the NULL), so a directory holding one bibr 11.x file cannot be read at all; pytacheck logs and skips the file and returns the 12.0 paper"}
 # paper_table() of every table, over a list of 12.x papers
 - "id": "paper_table.list.info"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "info"
 - "id": "paper_table.list.author"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "author"
 - "id": "paper_table.list.text"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "text"
 - "id": "paper_table.list.section"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "section"
 - "id": "paper_table.list.url"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "url"
 - "id": "paper_table.list.bib"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "bib"
 - "id": "paper_table.list.xref"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "xref"
 - "id": "paper_table.list.figure"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "figure"
 - "id": "paper_table.list.table"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "table"
 - "id": "paper_table.list.eq"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "eq"
 - "id": "paper_table.list.affiliation"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "affiliation"
 - "id": "paper_table.list.funding"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "funding"
 - "id": "paper_table.list.footnote"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "footnote"
 - "id": "paper_table.list.info_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "info_match"
 - "id": "paper_table.list.affiliation_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "affiliation_match"
 - "id": "paper_table.list.funding_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "funding_match"
 - "id": "paper_table.list.bib_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "bib_match"
 # ... of a single paper (images dropped)
 - "id": "paper_table.probe_docx.info"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "info"
 - "id": "paper_table.probe_docx.author"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "author"
 - "id": "paper_table.probe_docx.text"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "text"
 - "id": "paper_table.probe_docx.section"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "section"
 - "id": "paper_table.probe_docx.url"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "url"
 - "id": "paper_table.probe_docx.bib"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "bib"
 - "id": "paper_table.probe_docx.xref"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "xref"
 - "id": "paper_table.probe_docx.figure"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "figure"
 - "id": "paper_table.probe_docx.table"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "table"
 - "id": "paper_table.probe_docx.eq"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "eq"
 - "id": "paper_table.probe_docx.affiliation"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "affiliation"
 - "id": "paper_table.probe_docx.funding"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "funding"
 - "id": "paper_table.probe_docx.footnote"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "footnote"
 - "id": "paper_table.probe_docx.info_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "info_match"
 - "id": "paper_table.probe_docx.affiliation_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "affiliation_match"
 - "id": "paper_table.probe_docx.funding_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "funding_match"
 - "id": "paper_table.probe_docx.bib_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "table": "bib_match"
 # ... of a list mixing an older paper (the demo) and 12.x papers
 - "id": "paper_table.mixed.info"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "info"
 - "id": "paper_table.mixed.author"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "author"
 - "id": "paper_table.mixed.text"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "text"
 - "id": "paper_table.mixed.section"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "section"
 - "id": "paper_table.mixed.url"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "url"
 - "id": "paper_table.mixed.bib"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "bib"
 - "id": "paper_table.mixed.xref"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "xref"
 - "id": "paper_table.mixed.figure"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "figure"
 - "id": "paper_table.mixed.table"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "table"
 - "id": "paper_table.mixed.eq"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "eq"
 - "id": "paper_table.mixed.bib_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "bib_match"
 - "id": "paper_table.mixed.info_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "info_match"
 - "id": "paper_table.mixed.footnote"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
     "table": "footnote"
 - "id": "paper_table.list.xref.cols"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
     "table": "xref"
@@ -392,156 +392,156 @@ cases:
 # paper_validate() and ref_table()
 - "id": "paper_validate.PMC4383902"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json"}
 - "id": "paper_validate.full"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": "paper_validate.preprint"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"}
 - "id": "paper_validate.probe_docx"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
 - "id": "paper_validate.probe_html"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
 - "id": "paper_validate.pyfull"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "tests/fixtures/bibr_v12_full.json"}
 - "id": "paper_validate.inspect"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "tests/fixtures/bibr_v12_inspect.json"}
 - "id": "paper_validate.demo"
   "r": "paper_validate"
-  "py": "pytacheck.paper_validate"
+  "py": "metacheck.paper_validate"
   "args":
     "paper": {"$paper": "demo"}
 - "id": "ref_table.PMC4383902"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json"}
 - "id": "ref_table.full"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": "ref_table.preprint"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"}
 - "id": "ref_table.probe_docx"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
 - "id": "ref_table.probe_html"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
 - "id": "ref_table.pyfull"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "tests/fixtures/bibr_v12_full.json"}
 - "id": "ref_table.inspect"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "tests/fixtures/bibr_v12_inspect.json"}
 - "id": "ref_table.list"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "ref_table.mixed"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
 # captions and footnotes are text rows, so text_search() finds them
 - "id": "text_search.PMC4383902.footnote"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json"}
     "pattern": "list of authors of the Europe PMC Consortium"
 - "id": "text_search.full.caption"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
     "pattern": "Figure|Table"
 # import-bibr12.R helpers
 - "id": ".is_bibr12.full"
   "r": "metacheck:::.is_bibr12"
-  "py": "pytacheck.io.bibr12._is_bibr12"
+  "py": "metacheck.io.bibr12._is_bibr12"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": ".is_bibr12.demo"
   "r": "metacheck:::.is_bibr12"
-  "py": "pytacheck.io.bibr12._is_bibr12"
+  "py": "metacheck.io.bibr12._is_bibr12"
   "args":
     "paper": {"$paper": "demo"}
 - "id": ".bibr12_paper_ids.mixed"
   "r": "metacheck:::.bibr12_paper_ids"
-  "py": "pytacheck.io.bibr12._bibr12_paper_ids"
+  "py": "metacheck.io.bibr12._bibr12_paper_ids"
   "args":
     "paper": {"$read": ["upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"]}
 - "id": ".bibr12_paper_ids.paper"
   "r": "metacheck:::.bibr12_paper_ids"
-  "py": "pytacheck.io.bibr12._bibr12_paper_ids"
+  "py": "metacheck.io.bibr12._bibr12_paper_ids"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": ".bibr12_doi"
   "r": "metacheck:::.bibr12_doi"
-  "py": "pytacheck.io.bibr12._bibr12_doi"
+  "py": "metacheck.io.bibr12._bibr12_doi"
   "args":
     "x": {"$chr": [" https://doi.org/10.1234/ABC ", "HTTP://DX.DOI.ORG/10.1000/xyz", "doi:10.5555/a b", "doi: 10.5555/ab", "DOI:10.5555/ab", "10.123/short", null, "", "10.12345/x", "https://doi.org/10.1234/a\tb"]}
 - "id": ".bibr12_bib_type"
   "r": "metacheck:::.bibr12_bib_type"
-  "py": "pytacheck.io.bibr12._bibr12_bib_type"
+  "py": "metacheck.io.bibr12._bibr12_bib_type"
   "args":
     "x": {"$chr": ["article", "journal-article", "book", "phdthesis", "misc", null, "thesis", "posted-content", "Article", "incollection", "proceedings-article", "dataset", ""]}
 - "id": ".bibr12_df.types"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "metacheck:::.bibr12_df(list(a = list(1L, NULL, 'x'), b = list('x', 2.5, TRUE), c = list(list('a', 'b'), NULL, list()), d = list(list(list('A', 'B'), list(1L)), NULL, list()), e = list(list(x = 1), NULL, 'j'), g = list(TRUE, 0L, NULL), h = list(3L, 1.5, NULL)), c(a = 'int', b = 'chr', c = 'chr[]', d = 'chr[][]', e = 'json', f = 'lgl', g = 'lgl', h = 'num'))", "py": "__import__('pytacheck.io.bibr12', fromlist=['x'])._bibr12_df({'a': [1, None, 'x'], 'b': ['x', 2.5, True], 'c': [['a', 'b'], None, []], 'd': [[['A', 'B'], [1]], None, []], 'e': [{'x': 1}, None, 'j'], 'g': [True, 0, None], 'h': [3, 1.5, None]}, {'a': 'int', 'b': 'chr', 'c': 'chr[]', 'd': 'chr[][]', 'e': 'json', 'f': 'lgl', 'g': 'lgl', 'h': 'num'})"}}
+    "x": {"$expr": {"r": "metacheck:::.bibr12_df(list(a = list(1L, NULL, 'x'), b = list('x', 2.5, TRUE), c = list(list('a', 'b'), NULL, list()), d = list(list(list('A', 'B'), list(1L)), NULL, list()), e = list(list(x = 1), NULL, 'j'), g = list(TRUE, 0L, NULL), h = list(3L, 1.5, NULL)), c(a = 'int', b = 'chr', c = 'chr[]', d = 'chr[][]', e = 'json', f = 'lgl', g = 'lgl', h = 'num'))", "py": "__import__('metacheck.io.bibr12', fromlist=['x'])._bibr12_df({'a': [1, None, 'x'], 'b': ['x', 2.5, True], 'c': [['a', 'b'], None, []], 'd': [[['A', 'B'], [1]], None, []], 'e': [{'x': 1}, None, 'j'], 'g': [True, 0, None], 'h': [3, 1.5, None]}, {'a': 'int', 'b': 'chr', 'c': 'chr[]', 'd': 'chr[][]', 'e': 'json', 'f': 'lgl', 'g': 'lgl', 'h': 'num'})"}}
 - "id": ".bibr12_df.empty"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "metacheck:::.bibr12_df(list(), metacheck:::.bibr12_cols$table)", "py": "__import__('pytacheck.io.bibr12', fromlist=['x'])._bibr12_df({}, __import__('pytacheck.io.bibr12', fromlist=['x']).BIBR12_COLS['table'])"}}
+    "x": {"$expr": {"r": "metacheck:::.bibr12_df(list(), metacheck:::.bibr12_cols$table)", "py": "__import__('metacheck.io.bibr12', fromlist=['x'])._bibr12_df({}, __import__('metacheck.io.bibr12', fromlist=['x']).BIBR12_COLS['table'])"}}
 - "id": ".bibr12_rows"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "metacheck:::.bibr12_rows(list(list(a = 1L, b = 'x'), list(b = 'y')), c(a = 'int', b = 'chr', c = 'chr'))", "py": "__import__('pytacheck.io.bibr12', fromlist=['x'])._bibr12_rows([{'a': 1, 'b': 'x'}, {'b': 'y'}], {'a': 'int', 'b': 'chr', 'c': 'chr'})"}}
+    "x": {"$expr": {"r": "metacheck:::.bibr12_rows(list(list(a = 1L, b = 'x'), list(b = 'y')), c(a = 'int', b = 'chr', c = 'chr'))", "py": "__import__('metacheck.io.bibr12', fromlist=['x'])._bibr12_rows([{'a': 1, 'b': 'x'}, {'b': 'y'}], {'a': 'int', 'b': 'chr', 'c': 'chr'})"}}
 - "id": ".bibr12_sha256"
   "r": "metacheck:::.bibr12_sha256"
-  "py": "pytacheck.io.bibr12._bibr12_sha256"
+  "py": "metacheck.io.bibr12._bibr12_sha256"
   "args":
     "path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": ".bibr12_sha256.missing"
   "r": "metacheck:::.bibr12_sha256"
-  "py": "pytacheck.io.bibr12._bibr12_sha256"
+  "py": "metacheck.io.bibr12._bibr12_sha256"
   "args":
     "path": {"$file": "no/such/file.pdf"}
 - "id": ".paper_schema_bibr12"
@@ -658,21 +658,21 @@ cases:
 # refusals: an older paper, a later 12.x paper, an unknown schema_version
 - "id": "paper_write.error.older_format"
   "r": "paper_write"
-  "py": "pytacheck.paper_write"
+  "py": "metacheck.paper_write"
   "args":
     "paper": {"$paper": "demo"}
     "save_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
     "schema_version": "12.0"
 - "id": "paper_write.error.later_12x"
   "r": "paper_write"
-  "py": "pytacheck.paper_write"
+  "py": "metacheck.paper_write"
   "args":
     "paper": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); p$info$schema_version <- '12.1'; p})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).with_schema_version('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', '12.1')"}}
     "save_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
     "schema_version": "12.0"
 - "id": "paper_write.error.version"
   "r": "paper_write"
-  "py": "pytacheck.paper_write"
+  "py": "metacheck.paper_write"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
     "save_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
@@ -680,32 +680,32 @@ cases:
 # .table_tests(): 12.x tables use their own caption (not the text of their section)
 - "id": ".table_tests.full"
   "r": "metacheck:::.table_tests"
-  "py": "pytacheck.statout.match_table._table_tests"
+  "py": "metacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
 - "id": ".table_tests.probe_html"
   "r": "metacheck:::.table_tests"
-  "py": "pytacheck.statout.match_table._table_tests"
+  "py": "metacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
 - "id": ".table_tests.probe_docx"
   "r": "metacheck:::.table_tests"
-  "py": "pytacheck.statout.match_table._table_tests"
+  "py": "metacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
 - "id": ".table_tests.inspect"
   "r": "metacheck:::.table_tests"
-  "py": "pytacheck.statout.match_table._table_tests"
+  "py": "metacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$paper": "tests/fixtures/bibr_v12_inspect.json"}
 - "id": ".table_tests.correlation_caption"
   "r": "metacheck:::.table_tests"
-  "py": "pytacheck.statout.match_table._table_tests"
+  "py": "metacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1.', '2.'), c('1. Anxiety', '-', ''), c('2. Depression', '.45*', '-'))); p$table$caption <- 'Table 1. Correlations between measures'; p})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).correlation_table()"}}
 - "id": ".table_tests.correlation_caption.older"
   "r": "metacheck:::.table_tests"
-  "py": "pytacheck.statout.match_table._table_tests"
+  "py": "metacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1.', '2.'), c('1. Anxiety', '-', ''), c('2. Depression', '.45*', '-'))); p$table$caption <- 'Table 1. Correlations between measures'; p$info$schema_version <- NA_character_; p})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).correlation_table(None)"}}
 # match_reported_output(include_tables = TRUE): a 12.x table's caption names its statistics
@@ -731,7 +731,7 @@ cases:
     "x": {"$expr": {"r": "attr(metacheck::match_reported_output(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1', '2'), c('Condition A', '1.93', '-0.15'))); p$table$caption <- 'Table 1. Descriptive statistics'; p$info$schema_version <- NA_character_; p}), metacheck::stat_results_long(metacheck::read_stat_tables('upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp'), source_file = 'sample.jasp'), include_tables = TRUE, min_components = 1L), 'summary')", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).match_jasp(__import__('tests.bibr12._parity_helpers', fromlist=['x']).descriptive_table(None), 'summary')"}}
 - "id": ".table_tests.descriptive_caption"
   "r": "metacheck:::.table_tests"
-  "py": "pytacheck.statout.match_table._table_tests"
+  "py": "metacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1', '2'), c('Condition A', '1.93', '-0.15'))); p$table$caption <- 'Table 1. Descriptive statistics'; p})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).descriptive_table()"}}
 # module_run() of every built-in module that needs no network or LLM

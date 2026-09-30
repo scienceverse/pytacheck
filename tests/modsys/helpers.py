@@ -8,8 +8,8 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from pytacheck.config import update_config
-from pytacheck.packs.tree import INSTALL_RECORD, file_sha256, tree_files, tree_sha256
+from metacheck.config import update_config
+from metacheck.packs.tree import INSTALL_RECORD, file_sha256, tree_files, tree_sha256
 
 REV_A = "a" * 40
 REV_B = "b" * 40
@@ -29,7 +29,7 @@ def mod_src(
     body = body or f'return {{"summary_text": "{text}", "table": None, "x": x}}'
     return textwrap.dedent(
         f'''\
-        from pytacheck.module import module, get_prev_outputs
+        from metacheck.module import module, get_prev_outputs
         {header}
 
         @module(title="{name.title()}", description="The {name} module",

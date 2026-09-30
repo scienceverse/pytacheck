@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.dataone (port of test-archive-dataone.R, plus more)."""
+"""Tests for metacheck.archives.dataone (port of test-archive-dataone.R, plus more)."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ import math
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.dataone import (
+import metacheck as pc
+from metacheck.archives.dataone import (
     _dataone_host,
     _dataone_host_regex,
     _dataone_hosts,
@@ -179,7 +179,7 @@ def test_info_uses_the_listing_cache(mock_api: object) -> None:
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"dataone\.org seems to be offline"):
         dataone_info("10.18739/A2GT5FG86")
     # nothing valid: no connectivity check needed

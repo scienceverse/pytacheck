@@ -14,7 +14,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 REVIEW = "tests/datacheck_files/data/review"
-PY = "pytacheck.datacheck.files"
+PY = "metacheck.datacheck.files"
 HELP = "tests.datacheck_files.review_helpers"
 
 cases: list[dict[str, Any]] = []

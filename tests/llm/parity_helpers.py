@@ -13,13 +13,13 @@ import tempfile
 from collections.abc import Callable, Iterator, Mapping
 from typing import Any
 
-import pytacheck.llm as L
-from pytacheck.llm import cache as C
-from pytacheck.llm import core as K
-from pytacheck.llm import providers as P
-from pytacheck.llm import types as T
-from pytacheck.llm._rds import RInt
-from pytacheck.llm.providers import LLMError
+import metacheck.llm as L
+from metacheck.llm import cache as C
+from metacheck.llm import core as K
+from metacheck.llm import providers as P
+from metacheck.llm import types as T
+from metacheck.llm._rds import RInt
+from metacheck.llm.providers import LLMError
 
 __all__ = [
     "LLM_ON",
@@ -73,13 +73,13 @@ def scoped(
 
     A ``None`` option value unsets the option (R ``options(x = NULL)``).
     """
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     opts = dict(options or {})
     with local_options(opts), _envvars(env or {}):
         for k, v in opts.items():
             if v is None:
-                from pytacheck.utils import options as set_options
+                from metacheck.utils import options as set_options
 
                 set_options({k: None})
         return fn()
@@ -96,7 +96,7 @@ def with_cache_dir(fn: Callable[[str], Any]) -> Any:
 
 def cache_files(d: str) -> list[str]:
     """``sort(list.files(d))``."""
-    from pytacheck._r import r_sorted
+    from metacheck._r import r_sorted
 
     return r_sorted(os.listdir(d))  # type: ignore[no-any-return]
 
@@ -137,7 +137,7 @@ def ollama_reply(body: Any, fn: Callable[[], Any]) -> Any:
     import httpx
     import respx
 
-    from pytacheck.llm._rds import RVec, to_python
+    from metacheck.llm._rds import RVec, to_python
 
     with respx.mock(assert_all_called=False) as router:
         router.post(url__regex=r"/api/chat$").mock(return_value=httpx.Response(200, json=body))

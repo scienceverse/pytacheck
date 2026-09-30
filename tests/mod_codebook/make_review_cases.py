@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 R_PRE = "source('tests/mod_codebook/review_helpers.R', local = TRUE)"
 PY_RH = "__import__('tests.mod_codebook.review_helpers', fromlist=['_'])"
 PY_H = "__import__('tests.mod_codebook.helpers', fromlist=['_'])"
-PY_CB = "__import__('pytacheck.modules._codebook', fromlist=['_'])"
+PY_CB = "__import__('metacheck.modules._codebook', fromlist=['_'])"
 
 SCENARIOS = [
     "rv_violations",
@@ -96,7 +96,7 @@ def module_cases() -> list[dict[str, Any]]:
         c = case(
             f"codebook_check.null_paper.{s}",
             f"module_run(rv_prev_null('{s}'), 'codebook_check')",
-            f"__import__('pytacheck.module', fromlist=['_']).module_run("
+            f"__import__('metacheck.module', fromlist=['_']).module_run("
             f"RH.rv_prev_null('{s}'), 'codebook_check')",
         )
         out.append(c)
@@ -106,7 +106,7 @@ def module_cases() -> list[dict[str, Any]]:
             case(
                 f"codebook_check.{name}",
                 f"module_run(cbc_prev_list(c({vec_r})), 'codebook_check')",
-                f"__import__('pytacheck.module', fromlist=['_']).module_run("
+                f"__import__('metacheck.module', fromlist=['_']).module_run("
                 f"H.cbc_prev_list([{vec_r}]), 'codebook_check')",
             )
         )
@@ -166,19 +166,19 @@ def module_cases() -> list[dict[str, Any]]:
         for x in ("0956797613520608", "0956797614522816", "0956797614527830")
     ]
     psy_r = f"read(c({', '.join(psy)}))"
-    psy_py = f"__import__('pytacheck').read([{', '.join(psy)}])"
+    psy_py = f"__import__('metacheck').read([{', '.join(psy)}])"
     real = [
         (
             "odd.bibr12",
             "odd",
             f"cbc_prev('scales_mixed', paper = read({bibr12}))",
-            f"H.cbc_prev('scales_mixed', paper=__import__('pytacheck').read({bibr12}))",
+            f"H.cbc_prev('scales_mixed', paper=__import__('metacheck').read({bibr12}))",
         ),
         (
             "odd.demo",
             "odd",
             "cbc_prev('scales_mixed', paper = demopaper())",
-            "H.cbc_prev('scales_mixed', paper=__import__('pytacheck').demopaper())",
+            "H.cbc_prev('scales_mixed', paper=__import__('metacheck').demopaper())",
         ),
         (
             "odd.psychsci",

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-import pytacheck as pc
-from pytacheck.report.html_output import _html_export_r_source, _html_sniff_kind
-from pytacheck.report.report import report
+import metacheck as pc
+from metacheck.report.html_output import _html_export_r_source, _html_sniff_kind
+from metacheck.report.report import report
 
 
 @pytest.mark.parametrize(

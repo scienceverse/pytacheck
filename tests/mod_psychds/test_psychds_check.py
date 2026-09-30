@@ -18,11 +18,11 @@ from typing import Any
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleOutput, module_find, module_run
-from pytacheck.modules import psychds_check as mod
-from pytacheck.report.blocks import ReportTable
-from pytacheck.utils import local_options
+import metacheck as pc
+from metacheck.module import ModuleOutput, module_find, module_run
+from metacheck.modules import psychds_check as mod
+from metacheck.report.blocks import ReportTable
+from metacheck.utils import local_options
 from tests.mod_psychds import parity_support as ps
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -311,7 +311,7 @@ def test_compliant_names_and_root_files_stay_in_place() -> None:
 
 
 def _patched_data_check(monkeypatch: pytest.MonkeyPatch, chain: ModuleOutput) -> list[Any]:
-    import pytacheck.module as module_mod
+    import metacheck.module as module_mod
 
     calls: list[Any] = []
 
@@ -505,7 +505,7 @@ REPO_EXPECTED = {
 
 @pytest.mark.parametrize("repo", sorted(REPO_EXPECTED))
 def test_local_repositories(repo: str) -> None:
-    pytest.importorskip("pytacheck.modules.data_check", reason="data_check is not ported yet")
+    pytest.importorskip("metacheck.modules.data_check", reason="data_check is not ported yet")
     light, counts, targets, note = REPO_EXPECTED[repo]
     with local_options({"metacheck.llm.use": False}):
         out = module_run(

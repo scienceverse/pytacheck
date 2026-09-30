@@ -2,7 +2,7 @@
 
 The report prose comparison skips table widgets, so the data of a module's
 report tables is otherwise never compared with R. This returns every
-:class:`~pytacheck.report.blocks.ReportTable` in a module's report with its
+:class:`~metacheck.report.blocks.ReportTable` in a module's report with its
 ``report_table()`` arguments, in report order.
 """
 
@@ -18,8 +18,8 @@ def _blocks(x: Any) -> list[Any]:
 
 
 def mp_report_tables(paper: Any, module: str) -> list[dict[str, Any]]:
-    from pytacheck.module import module_run
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.module import module_run
+    from metacheck.report.blocks import ReportTable
 
     mo = module_run(paper, module)
     return [

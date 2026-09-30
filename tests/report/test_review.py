@@ -11,18 +11,18 @@ import warnings
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_run
-from pytacheck.report.blocks import _cap_num, link, scroll_table
-from pytacheck.report.html_output import _html_sniff_kind
-from pytacheck.report.render import deparse, scroll_table_qmd, table_chunk
-from pytacheck.report.report import (
+import metacheck as pc
+from metacheck.module import module_run
+from metacheck.report.blocks import _cap_num, link, scroll_table
+from metacheck.report.html_output import _html_sniff_kind
+from metacheck.report.render import deparse, scroll_table_qmd, table_chunk
+from metacheck.report.report import (
     module_report,
     render_module_outputs,
     report_module_run,
     report_repository,
 )
-from pytacheck.validate import accuracy, validate
+from metacheck.validate import accuracy, validate
 
 
 @pytest.fixture
@@ -207,7 +207,7 @@ def test_report_repository_single_module_name(tmp_path, quiet, test_module):
 
 
 def test_report_submodule_is_callable(tmp_path, quiet):
-    from pytacheck.report import report as report_mod
+    from metacheck.report import report as report_mod
 
     assert callable(report_mod)
     assert callable(report_mod.report)
@@ -216,8 +216,8 @@ def test_report_submodule_is_callable(tmp_path, quiet):
 
 
 def test_message_pastes_vectors(capsys):
-    from pytacheck.config import verbose
-    from pytacheck.utils import message
+    from metacheck.config import verbose
+    from metacheck.utils import message
 
     old = verbose()
     verbose(True)
@@ -229,7 +229,7 @@ def test_message_pastes_vectors(capsys):
 
 
 def test_datatable_cells_show_numbers_like_the_browser():
-    from pytacheck.report.render import _cell_text
+    from metacheck.report.render import _cell_text
 
     # htmlwidgets writes 16 significant digits; the browser prints Number#toString
     assert _cell_text(0.1 + 0.2) == "0.3"
@@ -243,8 +243,8 @@ def test_datatable_cells_show_numbers_like_the_browser():
 
 def test_report_with_ported_modules(tmp_path, quiet, test_module):
     # upstream test-report.R: "report return list" and "report pass args"
-    from pytacheck.module import ModuleError, module_find
-    from pytacheck.report.report import report
+    from metacheck.module import ModuleError, module_find
+    from metacheck.report.report import report
 
     try:
         module_find("stat_p_exact")

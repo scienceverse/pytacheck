@@ -12,9 +12,9 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.archives import zenodo
-from pytacheck.archives.zenodo import (
+import metacheck as pc
+from metacheck.archives import zenodo
+from metacheck.archives.zenodo import (
     _zenodo_id,
     _zenodo_info,
     _zenodo_unread,
@@ -23,7 +23,7 @@ from pytacheck.archives.zenodo import (
     zenodo_info,
     zenodo_links,
 )
-from pytacheck.utils import _col_chr
+from metacheck.utils import _col_chr
 
 FULL = [
     "zenodo_id",
@@ -136,7 +136,7 @@ def _batch_query_returning(resp: httpx.Response) -> Any:
 
 def test_zenodo_info_keeps_schema_when_unreadable(monkeypatch: pytest.MonkeyPatch) -> None:
     # non-200: Zenodo had nothing for us
-    monkeypatch.setattr("pytacheck.http.batch_query", _batch_query_returning(httpx.Response(404)))
+    monkeypatch.setattr("metacheck.http.batch_query", _batch_query_returning(httpx.Response(404)))
     with pytest.warns(UserWarning):
         unread = _zenodo_info("5498371")
     assert len(unread) == 1
@@ -145,7 +145,7 @@ def test_zenodo_info_keeps_schema_when_unreadable(monkeypatch: pytest.MonkeyPatc
 
     # 200 with a body that will not parse
     monkeypatch.setattr(
-        "pytacheck.http.batch_query",
+        "metacheck.http.batch_query",
         _batch_query_returning(httpx.Response(200, content=b"not json")),
     )
     bad = _zenodo_info("5498371")
@@ -154,8 +154,8 @@ def test_zenodo_info_keeps_schema_when_unreadable(monkeypatch: pytest.MonkeyPatc
 
 
 def test_zenodo_info_keeps_doi_license_when_every_record_unreadable() -> None:
-    from pytacheck._r import bind_rows
-    from pytacheck.utils import left_join
+    from metacheck._r import bind_rows
+    from metacheck.utils import left_join
 
     unread = bind_rows([_zenodo_unread("5498371", "unfound"), _zenodo_unread("5498372", "unfound")])
     table = pd.DataFrame(
@@ -207,7 +207,7 @@ def test_zenodo_info(apis: object) -> None:
 
 
 def test_zenodo_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(RuntimeError, match="offline"):
         zenodo_info("12345")
 
@@ -231,7 +231,7 @@ def test_zenodo_info_na_url_in_table(apis: object) -> None:
 
 
 def test_zenodo_info_cache(apis: object, tmp_path: Path) -> None:
-    from pytacheck import utils
+    from metacheck import utils
 
     with utils.local_options({"metacheck.repo_info_cache.dir": str(tmp_path)}):
         first = zenodo_info("2669586", cache=True)

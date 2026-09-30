@@ -15,9 +15,9 @@ from typing import Any
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck._r import grepl
-from pytacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
+import metacheck as pc
+from metacheck._r import grepl
+from metacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
 from tests.mod_ethics.make_parity_cases import SWEEP
 from tests.mod_ethics.parity_support import ec_paper, ec_papers
 
@@ -320,7 +320,7 @@ _NOT_A_PAPER = (
 
 def direct(paper: Any) -> dict[str, Any]:
     """The module function's own return value (R: the sourced ``ethics_check(paper)``)."""
-    from pytacheck.modules.ethics_check import ethics_check
+    from metacheck.modules.ethics_check import ethics_check
 
     return ethics_check(paper)
 

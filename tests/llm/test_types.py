@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from pytacheck.llm import types as T
-from pytacheck.llm._rds import RList, RVec
+from metacheck.llm import types as T
+from metacheck.llm._rds import RList, RVec
 from tests.llm.support import load_json
 
 POWER = T.type_object(

@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.fourtu (R/archive-4tu.R has no testthat file upstream)."""
+"""Tests for metacheck.archives.fourtu (R/archive-4tu.R has no testthat file upstream)."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.fourtu import (
+import metacheck as pc
+from metacheck.archives.fourtu import (
     _researchdata4tu_id,
     researchdata4tu_file_download,
     researchdata4tu_info,
@@ -70,7 +70,7 @@ def test_info_vector(mock_api: object) -> None:
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"data\.4tu\.nl seems to be offline"):
         researchdata4tu_info("16766929")
 
@@ -88,7 +88,7 @@ def test_pat(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_file_download_uses_the_4tu_token(mock_api: object, tmp_path: Path) -> None:
     researchdata4tu_pat("tok4tu")
     seen: list[str | None] = []
-    import pytacheck.archives.figshare as figshare
+    import metacheck.archives.figshare as figshare
 
     orig = figshare._figshare_headers
 

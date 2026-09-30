@@ -14,9 +14,9 @@ from typing import Any
 
 import pytest
 
-from pytacheck.codecheck import _encoding, _icu
-from pytacheck.codecheck._purl import purl
-from pytacheck.codecheck._rparse import (
+from metacheck.codecheck import _encoding, _icu
+from metacheck.codecheck._purl import purl
+from metacheck.codecheck._rparse import (
     Lang,
     RParseError,
     Sym,

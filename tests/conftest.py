@@ -53,14 +53,14 @@ def fixtures_dir(upstream_dir: Path) -> Path:
 
 @pytest.fixture
 def demo():
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.demopaper()
 
 
 @pytest.fixture
 def psychsci(fixtures_dir: Path):
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.read(fixtures_dir / "psychsci")
 

@@ -8,8 +8,8 @@ import pytest
 pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient
 
-import pytacheck as pc
-from pytacheck.api.app import create_app, parse_bool
+import metacheck as pc
+from metacheck.api.app import create_app, parse_bool
 
 
 @pytest.fixture(scope="module")
@@ -116,6 +116,6 @@ def test_parse_bool() -> None:
 
 
 def test_numbers_follow_jsonlite(demo_json: bytes) -> None:
-    from pytacheck.api.jsonlite import to_json
+    from metacheck.api.jsonlite import to_json
 
     assert orjson.loads(to_json([0.123456])) == [0.1235]

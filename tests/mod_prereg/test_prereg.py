@@ -8,14 +8,14 @@ from unittest import mock
 import pandas as pd
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
 from tests.mod_prereg.parity_support import LOCAL_MOCKS, mocked, plist, tp
 
 
 @pytest.fixture(autouse=True)
 def _online() -> Iterator[None]:
     # skip the DNS check in aspredicted_info()
-    with mock.patch("pytacheck.utils.online", return_value=True):
+    with mock.patch("metacheck.utils.online", return_value=True):
         yield
 
 
@@ -109,7 +109,7 @@ def test_inaccessible_registration_link_is_reported() -> None:
     # metacheck#361: osf_type() says "inaccessible" for a valid but unreadable id
     guid = "abcde"
     paper = osf_paper(guid)
-    with mock.patch("pytacheck.archives.osf.osf_type", lambda guid: "inaccessible"):
+    with mock.patch("metacheck.archives.osf.osf_type", lambda guid: "inaccessible"):
         mo = run(paper)
     assert "no registrations" not in mo.summary_text
     assert "could not be accessed" in mo.summary_text
@@ -120,14 +120,14 @@ def test_inaccessible_registration_link_is_reported() -> None:
 
 
 def test_registration_that_type_checks_but_fails_to_fetch_is_reported() -> None:
-    from pytacheck.archives.osf import _osf_error_result
+    from metacheck.archives.osf import _osf_error_result
 
     guid = "fghij"
     paper = osf_paper(guid)
     with (
-        mock.patch("pytacheck.archives.osf.osf_type", lambda guid: "registrations"),
+        mock.patch("metacheck.archives.osf.osf_type", lambda guid: "registrations"),
         mock.patch(
-            "pytacheck.archives.osf.osf_get_all_pages",
+            "metacheck.archives.osf.osf_get_all_pages",
             lambda url, page_end=float("inf"): _osf_error_result("forbidden"),
         ),
     ):
@@ -199,7 +199,7 @@ def test_osf_only_paper_needs_no_aspredicted() -> None:
     # aspredicted.org is not reachable, even for a paper without AsPredicted links
     from unittest import mock
 
-    with mock.patch("pytacheck.utils.online", return_value=False):
+    with mock.patch("metacheck.utils.online", return_value=False):
         mo = run(tp(["https://osf.io/48ncu"], "p_osf"))
     assert mo.traffic_light == "info"
     assert mo.summary_table["preregistration"].tolist() == [1]
@@ -242,7 +242,7 @@ def test_schemas_are_fetched_once() -> None:
 
 def test_report_structure() -> None:
     mo = run(pc.demopaper())
-    from pytacheck.report import ReportTable
+    from metacheck.report import ReportTable
 
     assert mo.report[0] == "We found 2 preregistrations."
     tables = [b for b in mo.report if isinstance(b, ReportTable)]
@@ -260,7 +260,7 @@ def test_report_structure() -> None:
 
 
 def test_module_contract() -> None:
-    from pytacheck.packs.check import run_issues
+    from metacheck.packs.check import run_issues
 
     demo = pc.demopaper()
     with mocked():
@@ -286,7 +286,7 @@ def test_aspredicted_info_messages_are_suppressed(capsys: pytest.CaptureFixture[
     # messages would be "Starting AsPredicted retrieval ...", "* Retrieving
     # info from ..." and "...AsPredicted retrieval complete!" (or "No valid
     # AsPredicted links" for a paper with only OSF links)
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     old = verbose()
     try:

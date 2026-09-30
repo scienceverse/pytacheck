@@ -8,8 +8,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.codecheck.core import (
+import metacheck as pc
+from metacheck.codecheck.core import (
     code_abs_path,
     code_extract_py,
     code_extract_r,

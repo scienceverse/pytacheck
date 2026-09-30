@@ -2,7 +2,7 @@
 
 The regular cases (``parity/cases/mod_repro.yaml``) compare the report as
 prose, which skips every table widget; :func:`rv_tables` collects the data
-frame of each of the report's :class:`~pytacheck.report.blocks.ReportTable`
+frame of each of the report's :class:`~metacheck.report.blocks.ReportTable`
 blocks so they can be compared with R's table chunks
 (``tests/mod_repro/rv_helpers.R``).
 """
@@ -18,7 +18,7 @@ from tests.mod_repro import helpers
 
 def rv_tables(mo: Any) -> list[pd.DataFrame]:
     """The data frames of the report's table blocks, in order ("Time (s)" zeroed)."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     out: list[pd.DataFrame] = []
 
@@ -39,7 +39,7 @@ def rv_tables(mo: Any) -> list[pd.DataFrame]:
 
 def _unroot_tables(mo: Any) -> Any:
     """Replace the kept sandbox's path by ``"<root>"`` in the report's table cells."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     root = mo.get("sandbox")
     if root is None:
@@ -84,7 +84,7 @@ def rv_run_saved(name: str, **kwargs: Any) -> Any:
     """The module with a committed metacheck ``.rds`` as *tables_dir* (R: ``rv_run_saved()``)."""
     import contextlib
 
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     with contextlib.chdir(helpers.ROOT):
         paper = helpers.rc_paper(helpers.specs()["scenarios"][name])
@@ -101,8 +101,8 @@ def rv_chain(**kwargs: Any) -> Any:
     """A real piped chain on the local fixture project (R: ``rv_chain()``)."""
     import contextlib
 
-    import pytacheck as pc
-    from pytacheck.module import module_run
+    import metacheck as pc
+    from metacheck.module import module_run
 
     proj = "tests/mod_repro/fixtures/project"
     with contextlib.chdir(helpers.ROOT):

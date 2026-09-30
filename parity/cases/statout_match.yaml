@@ -192,7 +192,7 @@
     - "\tp\n"
 - "id": "stato_type_column.null"
   "r": "stato_type_column"
-  "py": "pytacheck.statout.stato_map.stato_type_column"
+  "py": "metacheck.statout.stato_map.stato_type_column"
   "args":
     "header":
       "$null": true
@@ -281,7 +281,7 @@
     - "t.test"
 - "id": "stato_type_column.call_null"
   "r": "stato_type_column"
-  "py": "pytacheck.statout.stato_map.stato_type_column"
+  "py": "metacheck.statout.stato_map.stato_type_column"
   "args":
     "header": "W"
     "call_fn":
@@ -357,7 +357,7 @@
     "vocab": "upper"
 - "id": "spv_stato_type_label.null"
   "r": "metacheck:::.spv_stato_type_label"
-  "py": "pytacheck.statout.stato_map._spv_stato_type_label"
+  "py": "metacheck.statout.stato_map._spv_stato_type_label"
   "args":
     "label":
       "$null": true
@@ -394,7 +394,7 @@
     - "Kruskal.Test"
 - "id": "stato_by_call.null_call"
   "r": "metacheck:::.stato_by_call"
-  "py": "pytacheck.statout.stato_map._stato_by_call"
+  "py": "metacheck.statout.stato_map._stato_by_call"
   "args":
     "key": "w"
     "call_fn":
@@ -480,7 +480,7 @@
     - 0.30000000000000004
 - "id": "norm_value.null"
   "r": "metacheck:::.norm_value"
-  "py": "pytacheck.statout.match_reported._norm_value"
+  "py": "metacheck.statout.match_reported._norm_value"
   "args":
     "x":
       "$null": true
@@ -555,7 +555,7 @@
     - "(< 5)"
 - "id": "norm_df.null"
   "r": "metacheck:::.norm_df"
-  "py": "pytacheck.statout.match_reported._norm_df"
+  "py": "metacheck.statout.match_reported._norm_df"
   "args":
     "x":
       "$null": true
@@ -709,7 +709,7 @@
     "vocab": "keys"
 - "id": "stat_family.null"
   "r": "metacheck:::.stat_family"
-  "py": "pytacheck.statout.match_reported._stat_family"
+  "py": "metacheck.statout.match_reported._stat_family"
   "args":
     "name":
       "$null": true
@@ -3075,7 +3075,7 @@
     - "CORRELATION MATRIX"
 - "id": "table_caption_family.null"
   "r": "metacheck:::.table_caption_family"
-  "py": "pytacheck.statout.match_table._table_caption_family"
+  "py": "metacheck.statout.match_table._table_caption_family"
   "args":
     "caption":
       "$null": true

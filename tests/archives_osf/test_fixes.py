@@ -13,8 +13,8 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives.osf import osf_check_id
-from pytacheck.archives.osf_helpers import _osf_file_data, _osf_info, _osf_parse_response
+from metacheck.archives.osf import osf_check_id
+from metacheck.archives.osf_helpers import _osf_file_data, _osf_info, _osf_parse_response
 
 
 def test_osf_check_id_route_names_are_not_ids() -> None:

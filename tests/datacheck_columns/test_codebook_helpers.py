@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck.columns import (
+from metacheck.datacheck.columns import (
     _decode_value_labels,
     _empty_codebook_vars,
     _encode_value_labels,
@@ -330,7 +330,7 @@ def test_parse_codebook_missing_file_is_none() -> None:
 
 
 def test_haven_value_labels_na_label_name() -> None:
-    from pytacheck.datacheck.columns import _haven_value_labels, _looks_like_freetext_labels
+    from metacheck.datacheck.columns import _haven_value_labels, _looks_like_freetext_labels
 
     # U60: R: structure(1:2, labels = setNames(1:5, c("a", "b", "c", "d", NA)))
     # fails in `&&` because the free-text test returns NA; the NA-named code is

@@ -17,16 +17,16 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives import download as dlm
-from pytacheck.archives import zip_peek as zpm
-from pytacheck.archives.download import (
+from metacheck.archives import download as dlm
+from metacheck.archives import zip_peek as zpm
+from metacheck.archives.download import (
     _download_many_parallel,
     _download_one,
     _download_zip_to_cache,
     download_repo_files,
 )
-from pytacheck.archives.zip_peek import zip_peek
-from pytacheck.utils import local_options
+from metacheck.archives.zip_peek import zip_peek
+from metacheck.utils import local_options
 
 
 @pytest.fixture(autouse=True)
@@ -139,7 +139,7 @@ def test_zip_timeout_message_with_a_fractional_timeout(
 def test_zip_gate_ignores_rows_without_a_repository(monkeypatch: pytest.MonkeyPatch) -> None:
     # metacheck: sum(files$repo_url == repo) is NA with any NA repo_url, so the
     # zip is skipped ("holds NA files")
-    import pytacheck.archives.zenodo as zen
+    import metacheck.archives.zenodo as zen
 
     calls: list[str] = []
 
@@ -174,7 +174,7 @@ def test_stale_file_location_is_still_fetched(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # metacheck drops rows with any file_location from the remaining downloads
-    import pytacheck.archives.zenodo as zen
+    import metacheck.archives.zenodo as zen
 
     monkeypatch.setattr(zen, "_zenodo_id", lambda x: "123")
     monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 1024.0)

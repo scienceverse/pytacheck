@@ -18,12 +18,12 @@ from typing import Any
 import orjson
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.io.bibr12 import _bibr12_sha256
+from metacheck.io.grobid import _grobid_to_bibr, grobid_to_bibr
+from metacheck.io.grobid_bibr12 import _bibr12_utc, _grobid_to_bibr12
 from parity.canonical import canonical
 from parity.compare import Options, compare
-from pytacheck.io.bibr12 import _bibr12_sha256
-from pytacheck.io.grobid import _grobid_to_bibr, grobid_to_bibr
-from pytacheck.io.grobid_bibr12 import _bibr12_utc, _grobid_to_bibr12
 
 HERE = Path(__file__).resolve().parent
 EDGES = HERE / "fixtures" / "v12_edges.tei.xml"
@@ -345,7 +345,7 @@ def test_bibr12_utc(x: str | None, expected: str | None) -> None:
 
 
 def _builtin_modules() -> list[str]:
-    from pytacheck.module import _builtin_names
+    from metacheck.module import _builtin_names
 
     return list(_builtin_names())
 
@@ -358,7 +358,7 @@ def test_every_module_runs_on_grobid12_papers(module: str) -> None:
     modules run without an LLM. Modules that need no network or LLM are
     compared with metacheck in the grobid12 parity cases.
     """
-    from pytacheck.packs.check import run_issues
+    from metacheck.packs.check import run_issues
     from tests.httpmock import replay
 
     paper = grobid_to_bibr(pc.demofile("xml"), None)

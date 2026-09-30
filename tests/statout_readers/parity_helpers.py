@@ -26,7 +26,7 @@ def _fn(dotted: str) -> Any:
 
 
 def _read_lines(path: str) -> list[str]:
-    from pytacheck.statout.spv import _read_lines as rl
+    from metacheck.statout.spv import _read_lines as rl
 
     return rl(path)
 
@@ -54,7 +54,7 @@ def export_syntax(fn: str, path: str) -> Any:
 
 def spv_attrs(path: str) -> list[dict[str, Any]]:
     """Per-table ``attrs`` of :func:`import_spv` (charts and tables)."""
-    from pytacheck.statout.spv import import_spv
+    from metacheck.statout.spv import import_spv
 
     out = []
     for t in import_spv(str(ROOT / path)):
@@ -90,7 +90,7 @@ def spv_attrs(path: str) -> list[dict[str, Any]]:
 def data_labels(fn: str, path: str) -> dict[str, Any]:
     """Per-column variable and value labels of ``import_jasp()``/``import_omv()``."""
     df = _fn(fn)(str(ROOT / path))["data"]
-    from pytacheck.datacheck._colattrs import col_attrs_at
+    from metacheck.datacheck._colattrs import col_attrs_at
 
     def lab(v: Any) -> Any:
         if isinstance(v, list):  # (label, code) pairs: R's named vector
@@ -110,7 +110,7 @@ def data_labels(fn: str, path: str) -> dict[str, Any]:
 
 
 def jasp_summary(path: str) -> list[str]:
-    from pytacheck.statout.jasp import _jasp_analyses_summary, import_jasp
+    from metacheck.statout.jasp import _jasp_analyses_summary, import_jasp
 
     return _jasp_analyses_summary(import_jasp(str(ROOT / path)).get("analyses"))
 
@@ -126,35 +126,35 @@ def call(fn: str, **kwargs: Any) -> Any:
 
 
 def smcl_render_file(path: str) -> list[str]:
-    from pytacheck.statout.spv import _read_lines as rl
-    from pytacheck.statout.stata import _smcl_render
+    from metacheck.statout.spv import _read_lines as rl
+    from metacheck.statout.stata import _smcl_render
 
     return _smcl_render(rl(ROOT / path))
 
 
 def smcl_chunks(path: str) -> list[dict[str, Any]]:
-    from pytacheck.statout.stata import _smcl_command_chunks
+    from metacheck.statout.stata import _smcl_command_chunks
 
     return _smcl_command_chunks(smcl_render_file(path))
 
 
 def mplus_sections(path: str) -> list[dict[str, Any]]:
-    from pytacheck.statout.mplus import _mplus_sections
-    from pytacheck.statout.spv import _read_lines as rl
+    from metacheck.statout.mplus import _mplus_sections
+    from metacheck.statout.spv import _read_lines as rl
 
     return _mplus_sections(rl(ROOT / path))
 
 
 def mplus_syntax(path: str) -> Any:
-    from pytacheck.statout.mplus import _mplus_syntax_lines
-    from pytacheck.statout.spv import _read_lines as rl
+    from metacheck.statout.mplus import _mplus_syntax_lines
+    from metacheck.statout.spv import _read_lines as rl
 
     return _mplus_syntax_lines(rl(ROOT / path))
 
 
 def mplus_section_tables(path: str, title: str) -> Any:
     """``.mplus_output_tables()`` + ``consumed`` + label/value for one section."""
-    from pytacheck.statout.mplus import _mplus_output_labelvalue, _mplus_output_tables
+    from metacheck.statout.mplus import _mplus_output_labelvalue, _mplus_output_tables
 
     sec = next(s for s in mplus_sections(path) if s["title"] == title)
     tabs = _mplus_output_tables(sec["lines"])
@@ -172,7 +172,7 @@ def legacy_data(path: str, member: str) -> Any:
 
     import pandas as pd
 
-    from pytacheck.statout.spv import _chr_dbl, _spv_decode_legacy_data
+    from metacheck.statout.spv import _chr_dbl, _spv_decode_legacy_data
 
     with zipfile.ZipFile(ROOT / path) as zf:
         raw = zf.read(member)
@@ -200,7 +200,7 @@ def light_table(path: str, member: str) -> Any:
     """``.spv_decode_light_table()`` of one archive member."""
     import zipfile
 
-    from pytacheck.statout.spv import _spv_decode_light_table
+    from metacheck.statout.spv import _spv_decode_light_table
 
     with zipfile.ZipFile(ROOT / path) as zf:
         raw = zf.read(member)
@@ -213,7 +213,7 @@ def spv_structure(path: str) -> Any:
 
     import pandas as pd
 
-    from pytacheck.statout.spv import _spv_read_structure
+    from metacheck.statout.spv import _spv_read_structure
 
     with tempfile.TemporaryDirectory() as d:
         with zipfile.ZipFile(ROOT / path) as zf:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from pytacheck import http
+from metacheck import http
 
 
 @pytest.fixture(autouse=True)

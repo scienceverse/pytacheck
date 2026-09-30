@@ -21,10 +21,10 @@ from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse, RedirectResponse
 from starlette.routing import Route
 
-from pytacheck import cli
-from pytacheck.app import launch, main
-from pytacheck.app import state as saved
-from pytacheck.app.security import TokenGuard
+from metacheck import cli
+from metacheck.app import launch, main
+from metacheck.app import state as saved
+from metacheck.app.security import TokenGuard
 
 
 def test_state_file_is_private_and_holds_port_token_pid(state_dir: Path) -> None:
@@ -176,7 +176,7 @@ def test_self_test_passes(capsys: pytest.CaptureFixture[str]) -> None:
 def test_self_test_fails_with_exit_1(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    from pytacheck.app import run
+    from metacheck.app import run
 
     def broken(*_a: Any, **_k: Any) -> Any:
         raise RuntimeError("no good")
@@ -189,7 +189,7 @@ def test_self_test_fails_with_exit_1(
 def test_self_test_fails_when_a_check_fails(monkeypatch: pytest.MonkeyPatch) -> None:
     from dataclasses import replace
 
-    from pytacheck.app import run
+    from metacheck.app import run
 
     real = run.check_paper
 
@@ -241,7 +241,7 @@ def test_real_app_end_to_end(
     state_dir: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     """Start the app in this process, talk to it over HTTP, stop it like Ctrl+C."""
-    from pytacheck import config
+    from metacheck import config
 
     monkeypatch.setitem(config._state, "verbose", config.verbose())  # the app turns it off
     monkeypatch.setattr(launch, "_warm_up", lambda: None)
@@ -306,7 +306,7 @@ def test_gradio_keeps_its_files_in_a_private_folder(monkeypatch: pytest.MonkeyPa
 def test_closing_the_terminal_cleans_up(tmp_path: Path) -> None:
     """SIGHUP is what a closed terminal window sends."""
     env = {**os.environ, "XDG_STATE_HOME": str(tmp_path / "state"), "TMPDIR": str(tmp_path)}
-    code = "from pytacheck.app import main; raise SystemExit(main(['--no-browser']))"
+    code = "from metacheck.app import main; raise SystemExit(main(['--no-browser']))"
     proc = subprocess.Popen(
         [sys.executable, "-c", code], env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
     )

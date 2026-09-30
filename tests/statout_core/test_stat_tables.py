@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout.stat_tables import (
+from metacheck.statout.stat_tables import (
     _ipynb_is_noise,
     _ipynb_stat_kv,
     _ipynb_stat_line,
@@ -52,7 +52,7 @@ def test_read_stat_tables_reads_jupyter_notebook_outputs(notebooks: Path) -> Non
 
 
 def test_notebook_call_fn_types_statistic(notebooks: Path, stato: None) -> None:
-    from pytacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.stat_output import stat_results_long
 
     tabs = read_stat_tables(notebooks / "notebook_python.ipynb")
     long = stat_results_long(tabs, source_file="notebook_python.ipynb")
@@ -111,7 +111,7 @@ def test_ipynb_stat_line_parses_scipy_result_classes() -> None:
 
 
 def test_ipynb_stat_line_types_each_class(stato: None) -> None:
-    from pytacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.stat_output import stat_results_long
 
     long = stat_results_long(_scipy_results(), source_file="test.ipynb")
     slope = long[(long["row_label"] == "") & (long["statistic"] == "slope")]
@@ -150,7 +150,7 @@ def test_ipynb_stat_table_parses_statsmodels_summary() -> None:
 
 
 def test_ipynb_stat_table_long_typing(stato: None) -> None:
-    from pytacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.stat_output import stat_results_long
 
     tabs = _ipynb_stat_table(SUMMARY_TEXT)
     long = stat_results_long(tabs, source_file="test.ipynb")
@@ -211,7 +211,7 @@ def test_ipynb_stat_kv_extracts_full_header_block() -> None:
 
 
 def test_ipynb_stat_kv_long_typing(stato: None) -> None:
-    from pytacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.stat_output import stat_results_long
 
     long = stat_results_long([_ipynb_stat_kv(KV_TEXT)], source_file="test.ipynb")
     iri = dict(zip(long["statistic"], long["stato_iri"], strict=True))

@@ -2,7 +2,7 @@
 "cases":
 - "id": "github_links.review.tricky"
   "r": "github_links"
-  "py": "pytacheck.archives.github.github_links"
+  "py": "metacheck.archives.github.github_links"
   "args":
     "paper":
       "$test_paper":
@@ -25,7 +25,7 @@
     - "paper_id"
 - "id": "gitlab_links.review.tricky"
   "r": "gitlab_links"
-  "py": "pytacheck.archives.gitlab.gitlab_links"
+  "py": "metacheck.archives.gitlab.gitlab_links"
   "args":
     "paper":
       "$test_paper":
@@ -50,8 +50,8 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(github_links(paperlist(test_paper(\"a\"))[0]), online = function(...)\
           \ TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.github\", fromlist=[\"_\"]).github_links(__import__(\"\
-          pytacheck\").PaperList([]))"
+        "py": "lambda: __import__(\"metacheck.archives.github\", fromlist=[\"_\"]).github_links(__import__(\"\
+          metacheck\").PaperList([]))"
 - "id": "gitlab_links.review.empty_paperlist"
   "r": "identity"
   "py": "tests.archives_gz.parity_support.run"
@@ -60,8 +60,8 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(gitlab_links(paperlist(test_paper(\"a\"))[0]), online = function(...)\
           \ TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.gitlab\", fromlist=[\"_\"]).gitlab_links(__import__(\"\
-          pytacheck\").PaperList([]))"
+        "py": "lambda: __import__(\"metacheck.archives.gitlab\", fromlist=[\"_\"]).gitlab_links(__import__(\"\
+          metacheck\").PaperList([]))"
 - "id": "zenodo_links.review.empty_paperlist"
   "r": "identity"
   "py": "tests.archives_gz.parity_support.run"
@@ -70,11 +70,11 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(zenodo_links(paperlist(test_paper(\"a\"))[0]), online = function(...)\
           \ TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_links(__import__(\"\
-          pytacheck\").PaperList([]))"
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_links(__import__(\"\
+          metacheck\").PaperList([]))"
 - "id": "zenodo_links.review.tricky"
   "r": "zenodo_links"
-  "py": "pytacheck.archives.zenodo.zenodo_links"
+  "py": "metacheck.archives.zenodo.zenodo_links"
   "args":
     "paper":
       "$test_paper":
@@ -94,7 +94,7 @@
     - "paper_id"
 - "id": ".zenodo_id.review"
   "r": ".zenodo_id"
-  "py": "pytacheck.archives.zenodo._zenodo_id"
+  "py": "metacheck.archives.zenodo._zenodo_id"
   "args":
     "zenodo_url":
       "$chr":
@@ -107,7 +107,7 @@
       - "0123"
 - "id": ".zenodo_id.review.numbers"
   "r": ".zenodo_id"
-  "py": "pytacheck.archives.zenodo._zenodo_id"
+  "py": "metacheck.archives.zenodo._zenodo_id"
   "args":
     "zenodo_url":
       "$dbl":
@@ -115,7 +115,7 @@
       - 1234567890
 - "id": ".zenodo_license_id.review.vector"
   "r": ".zenodo_license_id"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_license_id"
+  "py": "metacheck.archives.zenodo_upload._zenodo_license_id"
   "args":
     "osf_license":
       "$chr":
@@ -123,14 +123,14 @@
       - "x"
 - "id": ".zenodo_license_id.review.list"
   "r": ".zenodo_license_id"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_license_id"
+  "py": "metacheck.archives.zenodo_upload._zenodo_license_id"
   "args":
     "osf_license":
       "$list":
       - "MIT License"
 - "id": ".zenodo_flat_names.review.three_way"
   "r": ".zenodo_flat_names"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_flat_names"
+  "py": "metacheck.archives.zenodo_upload._zenodo_flat_names"
   "args":
     "files":
       "$chr":
@@ -140,7 +140,7 @@
     "folder": "p"
 - "id": ".zenodo_flat_names.review.dup_input"
   "r": ".zenodo_flat_names"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_flat_names"
+  "py": "metacheck.archives.zenodo_upload._zenodo_flat_names"
   "args":
     "files":
       "$chr":
@@ -154,7 +154,7 @@
     "folder": "p"
 - "id": ".zenodo_flat_names.review.trailing_slash"
   "r": ".zenodo_flat_names"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_flat_names"
+  "py": "metacheck.archives.zenodo_upload._zenodo_flat_names"
   "args":
     "files":
       "$chr":
@@ -164,7 +164,7 @@
     "folder": "p/"
 - "id": ".zenodo_flat_names.review.numbered_clash"
   "r": ".zenodo_flat_names"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_flat_names"
+  "py": "metacheck.archives.zenodo_upload._zenodo_flat_names"
   "args":
     "files":
       "$chr":
@@ -174,25 +174,25 @@
     "folder": "p"
 - "id": "github_languages.review.error_body"
   "r": "github_languages"
-  "py": "pytacheck.archives.github.github_languages"
+  "py": "metacheck.archives.github.github_languages"
   "args":
     "repo": "rv/langerr"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_languages.review.mixed"
   "r": "github_languages"
-  "py": "pytacheck.archives.github.github_languages"
+  "py": "metacheck.archives.github.github_languages"
   "args":
     "repo": "rv/langmix"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_languages.review.none"
   "r": "github_languages"
-  "py": "pytacheck.archives.github.github_languages"
+  "py": "metacheck.archives.github.github_languages"
   "args":
     "repo": "rv/langnone"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_languages.review.vector"
   "r": "github_languages"
-  "py": "pytacheck.archives.github.github_languages"
+  "py": "metacheck.archives.github.github_languages"
   "args":
     "repo":
       "$chr":
@@ -203,27 +203,27 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_files.review.tricky"
   "r": "github_files"
-  "py": "pytacheck.archives.github.github_files"
+  "py": "metacheck.archives.github.github_files"
   "args":
     "repo": "https://github.com/rv/files"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_files.review.tricky_rec"
   "r": "github_files"
-  "py": "pytacheck.archives.github.github_files"
+  "py": "metacheck.archives.github.github_files"
   "args":
     "repo": "rv/files"
     "recursive": true
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_files.review.dir_arg"
   "r": "github_files"
-  "py": "pytacheck.archives.github.github_files"
+  "py": "metacheck.archives.github.github_files"
   "args":
     "repo": "rv/files"
     "dir": "my dir"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_files.review.vector_rec"
   "r": "github_files"
-  "py": "pytacheck.archives.github.github_files"
+  "py": "metacheck.archives.github.github_files"
   "args":
     "repo":
       "$chr":
@@ -233,140 +233,140 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_tree_files.review.null_branch"
   "r": "github_tree_files"
-  "py": "pytacheck.archives.github.github_tree_files"
+  "py": "metacheck.archives.github.github_tree_files"
   "args":
     "repo": "rv/tree3"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_tree_files.review.slash_branch"
   "r": "github_tree_files"
-  "py": "pytacheck.archives.github.github_tree_files"
+  "py": "metacheck.archives.github.github_tree_files"
   "args":
     "repo": "https://github.com/rv/tree4.git"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_info.review.recursive"
   "r": "github_info"
-  "py": "pytacheck.archives.github.github_info"
+  "py": "metacheck.archives.github.github_info"
   "args":
     "repo": "https://github.com/rv/files/"
     "recursive": true
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_readme.review.unicode"
   "r": "github_readme"
-  "py": "pytacheck.archives.github.github_readme"
+  "py": "metacheck.archives.github.github_readme"
   "args":
     "repo": "rv/files"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "gitlab_tree_files.review.branch_space"
   "r": "gitlab_tree_files"
-  "py": "pytacheck.archives.gitlab.gitlab_tree_files"
+  "py": "metacheck.archives.gitlab.gitlab_tree_files"
   "args":
     "repo": "https://gitlab.com/rv/glp.git"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.title_licence"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559001"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.empty_id_licence"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559002"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.no_metadata"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559003"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.gone"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559004"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.null_body"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559005"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.html_body"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559006"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.title_string"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559007"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_comments"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559201"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_repeated_key"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559202"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_nul_escape"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559203"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_bom"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559204"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_declared_latin1"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559205"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_nan"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559206"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_invalid_utf8"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559207"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_nul_byte_bigint"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559208"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_vnd_suffix"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559209"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.json_empty_body"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id": "5559210"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.vector"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id":
       "$expr":
@@ -375,7 +375,7 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.vector_urls"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id":
       "$expr":
@@ -384,7 +384,7 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.vector_unfound_error"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id":
       "$expr":
@@ -393,7 +393,7 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.vector_parse_error"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id":
       "$expr":
@@ -402,7 +402,7 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_info.review.vector_empty_error"
   "r": ".zenodo_info"
-  "py": "pytacheck.archives.zenodo._zenodo_info"
+  "py": "metacheck.archives.zenodo._zenodo_info"
   "args":
     "zenodo_id":
       "$expr":
@@ -418,7 +418,7 @@
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(c(\"5559001\", \"5559004\", \"5559005\"\
           , \"5559003\", \"https://zenodo.org/records/5559001\", NA)), online = function(...) TRUE, .package\
           \ = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info([\"5559001\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info([\"5559001\"\
           , \"5559004\", \"5559005\", \"5559003\", \"https://zenodo.org/records/5559001\", None])"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_info.review.table"
@@ -430,7 +430,7 @@
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(data.frame(link = c(\"https://zenodo.org/records/5559007\"\
           , \"5559007\", \"zenodo.5559004\", \"none\", \"5559007\"), title = letters[1:5], zenodo_id =\
           \ \"old\"), id_col = \"link\"), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
           link\": [\"https://zenodo.org/records/5559007\", \"5559007\", \"zenodo.5559004\", \"none\",\
           \ \"5559007\"], \"title\": list(\"abcde\"), \"zenodo_id\": \"old\"}), id_col=\"link\")"
   "mock_dir": "tests/archives_gz/mocks_review"
@@ -442,7 +442,7 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(data.frame(u = factor(c(\"5559007\"\
           , NA, \"5559001\")))), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
           u\": pd.Categorical([\"5559007\", None, \"5559001\"])}))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_info.review.numeric"
@@ -453,12 +453,12 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(c(5559007, 5559007)), online = function(...)\
           \ TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info([5559007.0,\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info([5559007.0,\
           \ 5559007.0])"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_verify_downloads.review.character_downloaded"
   "r": ".zenodo_verify_downloads"
-  "py": "pytacheck.archives.zenodo._zenodo_verify_downloads"
+  "py": "metacheck.archives.zenodo._zenodo_verify_downloads"
   "args":
     "files":
       "$expr":
@@ -470,7 +470,7 @@
       "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
 - "id": ".zenodo_verify_downloads.review.numeric_downloaded"
   "r": ".zenodo_verify_downloads"
-  "py": "pytacheck.archives.zenodo._zenodo_verify_downloads"
+  "py": "metacheck.archives.zenodo._zenodo_verify_downloads"
   "args":
     "files":
       "$expr":
@@ -481,7 +481,7 @@
       "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
 - "id": ".zenodo_verify_downloads.review.no_downloaded_error"
   "r": ".zenodo_verify_downloads"
-  "py": "pytacheck.archives.zenodo._zenodo_verify_downloads"
+  "py": "metacheck.archives.zenodo._zenodo_verify_downloads"
   "args":
     "files":
       "$expr":
@@ -499,7 +499,7 @@
           \ = { d <- tempfile(); dir.create(d); d }), online = function(...) TRUE, .package = \"metacheck\"\
           )"
         "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda\
-          \ d: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559101\"\
+          \ d: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559101\"\
           , download_to=d))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_file_download.review.ties"
@@ -512,7 +512,7 @@
           \ = NULL, max_download_size = 10, download_to = { d <- tempfile(); dir.create(d); d }), online\
           \ = function(...) TRUE, .package = \"metacheck\")"
         "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda\
-          \ d: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
+          \ d: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
           , max_file_size=None, max_download_size=10, download_to=d))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_file_download.review.all_too_big"
@@ -525,7 +525,7 @@
           \ = 0.5, download_to = { d <- tempfile(); dir.create(d); d }), online = function(...) TRUE,\
           \ .package = \"metacheck\")"
         "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda\
-          \ d: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
+          \ d: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
           , max_file_size=0.5, download_to=d))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_file_download.review.no_caps"
@@ -538,7 +538,7 @@
           \ = 0, max_download_size = -1, download_to = { d <- tempfile(); dir.create(d); d }), online\
           \ = function(...) TRUE, .package = \"metacheck\")"
         "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda\
-          \ d: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
+          \ d: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
           , max_file_size=0, max_download_size=-1, download_to=d))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_file_download.review.na_caps"
@@ -551,42 +551,42 @@
           \ = NA, max_download_size = NA, download_to = { d <- tempfile(); dir.create(d); d }), online\
           \ = function(...) TRUE, .package = \"metacheck\")"
         "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda\
-          \ d: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
+          \ d: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5559102\"\
           , max_file_size=float(\"nan\"), max_download_size=float(\"nan\"), download_to=d))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_languages.review.array"
   "r": "github_languages"
-  "py": "pytacheck.archives.github.github_languages"
+  "py": "metacheck.archives.github.github_languages"
   "args":
     "repo": "rv/langarr"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_languages.review.scalar"
   "r": "github_languages"
-  "py": "pytacheck.archives.github.github_languages"
+  "py": "metacheck.archives.github.github_languages"
   "args":
     "repo": "rv/langscalar"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_readme.review.nul"
   "r": "github_readme"
-  "py": "pytacheck.archives.github.github_readme"
+  "py": "metacheck.archives.github.github_readme"
   "args":
     "repo": "rv/readmenul"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_tree_files.review.untyped"
   "r": "github_tree_files"
-  "py": "pytacheck.archives.github.github_tree_files"
+  "py": "metacheck.archives.github.github_tree_files"
   "args":
     "repo": "rv/tree5"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_tree_files.review.string_size"
   "r": "github_tree_files"
-  "py": "pytacheck.archives.github.github_tree_files"
+  "py": "metacheck.archives.github.github_tree_files"
   "args":
     "repo": "rv/tree6"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_tree_files.review.vector"
   "r": "github_tree_files"
-  "py": "pytacheck.archives.github.github_tree_files"
+  "py": "metacheck.archives.github.github_tree_files"
   "args":
     "repo":
       "$chr":
@@ -595,13 +595,13 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "gitlab_tree_files.review.untyped"
   "r": "gitlab_tree_files"
-  "py": "pytacheck.archives.gitlab.gitlab_tree_files"
+  "py": "metacheck.archives.gitlab.gitlab_tree_files"
   "args":
     "repo": "rv/glq"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "gitlab_tree_files.review.vector"
   "r": "gitlab_tree_files"
-  "py": "pytacheck.archives.gitlab.gitlab_tree_files"
+  "py": "metacheck.archives.gitlab.gitlab_tree_files"
   "args":
     "repo":
       "$chr":
@@ -610,7 +610,7 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "gitlab_tree_files.review.vector_missing"
   "r": "gitlab_tree_files"
-  "py": "pytacheck.archives.gitlab.gitlab_tree_files"
+  "py": "metacheck.archives.gitlab.gitlab_tree_files"
   "args":
     "repo":
       "$chr":
@@ -626,8 +626,8 @@
         "r": "local({ old <- getOption(\"metacheck.gitlab.pat\"); on.exit(options(metacheck.gitlab.pat\
           \ = old)); c(metacheck::gitlab_pat(c(\"tok\")), metacheck::gitlab_pat()) })"
         "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_option(\"\
-          metacheck.gitlab.pat\", lambda: [__import__(\"pytacheck.archives.gitlab\", fromlist=[\"_\"]).gitlab_pat([\"\
-          tok\"]), __import__(\"pytacheck.archives.gitlab\", fromlist=[\"_\"]).gitlab_pat()])"
+          metacheck.gitlab.pat\", lambda: [__import__(\"metacheck.archives.gitlab\", fromlist=[\"_\"]).gitlab_pat([\"\
+          tok\"]), __import__(\"metacheck.archives.gitlab\", fromlist=[\"_\"]).gitlab_pat()])"
 - "id": "zenodo_pat.review.length_one_vector"
   "r": "identity"
   "py": "tests.archives_gz.parity_support.run"
@@ -637,8 +637,8 @@
         "r": "local({ old <- getOption(\"metacheck.zenodo.pat.sandbox\"); on.exit(options(metacheck.zenodo.pat.sandbox\
           \ = old)); c(metacheck::zenodo_pat(c(\"tok\")), metacheck::zenodo_pat()) })"
         "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_option(\"\
-          metacheck.zenodo.pat.sandbox\", lambda: [__import__(\"pytacheck.archives.zenodo_upload\", fromlist=[\"\
-          _\"]).zenodo_pat([\"tok\"]), __import__(\"pytacheck.archives.zenodo_upload\", fromlist=[\"_\"\
+          metacheck.zenodo.pat.sandbox\", lambda: [__import__(\"metacheck.archives.zenodo_upload\", fromlist=[\"\
+          _\"]).zenodo_pat([\"tok\"]), __import__(\"metacheck.archives.zenodo_upload\", fromlist=[\"_\"\
           ]).zenodo_pat()])"
 - "id": "zenodo_info.review.na_with_duplicates"
   "r": "identity"
@@ -648,7 +648,7 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(data.frame(u = c(\"5559007\", NA,\
           \ \"5559007\"))), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
           u\": [\"5559007\", None, \"5559007\"]}))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_info.review.two_na"
@@ -659,7 +659,7 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(data.frame(u = c(NA, \"5559007\",\
           \ NA))), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
           u\": [None, \"5559007\", None]}))"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_info.review.id_col_zero"
@@ -670,7 +670,7 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(data.frame(u = \"5559007\", v = \"\
           x\"), id_col = 0), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
           u\": [\"5559007\"], \"v\": [\"x\"]}), id_col=0)"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_info.review.id_col_negative"
@@ -681,7 +681,7 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(data.frame(v = \"x\", u = \"5559007\"\
           ), id_col = -1), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
           v\": [\"x\"], \"u\": [\"5559007\"]}), id_col=-1)"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "zenodo_info.review.id_col_too_big"
@@ -692,12 +692,12 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(metacheck::zenodo_info(data.frame(u = \"5559007\"), id_col\
           \ = 3), online = function(...) TRUE, .package = \"metacheck\")"
-        "py": "lambda: __import__(\"pytacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
+        "py": "lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_info(pd.DataFrame({\"\
           u\": [\"5559007\"]}), id_col=3)"
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": ".zenodo_build_metadata.review.na_tag"
   "r": ".zenodo_build_metadata"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_build_metadata"
+  "py": "metacheck.archives.zenodo_upload._zenodo_build_metadata"
   "args":
     "meta":
       "title": "T"
@@ -709,7 +709,7 @@
     "folder": "/tmp/f"
 - "id": ".zenodo_meta_from_folder.review.odd"
   "r": ".zenodo_meta_from_folder"
-  "py": "pytacheck.archives.zenodo_upload._zenodo_meta_from_folder"
+  "py": "metacheck.archives.zenodo_upload._zenodo_meta_from_folder"
   "args":
     "folder":
       "$expr":
@@ -720,7 +720,7 @@
         "py": "__import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).meta_folder()"
 - "id": "zenodo_upload.review.numeric_metadata"
   "r": "zenodo_upload"
-  "py": "pytacheck.archives.zenodo_upload.zenodo_upload"
+  "py": "metacheck.archives.zenodo_upload.zenodo_upload"
   "args":
     "folders":
       "$file": "tests/archives_gz/fixtures/upload/proj_plain"
@@ -736,7 +736,7 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_info.review.vector_dup"
   "r": "github_info"
-  "py": "pytacheck.archives.github.github_info"
+  "py": "metacheck.archives.github.github_info"
   "args":
     "repo":
       "$chr":
@@ -745,7 +745,7 @@
   "mock_dir": "tests/archives_gz/mocks_review"
 - "id": "github_info.review.vector_missing"
   "r": "github_info"
-  "py": "pytacheck.archives.github.github_info"
+  "py": "metacheck.archives.github.github_info"
   "args":
     "repo":
       "$chr":

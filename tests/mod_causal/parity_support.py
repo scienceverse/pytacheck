@@ -24,11 +24,11 @@ from unittest import mock
 
 import pandas as pd
 
-import pytacheck as pc
+import metacheck as pc
 
 
 def fake_causal_relations(sentence: Any, *args: Any, **kwargs: Any) -> pd.DataFrame:
-    """Deterministic stand-in for :func:`pytacheck.text.causal.causal_relations`."""
+    """Deterministic stand-in for :func:`metacheck.text.causal.causal_relations`."""
     sentences = [sentence] if isinstance(sentence, str) else list(sentence or [])
     rows: list[tuple[Any, ...]] = []
     if sentences and not all(s.strip(" \t\r\n") == "" for s in sentences):
@@ -52,7 +52,7 @@ def fake_causal_relations(sentence: Any, *args: Any, **kwargs: Any) -> pd.DataFr
 
 def run_fake_causal(x: Callable[[], Any]) -> Any:
     """Call *x* with ``causal_relations()`` replaced by :func:`fake_causal_relations`."""
-    with mock.patch("pytacheck.text.causal.causal_relations", fake_causal_relations):
+    with mock.patch("metacheck.text.causal.causal_relations", fake_causal_relations):
         return x()
 
 
@@ -119,7 +119,7 @@ def fake_causal_relations_na(sentence: Any, *args: Any, **kwargs: Any) -> pd.Dat
 
 def run_fake_causal_na(x: Callable[[], Any]) -> Any:
     """Call *x* with ``causal_relations()`` replaced by :func:`fake_causal_relations_na`."""
-    with mock.patch("pytacheck.text.causal.causal_relations", fake_causal_relations_na):
+    with mock.patch("metacheck.text.causal.causal_relations", fake_causal_relations_na):
         return x()
 
 
@@ -158,7 +158,7 @@ def with_section_types(p: Any, section_type: Sequence[str]) -> Any:
 def report_qmd(out: Any) -> list[str]:
     """``module_run(...)$report`` as R holds it: table blocks become the R
     chunk ``scroll_table()`` returns, so tables are compared too."""
-    from pytacheck.report import ReportTable
-    from pytacheck.report.render import table_chunk
+    from metacheck.report import ReportTable
+    from metacheck.report.render import table_chunk
 
     return [table_chunk(x) if isinstance(x, ReportTable) else x for x in out.report]

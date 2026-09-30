@@ -75,7 +75,7 @@ def test_envelope_keeps_an_index_other_than_the_default() -> None:
 
 
 def test_envelope_finds_the_frames_inside_module_outputs_and_lists() -> None:
-    from pytacheck.module import ModuleOutput
+    from metacheck.module import ModuleOutput
 
     out = ModuleOutput("m", "M", "general", table=_frame(x=[1]), summary_table=_frame(id=["a"]))
     frames = store.envelope(out)["frames"]

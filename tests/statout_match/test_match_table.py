@@ -1,4 +1,4 @@
-"""Tests for pytacheck.statout.match_table (port of R/match-table.R).
+"""Tests for metacheck.statout.match_table (port of R/match-table.R).
 
 metacheck has no dedicated testthat file for the table matcher (it runs
 inside reproducibility_check with include_tables = TRUE); these tests pin the
@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import pandas as pd
 
-import pytacheck as pc
-from pytacheck.statout.match_reported import match_reported_output
-from pytacheck.statout.match_table import (
+import metacheck as pc
+from metacheck.statout.match_reported import match_reported_output
+from metacheck.statout.match_table import (
     _table_caption,
     _table_caption_family,
     _table_header_ambiguous,

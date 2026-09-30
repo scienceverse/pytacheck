@@ -11,9 +11,9 @@ import warnings
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleError, module_list, module_run
-from pytacheck.modules import stat_effect_size as ses
+import metacheck as pc
+from metacheck.module import ModuleError, module_list, module_run
+from metacheck.modules import stat_effect_size as ses
 
 MODULE = "stat_effect_size"
 
@@ -370,7 +370,7 @@ def test_d_bounds(text: str, coherence: str) -> None:
 
 def test_stat_check_paper_list_summary_has_ids() -> None:
     # U124: metacheck's data.frame(paper_id = paperlist$paper_id) has no columns
-    from pytacheck.modules.stat_check import _paper_ids
+    from metacheck.modules.stat_check import _paper_ids
 
     papers = pc.PaperList([pc.test_paper(["No stats."]), pc.test_paper(["None either."])])
     assert _paper_ids(papers)["paper_id"].tolist() == [p.paper_id for p in papers]

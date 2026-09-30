@@ -15,15 +15,15 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck import files as F
-from pytacheck.datacheck._files_fread import FreadError, fread
-from pytacheck.datacheck._files_readtable import (
+from metacheck.datacheck import files as F
+from metacheck.datacheck._files_fread import FreadError, fread
+from metacheck.datacheck._files_readtable import (
     ReadTableError,
     _map_cr,
     read_table,
     type_convert,
 )
-from pytacheck.datacheck._files_time import posixct_series
+from metacheck.datacheck._files_time import posixct_series
 
 REVIEW = Path(__file__).parent / "data" / "review"
 
@@ -203,7 +203,7 @@ def test_posixct_series_out_of_nanosecond_range() -> None:
 
 
 def test_posixct_and_complex_as_character() -> None:
-    from pytacheck.datacheck._files_rdata import _complex_as_character, posixct_as_character
+    from metacheck.datacheck._files_rdata import _complex_as_character, posixct_as_character
 
     ts = pd.Timestamp("2020-01-01 10:00:00.5", tz="UTC")
     assert posixct_as_character(ts) == "2020-01-01 10:00:00.5"
@@ -253,7 +253,7 @@ def test_manifest_without_repo_url(tmp_path: Path, monkeypatch: pytest.MonkeyPat
 def test_duplicate_names_attrs_describe_the_first_column(tmp_path: Path) -> None:
     # col_attrs keyed by name describes the first column of a repeated name, the
     # one R's df$x / df[["x"]] returns; by position every column keeps its own
-    from pytacheck.datacheck._colattrs import col_attrs_at
+    from metacheck.datacheck._colattrs import col_attrs_at
 
     first_date = fread(_write(tmp_path, "a.csv", "x,x\n2020-01-01,1\n2020-01-02,2\n"), ",", True)
     assert first_date.attrs["col_attrs"] == {"x": {"class": ["IDate", "Date"]}}
@@ -262,7 +262,7 @@ def test_duplicate_names_attrs_describe_the_first_column(tmp_path: Path) -> None
     assert first_int.attrs["col_attrs"] == {}
     assert [col_attrs_at(first_int, j) for j in range(2)] == [{}, {"class": ["IDate", "Date"]}]
     # a renamed frame (names(df) <- ...) keeps the attributes by position
-    from pytacheck.datacheck.files import _set_names
+    from metacheck.datacheck.files import _set_names
 
     _set_names(first_int, ["a", "b"])
     assert first_int.attrs["col_attrs"] == {"b": {"class": ["IDate", "Date"]}}
@@ -273,7 +273,7 @@ def test_duplicate_names_attrs_describe_the_first_column(tmp_path: Path) -> None
 
 
 def test_era_date_format_reads_as_date() -> None:
-    from pytacheck.datacheck._files_readers import _is_date_format
+    from metacheck.datacheck._files_readers import _is_date_format
 
     assert _is_date_format('[$-411]ggge"年"m"月"d"日"')
     assert _is_date_format("[$-411]gge.m.d")

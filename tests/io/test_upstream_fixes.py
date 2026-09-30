@@ -13,8 +13,8 @@ from pathlib import Path
 
 import pytest
 
-import pytacheck as pc
-from pytacheck.io.grobid import _grobid_to_bibr, _join_doi, _print_hrefs, _prints_url
+import metacheck as pc
+from metacheck.io.grobid import _grobid_to_bibr, _join_doi, _print_hrefs, _prints_url
 from tests.io.conftest import IO_FIXTURES
 
 UPSTREAM = IO_FIXTURES.parents[2] / "upstream" / "metacheck"

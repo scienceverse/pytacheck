@@ -199,7 +199,7 @@ def dl_case(id_: str, r_body: str, py_body: str) -> None:
 
 # ---------------------------------------------------------------- links
 TP_R = f"test_paper({r_chr(FUZZ_TEXT)}, {r_chr(FUZZ_URL)})"
-TP_PY = f'__import__("pytacheck").test_paper({py_list(FUZZ_TEXT)}, {py_list(FUZZ_URL)})'
+TP_PY = f'__import__("metacheck").test_paper({py_list(FUZZ_TEXT)}, {py_list(FUZZ_URL)})'
 TEXT_ONLY = (
     "see 10.5061/dryad.abc, figshare.com/articles/x/12 (10.26180/19095317.v1.) and "
     "dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/Q"
@@ -219,14 +219,14 @@ for fn, mod in [
     fn_case(
         f"{fn}.review.text_only",
         fn,
-        f"pytacheck.archives.{mod}.{fn}",
+        f"metacheck.archives.{mod}.{fn}",
         {"paper": {"$test_paper": {"text": [TEXT_ONLY]}}},
         compare=IGNORE_PID,
     )
     fn_case(
         f"{fn}.review.url_only",
         fn,
-        f"pytacheck.archives.{mod}.{fn}",
+        f"metacheck.archives.{mod}.{fn}",
         {
             "paper": {
                 "$test_paper": {
@@ -318,7 +318,7 @@ expr_case(
         '"https://figshare.com/articles/dataset/x/18093368", "https://figshare.com/s/abc"))), '
         'id_col = "figshare_id")'
     ),
-    'lambda m: m.figshare.figshare_info(m.figshare.figshare_links(__import__("pytacheck").test_paper('
+    'lambda m: m.figshare.figshare_info(m.figshare.figshare_links(__import__("metacheck").test_paper('
     '[], ["https://figshare.com/articles/dataset/x/18093368", "https://figshare.com/s/abc"])), '
     'id_col="figshare_id")',
     compare=IGNORE_PID,
@@ -330,7 +330,7 @@ expr_case(
         '"https://doi.org/10.5061/dryad.j1fd7", "https://datadryad.org/stash/dataset/x"))), '
         'id_col = "dryad_doi")'
     ),
-    'lambda m: m.dryad.dryad_info(m.dryad.dryad_links(__import__("pytacheck").test_paper('
+    'lambda m: m.dryad.dryad_info(m.dryad.dryad_links(__import__("metacheck").test_paper('
     '[], ["https://doi.org/10.5061/dryad.j1fd7", "https://datadryad.org/stash/dataset/x"])), '
     'id_col="dryad_doi")',
     compare=IGNORE_PID,
@@ -342,7 +342,7 @@ expr_case(
         '"https://doi.org/10.5061/dryad.j1fd7", "https://datadryad.org/stash/dataset/x"))))'
     ),
     "(lambda m: (lambda l: m.dryad.dryad_info(l.iloc[[1, 0]], id_col=6))(m.dryad.dryad_links("
-    '__import__("pytacheck").test_paper([], ["https://doi.org/10.5061/dryad.j1fd7", '
+    '__import__("metacheck").test_paper([], ["https://doi.org/10.5061/dryad.j1fd7", '
     '"https://datadryad.org/stash/dataset/x"]))))',
     compare=IGNORE_PID,
 )
@@ -462,7 +462,7 @@ BAD_UTF8 = ["10.5061/dryad.abc%E2%80", "%FF10.5061/dryad.abc", "10.5061/dryad.ok
 fn_case(
     ".dryad_doi.review.invalid_utf8",
     "metacheck:::.dryad_doi",
-    "pytacheck.archives.dryad._dryad_doi",
+    "metacheck.archives.dryad._dryad_doi",
     {"dryad_url": {"$expr": {"r": r_chr(BAD_UTF8), "py": py_list(BAD_UTF8)}}},
 )
 BAD_DV = [
@@ -472,13 +472,13 @@ BAD_DV = [
 fn_case(
     ".dataverse_parse.review.invalid_utf8_error",
     "metacheck:::.dataverse_parse",
-    "pytacheck.archives.dataverse._dataverse_parse",
+    "metacheck.archives.dataverse._dataverse_parse",
     {"url": {"$expr": {"r": r_chr(BAD_DV), "py": py_list(BAD_DV)}}},
 )
 fn_case(
     ".dataverse_parse.review.valid_escapes",
     "metacheck:::.dataverse_parse",
-    "pytacheck.archives.dataverse._dataverse_parse",
+    "metacheck.archives.dataverse._dataverse_parse",
     {
         "url": [
             "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%E2%80%93.",
@@ -494,14 +494,14 @@ for fn, mod in [("dryad_links", "dryad"), ("figshare_links", "figshare")]:
     fn_case(
         f"{fn}.review.invalid_utf8",
         fn,
-        f"pytacheck.archives.{mod}.{fn}",
+        f"metacheck.archives.{mod}.{fn}",
         {"paper": {"$test_paper": {"text": BAD_TEXT}}},
         compare=IGNORE_PID,
     )
 fn_case(
     "dataverse_links.review.invalid_utf8_error",
     "dataverse_links",
-    "pytacheck.archives.dataverse.dataverse_links",
+    "metacheck.archives.dataverse.dataverse_links",
     {
         "paper": {
             "$test_paper": {
@@ -529,7 +529,7 @@ for fn, mod in [
     expr_case(
         f"{fn}.review.empty_paperlist",
         f'{fn}(paperlist(test_paper("a"))[0])',
-        f'lambda m: m.{mod}.{fn}(__import__("pytacheck").PaperList([]))',
+        f'lambda m: m.{mod}.{fn}(__import__("metacheck").PaperList([]))',
         mock=False,
     )
 

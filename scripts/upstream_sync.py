@@ -8,7 +8,7 @@ Used by .github/workflows/upstream-sync.yml, and runnable by hand:
     uv run python scripts/upstream_sync.py prepare --drop-pr  # stop tracking the pull request
 
 pytacheck follows metacheck's ``dev`` branch. The pin (parity/UPSTREAM.toml and
-pytacheck._version.UPSTREAM) can also name an open pull request that pytacheck
+metacheck._version.UPSTREAM) can also name an open pull request that pytacheck
 targets before it is merged (``pull_request``, with ``base_commit``, the dev
 commit it is built on). Then the tracked head is:
 
@@ -61,7 +61,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 SUB = ROOT / "upstream" / "metacheck"
 UPSTREAM_TOML = ROOT / "parity" / "UPSTREAM.toml"
-VERSION_PY = ROOT / "src" / "pytacheck" / "_version.py"
+VERSION_PY = ROOT / "src" / "metacheck" / "_version.py"
 BRIEF_DIR = ROOT / ".upstream-sync"
 DEF = re.compile(r"^`?([A-Za-z0-9._]+)`?\s*(?:<-|=)\s*function\b")
 MAX_DIFF_CHARS = 400_000
@@ -263,7 +263,7 @@ def write_pin(
     pull_request: int | None = None,
     base_commit: str | None = None,
 ) -> None:
-    """Write the pin to parity/UPSTREAM.toml and pytacheck._version.UPSTREAM.
+    """Write the pin to parity/UPSTREAM.toml and metacheck._version.UPSTREAM.
 
     Both always get the same entries: ``pull_request`` and ``base_commit``
     together (a tracked pull request), or neither.
@@ -483,7 +483,7 @@ def cmd_prepare(ns: argparse.Namespace) -> int:
         status, path = parts[0], parts[-1]
         py = targets.get(path) or targets.get(str(Path(path).parent)) or []
         if not py and path.startswith("inst/modules/") and path.endswith(".R"):
-            py = [f"src/pytacheck/modules/{Path(path).stem}.py"]
+            py = [f"src/metacheck/modules/{Path(path).stem}.py"]
         out.append(f"| {status} | `{path}` | {', '.join(f'`{p}`' for p in py) or '—'} |")
         if path.startswith("R/") and path.endswith(".R"):
             before, after = functions_at(old, path), functions_at(new, path)

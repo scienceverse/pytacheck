@@ -26,7 +26,7 @@ _TOKEN_OPTIONS = ("metacheck.researchdata4tu.pat", "metacheck.figshare.pat")
 @pytest.fixture(autouse=True)
 def _archive_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[None]:
     """No tokens from the environment; caches in a temp dir; no courtesy delays."""
-    from pytacheck import utils
+    from metacheck import utils
 
     for var in _TOKEN_ENV:
         monkeypatch.delenv(var, raising=False)
@@ -41,7 +41,7 @@ def _archive_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[No
 @pytest.fixture
 def online(monkeypatch: pytest.MonkeyPatch) -> None:
     """``online()`` reports every host as reachable (no DNS lookups)."""
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: True)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
 
 
 @pytest.fixture

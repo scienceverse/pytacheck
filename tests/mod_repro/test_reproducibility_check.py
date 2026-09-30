@@ -17,10 +17,10 @@ from typing import Any
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleOutput, module_find, module_list, module_run
-from pytacheck.modules import _reproducibility as h
-from pytacheck.report.blocks import ReportTable
+import metacheck as pc
+from metacheck.module import ModuleOutput, module_find, module_list, module_run
+from metacheck.modules import _reproducibility as h
+from metacheck.report.blocks import ReportTable
 from tests.mod_repro import helpers as rh
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -345,7 +345,7 @@ def test_throwaway_sandbox_is_removed(area_fixtures: Path, monkeypatch: pytest.M
 
 
 def test_tables_dir_replaces_upstream_modules(tmp_path: Path, repro_fixture: Any) -> None:
-    from pytacheck.repro import capture_module_tables
+    from metacheck.repro import capture_module_tables
 
     p = pc.test_paper()
     p.paper_id = "p1"
@@ -420,12 +420,12 @@ def test_null_paper_is_an_error() -> None:
 def test_argument_checks(paper: pc.Paper, monkeypatch: pytest.MonkeyPatch) -> None:
     with pytest.raises(pc.ModuleError, match="should be one of"):
         module_run(paper, "reproducibility_check", sandbox="vm")
-    from pytacheck.repro import core
+    from metacheck.repro import core
 
     monkeypatch.setattr(core, "_rscript", lambda: None)
     with pytest.raises(pc.ModuleError, match='sandbox = "process" needs R'):
         module_run(paper, "reproducibility_check", execute=True)
-    from pytacheck.repro import docker
+    from metacheck.repro import docker
 
     monkeypatch.setattr(docker, "repro_docker_available", lambda: {"ok": False, "msg": "no daemon"})
     with pytest.raises(pc.ModuleError, match='sandbox = "docker": no daemon'):
@@ -625,7 +625,7 @@ def test_execute_install_missing_installs_cran_dependency(
 
 
 def _run_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
-    from pytacheck.repro.core import _run_frame, _run_row
+    from metacheck.repro.core import _run_frame, _run_row
 
     return _run_frame([_run_row(**r) for r in rows])
 
@@ -633,7 +633,7 @@ def _run_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
 def test_install_report_and_dependency_unavailable(
     paper: pc.Paper, area_fixtures: Path, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pytacheck.repro import core
+    from metacheck.repro import core
 
     calls: dict[str, Any] = {}
 
@@ -693,7 +693,7 @@ def test_install_report_and_dependency_unavailable(
 def test_docker_sandbox_mocked(
     paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pytacheck.repro import docker
+    from metacheck.repro import docker
 
     seen: dict[str, Any] = {}
 
@@ -816,7 +816,7 @@ def test_batch_real_worker_processes(monkeypatch: pytest.MonkeyPatch) -> None:
     """
     import sys
 
-    from pytacheck.repro import docker
+    from metacheck.repro import docker
 
     monkeypatch.setenv("PATH", str(Path(sys.executable).parent))
     assert not docker.repro_docker_available()["ok"]

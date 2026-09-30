@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from pytacheck.llm._json import JSONParseError, Vec, parse_json, to_json
-from pytacheck.llm._rds import RInt
+from metacheck.llm._json import JSONParseError, Vec, parse_json, to_json
+from metacheck.llm._rds import RInt
 from tests.llm.support import load_json
 
 

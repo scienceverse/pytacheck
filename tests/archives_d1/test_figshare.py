@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.figshare (port of tests/testthat/test-archive-figshare.R, plus more).
+"""Tests for metacheck.archives.figshare (port of tests/testthat/test-archive-figshare.R, plus more).
 
 The R tests for ``.figshare_project_articles()`` and ``figshare_info()`` query
 the live API; here they run against the recorded responses in ``mocks/``.
@@ -12,9 +12,9 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives import figshare
-from pytacheck.archives.figshare import (
+import metacheck as pc
+from metacheck.archives import figshare
+from metacheck.archives.figshare import (
     _figshare_doi_prefix_hosts,
     _figshare_headers,
     _figshare_id,
@@ -159,7 +159,7 @@ def test_figshare_info_unfound_parse_error_and_no_valid(mock_api: object) -> Non
 
 
 def test_figshare_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"data\.4tu\.nl seems to be offline"):
         figshare_info("123", host="data.4tu.nl")
 
@@ -259,7 +259,7 @@ def test_link_prefilters_are_exact(
 
     from tests.archives_d1.make_review_cases import FUZZ_TEXT, FUZZ_URL
 
-    mod = importlib.import_module(f"pytacheck.archives.{module}")
+    mod = importlib.import_module(f"metacheck.archives.{module}")
     tricky = pc.test_paper(
         [
             *FUZZ_TEXT,

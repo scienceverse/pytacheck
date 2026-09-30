@@ -13,7 +13,7 @@ from typing import Any
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 
 @pytest.fixture

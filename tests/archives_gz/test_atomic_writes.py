@@ -15,9 +15,9 @@ from typing import Any
 import httpx
 import pytest
 
-from pytacheck.archives import zip_peek as zp
-from pytacheck.archives._atomic import atomic_write, staged_dir, sweep_stale
-from pytacheck.archives.download import _perform_once
+from metacheck.archives import zip_peek as zp
+from metacheck.archives._atomic import atomic_write, staged_dir, sweep_stale
+from metacheck.archives.download import _perform_once
 
 TEMP = re.compile(r"^\.~[0-9a-f]{4,12}$")
 URL = "https://files.example.test/a.csv"
@@ -33,7 +33,7 @@ def _leftovers(folder: Path) -> list[str]:
 
 def _fake_client(monkeypatch: pytest.MonkeyPatch, chunks: list[bytes], stop: bool) -> None:
     """A client whose body streams *chunks*, then (when *stop*) raises ``_Stop``."""
-    from pytacheck import http
+    from metacheck import http
 
     class _Resp:
         status_code = 200
@@ -291,7 +291,7 @@ def test_sweep_stale_removes_old_temp_names_only(tmp_path: Path) -> None:
 
 
 def test_the_temp_name_is_no_longer_than_the_target_where_possible() -> None:
-    from pytacheck.archives._atomic import _TEMP_NAME, _temp_name
+    from metacheck.archives._atomic import _TEMP_NAME, _temp_name
 
     for base, n in [("a.csv", 4), ("x" * 8, 6), ("x" * 14, 12), ("x" * 100, 12)]:
         name = _temp_name("/c/" + base)
@@ -323,7 +323,7 @@ def test_an_oserror_names_the_target_not_the_temp_file(
 def test_the_move_is_retried_on_windows_while_a_file_is_held(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from pytacheck.archives import _atomic
+    from metacheck.archives import _atomic
 
     calls = []
 

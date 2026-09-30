@@ -21,9 +21,9 @@ from typing import Any
 import pandas as pd
 import pytest
 
+from metacheck.datacheck._files_fread import FreadError, fread
 from parity.canonical import canonical
 from parity.compare import Options, compare
-from pytacheck.datacheck._files_fread import FreadError, fread
 
 DATA = Path(__file__).parent / "data"
 _BATTERIES = ("fread", "fread_quoted")

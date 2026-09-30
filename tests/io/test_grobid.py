@@ -8,9 +8,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.io import xml as px
-from pytacheck.io.grobid import (
+import metacheck as pc
+from metacheck.io import xml as px
+from metacheck.io.grobid import (
     _grobid_isalive,
     _grobid_to_bibr,
     _process_full_text,
@@ -20,7 +20,7 @@ from pytacheck.io.grobid import (
     convert_grobid,
     grobid_to_bibr,
 )
-from pytacheck.papers.validate import paper_validate
+from metacheck.papers.validate import paper_validate
 from tests.io.conftest import GROBID_URL, api
 
 
@@ -130,7 +130,7 @@ def test_directory(fixtures_dir: Path) -> None:
 
 
 def test_crossref_lookup_is_optional(demo_xml: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.db.crossref as crossref
+    import metacheck.db.crossref as crossref
 
     calls = []
 
@@ -341,7 +341,7 @@ def test_grobid_isalive() -> None:
 
 
 def test_null_section_import(fixtures_dir: Path, tmp_path: Path, online: None) -> None:
-    from pytacheck.io.convert import convert
+    from metacheck.io.convert import convert
     from tests.io.conftest import SERVERS_URL, json_response
 
     xml_file = fixtures_dir / "problems" / "203020.xml"
@@ -366,7 +366,7 @@ def test_in_text_refs(fixtures_dir: Path) -> None:
 
 
 def test_osf_view_only_links(fixtures_dir: Path) -> None:
-    from pytacheck.text.search import text_search
+    from metacheck.text.search import text_search
 
     xml_path = fixtures_dir / "problems" / "0956797615569889.xml"
     xml = px._xml_read_grobid(xml_path)

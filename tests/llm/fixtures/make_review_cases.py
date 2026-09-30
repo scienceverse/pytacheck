@@ -657,7 +657,7 @@ for _k, _j in RAW_JSON.items():
     expr_case(
         f"unnest_raw.{_k}",
         f"metacheck:::.unnest_result(jsonlite::parse_json({_j!r}))",
-        f"{H}.K._unnest_result({H}.K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json({_j!r})))",
+        f"{H}.K._unnest_result({H}.K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json({_j!r})))",
     )
 FS_R = (
     'ellmer::type_from_schema(\'{"type":"object","properties":{"a":{"type":"integer"},'

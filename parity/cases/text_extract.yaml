@@ -3,12 +3,12 @@
 # ---------------------------------------------------------------- extract_urls
 - "id": "extract_urls.demo"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper": {"$paper": "demo"}
 - "id": "extract_urls.test_paper.valid"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$test_paper":
@@ -20,7 +20,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_urls.test_paper.invalid"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$test_paper":
@@ -31,7 +31,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_urls.test_paper.tricky"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$test_paper":
@@ -47,7 +47,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_urls.psychsci"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper": &psychsci
       "$read":
@@ -56,23 +56,23 @@
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
 - "id": "extract_urls.bad_arg"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper": 1
 - "id": "extract_urls.chr"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper": {"$chr": ["see https://osf.io/x and a.bc", "nothing", "doi:10.1/x"]}
 # ------------------------------------------------------------ extract_p_values
 - "id": "extract_p_values.demo"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper": {"$paper": "demo"}
 - "id": "extract_p_values.test_paper.basic"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$test_paper":
@@ -85,7 +85,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_p_values.df.formats"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$df":
@@ -127,7 +127,7 @@
         - "p = 12.05"
 - "id": "extract_p_values.test_paper.tricky"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$test_paper":
@@ -146,7 +146,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_p_values.test_paper.none"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$test_paper":
@@ -156,29 +156,29 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_p_values.psychsci"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper": *psychsci
 - "id": "extract_p_values.bad_arg"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper": 1
 - "id": "extract_p_values.chr"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U150", "reason": "extract_p_values() of strings returns their p-values (R: '$ operator is invalid for atomic vectors')"}
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper": {"$chr": ["t = 2, p = .05"]}
 # ------------------------------------------------------------------ extract_eq
 - "id": "extract_eq.demo"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper": {"$paper": "demo"}
 - "id": "extract_eq.test_paper.basic"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -191,7 +191,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.complex"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -200,7 +200,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.none"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -209,7 +209,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.nodf"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -218,7 +218,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.possessive"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -228,7 +228,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.tricky"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -252,12 +252,12 @@
 - "id": "extract_eq.psychsci"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "each sentence of a paper in a list keeps its own grp_id, the one it has when the paper is searched alone (R restarts at 1 whenever its search order moves to another paper, so different sentences of a paper share grp_id 1 or 2)"}
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper": *psychsci
 - "id": "extract_eq.df.one_row_no_paper_id"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$df":
@@ -265,36 +265,36 @@
 - "id": "extract_eq.df.no_paper_id_error"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a table without paper_id works (R fails on NA comparisons once there are two equations)"}
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$df":
         "text": ["t = 2.1, p = .04"]
 - "id": "extract_eq.bad_arg"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper": 1
 - "id": "extract_eq.chr"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U150", "reason": "extract_eq() of strings returns their equations (R: a bind_rows() error)"}
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper": {"$chr": ["t = 2, p = .05"]}
 # ----------------------------------------------------------- .detect_live_data
 - "id": "detect_live_data.demo"
   "r": "metacheck:::.detect_live_data"
-  "py": "pytacheck.text.extract._detect_live_data"
+  "py": "metacheck.text.extract._detect_live_data"
   "args":
     "paper": {"$paper": "demo"}
 - "id": "detect_live_data.psychsci"
   "r": "metacheck:::.detect_live_data"
-  "py": "pytacheck.text.extract._detect_live_data"
+  "py": "metacheck.text.extract._detect_live_data"
   "args":
     "paper": *psychsci
 - "id": "detect_live_data.test_paper"
   "r": "metacheck:::.detect_live_data"
-  "py": "pytacheck.text.extract._detect_live_data"
+  "py": "metacheck.text.extract._detect_live_data"
   "args":
     "paper":
       "$test_paper":
@@ -313,12 +313,12 @@
 # --------------------------------------------------------------- extract_tests
 - "id": "extract_tests.demo"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper": {"$paper": "demo"}
 - "id": "extract_tests.test_paper.splits"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$test_paper":
@@ -338,7 +338,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_tests.test_paper.none"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$test_paper":
@@ -348,7 +348,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_tests.df"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$df":
@@ -358,89 +358,89 @@
 - "id": "extract_tests.psychsci"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a paper list gives each paper's 116 tests once, with their sentences (R: 348 = every test once per paper id, sentence NA)"}
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper": *psychsci
 - "id": "extract_tests.psychsci.0956797613520608"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"}
 - "id": "extract_tests.psychsci.0956797614522816"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"}
 - "id": "extract_tests.psychsci.0956797614527830"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"}
 - "id": "norm_stat_name.eta"
   "r": "metacheck:::.norm_stat_name"
-  "py": "pytacheck.text.extract_tests._norm_stat_name"
+  "py": "metacheck.text.extract_tests._norm_stat_name"
   "args":
     "x": "  ηp² "
 - "id": "norm_stat_name.cohen"
   "r": "metacheck:::.norm_stat_name"
-  "py": "pytacheck.text.extract_tests._norm_stat_name"
+  "py": "metacheck.text.extract_tests._norm_stat_name"
   "args":
     "x": "Cohen’s   d"
 - "id": "norm_stat_name.chi"
   "r": "metacheck:::.norm_stat_name"
-  "py": "pytacheck.text.extract_tests._norm_stat_name"
+  "py": "metacheck.text.extract_tests._norm_stat_name"
   "args":
     "x": "Χ²"
 - "id": "norm_stat_name.ci"
   "r": "metacheck:::.norm_stat_name"
-  "py": "pytacheck.text.extract_tests._norm_stat_name"
+  "py": "metacheck.text.extract_tests._norm_stat_name"
   "args":
     "x": "95% C.I."
 - "id": "norm_stat_name.greek"
   "r": "metacheck:::.norm_stat_name"
-  "py": "pytacheck.text.extract_tests._norm_stat_name"
+  "py": "metacheck.text.extract_tests._norm_stat_name"
   "args":
     "x": "Cronbach's α Δδρτβ"
 - "id": "norm_stat_name.null"
   "r": "metacheck:::.norm_stat_name"
-  "py": "pytacheck.text.extract_tests._norm_stat_name"
+  "py": "metacheck.text.extract_tests._norm_stat_name"
   "args":
     "x": {"$null": true}
 - "id": "is_anchor.t"
   "r": "metacheck:::.is_anchor"
-  "py": "pytacheck.text.extract_tests._is_anchor"
+  "py": "metacheck.text.extract_tests._is_anchor"
   "args": {"nm": "t"}
 - "id": "is_anchor.p"
   "r": "metacheck:::.is_anchor"
-  "py": "pytacheck.text.extract_tests._is_anchor"
+  "py": "metacheck.text.extract_tests._is_anchor"
   "args": {"nm": "p"}
 - "id": "is_anchor.cohen"
   "r": "metacheck:::.is_anchor"
-  "py": "pytacheck.text.extract_tests._is_anchor"
+  "py": "metacheck.text.extract_tests._is_anchor"
   "args": {"nm": "Cohen's d"}
 - "id": "is_primary_anchor.f"
   "r": "metacheck:::.is_primary_anchor"
-  "py": "pytacheck.text.extract_tests._is_primary_anchor"
+  "py": "metacheck.text.extract_tests._is_primary_anchor"
   "args": {"nm": "F"}
 - "id": "is_primary_anchor.d"
   "r": "metacheck:::.is_primary_anchor"
-  "py": "pytacheck.text.extract_tests._is_primary_anchor"
+  "py": "metacheck.text.extract_tests._is_primary_anchor"
   "args": {"nm": "d"}
 - "id": "is_stat_name.listed"
   "r": "metacheck:::.is_stat_name"
-  "py": "pytacheck.text.extract_tests._is_stat_name"
+  "py": "metacheck.text.extract_tests._is_stat_name"
   "args": {"nm": "SD"}
 - "id": "is_stat_name.nonevidence"
   "r": "metacheck:::.is_stat_name"
-  "py": "pytacheck.text.extract_tests._is_stat_name"
+  "py": "metacheck.text.extract_tests._is_stat_name"
   "args": {"nm": "height"}
 - "id": "is_stat_name.empty"
   "r": "metacheck:::.is_stat_name"
-  "py": "pytacheck.text.extract_tests._is_stat_name"
+  "py": "metacheck.text.extract_tests._is_stat_name"
   "args": {"nm": "%"}
 - "id": "split_into_tests.repeat"
   "r": "metacheck:::.split_into_tests"
-  "py": "pytacheck.text.extract_tests._split_into_tests"
+  "py": "metacheck.text.extract_tests._split_into_tests"
   "args":
     "comps":
       "$list":
@@ -451,7 +451,7 @@
       - {"name": "p", "comp": "=", "value": ".013", "df": "", "sentence_pos": 5}
 - "id": "split_into_tests.estimate"
   "r": "metacheck:::.split_into_tests"
-  "py": "pytacheck.text.extract_tests._split_into_tests"
+  "py": "metacheck.text.extract_tests._split_into_tests"
   "args":
     "comps":
       "$list":
@@ -465,7 +465,7 @@
       - {"name": "p", "comp": "<", "value": ".001", "df": "", "sentence_pos": 8}
 - "id": "split_into_tests.dual_role"
   "r": "metacheck:::.split_into_tests"
-  "py": "pytacheck.text.extract_tests._split_into_tests"
+  "py": "metacheck.text.extract_tests._split_into_tests"
   "args":
     "comps":
       "$list":
@@ -475,7 +475,7 @@
       - {"name": "SD", "comp": "=", "value": ".2", "df": "", "sentence_pos": 4}
 - "id": "split_into_tests.no_anchor"
   "r": "metacheck:::.split_into_tests"
-  "py": "pytacheck.text.extract_tests._split_into_tests"
+  "py": "metacheck.text.extract_tests._split_into_tests"
   "args":
     "comps":
       "$list":
@@ -483,7 +483,7 @@
       - {"name": "SD", "comp": "=", "value": "1", "df": "", "sentence_pos": 2}
 - "id": "render_test.basic"
   "r": "metacheck:::.render_test"
-  "py": "pytacheck.text.extract_tests._render_test"
+  "py": "metacheck.text.extract_tests._render_test"
   "args":
     "g":
       "$list":
@@ -492,11 +492,11 @@
       - {"name": "d", "value": "0.77", "sentence_pos": 3}
 - "id": "empty_tests"
   "r": "metacheck:::.empty_tests"
-  "py": "pytacheck.text.extract_tests._empty_tests"
+  "py": "metacheck.text.extract_tests._empty_tests"
 # ----------------------------------------------------------------- json_expand
 - "id": "json_expand.basic"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -510,7 +510,7 @@
 # a complex column (encoded as R's as.character() of each value)
 - "id": "json_expand.complex"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -523,7 +523,7 @@
         - '{"z": "0.33333333333333331+1e20i", "r": "7f"}'
 - "id": "json_expand.vector"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$chr":
@@ -532,7 +532,7 @@
       - "oh no"
 - "id": "json_expand.nulls"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -549,7 +549,7 @@
         - ""
 - "id": "json_expand.conflict"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -563,7 +563,7 @@
         - '{"number": 5, "letter": ["E", "F"], "bool": false}'
 - "id": "json_expand.conflict.suffix"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -576,7 +576,7 @@
     "suffix": {"$chr": ["_orig", "_x"]}
 - "id": "json_expand.conflict.suffix_default_chain"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -588,7 +588,7 @@
         - '{"number": 2}'
 - "id": "json_expand.multiline"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -599,7 +599,7 @@
         - "[]"
 - "id": "json_expand.fenced"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -611,7 +611,7 @@
         - "```json\n{\"number\": \"null\", \"letter\": \"D\"}\n```\n```json\n{\"number\": 9}\n```"
 - "id": "json_expand.col_index"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -620,7 +620,7 @@
     "col": 2
 - "id": "json_expand.col_missing"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -629,7 +629,7 @@
     "col": "nope"
 - "id": "json_expand.nested"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -646,7 +646,7 @@
 - "id": "json_expand.records"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing)"}
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -663,7 +663,7 @@
 - "id": "json_expand.row_names"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing)"}
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -681,7 +681,7 @@
         - '[{"_row": {"x": 1}, "a": 1}, {"a": 2}, {"a": 3}]'
 - "id": "json_expand.records.mismatch"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -691,7 +691,7 @@
         - '[{"a":{}},{"a":{"b":1}}]'
 - "id": "json_expand.not_a_list"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -699,7 +699,7 @@
         "answer": ["1", "true", "[1, 2, 3]", "[[1,2],[3,4]]", "[null, null]", "[1, \"a\"]", "-0"]
 - "id": "json_expand.parser"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -721,7 +721,7 @@
         - '{"a": 1e400, "b": -1e400}'
 - "id": "json_expand.types.numbers"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -730,7 +730,7 @@
         - '{"a": 1e20, "b": 0.1, "c": 123456.7891234567, "d": 1e-20, "e": 100000, "f": 1e5, "g": 1e15, "h": -3, "i": 3000000000, "j": -2147483648, "k": 2147483647, "l": 0.30000000000000004, "m": 1.0, "n": -0.0}'
 - "id": "json_expand.types.strings"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -739,7 +739,7 @@
         - '{"t": "T", "f": "F", "x": "true", "y": " 12", "z": "12 ", "w": "0x1A", "u": "Inf", "s": "nan", "r": "+5", "q": "1e3", "p": "NA", "o": "1d", "n": ".5", "m": "1e", "l": "0x1p3", "k": "-NaN", "j": "Infinity", "i": " NA", "h": "", "g": "  ", "e": "007", "d": "1,5", "c": "\t12", "b": " 12", "a": "-2147483648"}'
 - "id": "json_expand.types.columns"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -750,7 +750,7 @@
         - '{"lgl": null, "int": "", "dbl": "1e5", "chr": "", "blank": null, "mix": "", "na": "NA", "ws": ""}'
 - "id": "json_expand.na_input"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$expr":
@@ -758,7 +758,7 @@
         "py": "pd.DataFrame({'id': pd.Series([1, 2, 3], dtype='Int64'), 'answer': pd.Series([None, '{\"a\":1}', '{\"a\":\"NA\"}'], dtype='string')})"
 - "id": "json_expand.numeric_input"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -766,7 +766,7 @@
         "answer": [1.5, 2]
 - "id": "json_expand.error.unnamed"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -774,7 +774,7 @@
         "answer": ['{"a":1}', '{"b":2}', '[1,[2]]']
 - "id": "json_expand.error.duplicate"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -782,7 +782,7 @@
         "answer": ['{"a":"x","a":"y"}']
 - "id": "json_expand.error.empty_name"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -791,7 +791,7 @@
 - "id": "json_expand.error.zero_rows"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a table without rows is returned unchanged (R: 'Join columns in `y` must be present in the data')"}
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$expr":
@@ -800,7 +800,7 @@
 - "id": "json_expand.temp_id_key"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \".temp_id.\" key is kept as a column (R overwrites it with its internal join key)"}
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -809,35 +809,35 @@
 # ------------------------------------------------------------ causal_relations
 - "id": "causal_relations.empty"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence": {"$chr": []}
 - "id": "causal_relations.blank"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence": {"$chr": ["", "   "]}
 - "id": "causal_relations.bad_rel_mode"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence": "Smoking causes cancer."
     "rel_mode": "fast"
 - "id": "causal_relations.bad_threshold"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence": "Smoking causes cancer."
     "rel_threshold": 2
 - "id": "causal_relations.bad_decision"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence": "Smoking causes cancer."
     "cause_decision": "both"
 - "id": "causal_relations.bad_timeout"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence": "Smoking causes cancer."
     "timeout": 0

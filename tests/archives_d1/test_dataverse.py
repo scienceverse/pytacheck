@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.dataverse (port of tests/testthat/test-archive-dataverse.R, plus more).
+"""Tests for metacheck.archives.dataverse (port of tests/testthat/test-archive-dataverse.R, plus more).
 
 Where the R tests mock ``.batch_query()`` or httr2's request functions, these
 serve the same payloads over mocked HTTP (respx); where they mock
@@ -15,9 +15,9 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives import dataverse
-from pytacheck.archives.dataverse import (
+import metacheck as pc
+from metacheck.archives import dataverse
+from metacheck.archives.dataverse import (
     DATAVERSE_HOSTS,
     _dataverse_headers,
     _dataverse_host_from_doi,
@@ -164,7 +164,7 @@ def test_dataverse_info_on_its_own_links_for_an_unfound_doi(serve: Any, online: 
 
 
 def test_dataverse_pat_per_host(monkeypatch: pytest.MonkeyPatch) -> None:
-    from pytacheck import utils
+    from metacheck import utils
 
     monkeypatch.setenv("DATAVERSE_PAT_DATAVERSE_HARVARD_EDU", "")
     monkeypatch.setenv("DATAVERSE_PAT_DATAVERSE_NL", "")
@@ -470,7 +470,7 @@ def test_dataverse_info_found_and_offline(mock_api: Any, monkeypatch: pytest.Mon
     )
     assert info["title"].tolist() == ["Example Dataset"]
     assert info["authors"].iloc[0] == ["Doe, Jane", None]
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"dataverse\.harvard\.edu seems to be offline"):
         dataverse_info("https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X")
     # nothing valid: no network check at all
@@ -573,7 +573,7 @@ def test_one_element_json_arrays_become_list_cells(mock_api: Any) -> None:
 
 
 def test_cell_follows_r_replacement_rules() -> None:
-    from pytacheck.archives.dataverse import _field_cell as _cell
+    from metacheck.archives.dataverse import _field_cell as _cell
 
     assert _cell({"name": "x"}).iloc[0] == ["x"]  # R keeps the element, not the object
     assert _cell([{"k": 1}]).iloc[0] == {"k": 1}
@@ -585,7 +585,7 @@ def test_is_true_is_r_in_true() -> None:
     """R `x %in% TRUE`: only TRUE, a number equal to 1 and the string "TRUE" match."""
     import numpy as np
 
-    from pytacheck.archives.dataverse import _is_true
+    from metacheck.archives.dataverse import _is_true
 
     for x in (True, np.True_, 1, 1.0, np.int64(1), "TRUE"):
         assert _is_true(x), x

@@ -4,68 +4,68 @@
 "cases":
 - "id": "review.text_peek.tp_trailing_nul.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_trailing_nul.csv"
 - "id": "review.text_peek.tp_trailing_nul1.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_trailing_nul1.csv"
 - "id": "review.text_peek.tp_dbl_nul.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_dbl_nul.txt"
 - "id": "review.text_peek.tp_all_nul.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_all_nul.txt"
 - "id": "review.text_peek.tp_mid_nul.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_mid_nul.txt"
 - "id": "review.txt_classify_content.tp_trailing_nul.csv"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_trailing_nul.csv"
 - "id": "review.txt_classify_content.tp_dbl_nul.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_dbl_nul.txt"
 - "id": "review.sniff_delimiter.bom_numeric.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_numeric.csv"
 - "id": "review.sniff_delimiter.bom_comment_cr.txt"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_comment_cr.txt"
 - "id": "review.detect_header.bom_numeric.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_numeric.csv"
     "sep": ","
 - "id": "review.is_single_field_blob.bom_nohdr_blob.csv"
   "r": ".is_single_field_blob"
-  "py": "pytacheck.datacheck.files._is_single_field_blob"
+  "py": "metacheck.datacheck.files._is_single_field_blob"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_nohdr_blob.csv"
@@ -1518,7 +1518,7 @@
     "encoding": "latin1"
 - "id": "review.detect_likert_scale.huge"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$expr":
@@ -1526,7 +1526,7 @@
         "py": "[1, 2, 3, 4, 5] * 5 + [3e9]"
 - "id": "review.detect_likert_scale.huge_neg"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$expr":
@@ -1534,7 +1534,7 @@
         "py": "[0, 1, 2, 3, 4] * 6 + [-3e9, 99]"
 - "id": "review.detect_likert_scale.huge_only_suspect"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$expr":
@@ -1542,7 +1542,7 @@
         "py": "[1, 2, 3, 4, 5, 6, 7] * 4 + [1e10, 1e10]"
 - "id": "review.data_group_from_path.unicode"
   "r": ".data_group_from_path"
-  "py": "pytacheck.datacheck.files._data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
   "args":
     "paths":
       "$chr":
@@ -1555,7 +1555,7 @@
       - "Study 4ΣΣ.csv"
 - "id": "review.data_group_normalize.unicode"
   "r": ".data_group_normalize"
-  "py": "pytacheck.datacheck.files._data_group_normalize"
+  "py": "metacheck.datacheck.files._data_group_normalize"
   "args":
     "x":
       "$chr":
@@ -1565,7 +1565,7 @@
       - "exİ"
 - "id": "review.data_classify_files_ext.unicode"
   "r": "data_format"
-  "py": "pytacheck.datacheck.files.data_format"
+  "py": "metacheck.datacheck.files.data_format"
   "args":
     "ext":
       "$chr":

@@ -874,7 +874,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"tags\": [\"x\", \"y\"]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\", \"y\"]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\", \"y\"]}')))"
 - "id": "unnest_raw.tags_one"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -882,7 +882,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"tags\": [\"x\"]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\"]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\"]}')))"
 - "id": "unnest_raw.tags_empty"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -890,7 +890,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": 1, \"tags\": [\"x\", \"y\"]}, {\"a\": 2, \"tags\": []}]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1, \"tags\": [\"x\", \"y\"]}, {\"a\": 2, \"tags\": []}]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1, \"tags\": [\"x\", \"y\"]}, {\"a\": 2, \"tags\": []}]}')))"
 - "id": "unnest_raw.mixed_types"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -898,7 +898,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": 1}, {\"a\": \"x\"}]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1}, {\"a\": \"x\"}]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1}, {\"a\": \"x\"}]}')))"
 - "id": "unnest_raw.scalar_items"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -906,7 +906,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [\"x\", \"y\"]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [\"x\", \"y\"]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [\"x\", \"y\"]}')))"
 - "id": "unnest_raw.nested"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -914,7 +914,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"b\": {\"c\": 2, \"d\": [1, 2]}}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": 2, \"d\": [1, 2]}}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": 2, \"d\": [1, 2]}}')))"
 - "id": "unnest_raw.nested_null"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -922,7 +922,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"b\": {\"c\": null, \"d\": 2}}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": null, \"d\": 2}}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": null, \"d\": 2}}')))"
 - "id": "unnest_raw.nested_all_null"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -930,7 +930,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": {\"c\": null}}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": {\"c\": null}}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"a\": {\"c\": null}}')))"
 - "id": "unnest_raw.numbers"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -938,7 +938,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"b\": [1.5, true, \"q\\\\\"x\", -2, 100000, 0.1]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1.5, true, \"q\\\\\"x\", -2, 100000, 0.1]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1.5, true, \"q\\\\\"x\", -2, 100000, 0.1]}')))"
 - "id": "unnest_raw.dup_names"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -946,7 +946,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"b\": [1, 1]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1, 1]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1, 1]}')))"
 - "id": "unnest_raw.items_null_field"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -954,7 +954,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": null, \"b\": [1]}, {\"a\": 2, \"b\": [2]}]}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": null, \"b\": [1]}, {\"a\": 2, \"b\": [2]}]}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": null, \"b\": [1]}, {\"a\": 2, \"b\": [2]}]}')))"
 - "id": "unnest_raw.top_two"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -962,7 +962,7 @@
     "x":
       "$expr":
         "r": "metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": [1, 2], \"b\": \"x\"}'))"
-        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": [1, 2], \"b\": \"x\"}')))"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('metacheck.llm._json', fromlist=['_']).parse_json('{\"a\": [1, 2], \"b\": \"x\"}')))"
 - "id": "structured.from_schema"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"

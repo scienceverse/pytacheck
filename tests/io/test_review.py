@@ -13,17 +13,17 @@ import httpx
 import pandas as pd
 import pytest
 
-from pytacheck.io.bibr_convert import _status_desc, format_bib_authors
-from pytacheck.io.convert import convert
-from pytacheck.io.corpus import _papers_release_assets, papers_available, papers_load
-from pytacheck.io.grobid import (
+from metacheck.io.bibr_convert import _status_desc, format_bib_authors
+from metacheck.io.convert import convert
+from metacheck.io.corpus import _papers_release_assets, papers_available, papers_load
+from metacheck.io.grobid import (
     _grobid_to_bibr,
     _list_files,
     _restore_refs,
     convert_grobid,
     grobid_to_bibr,
 )
-from pytacheck.io.xml import (
+from metacheck.io.xml import (
     XmlParseError,
     _xml_find1_text,
     _xml_find_text,
@@ -32,7 +32,7 @@ from pytacheck.io.xml import (
     xml_find_all,
     xml_ns,
 )
-from pytacheck.papers.model import PaperList
+from metacheck.papers.model import PaperList
 from tests.io.conftest import GROBID_URL, IO_FIXTURES, api
 
 NORDS = str(IO_FIXTURES / "apis_papers_nords")
@@ -286,7 +286,7 @@ def test_papers_load_without_assets() -> None:
 
 
 def test_convert_partially_matches_method(tmp_path: Path) -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     out = tmp_path / "out"
     with warnings.catch_warnings():
@@ -299,7 +299,7 @@ def test_convert_partially_matches_method(tmp_path: Path) -> None:
 
 
 def test_convert_without_keep_xml_removes_temp_xml(tmp_path: Path) -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -327,7 +327,7 @@ def test_status_descriptions_follow_httr2() -> None:
 
 
 def test_convert_grobid_error_uses_httr2_status_text(tmp_path: Path) -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     routes = {
         ("POST", f"{GROBID_URL}/api/processFulltextDocument"): lambda _r: httpx.Response(413),
@@ -354,7 +354,7 @@ def test_convert_grobid_error_uses_httr2_status_text(tmp_path: Path) -> None:
     ],
 )
 def test_tokenize_sentences_drops_leading_bom_like_stringi(text: str, expected: list[str]) -> None:
-    from pytacheck.io.grobid import _tokenize_sentences
+    from metacheck.io.grobid import _tokenize_sentences
 
     assert _tokenize_sentences(text) == expected
 
@@ -368,7 +368,7 @@ def test_bom_paragraphs_fixture() -> None:
 
 
 def test_read_rds_matrices_are_column_major_arrays() -> None:
-    from pytacheck.io.corpus import _read_rds
+    from metacheck.io.corpus import _read_rds
 
     out = _read_rds(IO_FIXTURES / "matrices.rds")
     assert out["int"].tolist() == [[1, 3, 5], [2, 4, 6]]
@@ -377,7 +377,7 @@ def test_read_rds_matrices_are_column_major_arrays() -> None:
 
 
 def test_read_rds_real_paperlists() -> None:
-    from pytacheck.io.corpus import _read_rds
+    from metacheck.io.corpus import _read_rds
 
     papers = _read_rds(IO_FIXTURES / "psychsci_paperlist.rds")
     assert isinstance(papers, PaperList)
@@ -401,7 +401,7 @@ def _tei_copies(root: Path, names: list[str]) -> None:
 
 
 def test_read_dir_lists_like_list_files(tmp_path: Path) -> None:
-    from pytacheck.io.read import read
+    from metacheck.io.read import read
 
     _tei_copies(tmp_path, ["good.xml", ".hidden.xml", "UP.XML", "Z.xml", "sub/c.xml"])
     _tei_copies(tmp_path, [".hid/h.xml", "sub.xml"])
@@ -412,8 +412,8 @@ def test_read_dir_lists_like_list_files(tmp_path: Path) -> None:
 
 
 def test_list_files_sorts_full_paths_as_r(tmp_path: Path) -> None:
-    from pytacheck._r.base import r_sort_key
-    from pytacheck.io._files import list_files
+    from metacheck._r.base import r_sort_key
+    from metacheck.io._files import list_files
 
     (tmp_path / "b.json").write_text("{}")
     # "B.json" is a second file only where names are case-sensitive (not macOS, Windows)
@@ -435,7 +435,7 @@ def test_list_files_sorts_full_paths_as_r(tmp_path: Path) -> None:
 
 
 def test_read_list_drops_exact_twins_and_repeats(tmp_path: Path) -> None:
-    from pytacheck.io.read import read
+    from metacheck.io.read import read
 
     _tei_copies(tmp_path, ["Z.xml", "p.xml", "q.xml"])
     probe = IO_FIXTURES.parents[2] / "upstream/metacheck/tests/testthat/fixtures/bibr12"
@@ -449,7 +449,7 @@ def test_read_list_drops_exact_twins_and_repeats(tmp_path: Path) -> None:
 
 
 def test_read_dir_skips_any_unreadable_file(tmp_path: Path) -> None:
-    from pytacheck.io.read import read
+    from metacheck.io.read import read
 
     _tei_copies(tmp_path, ["b.xml"])
     # a JSON file whose root is an array (R: "$ operator is invalid for atomic vectors")
@@ -493,8 +493,8 @@ def test_convert_grobid_null_save_path_names_the_pdf(
 def test_read_empty_dir_messages_on_stderr(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    from pytacheck.config import verbose
-    from pytacheck.io.read import read
+    from metacheck.config import verbose
+    from metacheck.io.read import read
 
     old = verbose()
     try:

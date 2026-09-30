@@ -6,9 +6,9 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck._r import grepl
-from pytacheck.module import module
-from pytacheck.text import text_search
+from metacheck._r import grepl
+from metacheck.module import module
+from metacheck.text import text_search
 
 
 @module(

@@ -20,14 +20,14 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives import osf
-from pytacheck.archives.osf import osf_cache_clear, osf_file_download, osf_info
-from pytacheck.config import verbose
+from metacheck.archives import osf
+from metacheck.archives.osf import osf_cache_clear, osf_file_download, osf_info
+from metacheck.config import verbose
 
 
 @pytest.fixture(autouse=True)
 def _fresh_cache() -> Iterator[None]:
-    from pytacheck.config import _state
+    from metacheck.config import _state
 
     osf_cache_clear()
     saved = _state.get("verbose", _UNSET)

@@ -12,10 +12,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck import checks as C
-from pytacheck.datacheck._checks_facets import _strptime_ok
-from pytacheck.datacheck._checks_format import _head_rvec, _utf8_bom_connection
-from pytacheck.datacheck._checks_rvec import (
+from metacheck.datacheck import checks as C
+from metacheck.datacheck._checks_facets import _strptime_ok
+from metacheck.datacheck._checks_format import _head_rvec, _utf8_bom_connection
+from metacheck.datacheck._checks_rvec import (
     as_numeric_str,
     chr,
     chr_counts,
@@ -241,8 +241,8 @@ def test_facets_use_the_given_class_for_a_repeated_column_name(tmp_path: Path) -
     first column's class; the class passed by position must win all the way down
     to ``data_col_type()`` (R: the second ``d`` is numeric).
     """
-    from pytacheck.datacheck._colattrs import col_attrs_at
-    from pytacheck.datacheck.files import data_read_head
+    from metacheck.datacheck._colattrs import col_attrs_at
+    from metacheck.datacheck.files import data_read_head
 
     p = tmp_path / "dup.csv"
     p.write_text("d,d\n" + "".join(f"2020-01-{i:02d},{i}\n" for i in range(1, 25)))

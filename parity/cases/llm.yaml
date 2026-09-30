@@ -6,7 +6,7 @@
 "cases":
 - "id": "sanitise.controls"
   "r": "metacheck:::.llm_sanitise_text"
-  "py": "pytacheck.llm.core._llm_sanitise_text"
+  "py": "metacheck.llm.core._llm_sanitise_text"
   "args":
     "x":
       "$chr":
@@ -19,7 +19,7 @@
       - "del\x7Fkeep"
 - "id": "sanitise.numbers"
   "r": "metacheck:::.llm_sanitise_text"
-  "py": "pytacheck.llm.core._llm_sanitise_text"
+  "py": "metacheck.llm.core._llm_sanitise_text"
   "args":
     "x":
       "$dbl":
@@ -38,13 +38,13 @@
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_sanitise_text(['a', None, 'b\\x02'])"
 - "id": "sanitise.null"
   "r": "metacheck:::.llm_sanitise_text"
-  "py": "pytacheck.llm.core._llm_sanitise_text"
+  "py": "metacheck.llm.core._llm_sanitise_text"
   "args":
     "x":
       "$null": !!bool "true"
 - "id": "sanitise.empty"
   "r": "metacheck:::.llm_sanitise_text"
-  "py": "pytacheck.llm.core._llm_sanitise_text"
+  "py": "metacheck.llm.core._llm_sanitise_text"
   "args":
     "x":
       "$chr": []
@@ -394,14 +394,14 @@
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_apply_reasoning({}, 'groq/openai/gpt-oss-20b', api_args={'reasoning_effort': 'medium'}), {'metacheck.llm_reasoning': None})"
 - "id": "unnest_result.object"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "n_letters": !!int "5"
       "is_number": !!bool "false"
 - "id": "unnest_result.object_null"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "a": "x"
@@ -409,13 +409,13 @@
       "c": !!float "1.5"
 - "id": "unnest_result.wrapper_empty"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "variables": []
 - "id": "unnest_result.wrapper_rows"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "variables":
@@ -425,7 +425,7 @@
         "b": "x"
 - "id": "unnest_result.wrapper_ragged"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "variables":
@@ -434,7 +434,7 @@
         "a": !!int "3"
 - "id": "unnest_result.nested_object"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "obj":
@@ -443,7 +443,7 @@
       "n": !!int "2"
 - "id": "unnest_result.single_nested"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "obj":
@@ -451,14 +451,14 @@
         "b": "x"
 - "id": "unnest_result.single_nested_one"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "obj":
         "only": "x"
 - "id": "unnest_result.vector"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "x": !!int "1"
@@ -467,7 +467,7 @@
       - "b"
 - "id": "unnest_result.differing_rows"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "x":
@@ -479,7 +479,7 @@
       - "c"
 - "id": "unnest_result.data_frame"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "$df":
@@ -491,7 +491,7 @@
         - "y"
 - "id": "unnest_result.names"
   "r": "metacheck:::.unnest_result"
-  "py": "pytacheck.llm.core._unnest_result"
+  "py": "metacheck.llm.core._unnest_result"
   "args":
     "result":
       "power type": !!int "1"
@@ -516,7 +516,7 @@
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result({'power_analyses': __import__('pandas').DataFrame({'power_type': ['apriori', 'posthoc']})})"
 - "id": "cache_key.basic"
   "r": "metacheck:::.llm_cache_key"
-  "py": "pytacheck.llm.cache._llm_cache_key"
+  "py": "metacheck.llm.cache._llm_cache_key"
   "args":
     "text": "hi"
     "system_prompt": "sys"
@@ -527,7 +527,7 @@
       "temperature": !!float "0.0"
 - "id": "cache_key.order_ab"
   "r": "metacheck:::.llm_cache_key"
-  "py": "pytacheck.llm.cache._llm_cache_key"
+  "py": "metacheck.llm.cache._llm_cache_key"
   "args":
     "text": "hi"
     "system_prompt": "s"
@@ -539,7 +539,7 @@
       "a": !!float "1.0"
 - "id": "cache_key.order_ba"
   "r": "metacheck:::.llm_cache_key"
-  "py": "pytacheck.llm.cache._llm_cache_key"
+  "py": "metacheck.llm.cache._llm_cache_key"
   "args":
     "text": "hi"
     "system_prompt": "s"
@@ -551,7 +551,7 @@
       "b": !!float "2.0"
 - "id": "cache_key.empty_params"
   "r": "metacheck:::.llm_cache_key"
-  "py": "pytacheck.llm.cache._llm_cache_key"
+  "py": "metacheck.llm.cache._llm_cache_key"
   "args":
     "text": "hi"
     "system_prompt": "s"
@@ -570,7 +570,7 @@
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).C._llm_cache_key(None, 's', None, 'm', {'temperature': 0.0})"
 - "id": "cache_key.unicode"
   "r": "metacheck:::.llm_cache_key"
-  "py": "pytacheck.llm.cache._llm_cache_key"
+  "py": "metacheck.llm.cache._llm_cache_key"
   "args":
     "text": "café — “quoted” 中文 it's a ? mark\t\\ back"
     "system_prompt": "Is this é?\nAnswer 'TRUE'."
@@ -582,7 +582,7 @@
       "max_tokens": !!float "4096.0"
 - "id": "cache_key.prompt_vector"
   "r": "metacheck:::.llm_cache_key"
-  "py": "pytacheck.llm.cache._llm_cache_key"
+  "py": "metacheck.llm.cache._llm_cache_key"
   "args":
     "text": "hi"
     "system_prompt":
@@ -628,68 +628,68 @@
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).C._llm_cache_key('text', 'prompt', {'type': 'object', 'properties': {'results': {'type': 'array', 'items': {'type': 'object', 'properties': {'index': {'type': 'integer', 'description': 'The number'}, 'value': {'type': 'string', 'description': 'The value'}}, 'required': ['index', 'value']}}}, 'required': ['results']}, 'groq/m', {'temperature': 0.0})"
 - "id": "cap_size_str.1"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes":
       "$NA": !!bool "true"
 - "id": "cap_size_str.2"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!int "0"
 - "id": "cap_size_str.3"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!int "-5"
 - "id": "cap_size_str.4"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!int "512"
 - "id": "cap_size_str.5"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!int "1023"
 - "id": "cap_size_str.6"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!int "1024"
 - "id": "cap_size_str.7"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!int "1536"
 - "id": "cap_size_str.8"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!int "1048576"
 - "id": "cap_size_str.9"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!float "5400000000.0"
 - "id": "cap_size_str.10"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!float "10000000000000.0"
 - "id": "cap_size_str.11"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!float "1.0e+18"
 - "id": "cap_size_str.12"
   "r": "metacheck:::.cap_size_str"
-  "py": "pytacheck.llm.cap_prompt._cap_size_str"
+  "py": "metacheck.llm.cap_prompt._cap_size_str"
   "args":
     "bytes": !!float "1073741823.9"
 - "id": "cap_report.basic"
   "r": "cap_report"
-  "py": "pytacheck.llm.cap_report"
+  "py": "metacheck.llm.cap_report"
   "args":
     "message": "The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it."
 - "id": "llm_use.set_true"
@@ -1247,7 +1247,7 @@
   "mock_dir": "apis"
 - "id": "ollama_native.basic"
   "r": "metacheck:::.llm_ollama_native"
-  "py": "pytacheck.llm.core._llm_ollama_native"
+  "py": "metacheck.llm.core._llm_ollama_native"
   "args":
     "text": "A"
     "system_prompt": "Is this a vowel? Answer only 'TRUE' or 'FALSE'."
@@ -1255,7 +1255,7 @@
   "mock_dir": "apis"
 - "id": "ollama_native.notamodel"
   "r": "metacheck:::.llm_ollama_native"
-  "py": "pytacheck.llm.core._llm_ollama_native"
+  "py": "metacheck.llm.core._llm_ollama_native"
   "args":
     "text": "A"
     "system_prompt": "Is this a vowel? Answer only 'TRUE' or 'FALSE'."
@@ -1263,18 +1263,18 @@
   "mock_dir": "apis"
 - "id": "llm_model_list.ollama"
   "r": "llm_model_list"
-  "py": "pytacheck.llm.llm_model_list"
+  "py": "metacheck.llm.llm_model_list"
   "args":
     "platform": "ollama"
   "mock_dir": "apis"
 - "id": "llm_model_list.invalid"
   "r": "llm_model_list"
-  "py": "pytacheck.llm.llm_model_list"
+  "py": "metacheck.llm.llm_model_list"
   "args":
     "platform": "notamodel"
 - "id": "llm_model_list_groq.mock"
   "r": "metacheck:::.llm_model_list_groq"
-  "py": "pytacheck.llm.core._llm_model_list_groq"
+  "py": "metacheck.llm.core._llm_model_list_groq"
   "args": {}
   "mock_dir": "apis"
 - "id": "llm.cache.plain"

@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.packs.registry import builtin_pack
+from metacheck.packs.registry import builtin_pack
 
 
 def _strings(block: str) -> list[str]:
@@ -66,7 +66,7 @@ def test_builtin_presets_are_plain_module_lists() -> None:
 def test_metacheck_modules_lists_every_upstream_module(upstream_dir: Path) -> None:
     expected = sorted(p.stem for p in (upstream_dir / "inst" / "modules").glob("*.R"))
     assert builtin_pack().manifest["metacheck_modules"] == expected
-    from pytacheck.module import _builtin_names
+    from metacheck.module import _builtin_names
 
     assert set(_builtin_names()) <= set(expected), "a built-in module that metacheck lacks"
 
@@ -74,4 +74,4 @@ def test_metacheck_modules_lists_every_upstream_module(upstream_dir: Path) -> No
 def test_pack_json_ships_in_the_package() -> None:
     import importlib.resources
 
-    assert importlib.resources.files("pytacheck.modules").joinpath("pack.json").is_file()
+    assert importlib.resources.files("metacheck.modules").joinpath("pack.json").is_file()

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pandas as pd
 
-import pytacheck as pc
-from pytacheck.report import emojis, scroll_table
-from pytacheck.report.render import (
+import metacheck as pc
+from metacheck.report import emojis, scroll_table
+from metacheck.report.render import (
     TableSlots,
     deparse,
     markdown_to_gfm,
@@ -14,7 +14,7 @@ from pytacheck.report.render import (
     table_chunk,
     table_gfm,
 )
-from pytacheck.report.report import report_html, report_markdown, report_module_run
+from metacheck.report.report import report_html, report_markdown, report_module_run
 
 
 def test_emojis():
@@ -166,7 +166,7 @@ def test_report_markdown():
 
 
 def test_tabset_with_tables_and_balanced_html():
-    from pytacheck.report.render import render_blocks
+    from metacheck.report.render import render_blocks
 
     t1 = scroll_table(pd.DataFrame({"a": range(5)}))
     t2 = scroll_table(pd.DataFrame({"b": ["x"]}))
@@ -188,7 +188,7 @@ def test_report_page_is_balanced():
 
 
 def test_module_objects_as_modules(tmp_path):
-    from pytacheck.modules.marginal import marginal
+    from metacheck.modules.marginal import marginal
 
     mo = report_module_run(pc.demopaper(), [marginal])
     assert list(mo) == ["marginal"]

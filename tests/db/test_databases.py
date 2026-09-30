@@ -14,7 +14,7 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.db import databases, replications, retractionwatch
+from metacheck.db import databases, replications, retractionwatch
 from tests.db.conftest import DATA
 
 # retractionwatch -----------------------------------------------------------------
@@ -140,7 +140,7 @@ def test_bundled_files_are_deterministic_gzip() -> None:
 
     for name in ("FLoRA", "retractionwatch", "miscite"):
         raw = (
-            resources.files("pytacheck.resources.databases")
+            resources.files("metacheck.resources.databases")
             .joinpath(f"{name}.json.gz")
             .read_bytes()
         )

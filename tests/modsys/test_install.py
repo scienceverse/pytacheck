@@ -14,9 +14,9 @@ from pathlib import Path
 import pytest
 import respx
 
-from pytacheck.module import ModuleError, module_run
-from pytacheck.packs import ui
-from pytacheck.packs.install import (
+from metacheck.module import ModuleError, module_run
+from metacheck.packs import ui
+from metacheck.packs.install import (
     Cancelled,
     pack_install,
     pack_list,
@@ -24,9 +24,9 @@ from pytacheck.packs.install import (
     pack_show,
     pack_update,
 )
-from pytacheck.packs.manifest import PackError
-from pytacheck.packs.registry import get_pack
-from pytacheck.packs.tree import INSTALL_RECORD
+from metacheck.packs.manifest import PackError
+from metacheck.packs.registry import get_pack
+from metacheck.packs.tree import INSTALL_RECORD
 from tests.modsys.helpers import mod_src
 from tests.modsys.storekit import (
     REV_C,
@@ -86,7 +86,7 @@ def test_already_installed_is_just_pinned(store, ms, capsys) -> None:
 def test_install_project_scope(store, ms, monkeypatch) -> None:
     user_file = ms.root / "user" / "config.json"
     monkeypatch.delenv("PYTACHECK_CONFIG")
-    monkeypatch.setattr("pytacheck.config.user_config_path", lambda: user_file)
+    monkeypatch.setattr("metacheck.config.user_config_path", lambda: user_file)
     store.add("demo", {"hello": mod_src("hello")})
     pack_install("demo", scope="project", yes=True)
     project = json.loads((ms.work / "pytacheck.json").read_text())
@@ -144,11 +144,11 @@ def test_unsafe_tarball_members_are_refused(store, ms, member, why) -> None:
 
 def test_size_and_count_caps(store, ms, monkeypatch) -> None:
     store.add("demo", {"hello": mod_src("hello")}, files={"data/big.txt": "x" * 5000})
-    monkeypatch.setattr("pytacheck.packs.fetch.MAX_BYTES", 1000)
+    monkeypatch.setattr("metacheck.packs.fetch.MAX_BYTES", 1000)
     with pytest.raises(PackError, match="more than"):
         pack_install("demo", yes=True)
-    monkeypatch.setattr("pytacheck.packs.fetch.MAX_BYTES", 10**9)
-    monkeypatch.setattr("pytacheck.packs.fetch.MAX_FILES", 1)
+    monkeypatch.setattr("metacheck.packs.fetch.MAX_BYTES", 10**9)
+    monkeypatch.setattr("metacheck.packs.fetch.MAX_FILES", 1)
     with pytest.raises(PackError, match="more than 1 files"):
         pack_install("demo", yes=True)
 
@@ -339,7 +339,7 @@ def test_install_from_a_file_git_repo(ms, paper) -> None:
 
 
 def test_git_urls_are_restricted() -> None:
-    from pytacheck.packs.fetch import git_fetch
+    from metacheck.packs.fetch import git_fetch
 
     for url in ("ext::sh -c touch% /tmp/pwned", "-uhoh", "http://example.org/x.git"):
         with pytest.raises(PackError):

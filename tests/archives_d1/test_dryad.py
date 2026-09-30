@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.dryad (port of tests/testthat/test-archive-dryad.R, plus more)."""
+"""Tests for metacheck.archives.dryad (port of tests/testthat/test-archive-dryad.R, plus more)."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives import dryad
-from pytacheck.archives.dryad import (
+import metacheck as pc
+from metacheck.archives import dryad
+from metacheck.archives.dryad import (
     _dryad_auth,
     _dryad_doi,
     _dryad_doi_prefixes,
@@ -128,7 +128,7 @@ def test_dryad_info_errors_and_offline(mock_api: object, monkeypatch: pytest.Mon
     info = dryad_info(["10.5061/dryad.notjson", "nope"])
     assert info["error"].tolist()[0] == "parse_error"
     assert pd.isna(info["dryad_doi"].iloc[1])
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match="Dryad seems to be offline"):
         dryad_info("10.5061/dryad.j1fd7")
 
@@ -427,7 +427,7 @@ def test_dryad_oauth_reauthenticates_once_after_invalid_token(tmp_path: Path) ->
 def test_dryad_download_reauthenticates_once(tmp_path: Path) -> None:
     import respx
 
-    from pytacheck.archives.dataverse import _fetch_file
+    from metacheck.archives.dataverse import _fetch_file
 
     with respx.mock(assert_all_called=False) as router:
         seen = _revoking_router(router, ["stale", "fresh"])
@@ -441,7 +441,7 @@ def test_dryad_download_reauthenticates_once(tmp_path: Path) -> None:
         # a static token has no OAuth policy: no second attempt
         dryad._TOKENS.clear()
         dryad_pat("static")
-        from pytacheck import utils
+        from metacheck import utils
 
         with utils.local_options(
             {"metacheck.dryad.client_id": None, "metacheck.dryad.client_secret": None}

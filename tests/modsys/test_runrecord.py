@@ -8,11 +8,11 @@ import sys
 import pytest
 import respx
 
-from pytacheck._version import UPSTREAM, __version__
-from pytacheck.module import ModuleError, ModuleOutput
-from pytacheck.packs.install import pack_remove
-from pytacheck.presets import select
-from pytacheck.provenance import RUN_SCHEMA, ModuleChain, RunRecord, rerun, run_modules
+from metacheck._version import UPSTREAM, __version__
+from metacheck.module import ModuleError, ModuleOutput
+from metacheck.packs.install import pack_remove
+from metacheck.presets import select
+from metacheck.provenance import RUN_SCHEMA, ModuleChain, RunRecord, rerun, run_modules
 from tests.modsys.helpers import REV_A, mod_src
 from tests.modsys.storekit import codeload, dir_files, tarball
 

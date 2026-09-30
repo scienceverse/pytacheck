@@ -24,7 +24,7 @@ LLM_ENV_R = "c(GROQ_API_KEY = 'test-key')"
 
 
 def llm_options() -> dict[str, Any]:
-    from pytacheck.llm._rds import RInt
+    from metacheck.llm._rds import RInt
 
     return {
         "metacheck.llm.use": True,
@@ -52,7 +52,7 @@ def scoped(fn: Callable[[], Any], options: dict[str, Any], env: dict[str, str | 
 
 def run_llm(paper: Any, **kwargs: Any) -> Any:
     """``module_run(paper, "power", ...)`` with the LLM on (``groq/test-model``)."""
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     return scoped(lambda: module_run(paper, "power", **kwargs), llm_options(), LLM_ENV)
 
@@ -74,7 +74,7 @@ def run_llm_with(
     the option, as R's ``options(x = NULL)``); an ``env`` value of ``None``
     unsets the variable (R ``withr::with_envvar(c(X = NA))``).
     """
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     opts = {**llm_options(), **(options or {})}
     envs = {**LLM_ENV, **(env or {})}
@@ -87,7 +87,7 @@ def report_tables(out: Any) -> list[pd.DataFrame]:
     R side: the ``table <- structure(...)`` line of each report R chunk,
     evaluated (see ``make_fixtures.py``).
     """
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     report = out.report if isinstance(out.report, list) else [out.report]
     return [b.data for b in report if isinstance(b, ReportTable)]
@@ -98,7 +98,7 @@ def tp(texts: Sequence[str], pid: str | None = None) -> Any:
 
     R's ``test_paper()`` ids come from the clock, so parity cases fix them.
     """
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper([texts] if isinstance(texts, str) else list(texts))
     if pid is not None:
@@ -115,7 +115,7 @@ def paragraphs(texts: Sequence[str], ids: Sequence[int], pid: str | None = None)
 
 def papers(*texts: str | Sequence[str]) -> Any:
     """``paperlist()`` of test papers with ids ``p1``, ``p2``, ..."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.PaperList([tp(t, f"p{i}") for i, t in enumerate(texts, start=1)])
 
@@ -124,7 +124,7 @@ def read(files: Sequence[str]) -> Any:
     """``read(files)`` with paths relative to the repository root."""
     from pathlib import Path
 
-    import pytacheck as pc
+    import metacheck as pc
 
     root = Path(__file__).resolve().parents[2]
     papers = pc.read([root / f for f in files])

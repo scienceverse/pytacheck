@@ -4,7 +4,7 @@
 "cases":
 - "id": "code_abs_path.review.ws_collapse"
   "r": "code_abs_path"
-  "py": "pytacheck.codecheck.core.code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
   "args":
     "code_text":
       "$chr":
@@ -12,7 +12,7 @@
       - "g <- \"/home/u/x\ty.csv\""
 - "id": "code_abs_path.review.unicode_space"
   "r": "code_abs_path"
-  "py": "pytacheck.codecheck.core.code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
   "args":
     "code_text":
       "$chr":
@@ -20,7 +20,7 @@
       - "q <- \"C:/x  y.txt\""
 - "id": "code_abs_path.review.paragraph_marker"
   "r": "code_abs_path"
-  "py": "pytacheck.codecheck.core.code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
   "args":
     "code_text":
       "$chr":
@@ -29,14 +29,14 @@
       - "z <- \"D:/fine.R\""
 - "id": "code_abs_path.review.several_per_line_ws"
   "r": "code_abs_path"
-  "py": "pytacheck.codecheck.core.code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
   "args":
     "code_text":
       "$chr":
       - "read(\"C:/a  b.csv\", \"/home/x/y  z.R\") ; f('~/q  r')"
 - "id": "code_abs_path.review.carriage_return"
   "r": "code_abs_path"
-  "py": "pytacheck.codecheck.core.code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
   "args":
     "code_text":
       "$chr":
@@ -44,7 +44,7 @@
       - "\r"
 - "id": "code_abs_path.review.tabs_only_line"
   "r": "code_abs_path"
-  "py": "pytacheck.codecheck.core.code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
   "args":
     "code_text":
       "$chr":
@@ -52,7 +52,7 @@
       - "p <- \"\\\\\\\\srv1\\\\share\\\\a  b.txt\""
 - "id": "code_line_stats.review.sas_block_na"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$chr":
@@ -63,7 +63,7 @@
     "lang": "SAS"
 - "id": "code_remove_comments.review.sas_block_na"
   "r": "code_remove_comments"
-  "py": "pytacheck.codecheck.core.code_remove_comments"
+  "py": "metacheck.codecheck.core.code_remove_comments"
   "args":
     "code_text":
       "$chr":
@@ -74,7 +74,7 @@
     "lang": "SAS"
 - "id": "code_line_stats.review.matlab_block_na"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$chr":
@@ -85,7 +85,7 @@
     "lang": "MATLAB"
 - "id": "code_remove_comments.review.matlab_block_na"
   "r": "code_remove_comments"
-  "py": "pytacheck.codecheck.core.code_remove_comments"
+  "py": "metacheck.codecheck.core.code_remove_comments"
   "args":
     "code_text":
       "$chr":
@@ -96,7 +96,7 @@
     "lang": "MATLAB"
 - "id": "code_line_stats.review.stata_na_outside_block"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$chr":
@@ -106,7 +106,7 @@
     "lang": "Stata"
 - "id": "code_remove_comments.review.stata_na_outside_block"
   "r": "code_remove_comments"
-  "py": "pytacheck.codecheck.core.code_remove_comments"
+  "py": "metacheck.codecheck.core.code_remove_comments"
   "args":
     "code_text":
       "$chr":
@@ -116,7 +116,7 @@
     "lang": "Stata"
 - "id": "code_line_stats.review.spss_na_not_flagged"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$chr":
@@ -126,7 +126,7 @@
     "lang": "SPSS"
 - "id": "code_remove_comments.review.spss_na_not_flagged"
   "r": "code_remove_comments"
-  "py": "pytacheck.codecheck.core.code_remove_comments"
+  "py": "metacheck.codecheck.core.code_remove_comments"
   "args":
     "code_text":
       "$chr":
@@ -136,7 +136,7 @@
     "lang": "SPSS"
 - "id": "code_line_stats.review.mplus_na"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$chr":
@@ -146,7 +146,7 @@
     "lang": "Mplus"
 - "id": "code_remove_comments.review.mplus_na"
   "r": "code_remove_comments"
-  "py": "pytacheck.codecheck.core.code_remove_comments"
+  "py": "metacheck.codecheck.core.code_remove_comments"
   "args":
     "code_text":
       "$chr":
@@ -156,7 +156,7 @@
     "lang": "Mplus"
 - "id": "code_line_stats.review.stata_block_na"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$chr":
@@ -166,7 +166,7 @@
     "lang": "Stata"
 - "id": "code_remove_comments.review.stata_block_na"
   "r": "code_remove_comments"
-  "py": "pytacheck.codecheck.core.code_remove_comments"
+  "py": "metacheck.codecheck.core.code_remove_comments"
   "args":
     "code_text":
       "$chr":
@@ -176,77 +176,77 @@
     "lang": "Stata"
 - "id": "code_extract_py.review.comments"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [/* c */ {\"cell_type\": \"code\", \"source\": \"x\"}]} // trailing"
 - "id": "code_extract_py.review.comment_first"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "// head\n{\"cells\": [{\"cell_type\": \"code\", \"source\": [\"a\\n\", \"b\"]}]}"
 - "id": "code_extract_py.review.unterminated_block_comment"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"q\"}]} /* open"
 - "id": "code_extract_py.review.hash_is_not_a_comment"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"q\"}]} # hash"
 - "id": "code_extract_py.review.bom"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "\uFEFF{\"cells\": [{\"cell_type\": \"code\", \"source\": \"x\"}]}"
 - "id": "code_extract_py.review.bom_after_space"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - " \uFEFF{\"cells\": [{\"cell_type\": \"code\", \"source\": \"x\"}]}"
 - "id": "code_extract_py.review.nul_escape"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"a\\u0000b\\nc\"}]}"
 - "id": "code_extract_py.review.nul_in_key"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\\u0000x\": [{\"cell_type\": \"code\", \"source\": \"k\"}]}"
 - "id": "code_extract_py.review.lone_high_surrogate"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"a\\ud800b\"}]}"
 - "id": "code_extract_py.review.surrogate_pair"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"\\ud83d\\ude00 ok\"}]}"
 - "id": "code_extract_py.review.high_then_other_escape"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
@@ -254,233 +254,233 @@
         n\"}]}"
 - "id": "code_extract_py.review.int_and_logical"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": [1, true]}]}"
 - "id": "code_extract_py.review.double_and_bigint"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": [1.5, 3000000000]}]}"
 - "id": "code_extract_py.review.logicals"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": [true, false]}]}"
 - "id": "code_extract_py.review.doubles_formatting"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": [0.1, 1e-20, 123456789012345678]}]}"
 - "id": "code_extract_py.review.zero_exponent"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": [-0.0, 1E2, 2.50, -0]}]}"
 - "id": "code_extract_py.review.int32_bounds"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": [2147483647, 2147483648, -2147483648, -2147483647]}]}"
 - "id": "code_extract_py.review.string_and_numbers"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": [\"x\", 1, 2.5, true, null]}]}"
 - "id": "code_extract_py.review.nested_object"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": {\"a\": \"x\", \"b\": [\"y\\n\", \"z\"]}}]}"
 - "id": "code_extract_py.review.vertical_tab_whitespace"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "\v{\"cells\": [\f{\"cell_type\": \"code\", \"source\": \"v\"}]}"
 - "id": "code_extract_py.review.trailing_comma"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"x\"},]}"
 - "id": "code_extract_py.review.duplicate_keys"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cells\": [{\"cell_type\": \"code\", \"cell_type\": \"raw\", \"source\": \"d\"}]}"
 - "id": "code_extract_py.review.partial_key_name"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "text":
       "$chr":
       - "{\"cel\": [{\"cell_type\": \"code\", \"source\": \"p\"}]}"
 - "id": "code_lang.review.nb_comments"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/nb_comments.ipynb"
 - "id": "code_extract_py.review.file_nb_comments"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_comments.ipynb"
 - "id": "code_read.review.nb_comments"
   "r": "code_read"
-  "py": "pytacheck.codecheck.core.code_read"
+  "py": "metacheck.codecheck.core.code_read"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_comments.ipynb"
 - "id": "code_lang.review.nb_bom"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/nb_bom.ipynb"
 - "id": "code_extract_py.review.file_nb_bom"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_bom.ipynb"
 - "id": "code_read.review.nb_bom"
   "r": "code_read"
-  "py": "pytacheck.codecheck.core.code_read"
+  "py": "metacheck.codecheck.core.code_read"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_bom.ipynb"
 - "id": "code_lang.review.nb_escapes"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/nb_escapes.ipynb"
 - "id": "code_extract_py.review.file_nb_escapes"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_escapes.ipynb"
 - "id": "code_read.review.nb_escapes"
   "r": "code_read"
-  "py": "pytacheck.codecheck.core.code_read"
+  "py": "metacheck.codecheck.core.code_read"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_escapes.ipynb"
 - "id": "code_lang.review.nb_nul"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/nb_nul.ipynb"
 - "id": "code_extract_py.review.file_nb_nul"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_nul.ipynb"
 - "id": "code_read.review.nb_nul"
   "r": "code_read"
-  "py": "pytacheck.codecheck.core.code_read"
+  "py": "metacheck.codecheck.core.code_read"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_nul.ipynb"
 - "id": "code_lang.review.nb_vtab"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/nb_vtab.ipynb"
 - "id": "code_extract_py.review.file_nb_vtab"
   "r": "code_extract_py"
-  "py": "pytacheck.codecheck.core.code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_vtab.ipynb"
 - "id": "code_read.review.nb_vtab"
   "r": "code_read"
-  "py": "pytacheck.codecheck.core.code_read"
+  "py": "metacheck.codecheck.core.code_read"
   "args":
     "file_path": "tests/codecheck/fixtures/review/nb_vtab.ipynb"
 - "id": "code_lang.review.qmd_tag_r"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/tag_r.qmd"
 - "id": "code_lang.review.qmd_tag_expr"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/tag_expr.qmd"
 - "id": "code_lang.review.qmd_tag_expr_seq"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/tag_expr_seq.qmd"
 - "id": "code_lang.review.qmd_tag_seq"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/tag_seq.qmd"
 - "id": "code_lang.review.qmd_untagged_seq"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/untagged_seq.qmd"
 - "id": "code_lang.review.qmd_tag_map"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/tag_map.qmd"
 - "id": "code_lang.review.qmd_tag_str"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "tests/codecheck/fixtures/review/tag_str.qmd"
 - "id": "code_read.review.gz_utf16le"
   "r": "code_read"
-  "py": "pytacheck.codecheck.core.code_read"
+  "py": "metacheck.codecheck.core.code_read"
   "args":
     "file_path": "tests/codecheck/fixtures/review/gz_utf16le.R"
 - "id": "code_line_stats.review.gz_utf16le"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$call":
         "r": "code_read"
-        "py": "pytacheck.codecheck.core.code_read"
+        "py": "metacheck.codecheck.core.code_read"
         "args":
           "file_path": "tests/codecheck/fixtures/review/gz_utf16le.R"
     "lang": "R"
 - "id": "code_read.review.gz_utf16be"
   "r": "code_read"
-  "py": "pytacheck.codecheck.core.code_read"
+  "py": "metacheck.codecheck.core.code_read"
   "args":
     "file_path": "tests/codecheck/fixtures/review/gz_utf16be.R"
 - "id": "code_line_stats.review.gz_utf16be"
   "r": "code_line_stats"
-  "py": "pytacheck.codecheck.core.code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
   "args":
     "code_text":
       "$call":
         "r": "code_read"
-        "py": "pytacheck.codecheck.core.code_read"
+        "py": "metacheck.codecheck.core.code_read"
         "args":
           "file_path": "tests/codecheck/fixtures/review/gz_utf16be.R"
     "lang": "R"
 - "id": "code_lang.review.trailing_newline"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name":
       "$chr":
@@ -490,12 +490,12 @@
       - "d.R "
 - "id": "code_lang.review.single_trailing_newline"
   "r": "code_lang"
-  "py": "pytacheck.codecheck.core.code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
   "args":
     "file_name": "analysis.R\n"
 - "id": "code_extract_r.review.engine_symbol.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -508,7 +508,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.engine_symbol.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -521,7 +521,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.engine_call.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -534,7 +534,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.engine_call.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -547,7 +547,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.engine_R_symbol.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -560,7 +560,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.engine_R_symbol.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -573,7 +573,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.engine_NA.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -586,7 +586,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.engine_NA.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -599,7 +599,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.engine_NULL.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -612,7 +612,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.engine_NULL.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -625,7 +625,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.engine_number.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -638,7 +638,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.engine_number.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -651,7 +651,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.comment_symbol.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -664,7 +664,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.comment_symbol.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -677,7 +677,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.comment_call.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -690,7 +690,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.comment_call.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -703,7 +703,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.comment_number.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -716,7 +716,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.comment_number.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -729,7 +729,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.duplicate_eval.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -742,7 +742,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.duplicate_eval.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -755,7 +755,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.duplicate_eval_reversed.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -768,7 +768,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.duplicate_eval_reversed.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -781,7 +781,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.duplicate_error.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -794,7 +794,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.duplicate_error.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -807,7 +807,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.duplicate_purl.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -820,7 +820,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.duplicate_purl.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -833,7 +833,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.duplicate_label.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -846,7 +846,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.duplicate_label.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -859,7 +859,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.pipe_duplicate_eval.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -872,7 +872,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.pipe_duplicate_eval.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -885,7 +885,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.header_and_pipe_eval.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -898,7 +898,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.header_and_pipe_eval.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -911,7 +911,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_colon.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -924,7 +924,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_colon.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -937,7 +937,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_colon_reversed.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -950,7 +950,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_colon_reversed.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -963,7 +963,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_seq_len.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -976,7 +976,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_seq_len.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -989,7 +989,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_seq_len_zero.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1002,7 +1002,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_seq_len_zero.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1015,7 +1015,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_integer0.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1028,7 +1028,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_integer0.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1041,7 +1041,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_logical0.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1054,7 +1054,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_logical0.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1067,7 +1067,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_sys_time.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1080,7 +1080,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_sys_time.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1093,7 +1093,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_sum.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1106,7 +1106,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_sum.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1119,7 +1119,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_is_html_output.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1132,7 +1132,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_is_html_output.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1145,7 +1145,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_is_html_output_excludes.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1158,7 +1158,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_is_html_output_excludes.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1171,7 +1171,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_is_latex_output.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1184,7 +1184,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_is_latex_output.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1197,7 +1197,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.eval_not_latex.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1210,7 +1210,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.eval_not_latex.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1223,7 +1223,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.rnw_is_latex_output.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1236,7 +1236,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.rnw_is_latex_output.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1249,7 +1249,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.yaml_label_number.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1263,7 +1263,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.yaml_label_number.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1277,7 +1277,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.yaml_label_null.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1291,7 +1291,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.yaml_label_null.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1305,7 +1305,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.yaml_label_list.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1319,7 +1319,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.yaml_label_list.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1333,7 +1333,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.yaml_label_true.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1347,7 +1347,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.yaml_label_true.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1361,7 +1361,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.yaml_label_number_one.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1372,7 +1372,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.yaml_label_number_one.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1383,7 +1383,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.yaml_id.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1397,7 +1397,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.yaml_id.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1411,7 +1411,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.na_first_code_line.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1421,7 +1421,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.na_first_code_line.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1431,7 +1431,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.na_later_code_line.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1442,7 +1442,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.na_later_code_line.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1453,7 +1453,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.na_after_chunk.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1464,7 +1464,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.na_after_chunk.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1475,7 +1475,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.na_in_text.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1487,7 +1487,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.na_in_text.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1499,7 +1499,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.na_rnw_chunk.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1509,7 +1509,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.na_rnw_chunk.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1519,7 +1519,7 @@
     "documentation": !!int "1"
 - "id": "code_extract_r.review.na_indented_chunk.doc0"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1529,7 +1529,7 @@
     "documentation": !!int "0"
 - "id": "code_extract_r.review.na_indented_chunk.doc1"
   "r": "code_extract_r"
-  "py": "pytacheck.codecheck.core.code_extract_r"
+  "py": "metacheck.codecheck.core.code_extract_r"
   "args":
     "text":
       "$chr":
@@ -1539,7 +1539,7 @@
     "documentation": !!int "1"
 - "id": "code_expand_smcl.review.local"
   "r": "metacheck:::.code_expand_smcl"
-  "py": "pytacheck.codecheck.core._code_expand_smcl"
+  "py": "metacheck.codecheck.core._code_expand_smcl"
   "args":
     "all_files":
       "$df":
@@ -1572,7 +1572,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_smcl.review.no_file_path"
   "r": "metacheck:::.code_expand_smcl"
-  "py": "pytacheck.codecheck.core._code_expand_smcl"
+  "py": "metacheck.codecheck.core._code_expand_smcl"
   "args":
     "all_files":
       "$df":
@@ -1591,7 +1591,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_smcl.review.na_file_path"
   "r": "metacheck:::.code_expand_smcl"
-  "py": "pytacheck.codecheck.core._code_expand_smcl"
+  "py": "metacheck.codecheck.core._code_expand_smcl"
   "args":
     "all_files":
       "$df":
@@ -1618,7 +1618,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_smcl.review.no_file_location"
   "r": "metacheck:::.code_expand_smcl"
-  "py": "pytacheck.codecheck.core._code_expand_smcl"
+  "py": "metacheck.codecheck.core._code_expand_smcl"
   "args":
     "all_files":
       "$df":
@@ -1637,7 +1637,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_mplus.review.local"
   "r": "metacheck:::.code_expand_mplus"
-  "py": "pytacheck.codecheck.core._code_expand_mplus"
+  "py": "metacheck.codecheck.core._code_expand_mplus"
   "args":
     "all_files":
       "$df":
@@ -1670,7 +1670,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_spv.review.local"
   "r": "metacheck:::.code_expand_spv"
-  "py": "pytacheck.codecheck.core._code_expand_spv"
+  "py": "metacheck.codecheck.core._code_expand_spv"
   "args":
     "all_files":
       "$df":
@@ -1715,7 +1715,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_mplus.review.no_file_location"
   "r": "metacheck:::.code_expand_mplus"
-  "py": "pytacheck.codecheck.core._code_expand_mplus"
+  "py": "metacheck.codecheck.core._code_expand_mplus"
   "args":
     "all_files":
       "$df":
@@ -1734,7 +1734,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_html.review.local_data_type"
   "r": "metacheck:::.code_expand_html"
-  "py": "pytacheck.codecheck.core._code_expand_html"
+  "py": "metacheck.codecheck.core._code_expand_html"
   "args":
     "all_files":
       "$df":
@@ -1785,7 +1785,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_html.review.local"
   "r": "metacheck:::.code_expand_html"
-  "py": "pytacheck.codecheck.core._code_expand_html"
+  "py": "metacheck.codecheck.core._code_expand_html"
   "args":
     "all_files":
       "$df":
@@ -1812,7 +1812,7 @@
     "cache": !!bool "false"
 - "id": "code_expand_html.review.no_file_location"
   "r": "metacheck:::.code_expand_html"
-  "py": "pytacheck.codecheck.core._code_expand_html"
+  "py": "metacheck.codecheck.core._code_expand_html"
   "args":
     "all_files":
       "$df":
@@ -1831,7 +1831,7 @@
     "cache": !!bool "false"
 - "id": "code_predownload.review.no_language"
   "r": "metacheck:::.code_predownload"
-  "py": "pytacheck.codecheck.core._code_predownload"
+  "py": "metacheck.codecheck.core._code_predownload"
   "args":
     "all_files":
       "$df":
@@ -1858,7 +1858,7 @@
     "cache": !!bool "false"
 - "id": "code_predownload.review.no_file_location"
   "r": "metacheck:::.code_predownload"
-  "py": "pytacheck.codecheck.core._code_predownload"
+  "py": "metacheck.codecheck.core._code_predownload"
   "args":
     "all_files":
       "$df":
@@ -1885,7 +1885,7 @@
     "cache": !!bool "false"
 - "id": "code_predownload.review.no_file_url"
   "r": "metacheck:::.code_predownload"
-  "py": "pytacheck.codecheck.core._code_predownload"
+  "py": "metacheck.codecheck.core._code_predownload"
   "args":
     "all_files":
       "$df":
@@ -1912,7 +1912,7 @@
     "cache": !!bool "false"
 - "id": "code_version_pin_check.review.jsonlite_quirks"
   "r": "metacheck:::.code_version_pin_check"
-  "py": "pytacheck.codecheck.core._code_version_pin_check"
+  "py": "metacheck.codecheck.core._code_version_pin_check"
   "args":
     "all_files":
       "$df":
@@ -1942,7 +1942,7 @@
         - "checkpoint::checkpoint('2020-02-02')"
 - "id": "code_version_pin_check.review.no_file_location"
   "r": "metacheck:::.code_version_pin_check"
-  "py": "pytacheck.codecheck.core._code_version_pin_check"
+  "py": "metacheck.codecheck.core._code_version_pin_check"
   "args":
     "all_files":
       "$df":

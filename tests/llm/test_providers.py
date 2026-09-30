@@ -11,11 +11,11 @@ import httpx
 import pytest
 import respx
 
-import pytacheck.llm as L
-from pytacheck.llm import providers as P
-from pytacheck.llm._rds import RInt
-from pytacheck.llm.providers import LLMError
-from pytacheck.utils import local_options
+import metacheck.llm as L
+from metacheck.llm import providers as P
+from metacheck.llm._rds import RInt
+from metacheck.llm.providers import LLMError
+from metacheck.utils import local_options
 from tests.httpmock import mock_path
 from tests.llm.support import load_json
 
@@ -203,7 +203,7 @@ def test_openai_compatible_reply(monkeypatch: pytest.MonkeyPatch) -> None:
         chat = P.chat("groq/m", system_prompt="s")
         out = chat.chat_structured("t", type=L.type_object(a=L.type_string(), n=L.type_integer()))
     assert out == {"a": "x", "n": 2}
-    from pytacheck.llm.core import _llm_extract_thinking
+    from metacheck.llm.core import _llm_extract_thinking
 
     assert _llm_extract_thinking(chat) == "because"
 
@@ -239,7 +239,7 @@ def test_no_json_reply(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_transport_errors_are_llm_errors(monkeypatch: pytest.MonkeyPatch) -> None:
-    from pytacheck.llm.core import _llm_is_systemic_error
+    from metacheck.llm.core import _llm_is_systemic_error
 
     monkeypatch.setenv("GROQ_API_KEY", "k")
     with respx.mock() as router:
@@ -267,7 +267,7 @@ def test_cli_bullet_wrapping() -> None:
 
 def test_recorded_upstream_replies_parse(upstream_dir: Path) -> None:
     """metacheck's recorded Groq/Gemini replies parse as ellmer parses them."""
-    from pytacheck.llm._json import parse_json
+    from metacheck.llm._json import parse_json
 
     apis = upstream_dir / "tests" / "testthat" / "apis"
     groq = sorted((apis / "api.groq.com" / "openai" / "v1" / "chat").glob("completions-*.json"))

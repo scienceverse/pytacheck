@@ -119,16 +119,16 @@ def world(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[ModuleType, 
     git(sub, "checkout", "-q", up.pr)
     (root / "parity").mkdir()
     (root / "parity" / "UPSTREAM.toml").write_text(TOML.format(commit=up.pr, base=up.base))
-    (root / "src" / "pytacheck").mkdir(parents=True)
-    (root / "src" / "pytacheck" / "_version.py").write_text(
+    (root / "src" / "metacheck").mkdir(parents=True)
+    (root / "src" / "metacheck" / "_version.py").write_text(
         VERSION_PY.format(commit=up.pr, base=up.base)
     )
     (root / "porting" / "map").mkdir(parents=True)
     (root / "porting" / "map" / "x.toml").write_text(
-        '[files]\n"R/bar.R" = ["src/pytacheck/bar.py"]\n'
+        '[files]\n"R/bar.R" = ["src/metacheck/bar.py"]\n'
     )
     (root / "porting" / "symbols.json").write_text(
-        json.dumps({"bar": {"python": "pytacheck.x:bar"}})
+        json.dumps({"bar": {"python": "metacheck.x:bar"}})
     )
 
     spec = importlib.util.spec_from_file_location("upstream_sync_under_test", SCRIPT)
@@ -138,7 +138,7 @@ def world(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[ModuleType, 
     monkeypatch.setattr(us, "ROOT", root)
     monkeypatch.setattr(us, "SUB", sub)
     monkeypatch.setattr(us, "UPSTREAM_TOML", root / "parity" / "UPSTREAM.toml")
-    monkeypatch.setattr(us, "VERSION_PY", root / "src" / "pytacheck" / "_version.py")
+    monkeypatch.setattr(us, "VERSION_PY", root / "src" / "metacheck" / "_version.py")
     monkeypatch.setattr(us, "BRIEF_DIR", root / ".upstream-sync")
     return us, up, root
 
@@ -156,7 +156,7 @@ def prepare(us: ModuleType, capsys: pytest.CaptureFixture[str], *args: str) -> d
 def pin_files(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     toml = tomllib.loads((root / "parity" / "UPSTREAM.toml").read_text())["upstream"]
     ns: dict[str, Any] = {}
-    exec((root / "src" / "pytacheck" / "_version.py").read_text(), ns)
+    exec((root / "src" / "metacheck" / "_version.py").read_text(), ns)
     return toml, ns["UPSTREAM"]
 
 
@@ -215,7 +215,7 @@ def test_new_push_to_the_pull_request_is_synced(world, capsys) -> None:
     assert "`dev` commits not in pull request #7" in brief
     assert f"- {fix[:7]} Fix foo (#8)" in brief
     assert "**added** `baz` in `R/bar.R`" in brief
-    assert "changed `bar` (`R/bar.R`) -> `pytacheck.x:bar`" in brief
+    assert "changed `bar` (`R/bar.R`) -> `metacheck.x:bar`" in brief
     meta = json.loads((root / ".upstream-sync" / "meta.json").read_text())
     assert meta["title"] == f"Sync with metacheck dev + #7 {new[:10]} (0.3.1)"
     assert meta["pull_request"] == 7 and meta["base_commit"] == up.base
@@ -271,7 +271,7 @@ def test_merged_pull_request_goes_back_to_dev(world, capsys, how: str) -> None:
     assert_pin(root, head, None, None)
     text = (root / "parity" / "UPSTREAM.toml").read_text()
     assert "#7" not in text and "pull request" not in text
-    assert "#7" not in (root / "src" / "pytacheck" / "_version.py").read_text()
+    assert "#7" not in (root / "src" / "metacheck" / "_version.py").read_text()
     brief = (root / ".upstream-sync" / "brief.md").read_text()
     assert "Pull request #7 was merged into `dev`" in brief
     meta = json.loads((root / ".upstream-sync" / "meta.json").read_text())
@@ -339,10 +339,10 @@ def test_write_pin_adds_updates_and_drops_the_pull_request(world) -> None:
 
 
 def test_repository_pin_files_agree() -> None:
-    """parity/UPSTREAM.toml and pytacheck._version.UPSTREAM name the same upstream."""
+    """parity/UPSTREAM.toml and metacheck._version.UPSTREAM name the same upstream."""
     toml = tomllib.loads((REPO / "parity" / "UPSTREAM.toml").read_text())["upstream"]
     ns: dict[str, Any] = {}
-    exec((REPO / "src" / "pytacheck" / "_version.py").read_text(), ns)
+    exec((REPO / "src" / "metacheck" / "_version.py").read_text(), ns)
     assert toml == ns["UPSTREAM"]
     assert ("pull_request" in toml) == ("base_commit" in toml)
 
@@ -354,7 +354,7 @@ def test_write_pin_is_stable_on_the_repository_pin(tmp_path, monkeypatch) -> Non
     spec.loader.exec_module(us)
     for name, src in (
         ("UPSTREAM_TOML", REPO / "parity" / "UPSTREAM.toml"),
-        ("VERSION_PY", REPO / "src" / "pytacheck" / "_version.py"),
+        ("VERSION_PY", REPO / "src" / "metacheck" / "_version.py"),
     ):
         dst = tmp_path / src.name
         dst.write_text(src.read_text())
@@ -371,7 +371,7 @@ def test_write_pin_is_stable_on_the_repository_pin(tmp_path, monkeypatch) -> Non
         REPO / "parity" / "UPSTREAM.toml"
     ).read_text()
     assert (tmp_path / "_version.py").read_text() == (
-        REPO / "src" / "pytacheck" / "_version.py"
+        REPO / "src" / "metacheck" / "_version.py"
     ).read_text()
 
 

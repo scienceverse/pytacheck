@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytacheck as pc
+import metacheck as pc
 
 
 def test_read_corpus(benchmark, corpus_dir: Path) -> None:

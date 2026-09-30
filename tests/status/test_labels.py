@@ -10,11 +10,11 @@ from typing import Any
 
 import pytest
 
-from pytacheck._version import __version__
-from pytacheck.module import ModuleError, ModuleSpec, module, module_find
-from pytacheck.packs.registry import _path_pack, load_module, overlay
-from pytacheck.packs.tree import file_sha256
-from pytacheck.status import (
+from metacheck._version import __version__
+from metacheck.module import ModuleError, ModuleSpec, module, module_find
+from metacheck.packs.registry import _path_pack, load_module, overlay
+from metacheck.packs.tree import file_sha256
+from metacheck.status import (
     PROVISIONAL_NOTE,
     Registry,
     code_sha256,
@@ -55,7 +55,7 @@ def lab(tmp_path: Path):
     (root / "apa.py").write_text(
         textwrap.dedent(
             """\
-            from pytacheck.module import module
+            from metacheck.module import module
 
             @module(title="APA", description="An APA check")
             def apa(paper):
@@ -187,7 +187,7 @@ def test_a_loaded_pack_spec_resolves_to_its_pack(lab) -> None:
     spec = load_module(lab, "apa")
     assert status(spec, registry=_registry({})).ref == "lab::apa"
     (lab.root / "wordy.py").write_text(
-        "from pytacheck.module import module\n\n"
+        "from metacheck.module import module\n\n"
         '@module(title="Wordy")\n'
         "def count_words(paper):\n"
         "    return {}\n"
@@ -199,7 +199,7 @@ def test_a_loaded_pack_spec_resolves_to_its_pack(lab) -> None:
 def test_modules_outside_packs_are_unvalidated(tmp_path: Path) -> None:
     path = tmp_path / "mine.py"
     path.write_text(
-        "from pytacheck.module import module\n\n"
+        "from metacheck.module import module\n\n"
         '@module(title="Mine")\n'
         "def mine(paper):\n"
         "    return {}\n"

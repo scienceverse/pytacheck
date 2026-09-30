@@ -1,9 +1,9 @@
 # R source -> Python location for the causal_claims module (see docs/PORTING.md).
 [files]
-"inst/modules/causal_claims.R" = ["src/pytacheck/modules/causal_claims.py"]
+"inst/modules/causal_claims.R" = ["src/metacheck/modules/causal_claims.py"]
 
 [functions]
-"module:causal_claims" = "pytacheck.modules.causal_claims:causal_claims"
+"module:causal_claims" = "metacheck.modules.causal_claims:causal_claims"
 # (the bibentry objects Antonakis2010 and Grosz2020 defined in the R module are
-#  stored as their rendered format_ref() HTML: pytacheck.modules.causal_claims:
+#  stored as their rendered format_ref() HTML: metacheck.modules.causal_claims:
 #  _ANTONAKIS2010 / _GROSZ2020)

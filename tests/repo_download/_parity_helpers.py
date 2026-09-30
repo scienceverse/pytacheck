@@ -38,7 +38,7 @@ def raw(rel: str, tail: int | None = None, head: int | None = None) -> bytes:
 
 def member_bytes(rel: str, name: str) -> tuple[bytes, float, float]:
     """A member's compressed bytes, method and size, read the way ``.zip_member_fetch()`` does."""
-    from pytacheck.archives.zip_peek import _le_int, _parse_zip_central_dir
+    from metacheck.archives.zip_peek import _le_int, _parse_zip_central_dir
 
     data = raw(rel)
     cd = _parse_zip_central_dir(data)
@@ -59,7 +59,7 @@ def hexbytes(x: Any) -> list[str] | None:
 
 def inflate(rel: str, name: str, with_size: bool = True, method: float | None = None) -> Any:
     """``.zip_inflate_member()`` of a fixture member; returns ``length()`` and the CRC32."""
-    from pytacheck.archives.zip_peek import _crc32, _zip_inflate_member
+    from metacheck.archives.zip_peek import _crc32, _zip_inflate_member
 
     comp, m, size = member_bytes(rel, name)
     out = _zip_inflate_member(comp, m if method is None else method, size if with_size else None)
@@ -89,7 +89,7 @@ def _row(name: str) -> pd.DataFrame:
 
 def expand(fn: str, fixture: str, skip_types: Any = "materials", minimal: bool = False) -> Any:
     """Copy *fixture* to a temp dir and run ``.expand_zip``/``.expand_tar``/``.expand_compressed``."""
-    from pytacheck.archives import zip_peek
+    from metacheck.archives import zip_peek
 
     d = tempfile.mkdtemp(prefix="pc_rd_")
     try:
@@ -115,7 +115,7 @@ def expand(fn: str, fixture: str, skip_types: Any = "materials", minimal: bool =
 
 def fetch_members(url: str, names: Any = None) -> Any:
     """``.zip_fetch_members(url, names, dest = <temp dir>)`` with the temp dir as ``<TMP>``."""
-    from pytacheck.archives.zip_peek import _zip_fetch_members
+    from metacheck.archives.zip_peek import _zip_fetch_members
 
     d = tempfile.mkdtemp(prefix="pc_rd_")
     try:
@@ -145,8 +145,8 @@ def download(
     With *twice*, the download is repeated (the second run reuses the cache)
     and the second result is returned.
     """
-    from pytacheck.archives.download import download_repo_files
-    from pytacheck.utils import get_option, options
+    from metacheck.archives.download import download_repo_files
+    from metacheck.utils import get_option, options
 
     files = files.copy()
     if file_url is not None:

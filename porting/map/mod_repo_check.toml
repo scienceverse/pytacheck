@@ -1,9 +1,9 @@
 # R source -> Python location for the repo_check module (see docs/PORTING.md).
 [files]
-"inst/modules/repo_check.R" = ["src/pytacheck/modules/repo_check.py", "src/pytacheck/modules/_repo_check.py"]
+"inst/modules/repo_check.R" = ["src/metacheck/modules/repo_check.py", "src/metacheck/modules/_repo_check.py"]
 
 [functions]
-"module:repo_check" = "pytacheck.modules.repo_check:repo_check"
+"module:repo_check" = "metacheck.modules.repo_check:repo_check"
 # repo_check() is one function in R; its blocks live in _repo_check.py:
 # link collection (the *_links() calls), one listing block per platform
 # (OSF with registrations and their source projects, GitHub/GitLab trees,

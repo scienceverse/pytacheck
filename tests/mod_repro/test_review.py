@@ -9,10 +9,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_run
-from pytacheck.modules import _reproducibility as h
-from pytacheck.modules.reproducibility_check import _match_sandbox
+import metacheck as pc
+from metacheck.module import module_run
+from metacheck.modules import _reproducibility as h
+from metacheck.modules.reproducibility_check import _match_sandbox
 from tests.mod_repro.test_reproducibility_check import (
     PLAN,
     chain,
@@ -80,7 +80,7 @@ def test_rnamedlist_is_an_r_named_list() -> None:
 def test_each_code_file_is_read_once(
     paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pytacheck.codecheck import core
+    from metacheck.codecheck import core
 
     calls: list[str] = []
     real = core.code_read
@@ -108,7 +108,7 @@ def test_each_code_file_is_read_once(
 def test_docker_declared_version_of_any_vector_type(
     paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch, declared: Any
 ) -> None:
-    from pytacheck.repro import docker
+    from metacheck.repro import docker
 
     seen: dict[str, Any] = {}
 

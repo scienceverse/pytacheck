@@ -1,4 +1,4 @@
-"""Fixtures for the pytacheck.db tests."""
+"""Fixtures for the metacheck.db tests."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def apis(upstream_dir: Path) -> Iterator[None]:
 
 @pytest.fixture
 def psychsci_papers(fixtures_dir: Path):
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.read(fixtures_dir / "psychsci")
 

@@ -8,7 +8,7 @@
 - "id": "read_r_output.adversarial.code_lines"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U140", "reason": "a combined df cell keeps its width, so the table's columns split correctly; untitled one-line results take the source label (U139)"}
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": &adv_out
       "$call":
@@ -24,13 +24,13 @@
 - "id": "read_r_output.adversarial.no_code_lines"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U140", "reason": "a combined df cell keeps its width, so the table's columns split correctly (R: one 'df     F  ges' column)"}
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text": *adv_out
 - "id": "read_r_output.adversarial.single_string"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U140", "reason": "a combined df cell keeps its width, so the table's columns split correctly (R: one 'df     F  ges' column)"}
   "r": "read_r_output"
-  "py": "pytacheck.statout.r_output.read_r_output"
+  "py": "metacheck.statout.r_output.read_r_output"
   "args":
     "text":
       "$expr":
@@ -42,57 +42,57 @@
 # ---------------------------------------------------------------------------
 - "id": "read_stat_tables.omv.order_and_cells"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_order.omv"}}
 - "id": "read_stat_tables.html.nometa_utf8"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_nometa.jasp"}}
 - "id": "read_stat_tables.html.latin_meta"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "the HTML's <meta charset> (latin1) is honoured: 'Tést' (R's xml2 on libxml2 2.15 ignores it: 'T\ufffdst')"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_latin.jasp"}}
 - "id": "read_stat_tables.html.review_tables"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "a table row without any content is dropped (R's df[NA, ] adds a row of NAs)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_tables.jasp"}}
 - "id": "read_stat_tables.jasp.bom"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_bom.jasp"}}
 - "id": "read_stat_tables.jasp.dupkeys"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_dupkeys.jasp"}}
 - "id": "read_stat_tables.empty_zip"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U137", "reason": "an empty zip has no tables (R: basename(NULL) error)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_empty.jasp"}}
 - "id": "read_stat_tables.dirs_only_zip"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_dirs_only.omv"}}
 - "id": "read_stat_tables.directory"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U137", "reason": "a directory has no tables (R: basename(NULL) error)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data"}}
 - "id": "read_stat_tables.ipynb.bom"
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_bom.ipynb"}}
 - "id": "read_stat_tables.ipynb.dupkeys"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a printed result class, as metacheck intends (R: NA)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_dupkeys.ipynb"}}
 - "id": "read_stat_tables.ipynb.mixed_types"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a result class; a table row without content is dropped (U141)"}
   "r": "read_stat_tables"
-  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "py": "metacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_mixed_types.ipynb"}}
 - "id": "stat_table_parse.review_tables"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "a table row without any content is dropped (R's df[NA, ] adds a row of NAs)"}
@@ -112,25 +112,25 @@
     "x":
       "$expr":
         "r": "vapply(list(as.raw(c(97, 0)), as.raw(c(0, 0)), as.raw(c(97, 0, 98)), as.raw(c(97, 98)), raw(0), as.raw(c(0, 97)), as.raw(c(97, 0, 0))), metacheck:::.pb_str, character(1))"
-        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._pb_str(b) for b in [b'a\\x00', b'\\x00\\x00', b'a\\x00b', b'ab', b'', b'\\x00a', b'a\\x00\\x00']]"
+        "py": "[__import__('metacheck.statout.stat_tables', fromlist=['_'])._pb_str(b) for b in [b'a\\x00', b'\\x00\\x00', b'a\\x00b', b'ab', b'', b'\\x00a', b'a\\x00\\x00']]"
 # ---------------------------------------------------------------------------
 # stat_output_validate(): JSON quirks and R's partial `$` matching
 # ---------------------------------------------------------------------------
 - "id": "stat_output_validate.json_null"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/review_validate_null.json"}}
 - "id": "stat_output_validate.json_bom"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/review_validate_bom.json"}}
 - "id": "stat_output_validate.partial_names"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/review_validate_partial.json"}}
 - "id": "stat_output_validate.dupkeys"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/review_validate_dupkeys.json"}}
 # ---------------------------------------------------------------------------
 # stat_results_long() / stat_output_json(): R list semantics of the tables
@@ -138,7 +138,7 @@
 - "id": "stat_results_long.partial_fields"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "table fields are matched by exact name (R's tb$data also takes data_frame, tb$line takes line_seq)"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &partial_tabs
       "$expr":
@@ -148,12 +148,12 @@
 - "id": "stat_output_json.partial_fields"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "table fields are matched by exact name (R's tb$data also takes data_frame, tb$line takes line_seq)"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *partial_tabs, "source_file": "partial.R"}
 - "id": "stat_results_long.numeric_columns"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &numeric_tabs
       "$expr":
@@ -164,12 +164,12 @@
 - "id": "stat_output_json.numeric_columns"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *numeric_tabs, "source_file": "num.jasp"}
 - "id": "stat_results_long.unicode_ids"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &unicode_tabs
       "$expr":
@@ -179,11 +179,11 @@
 - "id": "stat_output_json.unicode_ids"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *unicode_tabs, "source_file": "İstanbul Data.R"}
 - "id": "stat_results_long.col_roles"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &roles_tabs
       "$expr":
@@ -192,12 +192,12 @@
     "source_file": "roles.omv"
 - "id": "stat_output_json.col_roles"
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *roles_tabs, "source_file": "roles.omv"}
 - "id": "stat_results_long.named_list"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": &named_tabs
       "$expr":
@@ -207,11 +207,11 @@
 - "id": "stat_output_json.named_list"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *named_tabs, "source_file": "named.jasp"}
 - "id": "stat_output_validate.na_fields"
   "r": "stat_output_validate"
-  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "py": "metacheck.statout.stat_output.stat_output_validate"
   "args":
     "doc":
       "$expr":
@@ -241,7 +241,7 @@
 - "id": "stat_output_json.source_null"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args":
     "tables": &nullna_tabs
       "$expr":
@@ -251,22 +251,22 @@
 - "id": "stat_output_json.source_na"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
-  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "py": "metacheck.statout.stat_output.stat_output_json"
   "args":
     "tables": *nullna_tabs
     "source_file": {"$expr": {"r": "NA_character_", "py": "pd.NA"}}
 - "id": "stat_results_long.source_null"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args": {"tables": *nullna_tabs, "source_file": {"$null": true}}
 - "id": "stat_results_long.source_null_empty"
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args": {"tables": {"$list": []}, "source_file": {"$null": true}}
 - "id": "stat_results_long.source_na"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
-  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
   "args":
     "tables": *nullna_tabs
     "source_file": {"$expr": {"r": "NA_character_", "py": "pd.NA"}}
@@ -278,7 +278,7 @@
     "x":
       "$expr":
         "r": "list(metacheck:::.stat_result_ids(list(list(table_index = 1L), list(line = 3L)), NULL), metacheck:::.stat_test_id(list(table_index = 1L), NULL, 'result_t1', 'x'), metacheck:::.stat_result_ids(list(list(table_index = 1L))), metacheck:::.stat_test_id(list(), NA, 'na_t1_r1', 'y'))"
-        "py": "(lambda so: [so._stat_result_ids([{'table_index': 1}, {'line': 3}], None), so._stat_test_id({'table_index': 1}, None, 'result_t1', 'x'), so._stat_result_ids([{'table_index': 1}]), so._stat_test_id({}, pd.NA, 'na_t1_r1', 'y')])(__import__('pytacheck.statout.stat_output', fromlist=['_']))"
+        "py": "(lambda so: [so._stat_result_ids([{'table_index': 1}, {'line': 3}], None), so._stat_test_id({'table_index': 1}, None, 'result_t1', 'x'), so._stat_result_ids([{'table_index': 1}]), so._stat_test_id({}, pd.NA, 'na_t1_r1', 'y')])(__import__('metacheck.statout.stat_output', fromlist=['_']))"
 - "id": "stat_output_write.file_null_na"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "base::identity"

@@ -21,7 +21,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "parity" / "cases" / "datacheck_checks.yaml"
 DATA = "tests/datacheck_checks/data"
-CK = "pytacheck.datacheck.checks."
+CK = "metacheck.datacheck.checks."
 PH = "tests.datacheck_checks.parity_helpers."
 
 CASES: list[dict[str, Any]] = []
@@ -74,7 +74,7 @@ def read_head(name: str, n_rows: float = float("inf")) -> dict[str, Any]:
     return {
         "$call": {
             "r": "data_read_head",
-            "py": "pytacheck.datacheck.files.data_read_head",
+            "py": "metacheck.datacheck.files.data_read_head",
             "args": {"path": fpath(name), "n_rows": n_rows},
         }
     }
@@ -1000,7 +1000,7 @@ def formats() -> None:
 
     for name in ("qualtrics.csv", "offset_header.csv", "blank_top_header.csv", "psychopy.csv"):
         add(f"data_read_head.{name}", "data_read_head", {"path": fpath(name), "n_rows": float("inf")},
-            py="pytacheck.datacheck.files.data_read_head")  # fmt: skip
+            py="metacheck.datacheck.files.data_read_head")  # fmt: skip
 
 
 # -- scale / task blocks -------------------------------------------------------------------
@@ -1385,14 +1385,14 @@ def data_sets() -> None:
         "scales.data",
         "identity",
         {"x": ex("metacheck::scales", "None")},
-        py="pytacheck.datacheck.scales.scales",
+        py="metacheck.datacheck.scales.scales",
         py_drop=["x"],
     )
     add(
         "tasks.data",
         "identity",
         {"x": ex("metacheck::tasks", "None")},
-        py="pytacheck.datacheck.tasks.tasks",
+        py="metacheck.datacheck.tasks.tasks",
         py_drop=["x"],
     )
 

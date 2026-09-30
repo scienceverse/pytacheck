@@ -10,9 +10,9 @@ pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 
-from pytacheck.api import app as app_module
-from pytacheck.api.app import ApiConfigError, api_key, create_app, is_loopback
-from pytacheck.cli import main
+from metacheck.api import app as app_module
+from metacheck.api.app import ApiConfigError, api_key, create_app, is_loopback
+from metacheck.cli import main
 
 KEY = "k" * 32
 GUARDED = [

@@ -6,7 +6,7 @@
 # design: bibr export schema v12.0 as the paper schema (older v10.x files are
 # still read as metacheck reads them), bibr in-process, the Grobid TEI
 # adapter, module system v2 (packs, presets, store), the `pytacheck` CLI and the
-# FastAPI server (pytacheck.api, the port of inst/plumber). R internals that
+# FastAPI server (metacheck.api, the port of inst/plumber). R internals that
 # pytacheck does not emulate (error texts, C-library quirks, R type details) are
 # not listed here: they are policy, not skipped symbols.
 #
@@ -28,7 +28,7 @@
 "report_app" = "Shiny app (inst/app/report_app.R). Replaced by `pytacheck report`/`run` (--preset metacheck::validated, --offline) and the API's /paper/check (report_html)."
 
 # R/zzz.R -- package hooks
-".onLoad" = "R package load hook. Its option defaults are in pytacheck.config and pytacheck.llm.core (_default_model_from_env), applied lazily; .osf_pat_validate() runs when OSF is used."
+".onLoad" = "R package load hook. Its option defaults are in metacheck.config and metacheck.llm.core (_default_model_from_env), applied lazily; .osf_pat_validate() runs when OSF is used."
 ".onAttach" = "library() startup banner, including a network version check against GitHub. pytacheck does no network I/O at import; `pytacheck version` shows versions."
 
 # R/svutils-utils.R -- infix operators
@@ -39,7 +39,7 @@
 "fig_image_view" = "Plots a figure on an R graphics device (jpeg + grDevices). Python shows paper.figure.image (a base64 data URI, read with include_images=True) directly in Jupyter or any image library."
 "print.scivrs_paper" = "S3 print method. Covered by Paper.__repr__ (same text)."
 "print.scivrs_paperlist" = "S3 print method. Covered by PaperList.__repr__; paper_table(papers, 'info', ['title', 'doi']) is the table R prints."
-"print.metacheck_module_list" = "S3 print method. Covered by pytacheck.module.format_module_list() (same text)."
+"print.metacheck_module_list" = "S3 print method. Covered by metacheck.module.format_module_list() (same text)."
 "print.metacheck_module_output" = "S3 print method. Covered by ModuleOutput.__repr__ ('<title>: <summary_text>')."
 "print.metacheck_module_help" = "S3 print method. Covered by module_help(), which returns the printed text."
 
@@ -48,7 +48,7 @@
 ".le_int" = "Little-endian integer from raw bytes. Use int.from_bytes(b, 'little') or struct."
 
 # ellmer providers metacheck can reach through ellmer::chat("provider/model")
-"ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (an SDK). pytacheck.llm.providers raises a clear error (_UNSUPPORTED)."
+"ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (an SDK). metacheck.llm.providers raises a clear error (_UNSUPPORTED)."
 "ellmer::chat_google_vertex" = "Needs Google Cloud ADC/project auth. pytacheck raises a clear error; google_gemini works with AI Studio keys (the API default)."
 "ellmer::chat_databricks" = "Needs Databricks workspace OAuth. pytacheck raises a clear error."
 "ellmer::chat_snowflake" = "Needs Snowflake key-pair/OAuth auth. pytacheck raises a clear error."
@@ -93,12 +93,12 @@
 "R/metacheck-package.R" = "roxygen package documentation."
 "inst/CITATION" = "R's citation() entry. pytacheck has CITATION.cff."
 "inst/--CITATION" = "An inactive copy of inst/CITATION."
-"inst/plumber/Dockerfile" = "R deployment. pytacheck has its own Dockerfile, docker-compose.yml and `pytacheck serve` (the API itself is ported as pytacheck.api)."
+"inst/plumber/Dockerfile" = "R deployment. pytacheck has its own Dockerfile, docker-compose.yml and `pytacheck serve` (the API itself is ported as metacheck.api)."
 "inst/plumber/docker-compose.yml" = "R deployment (see inst/plumber/Dockerfile)."
 "inst/plumber/.dockerignore" = "R deployment (see inst/plumber/Dockerfile)."
 "inst/plumber/run_api.R" = "Starts plumber. Use `pytacheck serve`."
 "inst/plumber/run_api.sh" = "Empty file."
-"inst/plumber/README.md" = "Plumber docs. The routes are documented in pytacheck/api/app.py."
+"inst/plumber/README.md" = "Plumber docs. The routes are documented in metacheck/api/app.py."
 "data-raw" = "Maintainer scripts that build data/*.rda and inst/databases. pytacheck converts the built files (scripts/convert_databases.R, scripts/convert_datacheck_data.R)."
 "man" = "Rd help pages (generated from roxygen)."
 "pkgdown" = "R documentation website."

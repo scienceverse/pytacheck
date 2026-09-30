@@ -24,7 +24,7 @@ def ref_paper(
     Each element of *cites* is a body sentence citing those ``bib_id``\\ s
     (one ``bibr`` xref each).
     """
-    import pytacheck as pc
+    import metacheck as pc
 
     cites = [[c] if isinstance(c, int) else list(c) for c in cites]
     n = len(dois)
@@ -58,7 +58,7 @@ def ref_paper(
 
 def report_tbl(o: Any) -> dict[str, Any]:
     """The first report table of a module output and its display arguments."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     for block in o.report if isinstance(o.report, list) else [o.report]:
         if isinstance(block, ReportTable):
@@ -73,7 +73,7 @@ def report_tbl(o: Any) -> dict[str, Any]:
 
 def demo_no_refs() -> Any:
     """The demo paper without references (testthat: "no references")."""
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.demopaper()
     paper.bib = paper.bib.iloc[0:0]
@@ -83,7 +83,7 @@ def demo_no_refs() -> Any:
 
 def demo_no_dois() -> Any:
     """The demo paper keeping only references without a DOI (testthat: "no DOIs")."""
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.demopaper()
     bib = paper.bib.copy()
@@ -95,7 +95,7 @@ def demo_no_dois() -> Any:
 
 def flora_originals(by: int = 1) -> list[str]:
     """Every *by*-th original DOI in the bundled FLoRA database (in order of first appearance)."""
-    from pytacheck.db.replications import FLoRA
+    from metacheck.db.replications import FLoRA
 
     return list(dict.fromkeys(FLoRA()["doi_o"].tolist()))[::by]
 
@@ -104,11 +104,11 @@ def rw_sample(by: int = 100) -> list[str]:
     """One RetractionWatch DOI per notice type plus every *by*-th DOI.
 
     Sampled from the stored table, blank DOIs included, as R's ``rw()`` has
-    them: :func:`~pytacheck.db.retractionwatch.retractionwatch` leaves them out
+    them: :func:`~metacheck.db.retractionwatch.retractionwatch` leaves them out
     (U15), which would shift every *by*-th row and give R and Python different
     papers.
     """
-    from pytacheck.db.databases import load_database
+    from metacheck.db.databases import load_database
 
     d = load_database("retractionwatch")
     first = d.loc[~d["retractionwatch"].duplicated().to_numpy(dtype=bool), "doi"].tolist()
@@ -129,7 +129,7 @@ def set_col(p: Any, table: str, col: str, values: Sequence[Any]) -> Any:
 
 def stress_papers() -> Any:
     """A deterministic paper list with many miscitation hits (see :func:`stress_db`)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     pool = [f"10.1000/s{i:02d}" for i in range(15)]
     ids = ["p10", "p2", "P1"]

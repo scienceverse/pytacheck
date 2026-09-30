@@ -7,14 +7,14 @@
 # ------------------------------------------------------------ extract_p_values
 - "id": "extract_p_values.review.df_no_text_col"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$df":
         "sentence": ["p = .01 and t = 2", "none"]
 - "id": "extract_p_values.review.df_na_text"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$expr":
@@ -22,7 +22,7 @@
         "py": "pd.DataFrame({'text': pd.Series(['p = .05', None, 't = 2, p = .1'], dtype='string'), 'text_id': pd.Series([1, 2, 3], dtype='Int64'), 'paper_id': pd.Series(['a'] * 3, dtype='string')})"
 - "id": "extract_p_values.review.df_extra_first_col"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$df":
@@ -30,7 +30,7 @@
         "text": ["p = .05", "x"]
 - "id": "extract_p_values.review.zero_rows"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$expr":
@@ -38,7 +38,7 @@
         "py": "pd.DataFrame({'text': pd.Series([], dtype='string')})"
 - "id": "extract_p_values.review.refs_excluded"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$df":
@@ -48,7 +48,7 @@
         "paper_id": ["x", "x", "x"]
 - "id": "extract_p_values.review.unicode_space"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$test_paper":
@@ -59,7 +59,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_p_values.review.paperlist_ids"
   "r": "extract_p_values"
-  "py": "pytacheck.text.extract.extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
   "args":
     "paper":
       "$expr":
@@ -68,14 +68,14 @@
 # ------------------------------------------------------------------ extract_eq
 - "id": "extract_eq.review.df_no_text_col"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$df":
         "sentence": ["p = .01 and t = 2", "none https://x.org"]
 - "id": "extract_eq.review.df_na_text"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$expr":
@@ -83,7 +83,7 @@
         "py": "pd.DataFrame({'text': pd.Series(['p = .05', None, 't = 2, p = .1'], dtype='string'), 'text_id': pd.Series([1, 2, 3], dtype='Int64'), 'paper_id': pd.Series(['a'] * 3, dtype='string')})"
 - "id": "extract_eq.review.zero_rows"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$expr":
@@ -91,7 +91,7 @@
         "py": "pd.DataFrame({'text': pd.Series([], dtype='string')})"
 - "id": "extract_eq.review.all_numeric_lhs"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -100,7 +100,7 @@
 - "id": "extract_eq.review.text_id_na_error"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "rows without text_id are grouped by their source sentence (R fails on NA comparisons)"}
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$df":
@@ -109,7 +109,7 @@
 - "id": "extract_eq.review.paperlist_ids"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "each sentence of a paper in a list keeps its own grp_id (R restarts at 1 whenever its search order moves to another paper: both of paper B's sentences get grp_id 1)"}
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$expr":
@@ -117,7 +117,7 @@
         "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['a < 2 and b = 3', 'c = 4', 'd > 5, e = 6', 'f ≤ 7'], 'b'), (['g > 5', 'h = 1'], 'B'), (['none', 'k ≈ 2 and m < 3'], 'a')]])"
 - "id": "extract_eq.review.refs_excluded"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$df":
@@ -127,7 +127,7 @@
         "paper_id": ["x", "x", "x"]
 - "id": "extract_eq.review.unicode"
   "r": "extract_eq"
-  "py": "pytacheck.text.extract.extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper":
       "$test_paper":
@@ -140,14 +140,14 @@
 # ---------------------------------------------------------------- extract_urls
 - "id": "extract_urls.review.df_no_text_col"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$df":
         "sentence": ["p = .01 and t = 2", "none https://x.org"]
 - "id": "extract_urls.review.zero_rows"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$expr":
@@ -155,7 +155,7 @@
         "py": "pd.DataFrame({'text': pd.Series([], dtype='string')})"
 - "id": "extract_urls.review.refs_excluded"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$df":
@@ -165,7 +165,7 @@
         "paper_id": ["x", "x", "x"]
 - "id": "extract_urls.review.caseless_unicode"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$test_paper":
@@ -177,7 +177,7 @@
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_urls.review.paperlist_ids"
   "r": "extract_urls"
-  "py": "pytacheck.text.extract.extract_urls"
+  "py": "metacheck.text.extract.extract_urls"
   "args":
     "paper":
       "$expr":
@@ -186,7 +186,7 @@
 # ----------------------------------------------------------- .detect_live_data
 - "id": "detect_live_data.review.df"
   "r": "metacheck:::.detect_live_data"
-  "py": "pytacheck.text.extract._detect_live_data"
+  "py": "metacheck.text.extract._detect_live_data"
   "args":
     "paper":
       "$df":
@@ -199,7 +199,7 @@
         - "Participants were recruited and gave informed consent via Prolific."
 - "id": "detect_live_data.review.paperlist_ids"
   "r": "metacheck:::.detect_live_data"
-  "py": "pytacheck.text.extract._detect_live_data"
+  "py": "metacheck.text.extract._detect_live_data"
   "args":
     "paper":
       "$expr":
@@ -208,7 +208,7 @@
 # --------------------------------------------------------------- extract_tests
 - "id": "extract_tests.review.eq_table"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$expr":
@@ -216,7 +216,7 @@
         "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([2, 1, 2, 1], dtype='Int64'), 'grp_id': pd.Series([1, 2, 1, 2], dtype='Int64'), 'lhs': ['t', 'F', 'p', 'p'], 'df': pd.Series(['(3)', None, None, None], dtype='string'), 'comp': ['=', '=', '<', '='], 'rhs': ['1.5', '2', '.03', '.2']})), p)[2])(pc.test_paper(['first sentence', 'second sentence']))"
 - "id": "extract_tests.review.eq_no_df_col"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$expr":
@@ -225,7 +225,7 @@
 - "id": "extract_tests.review.paperlist"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a paper list gives each paper's tests once (R repeats every test once per paper id)"}
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$expr":
@@ -233,7 +233,7 @@
         "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['t(10) = 2.1, p = .05', 'no stats'], 'b'), (['F(1, 20) = 5, p < .01', 'x', 'd = .5'], 'a')]])"
 - "id": "extract_tests.review.dup_text_ids"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$expr":
@@ -241,7 +241,7 @@
         "py": "(lambda p: (p.__setitem__('paper_id', 'dup'), p.__setitem__('text', p.text.assign(text_id=pd.Series([1, 1, 2], dtype='Int64'), paragraph_id=pd.Series([5.0, 6.0, 7.0]))), p)[2])(pc.test_paper(['t(10) = 2.1, p = .05', 'F(1, 2) = 3', 'r = .4']))"
 - "id": "extract_tests.review.info_empty"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$expr":
@@ -249,14 +249,14 @@
         "py": "(lambda p: (p.__setitem__('info', p.info.iloc[0:0]), p)[1])(pc.test_paper(['t(10) = 2.1, p = .05']))"
 - "id": "extract_tests.review.df_text_only"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$df":
         "text": ["t(23) = 3.77", "none"]
 - "id": "extract_tests.review.render_na"
   "r": "metacheck:::.render_test"
-  "py": "pytacheck.text.extract_tests._render_test"
+  "py": "metacheck.text.extract_tests._render_test"
   "args":
     "g":
       "$list":
@@ -264,7 +264,7 @@
       - {"name": "F", "value": "2", "sentence_pos": 2}
 - "id": "extract_tests.review.split_primary_after_satellite"
   "r": "metacheck:::.split_into_tests"
-  "py": "pytacheck.text.extract_tests._split_into_tests"
+  "py": "metacheck.text.extract_tests._split_into_tests"
   "args":
     "comps":
       "$list":
@@ -281,7 +281,7 @@
 # ----------------------------------------------------------------- json_expand
 - "id": "json_expand.review.type_convert"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -292,7 +292,7 @@
         - '{"a": "2", "b": "2", "c": "2", "d": "2", "e": null, "f": null, "g": "-NaN", "h": "1"}'
 - "id": "json_expand.review.bom"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -305,7 +305,7 @@
         - "﻿[1]"
 - "id": "json_expand.review.dates"
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -323,7 +323,7 @@
 - "id": "json_expand.review.row_names_nested_na"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U9", "reason": "a \"_row\" key holding nested objects is an ordinary column (jsonlite's row-name NA replacement mangled it and changed the row count)"}
   "r": "json_expand"
-  "py": "pytacheck.text.json_expand.json_expand"
+  "py": "metacheck.text.json_expand.json_expand"
   "args":
     "table":
       "$df":
@@ -349,7 +349,7 @@
 # ------------------------------------------------------------ causal_relations
 - "id": "causal_relations.review.na"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence":
       "$expr":
@@ -357,7 +357,7 @@
         "py": "[None]"
 - "id": "causal_relations.review.na_blank"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence":
       "$expr":
@@ -365,7 +365,7 @@
         "py": "[None, '  ']"
 - "id": "causal_relations.review.na_blank_text"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence":
       "$expr":
@@ -374,12 +374,12 @@
     "rel_mode": "fast"
 - "id": "causal_relations.review.not_character"
   "r": "causal_relations"
-  "py": "pytacheck.text.causal.causal_relations"
+  "py": "metacheck.text.causal.causal_relations"
   "args":
     "sentence": {"$dbl": [1.5]}
 - "id": "extract_tests.review.eq_tid_missing"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$expr":
@@ -387,7 +387,7 @@
         "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([7, 7, 8], dtype='Int64'), 'lhs': ['t', 'p', 'r'], 'df': pd.Series(['(3)', None, None], dtype='string'), 'comp': ['=', '<', '='], 'rhs': ['1.5', '.03', '.2']})), p)[2])(pc.test_paper(['first sentence']))"
 - "id": "extract_tests.review.eq_comp_na"
   "r": "extract_tests"
-  "py": "pytacheck.text.extract_tests.extract_tests"
+  "py": "metacheck.text.extract_tests.extract_tests"
   "args":
     "paper":
       "$expr":
@@ -395,7 +395,7 @@
         "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([1, 1], dtype='Int64'), 'lhs': ['t', 'p'], 'df': pd.Series(['', None], dtype='string'), 'comp': pd.Series([None, '<'], dtype='string'), 'rhs': pd.Series(['1.5', None], dtype='string')})), p)[2])(pc.test_paper(['first sentence']))"
 - "id": "extract_tests.review.render_null_name"
   "r": "metacheck:::.render_test"
-  "py": "pytacheck.text.extract_tests._render_test"
+  "py": "metacheck.text.extract_tests._render_test"
   "args":
     "g":
       "$list":

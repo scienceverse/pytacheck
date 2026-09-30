@@ -8,10 +8,10 @@ import warnings
 
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_find, module_list, module_run
-from pytacheck.packs.manifest import PackError
-from pytacheck.packs.registry import active_packs, get_pack, load_module, refresh, registry
+import metacheck as pc
+from metacheck.module import module_find, module_list, module_run
+from metacheck.packs.manifest import PackError
+from metacheck.packs.registry import active_packs, get_pack, load_module, refresh, registry
 from tests.modsys.helpers import REV_A, REV_B, mod_src
 
 
@@ -110,7 +110,7 @@ def test_config_false_hides_and_null_removes(ms, paper, monkeypatch, tmp_path) -
     class EP:
         name, module, value, dist = "distpack", "dist_demo", "dist_demo", None
 
-    import pytacheck.packs.registry as reg
+    import metacheck.packs.registry as reg
 
     monkeypatch.setattr(reg, "_dist_entry_points", lambda: [EP()])
     refresh()

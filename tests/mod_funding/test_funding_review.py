@@ -10,8 +10,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-import pytacheck as pc
-from pytacheck.modules import _funding as F
+import metacheck as pc
+from metacheck.modules import _funding as F
 
 KELVIN = "\u212a"
 LONG_S = "\u017f"
@@ -29,7 +29,7 @@ DOTLESS = "\u0131"
 
 def test_prefilter_gives_the_full_scan() -> None:
     """The literal prefilter and the shared column cache give a full scan's answer."""
-    from pytacheck._r.regex import grepl
+    from metacheck._r.regex import grepl
     from tests.mod_funding.test_funding_check import _all_patterns
 
     base = [

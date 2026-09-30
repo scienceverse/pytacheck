@@ -12,10 +12,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleOutput, get_prev_outputs, module, module_run
-from pytacheck.repro import tables
-from pytacheck.repro.tables import capture_module_tables, collect_module_tables
+import metacheck as pc
+from metacheck.module import ModuleOutput, get_prev_outputs, module, module_run
+from metacheck.repro import tables
+from metacheck.repro.tables import capture_module_tables, collect_module_tables
 
 
 @pytest.fixture(scope="module")
@@ -56,7 +56,7 @@ def test_encoding_round_trips_frames() -> None:
 
 
 def test_encoding_round_trips_values() -> None:
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     value = {
         "nested": {1: "int key", "$x": [1, 2.5, None, pd.NA]},

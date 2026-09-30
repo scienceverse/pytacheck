@@ -10,8 +10,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import SECTION_LEVELS, module_find
+import metacheck as pc
+from metacheck.module import SECTION_LEVELS, module_find
 
 MODULE = "all_urls"
 
@@ -109,7 +109,7 @@ def test_chaining_with_all_p_values(psychsci: pc.PaperList) -> None:
 
 def test_module_report_without_validation(demo: pc.Paper) -> None:
     try:
-        from pytacheck.report.report import module_report
+        from metacheck.report.report import module_report
     except ImportError:  # pragma: no cover - ported concurrently
         pytest.skip("module_report is not available")
     rep = module_report(pc.module_run(demo, MODULE))

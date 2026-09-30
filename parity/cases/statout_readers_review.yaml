@@ -4,7 +4,7 @@
 "cases":
 - "id": "import_spv.spv_strings"
   "r": "import_spv"
-  "py": "pytacheck.statout.spv.import_spv"
+  "py": "metacheck.statout.spv.import_spv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/spv_strings.spv"
@@ -31,7 +31,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.spv.export_spv_html"
+    "fn": "metacheck.statout.spv.export_spv_html"
     "path": "tests/statout_readers/fixtures/review/spv_strings.spv"
     "images": true
 - "id": "spv_read_structure.spv_strings"
@@ -48,7 +48,7 @@
     "path": "tests/statout_readers/fixtures/review/spv_strings.spv"
 - "id": "import_spv.spv_charts"
   "r": "import_spv"
-  "py": "pytacheck.statout.spv.import_spv"
+  "py": "metacheck.statout.spv.import_spv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/spv_charts.spv"
@@ -75,7 +75,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.spv.export_spv_html"
+    "fn": "metacheck.statout.spv.export_spv_html"
     "path": "tests/statout_readers/fixtures/review/spv_charts.spv"
     "images": true
 - "id": "spv_read_structure.spv_charts"
@@ -92,7 +92,7 @@
     "path": "tests/statout_readers/fixtures/review/spv_charts.spv"
 - "id": "import_spv.spv_charts_ok"
   "r": "import_spv"
-  "py": "pytacheck.statout.spv.import_spv"
+  "py": "metacheck.statout.spv.import_spv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/spv_charts_ok.spv"
@@ -119,7 +119,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.spv.export_spv_html"
+    "fn": "metacheck.statout.spv.export_spv_html"
     "path": "tests/statout_readers/fixtures/review/spv_charts_ok.spv"
     "images": true
 - "id": "spv_read_structure.spv_charts_ok"
@@ -136,7 +136,7 @@
     "path": "tests/statout_readers/fixtures/review/spv_charts_ok.spv"
 - "id": "import_spv.spv_box_na"
   "r": "import_spv"
-  "py": "pytacheck.statout.spv.import_spv"
+  "py": "metacheck.statout.spv.import_spv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/spv_box_na.spv"
@@ -163,7 +163,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.spv.export_spv_html"
+    "fn": "metacheck.statout.spv.export_spv_html"
     "path": "tests/statout_readers/fixtures/review/spv_box_na.spv"
     "images": true
 - "id": "spv_read_structure.spv_box_na"
@@ -189,7 +189,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.spv._spv_export_syntax"
+    "fn": "metacheck.statout.spv._spv_export_syntax"
     "path": "tests/statout_readers/fixtures/review/spv_strings.spv"
 - "id": "spv_decode_light_table.t2"
   "r": "identity"
@@ -275,7 +275,7 @@
         "py": "pc.statout.spv.spv_assemble_table(dims=[{\"name\": \"A\", \"leaves\": {\"0\": [\"a\"], \"1\": [\"b\"]}}, {\"leaves\": {\"0\": [\"z\"]}, \"n_leaves\": 1}], axes={\"rows\": [0, 1]}, cells=[{\"index\": 1.0, \"value\": {\"type\": \"numeric\", \"x\": -0.0}}, {\"index\": 0.0, \"value\": {\"type\": \"template\", \"s\": \"^1\"}}])"
 - "id": "import_omv.review"
   "r": "import_omv"
-  "py": "pytacheck.statout.omv.import_omv"
+  "py": "metacheck.statout.omv.import_omv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/review.omv"
@@ -290,17 +290,17 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.omv.import_omv"
+    "fn": "metacheck.statout.omv.import_omv"
     "path": "tests/statout_readers/fixtures/review/review.omv"
 - "id": "import_omv.empty_index"
   "r": "import_omv"
-  "py": "pytacheck.statout.omv.import_omv"
+  "py": "metacheck.statout.omv.import_omv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/empty_index.omv"
 - "id": "import_omv.fields_object"
   "r": "import_omv"
-  "py": "pytacheck.statout.omv.import_omv"
+  "py": "metacheck.statout.omv.import_omv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/fields_object.omv"
@@ -315,17 +315,17 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.omv.import_omv"
+    "fn": "metacheck.statout.omv.import_omv"
     "path": "tests/statout_readers/fixtures/review/fields_object.omv"
 - "id": "import_omv.nameless"
   "r": "import_omv"
-  "py": "pytacheck.statout.omv.import_omv"
+  "py": "metacheck.statout.omv.import_omv"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/nameless.omv"
 - "id": "import_jasp.review"
   "r": "import_jasp"
-  "py": "pytacheck.statout.jasp.import_jasp"
+  "py": "metacheck.statout.jasp.import_jasp"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/review.jasp"
@@ -340,17 +340,17 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.jasp.import_jasp"
+    "fn": "metacheck.statout.jasp.import_jasp"
     "path": "tests/statout_readers/fixtures/review/review.jasp"
 - "id": "import_jasp.short"
   "r": "import_jasp"
-  "py": "pytacheck.statout.jasp.import_jasp"
+  "py": "metacheck.statout.jasp.import_jasp"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/short.jasp"
 - "id": "import_jasp.sqlite_review"
   "r": "import_jasp"
-  "py": "pytacheck.statout.jasp.import_jasp"
+  "py": "metacheck.statout.jasp.import_jasp"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/sqlite_review.jasp"
@@ -365,11 +365,11 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.jasp.import_jasp"
+    "fn": "metacheck.statout.jasp.import_jasp"
     "path": "tests/statout_readers/fixtures/review/sqlite_review.jasp"
 - "id": "import_jasp.sqlite_nulltype"
   "r": "import_jasp"
-  "py": "pytacheck.statout.jasp.import_jasp"
+  "py": "metacheck.statout.jasp.import_jasp"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/sqlite_nulltype.jasp"
@@ -384,7 +384,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.jasp.import_jasp"
+    "fn": "metacheck.statout.jasp.import_jasp"
     "path":
       "$file": "tests/statout_readers/fixtures/review/sqlite_types.jasp"
 - "id": "import_jasp.labels.sqlite_types"
@@ -398,7 +398,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.jasp.import_jasp"
+    "fn": "metacheck.statout.jasp.import_jasp"
     "path": "tests/statout_readers/fixtures/review/sqlite_types.jasp"
 - "id": "export_omv_html.review"
   "r": "identity"
@@ -411,7 +411,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.omv.export_omv_html"
+    "fn": "metacheck.statout.omv.export_omv_html"
     "path": "tests/statout_readers/fixtures/review/review.omv"
 - "id": "export_omv_html.trailing_pct"
   "r": "identity"
@@ -424,7 +424,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.omv.export_omv_html"
+    "fn": "metacheck.statout.omv.export_omv_html"
     "path": "tests/statout_readers/fixtures/review/trailing_pct.omv"
 - "id": "export_omv_html.empty_index"
   "r": "identity"
@@ -437,7 +437,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.omv.export_omv_html"
+    "fn": "metacheck.statout.omv.export_omv_html"
     "path": "tests/statout_readers/fixtures/review/empty_index.omv"
 - "id": "export_jasp_html.review"
   "r": "identity"
@@ -450,11 +450,11 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.jasp.export_jasp_html"
+    "fn": "metacheck.statout.jasp.export_jasp_html"
     "path": "tests/statout_readers/fixtures/review/review.jasp"
 - "id": "export_omv_html.badurl"
   "r": "export_omv_html"
-  "py": "pytacheck.statout.omv.export_omv_html"
+  "py": "metacheck.statout.omv.export_omv_html"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/badurl.omv"
@@ -492,13 +492,13 @@
         "py": "[pc.statout.jasp._url_decode(s) for s in [\"a%20b.png\", \"a%\", \"a%2\", \"a%2%41\", \"%41%62c\", \"a+b.png\", \"%C3%A9\", \"%2F%2e\"]]"
 - "id": "import_stata_smcl.nul"
   "r": "import_stata_smcl"
-  "py": "pytacheck.statout.stata.import_stata_smcl"
+  "py": "metacheck.statout.stata.import_stata_smcl"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/nul_bytes.smcl"
 - "id": "import_stata_smcl.tricky"
   "r": "import_stata_smcl"
-  "py": "pytacheck.statout.stata.import_stata_smcl"
+  "py": "metacheck.statout.stata.import_stata_smcl"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/tricky.smcl"
@@ -513,7 +513,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.stata.export_stata_smcl_html"
+    "fn": "metacheck.statout.stata.export_stata_smcl_html"
     "path": "tests/statout_readers/fixtures/review/tricky.smcl"
 - "id": "smcl_export_syntax.tricky"
   "r": "identity"
@@ -526,7 +526,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.stata._smcl_export_syntax"
+    "fn": "metacheck.statout.stata._smcl_export_syntax"
     "path": "tests/statout_readers/fixtures/review/tricky.smcl"
 - "id": "smcl_render.tricky"
   "r": "identity"
@@ -563,7 +563,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.stata.import_stata_smcl"
+    "fn": "metacheck.statout.stata.import_stata_smcl"
     "path":
       "$file": "tests/statout_readers/fixtures/review/latin1.smcl"
 - "id": "smcl_render_line.more"
@@ -592,7 +592,7 @@
         "py": "pc.statout.stata._stata_output_oneline([\"Iteration 0:   log likelihood = -45.03321\", \"chi2(2) = 5.21  Prob > chi2 = 0.0739\", \"R-squared = 0.25, Adj R-squared = 0.2, R-squared = 0.3\", \"F(1, 72) = 20.26 p < .001\", \"βeta = 1 ²x = 2 x² = 3\", \"a=1b=2\", \"N = 1e5, M = 2E5, d = -1.5e-3\"], \"cmd\")"
 - "id": "import_mplus_output.tricky"
   "r": "import_mplus_output"
-  "py": "pytacheck.statout.mplus.import_mplus_output"
+  "py": "metacheck.statout.mplus.import_mplus_output"
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/tricky.out"
@@ -607,7 +607,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.mplus.export_mplus_html"
+    "fn": "metacheck.statout.mplus.export_mplus_html"
     "path": "tests/statout_readers/fixtures/review/tricky.out"
 - "id": "mplus_export_syntax.tricky"
   "r": "identity"
@@ -620,7 +620,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.mplus._mplus_export_syntax"
+    "fn": "metacheck.statout.mplus._mplus_export_syntax"
     "path": "tests/statout_readers/fixtures/review/tricky.out"
 - "id": "mplus_sections.tricky"
   "r": "identity"
@@ -717,6 +717,6 @@
   "py_drop":
   - "x"
   "py_args":
-    "fn": "pytacheck.statout.mplus.import_mplus_output"
+    "fn": "metacheck.statout.mplus.import_mplus_output"
     "path":
       "$file": "tests/statout_readers/fixtures/review/latin1.out"

@@ -6,9 +6,9 @@ import itertools
 
 import pytest
 
-from pytacheck.module import _builtin_names
-from pytacheck.packs.registry import builtin_pack
-from pytacheck.status import (
+from metacheck.module import _builtin_names
+from metacheck.packs.registry import builtin_pack
+from metacheck.status import (
     DEFAULT_POLICY,
     LABELS,
     POLICIES,

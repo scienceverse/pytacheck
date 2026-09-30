@@ -39,7 +39,7 @@ PP_DOIS: dict[str, list[str | None]] = {
 
 def pp_paper(dois: Sequence[str | None], id: str = "synthetic") -> Any:
     """A paper whose references have *dois* (``bib_id`` 0, 1, ...)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     n = len(dois)
     refs = [
@@ -75,14 +75,14 @@ def pp_mixed() -> Any:
 
 def pp_list() -> Any:
     """A paper list with duplicated, upper-case, NA and empty DOIs (see helpers.R)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.PaperList([pp_paper(PP_DOIS[k], k) for k in ("p1", "p2", "P0")])
 
 
 def demo_no_refs() -> Any:
     """The demo paper without references (testthat: "no references")."""
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.demopaper()
     paper.bib = paper.bib.iloc[0:0]
@@ -92,7 +92,7 @@ def demo_no_refs() -> Any:
 
 def demo_no_dois() -> Any:
     """The demo paper keeping only references without a DOI (testthat: "no DOIs")."""
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.demopaper()
     bib = paper.bib
@@ -103,7 +103,7 @@ def demo_no_dois() -> Any:
 
 def demo_no_match() -> Any:
     """The demo paper without bib_match (testthat: "no bib_match")."""
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.demopaper()
     del paper["bib_match"]
@@ -112,7 +112,7 @@ def demo_no_match() -> Any:
 
 def psychsci3() -> Any:
     """The psychsci fixture papers."""
-    import pytacheck as pc
+    import metacheck as pc
 
     d = ROOT / "upstream/metacheck/tests/testthat/fixtures/psychsci"
     return pc.read(
@@ -122,7 +122,7 @@ def psychsci3() -> Any:
 
 def chain(paper: Any, modules: Sequence[str]) -> Any:
     """Run modules one after another (``module_run(module_run(paper, m1), m2)`` ...)."""
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     out = paper
     for m in modules:
@@ -152,7 +152,7 @@ def drop_table_cols(out: Any, cols: Sequence[str]) -> Any:
 
 def report_tbl(o: Any) -> dict[str, Any]:
     """The first report table of a module output and its display arguments."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     for block in o.report if isinstance(o.report, list) else [o.report]:
         if isinstance(block, ReportTable):
@@ -205,14 +205,14 @@ def pp_nourl_some() -> Any:
 
 def pp_list_empty() -> Any:
     """A paper list whose second paper has no references at all."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.PaperList([pp_paper(PP_DOIS["odd"], "odd"), pp_paper([], "empty")])
 
 
 def pp_case_list() -> Any:
     """Mixed-case paper ids and a bib_match table (ref_table() sorts in the C locale)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     b = pp_paper(["10.9999/pp.one", "10.9999/pp.dup"], "b")
     A = pp_paper(["10.9999/pp.none", "10.9999/pp.stat"], "A")
@@ -261,7 +261,7 @@ def set_table_cols(out: Any, values: dict[str, Sequence[Any]]) -> Any:
 
 def rv_ret_collide() -> Any:
     """ref_retraction's table gains columns that collide with ref_summary's own."""
-    import pytacheck as pc
+    import metacheck as pc
 
     out = chain(pc.demopaper(), ["ref_accuracy", "ref_pubpeer", "ref_retraction"])
     return set_table_cols(out, {"pubpeer": ["P"], "pubpeer.x": ["PX"], "accuracy_mismatch": ["AM"]})
@@ -269,14 +269,14 @@ def rv_ret_collide() -> Any:
 
 def rv_ret_keys() -> Any:
     """ref_retraction's table keeps only the join keys (and the dropped text/doi)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return drop_table_cols(chain(pc.demopaper(), ["ref_retraction"]), ["retractionwatch"])
 
 
 def rv_ret_bib_id(type_: str) -> Any:
     """ref_retraction's table with a ``bib_id`` of another type (see ``helpers.R``)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     out = chain(pc.demopaper(), ["ref_retraction"])
     table = out.table.copy()
@@ -306,7 +306,7 @@ def rename_table_col(out: Any, from_: str, to: str) -> Any:
 
 def rv_acc_dup() -> Any:
     """Duplicated ref_accuracy rows (same group, and a new no_match group)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     out = chain(pc.demopaper(), ["ref_accuracy"])
     out = add_rows(out, [3], {"title_mismatch": [True]})
@@ -316,7 +316,7 @@ def rv_acc_dup() -> Any:
 
 def rv_acc_chr() -> Any:
     """Character ``*_mismatch`` / ``no_match`` columns."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return set_table_cols(
         chain(pc.demopaper(), ["ref_accuracy"]),
@@ -333,7 +333,7 @@ def rv_acc_chr() -> Any:
 
 def rv_acc_num() -> Any:
     """Integer / double ``*_mismatch`` columns mixed with logical ones."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return set_table_cols(
         chain(pc.demopaper(), ["ref_accuracy"]),
@@ -348,7 +348,7 @@ def rv_acc_num() -> Any:
 
 def rv_acc_mixed() -> Any:
     """Logical and character ``*_mismatch`` columns (pivot_longer() cannot combine them)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return set_table_cols(
         chain(pc.demopaper(), ["ref_accuracy"]),
@@ -358,7 +358,7 @@ def rv_acc_mixed() -> Any:
 
 def rv_acc_na_chr() -> Any:
     """An all-NA logical column combines with character ones."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return set_table_cols(
         chain(pc.demopaper(), ["ref_accuracy"]),
@@ -374,7 +374,7 @@ def rv_acc_na_chr() -> Any:
 
 def rv_acc_extra() -> Any:
     """Columns grep() selects but ends_with() does not, and one ends_with() matches by case."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return set_table_cols(
         chain(pc.demopaper(), ["ref_accuracy"]),
@@ -388,7 +388,7 @@ def rv_acc_extra() -> Any:
 
 def rv_acc_no_mismatch() -> Any:
     """ref_accuracy without any ``*_mismatch`` column."""
-    import pytacheck as pc
+    import metacheck as pc
 
     out = chain(pc.demopaper(), ["ref_accuracy"])
     return drop_table_cols(out, [c for c in out.table.columns if str(c).endswith("_mismatch")])
@@ -396,14 +396,14 @@ def rv_acc_no_mismatch() -> Any:
 
 def rv_pp_url_na() -> Any:
     """ref_pubpeer's table with missing URLs."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return set_table_cols(chain(pc.demopaper(), ["ref_pubpeer"]), {"url": [None]})
 
 
 def rv_rep_no_type() -> Any:
     """ref_replication's table without replication_type, with a duplicated row."""
-    import pytacheck as pc
+    import metacheck as pc
 
     out = add_rows(chain(pc.demopaper(), ["ref_replication"]), [0], {})
     return drop_table_cols(out, ["replication_type"])
@@ -411,7 +411,7 @@ def rv_rep_no_type() -> Any:
 
 def test_paper_id(text: Sequence[str], id: str) -> Any:
     """``test_paper()`` with a fixed ``paper_id`` (R's comes from the clock)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(list(text))
     p.paper_id = id
@@ -432,6 +432,6 @@ def pp_sici() -> Any:
 
 def bibr12(name: str) -> Any:
     """A bibr export schema 12.0 fixture paper."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.read(ROOT / "upstream/metacheck/tests/testthat/fixtures/bibr12" / f"{name}.json")

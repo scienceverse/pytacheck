@@ -7,7 +7,7 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck.module import module
+from metacheck.module import module
 
 
 @module(

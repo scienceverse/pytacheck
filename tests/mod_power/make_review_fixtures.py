@@ -594,7 +594,7 @@ llm_case(
     "power.review.llm.max_calls",
     paras([S.COMPLETE, S.OTHER], [0, 1]),
     r_options={"metacheck.llm_max_calls": "1L"},
-    py_options="{'metacheck.llm_max_calls': __import__('pytacheck.llm._rds', "
+    py_options="{'metacheck.llm_max_calls': __import__('metacheck.llm._rds', "
     "fromlist=['_']).RInt(1)}",
 )
 
@@ -640,7 +640,7 @@ def record_mocks() -> dict[str, tuple[int, Any]]:
     import httpx
     import respx
 
-    import pytacheck as pc
+    import metacheck as pc
     from tests.httpmock import mock_path
 
     recorded: dict[str, tuple[int, Any]] = {}
@@ -684,7 +684,7 @@ def record_mocks() -> dict[str, tuple[int, Any]]:
 
 
 def write_schema() -> None:
-    from pytacheck.modules._power import SCHEMA
+    from metacheck.modules._power import SCHEMA
 
     f = ROOT / SCHEMA_FILE
     f.parent.mkdir(parents=True, exist_ok=True)

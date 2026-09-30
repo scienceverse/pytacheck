@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "parity" / "cases" / "datacheck_columns_review.yaml"
 FIX = "tests/datacheck_columns/fixtures"
 REV = f"{FIX}/review"
-PY = "pytacheck.datacheck.columns"
+PY = "metacheck.datacheck.columns"
 
 cases: list[dict[str, Any]] = []
 
@@ -512,7 +512,7 @@ case(
 def jl(s: str) -> dict[str, Any]:
     return expr(
         f"jsonlite::fromJSON({s!r}, simplifyVector = FALSE)",
-        f"__import__('pytacheck.datacheck._columns_labels', fromlist=['x'])._json_loads({s!r})",
+        f"__import__('metacheck.datacheck._columns_labels', fromlist=['x'])._json_loads({s!r})",
     )
 
 
@@ -600,7 +600,7 @@ def _py_vec(v: str) -> str:
 
 
 _R_FMT = "function(v) unname(as.matrix(data.frame(a = 'x', b = v))[, 2])"
-_PY_FMT = "__import__('pytacheck.datacheck._columns_codebook', fromlist=['_'])._format_column"
+_PY_FMT = "__import__('metacheck.datacheck._columns_codebook', fromlist=['_'])._format_column"
 cases.append(
     {
         "id": "as_matrix_format.battery",
@@ -713,7 +713,7 @@ case(
     {
         "df": expr(
             f"as.data.frame(haven::read_sav('{REV}/dup_labels.sav'))",
-            f"__import__('pytacheck.datacheck._columns_codebook', fromlist=['x'])"
+            f"__import__('metacheck.datacheck._columns_codebook', fromlist=['x'])"
             f"._haven_frame('{REV}/dup_labels.sav', 'sav')",
         ),
         "src": "dup_labels.sav",

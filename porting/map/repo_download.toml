@@ -2,11 +2,11 @@
 # peeking, file categories/types/naming; see docs/PORTING.md).
 #
 # data/file_types.rda is converted by scripts/convert_data.R into
-# src/pytacheck/resources/data/file_types.json.gz (loaded by
-# pytacheck.resources.data.load_data and pytacheck.fileinfo.types). The storage
+# src/metacheck/resources/data/file_types.json.gz (loaded by
+# metacheck.resources.data.load_data and metacheck.fileinfo.types). The storage
 # retry policy of httr2's req_retry() as metacheck configures it is
 # download.py's _storage_request(); the per-host rate-limit record
-# (.host_rate_limit_cache) is pytacheck.http's host reset memory; R's
+# (.host_rate_limit_cache) is metacheck.http's host reset memory; R's
 # format(<object_size>, units = "auto") in repo_cache_clear() is
 # download.py's _format_object_size(). Base R / package internals metacheck
 # relies on are emulated where their behaviour shows in the results: R's
@@ -16,73 +16,73 @@
 # resp_status_desc() wording, resp_auth_message() bullets), and R's handling
 # of strings that are not valid UTF-8 (fileinfo/_strings.py; CP437 zip names).
 [files]
-"R/repo-download.R" = ["src/pytacheck/archives/download.py", "src/pytacheck/fileinfo/_strings.py"]
-"R/zip-peek.R" = ["src/pytacheck/archives/zip_peek.py", "src/pytacheck/fileinfo/_strings.py"]
-"R/file_category.R" = ["src/pytacheck/fileinfo/category.py", "src/pytacheck/fileinfo/_strings.py"]
-"R/file_types.R" = ["src/pytacheck/fileinfo/types.py"]
-"R/file-naming.R" = ["src/pytacheck/fileinfo/naming.py", "src/pytacheck/fileinfo/_strings.py"]
-"data/file_types.rda" = ["src/pytacheck/resources/data/file_types.json.gz", "src/pytacheck/fileinfo/types.py", "scripts/convert_data.R"]
+"R/repo-download.R" = ["src/metacheck/archives/download.py", "src/metacheck/fileinfo/_strings.py"]
+"R/zip-peek.R" = ["src/metacheck/archives/zip_peek.py", "src/metacheck/fileinfo/_strings.py"]
+"R/file_category.R" = ["src/metacheck/fileinfo/category.py", "src/metacheck/fileinfo/_strings.py"]
+"R/file_types.R" = ["src/metacheck/fileinfo/types.py"]
+"R/file-naming.R" = ["src/metacheck/fileinfo/naming.py", "src/metacheck/fileinfo/_strings.py"]
+"data/file_types.rda" = ["src/metacheck/resources/data/file_types.json.gz", "src/metacheck/fileinfo/types.py", "scripts/convert_data.R"]
 "data-raw/file_types.R" = ["scripts/convert_data.R"]
 
 [functions]
 # R/repo-download.R
-".repo_cache_dir" = "pytacheck.archives.download:_repo_cache_dir"
-".repo_cache_subdir" = "pytacheck.archives.download:_repo_cache_subdir"
-".repo_cache_rel" = "pytacheck.archives.download:_repo_cache_rel"
-".repo_cache_path" = "pytacheck.archives.download:_repo_cache_path"
-".repo_session_dir" = "pytacheck.archives.download:_repo_session_dir"
-repo_cache_dir = "pytacheck.archives.download:repo_cache_dir"
-repo_cache_size = "pytacheck.archives.download:repo_cache_size"
-repo_cache_clear = "pytacheck.archives.download:repo_cache_clear"
-".remote_size" = "pytacheck.archives.download:_remote_size"
-".remote_content_length" = "pytacheck.archives.download:_remote_content_length"
-".auth_for_url" = "pytacheck.archives.download:_auth_for_url"
-".is_login_page" = "pytacheck.archives.download:_is_login_page"
-".storage_is_transient" = "pytacheck.archives.download:_storage_is_transient"
-".storage_backoff" = "pytacheck.archives.download:_storage_backoff"
-".rate_limit_wait" = "pytacheck.archives.download:_rate_limit_wait"
-".host_rate_limit_record" = "pytacheck.archives.download:_host_rate_limit_record"
-".host_rate_limit_remaining" = "pytacheck.archives.download:_host_rate_limit_remaining"
-".format_wait_duration" = "pytacheck.archives.download:_format_wait_duration"
-".announce_rate_limit_wait" = "pytacheck.archives.download:_announce_rate_limit_wait"
-".storage_retry_after_factory" = "pytacheck.archives.download:_storage_retry_after_factory"
-".storage_is_transient_factory" = "pytacheck.archives.download:_storage_is_transient_factory"
-".wait_out_known_rate_limit" = "pytacheck.archives.download:_wait_out_known_rate_limit"
-".download_one" = "pytacheck.archives.download:_download_one"
-".download_many_parallel" = "pytacheck.archives.download:_download_many_parallel"
-".zip_timeout_for_size" = "pytacheck.archives.download:_zip_timeout_for_size"
-".download_zip_to_cache" = "pytacheck.archives.download:_download_zip_to_cache"
-download_repo_files = "pytacheck.archives.download:download_repo_files"
+".repo_cache_dir" = "metacheck.archives.download:_repo_cache_dir"
+".repo_cache_subdir" = "metacheck.archives.download:_repo_cache_subdir"
+".repo_cache_rel" = "metacheck.archives.download:_repo_cache_rel"
+".repo_cache_path" = "metacheck.archives.download:_repo_cache_path"
+".repo_session_dir" = "metacheck.archives.download:_repo_session_dir"
+repo_cache_dir = "metacheck.archives.download:repo_cache_dir"
+repo_cache_size = "metacheck.archives.download:repo_cache_size"
+repo_cache_clear = "metacheck.archives.download:repo_cache_clear"
+".remote_size" = "metacheck.archives.download:_remote_size"
+".remote_content_length" = "metacheck.archives.download:_remote_content_length"
+".auth_for_url" = "metacheck.archives.download:_auth_for_url"
+".is_login_page" = "metacheck.archives.download:_is_login_page"
+".storage_is_transient" = "metacheck.archives.download:_storage_is_transient"
+".storage_backoff" = "metacheck.archives.download:_storage_backoff"
+".rate_limit_wait" = "metacheck.archives.download:_rate_limit_wait"
+".host_rate_limit_record" = "metacheck.archives.download:_host_rate_limit_record"
+".host_rate_limit_remaining" = "metacheck.archives.download:_host_rate_limit_remaining"
+".format_wait_duration" = "metacheck.archives.download:_format_wait_duration"
+".announce_rate_limit_wait" = "metacheck.archives.download:_announce_rate_limit_wait"
+".storage_retry_after_factory" = "metacheck.archives.download:_storage_retry_after_factory"
+".storage_is_transient_factory" = "metacheck.archives.download:_storage_is_transient_factory"
+".wait_out_known_rate_limit" = "metacheck.archives.download:_wait_out_known_rate_limit"
+".download_one" = "metacheck.archives.download:_download_one"
+".download_many_parallel" = "metacheck.archives.download:_download_many_parallel"
+".zip_timeout_for_size" = "metacheck.archives.download:_zip_timeout_for_size"
+".download_zip_to_cache" = "metacheck.archives.download:_download_zip_to_cache"
+download_repo_files = "metacheck.archives.download:download_repo_files"
 
 # R/zip-peek.R
-".le_int" = "pytacheck.archives.zip_peek:_le_int"
-".http_range_tail" = "pytacheck.archives.zip_peek:_http_range_tail"
-".http_range_bytes" = "pytacheck.archives.zip_peek:_http_range_bytes"
-".parse_zip_central_dir" = "pytacheck.archives.zip_peek:_parse_zip_central_dir"
-zip_peek = "pytacheck.archives.zip_peek:zip_peek"
-".zip_inflate_member" = "pytacheck.archives.zip_peek:_zip_inflate_member"
-".zip_member_fetch" = "pytacheck.archives.zip_peek:_zip_member_fetch"
-".crc32" = "pytacheck.archives.zip_peek:_crc32"
-".zip_crc_ok" = "pytacheck.archives.zip_peek:_zip_crc_ok"
-".zip_fetch_members" = "pytacheck.archives.zip_peek:_zip_fetch_members"
-".is_zip" = "pytacheck.archives.zip_peek:_is_zip"
-".is_tar_archive" = "pytacheck.archives.zip_peek:_is_tar_archive"
-".is_single_compress" = "pytacheck.archives.zip_peek:_is_single_compress"
-".is_readable_archive" = "pytacheck.archives.zip_peek:_is_readable_archive"
-".archive_rows" = "pytacheck.archives.zip_peek:_archive_rows"
-".expand_zip" = "pytacheck.archives.zip_peek:_expand_zip"
-".expand_tar" = "pytacheck.archives.zip_peek:_expand_tar"
-".expand_compressed" = "pytacheck.archives.zip_peek:_expand_compressed"
-zip_decision = "pytacheck.archives.zip_peek:zip_decision"
+".le_int" = "metacheck.archives.zip_peek:_le_int"
+".http_range_tail" = "metacheck.archives.zip_peek:_http_range_tail"
+".http_range_bytes" = "metacheck.archives.zip_peek:_http_range_bytes"
+".parse_zip_central_dir" = "metacheck.archives.zip_peek:_parse_zip_central_dir"
+zip_peek = "metacheck.archives.zip_peek:zip_peek"
+".zip_inflate_member" = "metacheck.archives.zip_peek:_zip_inflate_member"
+".zip_member_fetch" = "metacheck.archives.zip_peek:_zip_member_fetch"
+".crc32" = "metacheck.archives.zip_peek:_crc32"
+".zip_crc_ok" = "metacheck.archives.zip_peek:_zip_crc_ok"
+".zip_fetch_members" = "metacheck.archives.zip_peek:_zip_fetch_members"
+".is_zip" = "metacheck.archives.zip_peek:_is_zip"
+".is_tar_archive" = "metacheck.archives.zip_peek:_is_tar_archive"
+".is_single_compress" = "metacheck.archives.zip_peek:_is_single_compress"
+".is_readable_archive" = "metacheck.archives.zip_peek:_is_readable_archive"
+".archive_rows" = "metacheck.archives.zip_peek:_archive_rows"
+".expand_zip" = "metacheck.archives.zip_peek:_expand_zip"
+".expand_tar" = "metacheck.archives.zip_peek:_expand_tar"
+".expand_compressed" = "metacheck.archives.zip_peek:_expand_compressed"
+zip_decision = "metacheck.archives.zip_peek:zip_decision"
 
 # R/file_category.R, R/file_types.R
-file_category = "pytacheck.fileinfo.category:file_category"
-filetype = "pytacheck.fileinfo.category:filetype"
-file_types = "pytacheck.fileinfo.types:file_types"
+file_category = "metacheck.fileinfo.category:file_category"
+filetype = "metacheck.fileinfo.category:filetype"
+file_types = "metacheck.fileinfo.types:file_types"
 
 # R/file-naming.R
-".file_naming_severity" = "pytacheck.fileinfo.naming:FILE_NAMING_SEVERITY"
-".file_naming_check_one" = "pytacheck.fileinfo.naming:_file_naming_check_one"
-".file_naming_check_padding" = "pytacheck.fileinfo.naming:_file_naming_check_padding"
-".file_naming_check_length" = "pytacheck.fileinfo.naming:_file_naming_check_length"
-check_file_naming = "pytacheck.fileinfo.naming:check_file_naming"
+".file_naming_severity" = "metacheck.fileinfo.naming:FILE_NAMING_SEVERITY"
+".file_naming_check_one" = "metacheck.fileinfo.naming:_file_naming_check_one"
+".file_naming_check_padding" = "metacheck.fileinfo.naming:_file_naming_check_padding"
+".file_naming_check_length" = "metacheck.fileinfo.naming:_file_naming_check_length"
+check_file_naming = "metacheck.fileinfo.naming:check_file_naming"

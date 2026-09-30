@@ -1,4 +1,4 @@
-"""R/stat_helpers.R (pytacheck.stats.helpers) and statcheck's R-condition semantics."""
+"""R/stat_helpers.R (metacheck.stats.helpers) and statcheck's R-condition semantics."""
 
 from __future__ import annotations
 
@@ -6,14 +6,14 @@ import warnings
 
 import pytest
 
-from pytacheck._r.regex import regexec
-from pytacheck.stats.helpers import (
+from metacheck._r.regex import regexec
+from metacheck.stats.helpers import (
     _r_stat_pattern,
     _stat_display_value,
     _stat_html_escape,
     _stato_strip_variant,
 )
-from pytacheck.stats.statcheck import (
+from metacheck.stats.statcheck import (
     RError,
     StatcheckWarning,
     _statcheck_quiet,

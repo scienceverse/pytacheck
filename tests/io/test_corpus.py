@@ -9,10 +9,8 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from parity.canonical import canonical
-from parity.compare import Options, compare
-from pytacheck.io.corpus import (
+import metacheck as pc
+from metacheck.io.corpus import (
     _papers_cache_dir,
     _papers_release_assets,
     _read_rds,
@@ -21,6 +19,8 @@ from pytacheck.io.corpus import (
     papers_metadata,
     papers_remove,
 )
+from parity.canonical import canonical
+from parity.compare import Options, compare
 from tests.io.conftest import IO_FIXTURES, api
 
 DOWNLOAD = re.compile(r"https://github\.com/scienceverse/retagtest/releases/download/.*")

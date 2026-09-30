@@ -13,7 +13,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
 from tests.mod_repo_check.parity_support import FIXTURES, ROOT, mocked, tp
 
 pytestmark = pytest.mark.filterwarnings("ignore::UserWarning")
@@ -84,7 +84,7 @@ def test_repo_check_offline() -> None:
 
 
 def test_module_metadata() -> None:
-    from pytacheck.module import module_find
+    from metacheck.module import module_find
 
     spec = module_find("repo_check")
     assert spec.title == "Repository Check"
@@ -217,7 +217,7 @@ def test_zenodo() -> None:
 
 def test_unknown_file_size(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """A file without a size is listed, and shown as "—" in the report."""
-    from pytacheck.archives import local
+    from metacheck.archives import local
 
     (tmp_path / "analysis.R").write_text("x <- 1\n")
     real = local.local_files
@@ -404,7 +404,7 @@ def test_local_only_skips_several_repo_types() -> None:
 
 def test_bibr12_paper_with_osf_project() -> None:
     """A native bibr export schema 12.0 paper (pytacheck's default format)."""
-    from pytacheck.io.bibr12 import is_bibr12
+    from metacheck.io.bibr12 import is_bibr12
 
     paper = pc.read(BIBR12 / "preprint.json")
     assert is_bibr12(paper)
@@ -567,7 +567,7 @@ def test_failed_registration_source_restores_only_registrations(
     # U122: when following a registration fails, the registration comes back
     # with the error; a link removed as no storage location at all (a user
     # page) stays removed
-    from pytacheck.modules import _repo_check as rc
+    from metacheck.modules import _repo_check as rc
 
     reg, user = "https://osf.io/reg12", "https://osf.io/usr12"
     listing = pd.DataFrame(
@@ -594,7 +594,7 @@ def test_failed_registration_source_restores_only_registrations(
 def test_private_osf_file_rows_are_excluded_per_row() -> None:
     # U123: a file marked private (public FALSE) is left out wherever it sits
     # in the listing (R's !isFALSE(public) tests the whole column at once)
-    from pytacheck.modules._repo_check import _osf_files
+    from metacheck.modules._repo_check import _osf_files
 
     info = pd.DataFrame(
         {
@@ -637,7 +637,7 @@ def test_does_not_mutate_paper() -> None:
 
 
 def test_format_object_size() -> None:
-    from pytacheck.modules._repo_check import format_object_size, size_label
+    from metacheck.modules._repo_check import format_object_size, size_label
 
     cases = {
         0: "0 B",

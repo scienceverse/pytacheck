@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.statout.mplus import (
+from metacheck.statout.mplus import (
     _mplus_export_syntax,
     _mplus_is_genuine_output,
     _mplus_is_level_label,
@@ -22,7 +22,7 @@ from pytacheck.statout.mplus import (
     export_mplus_html,
     import_mplus_output,
 )
-from pytacheck.statout.spv import _read_lines
+from metacheck.statout.spv import _read_lines
 
 FIX = Path(__file__).resolve().parent / "fixtures" / "text"
 

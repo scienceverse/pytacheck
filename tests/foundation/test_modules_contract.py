@@ -1,13 +1,13 @@
-"""Contracts every built-in module must satisfy (the checks live in pytacheck.packs.check)."""
+"""Contracts every built-in module must satisfy (the checks live in metacheck.packs.check)."""
 
 from __future__ import annotations
 
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.module import _builtin_names
+from metacheck.packs.check import metadata_issues, run_issues
 from parity.cases import load_cases
-from pytacheck.module import _builtin_names
-from pytacheck.packs.check import metadata_issues, run_issues
 from tests.httpmock import no_network
 
 BUILTINS = list(_builtin_names())

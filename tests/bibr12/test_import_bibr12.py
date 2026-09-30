@@ -15,10 +15,10 @@ import orjson
 import pandas as pd
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.io import bibr12
 from parity.canonical import canonical
 from parity.compare import Options, compare
-from pytacheck.io import bibr12
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -397,11 +397,11 @@ def test_from_bibr_reads_12x_natively(f12) -> None:
 
 
 def test_chew_returns_native_12x_papers(f12, monkeypatch: pytest.MonkeyPatch) -> None:
-    """``pytacheck.io.bibr.chew()`` with a stand-in bibr that returns 12.0 exports."""
+    """``metacheck.io.bibr.chew()`` with a stand-in bibr that returns 12.0 exports."""
     import sys
     import types
 
-    from pytacheck.io import bibr as bibr_io
+    from metacheck.io import bibr as bibr_io
 
     data = read_json(f12("full"))
 
@@ -520,7 +520,7 @@ def test_older_papers_read_as_before() -> None:
 
 
 def _builtin_modules() -> list[str]:
-    from pytacheck.module import _builtin_names
+    from metacheck.module import _builtin_names
 
     return list(_builtin_names())
 
@@ -535,7 +535,7 @@ def test_every_module_runs_on_bibr12_papers(f12, module: str, name: str) -> None
     never leaves the machine. Modules that need no network or LLM are compared
     with metacheck in the bibr12 parity cases.
     """
-    from pytacheck.packs.check import run_issues
+    from metacheck.packs.check import run_issues
     from tests.httpmock import replay
 
     paper = pc.read(f12(name))

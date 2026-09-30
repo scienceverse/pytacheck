@@ -221,7 +221,11 @@ jobs:
           uv venv "$RUNNER_TEMP/wheel-env"
           uv pip install --python "$RUNNER_TEMP/wheel-env" dist/*.whl
           "$RUNNER_TEMP/wheel-env"/bin/pytacheck version
+          "$RUNNER_TEMP/wheel-env"/bin/metacheck version
+          "$RUNNER_TEMP/wheel-env"/bin/python -m metacheck --help
+          "$RUNNER_TEMP/wheel-env"/bin/python -m pytacheck.cli --help
           "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
+          "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc, metacheck as mc; assert mc.__version__ == pc.__version__"
       - name: Audit dependencies
         run: uvx pip-audit --strict -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

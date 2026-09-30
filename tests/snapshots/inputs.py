@@ -133,7 +133,7 @@ FIXTURE_RULES = {
 
 def same_id_list(ids: tuple[str, str] = (SAME_ID, SAME_ID)) -> Any:
     """debruine-fret and debruine-child as one list, with the paper ids *ids*."""
-    from pytacheck.papers import PaperList
+    from metacheck.papers import PaperList
 
     papers = [read(FRET), read(CHILD)]
     for paper, paper_id in zip(papers, ids, strict=True):
@@ -195,13 +195,13 @@ class SnapshotSet:
 
 
 def read(path: str) -> Any:
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.read(ROOT / path)
 
 
 def _run_module(module: str, make: Callable[[], Any], args: dict[str, Any]) -> Any:
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     return module_run(make(), module, **args)
 
@@ -212,7 +212,7 @@ def module_call(module: str, make: Callable[[], Any], **args: Any) -> Callable[[
 
 
 def _demo() -> Any:
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.demopaper()
 
@@ -222,7 +222,7 @@ def _psychsci_list() -> Any:
 
 
 def _list3() -> Any:
-    from pytacheck.papers import PaperList
+    from metacheck.papers import PaperList
 
     return PaperList([read(p) for p in LIST3])
 

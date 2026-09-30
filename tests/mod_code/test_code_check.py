@@ -20,8 +20,8 @@ from typing import Any
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleOutput, module_find, module_run
+import metacheck as pc
+from metacheck.module import ModuleOutput, module_find, module_run
 from tests.mod_code.helpers import (
     ROOT,
     cc_prev,
@@ -80,7 +80,7 @@ def all_report(mo: ModuleOutput) -> str:
 def stub_repo_check(monkeypatch: pytest.MonkeyPatch) -> list[dict[str, Any]]:
     """Answer code_check's own ``module_run(paper, "repo_check", ...)`` with a
     listing of ``local_path`` (or no files), recording the call's arguments."""
-    import pytacheck.module as mod
+    import metacheck.module as mod
 
     calls: list[dict[str, Any]] = []
     real = mod.module_run
@@ -390,7 +390,7 @@ def _remote_listing(rows: list[dict[str, Any]]) -> pd.DataFrame:
 
 
 def test_manifest_records_failed_downloads(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.download as dl
+    import metacheck.archives.download as dl
 
     # the failed rows carry no paper_id: with one paper they are all its own
     monkeypatch.setattr(dl, "download_repo_files", _failing_download(with_paper_id=False))
@@ -424,7 +424,7 @@ def test_manifest_records_failed_downloads(tmp_path: Path, monkeypatch: pytest.M
 
 
 def test_manifest_split_per_paper(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.download as dl
+    import metacheck.archives.download as dl
 
     good = write(tmp_path / "src" / "good.R", ["library(ggplot2)", "x <- 1"])
 
@@ -518,7 +518,7 @@ def test_downloaded_files_keep_their_results(tmp_path: Path) -> None:
 
 def test_every_download_fails(monkeypatch: pytest.MonkeyPatch) -> None:
     # R: "code files found but every download fails does not crash"
-    import pytacheck.archives.download as dl
+    import metacheck.archives.download as dl
 
     monkeypatch.setattr(
         dl,
@@ -553,7 +553,7 @@ def test_every_download_fails(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_size_cap_messages(monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.download as dl
+    import metacheck.archives.download as dl
 
     msg = "Repository https://osf.io/x exceeds the 0.0 MB per-repository budget."
 
@@ -586,7 +586,7 @@ def test_size_cap_messages(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_download_false_streams_from_the_url(monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.archives.download as dl
+    import metacheck.archives.download as dl
 
     def boom(*args: Any, **kwargs: Any) -> None:
         raise AssertionError("download=False must not download")
@@ -790,7 +790,7 @@ def _comparable(out: ModuleOutput) -> dict[str, Any]:
 
 @pytest.mark.parametrize("scenario", ["mixed", "green", "parse_errors", "nocode"])
 def test_bibr12_paper_matches_the_legacy_paper(scenario: str) -> None:
-    from pytacheck.io.bibr12 import read_bibr12
+    from metacheck.io.bibr12 import read_bibr12
 
     p12 = read_bibr12(BIBR12_PREPRINT)
     legacy = pc.read(LEGACY_PREPRINT, schema_version=None)
@@ -882,7 +882,7 @@ def test_repo_check_osf_without_code() -> None:
 def test_zip_members_without_file_url_are_downloaded(monkeypatch: pytest.MonkeyPatch) -> None:
     # a member of a zip repo_check already expanded has archive_url + archive_member
     # instead of a file_url; it is fetched like any remote code file
-    import pytacheck.archives.download as dl
+    import metacheck.archives.download as dl
 
     src = str(CODE_FILES / "analysis.R")
     seen: list[list[str]] = []
@@ -927,8 +927,8 @@ def test_unexpanded_zip_code_members_are_checked(
 ) -> None:
     # R: .code_expand_zip() -- a remote .zip row repo_check did not expand: its
     # code members are fetched (range requests) and checked like any other file
-    import pytacheck.archives.download as dl
-    import pytacheck.archives.zip_peek as zp
+    import metacheck.archives.download as dl
+    import metacheck.archives.zip_peek as zp
 
     member = write(tmp_path / "members" / "analysis.R", ["# code in a zip", "library(dplyr)"])
     monkeypatch.setattr(
@@ -1001,7 +1001,7 @@ def test_na_file_url_is_read_as_the_path_na() -> None:
 def test_case_insensitive_match_uses_r_tolower() -> None:
     # R's tolower() (towlower) maps "İ" to "i": "İNDEX.csv" is the repository's
     # index.csv, "DATÉ.CSV" its daté.csv; only Ümlaut.csv is missing
-    from pytacheck.modules._code_check import _r_tolower
+    from metacheck.modules._code_check import _r_tolower
 
     assert _r_tolower("İNDEX.CSV") == "index.csv"
     assert _r_tolower("DATÉ.CSV ΣΑΣ Ǆ") == "daté.csv σασ ǆ"
@@ -1066,7 +1066,7 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
     # U88: the catch-up download counts the repository's whole listing, as the
     # pre-pass does, so a refusal is one message (R counts code files only
     # and reports the repository twice, "holds 6 files" and "holds 4 files")
-    import pytacheck.archives.download as dl
+    import metacheck.archives.download as dl
 
     counts: list[dict[Any, int]] = []
 
@@ -1106,7 +1106,7 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
 
     # rows an expansion adds (an archive's code members) are not counted as
     # files of the listing: the catch-up quotes the pre-pass count
-    import pytacheck.codecheck.core as cc
+    import metacheck.codecheck.core as cc
 
     def fake_expand(all_files: pd.DataFrame, skip_on_api_limit: bool = False) -> pd.DataFrame:
         member = all_files.iloc[[0]].copy()
@@ -1143,7 +1143,7 @@ def test_per_paper_pin_check_uses_the_module_download_options(
 ) -> None:
     # U88: the per-paper version-pin check downloads with the module's caps
     # and cache (R falls back to the defaults, 100 MB / 500 MB / no cache)
-    import pytacheck.codecheck.core as core
+    import metacheck.codecheck.core as core
 
     calls: list[dict[str, Any]] = []
 
@@ -1194,7 +1194,7 @@ def test_pin_files_of_one_name_keep_their_own_location(tmp_path: Path) -> None:
     # U89: the located pinning files are copied back by row, not by name. R
     # matches by name, so p2's README location lands in p1's README row and
     # p1 is credited with p2's sessionInfo()
-    from pytacheck.modules.code_check import _splice_locations
+    from metacheck.modules.code_check import _splice_locations
 
     readme1 = write(tmp_path / "p1" / "README.md", ["# Study 1", "No session info here."])
     readme2 = write(
@@ -1236,9 +1236,9 @@ def test_pin_files_of_one_name_keep_their_own_location(tmp_path: Path) -> None:
 def test_zip_expansion_honours_skip_on_api_limit(monkeypatch: pytest.MonkeyPatch) -> None:
     # U66: under skip_on_api_limit the zip peek and member fetch skip a
     # rate-limited host instead of waiting (R never passes the argument on)
-    import pytacheck.archives.zip_peek as zp
-    from pytacheck import http
-    from pytacheck.codecheck.core import _code_expand_zip
+    import metacheck.archives.zip_peek as zp
+    from metacheck import http
+    from metacheck.codecheck.core import _code_expand_zip
 
     seen: list[bool] = []
 

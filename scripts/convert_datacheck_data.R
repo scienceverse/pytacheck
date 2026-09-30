@@ -1,12 +1,12 @@
 # Convert metacheck's data_check dictionaries (data/scales.rda, data/tasks.rda)
 # into the dependency-free files pytacheck ships
-# (src/pytacheck/resources/data/{scales,tasks}.json.gz).
+# (src/metacheck/resources/data/{scales,tasks}.json.gz).
 #
 # Usage (from the repository root, with the R reference installation):
 #
 #   Rscript scripts/convert_datacheck_data.R [<metacheck dir>] [<output dir>]
 #
-# Defaults: upstream/metacheck and src/pytacheck/resources/data.
+# Defaults: upstream/metacheck and src/metacheck/resources/data.
 #
 # Each data frame becomes <name>.json.gz: gzip-compressed UTF-8 JSON in the
 # format scripts/convert_databases.R uses for the reference databases,
@@ -23,7 +23,7 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 src <- if (length(args) >= 1) args[[1]] else "upstream/metacheck"
-out <- if (length(args) >= 2) args[[2]] else "src/pytacheck/resources/data"
+out <- if (length(args) >= 2) args[[2]] else "src/metacheck/resources/data"
 
 data_dir <- file.path(src, "data")
 if (!dir.exists(data_dir)) stop("No data directory at ", data_dir)

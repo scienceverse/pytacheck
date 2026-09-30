@@ -16,8 +16,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout import spv
-from pytacheck.statout.spv import (
+from metacheck.statout import spv
+from metacheck.statout.spv import (
     SpvBinaryEOF,
     _as_integer,
     _as_numeric,

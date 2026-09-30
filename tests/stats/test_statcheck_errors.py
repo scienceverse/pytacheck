@@ -11,8 +11,8 @@ import math
 
 import pytest
 
-from pytacheck.stats._rmath import pchisq, pf, pnorm, pt
-from pytacheck.stats.statcheck import (
+from metacheck.stats._rmath import pchisq, pf, pnorm, pt
+from metacheck.stats.statcheck import (
     VAR_COMPUTED_P,
     VAR_DEC_ERROR,
     VAR_DF1,

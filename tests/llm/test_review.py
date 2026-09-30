@@ -16,13 +16,13 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck.llm as L
-from pytacheck import utils
-from pytacheck.llm import cache, core, types
-from pytacheck.llm import providers as P
-from pytacheck.llm._rds import RInt, RList, RVec
-from pytacheck.llm.providers import LLMError
-from pytacheck.utils import local_options
+import metacheck.llm as L
+from metacheck import utils
+from metacheck.llm import cache, core, types
+from metacheck.llm import providers as P
+from metacheck.llm._rds import RInt, RList, RVec
+from metacheck.llm.providers import LLMError
+from metacheck.utils import local_options
 
 # ---------------------------------------------------------------------------
 # .onLoad() defaults
