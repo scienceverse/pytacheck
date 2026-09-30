@@ -1,8 +1,29 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
+
+
+@pytest.fixture(scope="session", autouse=True)
+def gradio_dir(tmp_path_factory: pytest.TempPathFactory) -> Iterator[Path]:
+    """Gradio's folder for uploads, for this test process only.
+
+    By default every process shares ``/tmp/gradio``, where an upload is named by its hash,
+    and an app deletes its uploads when it stops: an app in another worker could delete the
+    file a run here is reading. The app itself sets its own folder when it starts.
+    """
+    folder = tmp_path_factory.mktemp("gradio")
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setenv("GRADIO_TEMP_DIR", str(folder))
+        yield folder
+
+
+@pytest.fixture(autouse=True)
+def gradio_dir_again(gradio_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Set for each test too, and so back after it: a launch in this process removes it."""
+    monkeypatch.setenv("GRADIO_TEMP_DIR", str(gradio_dir))
 
 
 @pytest.fixture(autouse=True)

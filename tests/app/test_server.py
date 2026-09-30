@@ -82,9 +82,9 @@ def test_an_uploaded_file_is_checked(client: TestClient) -> None:
 def test_the_report_downloads_from_the_apps_own_folder(client: TestClient) -> None:
     files = {"files": ("paper.json", pc.demofile("json").read_bytes(), "application/json")}
     (path,) = client.post("/gradio_api/upload", files=files).json()
-    _join(client, _check_fn_index(client), path)
+    events = _join(client, _check_fn_index(client), path)
     resp = client.get("/report/t1/paper_report.html")
-    assert resp.status_code == 200
+    assert resp.status_code == 200, events
     assert "attachment" in resp.headers["content-disposition"]
     assert "paper_report.html" in resp.headers["content-disposition"]
     assert resp.headers["content-security-policy"] == "sandbox"
