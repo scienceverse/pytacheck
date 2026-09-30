@@ -2525,11 +2525,14 @@ all = [
     { name = "bibr" },
     { name = "chardet" },
     { name = "fastapi" },
+    { name = "huggingface-hub" },
     { name = "matplotlib" },
+    { name = "onnxruntime" },
     { name = "pypdf" },
     { name = "pyreadstat" },
     { name = "python-multipart" },
     { name = "snowballstemmer" },
+    { name = "tokenizers" },
     { name = "uvicorn", extra = ["standard"] },
     { name = "xlrd" },
 ]
@@ -2546,6 +2549,11 @@ bibr = [
 ]
 charset = [
     { name = "chardet" },
+]
+concepts = [
+    { name = "huggingface-hub" },
+    { name = "onnxruntime" },
+    { name = "tokenizers" },
 ]
 data = [
     { name = "matplotlib" },
@@ -2581,11 +2589,13 @@ requires-dist = [
     { name = "gradio", marker = "extra == 'app'", specifier = ">=6.28,<7" },
     { name = "h2", specifier = ">=4.4.1" },
     { name = "httpx", extras = ["http2"], specifier = ">=0.28.1,<1" },
+    { name = "huggingface-hub", marker = "extra == 'concepts'", specifier = ">=0.30" },
     { name = "lxml", specifier = ">=5.3" },
     { name = "markdown-it-py", specifier = ">=3.0" },
     { name = "matplotlib", marker = "extra == 'data'", specifier = ">=3.8" },
-    { name = "metacheck", extras = ["bibr", "data", "api", "charset"], marker = "extra == 'all'" },
+    { name = "metacheck", extras = ["bibr", "data", "api", "charset", "concepts"], marker = "extra == 'all'" },
     { name = "numpy", specifier = ">=1.26" },
+    { name = "onnxruntime", marker = "extra == 'concepts'", specifier = ">=1.20" },
     { name = "orjson", specifier = ">=3.10" },
     { name = "packaging", specifier = ">=24" },
     { name = "pandas", specifier = ">=3.0" },
@@ -2599,10 +2609,11 @@ requires-dist = [
     { name = "rich", specifier = ">=13.7" },
     { name = "scipy", specifier = ">=1.13" },
     { name = "snowballstemmer", marker = "extra == 'data'", specifier = ">=2.2" },
+    { name = "tokenizers", marker = "extra == 'concepts'", specifier = ">=0.21" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'api'", specifier = ">=0.30" },
     { name = "xlrd", marker = "extra == 'data'", specifier = ">=2.0.1" },
 ]
-provides-extras = ["bibr", "data", "api", "app", "charset", "all"]
+provides-extras = ["bibr", "data", "api", "app", "charset", "concepts", "all"]
 
 [package.metadata.requires-dev]
 dev = [

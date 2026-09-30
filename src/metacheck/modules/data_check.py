@@ -343,6 +343,12 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         "model": "the LLM model name (see `llm_model_list()`) used only when\n`llm_use(TRUE)`",
         "params": "a named list passed to `llm()` (e.g., `list(seed = 123)`),\n"
         "used only when `llm_use(TRUE)`",
+        "concepts": "(pytacheck only) how columns the rules leave without a concept get\n"
+        'one: `"classifier"` (the default: a local multilingual classifier, see\n'
+        '`metacheck.datacheck.concepts`), `"cascade"` (the classifier, with its least\n'
+        'confident columns sent to the LLM under `llm_use(TRUE)`), `"llm"` (metacheck:\n'
+        'the LLM under `llm_use(TRUE)`, else none) or `"rules"`. `NULL` reads the\n'
+        "`metacheck.concepts` option or `METACHECK_CONCEPTS`.",
     },
 )
 def data_check(
@@ -362,6 +368,8 @@ def data_check(
     max_facets: int = h.DV_MAX_FACETS,
     model: str | None = None,
     params: Mapping[str, Any] | None = None,
+    *,
+    concepts: str | None = None,
 ) -> dict[str, Any]:
     """Port of inst/modules/data_check.R::data_check().
 
@@ -379,7 +387,13 @@ def data_check(
     without ``careless``, the report says the check was skipped). The
     distribution figure (``plot_distributions = TRUE``; ggplot2 in R) is
     drawn with matplotlib when it is installed.
+
+    *concepts* (pytacheck only) picks the tier that fills the concepts the rules
+    leave blank; its default, ``"classifier"``, runs a local model where
+    metacheck asks the LLM (``"llm"`` is metacheck's behaviour). See
+    :mod:`metacheck.datacheck.concepts`.
     """
+    from metacheck.datacheck.concepts import concept_mode
     from metacheck.llm.core import llm_use
     from metacheck.module import get_prev_outputs
     from metacheck.utils import match_arg
@@ -400,6 +414,7 @@ def data_check(
             raise ValueError("'arg' should be one of “data”, “all”, “none”")
         download = match_arg(arg, ["data", "all", "none"])
     params = dict(params or {})
+    concept_tier = concept_mode(concepts)
     if model is None:
         from metacheck.llm.core import llm_model
 
@@ -475,6 +490,8 @@ def data_check(
         }
 
     state = _classify(all_files, paper, model, params, llm_use())
+    state["concepts"] = concept_tier
+    state["concept_model_used"] = None
     all_files = state["all_files"]
 
     # -- 2c. download what the checks read ----------------------------------------
@@ -632,6 +649,12 @@ def data_check(
             f"column{plural(ex['llm_col_updates'])}) and assigned study groups "
             f"({n_groups:d} study group{plural(n_groups)} detected)."
         )
+    if state["concept_model_used"] is not None:
+        n_clf = ex["concept_col_updates"]
+        report.append(
+            f"The local concept classifier ('{state['concept_model_used']}') assigned concepts "
+            f"to {n_clf:d} column{plural(n_clf)} the rules left open."
+        )
 
     # -- 6. traffic light + summary table ------------------------------------------
     tl = "na" if n_tabular_all == 0 else "yellow" if n_no_local > 0 else "green"
@@ -668,6 +691,7 @@ def data_check(
             failed=dl["failed_files"],
             zip_peek=dl["zip_peek_reason"],
             model=model,
+            concept_model=state["concept_model_used"],
         )
 
     # == DATA VALIDATION ===========================================================
@@ -1207,7 +1231,13 @@ def _extract(
     previews: dict[str, pd.DataFrame] = {}
     columns_df: pd.DataFrame | None = None
     llm_col_updates = 0
+    concept_col_updates = 0
     n_extracted = 0
+    # the full reads by file basename, before Qualtrics header stripping: the concept
+    # classifier's value sample comes from the first read holding the column (as the
+    # training data was collected)
+    raw_reads: dict[Any, list[pd.DataFrame]] = {}
+    keep_reads = state["concepts"] in ("classifier", "cascade")
 
     if data_rows:
         from metacheck._r import bind_rows
@@ -1223,6 +1253,8 @@ def _extract(
             fname: Any = f.get("file_name")
             loc = str(f["file_location"])
             df = data_read_head(loc, n_rows=math.inf)
+            if df is not None and keep_reads:
+                raw_reads.setdefault(os.path.basename(loc), []).append(df)
             if df is None or df.shape[1] == 0:
                 if h._file_ext(fname) in ("rdata", "rda"):
                     workspace_files.append(fname)
@@ -1243,6 +1275,8 @@ def _extract(
                         df2 = data_read_head(loc, n_rows=math.inf, sheet=sh)
                     except Exception:
                         df2 = None
+                    if df2 is not None and keep_reads:
+                        raw_reads.setdefault(os.path.basename(loc), []).append(df2)
                     if df2 is None or df2.shape[1] == 0:
                         continue
                     cls2, _ = _facets(df2)
@@ -1285,7 +1319,23 @@ def _extract(
             n_tabular_all = sum(is_tab)
             n_no_local = sum(1 for t, hl in zip(is_tab, has_local, strict=True) if t and not hl)
 
-        if len(columns_df) > 0 and llm_use():
+        tier = state["concepts"]
+        clf = None
+        if len(columns_df) > 0 and tier in ("classifier", "cascade"):
+            from metacheck.datacheck.concepts import load_classifier
+
+            clf = load_classifier()
+            if clf is None:
+                tier = "llm"
+        if clf is not None:
+            cascade = tier == "cascade" and llm_use()
+            concept_col_updates, llm_col_updates, model_used = _model_concepts(
+                columns_df, header_sig, raw_reads, clf, cascade, model, params
+            )
+            state["concept_model_used"] = clf.name
+            if model_used is not None and state["llm_model_used"] is None:
+                state["llm_model_used"] = model_used
+        elif len(columns_df) > 0 and llm_use() and tier == "llm":
             llm_col_updates, model_used = _llm_concepts(columns_df, header_sig, model, params)
             if state["llm_model_used"] is None:
                 state["llm_model_used"] = model_used
@@ -1327,15 +1377,15 @@ def _extract(
         "is_tab": is_tab,
         "is_trial": is_trial,
         "llm_col_updates": llm_col_updates,
+        "concept_col_updates": concept_col_updates,
     }
 
 
-def _llm_concepts(
-    columns_df: pd.DataFrame, header_sig: list[str] | None, model: Any, params: dict[str, Any]
-) -> tuple[int, Any]:
-    """The LLM concept tier (in place): fill concepts the rules left blank."""
-    from metacheck.datacheck.files import _llm_classify_batched
-
+def _concept_gaps(
+    columns_df: pd.DataFrame, header_sig: list[str] | None
+) -> tuple[list[bool], list[int]]:
+    """Which rows are in the first file of their header signature, and which of those
+    rows the concept tier reviews (no concept yet, or an ambiguous column)."""
     src = [str(s) for s in columns_df["source_file"].tolist()]
     if header_sig is not None:
         first_file: dict[str, str] = {}
@@ -1347,8 +1397,31 @@ def _llm_concepts(
     concept = [None if h._na(v) else v for v in columns_df["concept"].tolist()]
     ambiguous = [h._is_true(v) for v in columns_df["ambiguous"].tolist()]
     gap_idx = [i for i in range(len(src)) if (concept[i] is None or ambiguous[i]) and rep_file[i]]
+    return rep_file, gap_idx
+
+
+def _llm_concepts(
+    columns_df: pd.DataFrame,
+    header_sig: list[str] | None,
+    model: Any,
+    params: dict[str, Any],
+    only: set[int] | None = None,
+    answers: dict[int, str | None] | None = None,
+) -> tuple[int, Any]:
+    """The LLM concept tier (in place): fill concepts the rules left blank.
+
+    *only* (the cascade) restricts it to those rows and leaves copying the concepts to
+    files with the same header to the caller; *answers* collects the LLM's valid
+    answer per row (``None`` when it gave none).
+    """
+    from metacheck.datacheck.files import _llm_classify_batched
+
+    rep_file, gap_idx = _concept_gaps(columns_df, header_sig)
+    if only is not None:
+        gap_idx = [i for i in gap_idx if i in only]
     if not gap_idx:
         return 0, None
+    concept = [None if h._na(v) else v for v in columns_df["concept"].tolist()]
     cname = columns_df["column_name"].tolist()
     samples = columns_df["sample_values"].tolist()
     isnum = columns_df["is_numeric"].tolist()
@@ -1372,12 +1445,25 @@ def _llm_concepts(
     updates = 0
     for k, i in enumerate(gap_idx):
         v = vals[k]
+        if answers is not None:
+            answers[i] = v
         if v is not None and v not in ("measure", "other") and concept[i] is None:
             concept[i] = v
             updates += 1
     columns_df["concept"] = _str_series(concept)
+    if only is None:
+        _share_concepts(columns_df, header_sig, rep_file)
+    return updates, model_used
+
+
+def _share_concepts(
+    columns_df: pd.DataFrame, header_sig: list[str] | None, rep_file: list[bool]
+) -> None:
+    """Copy the concept and level of each column in the first file of a header signature
+    to the same column of the other files with that signature, where theirs is blank."""
     if header_sig is not None and not all(rep_file):
-        cols = [str(c) for c in cname]
+        src = [str(s) for s in columns_df["source_file"].tolist()]
+        cols = [str(c) for c in columns_df["column_name"].tolist()]
         key = [f"{sg}\r{c}" for sg, c in zip(header_sig, cols, strict=True)]
         rep_pos: dict[str, int] = {}
         for pos, (kk, r) in enumerate(zip(key, rep_file, strict=True)):
@@ -1393,7 +1479,113 @@ def _llm_concepts(
                 if j is not None and vals_f[j] is not None:
                     new[i] = vals_f[j]
             columns_df[facet] = _str_series(new)
-    return updates, model_used
+
+
+def _model_concepts(
+    columns_df: pd.DataFrame,
+    header_sig: list[str] | None,
+    raw_reads: Mapping[Any, Sequence[pd.DataFrame]],
+    clf: Any,
+    cascade: bool,
+    model: Any,
+    params: dict[str, Any],
+) -> tuple[int, int, Any]:
+    """The local classifier's concept tier (in place; pytacheck only).
+
+    It fills the blanks the LLM tier would review; ``measure`` and ``other`` leave a
+    concept blank, as they do from the LLM. With *cascade* the rows below the confidence
+    threshold go to the LLM, and keep the classifier's answer where the LLM gives none.
+    Returns the columns the classifier filled, those the LLM filled and the LLM's model.
+    """
+    from metacheck.datacheck.concepts import concept_threshold
+
+    rep_file, gap_idx = _concept_gaps(columns_df, header_sig)
+    if not gap_idx:
+        return 0, 0, None
+    concept = [None if h._na(v) else v for v in columns_df["concept"].tolist()]
+    todo = [i for i in gap_idx if concept[i] is None]
+    preds = clf.predict(_concept_texts(columns_df, todo, raw_reads))
+    threshold = concept_threshold() if cascade else None
+    low: dict[int, str] = {}
+    n_clf = 0
+    for i, (label, conf) in zip(todo, preds, strict=True):
+        if threshold is not None and conf < threshold:
+            low[i] = label
+        elif label not in ("measure", "other"):
+            concept[i] = label
+            n_clf += 1
+    columns_df["concept"] = _str_series(concept)
+    n_llm, model_used = 0, None
+    if low:
+        answers: dict[int, str | None] = {}
+        n_llm, model_used = _llm_concepts(
+            columns_df, header_sig, model, params, only=set(low), answers=answers
+        )
+        concept = [None if h._na(v) else v for v in columns_df["concept"].tolist()]
+        for i, label in low.items():
+            if answers.get(i) is None and concept[i] is None and label not in ("measure", "other"):
+                concept[i] = label
+                n_clf += 1
+        columns_df["concept"] = _str_series(concept)
+    _share_concepts(columns_df, header_sig, rep_file)
+    return n_clf, n_llm, model_used
+
+
+def _concept_texts(
+    columns_df: pd.DataFrame, rows: Sequence[int], raw_reads: Mapping[Any, Sequence[pd.DataFrame]]
+) -> list[str]:
+    """The concept classifier's input for *rows* of the column table."""
+    from metacheck.datacheck.concepts import concept_text
+
+    n = len(columns_df)
+    src = columns_df["source_file"].tolist()
+    names = [None if h._na(c) else str(c) for c in columns_df["column_name"].tolist()]
+    in_file: dict[Any, list[int]] = {}
+    for i, f in enumerate(src):
+        in_file.setdefault(None if h._na(f) else f, []).append(i)
+    pos = {i: k for idx in in_file.values() for k, i in enumerate(idx)}
+    stat = {
+        k: columns_df[k].tolist() if k in columns_df.columns else [None] * n
+        for k in ("n", "n_missing", "n_unique", "min", "max", "mean", "sd")
+    }
+    rep = columns_df["representation"].tolist()
+    isnum = columns_df["is_numeric"].tolist()
+    samples = columns_df["sample_values"].tolist()
+    texts = []
+    for i in rows:
+        f = None if h._na(src[i]) else src[i]
+        sib = [str(names[r]) for r in in_file[f]]
+        k = pos[i]
+        stats: dict[str, Any] = {key: None if h._na(v[i]) else v[i] for key, v in stat.items()}
+        r = None if h._na(rep[i]) else rep[i]
+        # the representation data_check reports (blank ones become numeric/text afterwards)
+        stats["representation"] = (
+            r if r is not None else ("numeric" if h._is_true(isnum[i]) else "text")
+        )
+        texts.append(
+            concept_text(
+                h._dquote_free(names[i]),
+                None if f is None else str(f),
+                sib[max(0, k - 3) : k] + sib[k + 1 : k + 3],
+                stats,
+                _raw_values(raw_reads.get(os.path.basename(str(f))), names[i]),
+                h._dquote_free(None if h._na(samples[i]) else samples[i]),
+            )
+        )
+    return texts
+
+
+def _raw_values(frames: Sequence[pd.DataFrame] | None, name: str | None) -> list[str] | None:
+    """The value sample of column *name* from the first full read that has it."""
+    from metacheck.datacheck.concepts import sample_values
+
+    if not frames or name is None:
+        return None
+    for df in frames:
+        for j, c in enumerate(df.columns):
+            if str(c) == name:
+                return sample_values(h.col_chr(df, j))
+    return None
 
 
 # -----------------------------------------------------------------------------

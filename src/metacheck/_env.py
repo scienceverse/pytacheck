@@ -89,6 +89,11 @@ ENV_VARS: dict[str, EnvVar] = {
     "APP_JOB_TIMEOUT": EnvVar(("METACHECK_APP_JOB_TIMEOUT",)),
     "APP_TOKENS": EnvVar(("METACHECK_APP_TOKENS",), secret=True),
     "APP_USER_HEADER": EnvVar(("METACHECK_APP_USER_HEADER",)),
+    # data_check's local concept classifier: new, so no old names
+    "CONCEPTS": EnvVar(("METACHECK_CONCEPTS",)),
+    "CONCEPT_MODEL": EnvVar(("METACHECK_CONCEPT_MODEL",)),
+    "CONCEPT_THREADS": EnvVar(("METACHECK_CONCEPT_THREADS",)),
+    "CONCEPT_THRESHOLD": EnvVar(("METACHECK_CONCEPT_THRESHOLD",)),
 }
 
 #: the keys whose clash was logged (once per process and key), and what guards it

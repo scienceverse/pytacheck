@@ -79,7 +79,10 @@ api = [
 app = ["gradio>=6.28,<7"]
 # Character-set detection for files that are not UTF-8 (chardet, 0BSD since 7.0).
 charset = ["chardet>=7"]
-all = ["metacheck[bibr,data,api,charset]"]
+# data_check's local column-concept classifier (an int8 ONNX model, ~540 MB,
+# downloaded once from the Hugging Face Hub; see metacheck.datacheck.concepts).
+concepts = ["onnxruntime>=1.20", "tokenizers>=0.21", "huggingface-hub>=0.30"]
+all = ["metacheck[bibr,data,api,charset,concepts]"]
 
 [project.urls]
 Homepage = "https://github.com/scienceverse/pytacheck"
@@ -216,5 +219,5 @@ strict_equality = true
 disallow_untyped_defs = false
 
 [[tool.mypy.overrides]]
-module = ["scipy.*", "pyreadstat.*", "odf.*", "xlrd.*", "bibr.*", "respx.*", "yaml.*", "snowballstemmer.*"]
+module = ["scipy.*", "pyreadstat.*", "odf.*", "xlrd.*", "bibr.*", "respx.*", "yaml.*", "snowballstemmer.*", "onnxruntime.*"]
 ignore_missing_imports = true

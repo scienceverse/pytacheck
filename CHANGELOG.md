@@ -24,6 +24,25 @@ package's. The R commit each release is compared against is in
 - **Logging:** handlers on the `metacheck` logger now receive the package's records; the records are still named `pytacheck` and `pytacheck.api`, so existing logging setups keep working.
 - **Kept:** the `pytacheck` folder names; installed packs keep their `.pytacheck-install.json` record, and pack modules keep their internal `pytacheck_packs` names, so packs installed by either version stay valid in the other.
 
+### Added: a local concept classifier for data_check
+
+- `data_check` fills the column concepts its rules leave blank with a local,
+  multilingual classifier (XLM-RoBERTa-large fine-tuned on 108k LLM-labelled
+  columns, ONNX with 8-bit weights, ~840 MB, downloaded once from the Hugging
+  Face Hub), instead of leaving them to the LLM tier (D33). It runs offline in
+  ~0.1 s per column on eight CPU threads and ~2 GB of memory; held out, it scores
+  F1 0.795 on ResearchBox and 0.736-0.761 on OSF/GitHub/Zenodo repositories,
+  against 0.784 / 0.740 for Muse Spark 1.3 on metacheck's prompt. Install it with
+  `pip install "metacheck[concepts]"` (also in `[all]`); without it `data_check` behaves as metacheck.
+- `concepts=` (option `metacheck.concepts`, `METACHECK_CONCEPTS`) picks the tier:
+  `"classifier"` (default), `"cascade"` (the columns the classifier is least
+  sure of go to the LLM under `llm_use(TRUE)`; threshold
+  `metacheck.concepts.threshold` / `METACHECK_CONCEPT_THRESHOLD`, default 0.92),
+  `"llm"` (metacheck's behaviour) or `"rules"`. `metacheck.concepts.model` /
+  `METACHECK_CONCEPT_MODEL` loads another model (a directory or `repo@revision`), and
+  `METACHECK_CONCEPT_THREADS` sets its threads. These are new, so they have only
+  `METACHECK_*` names, and the options have no `pytacheck.*` spelling.
+
 ### bibr server client
 
 - `convert_bibr(backend="bibr")` and `convert()` (with `BIBR_URL` and `BIBR_API_KEY`) use bibr serve's job API and the hosted service in front of it: submit to `/papers/jobs`, poll, fetch the result, honour `Retry-After` on a 429 (bounded), read a 409 on the result as not ready, explain 401/403/413/415, and never send the token over plain http except to localhost or across a redirect. `"selfhosted"` now sends the token and waits out a 429; the readiness check accepts an anonymous bibr serve (docs/BIBR.md section 3, docs/UPSTREAM_ISSUES.md D59).

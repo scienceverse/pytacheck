@@ -23,7 +23,8 @@ rather than copied, and nothing invented ([the accuracy contract](https://github
 ```bash
 pip install "metacheck>=0.4.0a1"           # core: bibr JSON / Grobid XML input
 pip install "metacheck[bibr]>=0.4.0a1"     # + extract PDF/DOCX/HTML with bibr, in-process
-pip install "metacheck[all]>=0.4.0a1"      # + bibr, data-file readers, REST API, charset detection
+pip install "metacheck[concepts]>=0.4.0a1" # + data_check's offline column-concept classifier
+pip install "metacheck[all]>=0.4.0a1"      # + bibr, data-file readers, REST API, charset detection, concepts
 ```
 
 The package is on PyPI as `metacheck` and is a pre-release for now, so the
@@ -46,6 +47,12 @@ On a Mac or Linux:
 ```bash
 curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh
 ```
+
+With `metacheck[concepts]`, `data_check` gives concepts (reaction time, age, Likert
+item, condition, ...) to the columns its rules leave blank with a local multilingual
+classifier (downloaded once, ~840 MB; ~2 GB of memory) rather than an LLM. `concepts="cascade"` sends
+the columns it is unsure of to the LLM, and `concepts="llm"` is metacheck's behaviour
+(see D33 in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md)).
 
 Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/scienceverse/pytacheck run paper.json -m all_p_values`.
 

@@ -89,6 +89,13 @@ def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("PYTACHECK_NO_SLEEP", "1")
 
 
+@pytest.fixture(autouse=True)
+def _concepts_as_metacheck(monkeypatch: pytest.MonkeyPatch) -> None:
+    """data_check's concepts come from metacheck's rules/LLM tier, not the local
+    classifier (a model download); tests/datacheck_concepts opts back in."""
+    monkeypatch.setenv("METACHECK_CONCEPTS", "llm")
+
+
 # -- hygiene: a test not marked `network` never reaches the internet ---------------
 #
 # A request a test forgets to mock goes out for real, and the offline suite
