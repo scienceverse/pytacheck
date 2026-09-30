@@ -28,6 +28,8 @@ from typing import Any
 
 import platformdirs
 
+from metacheck._env import env_get, env_lookup, env_names
+
 __all__ = [
     "BUILTIN_STORE",
     "BUILTIN_STORE_URL",
@@ -56,18 +58,14 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 def email(address: str | None = None) -> str | None:
     """Get or set the contact email sent to polite APIs (Crossref, OpenAlex).
 
-    Reads ``PYTACHECK_EMAIL`` or ``METACHECK_EMAIL`` when unset.
+    Reads ``METACHECK_EMAIL`` or ``PYTACHECK_EMAIL`` when unset.
     """
     if address is not None:
         if not _EMAIL_RE.match(address):
             raise ValueError(f"{address!r} does not look like an email address")
         _state["email"] = address
         return address
-    value = (
-        _state.get("email")
-        or os.environ.get("PYTACHECK_EMAIL")
-        or os.environ.get("METACHECK_EMAIL")
-    )
+    value = _state.get("email") or env_get("EMAIL")
     return str(value) if value else None
 
 
@@ -114,21 +112,20 @@ def verbose(value: Any = None) -> bool:
         _state["verbose"] = flag
     if "verbose" in _state:
         return bool(_state["verbose"])
-    env = os.environ.get("PYTACHECK_VERBOSE")
+    env = env_get("VERBOSE")
     return env.lower() not in ("0", "false", "no") if env else True
 
 
 def cache_dir(subdir: str = "", override: str | os.PathLike[str] | None = None) -> Path:
     """A cache directory (created on demand).
 
-    Root: ``PYTACHECK_CACHE_DIR`` or the platform user cache directory.
+    Root: ``METACHECK_CACHE_DIR`` (or ``PYTACHECK_CACHE_DIR``) or the platform user
+    cache directory.
     """
     if override is not None:
         path = Path(override)
     else:
-        root = os.environ.get("PYTACHECK_CACHE_DIR") or platformdirs.user_cache_dir(
-            "pytacheck", "scienceverse"
-        )
+        root = env_get("CACHE_DIR") or platformdirs.user_cache_dir("pytacheck", "scienceverse")
         path = Path(root) / subdir if subdir else Path(root)
     path.mkdir(parents=True, exist_ok=True)
     return path
@@ -156,7 +153,12 @@ BUILTIN_STORE = "pytacheck"
 BUILTIN_STORE_URL = "https://github.com/scienceverse/pytacheck-modules"
 PROJECT_CONFIG = "pytacheck.json"
 _SECTIONS = ("stores", "packs", "presets")
-_ENV_KEYS = ("PYTACHECK_CONFIG", "PYTACHECK_DATA_DIR", "PYTACHECK_STORE_URL", "PYTACHECK_PRESET")
+_ENV_KEYS = (
+    *env_names("CONFIG"),
+    *env_names("DATA_DIR"),
+    *env_names("STORE_URL"),
+    *env_names("PRESET"),
+)
 TRUST_FILE = "trusted.json"
 _config_cache: dict[str, Any] = {}
 _writes = 0  # bumped by update_config(): mtime_ns alone can miss rapid rewrites
@@ -176,9 +178,10 @@ class ConfigError(ValueError):
 def data_dir(subdir: str = "", *, create: bool = False) -> Path:
     """Where installed packs and store indexes live.
 
-    ``PYTACHECK_DATA_DIR`` or ``platformdirs.user_data_dir("pytacheck")``.
+    ``METACHECK_DATA_DIR`` (or ``PYTACHECK_DATA_DIR``) or
+    ``platformdirs.user_data_dir("pytacheck")``.
     """
-    root = Path(os.environ.get("PYTACHECK_DATA_DIR") or platformdirs.user_data_dir("pytacheck"))
+    root = Path(env_get("DATA_DIR") or platformdirs.user_data_dir("pytacheck"))
     path = root / subdir if subdir else root
     if create:
         path.mkdir(parents=True, exist_ok=True)
@@ -238,13 +241,21 @@ def _unsafe(path: Path) -> str | None:
     return None
 
 
+def _config_env() -> tuple[str, str]:
+    """``(name, value)`` of ``METACHECK_CONFIG`` or ``PYTACHECK_CONFIG`` (stripped),
+    or ``("", "")`` when neither is set to a non-blank value."""
+    hit = env_lookup("CONFIG")
+    return (hit[0], hit[1].strip()) if hit is not None else ("", "")
+
+
 def config_files() -> list[tuple[str, Path]]:
     """``(scope, path)`` of the config files in effect, lowest precedence first.
 
     Scopes are ``"user"`` and ``"project"``, or ``"env"`` for the single file
-    named by ``PYTACHECK_CONFIG`` (listed even when it does not exist yet).
+    named by ``METACHECK_CONFIG`` or ``PYTACHECK_CONFIG`` (listed even when it
+    does not exist yet).
     """
-    env = os.environ.get("PYTACHECK_CONFIG", "").strip()
+    env = _config_env()[1]
     if env:
         if env.lower() == "none":
             return []
@@ -464,7 +475,8 @@ def load_config() -> Config:
     Scalars: the higher scope wins. ``stores``, ``packs`` and ``presets`` are
     merged by key; ``null`` removes an entry and ``false`` hides a dist pack.
     Relative paths are resolved against the file that holds them. The store
-    ``pytacheck`` is built in; ``PYTACHECK_STORE_URL`` overrides its URL.
+    ``pytacheck`` is built in; ``METACHECK_STORE_URL`` (or ``PYTACHECK_STORE_URL``)
+    overrides its URL.
     Project entries that run local code the user has not trusted
     (:func:`trust_local`) are left out and listed in ``Config.untrusted``.
     A project file's ``stores`` are ignored, with a warning: a cloned
@@ -520,10 +532,10 @@ def load_config() -> Config:
             else:
                 values[key] = value
                 sources[key] = where
-    url = os.environ.get("PYTACHECK_STORE_URL")
-    if url:
-        values["stores"][BUILTIN_STORE] = url
-        sources[f"stores.{BUILTIN_STORE}"] = ("env", "PYTACHECK_STORE_URL")
+    hit = env_lookup("STORE_URL")
+    if hit is not None:
+        values["stores"][BUILTIN_STORE] = hit[1]
+        sources[f"stores.{BUILTIN_STORE}"] = ("env", hit[0])
     config = Config(values=values, sources=sources, files=files, stamp=stamp, untrusted=untrusted)
     _config_cache["config"] = config
     return config
@@ -531,9 +543,9 @@ def load_config() -> Config:
 
 def config_path(scope: str = "user") -> Path:
     """The file :func:`update_config` writes for *scope* (``"user"`` or ``"project"``)."""
-    env = os.environ.get("PYTACHECK_CONFIG", "").strip()
+    name, env = _config_env()
     if env.lower() == "none":
-        raise ConfigError("Config files are disabled (PYTACHECK_CONFIG=none)")
+        raise ConfigError(f"Config files are disabled ({name}=none)")
     if env:
         return Path(env).expanduser().absolute()
     if scope == "user":
@@ -548,9 +560,9 @@ def update_config(scope: str, fn: Callable[[dict[str, Any]], dict[str, Any] | No
 
     *fn* receives the file's current content (``{}`` when it does not exist)
     and may change it in place or return a replacement. With
-    ``PYTACHECK_CONFIG=<file>`` every scope writes that file. Local code that
-    this edit adds to a project file is trusted (the user added it); code the
-    file already named keeps its trust status.
+    ``METACHECK_CONFIG=<file>`` (or ``PYTACHECK_CONFIG``) every scope writes that
+    file. Local code that this edit adds to a project file is trusted (the user
+    added it); code the file already named keeps its trust status.
     """
     global _writes
     path = config_path(scope)
@@ -561,8 +573,9 @@ def update_config(scope: str, fn: Callable[[dict[str, Any]], dict[str, Any] | No
         data = result
     if not isinstance(data, dict):
         raise ConfigError("update_config(): the new config must be a dict")
-    # a project file's stores are ignored, so they need no check (unless PYTACHECK_CONFIG names it)
-    own_project = scope == "project" and not os.environ.get("PYTACHECK_CONFIG", "").strip()
+    # a project file's stores are ignored, so they need no check (unless METACHECK_CONFIG
+    # or PYTACHECK_CONFIG names it)
+    own_project = scope == "project" and not _config_env()[1]
     _check_section(data, path, skip=("stores",) if own_project else ())
     path.parent.mkdir(parents=True, exist_ok=True)
     try:

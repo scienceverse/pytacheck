@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from metacheck._env import env_names
 from metacheck.config import (
     BUILTIN_STORE_URL,
     ConfigError,
@@ -19,8 +20,12 @@ from metacheck.config import (
     load_config,
     project_config_path,
     trust_local,
+    trusted_local,
     update_config,
 )
+
+#: the settings whose variables config_stamp() stamps
+_ENV_KEY_SETTINGS = ("CONFIG", "DATA_DIR", "STORE_URL", "PRESET")
 
 
 @pytest.fixture
@@ -285,3 +290,60 @@ def test_hermetic_defaults_in_the_test_suite() -> None:
     assert os.environ.get("PYTACHECK_CONFIG")
     assert os.environ.get("PYTACHECK_DATA_DIR")
     assert data_dir() != Path(platformdirs.user_data_dir("pytacheck"))
+
+
+# -- the METACHECK_ names of the config variables, and the API key (RENAME-3) --------------
+
+
+@pytest.mark.parametrize("name", [n for k in _ENV_KEY_SETTINGS for n in env_names(k)])
+def test_the_stamp_follows_each_config_variable_alone(monkeypatch, name) -> None:
+    # "NONE" and "None" both disable the files, so only the variable's own value can move it
+    monkeypatch.setenv("PYTACHECK_CONFIG", "none")
+    before = config_stamp()
+    monkeypatch.setenv(name, "NONE")
+    first = config_stamp()
+    monkeypatch.setenv(name, "None")
+    assert len({before, first, config_stamp()}) == 3
+
+
+@pytest.mark.parametrize("name", env_names("CONFIG"))
+def test_a_file_named_by_either_config_variable_is_the_users_own(
+    scopes, monkeypatch, tmp_path, name
+) -> None:
+    # the stores check runs and no code is trusted, exactly as for the old name
+    monkeypatch.setenv("PYTACHECK_DATA_DIR", str(tmp_path / "data"))
+    only = tmp_path / "only.json"
+    monkeypatch.setenv(name, str(only))
+    pack = tmp_path / "mypack"
+    pack.mkdir()
+    with pytest.raises(ConfigError, match=r"stores\.x must be"):
+        update_config("project", lambda c: {"stores": {"x": 1}})
+    lab = "https://github.com/lab/store"
+    path = update_config(
+        "project", lambda c: {"stores": {"lab": lab}, "packs": {"mine": {"path": str(pack)}}}
+    )
+    assert path == only
+    assert trusted_local() == frozenset()
+    config = load_config()
+    assert config.files == (("env", only),)
+    assert config.stores["lab"] == lab
+    assert config.packs["mine"]["path"] == str(pack)
+    assert not config.untrusted
+
+
+def test_serve_refuses_a_short_new_api_key_next_to_a_valid_old_one(monkeypatch, capsys) -> None:
+    pytest.importorskip("fastapi")
+    uvicorn = pytest.importorskip("uvicorn")
+    from metacheck.api.app import ApiConfigError, api_key
+    from metacheck.cli import main
+
+    served: list[dict] = []
+    monkeypatch.setattr(uvicorn, "run", lambda *a, **kw: served.append(kw))
+    monkeypatch.setenv("PYTACHECK_API_KEY", "k" * 32)
+    monkeypatch.setenv("METACHECK_API_KEY", "s" * 10)
+    with pytest.raises(ApiConfigError, match=r"^METACHECK_API_KEY has 10 characters"):
+        api_key()
+    assert main(["serve", "--behind-authenticating-proxy"]) == 1
+    assert served == []
+    out = capsys.readouterr()
+    assert "METACHECK_API_KEY has 10 characters" in " ".join((out.out + out.err).split())

@@ -1,8 +1,9 @@
 """GitHub credentials for stores and packs: which token, which hosts, and requests carrying it.
 
 A private store (or pack repository) on GitHub is read with a token from the
-environment: ``PYTACHECK_GITHUB_TOKEN``, then ``GH_TOKEN``, then
-``GITHUB_TOKEN`` (the first one that is set and not empty). The token
+environment: ``METACHECK_GITHUB_TOKEN``, then ``PYTACHECK_GITHUB_TOKEN``, then
+``GH_TOKEN``, then ``GITHUB_TOKEN`` (the first one that is set and not empty). The
+token
 
 * goes only as ``Authorization: Bearer`` over https to ``api.github.com``,
   ``github.com``, ``raw.githubusercontent.com`` and ``codeload.github.com``
@@ -46,6 +47,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 from urllib.parse import unquote_plus, urlsplit, urlunsplit
 
+from metacheck._env import env_lookup, env_names
 from metacheck.packs.manifest import PackError
 
 if TYPE_CHECKING:
@@ -72,7 +74,7 @@ __all__ = [
 ]
 
 #: environment variables read for a GitHub token, in order
-TOKEN_VARS = ("PYTACHECK_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN")
+TOKEN_VARS = env_names("GITHUB_TOKEN")
 #: the only hosts a token is ever sent to (https, default port, exact match)
 TOKEN_HOSTS = frozenset(
     {"api.github.com", "github.com", "raw.githubusercontent.com", "codeload.github.com"}
@@ -119,16 +121,14 @@ _lock = threading.Lock()
 
 def token_var() -> str | None:
     """The name of the variable a GitHub token is read from (never its value), if any."""
-    for var in TOKEN_VARS:
-        if os.environ.get(var, "").strip():
-            return var
-    return None
+    hit = env_lookup("GITHUB_TOKEN")
+    return hit[0] if hit is not None else None
 
 
 def github_token() -> str | None:
-    """The GitHub token: ``PYTACHECK_GITHUB_TOKEN``, ``GH_TOKEN`` or ``GITHUB_TOKEN``."""
-    var = token_var()
-    return os.environ[var].strip() if var else None
+    """The GitHub token: the first of :data:`TOKEN_VARS` that is set and not blank."""
+    hit = env_lookup("GITHUB_TOKEN")
+    return hit[1].strip() if hit is not None else None
 
 
 def may_send_token(url: str) -> bool:

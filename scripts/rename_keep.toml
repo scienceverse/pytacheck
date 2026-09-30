@@ -113,13 +113,6 @@ why = "pytacheck stays a reserved pack name"
 
 [[rule]]
 action = "keep"
-files = "src/metacheck/config.py"
-match = '^\s*"pytacheck", "scienceverse"$'
-count = 1
-why = "platformdirs cache folder name (call split over lines); RENAME-3"
-
-[[rule]]
-action = "keep"
 files = "tests/app/test_launch.py"
 match = '"state" / "pytacheck"'
 count = 1
