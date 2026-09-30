@@ -2,8 +2,8 @@
 
 A store is data only: listing, searching and showing never run pack code.
 The default store ``pytacheck`` is ``https://github.com/scienceverse/pytacheck-modules``;
-the user config can add others or remove it, a project's ``pytacheck.json`` cannot
-(see ``docs/MODULES.md``).
+the user config can add others or remove it, a project file (``metacheck.json`` or
+``pytacheck.json``) cannot (see ``docs/MODULES.md``).
 
 Where the index is read from:
 

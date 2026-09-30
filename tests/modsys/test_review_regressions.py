@@ -503,7 +503,7 @@ def test_init_project_pins_packs_already_installed_for_the_user(
     assert main(["init", "--preset", "fields::psychology", "--yes"]) == 0
     assert "fields" in json.loads(user.read_text())["packs"]
     assert main(["init", "--preset", "fields::psychology", "--project", "--yes"]) == 0
-    lock = json.loads((project / "pytacheck.json").read_text())
+    lock = json.loads((project / "metacheck.json").read_text())
     assert lock["preset"] == "fields::psychology"
     assert lock["packs"]["fields"] == json.loads(user.read_text())["packs"]["fields"]
     # a teammate: no user config, an empty data dir, the same project folder
@@ -519,7 +519,7 @@ def test_project_path_packs_are_pinned_relative(scoped, ms) -> None:
     _user, project = scoped
     author = ms.pack(project.parent / "author" / "docpack", "docpack", {"m": mod_src("m")})
     assert main(["pack", "install", "../author/docpack", "--project", "--yes"]) == 0
-    lock = json.loads((project / "pytacheck.json").read_text())
+    lock = json.loads((project / "metacheck.json").read_text())
     assert lock["packs"]["docpack"] == {"path": "../author/docpack"}
     assert load_config().packs["docpack"]["path"] == str(author.resolve())
 

@@ -136,9 +136,18 @@ def cache_dir(subdir: str = "", override: str | os.PathLike[str] | None = None) 
 # ---------------------------------------------------------------------------
 #
 # Config is JSON. Scopes, lowest precedence first: built-in defaults, the
-# user file (``<user_config_dir>/config.json``), the project file (nearest
-# ``pytacheck.json`` at or above the working directory). ``PYTACHECK_CONFIG``
-# names the only file to read, or ``none`` for no files (hermetic runs).
+# user file (``<user_config_dir>/config.json``), the project file (the nearest
+# ``metacheck.json`` or ``pytacheck.json`` at or above the working directory;
+# in one folder ``metacheck.json`` is used, and the files are never merged).
+# ``METACHECK_CONFIG`` (or ``PYTACHECK_CONFIG``) names the only file to read,
+# or ``none`` for no files (hermetic runs).
+#
+# The search passes over a file that is not a project file (a JSON value that
+# is not an object, or an object with none of the project keys), such as saved
+# ``check --json`` results: it is never read as settings. It also passes over a
+# blank ``metacheck.json``, silently: ``metacheck check --json > metacheck.json``
+# creates the file empty before the command runs. (A blank ``pytacheck.json``
+# still counts, as it did in 0.4.0a1.)
 #
 # A project file comes with the folder it is in, which may be a shared folder
 # or a cloned repository, so it is not trusted like the user's own config:
@@ -147,12 +156,18 @@ def cache_dir(subdir: str = "", override: str | os.PathLike[str] | None = None) 
 # user has trusted that code (``trust_local()``; ``pack install`` asks). It
 # cannot set ``stores`` at all: a store decides where packs come from, so a
 # project's stores are ignored with a warning and stores come from the user
-# file (or the file ``PYTACHECK_CONFIG`` names) only.
+# file (or the file ``METACHECK_CONFIG`` or ``PYTACHECK_CONFIG`` names) only.
+# These rules follow the scope, never the file name.
 
 BUILTIN_STORE = "pytacheck"
 BUILTIN_STORE_URL = "https://github.com/scienceverse/pytacheck-modules"
-PROJECT_CONFIG = "pytacheck.json"
+#: the project file created when none exists
+PROJECT_CONFIG = "metacheck.json"
+#: the project file names searched, in this order, in each folder
+PROJECT_CONFIGS = (PROJECT_CONFIG, "pytacheck.json")
 _SECTIONS = ("stores", "packs", "presets")
+#: a non-empty JSON object with none of these keys is not a project file
+_PROJECT_KEYS = ("preset", *_SECTIONS)
 _ENV_KEYS = (
     *env_names("CONFIG"),
     *env_names("DATA_DIR"),
@@ -169,6 +184,15 @@ _writes = 0  # bumped by update_config(): mtime_ns alone can miss rapid rewrites
 _RACY_NS = 3_000_000_000
 _warned_unsafe: set[tuple[str, str]] = set()
 _warned_stores: set[str] = set()
+_warned_both: set[str] = set()
+_warned_not_project: set[str] = set()
+#: path -> (its _candidate_stamp, _file_kind()): a large results file is read
+#: once, not at every config_stamp()
+_verdicts: dict[str, tuple[tuple[int, int, str | None], str]] = {}
+#: the most a candidate's verdict (or the digest in its stamp) reads: the search
+#: runs before _unsafe(), so a file planted in a shared folder must not be read
+#: in full; above this, the first non-blank byte decides
+_VERDICT_CAP = 64 * 1024 * 1024
 
 
 class ConfigError(ValueError):
@@ -194,10 +218,111 @@ def user_config_path() -> Path:
 
 
 def project_config_path(start: str | os.PathLike[str] | None = None) -> Path | None:
-    """The nearest ``pytacheck.json`` at or above *start* (default: the cwd).
+    """The nearest project file at or above *start* (default: the cwd).
 
-    The search does not go above the home folder, nor into another filesystem.
+    In each folder ``metacheck.json`` is looked for first, then ``pytacheck.json``;
+    the nearest folder that holds either wins. A file that is not a project file,
+    and a blank ``metacheck.json``, are passed over. The search does not go above
+    the home folder, nor into another filesystem.
     """
+    return _project_search(start)[0]
+
+
+def _read_head(path: Path) -> bytes | None:
+    """The first ``_VERDICT_CAP + 1`` bytes of *path*, or ``None`` when it cannot be
+    opened or is not a regular file (a FIFO is opened without blocking and not read)."""
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_NONBLOCK", 0)
+        | getattr(os, "O_NOCTTY", 0)
+        | getattr(os, "O_BINARY", 0)
+    )
+    try:
+        fd = os.open(path, flags)
+    except OSError:
+        return None
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            return None
+        with os.fdopen(fd, "rb") as fh:
+            fd = -1  # the file object closes it
+            return fh.read(_VERDICT_CAP + 1)
+    except OSError:
+        return None
+    finally:
+        if fd >= 0:
+            os.close(fd)
+
+
+def _file_kind(path: Path) -> str:
+    """``"blank"``, ``"other"`` (JSON that is not a project file) or ``"project"``.
+
+    Only what the search needs is read (:data:`_VERDICT_CAP`). A file that cannot
+    be read, or is not UTF-8 or not valid JSON, is ``"project"``: reading it as
+    settings (after :func:`_unsafe`) reports the error, as before.
+    """
+    head = _read_head(path)
+    if head is None:
+        return "project"
+    if len(head) > _VERDICT_CAP:  # too large to parse here: the first byte decides
+        first = head.lstrip(b" \t\r\n\x0b\x0c")[:1]
+        return "other" if first and first != b"{" else "project"
+    try:
+        text = head.decode("utf-8")
+    except UnicodeDecodeError:
+        return "project"
+    if not text.strip():
+        return "blank"
+    try:
+        data = json.loads(text)
+    except (ValueError, RecursionError):
+        return "project"  # a typo in a real project file still gives its error
+    if not isinstance(data, dict):
+        return "other"
+    return "other" if data and not any(key in data for key in _PROJECT_KEYS) else "project"
+
+
+def _candidate_stamp(path: Path, now: int) -> tuple[int, int, str | None] | None:
+    """:func:`_file_stamp` for a file the search looks at: its digest covers at most
+    :data:`_VERDICT_CAP` + 1 bytes, and only of a regular file."""
+    try:
+        st = path.stat()
+    except OSError:
+        return None
+    digest = None
+    if now - st.st_mtime_ns < _RACY_NS:
+        head = _read_head(path)
+        if head is not None:
+            digest = hashlib.sha256(head).hexdigest()
+    return (st.st_mtime_ns, st.st_size, digest)
+
+
+def _verdict(path: Path, now: int) -> str:
+    """:func:`_file_kind` of *path*, kept until the file's stamp changes."""
+    stamp = _candidate_stamp(path, now)
+    if stamp is None:
+        return "project"
+    cached = _verdicts.get(str(path))
+    if cached is not None and cached[0] == stamp:
+        return cached[1]
+    kind = _file_kind(path)
+    _verdicts[str(path)] = (stamp, kind)
+    return kind
+
+
+def _project_search(
+    start: str | os.PathLike[str] | None = None,
+) -> tuple[Path | None, tuple[Path, ...]]:
+    """``(the project file found or None, the files passed over)``, in search order.
+
+    See :func:`project_config_path`. A candidate is passed over when it parses as
+    JSON and is either not an object or a non-empty object with none of
+    ``preset``, ``stores``, ``packs`` and ``presets`` (with a warning), or when it
+    is a blank ``metacheck.json`` (silently). ``{}``, invalid JSON and a blank
+    ``pytacheck.json`` count as project files. With both names in the folder
+    found, ``metacheck.json`` is used and the other is ignored with a warning.
+    """
+    now = time.time_ns()  # before the stats: later writes get a later mtime
     here = Path(start) if start is not None else Path.cwd()
     try:
         home: Path | None = Path.home().resolve()
@@ -206,11 +331,33 @@ def project_config_path(start: str | os.PathLike[str] | None = None) -> Path | N
     try:
         device = here.stat().st_dev
     except OSError:
-        return None
+        return None, ()
+    passed: list[Path] = []
     for folder in (here, *here.parents):
-        candidate = folder / PROJECT_CONFIG
-        if candidate.is_file():
-            return candidate
+        for name in PROJECT_CONFIGS:
+            candidate = folder / name
+            if not candidate.is_file():
+                continue
+            kind = _verdict(candidate, now)
+            if kind == "blank" and name == PROJECT_CONFIG:
+                passed.append(candidate)  # made by a shell redirect, say: silently
+                continue
+            if kind == "other":
+                passed.append(candidate)
+                if str(candidate) not in _warned_not_project:
+                    _warned_not_project.add(str(candidate))
+                    warnings.warn(
+                        f"Ignoring {candidate}: it is not a metacheck project file "
+                        "(it has no preset, stores, packs or presets)",
+                        stacklevel=2,
+                    )
+                continue
+            # no merging: two files in one folder would be two trust surfaces
+            old = folder / PROJECT_CONFIGS[1]
+            if name == PROJECT_CONFIG and old.is_file() and str(folder) not in _warned_both:
+                _warned_both.add(str(folder))
+                warnings.warn(f"Ignoring {old}: {candidate} is used instead", stacklevel=2)
+            return candidate, tuple(passed)
         if home is not None and folder.resolve() == home:
             break
         try:
@@ -218,7 +365,7 @@ def project_config_path(start: str | os.PathLike[str] | None = None) -> Path | N
                 break
         except OSError:
             break
-    return None
+    return None, tuple(passed)
 
 
 def _unsafe(path: Path) -> str | None:
@@ -255,19 +402,25 @@ def config_files() -> list[tuple[str, Path]]:
     named by ``METACHECK_CONFIG`` or ``PYTACHECK_CONFIG`` (listed even when it
     does not exist yet).
     """
+    return _config_scan()[0]
+
+
+def _config_scan() -> tuple[list[tuple[str, Path]], tuple[Path, ...]]:
+    """:func:`config_files`, and the files the project search passed over."""
     env = _config_env()[1]
     if env:
         if env.lower() == "none":
-            return []
-        return [("env", Path(env).expanduser().absolute())]
+            return [], ()
+        return [("env", Path(env).expanduser().absolute())], ()
     out: list[tuple[str, Path]] = []
     user = user_config_path()
     if user.is_file():
         out.append(("user", user))
     try:
-        project = project_config_path()
+        project, passed = _project_search()
     except OSError:  # the working directory was removed
-        project = None
+        project, passed = None, ()
+    # an unsafe file is ignored, with no fallback to the other name in its folder
     if project is not None and project != user:
         why = _unsafe(project)
         if why is None:
@@ -279,7 +432,7 @@ def config_files() -> list[tuple[str, Path]]:
                 f"use it explicitly with PYTACHECK_CONFIG={project}",
                 stacklevel=2,
             )
-    return out
+    return out, passed
 
 
 def _trust_file() -> Path:
@@ -345,7 +498,10 @@ def _file_stamp(path: Path, now: int) -> tuple[int, int, str | None] | None:
 def config_stamp() -> tuple[Any, ...]:
     """A cheap fingerprint of everything config depends on (for cache invalidation)."""
     now = time.time_ns()  # before the stats: later writes get a later mtime
-    files = tuple((scope, str(path), _file_stamp(path, now)) for scope, path in config_files())
+    found, passed = _config_scan()
+    files = tuple((scope, str(path), _file_stamp(path, now)) for scope, path in found)
+    # a passed-over file that becomes a project file is seen at once
+    files += tuple(("passed", str(p), _candidate_stamp(p, now)) for p in passed)
     env = tuple(os.environ.get(k) for k in _ENV_KEYS)
     try:
         cwd = os.getcwd()
@@ -449,7 +605,7 @@ class Config:
         return self.values.get(key, default)
 
     def source(self, key: str) -> tuple[str, str] | None:
-        """``(scope, location)`` that set *key*, e.g. ``("project", "/x/pytacheck.json")``."""
+        """``(scope, location)`` that set *key*, e.g. ``("project", "/x/metacheck.json")``."""
         return self.sources.get(key)
 
     @property
@@ -542,7 +698,15 @@ def load_config() -> Config:
 
 
 def config_path(scope: str = "user") -> Path:
-    """The file :func:`update_config` writes for *scope* (``"user"`` or ``"project"``)."""
+    """The file :func:`update_config` writes for *scope* (``"user"`` or ``"project"``).
+
+    For ``"project"``: the project file found (edited in place, never renamed, so
+    a ``pytacheck.json`` stays one), else ``./metacheck.json``. A file the search
+    passed over is never written, except a blank ``./metacheck.json`` when no
+    project file is found above it (so ``touch metacheck.json`` and then
+    ``init --project`` writes into it; with a project file above, that one is
+    edited).
+    """
     name, env = _config_env()
     if env.lower() == "none":
         raise ConfigError(f"Config files are disabled ({name}=none)")
@@ -551,7 +715,16 @@ def config_path(scope: str = "user") -> Path:
     if scope == "user":
         return user_config_path()
     if scope == "project":
-        return project_config_path() or Path.cwd() / PROJECT_CONFIG
+        found, passed = _project_search()
+        if found is not None:
+            return found
+        path = Path.cwd() / PROJECT_CONFIG
+        if path in passed and _verdict(path, time.time_ns()) != "blank":
+            raise ConfigError(
+                f"{path} is not a metacheck project file; move it, "
+                "or set METACHECK_CONFIG to the file to write"
+            )
+        return path
     raise ValueError(f"scope must be 'user' or 'project', not {scope!r}")
 
 

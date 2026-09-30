@@ -744,7 +744,7 @@ def _init_interactive(ns: argparse.Namespace) -> tuple[list[str], str]:
     scope = _scope(ns)
     if not ns.project:
         answer = ui.ask(
-            "Save to the (u)ser config or this (p)roject's pytacheck.json?", default="u"
+            "Save to the (u)ser config or this (p)roject's metacheck.json?", default="u"
         )
         scope = "project" if answer.strip().lower().startswith("p") else "user"
     return refs, scope
@@ -884,7 +884,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("init", help="choose default presets (and install their packs)")
     p.add_argument("--preset", action="append", help="preset ref (repeatable); skips questions")
-    p.add_argument("--project", action="store_true", help="write ./pytacheck.json")
+    p.add_argument(
+        "--project",
+        action="store_true",
+        help="write ./metacheck.json (or the pytacheck.json already there)",
+    )
     p.add_argument("--yes", action="store_true", help="do not ask for confirmation")
     p.set_defaults(func=cmd_init)
 
@@ -933,7 +937,11 @@ def build_parser() -> argparse.ArgumentParser:
     q.add_argument("--field", default=None)
     q = psub.add_parser("install", help="install a pack (no REF: install every pin)")
     q.add_argument("ref", nargs="?", default=None)
-    q.add_argument("--project", action="store_true", help="pin in ./pytacheck.json")
+    q.add_argument(
+        "--project",
+        action="store_true",
+        help="pin in ./metacheck.json (or the pytacheck.json already there)",
+    )
     q.add_argument("--yes", action="store_true", help="do not ask for confirmation")
     q = psub.add_parser("remove", help="unpin a pack and delete its files")
     q.add_argument("name")

@@ -696,6 +696,40 @@ def test_the_readers_see_an_option_set_under_the_old_spelling(clean_options, mon
         assert _rds._r_version_int() == v430
 
 
+# --- the project file -------------------------------------------------------------
+
+
+def test_a_pytacheck_json_alone_is_found_and_edited_in_place(tmp_path: Path, monkeypatch) -> None:
+    """A committed pytacheck.json keeps working, and is never renamed (teammates on 0.4.0a1)."""
+    from metacheck import config
+    from metacheck._env import env_names
+
+    root = tmp_path / "home"
+    project = root / "proj"
+    cwd = project / "sub"
+    cwd.mkdir(parents=True)
+    monkeypatch.setenv("HOME", str(root))
+    monkeypatch.setenv("USERPROFILE", str(root))
+    monkeypatch.setattr(config, "user_config_path", lambda: tmp_path / "no-user.json")
+    for name in env_names("CONFIG"):
+        monkeypatch.delenv(name, raising=False)
+    old = project / "pytacheck.json"
+    old.write_text(json.dumps({"preset": "a", "packs": {"x": False}}))
+    for where in (project, cwd):
+        monkeypatch.chdir(where)
+        assert config.project_config_path() == old
+        assert config.config_files() == [("project", old)]
+        assert config.load_config().preset == "a"
+        assert config.load_config().source("preset") == ("project", str(old))
+        assert config.config_path("project") == old
+    path = config.update_config("project", lambda c: c.update(preset="b"))
+    assert path == old
+    assert json.loads(old.read_text()) == {"preset": "b", "packs": {"x": False}}
+    assert config.load_config().preset == "b"
+    assert sorted(p.name for p in project.iterdir()) == ["pytacheck.json", "sub"]
+    assert list(cwd.iterdir()) == []
+
+
 # --- the command --------------------------------------------------------------
 
 
