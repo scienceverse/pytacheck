@@ -72,6 +72,10 @@ means the value is a key or token, which the package never logs.
 | `APP_JOB_TIMEOUT` | `METACHECK_APP_JOB_TIMEOUT` | 900 seconds | Hosted app: how long one check may run. |
 | `APP_TOKENS` | `METACHECK_APP_TOKENS` | none | secret. Hosted app: access tokens of 32 or more characters, separated by commas. |
 | `APP_USER_HEADER` | `METACHECK_APP_USER_HEADER` | none | Hosted app, proxy mode only: the header that names the signed-in user. |
+| `CONCEPTS` | `METACHECK_CONCEPTS` | `classifier` | `data_check`'s concept tier: `classifier`, `cascade`, `llm` or `rules`. The `concepts` argument comes first, then the option `metacheck.concepts`. Stripped and lower-cased; any other value is an error. New, so it has no old name. |
+| `CONCEPT_MODEL` | `METACHECK_CONCEPT_MODEL` | `scienceverse/datacheck-concepts@v1` | The classifier's model: a local folder or `repo@revision` on the Hugging Face Hub. The option `metacheck.concepts.model` comes first. |
+| `CONCEPT_THREADS` | `METACHECK_CONCEPT_THREADS` | onnxruntime's default | How many threads the classifier uses. A value that is not an integer is an error when the model loads. |
+| `CONCEPT_THRESHOLD` | `METACHECK_CONCEPT_THRESHOLD` | 0.92 | Under `cascade`, columns the classifier is less sure of go to the LLM. The option `metacheck.concepts.threshold` comes first. A value that is not a number gives the default. |
 
 The hosted-app names are read through the same table. The hosted app gets them in a
 mapping it is given (its `env=` argument), so tests can pass its settings without

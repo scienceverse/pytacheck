@@ -401,6 +401,9 @@ _MEMO_OPTIONS = (
     "metacheck.llm.model",
     "metacheck.llm_reasoning",
     "metacheck.llm_max_tokens",
+    "metacheck.concepts",
+    "metacheck.concepts.model",
+    "metacheck.concepts.threshold",
 )
 
 

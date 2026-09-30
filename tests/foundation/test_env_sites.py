@@ -413,6 +413,20 @@ def _builtin_store() -> tuple[str, tuple[str, str]]:
     return BUILTIN_STORE_URL, ("builtin", "builtin")
 
 
+def _concepts(reader: str) -> Any:
+    """What a reader of ``datacheck.concepts`` gives with its option unset."""
+    from metacheck.datacheck import concepts
+
+    with utils.local_options(
+        {
+            "metacheck.concepts": None,
+            "metacheck.concepts.model": None,
+            "metacheck.concepts.threshold": None,
+        }
+    ):
+        return getattr(concepts, reader)()
+
+
 _KEY = "m" * 40
 _LLM_MODEL = "openai/gpt-from-the-table"
 
@@ -622,6 +636,34 @@ SITES: dict[str, Site] = {
         read=lambda ctx: _hosted_with_hosts(ctx, "user_header", tokens=False, proxy=True),
         expect=lambda ctx, name: "X-Forwarded-User",
         spaces=lambda ctx: None,
+    ),
+    "CONCEPTS": Site(
+        value=" Cascade ",
+        other="",
+        read=lambda ctx: _concepts("concept_mode"),
+        expect=lambda ctx, name: "cascade",
+        spaces=lambda ctx: "classifier",
+    ),
+    "CONCEPT_MODEL": Site(
+        value="org/concepts@v2",
+        other="",
+        read=lambda ctx: _concepts("model_source"),
+        expect=lambda ctx, name: "org/concepts@v2",
+        spaces=lambda ctx: "scienceverse/datacheck-concepts@v1",
+    ),
+    "CONCEPT_THREADS": Site(
+        value=" 3 ",
+        other="",
+        read=lambda ctx: _concepts("concept_threads"),
+        expect=lambda ctx, name: 3,
+        spaces=lambda ctx: None,
+    ),
+    "CONCEPT_THRESHOLD": Site(
+        value="0.5",
+        other="",
+        read=lambda ctx: _concepts("concept_threshold"),
+        expect=lambda ctx, name: 0.5,
+        spaces=lambda ctx: 0.92,
     ),
 }
 

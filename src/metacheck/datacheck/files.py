@@ -762,11 +762,14 @@ def _llm_model() -> str | None:
     return llm_model()
 
 
-def _provenance(generated: str, model: str | None) -> dict[str, Any]:
+def _provenance(
+    generated: str, model: str | None, concept_model: str | None = None
+) -> dict[str, Any]:
     """The manifest's ``provenance`` block, describing the software that ran.
 
     metacheck records its own version and R's; pytacheck records itself, the
-    metacheck release it ports and Python's version.
+    metacheck release it ports and Python's version, and the local concept
+    classifier when it ran (*concept_model*).
     """
     import platform
 
@@ -777,7 +780,7 @@ def _provenance(generated: str, model: str | None) -> dict[str, Any]:
         if _llm_use()
         else {"used": False}
     )
-    return {
+    out: dict[str, Any] = {
         "software": {
             "name": "pytacheck",
             "version": __version__,
@@ -787,8 +790,11 @@ def _provenance(generated: str, model: str | None) -> dict[str, Any]:
         "platform": f"{platform.machine()}-{sys.platform}",
         "prod_date": generated,
         "llm": llm,
-        "ddi_mapping": dict(_DDI_MAPPING),
     }
+    if concept_model is not None:
+        out["concept_classifier"] = {"used": True, "model": concept_model}
+    out["ddi_mapping"] = dict(_DDI_MAPPING)
+    return out
 
 
 def _data_check_write_manifest(
@@ -805,6 +811,7 @@ def _data_check_write_manifest(
     failed: pd.DataFrame | None = None,
     zip_peek: Sequence[str | None] | None = None,
     model: str | None = None,
+    concept_model: str | None = None,
 ) -> list[str]:
     """Write one ``*.manifest.json`` per paper recording every repository file.
 
@@ -902,7 +909,7 @@ def _data_check_write_manifest(
     ]
 
     generated = dt.datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
-    provenance = _provenance(generated, model)
+    provenance = _provenance(generated, model, concept_model)
 
     pid_arg = _as_list(paper_id)
     if "paper_id" in files.columns and n > 0:
