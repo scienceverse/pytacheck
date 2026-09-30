@@ -21,7 +21,7 @@ import gradio as gr
 from pytacheck.app import bibr
 from pytacheck.app import hosted as hosting
 from pytacheck.app.checks import validated_checks
-from pytacheck.app.run import Analysis, DataJob, Run, UserError, begin, protect, scratch_dir
+from pytacheck.app.run import Analysis, DataJob, Row, Run, UserError, begin, protect, scratch_dir
 
 __all__ = [
     "ABOUT_DATA",
@@ -259,6 +259,32 @@ def _download_link(session: str, path: Path) -> str:
     return f'<a href="{href}" download="{html.escape(path.name)}">Download the report</a>'
 
 
+#: the traffic light word at the start of a result -> its cell colours (background, text). The
+#: backgrounds are see-through so they read on a light and on a dark page; the word stays, so
+#: the colour is never the only signal.
+LIGHT_COLOURS = {
+    "Red": ("rgba(220, 38, 38, 0.30)", "inherit"),
+    "Yellow": ("rgba(234, 179, 8, 0.35)", "inherit"),
+    "Green": ("rgba(34, 197, 94, 0.30)", "inherit"),
+    "Failed": ("rgba(168, 85, 247, 0.25)", "inherit"),
+}
+
+
+def _light_style(result: str) -> str:
+    colours = LIGHT_COLOURS.get(result.split(":", 1)[0].strip())
+    return f"background-color: {colours[0]}; color: {colours[1]}" if colours else ""
+
+
+def table_value(rows: list[Row]) -> Any:
+    """The rows for the results table, the result cells coloured by their traffic light."""
+    import pandas as pd
+
+    frame = pd.DataFrame([row.cells() for row in rows], columns=["Check", "Status", "Result"])
+    return frame.style.apply(
+        lambda column: [_light_style(str(cell)) for cell in column], subset=["Result"]
+    )
+
+
 def _summary(analysis: Analysis) -> str:
     n = len(analysis.rows)
     return f"Ran {n} checks on **{analysis.name}** in {analysis.seconds:.1f} s."
@@ -334,7 +360,7 @@ def build_app(
         return (
             gr.update(visible=True),
             _summary(analysis),
-            [row.cells() for row in analysis.rows],
+            table_value(analysis.rows),
             report_frame(analysis.html),
             hosting.data_link(analysis.report_path.name, protect(analysis.html))
             if shared
