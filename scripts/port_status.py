@@ -25,6 +25,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+from metacheck._env import fold_to_legacy
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -108,6 +110,7 @@ def print_missing() -> None:
 
 
 def main() -> None:
+    fold_to_legacy()  # a METACHECK_CACHE_DIR in the shell would shadow the per-case cache folder
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--missing", action="store_true", help="list what is left to port")
     if parser.parse_args().missing:

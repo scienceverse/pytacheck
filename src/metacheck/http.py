@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import contextlib
 import email.utils
-import os
 import random
 import threading
 import time
@@ -33,6 +32,8 @@ from concurrent.futures import ThreadPoolExecutor
 from contextvars import ContextVar, copy_context
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
+
+from metacheck._env import env_get
 
 if TYPE_CHECKING:
     import httpx
@@ -94,7 +95,7 @@ def sleep(seconds: float) -> None:
 
     Inside :func:`interruptible` it wakes every quarter second to look for an interrupt.
     """
-    if seconds > 0 and not os.environ.get("PYTACHECK_NO_SLEEP"):
+    if seconds > 0 and not env_get("NO_SLEEP"):
         if _interrupt.get() is None:
             time.sleep(seconds)
             return
@@ -240,7 +241,7 @@ class Throttle:
                 self._tokens[host] = tokens
                 wait = (1 - tokens) / self.rate
             sleep(wait)
-            if os.environ.get("PYTACHECK_NO_SLEEP"):
+            if env_get("NO_SLEEP"):
                 return
 
 

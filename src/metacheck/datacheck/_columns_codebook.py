@@ -27,6 +27,7 @@ from typing import Any, cast
 
 import pandas as pd
 
+from metacheck._env import env_get
 from metacheck._r.base import slashed, trimws
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import grep, gsub, strsplit, sub
@@ -453,13 +454,13 @@ def _read_ods_sheet(path: str, sheet: str | None, col_names: bool) -> pd.DataFra
 
 def _pdftotext() -> str | None:
     """The ``pdftotext`` executable (PATH, ``$PYTACHECK_PDFTOTEXT``, next to Rscript)."""
-    exe = os.environ.get("PYTACHECK_PDFTOTEXT")
+    exe = env_get("PDFTOTEXT")
     if exe and Path(exe).exists():
         return exe
     found = shutil.which("pdftotext")
     if found:
         return found
-    rscript = os.environ.get("PYTACHECK_RSCRIPT")
+    rscript = env_get("RSCRIPT")
     if rscript:
         cand = Path(rscript).parent / "pdftotext"
         if cand.exists():

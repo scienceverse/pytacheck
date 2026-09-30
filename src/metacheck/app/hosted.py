@@ -17,6 +17,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, TypeVar, cast
 
+from metacheck._env import env_name
+
 __all__ = [
     "DEFAULT_PORT",
     "HOSTED_NOTE",
@@ -33,13 +35,13 @@ __all__ = [
 
 T = TypeVar("T")
 
-TOKENS_ENV = "METACHECK_APP_TOKENS"
-AUTH_ENV = "METACHECK_APP_AUTH"
-USER_HEADER_ENV = "METACHECK_APP_USER_HEADER"
-HOSTS_ENV = "METACHECK_APP_HOSTS"
+TOKENS_ENV = env_name("APP_TOKENS")
+AUTH_ENV = env_name("APP_AUTH")
+USER_HEADER_ENV = env_name("APP_USER_HEADER")
+HOSTS_ENV = env_name("APP_HOSTS")
 SPACE_HOST_ENV = "SPACE_HOST"  # set by Hugging Face Spaces
-TIMEOUT_ENV = "METACHECK_APP_JOB_TIMEOUT"
-COMMIT_ENV = "METACHECK_APP_COMMIT"
+TIMEOUT_ENV = env_name("APP_JOB_TIMEOUT")
+COMMIT_ENV = env_name("APP_COMMIT")
 PORT_ENV = "PORT"
 DEFAULT_PORT = 7860
 DEFAULT_TIMEOUT = 900.0

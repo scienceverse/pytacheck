@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from metacheck._env import env_get, env_names
 from metacheck.app import bibr
 from metacheck.app.checks import DATA, selected_checks, status_labels
 
@@ -49,7 +50,9 @@ GROBID_SERVERS: tuple[str, ...] = (
     "https://grobidOrg-grobid.hf.space",
     "https://grobidOrg-grobid-crf.hf.space",
 )
-GROBID_ENV = "PYTACHECK_GROBID_URL"
+#: the variables of the GROBID list, in lookup order; ``GROBID_ENV`` is the old name, as before
+GROBID_ENVS = env_names("GROBID_URL")
+GROBID_ENV = GROBID_ENVS[-1]
 #: seconds to wait for a server's liveness answer
 LIVENESS_TIMEOUT = 6.0
 
@@ -164,7 +167,7 @@ def _row(module: str, output: Any) -> Row:
 
 
 def grobid_servers() -> list[str]:
-    override = os.environ.get(GROBID_ENV, "").strip()
+    override = (env_get("GROBID_URL") or "").strip()
     if override:
         return [u.strip().rstrip("/") for u in override.split(",") if u.strip()]
     return list(GROBID_SERVERS)
@@ -307,7 +310,7 @@ def _latest(text: str) -> str:
 
 def cache_root() -> Path | None:
     """The folder for all the library's caches (``None``: as the person set it up)."""
-    if os.environ.get("PYTACHECK_CACHE_DIR"):
+    if env_get("CACHE_DIR"):
         return None
     import platformdirs
 

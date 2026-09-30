@@ -89,14 +89,14 @@ def test_install_project_scope(store, ms, monkeypatch) -> None:
     monkeypatch.setattr("metacheck.config.user_config_path", lambda: user_file)
     store.add("demo", {"hello": mod_src("hello")})
     pack_install("demo", scope="project", yes=True)
-    project = json.loads((ms.work / "pytacheck.json").read_text())
+    project = json.loads((ms.work / "metacheck.json").read_text())
     assert project["packs"]["demo"]["rev"] == REV_C
     assert not user_file.exists()
-    assert get_pack("demo").origin == str(ms.work / "pytacheck.json")
+    assert get_pack("demo").origin == str(ms.work / "metacheck.json")
     store.add("other", {"other_mod": mod_src("other_mod")})
     pack_install("other", scope="user", yes=True)
     assert "other" in json.loads(user_file.read_text())["packs"]
-    assert "other" not in json.loads((ms.work / "pytacheck.json").read_text())["packs"]
+    assert "other" not in json.loads((ms.work / "metacheck.json").read_text())["packs"]
 
 
 def test_tree_hash_mismatch_is_refused(store, ms) -> None:

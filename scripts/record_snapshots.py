@@ -46,6 +46,7 @@ ROOT = Path(__file__).resolve().parent.parent
 _CALLER_ENV = dict(os.environ)
 sys.path.insert(0, str(ROOT))
 
+from metacheck._env import fold_to_legacy
 from tests.snapshots import inputs, oracle, store
 
 #: the Python the committed snapshots are recorded with, on Linux
@@ -61,7 +62,11 @@ Recording = dict[str, dict[str, store.Record]]
 
 
 def _hermetic_env() -> None:
-    """No user or project config, and throwaway data and cache folders (as parity's)."""
+    """No user or project config, and throwaway data and cache folders (as parity's).
+
+    A ``METACHECK_*`` twin in the caller's environment is folded into its old name first.
+    """
+    fold_to_legacy()
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
     for name in ("PYTACHECK_DATA_DIR", "PYTACHECK_CACHE_DIR"):
         if not os.environ.get(name):

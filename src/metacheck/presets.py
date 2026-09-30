@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import importlib.metadata
 import json
-import os
 import re
 import shlex
 import warnings
@@ -37,6 +36,7 @@ from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from metacheck._env import env_lookup
 from metacheck.module import (
     ModuleError,
     ModuleSpec,
@@ -106,7 +106,8 @@ class Selection(list[tuple[str, dict[str, Any]]]):
 
     ``preset`` is the preset used (``None`` for explicit modules only),
     ``source`` where that choice came from (``"argument"``, ``"use()"``,
-    ``"PYTACHECK_PRESET"``, a config file path or ``"default"``), and
+    ``"METACHECK_PRESET"`` or ``"PYTACHECK_PRESET"``, a config file path or
+    ``"default"``), and
     ``dropped`` the refs left out because ``offline`` was on.
     """
 
@@ -448,16 +449,17 @@ def preset_list() -> pd.DataFrame:
 def default_preset(*, use_config: bool = False) -> tuple[str, str]:
     """``(preset, source)`` used when a call names neither modules nor a preset.
 
-    ``pc.use(preset=...)``, then (only with *use_config*) ``PYTACHECK_PRESET``,
-    the project config and the user config, then ``metacheck::default``.
+    ``pc.use(preset=...)``, then (only with *use_config*) ``METACHECK_PRESET`` or
+    ``PYTACHECK_PRESET`` (the source is the name read), the project config and the
+    user config, then ``metacheck::default``.
     """
     chosen = use_setting("preset")
     if chosen:
         return str(chosen), "use()"
     if use_config:
-        env = os.environ.get("PYTACHECK_PRESET", "").strip()
-        if env:
-            return env, "PYTACHECK_PRESET"
+        hit = env_lookup("PRESET")
+        if hit is not None:
+            return hit[1].strip(), hit[0]
         from metacheck.config import load_config
 
         config = load_config()
@@ -488,7 +490,8 @@ def select(
       deduplication; with ``preset`` too, the preset comes first.
     * Otherwise the preset is ``preset=``, then ``pc.use(preset=...)``, then
       (only with ``use_config=True``, as the CLI and API do)
-      ``PYTACHECK_PRESET``, the project and the user config, and finally
+      ``METACHECK_PRESET`` or ``PYTACHECK_PRESET``, the project and the user
+      config, and finally
       ``metacheck::default`` -- so the library's ``report(paper)`` always runs
       what R's ``report()`` runs.
     * ``args`` (R's ``report(args = list(power = list(seed = 1)))``) are

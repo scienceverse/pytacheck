@@ -15,7 +15,13 @@
 #                that is not drift
 #   why          the reason, and the package that renames it later, if any
 #
-# RENAME-2, RENAME-3 and RENAME-4 remove entries as they rename these names.
+# RENAME-2 and RENAME-4 remove entries as they rename these names. RENAME-3's
+# entries are resolved: the names it renamed are gone from this list or have new
+# reasons. The platformdirs folder names are kept by decision; they are already
+# separate from R's folders. The other old names it leaves in place (the install
+# record, the pack root and markers, the logger names, and the old run-record, format
+# and option names that are still read) stay until the alias sunset, when the old
+# spellings are removed.
 
 # --- entry-point groups: read as they are; no metacheck.* twin (decision 13 (a), STORE-2b)
 
@@ -109,37 +115,23 @@ match = 'RESERVED_PACK_NAMES = frozenset\(\{.*"pytacheck"'
 count = 1
 why = "pytacheck stays a reserved pack name"
 
-# --- platformdirs folder names split over lines, and paths under them (RENAME-3)
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/config.py"
-match = '^\s*"pytacheck", "scienceverse"$'
-count = 1
-why = "platformdirs cache folder name (call split over lines); RENAME-3"
+# --- platformdirs folder names split over lines, and paths under them (kept by decision; already separate from R's)
 
 [[rule]]
 action = "keep"
 files = "tests/app/test_launch.py"
 match = '"state" / "pytacheck"'
 count = 1
-why = "platformdirs state folder name; RENAME-3"
+why = "platformdirs state folder name; kept by decision; already separate from R's"
 
-# --- run records and the registry (RENAME-3, REG-RENAME)
+# --- run records and the registry (alias sunset, REG-RENAME)
 
 [[rule]]
 action = "keep"
 files = "src/metacheck/provenance.py"
-match = '^    pytacheck: str$|^\s+pytacheck=__version__,$|"pytacheck": self\.pytacheck'
-count = 4
-why = "run record field `pytacheck` (the version); RENAME-3 renames it to `version`"
-
-[[rule]]
-action = "keep"
-files = "tests/modsys/test_runrecord.py"
-match = '"pytacheck"'
+match = '"pytacheck": "version"|def pytacheck\(self\)'
 count = 2
-why = "run record field; RENAME-3"
+why = "old run-record key read from pytacheck.run/1 records, and the read-only property for 0.4.0a1 code; removed with the alias"
 
 [[rule]]
 action = "keep"
@@ -155,55 +147,20 @@ match = '"pytacheck"'
 count = 6
 why = "registry key implementations.py.pytacheck; REG-RENAME"
 
-# --- format ids and produced names (RENAME-3, REG-RENAME, EXTRACT-PROV)
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/repro/tables.py"
-match = '_FORMAT = "pytacheck\.module_tables"'
-count = 1
-why = "format id of saved module tables; RENAME-3 reads both forms"
-
-[[rule]]
-action = "keep"
-files = "tests/repro_core/test_tables.py"
-match = '"pytacheck\.module_tables"'
-count = 2
-why = "format id of saved module tables"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/repro/tables.py"
-match = '_TYPE_ROOT = "pytacheck\."'
-count = 1
-why = "saved dataclass types keep the prefix 0.4.0a1 reads; RENAME-3 switches it with the format id"
+# --- format ids and produced names (alias sunset, REG-RENAME, EXTRACT-PROV)
 
 [[rule]]
 action = "keep"
 files = "src/metacheck/repro/tables.py"
 match = 'module_name\.startswith\(\("pytacheck\.", "metacheck\."\)\)'
 count = 1
-why = "the decoder rebuilds dataclass types saved under either name"
+why = "the decoder rebuilds dataclass types saved under either name (tables saved up to RENAME-3)"
 
 [[rule]]
 action = "rewrite"
 files = "src/metacheck/repro/tables.py"
 match = '(cls\.__module__|module_name)\.startswith\("pytacheck\."\)'
 why = "dataclasses now live under metacheck.*"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/archives/info_cache.py"
-match = '_FORMAT = "pytacheck\.repo_info_cache"'
-count = 1
-why = "format id of the repo-info cache; entries written by 0.4.0a1 must stay hits; RENAME-3 reads both forms"
-
-[[rule]]
-action = "keep"
-files = "tests/archives_osf/test_cache.py"
-match = '"format": "pytacheck\.repo_info_cache"'
-count = 1
-why = "format id of the repo-info cache; RENAME-3"
 
 [[rule]]
 action = "keep"
@@ -261,37 +218,23 @@ match = 'f"pytacheck/\{__version__\}'
 count = 1
 why = "User-Agent product token; changing it is a separate decision (the URL stays the repository)"
 
-# --- option keys (RENAME-3 adds aliases)
+# --- option keys (the old names are accepted as aliases)
 
 [[rule]]
 action = "keep"
 files = "*.py"
 match = 'pytacheck\.(careless|r_serialize_version|llm\.workers)\b'
 count = 14
-why = "option keys set by users; RENAME-3 adds metacheck.* aliases"
+why = "old option names, still accepted as aliases; removed with the alias"
 
-# --- logger names (kept until RENAME-3; see the spec)
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/log.py"
-match = 'getLogger\("pytacheck"\)'
-count = 1
-why = "logger name; RENAME-3"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/api/app.py"
-match = 'getLogger\("pytacheck\.api"\)'
-count = 1
-why = "logger name; RENAME-3"
+# --- logger names (records keep the old names until the alias sunset)
 
 [[rule]]
 action = "keep"
 files = "tests/*.py"
 match = 'logger="pytacheck(\.api)?"'
 count = 3
-why = "logger names"
+why = "old logger names still receive records; emitters flip at the alias sunset"
 
 # --- the command name
 

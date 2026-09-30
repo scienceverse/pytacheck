@@ -95,7 +95,7 @@ def test_capture_writes_json_not_pickle(chain, tmp_path: Path) -> None:
     path = capture_module_tables(chain, tmp_path)
     assert Path(path) == tmp_path / "to_err_is_human.json"  # joined with "/", as R does
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
-    assert raw["format"] == "pytacheck.module_tables"
+    assert raw["format"] == "metacheck.module_tables"
     assert raw["paper_id"] == "to_err_is_human"
     assert list(raw["modules"]) == ["marginal", "all_p_values"]
     assert set(raw["modules"]["all_p_values"]) >= {
@@ -230,6 +230,6 @@ def test_load_reads_metacheck_rds(area_fixtures: Path) -> None:
 def test_load_missing(tmp_path: Path) -> None:
     assert tables._load_module_tables(tmp_path, "nope", None) is None
     (tmp_path / "empty.json").write_text(
-        json.dumps({"format": "pytacheck.module_tables", "paper_id": "empty", "modules": {}})
+        json.dumps({"format": "metacheck.module_tables", "paper_id": "empty", "modules": {}})
     )
     assert tables._load_module_tables(tmp_path, "empty", None) is None

@@ -25,15 +25,15 @@ names) and the modules of active packs (``pack::name``); it always runs with
 ``use(allow_local=False)`` (no ``./name.py`` files, paths or path packs) and
 never installs packs. ``/paper/check`` also takes ``preset``; without
 ``modules`` or ``preset`` it runs the preset configured for the server
-(``PYTACHECK_PRESET`` or config), else every available module as plumber
-does. Parsing uploads and running modules happen off the event loop, at
-most ``PYTACHECK_API_MAX_CHECKS`` (default: the CPU count) at a time, each
-request inside a run session.
+(``METACHECK_PRESET`` or ``PYTACHECK_PRESET``, or config), else every available
+module as plumber does. Parsing uploads and running modules happen off the event
+loop, at most ``METACHECK_API_MAX_CHECKS`` or ``PYTACHECK_API_MAX_CHECKS``
+(default: the CPU count) at a time, each request inside a run session.
 
 Access (pytacheck extension): plumber has no authentication. Set
-``PYTACHECK_API_KEY`` (at least 32 characters; a shorter one stops the server
-from starting) and every route except ``GET /health`` needs the header
-``Authorization: Bearer <key>``. Without a key the API is open, and
+``METACHECK_API_KEY`` or ``PYTACHECK_API_KEY`` (at least 32 characters; a shorter
+one stops the server from starting) and every route except ``GET /health``
+needs the header ``Authorization: Bearer <key>``. Without a key the API is open, and
 ``pytacheck serve`` then binds only to a loopback address unless
 ``--behind-authenticating-proxy`` says something in front of it authenticates.
 That bind check belongs to ``pytacheck serve``; ``uvicorn`` starts the app with
@@ -52,7 +52,6 @@ import asyncio
 import contextvars
 import hmac
 import ipaddress
-import logging
 import os
 import tempfile
 import uuid
@@ -65,10 +64,13 @@ from typing import Any
 from fastapi import FastAPI, Request
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+from metacheck._env import env_get, env_lookup, env_names
+from metacheck._logging import get_logger
 from metacheck.api.jsonlite import to_json
 
 __all__ = [
     "API_KEY_ENV",
+    "API_KEY_ENVS",
     "MAX_UPLOAD_BYTES",
     "MIN_API_KEY_LENGTH",
     "ApiConfigError",
@@ -77,10 +79,12 @@ __all__ = [
     "is_loopback",
 ]
 
-LOG = logging.getLogger("pytacheck.api")
+LOG = get_logger("api")
 MAX_UPLOAD_BYTES = 50 * 1024 * 1024
 _SOURCE_SUFFIXES = (".pdf", ".docx", ".doc", ".html", ".htm", ".epub")
-API_KEY_ENV = "PYTACHECK_API_KEY"
+#: the variables read for the API key, in order; ``API_KEY_ENV`` is the old name
+API_KEY_ENVS = env_names("API_KEY")
+API_KEY_ENV = API_KEY_ENVS[-1]
 MIN_API_KEY_LENGTH = 32
 _OPEN_PATH = "/health"
 
@@ -97,16 +101,19 @@ class ApiConfigError(ValueError):
 
 
 def api_key() -> str | None:
-    """The API key from ``PYTACHECK_API_KEY`` (surrounding whitespace dropped), or ``None``.
+    """The API key from ``METACHECK_API_KEY`` or ``PYTACHECK_API_KEY`` (surrounding
+    whitespace dropped), or ``None``.
 
-    A key shorter than 32 characters is an error, not a reason to run open.
+    A key shorter than 32 characters is an error, not a reason to run open, even
+    when the other variable holds a valid key: the error names the variable read.
     """
-    key = (os.environ.get(API_KEY_ENV) or "").strip()
-    if not key:
+    hit = env_lookup("API_KEY")
+    if hit is None:
         return None
+    name, key = hit[0], hit[1].strip()
     if len(key) < MIN_API_KEY_LENGTH:
         raise ApiConfigError(
-            f"{API_KEY_ENV} has {len(key)} characters; it needs at least "
+            f"{name} has {len(key)} characters; it needs at least "
             f"{MIN_API_KEY_LENGTH}. Make one with: "
             "python -c 'import secrets; print(secrets.token_urlsafe(32))'"
         )
@@ -144,9 +151,12 @@ def available_modules() -> list[str]:
 
 
 def max_checks() -> int:
-    """How many uploads are parsed / checked at once (``PYTACHECK_API_MAX_CHECKS``)."""
+    """How many uploads are parsed / checked at once (``METACHECK_API_MAX_CHECKS``).
+
+    ``PYTACHECK_API_MAX_CHECKS`` works too; not set, or not a positive number: the CPU count.
+    """
     try:
-        value = int(os.environ.get("PYTACHECK_API_MAX_CHECKS") or 0)
+        value = int(env_get("API_MAX_CHECKS") or 0)
     except ValueError:
         value = 0
     return value if value > 0 else (os.cpu_count() or 1)
@@ -194,10 +204,8 @@ def _configure_llm() -> None:
         LOG.warning("LLM support unavailable; LLM modules will use fallbacks")
         return
     llm_use(True)
-    llm_model(
-        os.environ.get("METACHECK_LLM_MODEL") or "google_gemini/gemini-3.1-flash-lite-preview"
-    )
-    llm_max_calls(int(os.environ.get("METACHECK_LLM_MAX_CALLS") or 200))
+    llm_model(env_get("LLM_MODEL") or "google_gemini/gemini-3.1-flash-lite-preview")
+    llm_max_calls(int(env_get("LLM_MAX_CALLS") or 200))
     LOG.info("LLM enabled: %s", llm_model())
 
 

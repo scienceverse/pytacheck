@@ -9,11 +9,11 @@ one-row records) so the ports can stay close to the R code.
 
 from __future__ import annotations
 
-import os
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from metacheck._env import env_get
 from metacheck._r.base import as_character
 from metacheck._r.regex import is_na
 
@@ -58,9 +58,9 @@ def user_data_dir() -> Path:
     """``rappdirs::user_data_dir("metacheck", "scienceverse")`` for pytacheck.
 
     Refreshed databases (``rw_update()``, ``FLoRA_update()``) are stored here.
-    ``PYTACHECK_DATA_DIR`` overrides the platform default.
+    ``METACHECK_DATA_DIR`` (or ``PYTACHECK_DATA_DIR``) overrides the platform default.
     """
-    override = os.environ.get("PYTACHECK_DATA_DIR")
+    override = env_get("DATA_DIR")
     if override:
         return Path(override)
     import platformdirs

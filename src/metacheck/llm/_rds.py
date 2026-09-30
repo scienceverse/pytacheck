@@ -19,7 +19,8 @@ integer, ``dict`` -> named list, ``list`` -> list, ``pandas.DataFrame`` ->
 
 The header of a serialization records the writing R version; keys written
 by pytacheck carry :data:`R_VERSION` (``PYTACHECK_R_SERIALIZE_VERSION`` or
-the ``pytacheck.r_serialize_version`` option override it, e.g. ``"4.4.1"``)
+the ``metacheck.r_serialize_version`` option override it, e.g. ``"4.4.1"``; the
+old spelling ``pytacheck.r_serialize_version`` also works)
 so they match caches written by that R release.
 """
 
@@ -32,6 +33,8 @@ import os
 import struct
 from collections.abc import Iterable, Mapping
 from typing import TYPE_CHECKING, Any
+
+from metacheck._env import env_get
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -176,11 +179,11 @@ def _obj_equal(a: Any, b: Any) -> bool:
 
 
 def _r_version_int() -> int:
-    ver: Any = os.environ.get("PYTACHECK_R_SERIALIZE_VERSION")
+    ver: Any = env_get("R_SERIALIZE_VERSION")
     try:
         from metacheck.utils import get_option
 
-        ver = get_option("pytacheck.r_serialize_version") or ver
+        ver = get_option("metacheck.r_serialize_version") or ver
     except ImportError:  # pragma: no cover
         pass
     parts = R_VERSION if not ver else tuple(int(p) for p in str(ver).split(".")[:3])

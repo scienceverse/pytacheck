@@ -20,6 +20,7 @@ import hashlib
 import inspect
 import math
 import os
+import re
 import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
@@ -32,6 +33,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "RUN_SCHEMA",
+    "RUN_SCHEMAS",
     "ModuleChain",
     "RunRecord",
     "bind_args",
@@ -233,12 +235,25 @@ def module_identity(spec: ModuleSpec, provenance: Mapping[str, Any]) -> tuple[An
 
 
 # ---------------------------------------------------------------------------
-# Run records (pytacheck.run/1), running a selection, and reruns
+# Run records (metacheck.run/2), running a selection, and reruns
 # ---------------------------------------------------------------------------
 
-RUN_SCHEMA = "pytacheck.run/1"
+#: the schema id written
+RUN_SCHEMA = "metacheck.run/2"
+#: older schema ids, still read (and upgraded to :data:`RUN_SCHEMA`)
+LEGACY_RUN_SCHEMAS = ("pytacheck.run/1",)
+#: every schema id read; test ``record["schema"] in RUN_SCHEMAS``
+RUN_SCHEMAS = (RUN_SCHEMA, *LEGACY_RUN_SCHEMAS)
+#: keys of the older schema -> their names now
+_LEGACY_RUN_KEYS = {"pytacheck": "version", "metacheck": "r_reference"}
 #: ``id`` of the ``<script type="application/json">`` that embeds a record in HTML reports
-RUN_SCRIPT_ID = "pytacheck-run"
+RUN_SCRIPT_ID = "metacheck-run"
+#: every script ``id`` read (the first is written)
+_RUN_SCRIPT_IDS = (RUN_SCRIPT_ID, "pytacheck-run")
+_RUN_SCRIPT_RE = re.compile(
+    r'<script[^>]*id="(?:' + "|".join(map(re.escape, _RUN_SCRIPT_IDS)) + r')"[^>]*>(.*?)</script>',
+    re.DOTALL,
+)
 _FAILED_TEXT = "This module failed to run"
 
 
@@ -273,18 +288,21 @@ def _environment() -> dict[str, Any]:
 
 @dataclass
 class RunRecord:
-    """What ran, from where, with which arguments (``pytacheck.run/1``).
+    """What ran, from where, with which arguments (``metacheck.run/2``).
 
     Built by :func:`run_modules` (and the CLI, API and reports) from the
     provenance of every module that ran. It is JSON: :meth:`write` /
     :meth:`read` a file, :meth:`to_html` embeds it in a report as
-    ``<script type="application/json" id="pytacheck-run">``, and
-    :func:`rerun` replays it.
+    ``<script type="application/json" id="metacheck-run">``, and
+    :func:`rerun` replays it. ``version`` is this package's version and
+    ``r_reference`` the R metacheck release and commit it is compared against.
+    Records of the older schema are read too, and keys a record does not
+    know are ignored.
     """
 
     created: str
-    pytacheck: str
-    metacheck: dict[str, str]
+    version: str
+    r_reference: dict[str, str]
     python: str
     platform: str
     preset: str | None = None
@@ -341,8 +359,8 @@ class RunRecord:
             )
         return cls(
             created=_utc_now(),
-            pytacheck=__version__,
-            metacheck={"version": UPSTREAM["version"], "commit": UPSTREAM["commit"][:10]},
+            version=__version__,
+            r_reference={"version": UPSTREAM["version"], "commit": UPSTREAM["commit"][:10]},
             python=_platform.python_version(),
             platform=sys.platform,
             preset=getattr(selection, "preset", None),
@@ -354,13 +372,23 @@ class RunRecord:
             environment=_environment(),
         )
 
+    @property
+    def pytacheck(self) -> str:
+        """:attr:`version`, under the name 0.4.0a1 used (read only)."""
+        return self.version
+
+    @property
+    def metacheck(self) -> dict[str, str]:
+        """:attr:`r_reference`, under the name 0.4.0a1 used (read only)."""
+        return self.r_reference
+
     def to_dict(self) -> dict[str, Any]:
         """The record as JSON data (key order as in the spec)."""
         return {
-            "schema": self.schema,
+            "schema": RUN_SCHEMA,  # never an older id over the new keys
             "created": self.created,
-            "pytacheck": self.pytacheck,
-            "metacheck": dict(self.metacheck),
+            "version": self.version,
+            "r_reference": dict(self.r_reference),
             "python": self.python,
             "platform": self.platform,
             "preset": self.preset,
@@ -385,16 +413,27 @@ class RunRecord:
         return out
 
     def to_html(self) -> str:
-        """The record as an HTML ``<script type="application/json" id="pytacheck-run">``."""
+        """The record as an HTML ``<script type="application/json" id="metacheck-run">``."""
         body = self.to_json(indent=None).replace("</", "<\\/")
         return f'<script type="application/json" id="{RUN_SCRIPT_ID}">{body}</script>'
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> RunRecord:
+        """A record from its JSON data; an older schema is upgraded, unknown keys are ignored."""
         from metacheck.module import ModuleError
 
-        if not isinstance(data, Mapping) or data.get("schema") != RUN_SCHEMA:
-            raise ModuleError(f"Not a pytacheck run record (schema {RUN_SCHEMA})")
+        schema = data.get("schema") if isinstance(data, Mapping) else None
+        if not isinstance(schema, str) or schema not in RUN_SCHEMAS:
+            raise ModuleError(
+                "Not a metacheck run record (schema metacheck.run/2 or pytacheck.run/1)"
+            )
+        if schema != RUN_SCHEMA:
+            data = dict(data)
+            for old, new in _LEGACY_RUN_KEYS.items():
+                if old in data:
+                    value = data.pop(old)
+                    data.setdefault(new, value)  # a key already under its new name wins
+            data["schema"] = RUN_SCHEMA
         known = set(cls.__dataclass_fields__)
         return cls(**{k: v for k, v in data.items() if k in known})
 
@@ -402,13 +441,12 @@ class RunRecord:
     def from_html(cls, html: str) -> RunRecord:
         """The record embedded in an HTML report."""
         import json
-        import re
 
         from metacheck.module import ModuleError
 
-        m = re.search(rf'<script[^>]*id="{RUN_SCRIPT_ID}"[^>]*>(.*?)</script>', html, re.DOTALL)
+        m = _RUN_SCRIPT_RE.search(html)
         if m is None:
-            raise ModuleError("This HTML file has no embedded pytacheck run record")
+            raise ModuleError("This HTML file has no embedded metacheck run record")
         return cls.from_dict(json.loads(m.group(1).replace("<\\/", "</")))
 
     @classmethod

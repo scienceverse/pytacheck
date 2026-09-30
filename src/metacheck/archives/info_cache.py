@@ -25,7 +25,10 @@ __all__ = ["repo_info_cache", "repo_info_cache_clear"]
 
 _SUFFIX = ".json"
 _LEGACY_SUFFIX = ".pkl"  # older pytacheck versions; removed by clear(), never read
-_FORMAT = "pytacheck.repo_info_cache"
+_FORMAT = "metacheck.repo_info_cache"
+#: read as well: entries written up to RENAME-3 (0.4.0a1 included). The entries hold
+#: the saved-table codec's dataclass types, so this id changes with that format's.
+_OLD_FORMAT = "pytacheck.repo_info_cache"
 _VERSION = 1
 
 
@@ -98,7 +101,7 @@ def _repo_info_cache_get(host: str, id: Any) -> Any:
             payload = orjson.loads(fh.read())
         if (
             not isinstance(payload, dict)
-            or payload.get("format") != _FORMAT
+            or payload.get("format") not in (_FORMAT, _OLD_FORMAT)
             or payload.get("version") != _VERSION
         ):
             return None

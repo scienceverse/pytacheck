@@ -1,8 +1,8 @@
 """R's parser in Python: syntax trees and exact parse-error messages.
 
 ``code_parse_r()`` reports the message ``parse(text = x)`` raises in R. Where an
-``Rscript`` is available (``PYTACHECK_RSCRIPT`` or ``Rscript`` on the
-``PATH``), R itself parses the code (:func:`parse_errors`). Otherwise this
+``Rscript`` is available (``METACHECK_RSCRIPT``, ``PYTACHECK_RSCRIPT`` or
+``Rscript`` on the ``PATH``), R itself parses the code (:func:`parse_errors`). Otherwise this
 module's port of R 4.5.3's parser is used, which reproduces R's messages:
 
 * the lexer is a line-by-line port of ``token()``/``yylex()`` in
@@ -38,6 +38,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
+from metacheck._env import env_get
 from metacheck.codecheck import _rparse_tables as T
 
 __all__ = [
@@ -1615,9 +1616,9 @@ jsonlite::write_json(out, args[2], auto_unbox = TRUE, null = "null")
 
 
 def rscript(search_path: bool = True) -> str | None:
-    """The ``Rscript`` to use: ``PYTACHECK_RSCRIPT``, else (with *search_path*)
-    ``Rscript`` on the ``PATH``."""
-    env = os.environ.get("PYTACHECK_RSCRIPT")
+    """The ``Rscript`` to use: ``METACHECK_RSCRIPT``, else ``PYTACHECK_RSCRIPT``, else
+    (with *search_path*) ``Rscript`` on the ``PATH``."""
+    env = env_get("RSCRIPT")
     if env and os.path.exists(env):
         return env
     return shutil.which("Rscript") if search_path else None
@@ -1652,13 +1653,14 @@ def parse_errors(
 
     *engine* ``"python"`` uses this module's port of R 4.5.3's parser; ``"r"``
     runs R's own parser, all texts in one ``Rscript`` process
-    (``PYTACHECK_RSCRIPT``, else ``Rscript`` on the ``PATH``), falling back to
-    Python when no R is found. ``None`` (default) takes ``PYTACHECK_R_PARSER``
-    if set, else R when the reference R is configured (``PYTACHECK_RSCRIPT``),
+    (``METACHECK_RSCRIPT``, else ``PYTACHECK_RSCRIPT``, else ``Rscript`` on the
+    ``PATH``), falling back to Python when no R is found. ``None`` (default) takes
+    ``METACHECK_R_PARSER`` (or ``PYTACHECK_R_PARSER``) if set, else R when the
+    reference R is configured (``METACHECK_RSCRIPT`` or ``PYTACHECK_RSCRIPT``),
     else Python -- an arbitrary ``Rscript`` on the ``PATH`` may be a different
     R version whose messages differ.
     """
-    engine = engine or os.environ.get("PYTACHECK_R_PARSER") or None
+    engine = engine or env_get("R_PARSER") or None
     if engine is None:
         engine = "r" if rscript(search_path=False) is not None else "python"
     if engine == "r":

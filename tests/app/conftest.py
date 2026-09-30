@@ -44,6 +44,6 @@ def bibr_settings(monkeypatch: pytest.MonkeyPatch) -> None:
     from metacheck.app import bibr
 
     monkeypatch.delenv(bibr.KEY_ENV, raising=False)
-    monkeypatch.delenv(bibr.URL_ENV, raising=False)
-    monkeypatch.delenv(bibr.BACKEND_ENV, raising=False)
+    for name in (*bibr.URL_ENVS, *bibr.BACKEND_ENVS):
+        monkeypatch.delenv(name, raising=False)
     bibr._forget_list()

@@ -7,8 +7,6 @@ Entries are also emitted on the standard :mod:`logging` logger
 
 from __future__ import annotations
 
-import logging
-import os
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -17,16 +15,19 @@ from typing import Any
 import orjson
 import platformdirs
 
+from metacheck._env import env_get
+from metacheck._logging import get_logger
+
 __all__ = ["lastlog", "logger", "logpath"]
 
-_LOG = logging.getLogger("pytacheck")
+_LOG = get_logger()
 _LOCK = threading.Lock()
 _MAX_ENTRIES = 1000
 _WARNED = False
 
 
 def _default_path() -> Path:
-    override = os.environ.get("PYTACHECK_LOG")
+    override = env_get("LOG")
     return (
         Path(override)
         if override
@@ -47,7 +48,10 @@ def _warn_once(path: Path, exc: OSError) -> None:
 
 
 def logpath() -> Path:
-    """Path of the log file (created if missing). Override with ``PYTACHECK_LOG``."""
+    """Path of the log file (created if missing).
+
+    Override with ``METACHECK_LOG`` (or ``PYTACHECK_LOG``).
+    """
     path = _default_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists():

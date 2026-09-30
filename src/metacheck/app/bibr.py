@@ -18,11 +18,15 @@ from urllib.parse import urlsplit
 
 import orjson
 
+from metacheck._env import env_lookup, env_names
+
 __all__ = [
     "BACKENDS",
     "BACKEND_ENV",
+    "BACKEND_ENVS",
     "KEY_ENV",
     "URL_ENV",
+    "URL_ENVS",
     "bibr_service",
     "convert_pdf",
     "forget_key",
@@ -36,9 +40,12 @@ __all__ = [
 
 #: the environment variable R metacheck reads for the same key
 KEY_ENV = "SCIVRS_API_KEY"
-URL_ENV = "PYTACHECK_BIBR_URL"
-#: how to talk to the service in ``URL_ENV``: one of ``BACKENDS``, ``bibr`` when it is not set
-BACKEND_ENV = "PYTACHECK_BIBR_BACKEND"
+#: the variables read for the service's address, in order; ``URL_ENV`` is the old name
+URL_ENVS = env_names("BIBR_URL")
+URL_ENV = URL_ENVS[-1]
+#: how to talk to the service in ``URL_ENVS``: one of ``BACKENDS``, ``bibr`` when it is not set
+BACKEND_ENVS = env_names("BIBR_BACKEND")
+BACKEND_ENV = BACKEND_ENVS[-1]
 #: ``bibr`` is the job API of bibr serve and of the hosted bibr service in front of it
 #: (``/papers/jobs``); ``scivrs`` is the job queue of the Scienceverse platform (``/jobs``)
 BACKENDS = ("bibr", "scivrs")
@@ -51,16 +58,20 @@ REFUSED = "The bibr service did not accept this key."
 UNAVAILABLE = "The bibr service is not available right now. Use GROBID for now."
 BAD_FORMAT = "The bibr service sent a format this version cannot read yet. Use GROBID for now."
 BAD_PDF = "The bibr service could not read this PDF. Try another copy of the paper."
-#: wrong settings: the person running the app can fix them (a hosted server does not start)
-BAD_BACKEND = (
-    f"{BACKEND_ENV} is either bibr (the default: bibr serve, or the hosted bibr service in "
+#: wrong settings: the person running the app can fix them (a hosted server does not start).
+#: ``{name}`` is the variable that was read; the constants below name the old one.
+_BAD_BACKEND = (
+    "{name} is either bibr (the default: bibr serve, or the hosted bibr service in "
     "front of it) or scivrs (the Scienceverse platform)."
 )
-BAD_URL = f"{URL_ENV} must be a full address, such as https://bibr.example.org."
-PLAIN_HTTP = (
-    f"{URL_ENV} must start with https://, so that the bibr key is not sent unencrypted. "
+_BAD_URL = "{name} must be a full address, such as https://bibr.example.org."
+_PLAIN_HTTP = (
+    "{name} must start with https://, so that the bibr key is not sent unencrypted. "
     "Plain http:// works for this computer only (localhost, 127.0.0.1 or ::1)."
 )
+BAD_BACKEND = _BAD_BACKEND.format(name=BACKEND_ENV)
+BAD_URL = _BAD_URL.format(name=URL_ENV)
+PLAIN_HTTP = _PLAIN_HTTP.format(name=URL_ENV)
 
 _list_lock = threading.Lock()
 #: the bibr entries of the public list, as (address, backend)
@@ -158,12 +169,15 @@ def _safe(url: str) -> bool:
 
 
 def _configured() -> tuple[str, str] | None:
-    """``PYTACHECK_BIBR_URL`` and the backend from ``PYTACHECK_BIBR_BACKEND``, or ``None``
-    when no address is set. A wrong setting raises ``ValueError`` that says what to set."""
-    backend = os.environ.get(BACKEND_ENV, "").strip().lower() or "bibr"
+    """The address from ``METACHECK_BIBR_URL`` or ``PYTACHECK_BIBR_URL`` and the backend
+    from ``METACHECK_BIBR_BACKEND`` or ``PYTACHECK_BIBR_BACKEND``, or ``None`` when no
+    address is set. A wrong setting raises ``ValueError`` that names the variable read."""
+    backend_name, backend = env_lookup("BIBR_BACKEND") or (BACKEND_ENV, "")
+    backend = backend.strip().lower() or "bibr"
     if backend not in BACKENDS:
-        raise ValueError(BAD_BACKEND)
-    url = os.environ.get(URL_ENV, "").strip().rstrip("/")
+        raise ValueError(_BAD_BACKEND.format(name=backend_name))
+    url_name, url = env_lookup("BIBR_URL") or (URL_ENV, "")
+    url = url.strip().rstrip("/")
     if not url:
         return None
     try:
@@ -172,16 +186,17 @@ def _configured() -> tuple[str, str] | None:
     except ValueError:
         usable = False
     if not usable:
-        raise ValueError(BAD_URL)
+        raise ValueError(_BAD_URL.format(name=url_name))
     # the bibr backend refuses to send a key over plain http to another computer
     if backend == "bibr" and not _safe(url):
-        raise ValueError(PLAIN_HTTP)
+        raise ValueError(_PLAIN_HTTP.format(name=url_name))
     return url, backend
 
 
 def settings_problem() -> str | None:
-    """What is wrong with ``PYTACHECK_BIBR_URL`` or ``PYTACHECK_BIBR_BACKEND``, or ``None``
-    (a hosted server checks this before it starts)."""
+    """What is wrong with the address (``METACHECK_BIBR_URL`` or ``PYTACHECK_BIBR_URL``) or
+    the backend (``METACHECK_BIBR_BACKEND`` or ``PYTACHECK_BIBR_BACKEND``), or ``None`` (a
+    hosted server checks this before it starts)."""
     try:
         _configured()
     except ValueError as exc:
@@ -191,8 +206,9 @@ def settings_problem() -> str | None:
 
 def bibr_service() -> tuple[str, str] | None:
     """Where the service is and how to talk to it, as (address, backend):
-    ``PYTACHECK_BIBR_URL`` with ``PYTACHECK_BIBR_BACKEND``, else the first bibr entry in the
-    public list that a key may go to (read once). A wrong setting raises ``ValueError``."""
+    ``METACHECK_BIBR_URL`` (or ``PYTACHECK_BIBR_URL``) with ``METACHECK_BIBR_BACKEND`` (or
+    ``PYTACHECK_BIBR_BACKEND``), else the first bibr entry in the public list that a key may
+    go to (read once). A wrong setting raises ``ValueError``."""
     global _servers
     configured = _configured()
     if configured is not None:

@@ -24,6 +24,8 @@ curl -H "Authorization: Bearer $PYTACHECK_API_KEY" -F file=@paper.json http://lo
 * The key is read from the environment only, so it does not show up in the process
   list. It is never logged.
 
+Environment variables and folders: see [ENVIRONMENT.md](ENVIRONMENT.md).
+
 Without a key the API is open, so `pytacheck serve` only binds to a loopback address
 (`127.0.0.1`, `::1`, `localhost`). With a key, `--host` can be anything.
 

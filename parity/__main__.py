@@ -80,6 +80,7 @@ from typing import Any
 
 import orjson
 
+from metacheck._env import fold_to_legacy
 from parity.canonical import canonical
 from parity.cases import (
     NEEDS_R_REASON,
@@ -1080,9 +1081,15 @@ def _hermetic_env() -> None:
     working directory, the checkout, as metacheck's do (the R runner points
     them at a temporary directory too). Each case gets a fresh directory inside
     the cache dir (``_case_cache_dir``).
+
+    A ``METACHECK_*`` twin in the caller's environment is folded into its
+    ``PYTACHECK_*`` name first, so it cannot shadow these folders or dodge the
+    ``<data>``/``<cache>`` placeholders (``lockfile.watch_run``).
     """
     global _DATA_DIR, _CACHE_DIR
     import atexit
+
+    fold_to_legacy()
 
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
     if not os.environ.get("PYTACHECK_DATA_DIR"):
