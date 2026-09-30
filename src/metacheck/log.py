@@ -7,7 +7,6 @@ Entries are also emitted on the standard :mod:`logging` logger
 
 from __future__ import annotations
 
-import logging
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -17,10 +16,11 @@ import orjson
 import platformdirs
 
 from metacheck._env import env_get
+from metacheck._logging import get_logger
 
 __all__ = ["lastlog", "logger", "logpath"]
 
-_LOG = logging.getLogger("pytacheck")
+_LOG = get_logger()
 _LOCK = threading.Lock()
 _MAX_ENTRIES = 1000
 _WARNED = False

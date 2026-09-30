@@ -221,28 +221,14 @@ match = 'pytacheck\.(careless|r_serialize_version|llm\.workers)\b'
 count = 14
 why = "old option names, still accepted as aliases; removed with the alias"
 
-# --- logger names (kept until RENAME-3; see the spec)
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/log.py"
-match = 'getLogger\("pytacheck"\)'
-count = 1
-why = "logger name; RENAME-3"
-
-[[rule]]
-action = "keep"
-files = "src/metacheck/api/app.py"
-match = 'getLogger\("pytacheck\.api"\)'
-count = 1
-why = "logger name; RENAME-3"
+# --- logger names (records keep the old names until the alias sunset)
 
 [[rule]]
 action = "keep"
 files = "tests/*.py"
 match = 'logger="pytacheck(\.api)?"'
 count = 3
-why = "logger names"
+why = "old logger names still receive records; emitters flip at the alias sunset"
 
 # --- the command name
 

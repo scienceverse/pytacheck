@@ -5,8 +5,10 @@
   that holds it. Only the warning codes of the bibr 12 converter look like names.
 * Every old name of the table has its ``METACHECK_`` twin in the same entry.
 
-The lints for ``getLogger(`` and for the documentation table come with the commits that add
-the logger link and the documentation.
+* ``getLogger(`` is called only in ``_logging.py`` and in ``packs/auth.py``, and never with
+  ``__name__``: every other module asks ``get_logger()`` for its logger.
+
+The lint for the documentation table comes with the commit that adds the documentation.
 """
 
 from __future__ import annotations
@@ -35,6 +37,11 @@ WARNING_CODES = frozenset(
         "METACHECK_XREF_TYPE_UNMAPPED",
     }
 )
+
+
+#: the only modules that call ``getLogger``: the package's logger, and the filter on the HTTP
+#: libraries' loggers
+GETLOGGER_MODULES = frozenset({"_logging.py", "packs/auth.py"})
 
 
 def _sources() -> Iterator[tuple[str, ast.Module]]:
@@ -82,3 +89,36 @@ def test_every_old_name_has_its_new_twin_in_the_same_entry() -> None:
             if name.startswith("PYTACHECK_"):
                 twin = "METACHECK_" + name.removeprefix("PYTACHECK_")
                 assert twin in var.names, f"{key}: {name} has no {twin} in its entry"
+
+
+def _getlogger_calls() -> list[tuple[str, int, bool]]:
+    """``(module, line, argument is __name__)`` for every ``getLogger(...)`` call in the package."""
+    found = []
+    for path in sorted(SRC.rglob("*.py")):
+        module = path.relative_to(SRC).as_posix()
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"), filename=str(path))):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            if (isinstance(func, ast.Attribute) and func.attr == "getLogger") or (
+                isinstance(func, ast.Name) and func.id == "getLogger"
+            ):
+                dunder_name = any(
+                    isinstance(arg, ast.Name) and arg.id == "__name__" for arg in node.args
+                )
+                found.append((module, node.lineno, dunder_name))
+    return found
+
+
+def test_getlogger_is_called_only_where_the_package_logger_lives() -> None:
+    calls = _getlogger_calls()
+    offenders = [f"{module}:{line}" for module, line, _ in calls if module not in GETLOGGER_MODULES]
+    assert not offenders, "ask metacheck._logging.get_logger() instead: " + ", ".join(offenders)
+    # a ratchet, as for the warning codes: a module that stops calling it leaves the list
+    assert {module for module, _, _ in calls} == GETLOGGER_MODULES
+
+
+def test_no_logger_is_named_after_its_module() -> None:
+    # records would come out under metacheck.<module>, and not reach handlers set on pytacheck
+    offenders = [f"{module}:{line}" for module, line, dunder in _getlogger_calls() if dunder]
+    assert not offenders, "getLogger(__name__) is not allowed: " + ", ".join(offenders)

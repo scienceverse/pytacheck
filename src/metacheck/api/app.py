@@ -52,7 +52,6 @@ import asyncio
 import contextvars
 import hmac
 import ipaddress
-import logging
 import os
 import tempfile
 import uuid
@@ -66,6 +65,7 @@ from fastapi import FastAPI, Request
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from metacheck._env import env_get, env_lookup, env_names
+from metacheck._logging import get_logger
 from metacheck.api.jsonlite import to_json
 
 __all__ = [
@@ -79,7 +79,7 @@ __all__ = [
     "is_loopback",
 ]
 
-LOG = logging.getLogger("pytacheck.api")
+LOG = get_logger("api")
 MAX_UPLOAD_BYTES = 50 * 1024 * 1024
 _SOURCE_SUFFIXES = (".pdf", ".docx", ".doc", ".html", ".htm", ".epub")
 #: the variables read for the API key, in order; ``API_KEY_ENV`` is the old name
