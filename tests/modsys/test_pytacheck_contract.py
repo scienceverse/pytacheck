@@ -8,6 +8,7 @@ written in its old form only and read in both forms, old first.
 from __future__ import annotations
 
 import json
+import logging
 import subprocess
 import sys
 import types
@@ -254,6 +255,53 @@ def test_repo_info_cache_entries_written_by_0_4_0a1_are_hits(tmp_path: Path) -> 
             b'{"format": "pytacheck.repo_info_cache", "version": 1, "value": 1}'
         )
         assert _repo_info_cache_get("osf", "old") == 1
+
+
+# --- the loggers ----------------------------------------------------------------
+
+
+def test_a_handler_on_metacheck_receives_the_pytacheck_records() -> None:
+    """Records keep their old names, and the package's loggers sit under ``metacheck``."""
+    import metacheck._logging  # noqa: F401 -- puts the link in place
+
+    seen: list[logging.LogRecord] = []
+
+    class Collect(logging.Handler):
+        def emit(self, record: logging.LogRecord) -> None:
+            seen.append(record)
+
+    top, old, api = (logging.getLogger(n) for n in ("metacheck", "pytacheck", "pytacheck.api"))
+    handler = Collect()
+    levels = {logger: logger.level for logger in (top, old, api)}
+    top.addHandler(handler)
+    try:
+        assert old.parent is top
+        assert api.parent is old
+        old.warning("from the root")
+        api.warning("from the api")
+        assert [(r.name, r.getMessage()) for r in seen] == [
+            ("pytacheck", "from the root"),
+            ("pytacheck.api", "from the api"),
+        ]
+
+        # a level set on the old logger still applies, to it and to its children
+        seen.clear()
+        old.setLevel(logging.ERROR)
+        old.warning("dropped")
+        api.warning("dropped too")
+        api.error("kept")
+        assert [r.getMessage() for r in seen] == ["kept"]
+
+        # and a level set on metacheck applies where the old loggers set none
+        seen.clear()
+        old.setLevel(logging.NOTSET)
+        top.setLevel(logging.DEBUG)
+        api.debug("debug")
+        assert [r.getMessage() for r in seen] == ["debug"]
+    finally:
+        top.removeHandler(handler)
+        for logger, level in levels.items():
+            logger.setLevel(level)
 
 
 # --- the command --------------------------------------------------------------

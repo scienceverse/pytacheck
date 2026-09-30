@@ -15,9 +15,15 @@ from urllib.parse import urlsplit
 
 import pytest
 
+from metacheck._env import fold_to_legacy
+
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))  # makes the `parity` harness importable
+
+# The tests set and read only the old names. Fold any METACHECK_* twin from the shell into
+# its old name first, or it would shadow the folders below (and keep an API key alive).
+fold_to_legacy()
 
 # Hermetic module system: no user/project config files and no installed
 # packs from the real data dir, unless the caller set these explicitly.
