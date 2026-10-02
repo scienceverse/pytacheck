@@ -652,7 +652,11 @@ def download_cases() -> list[dict[str, Any]]:
                 {"path": {"$file": f"tests/repo_download/data/{fixture}"}},
             )
         )
-    for fixture in ("mixed.zip", "stimuli.zip"):
+    # nolength.zip: a HEAD without Content-Length, then the one-byte ranged GET
+    # (its mock answers 206 with no Content-Range: no size). It replaces the
+    # case of .remote_content_length(), which metacheck removed; the review
+    # cases (size.*) serve real Content-Range answers.
+    for fixture in ("mixed.zip", "stimuli.zip", "nolength.zip"):
         cases.append(
             fn_case(
                 f"remote_size.{fixture}",
@@ -662,15 +666,6 @@ def download_cases() -> list[dict[str, Any]]:
                 mock_dir=MOCKS,
             )
         )
-    cases.append(
-        fn_case(
-            "remote_content_length.nolength",
-            ".remote_content_length",
-            DL + "_remote_content_length",
-            {"url": MOCK_URL + "nolength.zip"},
-            mock_dir=MOCKS,
-        )
-    )
 
     # download_repo_files() over local file:// URLs
     def dl(cid: str, files: dict[str, Any], **kw: Any) -> None:

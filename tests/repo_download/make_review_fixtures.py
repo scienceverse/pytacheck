@@ -145,6 +145,19 @@ def _cd(entries: list[bytes]) -> bytes:
     return prefix + cd + eocd
 
 
+def _github_zip() -> None:
+    """A repository archive as GitHub's zipball sends it: one top-level folder."""
+    d = zipfile.ZIP_DEFLATED
+    _zip(
+        OUT / "gh.zip",
+        [
+            ("owner-repo-1a2b3c/", b"", zipfile.ZIP_STORED),
+            ("owner-repo-1a2b3c/a.csv", CSV, d),
+            ("owner-repo-1a2b3c/sub/b.csv", CSV, d),
+        ],
+    )
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     d = zipfile.ZIP_DEFLATED
@@ -269,6 +282,7 @@ def main() -> None:
         links=[("alias", "real")],
         tail=[("z.csv", CSV)],
     )
+    _github_zip()
     # hand-built central directories for .parse_zip_central_dir()
     cds = {
         "trailnul.cd": [_cd_entry(b"data.csv\x00\x00"), _cd_entry(b"b.R", offset=50)],

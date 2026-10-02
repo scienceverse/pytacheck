@@ -927,7 +927,9 @@ def _download_file_table(
     ``self``. Applies the size caps (a zip named in *unzip_types* is exempt),
     creates the target folder, extracts wanted zip members or downloads each
     file, copies files under their names, verifies them and warns about any
-    that did not arrive. Returns the verified table and the folder.
+    that did not arrive. Returns the verified table and the folder; the table's
+    ``attrs["failed"]`` lists the zip members that could not be extracted
+    (``key``, ``member``, ``error``; metacheck #429's ``attr(, "failed")``).
 
     Files omitted by the size caps stay in the table with ``downloaded =
     False``, as metacheck documents (its code drops them: U36); when every
@@ -1005,6 +1007,7 @@ def _download_file_table(
         ids = [None if is_na(v) else str(v) for v in files["id"].tolist()]
         selfs = [None if is_na(v) else str(v) for v in files["self"].tolist()]
         n_wanted = n - sum(omitted)
+        failed_rows: list[tuple[str | None, str | None, str | None]] = []
         k = 0
         for i in range(n):
             if omitted[i]:
@@ -1029,6 +1032,12 @@ def _download_file_table(
                         pb,
                         f"- extracted {extracted[i]} file{plural(extracted[i])} from {_paste(keys[i])}",
                     )
+                    # a member that failed left a row with ok = FALSE: say why,
+                    # so a passing failure can be told from a lasting one
+                    bad = _failed_members(got)
+                    failed_rows.extend((keys[i], name, why) for name, why in bad)
+                    for name, why in bad:
+                        _tick(pb, f"  - failed to extract {_paste(name)}: {_paste(why)}")
                     continue
                 _tick(
                     pb,
@@ -1081,6 +1090,7 @@ def _download_file_table(
 
     # --- verify what actually reached the disk ----
     files = verify(files, download_to)
+    files.attrs["failed"] = _failed_frame(failed_rows)
 
     missing = [
         not bool(v) and not o for v, o in zip(files["downloaded"].tolist(), omitted, strict=True)
@@ -1098,10 +1108,58 @@ def _download_file_table(
     return files, download_to
 
 
+def _failed_members(got: pd.DataFrame) -> list[tuple[str | None, str | None]]:
+    """``got[!(got$ok %in% TRUE), ]``: (name, error) of the members that failed."""
+    n = len(got)
+    oks = got["ok"].tolist() if "ok" in got else [None] * n
+    names = got["name"].tolist() if "name" in got else [None] * n
+    errors = got["error"].tolist() if "error" in got else ["unknown failure"] * n
+    return [
+        (None if is_na(nm) else str(nm), None if is_na(e) else str(e))
+        for nm, ok, e in zip(names, oks, errors, strict=True)
+        if not _is_true(ok)
+    ]
+
+
+def _failed_frame(rows: Sequence[tuple[str | None, str | None, str | None]]) -> pd.DataFrame:
+    """The ``failed`` table of the ``*_file_download()`` functions (key, member, error)."""
+    return pd.DataFrame(
+        {
+            "key": _string_series([r[0] for r in rows]),
+            "member": _string_series([r[1] for r in rows]),
+            "error": _string_series([r[2] for r in rows]),
+        }
+    )
+
+
+def _bind_downloads(frames: Sequence[pd.DataFrame]) -> pd.DataFrame:
+    """``dplyr::bind_rows()`` of several ``*_file_download()`` tables.
+
+    dplyr keeps the first table's attributes (so its ``failed`` table); pandas
+    would instead compare every frame's ``attrs``, which fails for a DataFrame
+    value.
+    """
+    from metacheck._r import bind_rows
+
+    first = dict(frames[0].attrs)
+    stripped = []
+    for f in frames:
+        f = f.copy()
+        f.attrs = {}
+        stripped.append(f)
+    out = bind_rows(stripped)
+    out.attrs = first
+    return out
+
+
 def _finish_file_table(
     files: pd.DataFrame, download_to: str | None, ids: dict[str, Any], columns: Sequence[str]
 ) -> pd.DataFrame:
-    """``files$folder <- basename(download_to)``, the id columns, then R's column order."""
+    """``files$folder <- basename(download_to)``, the id columns, then R's column order.
+
+    Keeps ``attrs["failed"]`` (R sets ``attr(files, "failed")`` after this).
+    """
+    failed = files.attrs.get("failed")
     files = files.copy()
     n = len(files)
     folder = None if download_to is None else download_to.rstrip("/").rpartition("/")[2]
@@ -1112,7 +1170,10 @@ def _finish_file_table(
             if value is None or isinstance(value, str)
             else pd.Series([value] * n)
         )
-    return files.loc[:, list(columns)].reset_index(drop=True)
+    out = files.loc[:, list(columns)].reset_index(drop=True)
+    if failed is not None:
+        out.attrs["failed"] = failed
+    return out
 
 
 def _download_many(
@@ -1124,7 +1185,6 @@ def _download_many(
     done: str,
 ) -> pd.DataFrame | None:
     """The ``# --- iterate over multiple ...`` branch of the ``*_file_download()`` functions."""
-    from metacheck._r import bind_rows
     from metacheck.archives import _tick
 
     _tick(pb, start)
@@ -1138,7 +1198,7 @@ def _download_many(
     frames = [r for r in results if r is not None]
     if not frames:
         return None
-    dl = bind_rows(frames)
+    dl = _bind_downloads(frames)
     _tick(pb, done)
     return dl
 
