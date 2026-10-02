@@ -1,0 +1,23 @@
+{
+  "id": "code_char_vector_vars.review.walk_map_purrr",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "pk"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "m1",
+          "m2"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,11 +1,6 @@
 {
 "code_check.dupname": {"r": "1f58e885fe1e2ae2", "py": "32fab7d99d475a3a", "diff": ["report[]", "summary_table.code_version_pinned[]", "summary_text[]", "traffic_light[]", "version_pin.mechanisms", "version_pin.pinned[]"]},
-"code_check.edge": {"r": "c262136f5d4d2ec5", "py": "15c1ad2727cd23ca", "diff": ["table", "table.absolute_paths[]", "table.code_abs_path[]", "table.code_install_packages[]", "table.code_lines[]", "table.code_setwd[]", "table.comment_lines[]", "table.has_docstring[]", "table.install_packages_calls[]", "table.library_lines[]", "table.loaded_files_missing[]", "table.loaded_files_missing_names[]", "table.packages[]", "table.packages_n[]", "table.parse_error[]", "table.setwd_calls[]"]},
 "code_check.empty_paper": {"r": "ac5146cf65ca52a8", "py": "82c021e1a7592505", "diff": ["<R error, Python value>"]},
 "code_check.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "796edcbaba1067af", "diff": ["<R error, Python value>"]},
-"code_check.na_pid_pin": {"r": "779035b364871a7a", "py": "76425610fb9895ac", "diff": ["report[]", "summary_text[]", "traffic_light[]", "version_pin.mechanisms", "version_pin.pinned[]"]},
-"code_check.nochunk_only": {"r": "7459ff04cba892bd", "py": "4e1ae933268ab600", "diff": ["table", "table.absolute_paths[]", "table.code_abs_path[]", "table.code_install_packages[]", "table.code_setwd[]", "table.install_packages_calls[]", "table.library_lines[]", "table.packages[]", "table.packages_n[]", "table.parse_error[]", "table.setwd_calls[]"]},
-"errors.edge": {"r": "a7b589151706778a", "py": "d33e6a78120356d0", "diff": ["<root>"]},
-"report_tables.edge": {"r": "87af46953992499b", "py": "b69f63c298c2bac6", "diff": ["[].Absolute Paths[]", "[].Missing Files[]"]},
-"report_tables.nochunk_only": {"r": "27400ab3c9ffa69c", "py": "934cbe1ccad9734a", "diff": ["[]", "[].Absolute Paths[]"]}
+"code_check.na_pid_pin": {"r": "779035b364871a7a", "py": "76425610fb9895ac", "diff": ["report[]", "summary_text[]", "traffic_light[]", "version_pin.mechanisms", "version_pin.pinned[]"]}
 }

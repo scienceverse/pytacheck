@@ -5,24 +5,10 @@
 # docs/UPSTREAM_ISSUES.md entry.
 
 # --- codecheck (R/code_check.R) ---------------------------------------------
-"codecheck/code_abs_path.character0": &u67_abs
-  kind: r_bug_fixed
-  ref: U67
-  reason: no code gives the usual (abs_path, line) columns; R returns them in the other order
-"codecheck/code_abs_path.my_encodings_newline_only_R": *u67_abs
-"codecheck/code_line_stats.character0": &u67_stats
-  kind: r_bug_fixed
-  ref: U67
-  reason: no code gives zero counts like ""; R errors (non-character argument)
-"codecheck/code_line_stats.my_encodings_newline_only_R": *u67_stats
 "codecheck/code_lang.my_qmd_scalar_yaml_qmd":
   kind: r_bug_fixed
   ref: U68
   reason: a scalar YAML front matter falls back to the chunk engine; R's `$` error escapes code_lang()
-"codecheck/code_parse_r.empty_text":
-  kind: r_bug_fixed
-  ref: U87
-  reason: empty code parses (no error); R fails with "subscript out of bounds"
 "codecheck_review/code_extract_r.review.yaml_label_number.doc0": &u153
   kind: r_bug_fixed
   ref: U153
@@ -34,16 +20,6 @@
   kind: r_bug_fixed
   ref: U86
   reason: the language of a .qmd/.ipynb is read from its local copy (Python-engine .qmd, R notebook); R reads the file name relative to the working directory
-"mod_code/code_check.empty_files": &u87_empty
-  kind: r_bug_fixed
-  ref: U87
-  reason: empty code files are analysed (zero counts); R records "subscript out of bounds" / "non-character argument" as the file's error
-"mod_code/report_tables.empty_files": *u87_empty
-"mod_code_review/code_check.edge": *u87_empty
-"mod_code_review/errors.edge": *u87_empty
-"mod_code_review/report_tables.edge": *u87_empty
-"mod_code_review/code_check.nochunk_only": *u87_empty
-"mod_code_review/report_tables.nochunk_only": *u87_empty
 "mod_code/code_check.no_file_url":
   kind: r_bug_fixed
   ref: U87

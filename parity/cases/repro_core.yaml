@@ -119,6 +119,35 @@
       "$chr":
       - "library(edgeR)"
       - "remotes::install_github('Bioconductor/edgeR')"
+- "id": "repro_dependencies.loop_variable"
+  "r": "repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
+  "args":
+    "code_text":
+      "$chr":
+      - "list.packages <- c(\"activity\", \"bbmle\")"
+      - "for (req.lib in list.packages) {"
+      - "  if (!require(req.lib, character.only = TRUE)) install.packages(req.lib)"
+      - "}"
+- "id": "repro_dependencies.loop_variable_unresolved"
+  "r": "repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
+  "args":
+    "code_text":
+      "$chr":
+      - "for (req.lib in list.packages) {"
+      - "  if (!require(req.lib, character.only = TRUE)) install.packages(req.lib)"
+      - "}"
+      - "library(dplyr)"
+- "id": "repro_dependencies.lapply_variable"
+  "r": "repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
+  "args":
+    "code_text":
+      "$chr":
+      - "pkgs <- c(\"psych\", \"car\")"
+      - "invisible(lapply(pkgs, library, character.only = TRUE))"
+      - "pacman::p_load(char = pkgs)"
 - "id": "repro_dependencies.mixed"
   "r": "repro_dependencies"
   "py": "metacheck.repro.core.repro_dependencies"
@@ -1197,6 +1226,108 @@
   "py": "metacheck.repro.core._repro_classify_install_message"
   "args":
     "msg": "HTTP error 404. Not Found"
+- "id": "repro_classify_install_message.15"
+  "r": "metacheck:::.repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
+  "args":
+    "msg": "package 'list.packages' is not available for this version of R"
+- "id": "repro_classify_install_message.16"
+  "r": "metacheck:::.repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
+  "args":
+    "msg": "package 'list.packages' is not available for this version of R (CRAN Archive retry also failed: package not found in the CRAN Archive)"
+- "id": "repro_classify_install_message.17"
+  "r": "metacheck:::.repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
+  "args":
+    "msg": "package 'x' is not available for this version of R (CRAN Archive retry also failed: could not reach the CRAN Archive listing)"
+- "id": "repro_classify_install_message.18"
+  "r": "metacheck:::.repro_classify_install_message"
+  "py": "metacheck.repro.core._repro_classify_install_message"
+  "args":
+    "msg": "package not found in the CRAN Archive"
+- "id": "repro_not_loadable_msg.not_available"
+  "r": "metacheck:::.repro_not_loadable_msg"
+  "py": "metacheck.repro.core._repro_not_loadable_msg"
+  "args":
+    "pkg": "list.packages"
+    "warnings":
+      "$chr":
+      - "other warning"
+      - "package 'list.packages' is not available for this version of R"
+- "id": "repro_not_loadable_msg.not_available_twice"
+  "r": "metacheck:::.repro_not_loadable_msg"
+  "py": "metacheck.repro.core._repro_not_loadable_msg"
+  "args":
+    "pkg": "list.packages"
+    "warnings":
+      "$chr":
+      - "package 'list.packages' is not available for this version of R"
+      - "package 'list.packages' is not available for this version of R"
+- "id": "repro_not_loadable_msg.two_unavailable"
+  "r": "metacheck:::.repro_not_loadable_msg"
+  "py": "metacheck.repro.core._repro_not_loadable_msg"
+  "args":
+    "pkg": "list.packages"
+    "warnings":
+      "$chr":
+      - "package 'list.packages' is not available for this version of R"
+      - "unrelated"
+      - "package 'b' is not available (for R version 4.5.3)"
+- "id": "repro_not_loadable_msg.no_warnings"
+  "r": "metacheck:::.repro_not_loadable_msg"
+  "py": "metacheck.repro.core._repro_not_loadable_msg"
+  "args":
+    "pkg": "list.packages"
+    "warnings":
+      "$chr": []
+- "id": "repro_not_loadable_msg.other_warnings"
+  "r": "metacheck:::.repro_not_loadable_msg"
+  "py": "metacheck.repro.core._repro_not_loadable_msg"
+  "args":
+    "pkg": "list.packages"
+    "warnings":
+      "$chr":
+      - "installation of package 'x' had non-zero exit status"
+- "id": "repro_not_loadable_msg.null_warnings"
+  "r": "metacheck:::.repro_not_loadable_msg"
+  "py": "metacheck.repro.core._repro_not_loadable_msg"
+  "args":
+    "pkg": "list.packages"
+    "warnings":
+      "$null": true
+- "id": "repro_cran_archive_install.not_found"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_archive_install('not_found') }"
+        "py": "lambda m: m.archive_install('not_found')"
+- "id": "repro_cran_archive_install.server_error"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_archive_install('server_error') }"
+        "py": "lambda m: m.archive_install('server_error')"
+- "id": "repro_cran_archive_install.unreachable"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_archive_install('unreachable') }"
+        "py": "lambda m: m.archive_install('unreachable')"
+- "id": "repro_cran_archive_install.no_tarballs"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_archive_install('no_tarballs') }"
+        "py": "lambda m: m.archive_install('no_tarballs')"
 - "id": "repro_find_export_pkg.unique"
   "r": "identity"
   "py": "tests.repro_core.parity_support.run"
@@ -1544,6 +1675,22 @@
       "$df":
         "package": []
     "lib_dir": "unused"
+- "id": "repro_install_deps_docker.script.cran"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_docker_install_script(data.frame(package = c('dplyr', 'list.packages'), source = c('cran', 'cran'), ref = c(NA_character_, NA_character_))) }"
+        "py": "lambda m: m.docker._install_script(m.pd.DataFrame({'package': ['dplyr', 'list.packages'], 'source': ['cran', 'cran'], 'ref': [None, None]}))"
+- "id": "repro_install_deps_docker.script.mixed"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_docker_install_script(data.frame(package = c('edgeR', 'mypkg', 'tarpkg'), source = c('bioc', 'github', 'url'), ref = c(NA_character_, 'u/mypkg', 'http://x/t.tar.gz'))) }"
+        "py": "lambda m: m.docker._install_script(m.pd.DataFrame({'package': ['edgeR', 'mypkg', 'tarpkg'], 'source': ['bioc', 'github', 'url'], 'ref': [None, 'u/mypkg', 'http://x/t.tar.gz']}))"
 - "id": "repro_run_scripts_docker.empty"
   "r": "repro_run_scripts_docker"
   "py": "metacheck.repro.docker.repro_run_scripts_docker"

@@ -264,7 +264,7 @@ def reproducibility_check(
     cache: Any = False,
     download: Any = "data",
     skip_types: Sequence[str] | str | None = None,
-    peek_zips: bool = False,
+    peek_zips: bool = True,
     max_file_size: float = 100,
     max_download_size: float = 500,
     skip_on_api_limit: bool = False,

@@ -122,7 +122,9 @@ _COL_LABELS = {
         "skip_on_api_limit": "if TRUE, a 429 that carries a confirmed rate-limit-exhausted "
         "signal (e.g. Dryad's per-day quota) skips that file instead of waiting out the "
         "host's own reset. Default FALSE (always wait for a confirmed reset) -- see "
-        "[download_repo_files()]'s own parameter of the same name.",
+        "[download_repo_files()]'s own parameter of the same name. Also forwarded to "
+        "`repo_check()` and to `.code_expand_zip()`'s own zip-peeking step, both of which make "
+        "the same kind of request and can hit the same rate limit.",
         "manifest": "optional path to a metacheck manifest directory or `*.manifest.json` "
         "file. When given, the distinct packages loaded across the paper's code are merged "
         "into the manifest's `code$packages` section, and any code file this module tried and "
@@ -179,12 +181,25 @@ def code_check(
     if all_files is None:
         from metacheck.module import module_run
 
+        # skip_on_api_limit is forwarded too: repo_check's own zip peeking can
+        # hit the same rate limit as a download (metacheck issue #427)
         if local_path is not None:
             mo = module_run(
-                paper, "repo_check", local_path=local_path, local_only=local_only, cache=cache
+                paper,
+                "repo_check",
+                local_path=local_path,
+                local_only=local_only,
+                cache=cache,
+                skip_on_api_limit=skip_on_api_limit,
             )
         else:
-            mo = module_run(paper, "repo_check", local_only=local_only, cache=cache)
+            mo = module_run(
+                paper,
+                "repo_check",
+                local_only=local_only,
+                cache=cache,
+                skip_on_api_limit=skip_on_api_limit,
+            )
         all_files = mo.table
         if all_files is None:
             all_files = pd.DataFrame(
@@ -238,7 +253,7 @@ def code_check(
             all_files = set_language(expand(all_files, *size_args).reset_index(drop=True))
     if _any_name(all_files, r"\.zip$"):
         all_files = set_language(
-            _code_expand_zip(all_files, skip_on_api_limit).reset_index(drop=True)
+            _code_expand_zip(all_files, skip_on_api_limit, cache).reset_index(drop=True)
         )
     all_files.attrs = {}
 
