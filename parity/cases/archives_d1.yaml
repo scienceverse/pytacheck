@@ -73,6 +73,27 @@
       "$expr":
         "r": "c(\"18093368\", \"https://figshare.com/articles/dataset/some_title/18093368\", \"https://figshare.com/articles/18093368\", \"https://doi.org/10.6084/m9.figshare.18093368\", \"10.6084/m9.figshare.18093368.v1\", \"https://ndownloader.figshare.com/files/12345\", \"https://figshare.com/projects/some_project/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"not-a-figshare-url\", \"\", \"https://figshare.com/articles/PxW_dataset/6934484\", \"https://doi.org/10.26180/19095317.v1\", \"https://doi.org/10.26188/14122688\", \"https://doi.org/10.25375/uct.14618526.v1\", \"https://tandf.figshare.com/articles/journal_contribution/Title/12345678\", \"https://figshare.le.ac.uk/articles/dataset/x/21234567\", \"https://figsh.com/articles/123\", \"https://doi.org/10.6084/m9.figshare.c.1234567\", \"https://doi.org/10.26180/19095317.v1.\", \"https://doi.org/10.17633/rd.brunel.1234567\", \" 18093368 \", \"https://FIGSHARE.COM/ARTICLES/DATASET/X/123\", \"https://figshare.com/articles/dataset/some_title/18093368/2\", \"https://ndownloader.figshare.com/files/12345?private_link=abc\", \"https://sub.figshare.shef.ac.uk/articles/media/Name/99\", \"https://doi.org/10.25375/19095317x\", NA)"
         "py": "[\"18093368\", \"https://figshare.com/articles/dataset/some_title/18093368\", \"https://figshare.com/articles/18093368\", \"https://doi.org/10.6084/m9.figshare.18093368\", \"10.6084/m9.figshare.18093368.v1\", \"https://ndownloader.figshare.com/files/12345\", \"https://figshare.com/projects/some_project/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"not-a-figshare-url\", \"\", \"https://figshare.com/articles/PxW_dataset/6934484\", \"https://doi.org/10.26180/19095317.v1\", \"https://doi.org/10.26188/14122688\", \"https://doi.org/10.25375/uct.14618526.v1\", \"https://tandf.figshare.com/articles/journal_contribution/Title/12345678\", \"https://figshare.le.ac.uk/articles/dataset/x/21234567\", \"https://figsh.com/articles/123\", \"https://doi.org/10.6084/m9.figshare.c.1234567\", \"https://doi.org/10.26180/19095317.v1.\", \"https://doi.org/10.17633/rd.brunel.1234567\", \" 18093368 \", \"https://FIGSHARE.COM/ARTICLES/DATASET/X/123\", \"https://figshare.com/articles/dataset/some_title/18093368/2\", \"https://ndownloader.figshare.com/files/12345?private_link=abc\", \"https://sub.figshare.shef.ac.uk/articles/media/Name/99\", \"https://doi.org/10.25375/19095317x\", None]"
+- "id": ".figshare_id.chained_subprefix"
+  "r": "metacheck:::.figshare_id"
+  "py": "metacheck.archives.figshare._figshare_id"
+  "args":
+    "figshare_url":
+      "$expr":
+        "r": "c(\"https://doi.org/10.17608/k6.auckland.25808182.v2\", \"https://doi.org/10.15131/shef.data.13712533\", \"10.17608/k6.auckland.25808182\", \"https://doi.org/10.25375/a.b.c.14618526.v1.\", \"https://doi.org/10.17608/k6.auckland.v2\", \"https://figshare.com/collections/Some_collection/8742785\", \"https://doi.org/10.6084/m9.figshare.c.8742785.v1\")"
+        "py": "[\"https://doi.org/10.17608/k6.auckland.25808182.v2\", \"https://doi.org/10.15131/shef.data.13712533\", \"10.17608/k6.auckland.25808182\", \"https://doi.org/10.25375/a.b.c.14618526.v1.\", \"https://doi.org/10.17608/k6.auckland.v2\", \"https://figshare.com/collections/Some_collection/8742785\", \"https://doi.org/10.6084/m9.figshare.c.8742785.v1\"]"
+- "id": ".figshare_collection_id.shapes"
+  "r": "metacheck:::.figshare_collection_id"
+  "py": "metacheck.archives.figshare._figshare_collection_id"
+  "args":
+    "figshare_url":
+      "$expr":
+        "r": "c(\"https://figshare.com/collections/Some_collection/8742785\", \"https://figshare.com/collections/Some_collection/8742785/\", \"https://FIGSHARE.COM/Collections/X/12\", \"https://figshare.le.ac.uk/collections/Leicester/77\", \"https://doi.org/10.6084/m9.figshare.c.6190228\", \"10.6084/m9.figshare.c.6190228.v2\", \"https://doi.org/10.6084/M9.FIGSHARE.C.42\", \"https://figshare.com/collections/x/y/1\", \"https://figshare.com/collections/x/1/files\", \"https://figshare.com/projects/some_project/133332\", \"https://doi.org/10.6084/m9.figshare.18093368\", \"https://doi.org/10.26180/c.1234\", \"not-a-figshare-url\", \"\", NA)"
+        "py": "[\"https://figshare.com/collections/Some_collection/8742785\", \"https://figshare.com/collections/Some_collection/8742785/\", \"https://FIGSHARE.COM/Collections/X/12\", \"https://figshare.le.ac.uk/collections/Leicester/77\", \"https://doi.org/10.6084/m9.figshare.c.6190228\", \"10.6084/m9.figshare.c.6190228.v2\", \"https://doi.org/10.6084/M9.FIGSHARE.C.42\", \"https://figshare.com/collections/x/y/1\", \"https://figshare.com/collections/x/1/files\", \"https://figshare.com/projects/some_project/133332\", \"https://doi.org/10.6084/m9.figshare.18093368\", \"https://doi.org/10.26180/c.1234\", \"not-a-figshare-url\", \"\", None]"
+- "id": ".figshare_collection_id.single"
+  "r": "metacheck:::.figshare_collection_id"
+  "py": "metacheck.archives.figshare._figshare_collection_id"
+  "args":
+    "figshare_url": "https://doi.org/10.6084/m9.figshare.c.6190228"
 - "id": ".figshare_id.numeric"
   "r": "metacheck:::.figshare_id"
   "py": "metacheck.archives.figshare._figshare_id"
@@ -118,6 +139,7 @@
       "$expr":
         "r": "c(\"https://doi.org/10.18167/DVN1/T0DMFJ.\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123&version=1.0\", \"https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/X%2FY\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FZ\", \"HTTPS://DATAVERSE.HARVARD.EDU/dataset.xhtml?PERSISTENTID=DOI:10.7910/DVN/UP\", \"https://dataverse.northwestern.edu/x\", \"https://doi.org/10.17026/dans-abc\", \"https://doi.org/10.9999/x\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/OE9BNP.\", \"https://borealisdata.ca/dataset.xhtml?persistentId=hdl:1880/1234\", \"https://www.sodha.be/dataset.xhtml?persistentId=doi:10.34934/DVN/ABC\", \"https://doi.org/10.6084/m9.figshare.123\")"
         "py": "[\"https://doi.org/10.18167/DVN1/T0DMFJ.\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123&version=1.0\", \"https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/X%2FY\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FZ\", \"HTTPS://DATAVERSE.HARVARD.EDU/dataset.xhtml?PERSISTENTID=DOI:10.7910/DVN/UP\", \"https://dataverse.northwestern.edu/x\", \"https://doi.org/10.17026/dans-abc\", \"https://doi.org/10.9999/x\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/OE9BNP.\", \"https://borealisdata.ca/dataset.xhtml?persistentId=hdl:1880/1234\", \"https://www.sodha.be/dataset.xhtml?persistentId=doi:10.34934/DVN/ABC\", \"https://doi.org/10.6084/m9.figshare.123\"]"
+  "mock_dir": "tests/archives_d1/mocks"
 - "id": ".dataverse_parse.empty"
   "r": "metacheck:::.dataverse_parse"
   "py": "metacheck.archives.dataverse._dataverse_parse"
@@ -140,6 +162,7 @@
       "$expr":
         "r": "c(\"10.18167/DVN1/T0DMFJ\", \"10.7910/DVN/ABC123\", \"10.9999/unrelated123\", \"10.6084/m9.figshare.1\", \"10.17026/x\", \"10.48733/y\", \"10.58032/z\", NA, \"\", \"doi:10.7910/DVN/X\", \"10.26300/abc\")"
         "py": "[\"10.18167/DVN1/T0DMFJ\", \"10.7910/DVN/ABC123\", \"10.9999/unrelated123\", \"10.6084/m9.figshare.1\", \"10.17026/x\", \"10.48733/y\", \"10.58032/z\", None, \"\", \"doi:10.7910/DVN/X\", \"10.26300/abc\"]"
+  "mock_dir": "tests/archives_d1/mocks"
 - "id": "dryad_links.demo"
   "r": "dryad_links"
   "py": "metacheck.archives.dryad.dryad_links"
@@ -319,6 +342,33 @@
         - "https://doi.org/10.60847/unrelated"
         - "https://ndownloader.figshare.com/files/12345"
   "compare": *id002
+- "id": "figshare_links.collections"
+  "r": "figshare_links"
+  "py": "metacheck.archives.figshare.figshare_links"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The collection figshare.com/collections/Some_collection/8742785 and its DOI 10.6084/m9.figshare.c.8742785.v1."
+        - "Auckland 10.17608/k6.auckland.25808182.v2 and Sheffield https://doi.org/10.15131/shef.data.13712533."
+        "url":
+        - "https://figshare.le.ac.uk/collections/Leicester/77"
+        - "https://doi.org/10.6084/m9.figshare.c.6190228"
+  "compare": *id002
+- "id": "dataverse_links.shared_prefix"
+  "r": "dataverse_links"
+  "py": "metacheck.archives.dataverse.dataverse_links"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "DANS: https://doi.org/10.17026/dans-zbt-uhma and 10.17026/PT/ABC123."
+        - "Collection https://doi.org/10.6084/m9.figshare.c.8742785.v1."
+        - "phys-techsciences.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/PT/X"
+        "url":
+        - "https://doi.org/10.17026/SS/Q1"
+  "mock_dir": "tests/archives_d1/mocks"
+  "compare": *id002
 - "id": "dataverse_links.test_paper"
   "r": "dataverse_links"
   "py": "metacheck.archives.dataverse.dataverse_links"
@@ -465,6 +515,24 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(figshare_info(6934484), online = function(...) TRUE, .package = \"metacheck\")"
         "py": "lambda m: m.figshare.figshare_info(6934484.0)"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "figshare_info.mock.collection"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(figshare_info(c(\"https://figshare.com/collections/Some_collection/8742785\", \"https://doi.org/10.6084/m9.figshare.c.8742785.v1\", \"https://figshare.com/collections/Gone/404405\", \"https://figshare.com/projects/Empty/999\", \"18093368\")), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.figshare.figshare_info([\"https://figshare.com/collections/Some_collection/8742785\", \"https://doi.org/10.6084/m9.figshare.c.8742785.v1\", \"https://figshare.com/collections/Gone/404405\", \"https://figshare.com/projects/Empty/999\", \"18093368\"])"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "figshare_info.mock.collection_only"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(figshare_info(\"https://figshare.com/collections/Some_collection/8742785\"), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.figshare.figshare_info(\"https://figshare.com/collections/Some_collection/8742785\")"
   "mock_dir": "tests/archives_d1/mocks"
 - "id": "dataverse_info.mock.vector"
   "r": "identity"

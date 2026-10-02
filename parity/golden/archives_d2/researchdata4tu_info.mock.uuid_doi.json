@@ -1,0 +1,150 @@
+{
+  "id": "researchdata4tu_info.mock.uuid_doi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "researchdata4tu_url",
+      "researchdata4tu_id",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.4121/uuid:ce413614-1c82-4e81-90c0-323aa7d2fabd",
+          "16766929"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ce413614-1c82-4e81-90c0-323aa7d2fabd",
+          "16766929"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A uuid-only dataset",
+          "Wind tunnel measurements"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd",
+          "10.4121/16766929.v1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2021-10-12T10:00:00"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2022-01-01T00:00:00"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ada Author",
+              "Bob Builder"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "CC BY 4.0"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "download_url",
+                  "computed_md5"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      501
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      11
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://data.4tu.nl/file/7f866e02/f501"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "86621499bc8a27bdf497a6dedc2c545d"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

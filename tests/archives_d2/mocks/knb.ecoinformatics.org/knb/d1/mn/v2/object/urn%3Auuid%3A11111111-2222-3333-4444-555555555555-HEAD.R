@@ -1,0 +1,1 @@
+structure(list(method = "HEAD", url = "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A11111111-2222-3333-4444-555555555555", status_code = 200L, headers = structure(list(`content-type` = "application/octet-stream", `Content-Length` = "4096"), class = "httr2_headers"), body = raw(0), cache = new.env(parent = emptyenv())), class = "httr2_response")

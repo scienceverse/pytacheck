@@ -1,0 +1,98 @@
+{
+  "id": "dataone_links.knb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dataone_url",
+      "dataone_host",
+      "dataone_pid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87",
+          "knb.1404.1",
+          "knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD,",
+          "KNB.77.3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87",
+          "knb.1404.1",
+          "knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD,",
+          "KNB.77.3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "knb.ecoinformatics.org",
+          "knb.ecoinformatics.org",
+          "knb.ecoinformatics.org",
+          null
+        ],
+        "names": [
+          "https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87",
+          "knb.1404.1",
+          "knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD,",
+          "KNB.77.3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.5063/F1Z60M87",
+          "knb.1404.1",
+          "doi:10.5063/AB12CD",
+          null
+        ],
+        "names": [
+          "https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87",
+          "knb.1404.1",
+          "knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD,",
+          "KNB.77.3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

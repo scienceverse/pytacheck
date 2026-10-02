@@ -14,35 +14,6 @@
   kind: r_bug_fixed
   ref: U31
   reason: "each URL gets its own Dataverse host (metacheck's regmatches() realignment gives a host-less URL the next URL's host)"
-# U32
-"archives_d1/.dataverse_doi_prefix_hosts":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/.dataverse_doi_prefix_regex":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/.dataverse_host_from_doi.shapes":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/dataverse_links.problem_203020":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/dataverse_links.paperlist":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/dataverse_links.test_paper":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1_review/dataverse_links.review.generated_shapes":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
 # U33
 "archives_d1/dryad_info.mock.id_col_name":
   kind: r_bug_fixed
