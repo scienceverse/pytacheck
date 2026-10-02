@@ -163,6 +163,34 @@ def test_stat_effect_size() -> None:
     assert mod_output.table["eta_coherence"].iloc[0] == "indeterminate"
 
 
+def test_stat_effect_size_hedges_g() -> None:
+    """Numeric coherence for Hedges' g, not just Cohen's d (metacheck #450)."""
+    # Hedges' g is on the same scale as Cohen's d, so a reported g is checked
+    # against the same implied-d values, not skipped as unparseable.
+    mod_output = _run("A was bigger than B, t(124) = 1.23, p 0.013, Hedges' g = 0.34.")
+    assert mod_output.table["d_coherence"].iloc[0] == "match_under_assumptions"
+    assert mod_output.table["d_coherence_assumption"].iloc[0] in (
+        "paired_dz",
+        "independent_equal_n",
+        "independent_unequal_n_range",
+    )
+
+    # a genuinely incoherent Hedges' g is still flagged as no_match, like d
+    mod_output = _run("A was bigger than B, t(20) = 1.00, p 0.32, Hedges' g = 3.00.")
+    assert mod_output.table["d_coherence"].iloc[0] == "no_match"
+    assert mod_output.table["d_coherence_assumption"].iloc[0] == "none"
+
+    # bare "g =" (no "Hedges'" prefix) is also recognized
+    mod_output = _run("A was bigger than B, t(23) = 2.73, p 0.013, g = 0.56.")
+    assert mod_output.table["d_coherence"].iloc[0] == "match_under_assumptions"
+    assert mod_output.table["d_coherence_assumption"].iloc[0] == "paired_dz"
+
+    # curly apostrophe, no apostrophe and upper case
+    for text in ("Hedges’ g = 0.45", "Hedges g = 0.45", "HEDGES' G = 0.45"):
+        t = _run(f"A was bigger than B, t(40) = 2.9, {text}.").table
+        assert t["d_coherence_assumption"].iloc[0] == "paired_dz", text
+
+
 def test_stat_effect_size_no_warnings() -> None:
     """stat_effect_size emits no warnings for a paper with no stats (#308)."""
     with warnings.catch_warnings():
@@ -413,7 +441,18 @@ def test_parsers() -> None:
     assert ses._parse_d_stats("Cohen’s  d = .5; dz = 1e-1; g = 2; d > 0.4") == [
         ("cohen’s d", 0.5, "Cohen’s  d = .5", "="),
         ("dz", 0.1, "dz = 1e-1", "="),
+        ("g", 2.0, "g = 2", "="),
         ("d", 0.4, "d > 0.4", ">"),
+    ]
+    # Hedges' g: with its name, its variants and the plural "gs" (metacheck #450).
+    # As in metacheck, "Hedges' g" (apostrophe after the s) is read as a bare "g".
+    assert ses._parse_d_stats(
+        "Hedges g av = .5; Hedge’s g = 1; Hedges' g = 2; gs = 0.3; gain = 2; g/kg = 1"
+    ) == [
+        ("hedges g av", 0.5, "Hedges g av = .5", "="),
+        ("hedge’s g", 1.0, "Hedge’s g = 1", "="),
+        ("g", 2.0, "g = 2", "="),
+        ("gs", 0.3, "gs = 0.3", "="),
     ]
     assert ses._parse_eta_stats("ηp² = .17; η2 = .1; f = .3; ω² = 0; BF10 = 3; xyz; d = 1") == [
         ("partial_eta_squared", 0.17, "ηp² = .17", "="),

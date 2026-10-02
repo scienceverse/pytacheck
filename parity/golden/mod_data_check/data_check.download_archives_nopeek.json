@@ -1,5 +1,5 @@
 {
-  "id": "data_check.archives_nopeek",
+  "id": "data_check.download_archives_nopeek",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -651,11 +651,11 @@
             ]
           },
           {
-            "t": "lgl",
+            "t": "chr",
             "v": [
-              null,
-              null,
-              null,
+              "file://<root>/tests/mod_data_check/fixtures/repos/archives/README.md",
+              "file://<root>/tests/mod_data_check/fixtures/repos/archives/bundle.zip",
+              "file://<root>/tests/mod_data_check/fixtures/repos/archives/stimuli.zip",
               null,
               null
             ]
@@ -663,11 +663,11 @@
           {
             "t": "chr",
             "v": [
-              "<copy>/archives/README.md",
-              "<copy>/archives/bundle.zip",
-              "<copy>/archives/stimuli.zip",
-              "<copy>/archives/results.tar.gz.contents/summary.csv",
-              "<copy>/archives/extra.csv.gz.contents/extra.csv"
+              "<cache>/osf.io_archi/README.md",
+              "<cache>/osf.io_archi/bundle.zip",
+              "<cache>/osf.io_archi/stimuli.zip",
+              "<cache>/osf.io_archi/results.tar.gz.contents/summary.csv",
+              "<cache>/osf.io_archi/extra.csv.gz.contents/extra.csv"
             ]
           },
           {

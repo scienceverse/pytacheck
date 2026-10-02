@@ -1995,9 +1995,9 @@ def data_read_head(
 ) -> pd.DataFrame | None:
     """Read the head of a data file regardless of format.
 
-    Port of ``R/data_check_helpers.R::data_read_head()``: delimited text
-    (delimiter and header detected, Qualtrics header rows stripped, misplaced
-    headers promoted), Excel, OpenDocument, SPSS/Stata/SAS, JASP/jamovi and R
+    Port of ``R/data_check_helpers.R::data_read_head()``: delimited text (``.csv``,
+    ``.txt``, ``.tsv``, ``.dat``, ``.tab``, ``.table``; delimiter and header
+    detected, Qualtrics header rows stripped, misplaced headers promoted), Excel, OpenDocument, SPSS/Stata/SAS, JASP/jamovi and R
     data files. ``n_rows = math.inf`` reads everything; *sheet* selects an
     Excel sheet (name or 1-based index). Returns ``None`` on failure or for an
     unsupported format (with a warning when reading failed).
@@ -2008,7 +2008,7 @@ def data_read_head(
 
     try:
         df: pd.DataFrame | None
-        if ext in ("csv", "txt", "tsv", "dat"):
+        if ext in ("csv", "txt", "tsv", "dat", "tab", "table"):
             sep = "\t" if ext == "tsv" else _sniff_delimiter(path)
             hdr = _detect_header(path, sep)
             if _is_single_field_blob(path, sep):

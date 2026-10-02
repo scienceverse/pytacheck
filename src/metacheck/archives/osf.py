@@ -801,7 +801,7 @@ _STORAGE_TRANSIENT = (403, 429, 500, 502, 503, 504)
 
 
 def _cap_helpers() -> tuple[Any, Any, Any]:
-    """``cap_report()``, ``.cap_size_str()`` (R/cap-prompt.R) and ``.cap_num()``."""
+    """``.cap_report()``, ``.cap_size_str()`` (R/cap-prompt.R) and ``.cap_num()``."""
     from metacheck.report.blocks import _cap_num
 
     _cap_size_str: Callable[[float | None], str]

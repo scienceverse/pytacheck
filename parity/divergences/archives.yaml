@@ -536,11 +536,19 @@
   kind: r_bug_fixed
   ref: U69
   reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
+"mod_data_check/data_check.archives_default":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
 "mod_data_check/data_check.archives_skip_none":
   kind: r_bug_fixed
   ref: U69
   reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
 "mod_data_check/data_check.download_archives":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
+"mod_data_check/data_check.download_archives_nopeek":
   kind: r_bug_fixed
   ref: U69
   reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"

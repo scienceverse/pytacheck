@@ -153,6 +153,11 @@
   kind: r_bug_fixed
   ref: U123
   reason: a local file file_category() cannot place takes its extension's type (stimulus.png is image) in repo_check's listing, which data_check's structure keeps; R leaves it NA
+"mod_data_check/data_check.local.archives": &u123_local_archives
+  kind: r_bug_fixed
+  ref: U123
+  reason: a local archive takes its extension's type (archive) in repo_check's listing, which data_check's structure keeps (R leaves it NA); the file decompressed from a .gz also has its real size (U69)
+"mod_data_check/data_check.local.archives_nopeek": *u123_local_archives
 
 # --- reproducibility check (R/reproducibility_check*.R, its module) ----------
 "repro_core/repro_run_scripts.nopkg_failed_dep": &u132

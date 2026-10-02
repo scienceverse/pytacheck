@@ -331,7 +331,8 @@ def cases() -> list[dict[str, Any]]:
         module_case("data_check.careless_short", "careless_short", careless=True),
         module_case("data_check.spreadsheets", "spreadsheets"),
         module_case("data_check.archives", "archives", peek_zips=True),
-        module_case("data_check.archives_nopeek", "archives"),
+        module_case("data_check.archives_nopeek", "archives", peek_zips=False),
+        module_case("data_check.archives_default", "archives"),
         module_case("data_check.archives_skip_none", "archives", peek_zips=True, skip_types=[]),
         module_case("data_check.rdata", "rdata"),
         module_case("data_check.trial", "trial"),
@@ -361,6 +362,12 @@ def cases() -> list[dict[str, Any]]:
         module_case("data_check.download_oversize", "download_capped", max_file_size=1e-5),
         module_case("data_check.download_gated", "download_capped", max_download_size=1e-5),
         module_case("data_check.download_archives", "download_archives", download="all"),
+        module_case(
+            "data_check.download_archives_nopeek",
+            "download_archives",
+            download="all",
+            peek_zips=False,
+        ),
         module_case("data_check.download_mixed_gated", "download_mixed", max_download_size=1e-5),
         module_case("data_check.download_mixed_oversize", "download_mixed", max_file_size=1e-5),
         module_case("data_check.paperlist", "paperlist"),
@@ -409,6 +416,27 @@ def cases() -> list[dict[str, Any]]:
                         "$expr": {
                             "r": f"local({{{R_HELPERS}; dc_run_local({d!r})}})",
                             "py": f"{PY_HELPERS}.dc_run_local({d!r})",
+                        }
+                    }
+                },
+            }
+        )
+    # a local zip: repo_check does not peek it (no URL), data_check unpacks the file on
+    # disk by default (peek_zips = TRUE since metacheck a16b13f8) and not with peek_zips = FALSE
+    for cid, r_arg, py_arg in (
+        ("data_check.local.archives", "", ""),
+        ("data_check.local.archives_nopeek", ", peek_zips = FALSE", ", peek_zips=False"),
+    ):
+        out.append(
+            {
+                "id": cid,
+                "r": "base::identity",
+                "py": "tests.mod_data_check.helpers.identity",
+                "args": {
+                    "x": {
+                        "$expr": {
+                            "r": f"local({{{R_HELPERS}; dc_run_local('archives', copy = TRUE{r_arg})}})",
+                            "py": f"{PY_HELPERS}.dc_run_local('archives', copy=True{py_arg})",
                         }
                     }
                 },

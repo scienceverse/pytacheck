@@ -2,8 +2,10 @@
 "stat_effect_size.f_branches": {"r": "e88b1f85dfce5981", "py": "1e4b8794b6fb742f", "diff": ["report[]", "summary_text[]", "table.eta_coherence[]", "table.eta_coherence_assumption[]", "table.eta_coherence_note[]"]},
 "stat_effect_size.f_zero_df": {"r": "ac5146cf65ca52a8", "py": "9b020325779fb62a", "diff": ["<R error, Python value>"]},
 "stat_effect_size.green_paper": {"r": "bfee370efa08b0ce", "py": "9158dfde0e5c82ae", "diff": ["table.text[]"]},
+"stat_effect_size.hedges_g_edges": {"r": "1538dec197398c97", "py": "c07e28fbf79e5416", "diff": ["report[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_n[]", "table.eta_coherence_assumption[]", "table.eta_coherence_note[]", "traffic_light[]"]},
+"stat_effect_size.hedges_g_variants": {"r": "4d07f7215060147d", "py": "c51fc768a85a0226", "diff": ["report[]", "summary_table.ttests_with_es[]", "summary_table.ttests_without_es[]", "summary_text[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_indep_equal_n[]", "table.d_implied_indep_unequal_max[]", "table.d_implied_indep_unequal_min[]", "table.d_implied_n[]", "table.d_implied_paired_drm_r05[]", "table.d_implied_paired_dz[]", "table.d_reported[]", "table.d_reported_text[]", "table.df[]", "table.es[]", "table.t_value[]", "traffic_light[]"]},
 "stat_effect_size.preprint_tei": {"r": "02ce78736b29711a", "py": "bb3f37b64bd3f53b", "diff": ["summary_text[]", "table.text[]"]},
 "stat_effect_size.published_tei": {"r": "06f92c0dffe871a9", "py": "8ed854aedd9867b9", "diff": ["summary_text[]", "table.text[]"]},
-"stat_effect_size.tricky": {"r": "6aa5a9efcc96cbe9", "py": "bab117862172e391", "diff": ["report[]", "summary_text[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_n[]", "traffic_light[]"]},
+"stat_effect_size.tricky": {"r": "9fea56f7609096c6", "py": "8e702d8ece338556", "diff": ["report[]", "summary_text[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_n[]", "traffic_light[]"]},
 "stat_effect_size.xml_unsorted": {"r": "50b9fcf6d56dad86", "py": "34fbe346a7c6ac06", "diff": ["summary_text[]", "table.text[]"]}
 }
