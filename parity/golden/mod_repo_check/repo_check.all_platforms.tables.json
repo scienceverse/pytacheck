@@ -141,7 +141,7 @@
               1,
               4,
               1,
-              1,
+              2,
               4,
               0,
               3
@@ -271,7 +271,7 @@
       },
       {
         "t": "df",
-        "nrow": 155,
+        "nrow": 156,
         "names": [
           "Repository",
           "File",
@@ -434,6 +434,7 @@
               "https://doi.org/10.4121/16766929.v1",
               "https://data.mendeley.com/datasets/vjtxybrc28",
               "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY",
+              "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY",
               "https://zenodo.org/records/5559001",
               "https://zenodo.org/records/5559001",
               "https://zenodo.org/records/5559001"
@@ -594,6 +595,7 @@
               "<a href='https://data.4tu.nl/file/7f866e02/f501' target='_blank'>readme.txt<\/a>",
               "<a href='https://data.mendeley.com/x/survey.csv' target='_blank'>survey.csv<\/a>",
               "<a href='https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Aabc-123' target='_blank'>soil_temp.csv<\/a>",
+              "nameless",
               "a.png",
               "b.jpg",
               "readme.txt"
@@ -754,6 +756,7 @@
               "11 B",
               "—",
               "20.5 kB",
+              "—",
               "72 B",
               "72 B",
               "8 B"
@@ -914,6 +917,7 @@
               "readme",
               "data",
               "data",
+              null,
               "image",
               "image",
               "text"
@@ -923,7 +927,7 @@
       },
       {
         "t": "df",
-        "nrow": 11,
+        "nrow": 12,
         "names": [
           "File",
           "Rule",
@@ -944,7 +948,8 @@
               "trial data.csv",
               "noext",
               "bundle.zip",
-              "notzip.zip"
+              "notzip.zip",
+              "nameless"
             ]
           },
           {
@@ -958,6 +963,7 @@
               "unclassifiable",
               "unclassifiable",
               "spaces",
+              "unclassifiable",
               "unclassifiable",
               "unclassifiable",
               "unclassifiable"
@@ -966,6 +972,7 @@
           {
             "t": "chr",
             "v": [
+              "bad",
               "bad",
               "bad",
               "bad",
@@ -990,6 +997,7 @@
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "contains a space",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
@@ -1567,7 +1575,7 @@
       },
       {
         "t": "df",
-        "nrow": 9,
+        "nrow": 10,
         "names": [
           "File",
           "Group",
@@ -1585,7 +1593,8 @@
               "weird.file-name",
               "noext",
               "bundle.zip",
-              "notzip.zip"
+              "notzip.zip",
+              "nameless"
             ]
           },
           {
@@ -1599,7 +1608,8 @@
               "ex3",
               "ex7",
               "ex9",
-              "ex10"
+              "ex10",
+              "ex16"
             ]
           },
           {
@@ -1613,7 +1623,8 @@
               "weird.file-name",
               "noext",
               "bundle.zip",
-              "notzip.zip"
+              "notzip.zip",
+              "nameless"
             ]
           }
         ]

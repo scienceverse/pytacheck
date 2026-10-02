@@ -46,7 +46,7 @@
       },
       {
         "t": "df",
-        "nrow": 4,
+        "nrow": 6,
         "names": [
           "paper_id",
           "repo_url",
@@ -87,6 +87,8 @@
               "p1",
               "p1",
               "p1",
+              "p1",
+              "p1",
               "p1"
             ]
           },
@@ -96,12 +98,16 @@
               "https://osf.io/archi",
               "https://osf.io/archi",
               "https://osf.io/archi",
+              "https://osf.io/archi",
+              "https://osf.io/archi",
               "https://osf.io/archi"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "trials.csv",
+              "trials.csv",
               "summary.csv",
               "summary.csv",
               "extra.csv",
@@ -114,12 +120,16 @@
               null,
               null,
               null,
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "subject",
+              "rt",
               "block",
               "acc",
               "item",
@@ -129,6 +139,8 @@
           {
             "t": "chr",
             "v": [
+              "text",
+              "numeric",
               "numeric",
               "numeric",
               "text",
@@ -138,6 +150,8 @@
           {
             "t": "chr",
             "v": [
+              "nominal",
+              "ratio",
               "ratio",
               "ratio",
               "nominal",
@@ -147,6 +161,8 @@
           {
             "t": "chr",
             "v": [
+              "id",
+              "reaction_time",
               null,
               null,
               null,
@@ -156,6 +172,8 @@
           {
             "t": "chr",
             "v": [
+              "identifier",
+              "measure",
               "measure",
               "measure",
               "measure",
@@ -166,6 +184,8 @@
             "t": "chr",
             "v": [
               null,
+              "milliseconds",
+              null,
               null,
               null,
               null
@@ -174,6 +194,8 @@
           {
             "t": "chr",
             "v": [
+              "ok",
+              "ok",
               "ok",
               "ok",
               "ok",
@@ -186,6 +208,8 @@
               null,
               null,
               null,
+              null,
+              null,
               null
             ]
           },
@@ -195,6 +219,8 @@
               false,
               false,
               false,
+              false,
+              false,
               false
             ]
           },
@@ -204,12 +230,16 @@
               false,
               false,
               false,
+              false,
+              false,
               false
             ]
           },
           {
             "t": "chr",
             "v": [
+              "1 | 2 | 3 | 4 | 5",
+              "512 | 498 | 610 | 577 | 530",
               "1 | 2 | 3 | 4",
               "0.9 | 0.85 | 0.95 | 0.8",
               "a | b | c",
@@ -222,12 +252,16 @@
               0,
               0,
               0,
+              0,
+              0,
               0
             ]
           },
           {
             "t": "int",
             "v": [
+              6,
+              6,
               4,
               4,
               3,
@@ -240,12 +274,16 @@
               0,
               0,
               0,
+              0,
+              0,
               0
             ]
           },
           {
             "t": "int",
             "v": [
+              6,
+              6,
               4,
               4,
               3,
@@ -255,6 +293,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              536,
               2.5,
               0.875,
               null,
@@ -264,6 +304,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              47.7953972679378,
               1.29099444873581,
               0.0645497224367903,
               null,
@@ -273,6 +315,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              19.5123892266768,
               0.645497224367903,
               0.0322748612183951,
               null,
@@ -282,6 +326,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              521,
               2.5,
               0.875,
               null,
@@ -291,6 +337,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              489,
               1,
               0.8,
               null,
@@ -300,6 +348,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              610,
               4,
               0.95,
               null,
@@ -309,6 +359,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              121,
               3,
               0.15,
               null,
@@ -318,6 +370,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              501.5,
               1.75,
               0.8375,
               null,
@@ -327,6 +381,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              565.25,
               3.25,
               0.9125,
               null,
@@ -336,6 +392,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              63.75,
               1.5,
               0.0750000000000002,
               null,
@@ -345,6 +403,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              0.460095705230889,
               0,
               0,
               null,
@@ -354,6 +414,8 @@
           {
             "t": "dbl",
             "v": [
+              null,
+              -1.71896924728976,
               -2.0775,
               -2.0775,
               null,
@@ -367,18 +429,18 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified.",
           "**Repository: https://osf.io/archi**",
-          "```\n├── extra.csv.gz/\n│   └── extra.csv    📊 data\n├── results.tar.gz/\n│   └── summary.csv  📊 data\n├── bundle.zip       ❓ unknown\n├── README.md        📄 readme\n└── stimuli.zip      📁 materials ex1\n```",
+          "```\n├── bundle.zip/\n│   └── inner/\n│       ├── codebook.txt  📖 documentation\n│       └── trials.csv    📊 data\n├── extra.csv.gz/\n│   └── extra.csv         📊 data\n├── results.tar.gz/\n│   └── summary.csv       📊 data\n└── README.md             📄 readme\n```",
           "#### Data Files",
-          "::: {.panel-tabset}\n\n## summary.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(block = 1:4, acc = c(0.9, 0.85, 0.95, 0.8)), row.names = c(NA, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## extra.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(item = c(\"a\", \"b\", \"c\"), value = 1:3), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "::: {.panel-tabset}\n\n## trials.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(subject = 1:6, rt = c(512L, 498L, 610L, 577L, \n530L, 489L)), row.names = c(NA, 6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## summary.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(block = 1:4, acc = c(0.9, 0.85, 0.95, 0.8)), row.names = c(NA, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## extra.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(item = c(\"a\", \"b\", \"c\"), value = 1:3), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
-          "::: {.panel-tabset}\n\n## summary.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"acc\", \"block\"), Representation = c(\"numeric\", \n\"numeric\"), Level = c(\"ratio\", \"ratio\"), Concept = c(\"\", \"\"), \n    Role = c(\"measure\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(4L, \n    4L), \"% Missing\" = c(0, 0), \"N Unique\" = c(4L, 4L), Mean = c(0.875, \n    2.5), SD = c(0.065, 1.291), Min = c(0.8, 1), Max = c(0.95, \n    4)), row.names = c(\"acc\", \"block\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## extra.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"item\", \"value\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"\", \"\"\n), Role = c(\"measure\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(3L, \n3L), \"% Missing\" = c(0, 0), \"N Unique\" = c(3L, 3L), Mean = c(NA, \n2), SD = c(NA, 1), Min = c(NA, 1), Max = c(NA, 3)), row.names = c(\"item\", \n\"value\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "::: {.panel-tabset}\n\n## summary.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"acc\", \"block\"), Representation = c(\"numeric\", \n\"numeric\"), Level = c(\"ratio\", \"ratio\"), Concept = c(\"\", \"\"), \n    Role = c(\"measure\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(4L, \n    4L), \"% Missing\" = c(0, 0), \"N Unique\" = c(4L, 4L), Mean = c(0.875, \n    2.5), SD = c(0.065, 1.291), Min = c(0.8, 1), Max = c(0.95, \n    4)), row.names = c(\"acc\", \"block\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## extra.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"item\", \"value\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"\", \"\"\n), Role = c(\"measure\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(3L, \n3L), \"% Missing\" = c(0, 0), \"N Unique\" = c(3L, 3L), Mean = c(NA, \n2), SD = c(NA, 1), Min = c(NA, 1), Max = c(NA, 3)), row.names = c(\"item\", \n\"value\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## trials.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"rt\", \"subject\"), Representation = c(\"numeric\", \n\"text\"), Level = c(\"ratio\", \"nominal\"), Concept = c(\"reaction_time\", \n\"id\"), Role = c(\"measure\", \"identifier\"), Unit = c(\"milliseconds\", \n\"\"), Rows = c(6L, 6L), \"% Missing\" = c(0, 0), \"N Unique\" = c(6L, \n6L), Mean = c(536, NA), SD = c(47.795, NA), Min = c(489, NA), \n    Max = c(610, NA)), row.names = c(\"rt\", \"subject\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
-          "We examined 4 columns across 2 data files.",
+          "We examined 6 columns across 3 data files.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
-          "**What this does not cover.** Only 0 of 2 data files could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+          "**What this does not cover.** Only 0 of 3 data files could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
         ]
       },
       {
@@ -390,7 +452,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 5 files: 2 data, 1 documentation, 1 materials, 1 unknown.\n-  We found 2 tabular data files and extracted 4 columns from 2 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 4 columns and found no issues."
+          "\n-  We classified 5 files: 3 data, 2 documentation.\n-  We found 3 tabular data files and extracted 6 columns from 3 of them.\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 6 columns and found no issues."
         ]
       },
       {
@@ -417,13 +479,13 @@
           {
             "t": "int",
             "v": [
-              2
+              3
             ]
           },
           {
             "t": "int",
             "v": [
-              4
+              6
             ]
           },
           {
@@ -435,13 +497,13 @@
           {
             "t": "int",
             "v": [
-              3
+              4
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              2
             ]
           },
           {
@@ -634,8 +696,8 @@
             "t": "chr",
             "v": [
               "README.md",
-              "bundle.zip",
-              "stimuli.zip",
+              "codebook.txt",
+              "trials.csv",
               "summary.csv",
               "extra.csv"
             ]
@@ -644,8 +706,8 @@
             "t": "chr",
             "v": [
               "README.md",
-              "bundle.zip",
-              "stimuli.zip",
+              "bundle.zip/inner/codebook.txt",
+              "bundle.zip/inner/trials.csv",
               "results.tar.gz/summary.csv",
               "extra.csv.gz/extra.csv"
             ]
@@ -654,8 +716,8 @@
             "t": "chr",
             "v": [
               "file://<root>/tests/mod_data_check/fixtures/repos/archives/README.md",
-              "file://<root>/tests/mod_data_check/fixtures/repos/archives/bundle.zip",
-              "file://<root>/tests/mod_data_check/fixtures/repos/archives/stimuli.zip",
+              null,
+              null,
               null,
               null
             ]
@@ -664,8 +726,8 @@
             "t": "chr",
             "v": [
               "<cache>/osf.io_archi/README.md",
-              "<cache>/osf.io_archi/bundle.zip",
-              "<cache>/osf.io_archi/stimuli.zip",
+              "<cache>/osf.io_archi/bundle.zip.contents/inner/codebook.txt",
+              "<cache>/osf.io_archi/bundle.zip.contents/inner/trials.csv",
               "<cache>/osf.io_archi/results.tar.gz.contents/summary.csv",
               "<cache>/osf.io_archi/extra.csv.gz.contents/extra.csv"
             ]
@@ -674,8 +736,8 @@
             "t": "dbl",
             "v": [
               11,
-              481,
-              143,
+              65,
+              51,
               40,
               0
             ]
@@ -684,8 +746,8 @@
             "t": "chr",
             "v": [
               "documentation",
-              "unknown",
-              "materials",
+              "documentation",
+              "data",
               "data",
               "data"
             ]
@@ -694,7 +756,7 @@
             "t": "chr",
             "v": [
               "readme",
-              null,
+              "codebook",
               null,
               null,
               null
@@ -704,8 +766,8 @@
             "t": "chr",
             "v": [
               null,
-              null,
-              null,
+              "tabular",
+              "tabular",
               "tabular",
               "tabular"
             ]
@@ -715,7 +777,7 @@
             "v": [
               null,
               null,
-              "ex1",
+              null,
               null,
               null
             ]
@@ -766,10 +828,43 @@
       {
         "t": "list",
         "names": [
+          "trials.csv",
           "summary.csv",
           "extra.csv"
         ],
         "v": [
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "subject",
+              "rt"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  512,
+                  498,
+                  610,
+                  577,
+                  530,
+                  489
+                ]
+              }
+            ]
+          },
           {
             "t": "df",
             "nrow": 4,

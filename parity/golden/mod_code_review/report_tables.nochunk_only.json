@@ -2,10 +2,7 @@
   "id": "report_tables.nochunk_only",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`."
-  ],
+  "warnings": [],
   "value": {
     "t": "list",
     "names": null,
@@ -15,6 +12,8 @@
         "nrow": 2,
         "names": [
           "File Name",
+          "% Comments",
+          "Missing Files",
           "Absolute Paths",
           "Code Between Libraries"
         ],
@@ -27,9 +26,23 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
             "t": "int",
             "v": [
-              null,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
               0
             ]
           },

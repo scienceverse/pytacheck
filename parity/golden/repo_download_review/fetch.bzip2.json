@@ -18,7 +18,8 @@
           "name",
           "path",
           "size",
-          "ok"
+          "ok",
+          "error"
         ],
         "v": [
           {
@@ -51,6 +52,14 @@
               false,
               false,
               true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unsupported compression method (12)",
+              "CRC32 mismatch (corrupt download)",
+              null
             ]
           }
         ]

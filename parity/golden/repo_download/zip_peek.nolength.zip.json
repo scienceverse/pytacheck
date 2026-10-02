@@ -4,7 +4,84 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "null"
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "name",
+      "size",
+      "method",
+      "csize",
+      "offset",
+      "crc"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "README.txt",
+          "__MACOSX/._study.csv",
+          "analysis.R",
+          "stim.png",
+          "study.csv",
+          "sub/codebook.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          6,
+          4,
+          38,
+          72,
+          1440,
+          38
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          8,
+          0,
+          8,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          6,
+          4,
+          37,
+          72,
+          696,
+          38
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          74,
+          156,
+          261,
+          399,
+          1162
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3604533822,
+          2775793027,
+          1322098019,
+          2149987689,
+          773114359,
+          294138266
+        ]
+      }
+    ]
   },
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"

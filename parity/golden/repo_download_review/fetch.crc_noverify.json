@@ -18,7 +18,8 @@
           "name",
           "path",
           "size",
-          "ok"
+          "ok",
+          "error"
         ],
         "v": [
           {
@@ -59,6 +60,16 @@
               false,
               true,
               true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "decompressed size did not match the archive's record",
+              null,
+              null
             ]
           }
         ]
