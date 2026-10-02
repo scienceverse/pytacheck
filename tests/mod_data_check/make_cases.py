@@ -423,10 +423,13 @@ def cases() -> list[dict[str, Any]]:
         )
     # a local zip: repo_check does not peek it (no URL), data_check unpacks the file on
     # disk by default (peek_zips = TRUE since metacheck a16b13f8) and not with peek_zips = FALSE
+    # each case copies to its own folder, so that cases running side by side
+    # (`parity check --jobs`) do not share one
     for cid, r_arg, py_arg in (
         ("data_check.local.archives", "", ""),
         ("data_check.local.archives_nopeek", ", peek_zips = FALSE", ", peek_zips=False"),
     ):
+        label = cid.rsplit(".", 1)[1]
         out.append(
             {
                 "id": cid,
@@ -435,8 +438,8 @@ def cases() -> list[dict[str, Any]]:
                 "args": {
                     "x": {
                         "$expr": {
-                            "r": f"local({{{R_HELPERS}; dc_run_local('archives', copy = TRUE{r_arg})}})",
-                            "py": f"{PY_HELPERS}.dc_run_local('archives', copy=True{py_arg})",
+                            "r": f"local({{{R_HELPERS}; dc_run_local('archives', copy = '{label}'{r_arg})}})",
+                            "py": f"{PY_HELPERS}.dc_run_local('archives', copy='{label}'{py_arg})",
                         }
                     }
                 },
