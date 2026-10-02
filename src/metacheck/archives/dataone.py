@@ -69,8 +69,9 @@ def dataone_links(paper: Any) -> pd.DataFrame:
 
     Hyperlinks from the paper's (or paper list's) ``url`` table naming a known
     member node or one of their DOI prefixes, plus bare mentions in the text
-    (a member node's ``view/doi:...`` landing page, or a DOI under a known
-    prefix). Trailing slashes are stripped and duplicate rows dropped;
+    (a member node's ``view/doi:...`` or ``#view/doi:...`` landing page, a DOI
+    under a known prefix, or a legacy KNB docid such as ``knb.1404.1``).
+    Trailing slashes are stripped and duplicate rows dropped;
     ``dataone_url``, ``dataone_host`` and ``dataone_pid`` columns are added.
     """
     from metacheck.archives.dataverse import _collect_links, _string_series, _url_rows
@@ -78,19 +79,30 @@ def dataone_links(paper: Any) -> pd.DataFrame:
     host_regex = _dataone_host_regex()
     doi_regex = _doi_regex()
     found_href = _url_rows(paper, f"{host_regex}|{doi_regex}")
+    # KNB's own landing pages use a "#view/doi:..." fragment; older KNB datasets
+    # are cited by their Metacat docid alone ("knb.1404.1"), which is their PID
     bare_regex = (
-        f"(?:https?://)?(?:{host_regex})/(?:view|catalog/view)/doi:[^\\s\"'<>)]+"
+        f"(?:https?://)?(?:{host_regex})/(?:#?view|catalog/view)/doi:[^\\s\"'<>)]+"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{doi_regex})/[A-Za-z0-9._/-]+"
+        f"|{_KNB_DOCID}"
     )
     literals = [f"{h['host']}/" for h in DATAONE_HOSTS]
     literals += [f"{h['doi_prefix']}/" for h in DATAONE_HOSTS if h["doi_prefix"]]
-    other = _scan_links(paper, bare_regex, literals)
+    # a docid has no "/": every candidate row holds one of the literals instead
+    other = _scan_links(paper, bare_regex, [*literals, "knb."], anchor=None)
     links = _collect_links([found_href, other])
     urls = links["href"].tolist()
     links["dataone_url"] = links["href"]
     links["dataone_host"] = _string_series([_host_one(u) for u in urls])
     links["dataone_pid"] = _string_series([_pid_one(u) for u in urls])
     return links
+
+
+#: a legacy KNB Metacat docid (scope.identifier.revision), matched on the literal
+#: "knb." prefix only
+_KNB_DOCID = r"\bknb\.[0-9]+\.[0-9]+\b"
+#: a whole URL that is a KNB docid (case-sensitive, as in R)
+_KNB_DOCID_ONLY = r"^knb\.[0-9]+\.[0-9]+$"
 
 
 def _scan_links(
@@ -150,6 +162,8 @@ def _host_one(url: Any) -> str | None:
     u = _clean_one(url)
     if u is None:
         return None
+    if grepl(_KNB_DOCID_ONLY, u, perl=True):
+        return "knb.ecoinformatics.org"
     # each host's name, then its DOI prefix, in list order: a KNB landing page
     # citing a 10.18739 DOI goes to arcticdata.io, the member node that
     # registered the DOI and holds the dataset (U40 lists this; kept)
@@ -179,7 +193,8 @@ def _dataone_host(dataone_url: Any) -> Any:
 
     A URL naming a known host, or containing a known host's DOI prefix, gives
     that host (hosts are tried in :data:`DATAONE_HOSTS` order, host name
-    before prefix); anything else ``None``.
+    before prefix); a KNB docid (``knb.1404.1``) gives KNB; anything else
+    ``None``.
     """
     return _map(dataone_url, _host_one)
 
@@ -191,9 +206,13 @@ _PID_BARE = r"(?:doi\.org/)?(10\.[0-9]+/[A-Za-z0-9._/-]+)$"
 
 
 def _pid_one(url: Any) -> str | None:
+    from metacheck._r import grepl
+
     u = _clean_one(url)
     if u is None:
         return None
+    if grepl(_KNB_DOCID_ONLY, u, perl=True):
+        return u  # a KNB docid is its own PID
     for pattern in (_PID_MARKED, _PID_BARE):
         groups = regexec(pattern, u, perl=True, ignore_case=True)
         if len(groups) >= 2:
@@ -207,10 +226,11 @@ def _pid_one(url: Any) -> str | None:
 def _dataone_pid(dataone_url: Any) -> Any:
     """Port of R/archive-dataone.R::.dataone_pid(): DataONE PIDs from URLs or DOIs.
 
-    A ``doi:10.xxx/...`` marker (as in a landing-page URL) is taken as is;
-    otherwise a DOI at the end of the string (in both, the suffix may contain
-    slashes; a trailing ``.`` is dropped). The result is in DataONE's
-    ``doi:<prefix>/<suffix>`` form, or ``None``.
+    A KNB docid (``knb.1404.1``) is its own PID. A ``doi:10.xxx/...`` marker
+    (as in a landing-page URL) is taken as is; otherwise a DOI at the end of
+    the string (in both, the suffix may contain slashes; a trailing ``.`` is
+    dropped). A DOI is given in DataONE's ``doi:<prefix>/<suffix>`` form;
+    ``None`` where there is no PID.
     """
     return _map(dataone_url, _pid_one)
 
@@ -385,6 +405,28 @@ def _as_numeric_quiet(x: str | None) -> float:
         return _as_numeric(x)
 
 
+def _dataone_object_size(host: str, api_base: str, pid: str) -> float:
+    """Port of R/archive-dataone.R::.dataone_object_size(): one object's size in bytes.
+
+    The ``Content-Length`` of a ``HEAD`` request to the member node's
+    ``<api_base>object/<pid>``; ``NaN`` (R's ``NA``) when the request fails,
+    the status is not 200 or the header is missing or not a number.
+    """
+    import math
+
+    from metacheck import http
+    from metacheck.archives.dataverse import _url_encode_reserved
+
+    url = f"https://{host}{api_base}object/{_url_encode_reserved(pid)}"
+    try:
+        resp = http.request("HEAD", url, max_tries=1)
+    except Exception:
+        return math.nan
+    if resp is None or resp.status_code != 200:
+        return math.nan
+    return _as_numeric_quiet(resp.headers.get("Content-Length"))
+
+
 def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
     """Port of R/archive-dataone.R::.dataone_info(): one dataset from one member node.
 
@@ -393,9 +435,15 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
     ``dataone_pid`` and either ``error`` (``"unknown_host"``, ``"unfound"``
     with a warning, or ``"unsupported_metadata_format"`` for anything that is
     not an EML document) or ``title``, ``doi``, ``publication_date``,
-    ``authors``, ``license`` and ``files`` (one record per ``<physical>``
-    element: ``key``, ``size``, ``pid``).
+    ``authors``, ``license`` and ``files``: one record (``key``, ``size``,
+    ``pid``) per data entity (``dataTable``, ``otherEntity``,
+    ``spatialVector``, ``spatialRaster``), read from its first
+    ``<physical>``; for an entity without one, the ``entityName``, the PID its
+    ``urn-uuid-`` id stands for and the size a ``HEAD`` request reports
+    (:func:`_dataone_object_size`).
     """
+    import math
+
     from metacheck.archives import _spinner, _tick
     from metacheck.archives.dataverse import (
         _cell,
@@ -447,16 +495,44 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
         license_ = _text_of(doc, _local("intellectualRights"))
 
         files = []
-        for p in cast("list[etree._Element]", doc.xpath(_local("physical"))):
-            name = _text_of(p, _local("objectName"))
-            size = _text_of(p, _local("size"))
-            url = _text_of(p, _local("url"))
-            file_pid = None if url is None else sub("^.*/", "", url)
+        entities = cast(
+            "list[etree._Element]",
+            doc.xpath(
+                ".//*[local-name()='dataTable' or local-name()='otherEntity' or "
+                "local-name()='spatialVector' or local-name()='spatialRaster']"
+            ),
+        )
+        for e in entities:
+            p = _find_first(e, _local("physical"))
+            if p is not None:
+                name = _text_of(p, _local("objectName"))
+                size = _text_of(p, _local("size"))
+                url = _text_of(p, _local("url"))
+                file_pid = None if url is None else sub("^.*/", "", url)
+                files.append(
+                    {
+                        "key": name,
+                        "size": _as_numeric_quiet(size),
+                        "pid": file_pid if file_pid else None,
+                    }
+                )
+                continue
+            # an entity without <physical> (a bare name/type pair, as some KNB
+            # records list): its "urn-uuid-<uuid>" id is the object's PID, and
+            # its size comes from a HEAD request; any other id is not a PID
+            raw_id = e.get("id")
+            pid_ = (
+                sub("^urn-uuid-", "urn:uuid:", raw_id)
+                if raw_id is not None and raw_id.startswith("urn-uuid-")
+                else None
+            )
             files.append(
                 {
-                    "key": name,
-                    "size": _as_numeric_quiet(size),
-                    "pid": file_pid if file_pid else None,
+                    "key": _text_of(e, _local("entityName")),
+                    "size": math.nan
+                    if pid_ is None
+                    else _dataone_object_size(str(host), str(api_base), pid_),
+                    "pid": pid_,
                 }
             )
 

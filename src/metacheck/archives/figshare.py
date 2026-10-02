@@ -14,6 +14,7 @@ from __future__ import annotations
 import functools
 import os
 import warnings
+from collections.abc import Callable
 from typing import Any, cast
 
 import pandas as pd
@@ -164,7 +165,10 @@ def _figshare_prefilter() -> str:
     hosts = ("figshare.com", "figsh.com", *FIGSHARE_VANITY_HOSTS)
     labels = "|".join(sorted({h.rsplit(".", 1)[1] for h in hosts}))
     digits = "|".join(p.split(".", 1)[1] for p in ("10.6084", *FIGSHARE_DOI_PREFIX_HOSTS))
-    return f"\\.(?:{labels})/(?:articles|ndownloader|projects|s)/|10\\.(?:{digits})/[A-Za-z0-9._-]"
+    return (
+        f"\\.(?:{labels})/(?:articles|ndownloader|projects|collections|s)/"
+        f"|10\\.(?:{digits})/[A-Za-z0-9._-]"
+    )
 
 
 def _escape_prefixes(prefixes: Any) -> str:
@@ -182,7 +186,7 @@ def figshare_links(paper: Any) -> pd.DataFrame:
 
     Hyperlinks from the paper's (or paper list's) ``url`` table mentioning a
     Figshare host or DOI prefix, plus bare mentions in the text (article,
-    download, project and share URLs; ``10.6084/m9.figshare.<id>`` and
+    download, project, collection and share URLs; ``10.6084/m9.figshare.<id>`` and
     institutional DOIs). Trailing slashes are stripped and duplicate rows
     dropped; ``figshare_url``, ``figshare_id`` and ``figshare_unsupported``
     (a private share link, which cannot be resolved) are added.
@@ -191,8 +195,8 @@ def figshare_links(paper: Any) -> pd.DataFrame:
     doi_prefix_regex = _doi_prefix_regex()
     found_href = _url_rows(paper, f"{host_regex}|{doi_prefix_regex}")
     fs_bare_regex = (
-        f"(?:https?://)?(?:[a-z0-9.-]+\\.)?(?:{host_regex})/(?:articles|ndownloader|projects|s)"
-        "/[A-Za-z0-9/_.-]*"
+        f"(?:https?://)?(?:[a-z0-9.-]+\\.)?(?:{host_regex})"
+        "/(?:articles|ndownloader|projects|collections|s)/[A-Za-z0-9/_.-]*"
         "|(?:https?://)?(?:doi\\.org/)?10\\.6084/m9\\.figshare\\.[0-9]+(?:\\.v[0-9]+)?"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{doi_prefix_regex})/[A-Za-z0-9._-]+(?:\\.v[0-9]+)?"
     )
@@ -219,7 +223,9 @@ def _figshare_id_patterns() -> tuple[Any, ...]:
         f"(?:{host_regex})/articles/[^/]+/([0-9]+)",
         f"(?:{host_regex})/articles/([0-9]+)",
         r"ndownloader\.figshare\.com/files/([0-9]+)",
-        f"(?:{inst_prefix_regex})/(?:[a-z]+\\.)?([0-9]+)(?:\\.v[0-9]+)?(?:[^0-9]|$)",
+        # any number of sub-prefix segments before the id ("uct.", "k6.auckland.",
+        # "shef.data.")
+        f"(?:{inst_prefix_regex})/(?:[a-z0-9]+\\.)*([0-9]+)(?:\\.v[0-9]+)?(?:[^0-9]|$)",
     )
     return tuple(compile_r(p, ignore_case=True, perl=True) for p in patterns)
 
@@ -276,6 +282,40 @@ def _figshare_project_id(figshare_url: Any) -> Any:
     return out[0] if scalar else out
 
 
+@functools.cache
+def _collection_rxs() -> tuple[Any, Any]:
+    return (
+        compile_r(
+            f"(?:{_figshare_host_regex()})/collections/[^/]+/([0-9]+)/?$",
+            ignore_case=True,
+            perl=True,
+        ),
+        compile_r(r"10\.6084/m9\.figshare\.c\.([0-9]+)", ignore_case=True, perl=True),
+    )
+
+
+def _figshare_collection_id(figshare_url: Any) -> Any:
+    """Port of R/archive-figshare.R::.figshare_collection_id(): collection IDs.
+
+    The trailing number of a ``<figshare host>/collections/<name>/<id>`` URL,
+    or the ``<id>`` of a collection DOI ``10.6084/m9.figshare.c.<id>``; else
+    ``None``. A string gives a string, a sequence a list.
+    """
+    vals, scalar = _chr_values(figshare_url)
+    out: list[str | None] = []
+    for v in vals:
+        s = None if v is None else trimws(v)
+        found = None
+        if s:
+            for rx in _collection_rxs():
+                m = rx.search(s)
+                if m is not None:
+                    found = cast("str", m.group(1))
+                    break
+        out.append(found)
+    return out[0] if scalar else out
+
+
 def _figshare_project_articles(
     project_id: Any, host: str = "api.figshare.com", pb: Any = None
 ) -> list[str]:
@@ -285,6 +325,23 @@ def _figshare_project_articles(
     page) and returns the unique article IDs; warns when the project cannot
     be found.
     """
+    return _bundle_articles("projects", "project", project_id, host, pb)
+
+
+def _figshare_collection_articles(
+    collection_id: Any, host: str = "api.figshare.com", pb: Any = None
+) -> list[str]:
+    """Port of R/archive-figshare.R::.figshare_collection_articles(): a collection's article IDs.
+
+    Pages through the public ``/v2/collections/<id>/articles`` endpoint (100
+    per page) and returns the unique article IDs; warns when the collection
+    cannot be found.
+    """
+    return _bundle_articles("collections", "collection", collection_id, host, pb)
+
+
+def _bundle_articles(path: str, label: str, bundle_id: Any, host: str, pb: Any) -> list[str]:
+    """The article IDs of a project or collection (``/v2/<path>/<id>/articles``)."""
     from metacheck.archives import _spinner
 
     with _spinner(pb):
@@ -292,15 +349,14 @@ def _figshare_project_articles(
         page = 1
         while True:
             api_url = (
-                f"https://{host}/v2/projects/{_paste(project_id)}/articles"
-                f"?page={page}&page_size=100"
+                f"https://{host}/v2/{path}/{_paste(bundle_id)}/articles?page={page}&page_size=100"
             )
             resp = _query(api_url, lambda req: _figshare_headers(req, host=host))
             if resp is None or resp.status_code != 200:
                 if not all_ids:
                     warnings.warn(
-                        f"Figshare project {_paste(project_id)} could not be found on {host}",
-                        stacklevel=2,
+                        f"Figshare {label} {_paste(bundle_id)} could not be found on {host}",
+                        stacklevel=3,
                     )
                 break
             rec = _resp_json(resp)
@@ -326,8 +382,8 @@ def figshare_info(
 
     *figshare_url* is a URL/DOI/ID, a sequence of them, or a table whose
     *id_col* (1-based position or name) holds them (e.g. from
-    :func:`figshare_links`). A project URL is expanded into one row per
-    article it contains. Each article is fetched from *host*'s API (with
+    :func:`figshare_links`). A project or collection URL is expanded into one
+    row per article it contains. Each article is fetched from *host*'s API (with
     *cache*, from the on-disk listing cache when possible); the input rows
     are returned with ``figshare_id`` and the article's ``title``, ``doi``,
     ``publication_date``, ``updated_date``, ``authors``, ``license`` and
@@ -359,33 +415,12 @@ def figshare_info(
         ids = ids.drop_duplicates()
         ids = ids[ids["figshare_url"].notna().to_numpy()].reset_index(drop=True)
 
-        unresolved = ids["figshare_id"].isna().to_numpy()
-        if unresolved.any():
-            project_urls = ids["figshare_url"][unresolved].tolist()
-            project_ids = _figshare_project_id(project_urls)
-            project_rows = []
-            for url, proj_id in zip(project_urls, project_ids, strict=True):
-                if proj_id is None:
-                    continue
-                article_ids = _figshare_project_articles(proj_id, host=host, pb=bar)
-                if article_ids:
-                    project_rows.append((url, article_ids))
-            if project_rows:
-                expanded = list(dict.fromkeys(url for url, _ in project_rows))
-                drop = (
-                    ids["figshare_url"].isin(expanded).to_numpy()
-                    & ids["figshare_id"].isna().to_numpy()
-                )
-                ids = ids[~drop]
-                extra = pd.DataFrame(
-                    {
-                        "figshare_url": [url for url, arts in project_rows for _ in arts],
-                        "figshare_id": _string_series(
-                            [a for _, arts in project_rows for a in arts]
-                        ),
-                    }
-                ).astype({"figshare_url": ids["figshare_url"].dtype})
-                ids = bind_rows([ids, extra]).drop_duplicates().reset_index(drop=True)
+        # a project or collection URL has no article id of its own: it becomes
+        # one row per article it contains (projects first, then collections)
+        ids = _expand_bundles(ids, _figshare_project_id, _figshare_project_articles, host, bar)
+        ids = _expand_bundles(
+            ids, _figshare_collection_id, _figshare_collection_articles, host, bar
+        )
 
         valid_ids = list(dict.fromkeys(v for v in ids["figshare_id"].tolist() if not is_na(v)))
         if not valid_ids:
@@ -411,6 +446,45 @@ def figshare_info(
         data = left_join(data, info, by="figshare_id", suffix=("", ".figshare"))
         _tick(bar, "...Figshare retrieval complete!")
         return data
+
+
+def _expand_bundles(
+    ids: pd.DataFrame,
+    bundle_id: Callable[[Any], Any],
+    articles: Callable[..., list[str]],
+    host: str,
+    bar: Any,
+) -> pd.DataFrame:
+    """Replace the id-less rows of project (or collection) URLs by their articles.
+
+    *ids* has ``figshare_url`` and ``figshare_id``; each row without an id
+    whose URL *bundle_id* recognises becomes one row per article *articles*
+    lists for it. A URL listing no articles keeps its id-less row.
+    """
+    from metacheck._r import bind_rows
+
+    unresolved = ids["figshare_id"].isna().to_numpy()
+    if not unresolved.any():
+        return ids
+    urls = ids["figshare_url"][unresolved].tolist()
+    rows = []
+    for url, bid in zip(urls, bundle_id(urls), strict=True):
+        if bid is None:
+            continue
+        article_ids = articles(bid, host=host, pb=bar)
+        if article_ids:
+            rows.append((url, article_ids))
+    if not rows:
+        return ids
+    expanded = list(dict.fromkeys(url for url, _ in rows))
+    drop = ids["figshare_url"].isin(expanded).to_numpy() & ids["figshare_id"].isna().to_numpy()
+    extra = pd.DataFrame(
+        {
+            "figshare_url": [url for url, arts in rows for _ in arts],
+            "figshare_id": _string_series([a for _, arts in rows for a in arts]),
+        }
+    ).astype({"figshare_url": ids["figshare_url"].dtype})
+    return bind_rows([ids[~drop], extra]).drop_duplicates().reset_index(drop=True)
 
 
 def _figshare_info(

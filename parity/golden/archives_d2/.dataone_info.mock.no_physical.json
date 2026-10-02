@@ -1,0 +1,224 @@
+{
+  "id": ".dataone_info.mock.no_physical",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dataone_host",
+      "dataone_pid",
+      "title",
+      "doi",
+      "publication_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "knb.ecoinformatics.org"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.5063/NOPHYS"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Entities without a physical description"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.5063/NOPHYS"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "table.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2048
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn%3Auuid%3Aaaaaaaaa-0000-0000-0000-000000000000"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "script.R"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      4096
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn:uuid:11111111-2222-3333-4444-555555555555"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "shapes.zip"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn:uuid:66666666-7777-8888-9999-000000000000"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "notes.txt"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "raster.tif"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

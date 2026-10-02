@@ -290,8 +290,9 @@ def test_unfound_dspace7_items_are_flagged_but_empty_ones_are_not(
 
     monkeypatch.setattr(ds7, "_dspace7_file_lists", lambda urls, pb=None: (None, [urls[1]]))
     repos = rc.Repos(rc.repo_rows("p", ["https://x/a", "https://x/b"], "dspace7", rc.NA_SCALAR))
-    files = rc.list_dspace7(repos, ["https://x/a", "https://x/b"], None)
+    files, meta = rc.list_dspace7(repos, ["https://x/a", "https://x/b"], None)
     assert len(files) == 0
+    assert len(meta) == 0
     # only the item that was not found (an item without files was found)
     assert pd.isna(repos.df["repo_error"].iloc[0])
     assert repos.df["repo_error"].iloc[1] == "invalid or inaccessible DSpace item"
