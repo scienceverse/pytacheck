@@ -289,10 +289,11 @@ def dc_run(
     return norm_paths(out)
 
 
-def dc_run_local(d: str, **kwargs: Any) -> Any:
+def dc_run_local(d: str, copy: bool = False, **kwargs: Any) -> Any:
     """``module_run(<test paper p1>, "data_check", local_path = <fixture dir>)``.
 
-    The real pipeline: ``repo_check`` lists the directory.
+    The real pipeline: ``repo_check`` lists the directory. *copy* works on a
+    temporary copy (archives are unpacked beside themselves).
     """
     import metacheck as pc
     from metacheck.module import module_run
@@ -305,6 +306,12 @@ def dc_run_local(d: str, **kwargs: Any) -> Any:
     # R passes the relative path (it runs from the repository root), which
     # repo_check reports as the repository URL
     local = f"tests/mod_data_check/fixtures/repos/{d}"
+    if copy:  # a fixed relative path, as in dc_helpers.R: the same URL on every run
+        work = ROOT / "parity" / "_out" / "dc_local_copy"
+        shutil.rmtree(work, ignore_errors=True)
+        work.mkdir(parents=True)
+        shutil.copytree(REPOS / d, work / d)
+        local = f"parity/_out/dc_local_copy/{d}"
     with (
         contextlib.chdir(ROOT),
         local_options({"pytacheck.careless": False, "metacheck.llm.use": False}),

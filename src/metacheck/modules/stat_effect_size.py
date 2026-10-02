@@ -39,7 +39,8 @@ _T_PATTERN = r"\bt\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
 # parse_d_stats(): perl = TRUE
 _D_PATTERN = (
     r"(?i)\b"
-    r"(cohen(?:'|’)?s\s+d\s*z|cohen(?:'|’)?s\s+d|d\s*z|d|ds)"
+    r"(hedge(?:'|’)?s\s+g\s*(?:av|z|rm)?|cohen(?:'|’)?s\s+d\s*z|cohen(?:'|’)?s\s+d|"
+    r"d\s*z|d|ds|g\s*(?:av|z|rm)?|gs)"
     r"\b\s*([=≈<>≤≥]{1,3})\s*" + _NUM
 )
 
@@ -57,7 +58,7 @@ _ETA_PATTERN = r"(?i)^\s*" r"([^=≈<>≤≥;]+?)" r"\s*([=≈<>≤≥]{1,3})\s*
 _F_DF_PATTERN = r"^\(\s*[0-9]+\s*,\s*[0-9]+\s*\)$"
 _ES_PATTERNS = (
     r"^(cohen.{0,3})?d(_?(z|s|av|rm))?$",  # Cohen's d / dz / ds / dav / drm
-    r"^(hedge.{0,3})?g$",  # Hedges' g
+    r"^(hedge.{0,3})?g(_?(z|s|av|rm))?$",  # Hedges' g / gz / gs / gav / grm (U222)
     r"^f2?$",  # Cohen's f
     r"cohen",
     r"ω|omega",  # omega
@@ -506,7 +507,7 @@ def _parse_t_stats(test_text: str | None) -> list[_TStat]:
 
 
 def _parse_d_stats(es_text: str | None) -> list[_DStat]:
-    """Port of ``stat_effect_size.R::parse_d_stats()``: every Cohen's d / dz value."""
+    """Port of ``stat_effect_size.R::parse_d_stats()``: every Cohen's d / dz and Hedges' g value."""
     from metacheck._r.base import trimws
     from metacheck._r.regex import gsub
 

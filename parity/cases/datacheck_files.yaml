@@ -32,6 +32,32 @@
       "$expr":
         "r": "c(NA, \"tsv\")"
         "py": "[None, 'tsv']"
+- "id": "data_format.domain_formats"
+  "r": "data_format"
+  "py": "metacheck.datacheck.files.data_format"
+  "args":
+    "ext":
+      "$chr":
+      - "tab"
+      - "table"
+      - "TAB"
+      - "Table"
+      - "shp"
+      - "dbf"
+      - "shx"
+      - "prj"
+      - "sbn"
+      - "sbx"
+      - "cpg"
+      - "gpkg"
+      - "nex"
+      - "nwk"
+      - "tre"
+      - "phy"
+      - "mzxml"
+      - "mztab"
+      - "ply"
+      - "stl"
 - "id": "data_is_manifest.manifest"
   "r": "data_is_manifest"
   "py": "metacheck.datacheck.files.data_is_manifest"
@@ -1255,6 +1281,46 @@
       "$expr":
         "r": "Inf"
         "py": "float('inf')"
+- "id": "data_read_head.results.tab"
+  "r": "data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/results.tab"
+    "n_rows":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+- "id": "data_read_head.results.table"
+  "r": "data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/results.table"
+    "n_rows":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+- "id": "data_read_head.spaces.table"
+  "r": "data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/spaces.table"
+    "n_rows":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+- "id": "data_read_head.comma.tab"
+  "r": "data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/comma.tab"
+    "n_rows":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
 - "id": "data_read_head.hundred.csv.n5"
   "r": "data_read_head"
   "py": "metacheck.datacheck.files.data_read_head"
@@ -1327,6 +1393,18 @@
   "args":
     "path":
       "$file": "tests/datacheck_files/data/footer.csv"
+- "id": "data_read_head.results.tab.n5"
+  "r": "data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/results.tab"
+- "id": "data_read_head.results.table.n5"
+  "r": "data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/results.table"
 - "id": "data_read_head.xl_sheets.second"
   "r": "data_read_head"
   "py": "metacheck.datacheck.files.data_read_head"

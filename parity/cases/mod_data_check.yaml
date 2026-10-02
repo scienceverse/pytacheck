@@ -181,6 +181,15 @@
   "args":
     "x":
       "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('archives', peek_zips\
+          \ = FALSE)})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('archives', peek_zips=False)"
+- "id": "data_check.archives_default"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('archives')})"
         "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('archives')"
 - "id": "data_check.archives_skip_none"
@@ -401,6 +410,16 @@
           \ download = 'all')})"
         "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('download_archives',\
           \ download='all')"
+- "id": "data_check.download_archives_nopeek"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('download_archives',\
+          \ download = 'all', peek_zips = FALSE)})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('download_archives',\
+          \ download='all', peek_zips=False)"
 - "id": "data_check.download_mixed_gated"
   "r": "base::identity"
   "py": "tests.mod_data_check.helpers.identity"
@@ -588,6 +607,25 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_local('groups')})"
         "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('groups')"
+- "id": "data_check.local.archives"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_local('archives',\
+          \ copy = TRUE)})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('archives', copy=True)"
+- "id": "data_check.local.archives_nopeek"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_local('archives',\
+          \ copy = TRUE, peek_zips = FALSE)})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('archives', copy=True,\
+          \ peek_zips=False)"
 - "id": "repo_tree_rows.mixed"
   "r": "base::identity"
   "py": "tests.mod_data_check.helpers.identity"
