@@ -1,0 +1,23 @@
+{
+  "id": "code_char_vector_vars.review.sapply_fun",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "pkgs"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psych",
+          "car"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

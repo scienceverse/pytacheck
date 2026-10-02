@@ -373,6 +373,179 @@ case(
     {"all_files": {"$df": {"repo_url": ["r"], "file_name": ["renv.lock"], "file_url": [None]}}},
 )
 
+# ---------------------------------------------------------------------------
+# code_library_names(): a package-list variable is not a package (issue #421)
+# ---------------------------------------------------------------------------
+LIBS: dict[str, list[str | None]] = {
+    # the issue's example: a loop variable over a literal list spread over lines
+    "loop_var_issue": [
+        'list.packages <- c("activity", "bbmle",',
+        '                   "Distance")',
+        "for (req.lib in list.packages) {",
+        "  if (!require(req.lib, character.only = TRUE)) {",
+        "    install.packages(req.lib)",
+        "    library(req.lib, character.only = TRUE)",
+        "  }",
+        "}",
+    ],
+    # the common new.packages idiom: indexing resolves, a derived variable does not
+    "new_packages_idiom": [
+        'list.of.packages <- c("ggplot2", "Rcpp")',
+        'new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]',
+        "if (length(new.packages)) install.packages(new.packages)",
+        "install.packages(list.of.packages[!list.of.packages %in% rownames(installed.packages())])",
+        "lapply(list.of.packages, require, character.only = TRUE)",
+    ],
+    "not_purely_literal": ['pk <- c("zoo", other)', "install.packages(pk)"],
+    "sapply_fun": [
+        'pkgs = c("psych", "car")',
+        "sapply(pkgs, FUN = library, character.only = TRUE)",
+    ],
+    "pload_char": ['p <- c("lme4", "car")', "pacman::p_load(char = p)"],
+    "pload_character_only": ['p <- c("lme4", "car")', "pacman::p_load(p, character.only = TRUE)"],
+    "pload_mixed": ['p <- c("lme4", "car")', 'pacman::p_load(dplyr, "tidyr", tibble)'],
+    "pload_named_arg": ["pacman::p_load(dplyr, install = FALSE)"],
+    "literal_names": [
+        'library(dplyr); library("tidyr")',
+        'install.packages("afex", dependencies = TRUE)',
+        'BiocManager::install("edgeR")',
+    ],
+    "assign_forms": [
+        'a <<- c("one", "two")',
+        'b = "three"',
+        "install.packages(a); install.packages(b)",
+    ],
+    "later_assignment_wins": [
+        'p <- c("first")',
+        "install.packages(p)",
+        'p <- c("second", "third")',
+        "install.packages(p)",
+    ],
+    "loop_over_unknown": [
+        "for (p in pkgs) library(p, character.only = TRUE)",
+        'for (p in c("a", "b")) library(p, character.only = TRUE)',
+    ],
+    "single_quotes_and_T": [
+        "pk <- c('x1', 'y2')",
+        "library(pk, character.only = T)",
+        "require(pk, character.only = TRUE)",
+    ],
+    "require_namespace_var": [
+        'pkg <- "stringr"',
+        "requireNamespace(pkg, quietly = TRUE)",
+        'requireNamespace("glue", quietly = TRUE)',
+    ],
+    "bare_library_vs_char_only": [
+        'x <- "tidyr"',
+        "library(x)",
+        "library(x, character.only = TRUE)",
+    ],
+    "install_c_with_variable": [
+        'extra <- c("p1", "p2")',
+        'install.packages(c("a", "b"))',
+        'install.packages(c(extra, "z"))',
+        "renv::install(extra)",
+    ],
+    "walk_map_purrr": [
+        'pk <- c("m1", "m2")',
+        "purrr::walk(pk, library, character.only = TRUE)",
+        "purrr::map(pk, require, character.only = TRUE)",
+        "vapply(pk, FUN = require, logical(1), character.only = TRUE)",
+    ],
+    "indexed_variable": [
+        'pk <- c("i1", "i2")',
+        "library(pk[1], character.only = TRUE)",
+        "install.packages(pk[2])",
+    ],
+    "unclosed_and_odd": [
+        'library("dplyr',
+        "install.packages(1 + 2)",
+        "install.packages(.hidden)",
+        'pkgs <- c("a", \'b")',
+        "install.packages(pkgs)",
+    ],
+    "comment_removed_assignment": [
+        '# pk <- c("hidden")',
+        "install.packages(pk)",
+        'pk <- c("shown") # trailing',
+        "install.packages(pk)",
+    ],
+}
+for name, text in LIBS.items():
+    case(
+        f"code_library_names.review.{name}",
+        "code_library_names",
+        "code_library_names",
+        {"code_text": chr_(*text), "lang": "R"},
+    )
+    case(
+        f"code_char_vector_vars.review.{name}",
+        "metacheck:::.code_char_vector_vars",
+        "_code_char_vector_vars",
+        {"code_text": chr_(*text)},
+    )
+# a Python file is not affected by the R variable resolution
+case(
+    "code_library_names.review.python_unchanged",
+    "code_library_names",
+    "code_library_names",
+    {
+        "code_text": chr_("import numpy as np", "pkgs = ['a']", "from scipy import stats"),
+        "lang": "Python",
+    },
+)
+
+# ---------------------------------------------------------------------------
+# empty files (issue #425): no code is handled like "" by every code_*() function
+# ---------------------------------------------------------------------------
+for fn in ("code_setwd", "code_install_packages"):
+    case(f"{fn}.review.character0", fn, fn, {"code_text": chr_()})
+    case(f"{fn}.review.empty_string", fn, fn, {"code_text": ""})
+case(
+    "code_line_stats.review.character0_python",
+    "code_line_stats",
+    "code_line_stats",
+    {"code_text": chr_(), "lang": "Python"},
+)
+case(
+    "code_remove_comments.review.character0_python",
+    "code_remove_comments",
+    "code_remove_comments",
+    {"code_text": chr_(), "lang": "Python"},
+)
+case(
+    "code_has_docstring.review.character0",
+    "metacheck:::.code_has_docstring",
+    "_code_has_docstring",
+    {"code_text": chr_()},
+)
+case(
+    "code_has_docstring.review.empty_string",
+    "metacheck:::.code_has_docstring",
+    "_code_has_docstring",
+    {"code_text": ""},
+)
+case(
+    "code_has_docstring.review.blocks",
+    "metacheck:::.code_has_docstring",
+    "_code_has_docstring",
+    {"code_text": chr_('"""doc', 'string"""', "x = 1")},
+)
+case(
+    "code_has_docstring.review.unclosed",
+    "metacheck:::.code_has_docstring",
+    "_code_has_docstring",
+    {"code_text": chr_("'''open", "x = 1")},
+)
+case("code_parse_r.review.empty_string", "code_parse_r", "code_parse_r", {"text": ""})
+case(
+    "code_parse_r.review.blank_lines",
+    "code_parse_r",
+    "code_parse_r",
+    {"text": chr_("", "  ")},
+)
+case("code_abs_path.review.character0", "code_abs_path", "code_abs_path", {"code_text": chr_()})
+
 OUT.write_text(
     "# Adversarial-review parity cases for R/code_check.R (generated by\n"
     "# tests/codecheck/gen_review_cases.py; do not edit by hand).\n"

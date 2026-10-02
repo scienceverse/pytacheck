@@ -763,6 +763,123 @@ def test_code_library_names_python() -> None:
     assert set(obs["source"]) == {"import"}
 
 
+def _pkgs(code: list[str]) -> list[str]:
+    return sorted(set(code_library_names(code, "R")["package"]))
+
+
+def test_code_library_names_does_not_report_a_package_list_variable() -> None:
+    # R (issue #421): a paper's own install boilerplate loads its packages
+    # through a variable, and the variable's name was reported, installed and
+    # listed as a failed dependency.
+    # the issue's example: the loop variable resolves to the literal list,
+    # which may span several lines
+    assert _pkgs(
+        [
+            'list.packages <- c("activity", "bbmle",',
+            '                   "Distance")',
+            "for (req.lib in list.packages) {",
+            "  if (!require(req.lib, character.only = TRUE)) {",
+            "    install.packages(req.lib)",
+            "    library(req.lib, character.only = TRUE)",
+            "  }",
+            "}",
+        ]
+    ) == ["Distance", "activity", "bbmle"]
+
+    # the common new.packages idiom: indexing a list variable resolves to it;
+    # a derived variable (new.packages) cannot be resolved and is dropped
+    assert _pkgs(
+        [
+            'list.of.packages <- c("ggplot2", "Rcpp")',
+            'new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]',
+            "if (length(new.packages)) install.packages(new.packages)",
+            "install.packages(list.of.packages[!list.of.packages %in% rownames(installed.packages())])",
+            "lapply(list.of.packages, require, character.only = TRUE)",
+        ]
+    ) == ["Rcpp", "ggplot2"]
+
+    # variables with no literal value in the file are dropped, never reported
+    for v in ["x", "pkg", "packages.toinstall", "not_installed", "dependencies", "arma"]:
+        assert (
+            _pkgs(
+                [
+                    f"install.packages({v})",
+                    f"library({v}, character.only = TRUE)",
+                    f"requireNamespace({v}, quietly = TRUE)",
+                ]
+            )
+            == []
+        ), v
+    # a vector that is not purely literal is not resolved either
+    assert _pkgs(['pk <- c("zoo", other)', "install.packages(pk)"]) == []
+
+    # sapply(FUN = ...) and pacman's char = form
+    assert _pkgs(
+        ['pkgs = c("psych", "car")', "sapply(pkgs, FUN = library, character.only = TRUE)"]
+    ) == [
+        "car",
+        "psych",
+    ]
+    assert _pkgs(['p <- c("lme4", "car")', "pacman::p_load(char = p)"]) == [
+        "car",
+        "lme4",
+        "pacman",
+    ]
+
+    # literal names keep working, including with further arguments
+    assert _pkgs(
+        [
+            'library(dplyr); library("tidyr")',
+            'install.packages("afex", dependencies = TRUE)',
+            'BiocManager::install("edgeR")',
+        ]
+    ) == ["BiocManager", "afex", "dplyr", "edgeR", "tidyr"]
+
+
+def test_code_char_vector_vars() -> None:
+    from metacheck.codecheck.core import _code_char_vector_vars
+
+    code = [
+        'a <- c("x", "y")',
+        "b = 'z'",
+        'd <<- c("p",',
+        '         "q")',
+        'e <- c("k", other)',
+        'f <- g("k")',
+        "for (v in a) print(v)",
+        "for (w in unknown) print(w)",
+        'a <- c("late")',
+    ]
+    assert _code_char_vector_vars(code) == {
+        "a": ["late"],
+        "b": ["z"],
+        "d": ["p", "q"],
+        "v": ["late"],  # loops see the last assignment: all assignments are read first
+    }
+    assert _code_char_vector_vars([]) == {}
+
+
+def test_empty_code_is_handled_like_an_empty_string() -> None:
+    # R (issue #425): an empty script (such as a Python package's __init__.py)
+    # gave "Unknown or uninitialised column" warnings, and code_parse_r() and
+    # code_line_stats() stopped with an error.
+    from metacheck.codecheck.core import _code_has_docstring, code_install_packages
+
+    x: list[str] = []
+    ap = code_abs_path(x)
+    assert len(ap) == 0
+    assert list(ap.columns) == ["abs_path", "line"]
+    assert len(code_setwd(x)) == 0
+    assert len(code_install_packages(x)) == 0
+    stats = code_line_stats(x, "Python")
+    assert stats["total_lines"] == 0
+    assert math.isnan(stats["percent_comments"])
+    assert stats["has_docstring"] is False
+    assert _code_has_docstring(x) is False
+    assert code_remove_comments(x, "R") == []
+    assert not code_parse_r(text=x)["error"].iloc[0]
+
+
 def test_code_library_names_other_languages_empty() -> None:
     for lang in ["SPSS", "SAS", "Stata"]:
         obs = code_library_names("anything", lang)

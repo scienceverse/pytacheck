@@ -304,14 +304,14 @@ def test_version_pin_check_jsonlite_lockfiles(tmp_path: Path) -> None:
 def test_code_expand_zip_mocked(monkeypatch: pytest.MonkeyPatch) -> None:
     """Expected rows from R with the same three functions mocked (testthat)."""
 
-    def peek(url: str) -> pd.DataFrame:
+    def peek(url: str, **kwargs: object) -> pd.DataFrame:
         if "other" in url:
             return pd.DataFrame({"name": ["x.csv", "y.R"], "size": [1, 2]})
         return pd.DataFrame(
             {"name": ["code/a.R", "readme.txt", "nb.ipynb", "s.do"], "size": [10, 20, 30, 40]}
         )
 
-    def fetch(url: str, names: list[str], dest: str) -> pd.DataFrame:
+    def fetch(url: str, names: list[str], dest: str, **kwargs: object) -> pd.DataFrame:
         ok = [True, *([False, True] * len(names))[: len(names) - 1]]
         return pd.DataFrame(
             {

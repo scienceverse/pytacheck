@@ -1,0 +1,40 @@
+{
+  "id": "code_library_names.review.require_namespace_var",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "package",
+      "source",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stringr",
+          "glue"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "requireNamespace",
+          "requireNamespace"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,8 +1,3 @@
 {
-"code_abs_path.character0": {"r": "c433e5b7c8b94e33", "py": "e9c00238f088ec1c", "diff": ["<root>"]},
-"code_abs_path.my_encodings_newline_only_R": {"r": "c433e5b7c8b94e33", "py": "e9c00238f088ec1c", "diff": ["<root>"]},
-"code_lang.my_qmd_scalar_yaml_qmd": {"r": "ac5146cf65ca52a8", "py": "8259b48afe2dfac5", "diff": ["<R error, Python value>"]},
-"code_line_stats.character0": {"r": "ac5146cf65ca52a8", "py": "b903bbde8d213e0f", "diff": ["<R error, Python value>"]},
-"code_line_stats.my_encodings_newline_only_R": {"r": "ac5146cf65ca52a8", "py": "b903bbde8d213e0f", "diff": ["<R error, Python value>"]},
-"code_parse_r.empty_text": {"r": "ac5146cf65ca52a8", "py": "85d8cf66e98fa430", "diff": ["<R error, Python value>"]}
+"code_lang.my_qmd_scalar_yaml_qmd": {"r": "ac5146cf65ca52a8", "py": "8259b48afe2dfac5", "diff": ["<R error, Python value>"]}
 }

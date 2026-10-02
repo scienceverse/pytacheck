@@ -168,7 +168,7 @@ def _parse_text(lines: list[str | None]) -> list[str]:
 
     A text whose first line is a YAML ``---`` fence is purled first. An
     empty file parses (nothing to parse); R's ``code_parse_r(text =
-    character(0))`` fails with "subscript out of bounds", which
+    character(0))`` failed with "subscript out of bounds" before PR #426, which
     ``code_check()`` recorded as the file's error (UPSTREAM_ISSUES U87).
     """
     from metacheck.codecheck.core import code_extract_r

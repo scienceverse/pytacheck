@@ -1,0 +1,26 @@
+{
+  "id": "code_install_packages.review.empty_string",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "install_packages_call",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
