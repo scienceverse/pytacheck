@@ -191,11 +191,15 @@ def test_unknown_size_is_excluded_not_gating(
     assert len(dl.attrs["gated"]) == 0
 
 
-def test_real_head_probe_on_file_urls(tmp_path: Path) -> None:
+def test_real_size_probe_on_file_urls(tmp_path: Path) -> None:
+    # a file:// answer has status 0, which is not a 2xx answer, so neither the
+    # HEAD nor the ranged GET gives a size (as in metacheck, whose .head_size()
+    # reads only a 2xx answer): the files are left out, not gated
     files = make_dl_files(tmp_path)
     files["file_size"] = math.nan
     dl = download_repo_files(files, max_file_size=100, max_download_size=500)
-    assert located(dl) == 2
+    assert located(dl) == 0
+    assert len(dl.attrs["gated"]) == 0
 
 
 def test_failed_downloads_are_reported(tmp_path: Path, messages: list[str]) -> None:
@@ -347,13 +351,13 @@ def test_cache_false_uses_session_dir(tmp_path: Path, messages: list[str]) -> No
         )
 
 
-def _osf_files() -> pd.DataFrame:
+def _github_files(repo: str = "https://github.com/owner/repo-timeout") -> pd.DataFrame:
     return pd.DataFrame(
         {
-            "repo_url": ["https://osf.io/abcde"],
+            "repo_url": [repo],
             "file_name": ["a.csv"],
             "file_path": ["a.csv"],
-            "file_url": ["https://files.osf.io/v1/resources/abcde/providers/osfstorage/a.csv"],
+            "file_url": ["https://raw.githubusercontent.com/owner/repo/main/a.csv"],
             "file_size": [1024.0],
             "file_location": pd.Series([None], dtype="string"),
         }
@@ -367,7 +371,7 @@ def _fill_zip(files: pd.DataFrame, row_idx: list[int], zip_url: str, **kw: Any) 
 
 
 def test_zip_timeout_is_passed_to_zip_transport(monkeypatch: pytest.MonkeyPatch) -> None:
-    import metacheck.archives.osf as osf
+    import metacheck.archives.github as github
 
     seen: dict[str, Any] = {}
 
@@ -375,13 +379,15 @@ def test_zip_timeout_is_passed_to_zip_transport(monkeypatch: pytest.MonkeyPatch)
         seen.update(kw, zip_url=zip_url)
         return _fill_zip(files, row_idx, zip_url)
 
-    monkeypatch.setattr(osf, "osf_check_id", lambda x: "abcde")
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 1024.0)
+    # a listed (small) file size gives the archive an estimate within budget,
+    # so the zip transport, which is given zip_timeout_s, runs
+    monkeypatch.setattr(github, "github_repo", lambda repo: "owner/repo")
     monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
-    dl = download_repo_files(_osf_files(), max_file_size=10, max_download_size=100, zip_timeout_s=7)
+    dl = download_repo_files(
+        _github_files(), max_file_size=10, max_download_size=100, zip_timeout_s=7
+    )
     assert seen["timeout_s"] == 7
-    assert seen["zip_url"] == "https://files.osf.io/v1/resources/abcde/providers/osfstorage/?zip="
-    assert seen["max_bytes"] == 100 * 1024 * 1024
+    assert seen["zip_url"] == "https://api.github.com/repos/owner/repo/zipball"
     assert not pd.isna(dl["file_location"].iloc[0])
 
 
@@ -397,44 +403,83 @@ def test_zip_timeout_for_size() -> None:
     )
 
 
-def test_reports_archive_larger_than_selected_files(
-    monkeypatch: pytest.MonkeyPatch, messages: list[str]
-) -> None:
-    import metacheck.archives.osf as osf
+def test_github_archive_is_limited_to_twice_the_budget(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck #424: GitHub's zipball reports no size, so it used to be
+    # downloaded with no byte limit; it is now limited like Dryad's archive
+    import metacheck.archives.github as github
 
-    monkeypatch.setattr(osf, "osf_check_id", lambda x: "abcde")
-    monkeypatch.setattr(
-        dlm, "_remote_content_length", lambda url, req_func=None: 50 * 1024 * 1024.0
+    seen: dict[str, Any] = {}
+
+    def fake_zip(files: pd.DataFrame, row_idx: list[int], zip_url: str, **kw: Any) -> pd.DataFrame:
+        seen.update(kw)
+        return _fill_zip(files, row_idx, zip_url)
+
+    monkeypatch.setattr(github, "github_repo", lambda repo: "owner/repo")
+    monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
+    dl = download_repo_files(
+        _github_files("https://github.com/owner/repo-cap"), max_file_size=10, max_download_size=100
     )
-    monkeypatch.setattr(dlm, "_download_zip_to_cache", _fill_zip)
-    dl = download_repo_files(_osf_files(), max_file_size=10, max_download_size=500)
-    assert any("downloads as one archive" in m for m in messages)
+    assert seen["max_bytes"] == 2 * 100 * 1024 * 1024
     assert not pd.isna(dl["file_location"].iloc[0])
 
 
-def test_osf_decision_scales_with_the_repo_not_the_batch(monkeypatch: pytest.MonkeyPatch) -> None:
-    import metacheck.archives.osf as osf
+def test_github_archive_unsized_or_too_large_is_not_used(
+    monkeypatch: pytest.MonkeyPatch, messages: list[str]
+) -> None:
+    # no whole-repository archive reports its size, so it is estimated from
+    # the listed file sizes: with none listed there is no estimate, and an
+    # estimate over 2x the budget is refused; both go file by file
+    import metacheck.archives.github as github
 
-    n_decoy = 20000
-    decoy = pd.DataFrame(
-        {
-            "repo_url": "https://example.org/big-non-osf-repo",
-            "file_name": [f"d{i}.csv" for i in range(n_decoy)],
-            "file_path": [f"d{i}.csv" for i in range(n_decoy)],
-            "file_url": pd.Series([None] * n_decoy, dtype="string"),
-            "file_size": math.nan,
-            "file_location": pd.Series([None] * n_decoy, dtype="string"),
-        }
+    def make_files(sizes: list[float], repo: str) -> pd.DataFrame:
+        names = [f"{c}.csv" for c in "abc"[: len(sizes)]]
+        return pd.DataFrame(
+            {
+                "repo_url": [repo] * len(sizes),
+                "file_name": names,
+                "file_path": names,
+                "file_url": [
+                    f"https://raw.githubusercontent.com/owner/repo/main/{n}" for n in names
+                ],
+                "file_size": sizes,
+                "file_location": pd.Series([None] * len(sizes), dtype="string"),
+            }
+        )
+
+    fallback: list[str] = []
+
+    def no_zip(*a: Any, **k: Any) -> Any:
+        raise AssertionError("the archive should not be used")
+
+    def fake_one(url: str, dest: str, **kw: Any) -> None:
+        fallback.append(url)
+        Path(dest).parent.mkdir(parents=True, exist_ok=True)
+        Path(dest).write_bytes(b"\x00")
+
+    monkeypatch.setattr(github, "github_repo", lambda repo: "owner/repo")
+    # a file whose size is unknown is sized on the spot: 1 KB lets it through
+    monkeypatch.setattr(dlm, "_remote_size", lambda url: 1024.0)
+    monkeypatch.setattr(dlm, "_download_zip_to_cache", no_zip)
+    monkeypatch.setattr(dlm, "_download_one", fake_one)
+
+    dl = download_repo_files(
+        make_files([math.nan], "https://github.com/owner/repo-unsized"),
+        max_file_size=10,
+        max_download_size=100,
     )
-    files = pd.concat([decoy, _osf_files()], ignore_index=True)
-    monkeypatch.setattr(osf, "osf_check_id", lambda x: "abcde")
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 1024.0)
-    monkeypatch.setattr(dlm, "_download_zip_to_cache", _fill_zip)
-    t0 = time.perf_counter()
-    dl = download_repo_files(files, max_file_size=10, max_download_size=100)
-    elapsed = time.perf_counter() - t0
-    assert not pd.isna(dl["file_location"].iloc[-1])
-    assert elapsed < 15
+    assert any("archive size unknown" in m for m in messages)
+    assert not pd.isna(dl["file_location"].iloc[0])
+
+    # a 0.5 MB wanted file next to a 5 MB one the per-file cap skips: the
+    # archive would hold both (5.5 MB), over 2x the 1 MB budget
+    dl = download_repo_files(
+        make_files([0.5 * 1024 * 1024, 5 * 1024 * 1024], "https://github.com/owner/repo-big"),
+        max_file_size=1,
+        max_download_size=1,
+    )
+    assert any("exceeds 2x the 1 MB budget" in m for m in messages)
+    assert not pd.isna(dl["file_location"].iloc[0])
+    assert len(fallback) == 2
 
 
 def _dryad_files(n: int, doi: str) -> pd.DataFrame:
@@ -466,8 +511,9 @@ def test_dryad_small_dataset_skips_zip(
         Path(dest).parent.mkdir(parents=True, exist_ok=True)
         Path(dest).write_text("x\n")
 
+    # the listed sizes (3 KB in total) pass the size test: the skip is the
+    # file-count quota rule's
     monkeypatch.setattr(dryad, "_dryad_doi", lambda x: "10.5061/dryad.testquota1")
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 3072.0)
     monkeypatch.setattr(dlm, "_download_zip_to_cache", no_zip)
     monkeypatch.setattr(dlm, "_download_one", fake_one)
     dl = download_repo_files(
@@ -487,7 +533,6 @@ def test_dryad_larger_dataset_uses_zip(monkeypatch: pytest.MonkeyPatch) -> None:
         return _fill_zip(files, row_idx, zip_url)
 
     monkeypatch.setattr(dryad, "_dryad_doi", lambda x: "10.5061/dryad.testquota2")
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 16 * 1024.0)
     monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
     dl = download_repo_files(
         _dryad_files(16, "10.5061/dryad.testquota2"), max_file_size=10, max_download_size=100
@@ -498,37 +543,46 @@ def test_dryad_larger_dataset_uses_zip(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
 
-def test_osf_non_osfstorage_rows_fall_back(monkeypatch: pytest.MonkeyPatch) -> None:
-    import metacheck.archives.osf as osf
-
+def test_osf_zenodo_and_dataverse_are_downloaded_file_by_file(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # metacheck #424: their whole-record archives never report a size, so the
+    # archive route for them never ran and was removed
     files = pd.DataFrame(
         {
-            "repo_url": ["https://osf.io/abcde"] * 2,
-            "file_name": ["a.csv", "b.csv"],
-            "file_path": ["a.csv", "b.csv"],
-            "file_url": [
-                "https://files.osf.io/v1/resources/abcde/providers/osfstorage/a.csv",
-                "https://files.osf.io/v1/resources/abcde/providers/dropbox/b.csv",
+            "repo_url": [
+                "https://osf.io/fghij",
+                "https://doi.org/10.5281/zenodo.424424",
+                "https://doi.org/10.7910/DVN/ABCDEF",
             ],
-            "file_size": [1024.0, 1024.0],
-            "file_location": pd.Series([None, None], dtype="string"),
+            "file_name": ["a.csv", "b.csv", "c.csv"],
+            "file_path": ["a.csv", "b.csv", "c.csv"],
+            "file_url": [
+                "https://files.osf.io/v1/resources/fghij/providers/osfstorage/a.csv",
+                "https://zenodo.org/api/records/424424/files/b.csv/content",
+                "https://dataverse.harvard.edu/api/access/datafile/1",
+            ],
+            "file_size": [1024.0] * 3,
+            "file_location": pd.Series([None] * 3, dtype="string"),
         }
     )
-    fallback: list[str] = []
 
-    def fake_zip(files: pd.DataFrame, row_idx: list[int], zip_url: str, **kw: Any) -> pd.DataFrame:
-        assert len(row_idx) == 1
-        return _fill_zip(files, row_idx, zip_url)
+    def no_zip(*a: Any, **k: Any) -> Any:
+        raise AssertionError("no archive should be requested for OSF, Zenodo or Dataverse")
 
-    def fake_one(url: str, dest: str, **kw: Any) -> None:
-        fallback.append(url)
+    def write(dest: str) -> None:
+        Path(dest).parent.mkdir(parents=True, exist_ok=True)
+        Path(dest).write_bytes(b"\x00")
 
-    monkeypatch.setattr(osf, "osf_check_id", lambda x: "abcde")
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 1024.0)
-    monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
-    monkeypatch.setattr(dlm, "_download_one", fake_one)
+    def fake_parallel(urls: list[str], dests: list[str], *a: Any, **kw: Any) -> list[None]:
+        for d in dests:
+            write(d)
+        return [None] * len(urls)
+
+    monkeypatch.setattr(dlm, "_download_zip_to_cache", no_zip)
+    monkeypatch.setattr(dlm, "_download_many_parallel", fake_parallel)
+    monkeypatch.setattr(dlm, "_download_one", lambda url, dest, **kw: write(dest))
     dl = download_repo_files(files, max_file_size=10, max_download_size=100)
-    assert fallback == [files["file_url"].iloc[1]]
     assert dl["file_location"].notna().all()
 
 
@@ -588,7 +642,6 @@ def test_parallel_routing_is_per_file(monkeypatch: pytest.MonkeyPatch) -> None:
         Path(dest).parent.mkdir(parents=True, exist_ok=True)
         Path(dest).write_bytes(b"\x00")
 
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: math.nan)
     monkeypatch.setattr(dlm, "_download_many_parallel", fake_parallel)
     monkeypatch.setattr(dlm, "_download_one", fake_one)
     dl = download_repo_files(files, max_file_size=10, max_download_size=100)
@@ -990,7 +1043,9 @@ def test_archive_member_rows(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
 
     calls: list[tuple[str, list[str]]] = []
 
-    def fake_fetch(url: str, names: list[str], dest: str, verify: bool = True) -> pd.DataFrame:
+    def fake_fetch(
+        url: str, names: list[str], dest: str, verify: bool = True, **kw: Any
+    ) -> pd.DataFrame:
         calls.append((url, list(names)))
         paths = []
         for n in names:
@@ -1020,3 +1075,86 @@ def test_archive_member_rows(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
     loc = dl["file_location"].iloc[0].replace(os.sep, "/")
     assert "/.archive_members/files.example.org_x.zip.contents/" in loc
     assert dl.attrs["oversize_skipped"]["file_name"].tolist() == ["huge.csv"]
+
+
+# -- #429: archive-member failures are recorded --------------------------------
+
+
+def _archive_member_files() -> pd.DataFrame:
+    repo = "https://example.org/repo-test-" + secrets.token_hex(6)
+    return pd.DataFrame(
+        {
+            "repo_url": [repo],
+            "file_name": ["member.R"],
+            "file_path": ["data/member.R"],
+            "file_url": pd.Series([None], dtype="string"),
+            "file_size": [100.0],
+            "file_location": pd.Series([None], dtype="string"),
+            "archive_url": [repo + "/archive.zip"],
+            "archive_member": ["member.R"],
+            "paper_id": ["p.1"],
+        }
+    )
+
+
+def test_failed_archive_member_fetch_is_recorded(monkeypatch: pytest.MonkeyPatch) -> None:
+    import metacheck.archives.zip_peek as zp
+
+    def boom(url: str, names: list[str], dest: str, **kw: Any) -> Any:
+        raise RuntimeError("simulated network failure")
+
+    monkeypatch.setattr(zp, "_zip_fetch_members", boom)
+    dl = download_repo_files(_archive_member_files())
+    assert pd.isna(dl["file_location"].iloc[0])
+    fa = dl.attrs["failed"]
+    assert len(fa) == 1
+    assert "simulated network failure" in fa["error"].iloc[0]
+    assert fa["file_name"].tolist() == ["member.R"]
+    assert fa["paper_id"].tolist() == ["p.1"]
+
+
+def test_member_not_ok_is_recorded_with_its_reason(monkeypatch: pytest.MonkeyPatch) -> None:
+    import metacheck.archives.zip_peek as zp
+
+    def not_ok(url: str, names: list[str], dest: str, **kw: Any) -> pd.DataFrame:
+        return pd.DataFrame(
+            {
+                "name": names,
+                "path": [None] * len(names),
+                "size": [100.0] * len(names),
+                "ok": [False] * len(names),
+                "error": ["CRC32 mismatch (corrupt download)"] * len(names),
+            }
+        )
+
+    monkeypatch.setattr(zp, "_zip_fetch_members", not_ok)
+    dl = download_repo_files(_archive_member_files())
+    assert pd.isna(dl["file_location"].iloc[0])
+    fa = dl.attrs["failed"]
+    assert len(fa) == 1
+    assert "CRC32 mismatch" in fa["error"].iloc[0]
+
+
+def test_member_fetched_fills_file_location(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import metacheck.archives.zip_peek as zp
+
+    extracted = tmp_path / "member.R"
+    extracted.write_text("ok\n")
+
+    def ok(url: str, names: list[str], dest: str, **kw: Any) -> pd.DataFrame:
+        return pd.DataFrame(
+            {
+                "name": names,
+                "path": [str(extracted)] * len(names),
+                "size": [100.0] * len(names),
+                "ok": [True] * len(names),
+                "error": [None] * len(names),
+            }
+        )
+
+    monkeypatch.setattr(zp, "_zip_fetch_members", ok)
+    dl = download_repo_files(_archive_member_files())
+    assert dl["file_location"].iloc[0] == str(extracted)
+    assert len(dl.attrs["failed"]) == 0

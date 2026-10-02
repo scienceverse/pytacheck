@@ -33,7 +33,6 @@ import os
 import shutil
 import tempfile
 import time
-import warnings
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
@@ -515,14 +514,20 @@ def _file_response(method: str, url: str, path: str | None) -> Any:
 
 
 def _perform_once(
-    spec: Mapping[str, Any], timeout: float | None = None, path: str | None = None
+    spec: Mapping[str, Any],
+    timeout: float | None = None,
+    path: str | None = None,
+    read_body: Callable[[Any], bool] | None = None,
 ) -> Any:
     """Send one request (no retries); the body goes to *path* when given.
 
     ``spec`` is a request spec (``{"method", "url", "headers",
     "unrestricted_auth"}``). ``unrestricted_auth`` re-sends the headers
     (the token) on every redirect hop, as curl's option of that name does.
-    Raises :class:`_RequestError` on a connection failure.
+    *read_body*, given the response before its body arrives, decides
+    whether the body is read at all (httr2 ``req_perform_connection()``: the
+    status is read first and an unwanted body is closed unread). Raises
+    :class:`_RequestError` on a connection failure.
     """
     import httpx
 
@@ -549,7 +554,9 @@ def _perform_once(
                 continue
             break
         try:
-            if path is not None:
+            if read_body is not None and not read_body(resp):
+                pass  # closed unread
+            elif path is not None:
                 with atomic_write(path) as fh:
                     for chunk in resp.iter_bytes(chunk_size=1 << 20):
                         http.check_interrupt()
@@ -592,6 +599,8 @@ def _storage_request(
     auth: bool = True,
     throttle: Any = None,
     error: bool = False,
+    is_transient: Callable[[Any], bool] | None = None,
+    read_body: Callable[[Any], bool] | None = None,
 ) -> Any:
     """A storage request with metacheck's retry policy (httr2 ``req_retry()`` as R sets it).
 
@@ -602,14 +611,17 @@ def _storage_request(
     status is returned; with ``True`` a status >= 400 raises
     :class:`_HttpError`. A connection failure on the last try raises
     :class:`_RequestError`. *path* streams the body to a file; *throttle* is a
-    :class:`metacheck.http.Throttle` applied once per call.
+    :class:`metacheck.http.Throttle` applied once per call. *is_transient*
+    replaces the storage rule for which answers are retried; *read_body* is
+    passed on to :func:`_perform_once`.
     """
     from metacheck import http
 
     spec: dict[str, Any] = {"method": method, "url": url, "headers": dict(headers or {})}
     if auth:
         spec = _auth_for_url(spec)
-    is_transient = _storage_is_transient_factory(skip_on_api_limit)
+    if is_transient is None:
+        is_transient = _storage_is_transient_factory(skip_on_api_limit)
     after = _storage_retry_after_factory(skip_on_api_limit)
     if throttle is not None:
         throttle.acquire(_host(url) or "local")
@@ -620,7 +632,10 @@ def _storage_request(
     while tries < max_tries:
         http.sleep(delay)
         try:
-            resp, err = _perform_once(spec, timeout=timeout, path=path), None
+            resp, err = (
+                _perform_once(spec, timeout=timeout, path=path, read_body=read_body),
+                None,
+            )
         except _RequestError as e:
             resp, err = None, e
         if err is not None:
@@ -640,33 +655,53 @@ def _storage_request(
 
 
 def _remote_size(url: str) -> float:
-    """Port of ``R/repo-download.R::.remote_size()``: ``Content-Length`` of a HEAD request.
+    """Port of ``R/repo-download.R::.remote_size()``: a remote file's size before download.
 
-    Authenticated per host (:func:`_auth_for_url`); ``nan`` (R ``NA``) on any
-    error or when the header is absent or empty.
+    A HEAD request first, then a one-byte ranged GET whose ``Content-Range``
+    carries the size (:func:`metacheck.archives.zip_peek._head_size`,
+    :func:`~metacheck.archives.zip_peek._range_size`): S3-backed hosts
+    (Dryad, Figshare, Harvard Dataverse) refuse HEAD with 403. Both are
+    authenticated per host; ``nan`` (R ``NA``) when neither gives a size.
     """
-    return _remote_content_length(url)
+    from metacheck.archives.zip_peek import _head_size, _range_size
+
+    size = _head_size(url)
+    if is_na(size):
+        size = _range_size(url)
+    return size
 
 
-def _remote_content_length(url: str, req_func: Callable[[Any], Any] | None = None) -> float:
-    """Port of ``R/repo-download.R::.remote_content_length()``: ``Content-Length`` via HEAD.
+def _archive_size_estimate(files: pd.DataFrame, repo: Any) -> float:
+    """Port of ``R/repo-download.R::.archive_size_estimate()``.
 
-    *req_func* modifies the request spec after the host authentication (e.g.
-    ``_dryad_headers``). ``nan`` (R ``NA``) on any error or a missing header.
+    The estimated size (bytes) of a repository's whole-archive download: the
+    sum of the file sizes listed for *repo* in *files*, or ``nan`` (R ``NA``)
+    when none are listed. No whole-archive endpoint reports its size ahead of
+    time; the byte limit of the download is what actually bounds it.
     """
-    from metacheck.stats._rmath import as_numeric
+    repos = files["repo_url"].tolist()
+    sizes = _nums(files["file_size"].tolist()) if "file_size" in files.columns else []
+    est = sum(s for r, s in zip(repos, sizes, strict=False) if r == repo and not is_na(s))
+    return float(est) if est > 0 else math.nan
 
-    try:
-        spec = _auth_for_url({"method": "HEAD", "url": url, "headers": {}})
-        if req_func is not None:
-            spec = req_func(spec)
-        resp = _perform_once(spec)
-        cl = resp.headers.get("content-length")
-        if cl is None or cl == "":
-            return math.nan
-        return as_numeric(cl)[0]
-    except Exception:
-        return math.nan
+
+def _archive_size_refusal(zip_bytes: float, max_download_size: float, mb: float) -> str | None:
+    """Port of ``R/repo-download.R::.archive_size_refusal()``.
+
+    Why a whole-archive download is refused on size, or ``None`` (R ``NA``)
+    when it is allowed: its size is unknown, or above 2x the per-repository
+    budget (a one-request transport earns a 2x allowance).
+    """
+    from metacheck.report.blocks import _cap_num
+
+    if is_na(zip_bytes):
+        return "archive size unknown: no file sizes listed"
+    if math.isfinite(max_download_size) and zip_bytes > 2 * max_download_size * mb:
+        return (
+            f"estimated archive size {_cap_num(_rround(zip_bytes / mb))} MB exceeds 2x the "
+            f"{_cap_num(max_download_size)} MB budget"
+        )
+    return None
 
 
 def _with_headers(spec: dict[str, Any], extra: Mapping[str, str]) -> dict[str, Any]:
@@ -1346,9 +1381,11 @@ def _frame(cols: dict[str, tuple[list[Any], str]]) -> pd.DataFrame:
 
 
 def _cap_report(msg: str) -> None:
-    from metacheck.llm.cap_prompt import cap_report
+    """``.cap_report()`` (R/cap-prompt.R): show *msg* now and raise it as a warning."""
+    from metacheck.llm import cap_prompt
 
-    cap_report(msg)
+    report = getattr(cap_prompt, "_cap_report", None) or cap_prompt.cap_report
+    report(msg)
 
 
 def _col(files: pd.DataFrame, name: str) -> list[Any] | None:
@@ -1470,6 +1507,12 @@ def download_repo_files(
 
     gated_rows: list[tuple[Any, str]] = []
     oversize_rows: list[tuple[Any, Any, float]] = []
+    # defined before the archive-member block, which records into it too (#429)
+    failed_rows: list[tuple[Any, Any, Any, Any, str | None]] = []
+    paper_ids = _col(df, "paper_id")
+
+    def paper_id(i: int) -> Any:
+        return None if paper_ids is None else paper_ids[i]
 
     # which(files$repo_url == repo), computed once: rows per repository (NA rows in none)
     rows_of: dict[Any, list[int]] = {}
@@ -1537,29 +1580,45 @@ def download_repo_files(
             member_dest = cache_path(repo_urls[idx[0]], f".archive_members/{arc_key}") + ".contents"
             member_dest = _safe_write_path(member_dest) or member_dest
             _dir_create(member_dest)
+            # why a member was not fetched is recorded in `failed` (#429)
             try:
                 fetched = _zip_fetch_members(
-                    str(arc), names=[str(members[i]) for i in idx], dest=member_dest
+                    str(arc),
+                    names=[str(members[i]) for i in idx],
+                    dest=member_dest,
+                    cache=cache,
+                    skip_on_api_limit=skip_on_api_limit,
                 )
-            except Exception:
+            except Exception as e:
+                why: str | None = str(e)
                 fetched = None
+            else:
+                why = "could not list the archive (host may not support range requests)"
             if fetched is None:
+                # R: repo_url of the archive's first row, the rest per row
+                failed_rows.extend(
+                    (repo_urls[idx[0]], file_names[i], arc, paper_id(i), why) for i in idx
+                )
                 continue
             f_names = fetched["name"].tolist()
-            f_ok = fetched["ok"].tolist() if "ok" in fetched.columns else [False] * len(fetched)
+            f_ok = fetched["ok"].tolist() if "ok" in fetched.columns else [None] * len(fetched)
             f_path = (
                 fetched["path"].tolist() if "path" in fetched.columns else [None] * len(fetched)
             )
-            # fetched[fetched$name == member & fetched$ok %in% TRUE, ]$path[[1]]
-            first_ok: dict[Any, Any] = {}
-            for name, ok, path in zip(f_names, f_ok, f_path, strict=True):
-                if ok is True:
-                    first_ok.setdefault(name, path)
+            f_error = fetched["error"].tolist() if "error" in fetched.columns else None
+            # fetched[fetched$name == member, ][1, ]
+            first: dict[Any, int] = {}
+            for j, name in enumerate(f_names):
+                first.setdefault(name, j)
             for k in idx:
-                path = first_ok.get(members[k])
-                if _is_missing(path):
+                j = first.get(members[k])  # type: ignore[assignment]
+                if j is None:
                     continue
-                df.iat[k, loc_col] = path
+                if f_ok[j] is not True or _is_missing(f_path[j]):
+                    why = "unknown failure" if f_error is None else _chr(f_error[j])
+                    failed_rows.append((repo_urls[k], file_names[k], arc, paper_id(k), why))
+                    continue
+                df.iat[k, loc_col] = f_path[j]
 
     file_urls = _col(df, "file_url") or [None] * n
     has_url = [u is not None and str(u) != "" for u in file_urls]
@@ -1659,12 +1718,18 @@ def download_repo_files(
             )
 
     # -- download what passed the gates ----------------------------------------
-    failed_rows: list[tuple[Any, Any, Any, Any, str]] = []
-    paper_ids = _col(df, "paper_id")
+    # Dryad, GitHub and GitLab use a whole-repository archive; every other host
+    # (and any repository whose archive is not used or fails) goes file by
+    # file. OSF ?zip=, Zenodo files-archive and Dataverse's dataset download
+    # never report their size, so metacheck removed those archive routes. No
+    # archive reports its size, so it is estimated from the listed file sizes:
+    # no estimate, or one above 2x the budget, skips the archive, and the
+    # download itself stops past 2x the budget (archive_cap).
     zip_kw: dict[str, Any] = {
         "timeout_s": zip_timeout_s,
         "skip_on_api_limit": skip_on_api_limit,
     }
+    archive_cap = 2 * max_download_size * _MB  # inf when there is no budget
 
     def location(i: int) -> Any:
         return df.iat[i, _loc(df)]
@@ -1685,15 +1750,13 @@ def download_repo_files(
             return list(dict.fromkeys(repo_list[i] for i, h in zip(rows, hits, strict=True) if h))
 
         def is_osfstorage(i: int) -> bool:
+            # picks the downloads that are safe to run in parallel
             if providers is not None and providers[i] is not None:
                 return str(providers[i]).lower() == "osfstorage"
             url = file_urls[i]
             if url is None or str(url) == "":
                 return False
             return bool(grepl("/providers/osfstorage/", str(url), ignore_case=True))
-
-        def repo_rows(repo: Any) -> list[int]:
-            return rows_for(repo)
 
         def record_count(repo: Any) -> float:
             """The rows of *repo* (metacheck's ``sum(files$repo_url == repo)`` is NA
@@ -1716,151 +1779,10 @@ def download_repo_files(
             # fetched: U74)
             return {i for i in rows if location(i) == cache_paths[i]}
 
-        def gate(repo: Any, zip_bytes: float, n_wanted: int, total_n: float, what: str) -> bool:
-            size_ok = not is_na(zip_bytes) and (
-                not math.isfinite(max_download_size) or zip_bytes <= 2 * max_download_size * _MB
-            )
-            ratio_ok = None if is_na(total_n) else total_n <= 2 * n_wanted
-            worth_it = True if n_wanted > 50 else ratio_ok
-            if size_ok and worth_it is True:
-                return True
-            if not size_ok:
-                shown = "unknown" if is_na(zip_bytes) else _cap_num(float(_rround(zip_bytes / _MB)))
-                why = f"zip transport {shown} MB exceeds 2x the {_cap_num(max_download_size)} MB budget"
-            else:
-                why = (
-                    f"{what} holds {_fmt_int(total_n)} files for {n_wanted} wanted (>2x) "
-                    "and wanted <= 50"
-                )
-            _message(f"Skipping zip for {repo} ({why}); downloading its files individually.")
-            return False
-
-        def announce_bigger(repo: Any, zip_bytes: float, expected: float, what: str) -> None:
-            if not is_na(zip_bytes) and expected > 0 and zip_bytes > expected:
-                _message(
-                    f"Repository {repo} downloads as one archive of "
-                    f"{_cap_num(float(_rround(zip_bytes / _MB)))} MB to extract "
-                    f"{_cap_num(float(_rround(expected / _MB)))} MB of selected files ({what})."
-                )
-
         def run_zip(rows: list[int], zip_url: str, **kw: Any) -> None:
             nonlocal df
             df = _download_zip_to_cache(df, rows, zip_url, _inplace=True, **kw)
             remaining_set.difference_update(filled(rows))
-
-        # OSF: Waterbutler zip (osfstorage only)
-        from metacheck.archives.osf_helpers import _osf_headers
-
-        for repo in in_remaining(r"osf\.io"):
-            ridx = in_repo(repo)
-            if not ridx:
-                continue
-            ridx_zip = [i for i in ridx if is_osfstorage(i)]
-            if not ridx_zip:
-                continue
-            try:
-                from metacheck.archives.osf import osf_check_id
-
-                osf_id = osf_check_id(repo)
-            except Exception:
-                osf_id = None
-            if not isinstance(osf_id, str) or osf_id == "" or len(osf_id) != 5:
-                continue
-            zip_url = f"https://files.osf.io/v1/resources/{osf_id}/providers/osfstorage/?zip="
-            zip_bytes = _remote_content_length(zip_url)
-            n_wanted = len(ridx_zip)
-            node_osf_n = float(sum(1 for i in repo_rows(repo) if is_osfstorage(i)))
-            size_ok = not is_na(zip_bytes) and (
-                not math.isfinite(max_download_size) or zip_bytes <= 2 * max_download_size * _MB
-            )
-            worth_it = n_wanted > 50 or node_osf_n <= 2 * n_wanted
-            if not (size_ok and worth_it):
-                if not size_ok:
-                    shown = (
-                        "unknown" if is_na(zip_bytes) else _cap_num(float(_rround(zip_bytes / _MB)))
-                    )
-                    why = f"zip transport {shown} MB exceeds 2x the {_cap_num(max_download_size)} MB budget"
-                else:
-                    why = (
-                        f"node holds {_fmt_int(node_osf_n)} osfstorage files for {n_wanted} "
-                        "wanted (>2x) and wanted <= 50"
-                    )
-                _message(f"Skipping zip for {repo} ({why}); downloading its files individually.")
-                continue
-            expected = expected_of(ridx_zip)
-            announce_bigger(repo, zip_bytes, expected, "whole-node osfstorage zip")
-            _message(f"Downloading {repo} as zip ({n_wanted} file{plural(n_wanted)})...")
-            run_zip(
-                ridx_zip,
-                zip_url,
-                strip_dir=False,
-                req_func=_osf_headers,
-                max_bytes=max_download_size * _MB,
-                expected_bytes=expected,
-                **zip_kw,
-            )
-
-        # Zenodo: files-archive
-        for repo in in_remaining("zenodo"):
-            ridx = in_repo(repo)
-            if not ridx:
-                continue
-            try:
-                from metacheck.archives.zenodo import _zenodo_id
-
-                zenodo_id = _zenodo_id(repo)
-            except Exception:
-                zenodo_id = None
-            if not isinstance(zenodo_id, str) or zenodo_id == "":
-                continue
-            zip_url = f"https://zenodo.org/api/records/{zenodo_id}/files-archive"
-            zip_bytes = _remote_content_length(zip_url)
-            if not gate(repo, zip_bytes, len(ridx), record_count(repo), "record"):
-                continue
-            expected = expected_of(ridx)
-            announce_bigger(repo, zip_bytes, expected, "whole-record Zenodo archive")
-            _message(f"Downloading {repo} as zip ({len(ridx)} file{plural(len(ridx))})...")
-            run_zip(
-                ridx,
-                zip_url,
-                strip_dir=False,
-                max_bytes=max_download_size * _MB,
-                expected_bytes=expected,
-                **zip_kw,
-            )
-
-        # Dataverse: whole-dataset archive
-        from metacheck.archives.dataverse import (
-            _dataverse_headers,
-            _dataverse_host_regex,
-            _dataverse_parse,
-        )
-
-        for repo in in_remaining(_dataverse_host_regex()):
-            ridx = in_repo(repo)
-            if not ridx:
-                continue
-            parsed = _dataverse_parse(repo)
-            host = _chr(parsed["host"].iloc[0]) if len(parsed) else None
-            doi = _chr(parsed["doi"].iloc[0]) if len(parsed) else None
-            if host is None or doi is None:
-                continue
-            zip_url = f"https://{host}/api/access/dataset/:persistentId/?persistentId=doi:{doi}"
-            zip_bytes = _remote_content_length(zip_url)
-            if not gate(repo, zip_bytes, len(ridx), record_count(repo), "dataset"):
-                continue
-            expected = expected_of(ridx)
-            announce_bigger(repo, zip_bytes, expected, "whole-dataset Dataverse archive")
-            _message(f"Downloading {repo} as zip ({len(ridx)} file{plural(len(ridx))})...")
-            run_zip(
-                ridx,
-                zip_url,
-                strip_dir=False,
-                req_func=_dataverse_headers,
-                max_bytes=max_download_size * _MB,
-                expected_bytes=expected,
-                **zip_kw,
-            )
 
         # Dryad: whole-dataset archive (quota-aware)
         from metacheck.archives.dryad import _dryad_headers
@@ -1879,29 +1801,17 @@ def download_repo_files(
                 continue
             encoded = _url_encode_reserved(f"doi:{doi}")
             zip_url = f"https://datadryad.org/api/v2/datasets/{encoded}/download"
-            zip_bytes = _remote_content_length(zip_url, req_func=_dryad_headers)
+            zip_bytes = _archive_size_estimate(df, repo)
             expected = expected_of(ridx)
-            if is_na(zip_bytes) and expected > 0:
-                zip_bytes = expected
             n_wanted = len(ridx)
             record_n = record_count(repo)
-            size_ok = not is_na(zip_bytes) and (
-                not math.isfinite(max_download_size) or zip_bytes <= 2 * max_download_size * _MB
-            )
+            size_why = _archive_size_refusal(zip_bytes, max_download_size, _MB)
+            # Dryad's zip quota (100/day) is 5x stricter than its per-file one
             quota_worth_it = n_wanted > 12
-            ratio_ok = None if is_na(record_n) else record_n <= 2 * n_wanted
-            worth_count = True if n_wanted > 50 else ratio_ok
-            dryad_worth: bool | None = (
-                (worth_count and quota_worth_it)
-                if worth_count is not None
-                else (None if quota_worth_it else False)
-            )
-            if not (size_ok and dryad_worth is True):
-                if not size_ok:
-                    shown = (
-                        "unknown" if is_na(zip_bytes) else _cap_num(float(_rround(zip_bytes / _MB)))
-                    )
-                    why = f"zip transport {shown} MB exceeds 2x the {_cap_num(max_download_size)} MB budget"
+            worth_it = (n_wanted > 50 or record_n <= 2 * n_wanted) and quota_worth_it
+            if size_why is not None or not worth_it:
+                if size_why is not None:
+                    why = size_why
                 elif not quota_worth_it:
                     why = (
                         f"only {n_wanted} file{plural(n_wanted)} wanted -- Dryad's zip quota "
@@ -1915,20 +1825,13 @@ def download_repo_files(
                     )
                 _message(f"Skipping zip for {repo} ({why}); downloading its files individually.")
                 continue
-            if expected > 0 and zip_bytes > expected:
-                _message(
-                    f"Repository {repo} downloads as one archive of "
-                    f"{_cap_num(float(_rround(zip_bytes / _MB)))} MB to extract "
-                    f"{_cap_num(float(_rround(expected / _MB)))} MB of selected files "
-                    "(whole-dataset Dryad archive)."
-                )
             _message(f"Downloading {repo} as zip ({n_wanted} file{plural(n_wanted)})...")
             run_zip(
                 ridx,
                 zip_url,
                 strip_dir=False,
                 req_func=_dryad_headers,
-                max_bytes=max_download_size * _MB,
+                max_bytes=archive_cap,
                 expected_bytes=expected,
                 **zip_kw,
             )
@@ -1967,33 +1870,22 @@ def download_repo_files(
                     proj_id = _gitlab_project_id(clean_repo)
                     zip_url = f"https://gitlab.com/api/v4/projects/{proj_id}/repository/archive.zip"
                     req_func = _headers_fn(_gitlab_config)
-                zip_bytes = _remote_content_length(zip_url)
+                size_why = _archive_size_refusal(
+                    _archive_size_estimate(df, repo), max_download_size, _MB
+                )
+                if size_why is not None:
+                    _message(
+                        f"Skipping zip for {repo} ({size_why}); downloading its files individually."
+                    )
+                    continue
                 expected = expected_of(ridx)
-                if not is_na(zip_bytes) and expected > 0 and zip_bytes > expected:
-                    warnings.warn(
-                        f"Repository {repo} will be downloaded as a larger archive transport "
-                        f"({_cap_num(float(_rround(zip_bytes / _MB)))} MB) than the selected "
-                        f"file estimate ({_cap_num(float(_rround(expected / _MB)))} MB).",
-                        stacklevel=2,
-                    )
-                if (
-                    not is_na(zip_bytes)
-                    and math.isfinite(max_download_size)
-                    and zip_bytes > max_download_size * _MB
-                ):
-                    warnings.warn(
-                        f"Repository {repo} archive transport is "
-                        f"{_cap_num(float(_rround(zip_bytes / _MB)))} MB, above max_download_size "
-                        f"({_cap_num(max_download_size)} MB). Continuing by design because "
-                        "transport is one-shot zip.",
-                        stacklevel=2,
-                    )
                 _message(f"Downloading {repo} as zip ({len(ridx)} file{plural(len(ridx))})...")
                 run_zip(
                     ridx,
                     zip_url,
                     strip_dir=True,
                     req_func=req_func,
+                    max_bytes=archive_cap,
                     expected_bytes=expected,
                     **zip_kw,
                 )
@@ -2018,8 +1910,9 @@ def download_repo_files(
                 remaining_seq = [i for i, p in zip(remaining, parallel_safe, strict=True) if not p]
 
                 def fail(i: int, err: str) -> None:
-                    pid = paper_ids[i] if paper_ids is not None else None
-                    failed_rows.append((repo_urls[i], file_names[i], file_urls[i], pid, err))
+                    failed_rows.append(
+                        (repo_urls[i], file_names[i], file_urls[i], paper_id(i), err)
+                    )
 
                 if remaining_parallel:
                     errs = _download_many_parallel(

@@ -6,7 +6,9 @@ requests -- so ``zip_peek()``, the member fetches and ``download_repo_files()``
 run against real bytes on both sides. A route is a mapping with ``url``,
 ``fixture`` (a file under ``tests/repo_download/data``) or ``body``,
 ``status`` (200), ``headers``, ``range`` (True: honour a Range header),
-``length`` (True: a HEAD sends Content-Length) and ``method`` (any).
+``length`` (True: a HEAD sends Content-Length), ``method`` (any) and
+``suffix`` (how a ``bytes=-n`` range is answered: ``"206"``, ``"416"`` for
+one longer than the file, ``"ignore"``; unset, it is an error).
 """
 
 from __future__ import annotations
@@ -78,6 +80,19 @@ def _handler(routes: list[dict[str, Any]]) -> Callable[[Any], Any]:
             return httpx.Response(status, headers=headers, content=b"")
         rng = request.headers.get("range")
         if rng is not None and hit.get("range", True) is not False and status == 200:
+            total = len(body)
+            suffix = hit.get("suffix")
+            sm = re.match(r"^bytes=-([0-9]+)$", rng)
+            if suffix is not None and sm is not None:
+                n = int(sm.group(1))
+                if suffix == "ignore":
+                    return httpx.Response(200, headers=headers, content=body)
+                if suffix == "416" and n > total:
+                    headers["Content-Range"] = f"bytes */{total}"
+                    return httpx.Response(416, headers=headers, content=b"")
+                start = max(0, total - n)
+                headers["Content-Range"] = f"bytes {start}-{total - 1}/{total}"
+                return httpx.Response(206, headers=headers, content=body[start:])
             m = re.match(r"^bytes=([0-9]+)-([0-9]+)$", rng)
             assert m is not None
             start, end = int(m.group(1)), min(int(m.group(2)), len(body) - 1)
@@ -115,6 +130,58 @@ def peek(routes: list[dict[str, Any]], url: str, **kw: Any) -> Any:
     from metacheck.archives.zip_peek import zip_peek
 
     return _df_bytes(serve(routes, zip_peek, url, **kw))
+
+
+def size(routes: list[dict[str, Any]], url: str) -> Any:
+    from metacheck.archives.download import _remote_size
+
+    return serve(routes, _remote_size, url)
+
+
+def peek_cached(
+    first: list[dict[str, Any]],
+    second: list[dict[str, Any]],
+    url: str,
+    rate_limited: bool = False,
+    **kw: Any,
+) -> dict[str, Any]:
+    """``zip_peek(cache=True)`` twice with the in-memory cache cleared in between.
+
+    Mirrors ``rv_peek_cached()``: the disk cache sits in a fresh temporary
+    folder; *rate_limited* records a long rate limit for the host before the
+    first peek (made with ``skip_on_api_limit=True``) and forgets it after.
+    """
+    from metacheck import http
+    from metacheck.archives import zip_peek_cache as zpc
+    from metacheck.archives.download import _host, _host_rate_limit_record
+    from metacheck.archives.zip_peek import zip_peek
+    from metacheck.utils import options
+
+    d = tempfile.mkdtemp(prefix="rv_zpc_")
+    old = options({"metacheck.zip_peek_cache.dir": d})
+    host = _host(url)
+
+    def forget() -> None:
+        with http._reset_lock:
+            http._host_reset.pop(host, None)
+
+    try:
+        if rate_limited:
+            _host_rate_limit_record(host, 999)
+        one = serve(first, zip_peek, url, cache=True, skip_on_api_limit=rate_limited, **kw)
+        forget()
+        stored = zpc._zip_peek_cache_has(url)
+        two = serve(second, zip_peek, url, cache=True, **kw)
+        return {
+            "first": _df_bytes(one),
+            "stored": stored,
+            "second": _df_bytes(two),
+            "entries": len(os.listdir(d)),
+        }
+    finally:
+        forget()
+        options(old)
+        shutil.rmtree(d, ignore_errors=True)
 
 
 def decision(routes: list[dict[str, Any]], url: str, **kw: Any) -> Any:
@@ -235,6 +302,59 @@ def download(
     finally:
         options(old)
         shutil.rmtree(sess, ignore_errors=True)
+
+
+def download_spy(routes: list[dict[str, Any]], files: pd.DataFrame, **kw: Any) -> dict[str, Any]:
+    """``download_repo_files()`` with its archive and one-file transports recorded.
+
+    Mirrors ``rv_download_spy()``: which archive is requested (and with what
+    byte limit) and which files are then fetched one by one.
+    """
+    import math
+
+    from metacheck.archives import download as dl
+
+    zips: list[dict[str, Any]] = []
+    ones: list[str] = []
+
+    def spy_zip(
+        files: pd.DataFrame,
+        row_idx: Any,
+        zip_url: str,
+        strip_dir: bool = False,
+        req_func: Any = None,
+        timeout_s: float = 120,
+        max_bytes: float = math.inf,
+        skip_on_api_limit: bool = False,
+        expected_bytes: float = math.nan,
+        _inplace: bool = False,
+    ) -> pd.DataFrame:
+        zips.append(
+            {
+                "zip_url": zip_url,
+                "rows": len(row_idx),
+                "strip_dir": strip_dir,
+                "max_bytes": float(max_bytes),
+                "expected_bytes": float(expected_bytes),
+            }
+        )
+        return files
+
+    def spy_one(
+        url: str, dest: str, skip_on_api_limit: bool = False, expected_bytes: float = math.nan
+    ) -> None:
+        ones.append(url)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        Path(dest).write_bytes(b"\x01")
+        return None
+
+    real_zip, real_one = dl._download_zip_to_cache, dl._download_one
+    dl._download_zip_to_cache, dl._download_one = spy_zip, spy_one  # type: ignore[assignment]
+    try:
+        out = download(routes, files, disk=False, **kw)
+    finally:
+        dl._download_zip_to_cache, dl._download_one = real_zip, real_one  # type: ignore[assignment]
+    return {"zips": zips, "downloaded": ones, **out}
 
 
 def expand(fn: str, fixture: str, skip_types: Any = "materials") -> Any:

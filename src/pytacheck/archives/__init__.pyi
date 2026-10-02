@@ -22,5 +22,6 @@ from metacheck.archives.osf import osf_preprint_list as osf_preprint_list
 from metacheck.archives.osf import osf_type as osf_type
 from metacheck.archives.osf_helpers import osf_pat as osf_pat
 from metacheck.archives.osf_helpers import osf_user_projects as osf_user_projects
+from metacheck.archives.zip_peek_cache import zip_peek_cache_clear as zip_peek_cache_clear
 
 def __getattr__(name: str) -> Any: ...

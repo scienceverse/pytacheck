@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 96,
+    "nrow": 94,
     "names": [
       "repo_url",
       "file_name",
@@ -18,8 +18,6 @@
       {
         "t": "chr",
         "v": [
-          "upstream/metacheck/tests/testthat/fixtures",
-          "upstream/metacheck/tests/testthat/fixtures",
           "upstream/metacheck/tests/testthat/fixtures",
           "upstream/metacheck/tests/testthat/fixtures",
           "upstream/metacheck/tests/testthat/fixtures",
@@ -167,8 +165,6 @@
           "25.R",
           "demo.Rproj",
           "Archive.zip",
-          "0956797613520608.xml",
-          "0956797614522816.xml",
           "file.txt",
           "good-example.R",
           "README.md",
@@ -220,8 +216,6 @@
       {
         "t": "chr",
         "v": [
-          null,
-          null,
           null,
           null,
           null,
@@ -369,8 +363,6 @@
           "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/code/25.R",
           "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/demo.Rproj",
           "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/folder/Archive.zip",
-          "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/folder/Archive.zip.contents/0956797613520608.xml",
-          "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/folder/Archive.zip.contents/0956797614522816.xml",
           "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/folder/file.txt",
           "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/good-example.R",
           "<repo>/upstream/metacheck/tests/testthat/fixtures/demo/README.md",
@@ -470,8 +462,6 @@
           33,
           195,
           31324,
-          78597,
-          55964,
           17,
           227,
           36,
@@ -571,8 +561,6 @@
           "code",
           null,
           null,
-          "code",
-          "code",
           null,
           "code",
           "readme",

@@ -1,7 +1,7 @@
 {
-  "id": "remote_content_length.nolength",
+  "id": "osf_file_download.zip.budget_partial",
   "ok": false,
-  "error": "object '.remote_content_length' of mode 'function' was not found",
+  "error": "could not find function \"cap_report\"",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

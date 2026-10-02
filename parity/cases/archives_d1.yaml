@@ -593,6 +593,15 @@
         "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { dryad_file_download(\"10.25338/B8N33J\", download_to = d, unzip_types = \"data\") })"
         "py": "lambda m: m.tmp(lambda d: m.dryad.dryad_file_download(\"10.25338/B8N33J\", download_to=d, unzip_types=\"data\"))"
   "mock_dir": "tests/archives_d1/mocks"
+- "id": "dryad_file_download.mock.unzip_failed_member"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { x <- testthat::with_mocked_bindings(dryad_file_download(\"10.25338/B8N33J\", download_to = d, unzip_types = \"data\"), .dryad_zip_members = function(url, dest, ...) { writeLines(\"a,b\", file.path(dest, \"a.csv\")); data.frame(name = c(\"a.csv\", \"b.csv\"), path = c(file.path(dest, \"a.csv\"), NA), size = c(4, 9), ok = c(TRUE, FALSE), error = c(NA, \"HTTP 403 (range not honoured)\"), stringsAsFactors = FALSE) }, .package = \"metacheck\"); list(value = x, failed = attr(x, \"failed\")) })"
+        "py": "lambda m: m.tmp(lambda d: __import__(\"tests.archives_d1._failed_members\", fromlist=[\"_\"]).run(m.dryad, \"_dryad_zip_members\", lambda: m.dryad.dryad_file_download(\"10.25338/B8N33J\", download_to=d, unzip_types=\"data\")))"
+  "mock_dir": "tests/archives_d1/mocks"
 - "id": "dryad_file_download.mock.folder_exists"
   "r": "identity"
   "py": "tests.archives_d1.parity_support.run"

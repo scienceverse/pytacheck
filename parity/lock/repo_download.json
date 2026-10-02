@@ -5,6 +5,5 @@
 "expand.gz_uncompressed": {"r": "d5e178cbb3c52c47", "py": "9611579cd9712066", "diff": ["file_size[]"]},
 "expand.xz": {"r": "c0e8df5f0e6840b8", "py": "5d41eb452180b790", "diff": ["file_size[]"]},
 "zip_crc_ok.near_miss_large": {"r": "dc2bf8626cfd83b7", "py": "e6e5bcc9388d34ec", "diff": ["[]"]},
-"zip_inflate_member.big_without_size": {"r": "513b6ff8fbd37375", "py": "dc61766e8117e295", "diff": ["crc[]", "length[]"]},
-"zip_peek.nolength.zip": {"r": "f86aa4d8b3f7fd3e", "py": "a0e6915613e23ce8", "diff": ["<root>"]}
+"zip_inflate_member.big_without_size": {"r": "513b6ff8fbd37375", "py": "dc61766e8117e295", "diff": ["crc[]", "length[]"]}
 }

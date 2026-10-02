@@ -796,6 +796,15 @@
           \ d: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5550005\"\
           , unzip_types=\"data\", download_to=d))"
   "mock_dir": "tests/archives_gz/mocks"
+- "id": "zenodo_file_download.unzip_failed_member"
+  "r": "identity"
+  "py": "tests.archives_gz.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); x <- testthat::with_mocked_bindings(metacheck::zenodo_file_download(\"5550005\", unzip_types = \"data\", download_to = d), online = function(...) TRUE, .zenodo_zip_members = function(url, dest, ...) { writeLines(\"a,b\", file.path(dest, \"a.csv\")); data.frame(name = c(\"a.csv\", \"b.csv\"), path = c(file.path(dest, \"a.csv\"), NA), size = c(4, 9), ok = c(TRUE, FALSE), error = c(NA, \"HTTP 403 (range not honoured)\"), stringsAsFactors = FALSE) }, .package = \"metacheck\"); list(value = x, failed = attr(x, \"failed\")) })()"
+        "py": "lambda: __import__(\"tests.archives_gz.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: __import__(\"tests.archives_d1._failed_members\", fromlist=[\"_\"]).run(__import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]), \"_zenodo_zip_members\", lambda: __import__(\"metacheck.archives.zenodo\", fromlist=[\"_\"]).zenodo_file_download(\"5550005\", unzip_types=\"data\", download_to=d)))"
+  "mock_dir": "tests/archives_gz/mocks"
 - "id": "zenodo_file_download.zip_no_unzip"
   "r": "identity"
   "py": "tests.archives_gz.parity_support.run"
