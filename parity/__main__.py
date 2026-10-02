@@ -163,6 +163,22 @@ def cmd_generate(ns: argparse.Namespace) -> int:
             cmd += ["--only", ",".join(ns.only)]
         cmds.append(cmd)
     jobs = ns.jobs if ns.jobs > 0 else os.cpu_count() or 1
+    before = _tree_changes()
+    status = _run_sessions(cmds, env, jobs)
+    left = sorted(_tree_changes() - before)
+    if left:
+        # what a case writes into the checkout can reach another area's
+        # goldens, above all when sessions run side by side
+        print(
+            "warning: the R sessions changed files outside parity/golden (a case "
+            "should write to a temporary copy):\n  " + "\n  ".join(left),
+            file=sys.stderr,
+        )
+    return status
+
+
+def _run_sessions(cmds: list[list[str]], env: Mapping[str, str], jobs: int) -> int:
+    """Run the R sessions, *jobs* at a time; the worst exit status."""
     if jobs == 1 or len(cmds) < 2:
         return max(subprocess.call(cmd, env=env, cwd=ROOT) for cmd in cmds)
 
@@ -179,6 +195,39 @@ def cmd_generate(ns: argparse.Namespace) -> int:
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
         return max(pool.map(run, cmds))
+
+
+def _tree_changes() -> set[str]:
+    """``git status`` lines of the checkout and its submodules, outside the goldens
+    and parity/_out (empty when git is not available)."""
+    try:
+        out = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=all", "--ignore-submodules=none"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+        sub = ROOT / "upstream" / "metacheck"
+        if (sub / ".git").exists():
+            out += "".join(
+                f"{line[:3]}upstream/metacheck/{line[3:]}\n"
+                for line in subprocess.run(
+                    ["git", "status", "--porcelain", "--untracked-files=all"],
+                    cwd=sub,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                ).stdout.splitlines()
+            )
+    except (OSError, subprocess.CalledProcessError):
+        return set()
+    skip = ("parity/golden/", "parity/_out/")
+    return {
+        line
+        for line in out.splitlines()
+        if line[3:] != "upstream/metacheck" and not line[3:].startswith(skip)
+    }
 
 
 # -- one case ---------------------------------------------------------------------------

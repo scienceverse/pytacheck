@@ -140,10 +140,14 @@ def test_generate_runs_case_files_side_by_side(tree, monkeypatch, capsys) -> Non
         )
 
     monkeypatch.setattr(parity_main.subprocess, "run", run)
+    changes = iter([set(), {"?? tests/x/fixtures/out.zip.contents/a.csv"}])
+    monkeypatch.setattr(parity_main, "_tree_changes", lambda: next(changes))
     # the worst exit status, and each session's output in one piece
     assert parity_main.main(["generate", "--jobs", "2", "--area", "beta,alpha+review"]) == 3
-    out = capsys.readouterr().out.splitlines()
-    assert sorted(out) == ["[ok] alpha", "[ok] alpha_review", "[ok] beta"]
+    captured = capsys.readouterr()
+    assert sorted(captured.out.splitlines()) == ["[ok] alpha", "[ok] alpha_review", "[ok] beta"]
+    # a file a case left in the checkout is named
+    assert "tests/x/fixtures/out.zip.contents/a.csv" in captured.err
 
 
 # -- check --strict ---------------------------------------------------------------------
