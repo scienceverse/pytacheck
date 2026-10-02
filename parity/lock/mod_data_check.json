@@ -4,7 +4,6 @@
 "data_check.archives_nopeek": {"r": "e05e936fc2facf46", "py": "338e0dc6deaefe64", "diff": ["structure.file_size[]"]},
 "data_check.archives_skip_none": {"r": "df9f9c34b1816110", "py": "788680f42d144157", "diff": ["structure.file_size[]"]},
 "data_check.download_archives": {"r": "257e8ecab2909f2d", "py": "a75fe0909eaba38a", "diff": ["structure.file_size[]"]},
-"data_check.download_archives_nopeek": {"r": "91ed5832439c5ec1", "py": "113484f8951ac471", "diff": ["structure.file_size[]"]},
 "data_check.download_gated": {"r": "cc77db37984a6019", "py": "9b5cc1da1919ab74", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
 "data_check.download_none": {"r": "20886ede56bb1a50", "py": "d27e7f10c60b52e6", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
 "data_check.download_oversize": {"r": "cc77db37984a6019", "py": "fccbb73ce7a59154", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},

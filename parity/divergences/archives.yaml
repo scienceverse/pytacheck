@@ -515,10 +515,6 @@
   kind: r_bug_fixed
   ref: U69
   reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
-"mod_data_check/data_check.download_archives_nopeek":
-  kind: r_bug_fixed
-  ref: U69
-  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
 # U76 (file names that are not valid UTF-8 are classified; R's grepl() is FALSE for them)
 "datacheck_files_review/review.data_classify_files.invalid_utf8.glibc_valid":
   kind: r_bug_fixed
