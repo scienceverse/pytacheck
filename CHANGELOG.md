@@ -34,6 +34,10 @@ The R reference is metacheck `dev` at 49f97ec5 merged into pull request #423 (th
 
 - `python -m parity generate --jobs N` runs the case files' R sessions side by side (`0`: one per CPU). A full regeneration took about 6 minutes instead of about 45; the parity and upstream-sync workflows use it. `generate` warns when the R sessions leave files in the checkout outside the goldens.
 
+### Fixed
+
+- The default LLM model (the first provider whose API key is set) is now set when metacheck loads, as R's `.onLoad()` does, not when the LLM code is first imported. Before, a module run before and after that import used different session-cache keys.
+
 ### The import package is metacheck
 
 - **Changed:** the import package is now `metacheck` (`src/metacheck`). `import pytacheck` and the `pytacheck` command keep working: every `pytacheck.<sub>` is the same module object as `metacheck.<sub>`, and type checkers see the public names through stubs. Packs may declare `requires.metacheck`; use `>=0.4.0a2.dev0` if the pack does `import metacheck`, because 0.4.0a1 has no `metacheck` import package. `requires.pytacheck` is still read, and `pack check` warns if both are given. The pack scanner treats `pytacheck.*` and `metacheck.*` alike. Saved tables and the repo-info cache keep their format, so files move between this version and 0.4.0a1 both ways (until the change below). Not renamed yet: the store id, the logger names (records still carry `pytacheck`), the install record and pack module names, the command's help name and the version line (the folders keep their name; see below).

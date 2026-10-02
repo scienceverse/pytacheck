@@ -32,6 +32,7 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, cast
 
 from metacheck._env import env_get
+from metacheck.llm._onload import _API_KEY_ENV, _default_model_from_env  # noqa: F401  (re-exported)
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -88,53 +89,16 @@ def _capture_messages() -> Iterator[list[str]]:
 # options (R/zzz.R .onLoad)
 # ---------------------------------------------------------------------------
 
-_init_lock = threading.Lock()
-
-#: Environment variables .onLoad() checks to pick the default model provider.
-_API_KEY_ENV = (
-    ("ollama", "OLLAMA_BASE_URL"),
-    ("groq", "GROQ_API_KEY"),
-    ("openai", "OPENAI_API_KEY"),
-    ("google_gemini", "GEMINI_API_KEY"),
-    ("google_vertex", "GOOGLE_API_KEY"),
-    ("anthropic", "ANTHROPIC_API_KEY"),
-    ("cloudflare", "CLOUDFLARE_API_KEY"),
-    ("deepseek", "DEEPSEEK_API_KEY"),
-    ("huggingface", "HUGGINGFACE_API_KEY"),
-    ("mistral", "MISTRAL_API_KEY"),
-    ("openrouter", "OPENROUTER_API_KEY"),
-    ("perplexity", "PERPLEXITY_API_KEY"),
-    ("portkey", "PORTKEY_API_KEY"),
-    ("azure_openai", "AZURE_OPENAI_ENDPOINT"),
-    ("databricks", "DATABRICKS_HOST"),
-    # not ("github", "GITHUB_PAT"): ellmer's chat_github() is defunct, and
-    # GITHUB_PAT is set for many other reasons; metacheck still picks it as the
-    # default model, so every LLM call then fails (U20)
-)
-
-
-def _default_model_from_env() -> str | None:
-    for name, env in _API_KEY_ENV:
-        if os.environ.get(env, ""):
-            return name
-    return None
-
 
 def _init_options() -> None:
-    """metacheck's ``.onLoad()`` default model (R/zzz.R), applied when this module loads.
+    """metacheck's ``.onLoad()`` default model (R/zzz.R); see :func:`metacheck.utils._init_default_model`.
 
-    ``metacheck.llm_max_calls = 30L`` and ``metacheck.llm.use = FALSE`` are
-    option-store defaults from the start (:data:`metacheck.utils._DEFAULTS`).
-    The default model (the first provider whose API key is set) is set as an
-    option unless one is already set, as ``.onLoad()`` does, so
-    ``llm_model(None)`` can still unset it.
+    :mod:`metacheck.utils` applies it when it loads, so the option is set before
+    any LLM code runs; calling this again (tests do) re-applies it.
     """
     from metacheck import utils
 
-    with _init_lock:
-        model = _default_model_from_env()
-        if model is not None and utils.get_option("metacheck.llm.model", _MISSING) is _MISSING:
-            utils.options({"metacheck.llm.model": model})
+    utils._init_default_model()
 
 
 def _get(name: str, default: Any = None) -> Any:
