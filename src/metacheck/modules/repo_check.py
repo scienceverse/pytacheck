@@ -165,6 +165,11 @@ _NAMING_OK = "File names are broadly machine-parseable."
         "model": "the LLM model name (see `llm_model_list()`), used only when `llm_use(TRUE)` "
         "for study grouping the deterministic passes cannot place",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
+        "skip_on_api_limit": "if TRUE, a confirmed exhausted rate-limit bucket hit while "
+        "peeking a zip's contents (`peek_zips = TRUE`) skips that archive instead of waiting "
+        "out the host's own reset. Default FALSE (always wait for a confirmed reset) -- see "
+        "[download_repo_files()]'s parameter of the same name, which this matches for the "
+        "listing-only requests `zip_peek()` makes here.",
     },
 )
 def repo_check(
@@ -176,6 +181,7 @@ def repo_check(
     cache: bool = False,
     model: str | None = None,
     params: Mapping[str, Any] | None = None,
+    skip_on_api_limit: bool = False,
 ) -> dict[str, Any]:
     """Port of ``inst/modules/repo_check.R::repo_check()``.
 
@@ -183,7 +189,9 @@ def repo_check(
     *local_path* folders (*local_only* skips the online repositories), and
     reports on their documentation, archives and naming. *model* defaults to
     :func:`~metacheck.llm_model` and, like *params*, is only used for study
-    grouping when ``llm_use(TRUE)``.
+    grouping when ``llm_use(TRUE)``. *cache* also reuses zip listings
+    peeked before, and *skip_on_api_limit* skips a zip whose host's rate limit
+    is exhausted instead of waiting for its reset.
     """
     from metacheck.archives import _tick
     from metacheck.utils import pb as make_pb
@@ -193,7 +201,16 @@ def repo_check(
     _tick(bar, "Starting Repo Check")
     try:
         return _repo_check(
-            paper, local_path, local_only, peek_zips, osf_license, cache, model, params, bar
+            paper,
+            local_path,
+            local_only,
+            peek_zips,
+            osf_license,
+            cache,
+            model,
+            params,
+            bar,
+            skip_on_api_limit,
         )
     finally:
         _tick(bar, "Repo Check Complete")
@@ -211,6 +228,7 @@ def _repo_check(
     model: str | None,
     params: Mapping[str, Any] | None,
     bar: Any,
+    skip_on_api_limit: bool = False,
 ) -> dict[str, Any]:
     """The body of :func:`repo_check` (*bar* is the module's progress spinner)."""
     from metacheck.papers.tables import as_paper_list
@@ -290,7 +308,7 @@ def _repo_check(
 
     all_files, is_readme = _prepare_files(all_files, repos)
     if peek_zips is True and len(all_files) > 0:
-        all_files = _peek_zips(all_files)
+        all_files = _peek_zips(all_files, cache, skip_on_api_limit)
 
     # preliminary classification + study grouping ----
     all_files, roster_check, group_no_evidence = _classify(all_files, model, params, paper)
@@ -366,10 +384,10 @@ def _online_listings(
     gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
     rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), bar)
     pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
-    dspace7_files = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
+    dspace7_files, dspace7_meta = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
     listings = _api_listings(repos, cache, bar)
     files = [osf_files, github_files, gitlab_files, rb_files, pa_files, dspace7_files]
-    meta = [osf_meta, github_meta, gitlab_meta, pa_meta]
+    meta = [osf_meta, github_meta, gitlab_meta, pa_meta, dspace7_meta]
     return files + [f for f, _ in listings.values()], meta + [m for _, m in listings.values()]
 
 
@@ -588,8 +606,13 @@ def _as_logical(x: Any) -> bool | None:
     return None
 
 
-def _peek_zips(all_files: pd.DataFrame) -> pd.DataFrame:
-    """Replace each listable ``.zip`` row by the archive's entries (one Range request each)."""
+def _peek_zips(
+    all_files: pd.DataFrame, cache: bool = False, skip_on_api_limit: bool = False
+) -> pd.DataFrame:
+    """Replace each listable ``.zip`` row by the archive's entries (one Range request each).
+
+    *cache* and *skip_on_api_limit* go to :func:`~metacheck.archives.zip_peek.zip_peek`.
+    """
     from metacheck.archives.zip_peek import _is_zip, zip_peek
     from metacheck.fileinfo.types import file_types
 
@@ -613,7 +636,7 @@ def _peek_zips(all_files: pd.DataFrame) -> pd.DataFrame:
     try:
         for i in [k for k, z in enumerate(is_zip) if z]:
             try:
-                peek = zip_peek(urls[i])
+                peek = zip_peek(urls[i], cache=cache, skip_on_api_limit=skip_on_api_limit)
             except Exception:
                 peek = None
             with contextlib.suppress(Exception):  # a progress display must never break a run

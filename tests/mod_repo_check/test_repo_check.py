@@ -526,6 +526,26 @@ def test_zip_peek_replaces_the_archive_row() -> None:
     assert "stimuli.zip" in no_peek.table["file_name"].tolist()
 
 
+def test_zip_peek_gets_cache_and_skip_on_api_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck bec46c66: repo_check() forwards cache and skip_on_api_limit
+    # to zip_peek()
+    from metacheck.archives import zip_peek as zp
+
+    seen: list[dict[str, object]] = []
+
+    def fake(url: str, *args: object, **kwargs: object) -> None:
+        seen.append({"url": url, **kwargs})
+        return None
+
+    monkeypatch.setattr(zp, "zip_peek", fake)
+    paper = tp(["https://zenodo.org/records/5559001"], "p_zip")
+    run(paper, skip_on_api_limit=True)
+    assert seen and all(s["cache"] is False and s["skip_on_api_limit"] is True for s in seen), seen
+    seen.clear()
+    run(paper)
+    assert seen and all(s["skip_on_api_limit"] is False for s in seen)
+
+
 def test_nameless_file_is_listed_without_a_naming_check() -> None:
     # a listed file without a name has no name to check (R's
     # check_file_naming() fails and the module errors, U122)
