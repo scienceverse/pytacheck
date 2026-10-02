@@ -1313,7 +1313,7 @@ def _dataverse_resolve_doi_host(doi: str, candidates: Sequence[str]) -> str:
     ``rodbuk.pl`` and ``uj.rodbuk.pl``, in that order, a dataset on
     ``uj.rodbuk.pl`` is given ``rodbuk.pl``. Here the resolved URL's host
     name is compared: the candidate it equals, else the longest candidate it
-    is a subdomain of (U211).
+    is a subdomain of (U206).
     """
     resolved = _resolved_url(f"https://doi.org/{doi}")
     url_host = None if resolved is None else _url_host(resolved)

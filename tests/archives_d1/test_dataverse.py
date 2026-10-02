@@ -648,7 +648,7 @@ def test_resolve_doi_host_connection_failure(monkeypatch: pytest.MonkeyPatch) ->
 
 
 def test_resolve_doi_host_compares_host_names(serve: Any) -> None:
-    # U211: metacheck takes the first candidate named anywhere in the URL, so
+    # U206: metacheck takes the first candidate named anywhere in the URL, so
     # rodbuk.pl (listed first) wins for a dataset on uj.rodbuk.pl
     doi = "10.26106/abc"
     _redirects(serve, doi, "https://uj.rodbuk.pl/dataset.xhtml?persistentId=doi:" + doi)

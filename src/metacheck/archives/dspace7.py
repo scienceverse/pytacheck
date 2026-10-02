@@ -189,7 +189,7 @@ def _dspace7_resolve_doi_url(doi: str) -> str | None:
     :data:`DSPACE7_HOSTS`; else (or when the DOI cannot be resolved) ``None``.
     R accepts a URL that names a host anywhere (``grepl(host, resolved,
     fixed = TRUE)``, a query string too); here the URL's host name must be
-    the listed host (``www.`` aside) or a subdomain of it (U211).
+    the listed host (``www.`` aside) or a subdomain of it (U206).
     """
     from metacheck.archives.dataverse import _on_host, _resolved_url, _url_host
 

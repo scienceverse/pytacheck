@@ -157,7 +157,7 @@ def test_resolve_doi_url(serve: object) -> None:
     target = f"https://repository.gatech.edu/entities/publication/{GT}"
     _doi_redirect(serve, "10.35090/gatech/1", target)
     assert _dspace7_resolve_doi_url("10.35090/gatech/1") == target
-    # not a DSpace 7 host, or one named only in the query string (U211)
+    # not a DSpace 7 host, or one named only in the query string (U206)
     _doi_redirect(serve, "10.1234/a", "https://example.org/a")
     _doi_redirect(serve, "10.1234/b", "https://example.org/b?next=repository.gatech.edu")
     assert _dspace7_resolve_doi_url("10.1234/a") is None
