@@ -11,6 +11,7 @@ accuracy  Score pytacheck against metacheck on the realistic corpus (parity.accu
 Examples::
 
     python -m parity generate --area text          # needs R + metacheck
+    python -m parity generate --jobs 0             # every area, one R session per CPU
     python -m parity check --area text -v
     python -m parity check --area core,text_extract+review  # core, text_extract(_review)
     python -m parity check --only text_search.demo.significant
@@ -151,16 +152,33 @@ def cmd_generate(ns: argparse.Namespace) -> int:
         return 1
     rscript = _rscript(ns.rscript)
     env = without_credentials({**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"})
-    status = 0
     # one R session per case file: what a case leaves behind (a package it
     # loaded, an option it set) must not change the goldens of other areas, so
-    # that `--area x` and a full run write the same files
+    # that `--area x` and a full run write the same files. Each session writes
+    # only its own area's folder, so sessions can also run side by side.
+    cmds = []
     for f in files:
         cmd = [rscript, str(ROOT / "parity" / "r" / "run_cases.R"), str(ROOT), f]
         if ns.only:
             cmd += ["--only", ",".join(ns.only)]
-        status = max(status, subprocess.call(cmd, env=env, cwd=ROOT))
-    return status
+        cmds.append(cmd)
+    jobs = ns.jobs if ns.jobs > 0 else os.cpu_count() or 1
+    if jobs == 1 or len(cmds) < 2:
+        return max(subprocess.call(cmd, env=env, cwd=ROOT) for cmd in cmds)
+
+    def run(cmd: list[str]) -> int:
+        # buffered, so that each file's progress lines come out together
+        done = subprocess.run(
+            cmd, env=env, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        sys.stdout.buffer.write(done.stdout)
+        sys.stdout.flush()
+        return done.returncode
+
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=jobs) as pool:
+        return max(pool.map(run, cmds))
 
 
 # -- one case ---------------------------------------------------------------------------
@@ -1141,6 +1159,14 @@ def main(argv: list[str] | None = None) -> int:
     _add_area(g)
     g.add_argument("--only", nargs="*")
     g.add_argument("--rscript")
+    g.add_argument(
+        "-j",
+        "--jobs",
+        type=int,
+        default=1,
+        metavar="N",
+        help="run N case files' R sessions side by side (0: one per CPU; default 1)",
+    )
     g.set_defaults(func=cmd_generate)
     c = sub.add_parser("check", help="compare Python with goldens")
     _add_selection(c)
