@@ -46,6 +46,15 @@ match = 'ENTRY_POINT_GROUP = "pytacheck\.packs"|registering the ``pytacheck\.pac
 count = 2
 why = "entry-point group pytacheck.packs"
 
+# --- docs/CODEMAP.md links the alias package by its path
+
+[[rule]]
+action = "keep"
+files = "docs/CODEMAP.md"
+match = '\[`src/pytacheck`\]\(\.\./src/pytacheck\)'
+count = 2
+why = "the import alias package lives in src/pytacheck until the alias sunset"
+
 # --- distribution names (the old distribution is still accepted)
 
 [[rule]]
