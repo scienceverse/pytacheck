@@ -279,12 +279,16 @@ def _sev(overrides: Mapping[str, str], rule: str) -> str:
     return overrides.get(rule, DEFAULT_SEVERITY[rule])
 
 
-def _data_files(pkg: Any) -> list[tuple[str, str, int]]:
-    """``(path, extension, size)`` of the package's tabular files, not hidden, not links, not codebooks."""
+def _data_files(pkg: Any) -> list[tuple[str, str, str, int]]:
+    """``(path, rel, extension, size)`` of the tabular files, not hidden, not links, not codebooks.
+
+    ``path`` is relative to the package's root (where the file is), ``rel`` to its base (what a report shows).
+    """
     files = pkg.files()
-    out: list[tuple[str, str, int]] = []
-    for path, ext, size, hidden, link, role in zip(
+    out: list[tuple[str, str, str, int]] = []
+    for path, rel, ext, size, hidden, link, role in zip(
         files["path"].tolist(),
+        files["rel"].tolist(),
         files["ext"].tolist(),
         files["size"].tolist(),
         files["hidden"].tolist(),
@@ -292,8 +296,8 @@ def _data_files(pkg: Any) -> list[tuple[str, str, int]]:
         files["doc_role"].tolist(),
         strict=True,
     ):
-        if ext in TABULAR_EXTENSIONS and not hidden and not link and role != "codebook":
-            out.append((str(path), str(ext), int(size)))
+        if ext in TABULAR_EXTENSIONS and not hidden and not link and str(role) != "codebook":
+            out.append((str(path), str(rel), str(ext), int(size)))
     return out
 
 
@@ -325,7 +329,7 @@ def check_personal_data(
     scanned = tables_read = rows_read = skipped = 0
     root = Path(pkg.root)
 
-    for index, (path, ext, size) in enumerate(data_files):
+    for index, (disk, path, ext, size) in enumerate(data_files):
         if index >= max_files:
             break
         if size > max_file_size * 1024 * 1024:
@@ -341,7 +345,7 @@ def check_personal_data(
             )
             continue
         try:
-            tables = _read_tables(root / path, ext, max_rows)
+            tables = _read_tables(root / disk, ext, max_rows)
         except _Unreadable:
             skipped += 1
             rows.append(
@@ -514,7 +518,7 @@ def _checklist(
                 **item,
                 "status": status,
                 "detail": (
-                    f"{_n(len(mine), 'column')} in {_n(files, 'file')} look like {det.noun}; "
+                    f"{_n(len(mine), 'column')} in {_n(files, 'file')} may hold {det.noun}; "
                     "a person has to check them."
                 ),
             }
