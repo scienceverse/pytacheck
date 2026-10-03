@@ -21,6 +21,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import itertools
+import threading
 import time
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import Any, cast, overload
@@ -37,6 +38,10 @@ _RESERVED = frozenset(
 # Process-wide mutation counter: ``Paper._generation`` changes whenever a paper is
 # modified through its API, which invalidates ``run_session()`` memo entries.
 _GENERATION = itertools.count(1)
+# Builds a table from its JSON records once, however many threads ask first. One
+# lock for all papers (never part of a paper's state, so papers pickle and copy
+# as before); a build takes milliseconds and is rare.
+_MATERIALISE = threading.Lock()
 
 
 # Papers created in the same clock tick (a coarse clock, e.g. on Windows) must not
@@ -128,23 +133,36 @@ class Paper:
 
     def _raw_records(self, name: str) -> tuple[list[dict[str, Any]], list[str]] | None:
         """``(records, columns)`` if *name* is still unmaterialised JSON."""
-        if name in self._raw and self._tables.get(name) is None:
-            return self._raw[name], self._columns[name]
+        if self._tables.get(name) is None:
+            records = self._raw.get(name)
+            columns = self._columns.get(name)
+            if records is not None and columns is not None:
+                return records, columns
         return None
 
     def _materialise(self, name: str) -> Any:
         value = self._tables.get(name)
         if value is None:
-            if name in self._raw:
-                value = records_to_frame(name, self._raw.pop(name), self._columns.pop(name))
-                token = self._lazy.get(name)
-                if token is not None:
-                    token.built = value
-            elif name in table_names():
-                value = empty_table(name)
-            else:
-                return None
-            self._tables[name] = value
+            # Under a lock, and the table is stored before the records are dropped:
+            # a thread that reads the paper meanwhile finds the records or the
+            # table, never neither (which would read as a missing table).
+            with _MATERIALISE:
+                value = self._tables.get(name)
+                if value is not None:
+                    return value
+                if name in self._raw:
+                    value = records_to_frame(name, self._raw[name], self._columns[name])
+                    token = self._lazy.get(name)
+                    if token is not None:
+                        token.built = value
+                    self._tables[name] = value
+                    self._raw.pop(name, None)
+                    self._columns.pop(name, None)
+                elif name in table_names():
+                    value = empty_table(name)
+                    self._tables[name] = value
+                else:
+                    return None
         return value
 
     # -- mapping-style access ----------------------------------------------

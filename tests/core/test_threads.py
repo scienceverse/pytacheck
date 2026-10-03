@@ -20,11 +20,13 @@ import pytest
 
 from metacheck.core.doc import Doc
 from metacheck.core.patterns import Pat
+from metacheck.papers.model import Paper
 
 TEXTS = ["a , , b", "x  , , , y", "p\n\nq , , r", "plain text", "a , , , , , b c"]
 PATTERNS = [Pat(",,"), Pat(", ,"), Pat("a, b"), Pat(r"\s{2}", "pcre"), Pat("text")]
 THREADS = 8
 ROUNDS = 30
+PAPER_ROUNDS = 20
 
 
 @pytest.fixture(autouse=True)
@@ -106,3 +108,31 @@ def test_threads_sharing_a_doc_get_the_groups_one_thread_gets() -> None:
 
 def _group_text(doc: Doc, rows: list[int]) -> list[str | None]:
     return doc.groups("paper_id", rows, 1).text
+
+
+def _raw_paper(rounds_id: int) -> Paper:
+    p = Paper(paper_id=f"race{rounds_id}")
+    texts = [
+        {"text": f"Sentence {i} of the paper.", "text_id": i, "section_id": 1, "paragraph_id": 1}
+        for i in range(1, 41)
+    ]
+    p._set_raw("text", texts, ["text", "text_id", "section_id", "paragraph_id"])
+    sections = [{"section_id": 1, "header": "Intro", "section_type": "intro"}]
+    p._set_raw("section", sections, ["section_id", "header", "section_type"])
+    return p
+
+
+def test_threads_on_a_raw_paper_never_see_an_empty_table() -> None:
+    """A table is built from the JSON records while other threads read the paper."""
+    from metacheck.text.search import text_search
+
+    for rnd in range(PAPER_ROUNDS):
+        p = _raw_paper(rnd)
+
+        def reader(materialise: bool, p: Paper = p) -> int:
+            if materialise:
+                assert len(p.text) == 40
+            return len(text_search(p, "Sentence"))
+
+        fns = [functools.partial(reader, i % 2 == 0) for i in range(THREADS)]
+        assert _in_threads(fns) == [40] * THREADS
