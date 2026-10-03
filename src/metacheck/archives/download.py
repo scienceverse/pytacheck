@@ -128,6 +128,17 @@ def _repo_cache_dir() -> str:
     )
 
 
+def _repo_cache_location() -> str:
+    """Where :func:`_repo_cache_dir` is, without creating it."""
+    from metacheck.archives.cache import _metacheck_cache_root
+    from metacheck.utils import get_option
+
+    override = get_option("metacheck.repo_cache.dir")
+    if override is not None and str(override) != "":
+        return str(override)
+    return os.path.join(_metacheck_cache_root(), ".metacheck_repo_cache")
+
+
 _STALE_TEMP_AGE_S = 6 * 3600
 _swept = False
 
@@ -145,15 +156,8 @@ def _sweep_repo_cache_once() -> None:
     _swept = True
     try:
         from metacheck.archives._atomic import sweep_stale
-        from metacheck.archives.cache import _metacheck_cache_root
-        from metacheck.utils import get_option
 
-        override = get_option("metacheck.repo_cache.dir")
-        root = (
-            str(override)
-            if override is not None and str(override) != ""
-            else os.path.join(_metacheck_cache_root(), ".metacheck_repo_cache")
-        )
+        root = _repo_cache_location()
         if os.path.isdir(root):
             sweep_stale(root, _STALE_TEMP_AGE_S)
     except Exception:  # noqa: S110 - a sweep must never fail a run

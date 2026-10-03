@@ -275,6 +275,22 @@ def test_expand_zip_members_take_their_own_type(tmp_path: Path) -> None:
     assert "archive" not in rows["file_type"].tolist()
 
 
+def test_finding_where_to_extract_does_not_create_the_repository_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # the repository cache is relative to the working folder by default; creating
+    # it just to compare paths left .metacheck_repo_cache in the user's folder
+    from metacheck.utils import local_options
+
+    z = tmp_path / "user" / "mixed.zip"
+    z.parent.mkdir()
+    shutil.copyfile(DATA / "mixed.zip", z)
+    cache = tmp_path / "not-yet"
+    with local_options({"metacheck.repo_cache.dir": str(cache)}):
+        zp._contents_dir(str(z))
+    assert not cache.exists()
+
+
 def test_local_archive_is_not_extracted_into_the_users_folder(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

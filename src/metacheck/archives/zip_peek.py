@@ -1135,7 +1135,9 @@ def _local_contents_root() -> str:
     The same folder in every session, so the extracted files' locations do not
     change from run to run. When it belongs to someone else (a shared ``/tmp``)
     or is open to other users, a private folder of this session is used instead,
-    removed when the session ends.
+    removed when the session ends. On Windows the temporary folder is the
+    user's own, and its permissions are not POSIX modes, so only its being a
+    folder is checked.
     """
     import stat
     import tempfile
@@ -1144,8 +1146,11 @@ def _local_contents_root() -> str:
     try:
         os.makedirs(root, mode=0o700, exist_ok=True)
         st = os.lstat(root)
-        owned = not hasattr(os, "getuid") or st.st_uid == os.getuid()
-        if stat.S_ISDIR(st.st_mode) and owned and not st.st_mode & 0o022:
+        if os.name == "nt":
+            private = True
+        else:
+            private = st.st_uid == os.getuid() and not st.st_mode & 0o022
+        if stat.S_ISDIR(st.st_mode) and private:
             return root
     except OSError:
         pass
@@ -1177,10 +1182,10 @@ def _contents_dir(archive_path: str) -> str:
     """
     import tempfile
 
-    from metacheck.archives.download import _repo_cache_dir
+    from metacheck.archives.download import _repo_cache_location
 
     real = os.path.realpath(archive_path)
-    for root in (_repo_cache_dir(), tempfile.gettempdir()):
+    for root in (_repo_cache_location(), tempfile.gettempdir()):  # neither is created here
         base = os.path.realpath(root)
         if real.startswith(base.rstrip(os.sep) + os.sep):
             return f"{archive_path}.contents"

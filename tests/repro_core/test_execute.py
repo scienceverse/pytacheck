@@ -551,7 +551,8 @@ def test_install_r_reports_an_unavailable_package_with_its_warning(
     repo.mkdir(parents=True)
     (repo / "PACKAGES").write_text("")
     profile = tmp_path / "Rprofile"
-    profile.write_text(f'options(repos = c(CRAN = "file://{tmp_path / "repo"}"))\n')
+    # a file URL and forward slashes, so a Windows path is not read as R escapes
+    profile.write_text(f'options(repos = c(CRAN = "{(tmp_path / "repo").as_uri()}"))\n')
     monkeypatch.setenv("R_PROFILE_USER", str(profile))
     res = core._install_r(
         "install", str(tmp_path / "lib"), pkg="zzznotapackagezzz", src="cran", ref=None,
