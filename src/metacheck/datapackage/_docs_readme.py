@@ -243,6 +243,29 @@ def _is_caps(text: str) -> bool:
     return len(letters) >= 3 and text == text.upper()
 
 
+def _rank_weak(weak: list[Heading], base: int) -> None:
+    """Give plain-text headings their levels: the first kind of heading line is the top.
+
+    As in reStructuredText, a README's own order tells which kind of line is
+    a section and which a part of one: in "GENERAL INFORMATION" followed by
+    "1. Title of Dataset" the capitals are the sections, in "1. GENERAL
+    INFORMATION" followed by "Authors information:" the numbers are. Numbered
+    lines rank by their depth (1, 1.1, ...), and ``Label:`` lines always come
+    last, since most of them are fields. *base* is the level of a Markdown
+    heading above them, if any.
+    """
+
+    def kind(h: Heading) -> tuple[str, int]:
+        return (h.style, h.level if h.style == "numbered" else 0)
+
+    order: list[tuple[str, int]] = []
+    for h in weak:
+        if h.style != "colon" and kind(h) not in order:
+            order.append(kind(h))
+    for h in weak:
+        h.level = base + 1 + (order.index(kind(h)) if h.style != "colon" else len(order))
+
+
 def find_headings(text: str) -> list[Heading]:
     """The lines of *text* that work as headings, in order, each with the lines it covers.
 
@@ -251,8 +274,9 @@ def find_headings(text: str) -> list[Heading]:
     ``2) Methods``), a bold line, short ALL-CAPS lines and short lines ending
     in a colon. The last four only count when the text has fewer than two
     Markdown or setext headings, so numbered lists and bold text in a proper
-    Markdown README stay body text. A heading's body runs to the next heading
-    of the same or a higher level. A level-1 heading that opens the README and
+    Markdown README stay body text; their levels follow the order in which
+    each kind first appears. A heading's body runs to the next heading of the
+    same or a higher level. A level-1 heading that opens the README and
     has deeper headings below it is its title (:attr:`Heading.is_title`), which
     names the project rather than a section.
     """
@@ -349,6 +373,7 @@ def find_headings(text: str) -> list[Heading]:
                 weak.append(Heading(i, stripped, _heading_key(plain), 7, "colon", i + 1))
                 claimed.add(i)
 
+    _rank_weak(weak, base=max((h.level for h in strong), default=0))
     headings = sorted([*strong, *weak], key=lambda h: h.index)
     for k, h in enumerate(headings):
         h.end = next((o.index for o in headings[k + 1 :] if o.level <= h.level), n)
@@ -362,9 +387,19 @@ def find_headings(text: str) -> list[Heading]:
     return headings
 
 
-def _body_lines(lines: list[str], headings: list[Heading], h: Heading) -> list[tuple[int, str]]:
-    """The lines (index, text) in a heading's body, without the headings and underlines inside it."""
+def _body_lines(
+    lines: list[str], headings: list[Heading], h: Heading, template: ReadmeTemplate
+) -> list[tuple[int, str]]:
+    """The lines (index, text) in a heading's body, without the headings and underlines inside it.
+
+    A heading inside it that carries its own value ("1. Licenses: CC BY 4.0")
+    is kept, since the value is part of the section.
+    """
     skip = {o.index for o in headings} | {o.body_start - 1 for o in headings if o.style == "setext"}
+    for o in headings:
+        value = _INLINE.match(lines[o.index]) if o.style in ("numbered", "colon") else None
+        if value and _has_content(value.group(2), template):
+            skip.discard(o.index)
     return [(i, lines[i]) for i in range(h.body_start, h.end) if i not in skip]
 
 
@@ -470,17 +505,21 @@ def _locate(
     skip: set[int],
     template: ReadmeTemplate,
 ) -> _Found | None:
-    """Find a section of the template in the README: by heading, by label, or by the intro."""
-    for h in headings:
-        if not _is_long_title(h) and any(p.search(h.key) for p in spec.match):
-            body = _body_lines(lines, headings, h)
-            return _Found(
-                h.index,
-                h.raw,
-                "heading",
-                max([h.index, *(i for i, t in body if t.strip())]),
-                body,
-            )
+    """Find a section of the template in the README: by heading, by label, or by the intro.
+
+    Of several matching headings the highest-level one counts, so that
+    "METHODOLOGICAL INFORMATION" is the methods section rather than a "Date of
+    data collection" line inside another section.
+    """
+    matching = [
+        h for h in headings if not _is_long_title(h) and any(p.search(h.key) for p in spec.match)
+    ]
+    if matching:
+        h = min(matching, key=lambda m: m.level)
+        body = _body_lines(lines, headings, h, template)
+        return _Found(
+            h.index, h.raw, "heading", max([h.index, *(i for i, t in body if t.strip())]), body
+        )
     inline = _inline_matches(lines, skip, spec.match)
     if inline is not None:
         i, raw, body = inline

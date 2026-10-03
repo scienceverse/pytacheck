@@ -254,6 +254,7 @@ class ComponentSpec:
     doc_roles: frozenset[str] = frozenset()
     readme_sections: tuple[str, ...] = ()
     formats: tuple[str, ...] = ()
+    file_types: frozenset[str] = frozenset()
     when: tuple[str, ...] = ()
 
 
@@ -293,6 +294,7 @@ def _component_spec(raw: Mapping[str, Any]) -> ComponentSpec:
         doc_roles=frozenset(_strings(match.get("doc_role"))),
         readme_sections=_strings(match.get("readme_sections")),
         formats=tuple(_ext_set(raw.get("formats")) and sorted(_ext_set(raw.get("formats")))),
+        file_types=frozenset(_strings(raw.get("file_types"))),
         when=_strings(raw.get("when")),
     )
 

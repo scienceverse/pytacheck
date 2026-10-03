@@ -501,6 +501,56 @@ def test_the_generic_template_recognises_a_template_style_readme() -> None:
     )
 
 
+# the older layout of the same template: sections in capitals, numbered items inside
+CAPS_README = """\
+GENERAL INFORMATION
+
+1. Title of Dataset: Reaction times in a visual search task
+
+2. Author Information
+    Name: A. Smith
+    Email: a.smith@example.org
+
+3. Date of data collection: 2020-11-26
+
+SHARING/ACCESS INFORMATION
+
+1. Licenses/restrictions placed on the data: CC BY 4.0
+
+DATA & FILE OVERVIEW
+
+1. File List:
+   raw.csv: the reaction times
+
+METHODOLOGICAL INFORMATION
+
+1. Description of methods: a visual search task.
+"""
+
+
+def test_capitals_sections_with_numbered_items_inside() -> None:
+    headings = find_headings(CAPS_README)
+    levels = {h.key.split(":")[0]: h.level for h in headings}
+    assert levels["GENERAL INFORMATION"] == 1
+    assert levels["Title of Dataset"] == 2
+    assert levels["Author Information"] == 2
+    sections, fields = match_sections(CAPS_README)
+    s = sections.set_index("id")
+    expected = {
+        "description": "GENERAL INFORMATION",
+        "files": "DATA & FILE OVERVIEW",
+        # the top-level heading, not "3. Date of data collection" inside another section
+        "methods": "METHODOLOGICAL INFORMATION",
+        "licence": "SHARING/ACCESS INFORMATION",
+    }
+    for sid, heading in expected.items():
+        assert s.loc[sid, "heading"] == heading, sid
+        # "1. Licenses/restrictions ...: CC BY 4.0" is a numbered line that carries its value
+        assert not s.loc[sid, "empty"], sid
+    assert s.loc["contact", "heading"] == "2. Author Information"
+    assert bool(fields.iloc[0]["ok"])
+
+
 def test_a_template_style_readme_in_a_package(tmp_path: Path) -> None:
     r = _check(
         tmp_path,
@@ -714,6 +764,40 @@ def test_licence_file_section_or_neither(tmp_path: Path) -> None:
 
 def _component(r: DocsResult, cid: str) -> Any:
     return r.components.set_index("id").loc[cid]
+
+
+def test_a_document_named_for_a_part_is_not_data(tmp_path: Path) -> None:
+    r = _check(
+        tmp_path,
+        {
+            "README.md": "# Study\n\nAbout it.\n",
+            "admin/Data Management Plan.pdf": "%PDF-1.4",
+            "data/raw.csv": "a\n1\n",
+            "data/approval_ratings.csv": "a\n1\n",
+        },
+        human_participants=False,
+    )
+    data = _component(r, "data")["files"]
+    assert "Data Management Plan.pdf" not in data
+    # a data file keeps counting as data, whatever its name
+    assert "data/approval_ratings.csv" in data
+    assert "Data Management Plan.pdf" in _component(r, "dmp")["files"]
+
+
+def test_data_files_are_not_ethics_documents(tmp_path: Path) -> None:
+    r = _check(
+        tmp_path,
+        {
+            "README.md": "# Study\n\nAbout it.\n",
+            "data/approval_ratings.csv": "a\n1\n",
+            "data/consent_given.csv": "a\n1\n",
+            "consent/signed_form_01.jpg": b"\xff\xd8",
+        },
+        human_participants=True,
+    )
+    assert _component(r, "ethics")["files"] == ""
+    # a scanned form counts, a table of answers does not
+    assert _component(r, "consent")["files"] == "consent/signed_form_01.jpg"
 
 
 def test_the_generic_catalogue() -> None:

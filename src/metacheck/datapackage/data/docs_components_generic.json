@@ -77,7 +77,11 @@
           "gegevensbeheerplan"
         ]
       },
-      "required": "optional"
+      "required": "optional",
+      "file_types": [
+        "text",
+        "image"
+      ]
     },
     {
       "id": "ethics",
@@ -100,6 +104,10 @@
       "required": "human_participants",
       "formats": [
         "pdf"
+      ],
+      "file_types": [
+        "text",
+        "image"
       ]
     },
     {
@@ -117,7 +125,11 @@
           "^(?:consent|informed[ _-]?consent|toestemming)$"
         ]
       },
-      "required": "human_participants"
+      "required": "human_participants",
+      "file_types": [
+        "text",
+        "image"
+      ]
     }
   ]
 }

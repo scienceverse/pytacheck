@@ -44,9 +44,12 @@ Component catalogue (JSON)::
                    "data_type": [...], "doc_role": [...], "readme_sections": [...]},
          "required": "always" | "recommended" | "optional" | "human_participants",
          "formats": ["pdf"],        # other formats of a matched file get a suggestion
+         "file_types": ["text", "image"],  # files of other known types never count
          "when": ["data"]}]}        # only applies when these components are present
 
-A file belongs to a component when any one of the ``match`` criteria hits.
+A file belongs to a component when any one of the ``match`` criteria hits and
+its type (:func:`metacheck.fileinfo.category.filetype`: ``text``, ``image``,
+``data``, ``code``, ...) is not ruled out by ``file_types``.
 """
 
 from __future__ import annotations
@@ -139,6 +142,15 @@ _FORMAT_NAMES = {
 
 #: Most files from a folder of data that the README is expected to name one by one.
 _MAX_DATA_FILES = 50
+
+
+def _type_allowed(spec: ComponentSpec, file_type: str) -> bool:
+    """Whether a file of *file_type* may count for *spec* (unknown types always may)."""
+    return not spec.file_types or file_type in ("NA", "") or file_type in spec.file_types
+
+
+# documents: a part that names one (a DMP, a consent form) takes it from "data"
+_DOCUMENT_EXTS = frozenset({"pdf", "doc", "docx", "odt", "rtf", "txt", "md", "html", "htm"})
 #: Findings listed one by one before the rest are summed up.
 _MAX_LISTED = 10
 
@@ -838,6 +850,8 @@ class _Run:
     def check_components(self, files: Any) -> Any:
         import pandas as pd
 
+        from metacheck.fileinfo.category import filetype
+
         cand = _candidates(files)
         rels = [str(v) for v in cand["rel"]] if len(cand) else []
         names = [str(v) for v in cand["name"]] if len(cand) else []
@@ -860,21 +874,45 @@ class _Run:
             if row["found"] and not row["empty"]:
                 sec_found[str(row["id"])] = (str(row["title"]), int(row["line"]))
 
-        matched: dict[str, list[str]] = {}
-        via_readme: dict[str, str] = {}
+        # A file's data type is a rough guess ("Data Management Plan.pdf" is "data"),
+        # so a part that matches by data type does not take the documents another
+        # part names more precisely.
+        ext_of = dict(zip(rels, exts, strict=True))
+        ftypes = [str(t) for t in filetype(names)] if names else []
+        named: dict[str, set[str]] = {}
         for index, spec in enumerate(self.catalogue.components):
-            hits = []
-            for k, rel in enumerate(rels):
-                if (
+            named[spec.id] = {
+                rel
+                for k, rel in enumerate(rels)
+                if _type_allowed(spec, ftypes[k])
+                and (
                     exts[k] in spec.exts
-                    or types[k] in spec.data_types
                     or roles[k] in spec.doc_roles
                     or any(p.search(names[k]) for p in spec.names)
                     or any(p.search(rel) for p in spec.paths)
                     or (spec.folders and in_folder(index, spec, rel))
-                ):
-                    hits.append(rel)
-            matched[spec.id] = hits
+                )
+            }
+        matched: dict[str, list[str]] = {}
+        via_readme: dict[str, str] = {}
+        for spec in self.catalogue.components:
+            taken = {
+                rel
+                for c, v in named.items()
+                if c != spec.id
+                for rel in v
+                if ext_of[rel] in _DOCUMENT_EXTS
+            }
+            matched[spec.id] = [
+                rel
+                for k, rel in enumerate(rels)
+                if rel in named[spec.id]
+                or (
+                    types[k] in spec.data_types
+                    and rel not in taken
+                    and _type_allowed(spec, ftypes[k])
+                )
+            ]
             for sid in spec.readme_sections:
                 if sid in sec_found and self.readme_rel:
                     title_, line = sec_found[sid]
