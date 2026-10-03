@@ -83,19 +83,41 @@ say in a sentence what a check covers; the options of each are in the module's h
 
 ### `package_files`
 
-Junk and temporary files, file formats and file and folder names.
+Junk and temporary files, file formats and file and folder names. Checklist items:
+`junk_files` (`.DS_Store`, `~$` lock files, `__MACOSX`, `.git`, ...), `file_formats`
+(files outside the list of preferred archival formats, by default based on the DANS
+list; a PDF counts only as PDF/A), `file_names` (spaces, special characters, accents,
+too long names or paths) and `naming_convention` (names that separate words
+differently from the rest, dates not written as YYYY-MM-DD, numbers without leading
+zeros). The format list, the junk rules, the limits and the severity of each rule
+are options.
 
 Options: see `metacheck modules datapackage::package_files`.
 
 ### `package_structure`
 
-The folder tree: its depth, and whether it follows a recognised layout.
+The folder tree. Checklist items: `folder_tree` (a snapshot of the tree, in the
+report), `folder_depth` (no more than three levels by default), `folder_layout`
+(whether the folders follow a recognised layout: data, code and documentation;
+Psych-DS; or one folder per figure) and `empty_folders`. The layouts and the depth
+are options.
 
 Options: see `metacheck modules datapackage::package_structure`.
 
 ### `package_docs`
 
-The README, and whether the package has the parts it should have.
+The README, and whether the package has the parts it should have. Checklist items:
+`readme_present`, `readme_format` (plain text or Markdown), `readme_sections` (a
+description, the authors and a contact, the files; methods, how to reproduce, the
+licence and the variables if there), `readme_placeholders` (template text such as
+`<provide DOI>` left in), `readme_contact` (an e-mail address), `readme_file_list`
+(the README names the folders and data files), `licence`, and `components` with one
+`component:<id>` row per part: README, data, code, codebook, data management plan,
+ethical approval and informed consent. Whether the last two are needed depends on
+whether the research involved people: give `human_participants`, or the check looks
+at the paper's text if there is one, and otherwise leaves them to a person
+(`manual`). The README template and the catalogue of parts are options, so a pack
+can supply its institution's own.
 
 Options: see `metacheck modules datapackage::package_docs`.
 
