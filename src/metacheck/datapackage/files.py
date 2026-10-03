@@ -499,8 +499,8 @@ def pdfa_part(path: str | os.PathLike[str]) -> str | None:
 
     Looks for the ``pdfaid:part`` and ``pdfaid:conformance`` properties of the
     PDF/A identification schema, written as an attribute or as an element, in the
-    file's raw bytes (PDF/A requires the XMP metadata to be stored uncompressed).
-    The result is the part with the conformance level in lower case: ``"1b"``,
+    file's raw bytes, in chunks, so XMP metadata that a tool stored compressed is not
+    seen. The result is the part with the conformance level in lower case: ``"1b"``,
     ``"2a"``, ``"3u"``; PDF/A-4 may have no level (``"4"``) or ``"4e"``/``"4f"``.
     ``None`` means the file does not declare PDF/A; it is not a validation that a
     file declaring PDF/A really conforms. A file that cannot be read raises
@@ -583,6 +583,7 @@ def format_findings(
         strict=True,
     ):
         ext, entry = _format_entry(name, policy)
+        shown = name[len(name) - len(ext) :]  # the extension as written
         if entry is None:
             if ext and sev_un != "ignore":
                 rows.append(
@@ -592,9 +593,9 @@ def format_findings(
                         "file_formats",
                         "unlisted",
                         sev_un,
-                        f"The format .{ext} is not on the list of preferred formats, so we cannot "
-                        "say whether it suits long-term archiving. Check that others can open it "
-                        "without special software.",
+                        f"The format .{shown} is not on the list of preferred formats, so we "
+                        "cannot say whether it suits long-term archiving. Check that others can "
+                        "open it without special software.",
                     )
                 )
             continue
@@ -616,7 +617,7 @@ def format_findings(
         if why:
             detail = why + alt
         else:
-            detail = f"{label} (.{ext}) is not a preferred format for long-term archiving.{alt}"
+            detail = f"{label} (.{shown}) is not a preferred format for long-term archiving.{alt}"
         rows.append(_row(rel, "file", "file_formats", "non-preferred", sev_np, detail))
     return _sorted_frame(rows)
 

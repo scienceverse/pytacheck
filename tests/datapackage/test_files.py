@@ -422,6 +422,7 @@ def test_default_formats(tmp_path: Path) -> None:
     assert "Save it as ODT or PDF/A" in detail["doc/protocol.docx"]
     assert "PDF/A or ODP" in detail["doc/slides.pptx"]
     assert "CSV" in detail["data/clean.sav"]
+    assert "(.RDS)" in detail["data/results.RDS"]  # the extension as it is written
     assert "does not say that it is PDF/A" in detail["scans/b.pdf"]
     assert detail["scans/b.pdf"].endswith("Save it as PDF/A.")
     assert ".xyz is not on the list" in detail["doc/notes.xyz"]

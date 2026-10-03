@@ -53,8 +53,8 @@ from ._common import no_package, summary_table
             '"severity", "explanation"}; the default lists the usual junk files'
         ),
         "severity": (
-            'a dict of rule id to "problem", "suggestion", "info" or "ignore" that '
-            "overrides the default severity of a rule"
+            'a dict (or the path of a JSON file) of rule id to "problem", "suggestion", '
+            '"info" or "ignore" that overrides the default severity of a rule'
         ),
         "limits": (
             "the length limits for names, a dict or the path of a JSON file: "
