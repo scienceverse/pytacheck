@@ -471,8 +471,10 @@ def _build_tree(files: Iterable[tuple[str, int, bool]], dirs: Iterable[tuple[str
     return root
 
 
-def _name_key(name: str) -> tuple[bool, str, str]:
-    return (name.startswith("."), name.casefold(), name)
+def _name_key(name: str) -> tuple[bool, list[int | str], str]:
+    """Sort order of the tree: hidden names last, numbers in order (``f2`` before ``f10``)."""
+    parts = re.split(r"(\d+)", name.casefold())
+    return (name.startswith("."), [int(p) if i % 2 else p for i, p in enumerate(parts)], name)
 
 
 def _ext_summary(files: Sequence[tuple[str, int, bool]]) -> str:

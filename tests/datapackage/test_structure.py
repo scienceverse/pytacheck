@@ -503,6 +503,14 @@ def test_the_tree_lists_folders_first_then_files_with_sizes(tmp_path: Path) -> N
     assert lines[-1].startswith("└── b.txt")
 
 
+def test_numbers_in_names_sort_in_order(tmp_path: Path) -> None:
+    files = ["f10.csv", "f2.csv", "f1.csv", ".hidden", "Fig 9.png", "fig 10.png"]
+    with open_package(make(tmp_path / "pkg", files)) as pkg:
+        lines = folder_tree(pkg).splitlines()[1:]
+    names = [re.sub(r"^[│├└─ ]+", "", line).split("  ")[0] for line in lines]
+    assert names == ["f1.csv", "f2.csv", "f10.csv", "Fig 9.png", "fig 10.png", ".hidden"]
+
+
 def test_big_folders_are_collapsed(tmp_path: Path) -> None:
     files = [f"data/a{i:03d}.csv" for i in range(185)] + [f"data/z{i:02d}.txt" for i in range(10)]
     with open_package(make(tmp_path / "pkg", files)) as pkg:
