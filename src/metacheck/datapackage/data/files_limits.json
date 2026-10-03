@@ -1,0 +1,8 @@
+{
+  "name": "File and folder name length limits",
+  "source": "The path-length budgets of metacheck's machine-readable FAIR data and code guide (the same numbers as metacheck.fileinfo.naming).",
+  "path_too_long": 255,
+  "path_long": 228,
+  "folder_path_long": 100,
+  "file_name_long": 50
+}
