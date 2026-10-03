@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from collections.abc import Iterator
@@ -14,6 +15,12 @@ import pytest
 def test_llm_option_defaults_exist_before_llm_is_imported() -> None:
     # R: library(metacheck) sets metacheck.llm_max_calls = 30L and
     # metacheck.llm.use = FALSE, so getOption() sees them before any LLM code runs
+    from metacheck.llm import core
+
+    # no provider keys: with one set, metacheck.llm.core sets the default
+    # metacheck.llm.model when it loads (as .onLoad() does), changing the memo key
+    keys = {env for _, env in core._API_KEY_ENV}
+    env = {k: v for k, v in os.environ.items() if k not in keys}
     code = (
         "import json, sys\n"
         "import metacheck.utils as u\n"
@@ -26,7 +33,7 @@ def test_llm_option_defaults_exist_before_llm_is_imported() -> None:
         " before == _memo_options()]))\n"
     )
     out = subprocess.run(
-        [sys.executable, "-c", code], capture_output=True, text=True, check=True
+        [sys.executable, "-c", code], capture_output=True, text=True, check=True, env=env
     ).stdout
     n, cls, use, loaded, same = json.loads(out.strip().splitlines()[-1])
     assert (n, cls, use) == (30, "RInt", False)  # 30L: an R integer
