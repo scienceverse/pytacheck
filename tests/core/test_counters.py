@@ -19,6 +19,7 @@ import pytest
 
 import metacheck as pc
 from metacheck._r import regex as rx
+from metacheck.core.doc import _derived
 from metacheck.core.scope import counting, trusted_scope
 from metacheck.provenance import run_modules
 from metacheck.text.extract import extract_eq, extract_urls
@@ -111,6 +112,25 @@ def test_a_table_paper_is_indexed_per_search_outside_a_run(fixtures_dir: Path, f
         for _ in range(3):
             text_search(paper, "power")
     assert n["doc_builds"] == 1
+
+
+@pytest.mark.parametrize("form", ["materialised", "metacheck_defaults"])
+def test_a_doc_that_cannot_be_served_is_not_kept(fixtures_dir: Path, form: str) -> None:
+    paper = _read(fixtures_dir / PAPERS[0], form)
+    for _ in range(2):
+        text_search(paper, "power")
+        assert "doc" not in _derived(paper)
+    with trusted_scope():
+        text_search(paper, "power")
+        assert "doc" in _derived(paper)
+    text_search(paper, "power")  # outside again: the scope's Doc is dropped, not kept
+    assert "doc" not in _derived(paper)
+
+
+def test_a_raw_paper_keeps_its_doc(fixtures_dir: Path) -> None:
+    paper = _read(fixtures_dir / PAPERS[0], "raw")
+    text_search(paper, "power")
+    assert "doc" in _derived(paper)
 
 
 @pytest.mark.parametrize("form", FORMS)

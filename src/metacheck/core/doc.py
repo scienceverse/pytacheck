@@ -418,8 +418,14 @@ class Doc:
                 return doc  # type: ignore[no-any-return]
         doc = cls._build(paper)
         count("doc_builds")
-        # what it was built from, read after the build (which may build a table)
-        derived["doc"] = (_deps(paper), token, doc)
+        # what it was built from, read after the build (which may build a table).
+        # Kept only when a later call can be served from it: outside a trusted
+        # scope a DataFrame-backed Doc never is, and would keep old frames alive.
+        deps = _deps(paper)
+        if token is not None or _all_raw(deps):
+            derived["doc"] = (deps, token, doc)
+        else:
+            derived.pop("doc", None)
         return doc
 
     @classmethod
