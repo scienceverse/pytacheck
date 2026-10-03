@@ -9,7 +9,8 @@ every combination of TRE/PCRE and case on/off:
 
 * a string that ``grepl`` matches has, for every clause of the pattern's
   required literals, one of the clause's pieces in ``fold(string)``;
-* ``detect_many`` gives what ``grepl`` gives, for every pattern of the list.
+* ``detect_many`` gives what ``grepl`` gives, for every pattern of the list, with
+  the pieces looked up by a scan of the text and by the word index alike.
 
 The default budget is fixed (``derandomize``), so a failure is reproducible. For
 a nightly run, ``METACHECK_FUZZ_EXAMPLES=20000`` raises it (``derandomize`` is
@@ -231,9 +232,16 @@ def check(perl: bool, icase: bool, patterns: list[str], text: str) -> None:
                 )
     valid = [p for p, t in zip(patterns, truth, strict=True) if t != "invalid"]
     want = [t for t in truth if t != "invalid"]
-    assert detect_many(valid, text, icase, perl) == want, (patterns, text, perl, icase)
-    # a clause-less pattern in the list, and the text folded once for all
-    assert detect_many(["", *valid], text, icase, perl) == [True, *want]
+    for mode in ("auto", "scan", "index"):  # the scan and the word index answer alike
+        assert detect_many(valid, text, icase, perl, literals=mode) == want, (
+            patterns,
+            text,
+            perl,
+            icase,
+            mode,
+        )
+        # a clause-less pattern in the list, and the text folded once for all
+        assert detect_many(["", *valid], text, icase, perl, literals=mode) == [True, *want]
 
 
 def run(max_examples: int) -> dict[str, int]:
