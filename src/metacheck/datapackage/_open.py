@@ -106,10 +106,12 @@ class OpenedPackage:
         """A name for the package: the wrapper folder's, else the folder's or archive's."""
         if self.base:
             return PurePosixPath(self.base).name
+        if not self.archive:
+            return self.root.name  # resolved, so "." gives the folder's own name
         name = Path(self.source).name
         low = name.lower()
         for suffix in sorted(ARCHIVE_SUFFIXES, key=len, reverse=True):
-            if self.archive and low.endswith(suffix):
+            if low.endswith(suffix):
                 return name[: -len(suffix)] or name
         return name
 

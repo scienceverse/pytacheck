@@ -211,3 +211,12 @@ def test_findings_and_checklist_tables() -> None:
     assert traffic_light(checklist_frame()) == "na"
     with pytest.raises(ValueError, match="severity"):
         findings_frame([{"severity": "bad"}])
+
+
+def test_a_folder_given_as_dot_is_named_after_the_folder(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = _tree(tmp_path / "study1", PACKAGE)
+    monkeypatch.chdir(root)
+    with open_package(".") as pkg:
+        assert pkg.name == "study1"

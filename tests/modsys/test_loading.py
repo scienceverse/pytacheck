@@ -136,7 +136,7 @@ def test_module_list_default_unchanged_and_pack_column(ms) -> None:
     assert list(builtin.columns) == [*before.columns, "pack"]
     assert builtin.drop(columns="pack").equals(before)
     everything = module_list(pack="*")
-    # metacheck registers its own datapackage pack (pytacheck.packs entry point)
+    # metacheck registers its own datapackage pack (an entry point in pyproject.toml)
     assert set(everything["pack"]) == {"metacheck", "datapackage", "demo"}
     assert everything.loc[everything["pack"] == "demo", "name"].tolist() == ["zeta"]
     assert module_list(pack="demo")["name"].tolist() == ["zeta"]
