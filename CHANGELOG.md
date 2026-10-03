@@ -83,11 +83,19 @@ The R reference is metacheck `dev` at 49f97ec5 merged into pull request #423 (th
 
 - `convert_bibr(backend="bibr")` and `convert()` (with `BIBR_URL` and `BIBR_API_KEY`) use bibr serve's job API and the hosted service in front of it: submit to `/papers/jobs`, poll, fetch the result, honour `Retry-After` on a 429 (bounded), read a 409 on the result as not ready, explain 401/403/413/415, and never send the token over plain http except to localhost or across a redirect. `"selfhosted"` now sends the token and waits out a 429; the readiness check accepts an anonymous bibr serve (docs/BIBR.md section 3, docs/UPSTREAM_ISSUES.md D59).
 
+### Faster pattern scans: required literals
+
+- `metacheck._r.regex.required_literals(pattern, perl, icase)` reads a TRE or PCRE pattern and returns the words every match must contain (in casefolded text); `detect_many(patterns, text)` folds the text once, skips the patterns whose words are not in it, compiles only the others, and gives the same truth values as `grepl()` pattern by pattern. A pattern the reader does not fully understand has no required words and always runs, so results do not change. The dictionary scans of the codebook modules (791 scale and 833 task patterns per paper) use it: on a 94,000-character text about a third faster once the patterns are compiled. `METACHECK_LITERALS=off` (or `PYTACHECK_LITERALS=off`) turns the new filter off, to rule it out when a match seems to be missing. `grepl()`'s own filter is unchanged. Tests: every match in the recorded regex calls (92,767) has its required words; a generated-pattern test (TRE and PCRE, case on and off, tricky characters such as the Kelvin sign, the long s and no-break space) finds no violation; 229 of the 273 built-in patterns get at least one required word.
+
 ### The app
 
 - The page has a header with the version and links to ScienceVerse and the Metacheck, Pytacheck and bibr repositories on GitHub, repeated under the credit line. The online and data options sit above the buttons they apply to, the bibr key field is hidden where the server supplies the key (that key wins over a typed one), and result cells are coloured by their traffic light (the word stays, so colour is never the only signal).
 - The page starts on the bibr reader where the server supplies the bibr key (`SCIVRS_API_KEY`), as a hosted server does, and on GROBID otherwise, since GROBID needs no key.
 - The bibr option talks to bibr serve and the hosted bibr service in front of it: it sends a PDF to `/papers/jobs`. Before, it sent every PDF to the Scienceverse platform's `/jobs`, which those services answer with 404, so the page said the bibr service could not be found. `PYTACHECK_BIBR_BACKEND=scivrs` says that the address in `PYTACHECK_BIBR_URL` is the platform. For an address from metacheck's public server list, the entry's `protocol` decides; without one, an entry whose `api_key` is `SCIVRS_API_KEY` is the platform, and any other entry is bibr serve. A hosted server does not start with a `PYTACHECK_BIBR_BACKEND` other than `bibr` or `scivrs`, or with a `PYTACHECK_BIBR_URL` that cannot work, such as plain http to another machine for bibr (deploy/space/DEPLOY.md).
+
+### Documentation
+
+- docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.
 
 ## 0.4.0a1 (first release on PyPI)
 

@@ -575,6 +575,17 @@ def _safe_grepl(pat: str, hay: str) -> bool:
         return False
 
 
+def _safe_detect_many(pats: list[str], hay: str) -> list[bool]:
+    """``[_safe_grepl(p, hay) for p in pats]``, with the text folded once and only
+    the patterns whose required literals are all in it run (``detect_many``)."""
+    from metacheck._r.regex import detect_many
+
+    try:
+        return detect_many(pats, hay, ignore_case=True, perl=True)
+    except Exception:  # a pattern that does not compile: each one on its own, as R's tryCatch
+        return [_safe_grepl(p, hay) for p in pats]
+
+
 def _scan_paper_with_dict(paper: Any, dict_df: pd.DataFrame | None) -> list[str]:
     """Instruments of a dictionary named (by name or acronym) in a paper's text.
 
@@ -587,8 +598,7 @@ def _scan_paper_with_dict(paper: Any, dict_df: pd.DataFrame | None) -> list[str]
     hay = _paper_hay(paper)
     names = _vals(dict_df, "name") or []
     pats = _dict_patterns(dict_df)
-    hit = [n for n, p in zip(names, pats, strict=True) if _safe_grepl(p, hay)]
-    return _unique(hit)
+    return _unique(n for n, found in zip(names, _safe_detect_many(pats, hay), strict=True) if found)
 
 
 def _scan_paper_for_scales(paper: Any) -> list[str]:

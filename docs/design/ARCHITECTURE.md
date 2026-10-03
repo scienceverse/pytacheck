@@ -172,7 +172,7 @@ Internal file mirroring, private-function mirroring and "Port of R/…" docstrin
 Dropped from revision 1: `core/index.py` (the word index missed its own 10% bar, Review B-13) and `core/declarative.py` (YAML modules deferred, decision 2 (decided 2026-09-28: (c))).
 
 **Layering (G6, an AST lint):**
-- `core/**` imports only `_r`, `_values`, `_json`, `papers.model`, `papers.schema` and `papers.ids`. It never imports `text.*`, `modules`, `report`, `api`, `cli`, `archives`, `datacheck` or `codecheck`. The spike broke this twice (`core/doc.py` → `text.search._legacy_text_frame`; `core/facets.py` → `text.json_expand.as_numeric`); CORE 1b moves the frame builder into the Doc's `.tolist()` backing and uses `_values.as_float`.
+- `core/**` imports only `_r`, `_values`, `_json`, `_env`, `_logging`, `papers.model`, `papers.schema` and `papers.ids`. `_env` (the table of environment variables) and `_logging` import only the standard library; `_r/regex.py` reads the literal kill switch through `_env` (CORE-1a). It never imports `text.*`, `modules`, `report`, `api`, `cli`, `archives`, `datacheck` or `codecheck`. The spike broke this twice (`core/doc.py` → `text.search._legacy_text_frame`; `core/facets.py` → `text.json_expand.as_numeric`); CORE 1b moves the frame builder into the Doc's `.tolist()` backing and uses `_values.as_float`.
 - The façades import the core, never the reverse.
 - **A module that imports `pytacheck.doc` counts as migrated.** G6 then bans `text.search`, `papers.tables`, `_r.frames` and `_r.regex.grepl` in it. The rule is derived from the imports, so no package edits a shared list (Review B-14).
 
