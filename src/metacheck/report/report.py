@@ -32,6 +32,8 @@ from types import ModuleType
 from typing import Any, cast
 
 from metacheck._r.regex import gsub, regextract_all, sub
+from metacheck.core.errors import StaleDocumentError
+from metacheck.core.scope import check_mutation, running_module, trusted_scope
 from metacheck.module import SECTION_LEVELS, ModuleOutput, module_find, module_info, module_run
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.report.blocks import ReportTable, collapse_section
@@ -396,6 +398,11 @@ def report_module_run(
     :func:`~metacheck.module.get_prev_outputs`). A module that errors is
     recorded as a ``"fail"`` output, with a warning, and the chain goes on.
     ``args`` maps module names to extra arguments for them.
+
+    Each paper's tables are read once per run, so a module must not edit a paper
+    in place (the modules after it would not see the edit); with
+    ``METACHECK_CHECK_MUTATION=1`` such an edit raises
+    :class:`~metacheck.core.errors.StaleDocumentError` before the next module.
     """
     from metacheck.utils import pb
 
@@ -405,43 +412,52 @@ def report_module_run(
         raise ValueError("No modules to run: `modules` is empty")
     args = args or {}
     bar = pb(len(modules), ":what [:bar] :current/:total :elapsedfull")
-    try:
-        bar.tick(0, tokens={"what": "Running modules"})
-        op: Any = paper
-        for module in modules:
-            label = _label(module)
-            bar.tick(0, tokens={"what": label})
-            mod_args = dict(args.get(label) or {})
-            mod_args.pop("paper", None)
-            mod_args.pop("module", None)
-            try:
-                op = module_run(op, module, **mod_args)
-            except Exception as exc:
-                warnings.warn(f"Error in {label}", stacklevel=2)
-                prev: dict[str, ModuleOutput] = {}
-                if isinstance(op, ModuleOutput):
-                    prev = dict(op.prev_outputs or {})
-                    prev[op.module] = replace(op, prev_outputs={}, paper=None)
-                summary_table = (
-                    op.summary_table
-                    if isinstance(op, ModuleOutput) and op.summary_table is not None
-                    else _paper_summary_table(paper)
-                )
-                op = ModuleOutput(
-                    module=label,
-                    title=label,
-                    section=None,  # type: ignore[arg-type]  # R's failed output has no section
-                    table=None,
-                    report=str(exc),
-                    traffic_light="fail",
-                    summary_text="This module failed to run",
-                    summary_table=summary_table,
-                    paper=paper,
-                    prev_outputs=prev,
-                )
-            bar.tick(tokens={"what": label})
-    finally:
-        bar.terminate()
+    # a trusted scope: each paper's Doc is built once for all the modules
+    with trusted_scope():
+        try:
+            bar.tick(0, tokens={"what": "Running modules"})
+            op: Any = paper
+            ran: str | None = None
+            for module in modules:
+                label = _label(module)
+                check_mutation(ran)  # the module before edited a paper in place (CI check)
+                bar.tick(0, tokens={"what": label})
+                mod_args = dict(args.get(label) or {})
+                mod_args.pop("paper", None)
+                mod_args.pop("module", None)
+                try:
+                    with running_module(label):
+                        op = module_run(op, module, **mod_args)
+                except StaleDocumentError:
+                    raise
+                except Exception as exc:
+                    warnings.warn(f"Error in {label}", stacklevel=2)
+                    prev: dict[str, ModuleOutput] = {}
+                    if isinstance(op, ModuleOutput):
+                        prev = dict(op.prev_outputs or {})
+                        prev[op.module] = replace(op, prev_outputs={}, paper=None)
+                    summary_table = (
+                        op.summary_table
+                        if isinstance(op, ModuleOutput) and op.summary_table is not None
+                        else _paper_summary_table(paper)
+                    )
+                    op = ModuleOutput(
+                        module=label,
+                        title=label,
+                        section=None,  # type: ignore[arg-type]  # R's failed output has no section
+                        table=None,
+                        report=str(exc),
+                        traffic_light="fail",
+                        summary_text="This module failed to run",
+                        summary_table=summary_table,
+                        paper=paper,
+                        prev_outputs=prev,
+                    )
+                bar.tick(tokens={"what": label})
+                ran = label
+            check_mutation(ran)
+        finally:
+            bar.terminate()
 
     if not isinstance(op, ModuleOutput):
         return ReportOutput(paper=op)

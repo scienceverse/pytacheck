@@ -108,12 +108,12 @@ def _scan_links(
     from metacheck.archives.dataverse import _link_matches
 
     try:
-        from metacheck.text.search import _text_frame, text_search
+        from metacheck.text.search import sentence_table, text_search
     except ImportError:  # pragma: no cover - search everything instead
         return _link_matches(paper, pattern)
     if isinstance(paper, str | pd.DataFrame):
         return _link_matches(paper, pattern)
-    frame, is_vector = _text_frame(paper)
+    frame, is_vector = sentence_table(paper)
     if is_vector or "text" not in frame.columns:
         return _link_matches(paper, pattern)
 

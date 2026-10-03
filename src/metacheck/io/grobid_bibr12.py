@@ -807,25 +807,42 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     if completed_at is None:
         completed_at = _now_utc()
 
-    # statistics, as the older conversion finds them ----
+    # statistics, as the older conversion finds them, searched in the paper's
+    # sentences indexed now (the paper keeps the index) ----
     paper_id = _file_path_sans_ext(os.path.basename(src_path))
-    tmp = Paper(paper_id)
-    tmp.text = pd.DataFrame(
+    text_records = _records(
         {
-            "text": _column(text, "string"),
-            "text_id": _column(text_id, "Int64"),
-            "paragraph_id": _column(paragraph_id, "Int64"),
-            "section_id": _column(text_section, "Int64"),
-        }
+            "text": text,
+            "text_id": text_id,
+            "paragraph_id": [_int(v) for v in paragraph_id],
+            "section_id": text_section,
+        },
+        "text",
     )
-    tmp.section = pd.DataFrame(
-        {
-            "section_id": _column(sections["section_id"], "Int64"),
-            "header": _column(sections["header"], "string"),
-            "section_type": _column(sections["section_type"], "string"),
-        }
-    )
-    eq = _extract_eq(tmp)
+    section_records = _records(sections, "section")
+    doc = _read_doc(paper_id, text_records, section_records)
+    if doc is not None:
+        from metacheck.text.extract import eq_table
+
+        eq = eq_table(doc)
+    else:
+        tmp = Paper(paper_id)
+        tmp.text = pd.DataFrame(
+            {
+                "text": _column(text, "string"),
+                "text_id": _column(text_id, "Int64"),
+                "paragraph_id": _column(paragraph_id, "Int64"),
+                "section_id": _column(text_section, "Int64"),
+            }
+        )
+        tmp.section = pd.DataFrame(
+            {
+                "section_id": _column(sections["section_id"], "Int64"),
+                "header": _column(sections["header"], "string"),
+                "section_type": _column(sections["section_type"], "string"),
+            }
+        )
+        eq = _extract_eq(tmp)
     comp = [None if _na(c) else _COMP_MAP.get(c, c) for c in eq["comp"].tolist()]
     off_vocab = [c for c in comp if c not in _COMPS]
     keep_eq = [i for i, c in enumerate(comp) if c in _COMPS]
@@ -843,16 +860,8 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     tables = {
         "author": _records(author, "author"),
         "affiliation": _records(affiliation, "affiliation"),
-        "text": _records(
-            {
-                "text": text,
-                "text_id": text_id,
-                "paragraph_id": [_int(v) for v in paragraph_id],
-                "section_id": text_section,
-            },
-            "text",
-        ),
-        "section": _records(sections, "section"),
+        "text": text_records,
+        "section": section_records,
         "url": _records(
             {
                 "url_id": list(range(1, len(href) + 1)),
@@ -906,7 +915,22 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     # the metadata are strings (keywords a list of them): nothing for
     # .paper_coerce() to stop at
     info = _bibr12_info(metadata, source, "12.0", extraction)
-    return _bibr12_paper(paper_id, info, tables, extraction)
+    paper = _bibr12_paper(paper_id, info, tables, extraction)
+    if doc is not None:
+        from metacheck.core.doc import Doc
+
+        Doc.attach(paper, doc)
+    return paper
+
+
+def _read_doc(paper_id: str, text: list[dict[str, Any]], section: list[dict[str, Any]]) -> Any:
+    """The Doc of the paper being read, from its text and section records (``None``
+    when they need the older path: no sentences, or section IDs that repeat)."""
+    from metacheck.core.doc import Doc
+
+    return Doc.from_records(
+        paper_id, text, list(BIBR12_COLS["text"]), section, list(BIBR12_COLS["section"])
+    )
 
 
 def _as_integer(x: Sequence[Any]) -> list[int | None]:

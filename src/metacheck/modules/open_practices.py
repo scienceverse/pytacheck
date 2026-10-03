@@ -100,9 +100,9 @@ def _search_frame(paper: Any) -> Any:
     table); other inputs are passed through."""
     if not isinstance(paper, Paper | PaperList):
         return paper
-    from metacheck.text.search import _text_frame
+    from metacheck.text.search import sentence_table
 
-    return _text_frame(paper)[0]
+    return sentence_table(paper)[0]
 
 
 def _code_rows(frame: Any) -> Any:

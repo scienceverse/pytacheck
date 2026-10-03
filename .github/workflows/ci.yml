@@ -94,6 +94,8 @@ jobs:
       GIT_CONFIG_VALUE_0: "false"
       GIT_CONFIG_KEY_1: core.eol
       GIT_CONFIG_VALUE_1: lf
+      # a module that edits a paper's table in place fails the run (docs/MODULES.md)
+      METACHECK_CHECK_MUTATION: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
@@ -135,6 +137,8 @@ jobs:
           python-version: ${{ env.PRIMARY_PYTHON }}
       - run: uv sync --locked --all-extras
       - name: Parity (every case)
+        env:
+          METACHECK_CHECK_MUTATION: "1" # as in the Tests job
         run: >-
           uv run python -m parity check --jobs 0
           --report parity/_out/report.json --md "$GITHUB_STEP_SUMMARY"
@@ -173,6 +177,8 @@ jobs:
       - run: uv sync --locked --all-extras
       - uses: ./.github/actions/xdist-workers
       - name: Tier-1 parity cases with pyarrow installed
+        env:
+          METACHECK_CHECK_MUTATION: "1" # as in the Tests job
         run: uv run --with pyarrow pytest -n auto -m "parity and tier1"
 
   benchmark:
