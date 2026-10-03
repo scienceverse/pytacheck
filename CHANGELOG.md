@@ -50,6 +50,7 @@ package's. The R commit each release is compared against is in
 ### Faster pattern scans: required literals
 
 - `metacheck._r.regex.required_literals(pattern, perl, icase)` reads a TRE or PCRE pattern and returns the words every match must contain (in casefolded text); `detect_many(patterns, text)` folds the text once, skips the patterns whose words are not in it, compiles only the others, and gives the same truth values as `grepl()` pattern by pattern. A pattern the reader does not fully understand has no required words and always runs, so results do not change. The dictionary scans of the codebook modules (791 scale and 833 task patterns per paper) use it: on a 94,000-character text about a third faster once the patterns are compiled. `METACHECK_LITERALS=off` (or `PYTACHECK_LITERALS=off`) turns the new filter off, to rule it out when a match seems to be missing. `grepl()`'s own filter is unchanged. Tests: every match in the recorded regex calls (92,767) has its required words; a generated-pattern test (TRE and PCRE, case on and off, tricky characters such as the Kelvin sign, the long s and no-break space) finds no violation; 229 of the 273 built-in patterns get at least one required word.
+- `detect_many(patterns, text, ..., literals="auto")` looks the words up in an index of the text's distinct words when it has 64 patterns or more (a few patterns still scan the text, since building the index costs about 2 ms on a 94,000-character paper); `literals="scan"` and `literals="index"` choose either way. The answers are exactly the scan's: a word of printable ASCII without a space can only sit inside one whitespace-separated word of the text, so searching the joined distinct words finds it wherever it lies in a word (`ann` in `planning`, `ab.cd`), and any other string is looked up in the text itself. On the codebook scan (scales and tasks, 1,624 patterns, a 94,000-character paper) the index makes `detect_many` about 20-27% faster than the scan (best of 15 runs 92 ms against 114 ms, median 110 ms against 150 ms; a first call in a fresh process 234 ms against 279 ms). `METACHECK_LITERALS=off` turns off both.
 
 ### Text search on an indexed paper
 
@@ -63,6 +64,29 @@ package's. The R commit each release is compared against is in
 - The page has a header with the version and links to ScienceVerse and the Metacheck, Pytacheck and bibr repositories on GitHub, repeated under the credit line. The online and data options sit above the buttons they apply to, the bibr key field is hidden where the server supplies the key (that key wins over a typed one), and result cells are coloured by their traffic light (the word stays, so colour is never the only signal).
 - The page starts on the bibr reader where the server supplies the bibr key (`SCIVRS_API_KEY`), as a hosted server does, and on GROBID otherwise, since GROBID needs no key.
 - The bibr option talks to bibr serve and the hosted bibr service in front of it: it sends a PDF to `/papers/jobs`. Before, it sent every PDF to the Scienceverse platform's `/jobs`, which those services answer with 404, so the page said the bibr service could not be found. `PYTACHECK_BIBR_BACKEND=scivrs` says that the address in `PYTACHECK_BIBR_URL` is the platform. For an address from metacheck's public server list, the entry's `protocol` decides; without one, an entry whose `api_key` is `SCIVRS_API_KEY` is the platform, and any other entry is bibr serve. A hosted server does not start with a `PYTACHECK_BIBR_BACKEND` other than `bibr` or `scivrs`, or with a `PYTACHECK_BIBR_URL` that cannot work, such as plain http to another machine for bibr (deploy/space/DEPLOY.md).
+
+### Fixed: GitHub and GitLab links of 12.x papers
+
+- `github_links()` and `gitlab_links()`, and so `repo_check`, find the GitHub and GitLab links of papers in the 12.x format: bibr 12.x JSON, and Grobid TEI, which is read as 12.x by default. They searched the url table's first column, which in a 12.x paper is the number `url_id`, so no such repository was found; they now search `href`, as the other repository finders do. metacheck has the same bug (docs/UPSTREAM_ISSUES.md U196). On 450 Psychological Science papers read from Grobid TEI, 9 papers now give 9 GitHub and 1 GitLab repositories, against none before. More repositories found means more calls to api.github.com, which allows 60 an hour without a token.
+
+### Fixed: open_practices on papers from older bibr exports
+
+- `open_practices` stopped with "cannot use 'tuple' as a dict key" on papers read from an older (pre-12) bibr JSON export, whose text table has a list column (`_bbox_2d`): 36 of the first 40 papers of a bibr validation set. The list is now compared by its elements, as dplyr does when it joins on a list column. Results on papers without a list column, and on 12.x papers, do not change.
+### Fixed: p-values and statistics that were not read
+
+These change the results of validated checks (`all_p_values`, `stat_p_exact`, `stat_p_nonsig`, `stat_effect_size`); metacheck has the same bugs (docs/UPSTREAM_ISSUES.md U204, U205).
+
+- `extract_p_values()` reads p written as "ps", "p's" or "p-values": "ps < .05", the usual way to report several p-values at once, was not a p-value. In 450 Psychological Science papers read from Grobid TEI it occurs 216 times in 70 papers. `stat_p_exact` counts "ps < .05" as an imprecise p-value, so it turns red on 3 of the 21 papers of the realistic corpus.
+- Scientific notation may use "×", leave out "^" and use the Unicode minus: "p = 1.8 × 10 -6" was read as p = 1.8 and is now 1.8e-06.
+- `extract_eq()` and `extract_p_values()` read the Unicode minus sign (U+2212), which text from PDFs often has (bibr keeps it, Grobid writes "-"): "t(28) = −2.15" and "d = −0.80" were not found, so `stat_effect_size` saw no t-test in such a sentence. `rhs` and `p_value` now have "-"; the matched `text` is kept as written.
+
+### Fixed: e-mail addresses are not URLs
+
+- `all_urls` and `extract_urls()` no longer list the parts of an e-mail address as URLs: for `k.aristovich@ucl.ac.uk` metacheck lists `k.aristovich` and `ucl.ac.uk`, and `gmail.com` for every address at gmail.com. A URL that has an `@` after its host (`twitter.com/@user`) is still listed. On 120 papers read from bibr 12.x, 274 of 575 rows were such fragments (214 of 835 in 86 older bibr papers, 12 of 2,584 in 450 Grobid TEI papers); a paper whose only matches were e-mail addresses had the traffic light `info` and now has `na` (22 of the 120). This changes the result of a validated module; metacheck has the same bug (docs/UPSTREAM_ISSUES.md U206).
+
+### Fixed: ref_consistency on papers from older bibr exports
+
+- `ref_consistency` counts the citations of an older bibr JSON export (bibr 0.3.0 and the v10 format), which marks them `bib` instead of Grobid's `bibr`. Before, such a paper had no citations: every reference was reported as not cited and the light was red. On 120 platform papers 4,973 of 4,973 references were reported, now 922, and 20 papers are green instead of none (86 older bibr papers: 3,700 to 375, 11 green). A 12.x export and Grobid TEI are unchanged. What the module still reports is mostly bibr's own noise (citations it did not link, author-year styles). metacheck has the same bug (docs/UPSTREAM_ISSUES.md U207).
 
 ### Documentation
 

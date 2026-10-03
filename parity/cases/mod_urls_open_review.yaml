@@ -507,6 +507,7 @@
         "r": "local({q <- demopaper(); q$paper_id <- \"copy\"; paperlist(q, demopaper())})"
         "py": "(lambda q: (q.__setitem__(\"paper_id\", \"copy\"), pc.PaperList([q, pc.demopaper()]))[1])(pc.demopaper())"
 - "id": "all_urls.review.tricky"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U206", "reason": "'someone@example.com' is an e-mail address, not the host name 'example.com' (metacheck lists it)"}
   "module": "all_urls"
   "args":
     "paper":
