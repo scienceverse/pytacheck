@@ -26,8 +26,8 @@ function or class of an ``__init__`` binds nothing in the package. The graph
 feeds three rules.
 
 **Foundation.** §2.1 says ``core/**`` imports only ``_r``, ``_values``,
-``_json``, ``papers.model``, ``papers.schema`` and ``papers.ids``. ``core/`` and
-``papers/ids.py`` do not exist yet. Today the modules that exist are the
+``_json``, ``_env``, ``_logging``, ``papers.model``, ``papers.schema`` and
+``papers.ids``. ``core/`` and ``papers/ids.py`` do not exist yet. Today the modules that exist are the
 foundation the core will build on, and they must already keep that promise: they
 import only each other, and nothing else in ``metacheck``. Attribute access
 counts as an import, so ``metacheck.text_search(...)``, which loads ``text``
@@ -101,7 +101,9 @@ def _names(*relative: str) -> tuple[str, ...]:
     return tuple(f"{PKG}.{name}" for name in relative)
 
 
-FOUNDATION = _names("_r", "_values", "_json", "papers.model", "papers.schema", "papers.ids")
+FOUNDATION = _names(
+    "_r", "_values", "_json", "_env", "_logging", "papers.model", "papers.schema", "papers.ids"
+)
 CORE = _names("core")
 LOWER = FOUNDATION + CORE
 UPPER = _names("text", "modules", "report", "api", "cli", "archives", "datacheck", "codecheck")

@@ -227,6 +227,27 @@ def _grobid_default() -> list[str]:
     return list(run.GROBID_SERVERS)
 
 
+def _read_literals(ctx: Ctx) -> Any:
+    from metacheck._r.regex import required_literals
+
+    return required_literals("funding", perl=False, icase=True)
+
+
+def _read_literals_detect_many(ctx: Ctx) -> Any:
+    """How many patterns ``detect_many`` filtered by their required literals."""
+    from metacheck._r import regex
+
+    seen: list[str] = []
+
+    def recorded(src: str, perl: bool) -> Any:
+        seen.append(src)
+        return (("funding",),)
+
+    ctx.monkeypatch.setattr(regex, "_required_literals", recorded)
+    assert regex.detect_many(["funding", "grant"], "funding text") == [True, False]
+    return len(seen)
+
+
 def _read_llm_cache_dir(ctx: Ctx) -> Any:
     from metacheck.llm.cache import _llm_cache_dir
 
@@ -537,6 +558,13 @@ SITES: dict[str, Site] = {
         expect=lambda ctx, name: ["http://a.example", "http://b.example"],
         spaces=lambda ctx: _grobid_default(),
     ),
+    "LITERALS": Site(
+        value=" Off ",
+        other="on",
+        read=_read_literals,
+        expect=lambda ctx, name: (),  # off: no clauses
+        spaces=lambda ctx: (("funding",),),
+    ),
     "LLM_CACHE_DIR": Site(
         value="<tmp>/llm-from-the-table",
         other="<tmp>/other-llm",
@@ -717,6 +745,13 @@ EXTRA_SITES: dict[tuple[str, str], Site] = {
         read=_read_capture_rscript,
         expect=lambda ctx, name: str(ctx.tmp_path / "bin" / "Rscript"),
         spaces=lambda ctx: None,
+    ),
+    ("LITERALS", "regex.detect_many"): Site(
+        value="off",
+        other="on",
+        read=_read_literals_detect_many,
+        expect=lambda ctx, name: 0,  # off: the filter is skipped
+        spaces=lambda ctx: 2,
     ),
     ("RSCRIPT", "datacheck.files"): Site(
         value="<tmp>/bin/Rscript",
