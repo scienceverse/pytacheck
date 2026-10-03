@@ -83,8 +83,14 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
 
 
 def _one_table(p: Paper, table: str) -> pd.DataFrame:
-    """*table* of one paper plus ``paper_id``: the paper's own (lazily built, then
-    kept) table as a copy-on-write view, not a new frame from its JSON records."""
+    """*table* of one paper plus ``paper_id``: from the typed columns of its JSON
+    records while it has them (its table is not built), else its own table as a
+    copy-on-write view."""
+    from metacheck.core.doc import table_frame  # the core imports papers.model
+
+    fast = table_frame(p, table)
+    if fast is not None:
+        return fast
     x = p.get(table)
     if not isinstance(x, pd.DataFrame):
         return pd.DataFrame()

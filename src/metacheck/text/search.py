@@ -1,6 +1,12 @@
 """``text_search()``: search the sentences of papers.
 
-Port of ``R/text_search.R``.
+Port of ``R/text_search.R``, as a façade on the indexed document
+(:mod:`metacheck.core.doc`). R's semantics are kept: pattern-major order for a
+list of patterns, the ``exclude`` intersection, every ``return`` mode and R's
+errors. A paper is indexed once (its Doc is cached on it) and each (pattern,
+sentence) is tested at most once per Doc, however many searches ask. The
+implementation before the core is frozen in ``tests/_legacy/search.py``, the
+oracle of the differential tests.
 """
 
 from __future__ import annotations
@@ -11,396 +17,142 @@ from typing import Any, Literal
 import pandas as pd
 
 from metacheck._r.frames import bind_rows
-from metacheck._r.regex import (
-    RegexError,
-    _as_str,
-    compile_r,
-    detector,
-    fold,
-    gsub,
-    regextract_all,
-)
-from metacheck._values import is_missing
+from metacheck._r.regex import RegexError, compile_r, regextract_all
+from metacheck.core.doc import Doc, bits, merge_sections
+from metacheck.core.patterns import Pat
 from metacheck.papers.model import Paper, PaperList, is_paper_list
-from metacheck.papers.schema import records_to_frame
 from metacheck.papers.tables import paper_table
 
-__all__ = ["search_text", "text_search"]
+__all__ = ["search_text", "sentence_table", "text_search"]
 
 ReturnType = Literal["sentence", "paragraph", "section", "header", "match", "paper_id"]
 _RETURN_TYPES = ("sentence", "paragraph", "section", "header", "match", "paper_id")
-_REQUIRED = ("text", "text_id", "section_id", "paragraph_id", "paper_id", "header", "section_type")
-_PARAGRAPH_MARKER = "<~p~>"
-_GROUPS = {
-    "paragraph": ["section_type", "header", "section_id", "paragraph_id", "paper_id"],
-    "header": ["section_type", "header", "section_id", "paper_id"],
-    "section": ["section_type", "section_id", "paper_id"],
-    "paper_id": ["paper_id"],
-}
 
 
-def _text_frame(paper: Any) -> tuple[pd.DataFrame, bool]:
-    """The table to search, and whether the input was a plain character vector."""
-    if isinstance(paper, pd.DataFrame):
-        return paper.copy(deep=False), False
-    if isinstance(paper, Paper | PaperList) or (
-        is_paper_list(paper) and not isinstance(paper, str)
-    ):
-        return _join_sections(paper), False
+def _is_papers(paper: Any) -> bool:
+    return isinstance(paper, PaperList) or (is_paper_list(paper) and not isinstance(paper, str))
+
+
+def _list_frame(paper: Any) -> pd.DataFrame:
+    """A paper list's sentence table: its text tables with their sections merged."""
+    return merge_sections(paper_table(paper, "text"), lambda: paper_table(paper, "section"))
+
+
+def _strings(paper: Any) -> list[str] | None:
+    """*paper* as character strings, or ``None`` when it is not a string or strings."""
     if isinstance(paper, str):
-        return pd.DataFrame({"text": pd.Series([paper], dtype="string")}), True
+        return [paper]
     if isinstance(paper, Sequence) and all(isinstance(s, str) for s in paper):
-        return pd.DataFrame({"text": pd.Series(list(paper), dtype="string")}), True
-    raise TypeError(
+        return list(paper)
+    return None
+
+
+def _not_a_paper() -> TypeError:
+    return TypeError(
         "The paper argument doesn't seem to be a scivrs_paper object or a list of paper objects"
     )
 
 
-def _join_sections(paper: Any) -> pd.DataFrame:
-    """``paper_table(paper, "text")`` with each sentence's section ``header`` and ``section_type``."""
-    fast = _join_one(paper) if isinstance(paper, Paper) else None
-    if fast is not None:
-        return fast
-    text = paper_table(paper, "text")
-    if "text" not in text.columns and len(text) == 0:
-        # an empty paper list (or a paper without text): the columns of a
-        # text table, typed, so that searches of it chain like any other
-        # (metacheck gives logical NA columns and drops `text`; U79)
-        return _empty_text_frame()
-    sections = paper_table(paper, "section")
-    cols = ["section_id", "paper_id", "header", "section_type"]
-    if all(c in sections.columns for c in cols) and len(text.columns) > 0:
-        right = sections.loc[:, cols]
-        if "section_id" in text.columns:
-            right = right.astype({"section_id": text["section_id"].dtype}, errors="ignore")
-        text = text.merge(right, on=["section_id", "paper_id"], how="left", sort=False)
-    return text
+def search_doc(paper: Any) -> tuple[Doc, bool]:
+    """The Doc a search of *paper* searches, and whether *paper* was character strings.
 
-
-def _one_table(paper: Paper, name: str, columns: list[str] | None = None) -> pd.DataFrame | None:
-    """``paper_table(paper, name, columns)`` of one paper, cheaply (``None``: not cheaply).
-
-    From its JSON records when it still has them (``paper_table()`` types each
-    column the same way from all of them), or from its table.
+    A paper's Doc is its cached one; a table, a paper list or strings get a Doc
+    of their own.
     """
-    raw = paper._raw_records(name)
-    if raw is not None:
-        records, own = raw
-        if not records or (columns is not None and not set(columns) <= set(own)):
-            return None
-        wanted = [c for c in (own if columns is None else columns) if c != "paper_id"]
-        frame = records_to_frame(name, records, wanted)
-    else:
-        table = paper.get(name)
-        if not isinstance(table, pd.DataFrame) or len(table) == 0:
-            return None
-        own = list(table.columns)
-        if not table.columns.is_unique or (columns is not None and not set(columns) <= set(own)):
-            return None
-        wanted = [c for c in (own if columns is None else columns) if c != "paper_id"]
-        frame = table.loc[:, wanted].reset_index(drop=True)
-    at = own.index("paper_id") if "paper_id" in own and columns is None else len(wanted)
-    ids = pd.Series([paper.paper_id] * len(frame), index=frame.index, dtype="string")
-    frame.insert(at, "paper_id", ids)
-    return frame
+    if isinstance(paper, pd.DataFrame):
+        return Doc.from_frame(paper.copy(deep=False)), False
+    if isinstance(paper, Paper):
+        return Doc.of(paper), False
+    if _is_papers(paper):
+        return Doc.from_frame(_list_frame(paper)), False
+    strings = _strings(paper)
+    if strings is None:
+        raise _not_a_paper()
+    return Doc.from_strings(strings), True
 
 
-def _join_one(paper: Paper) -> pd.DataFrame | None:
-    """:func:`_join_sections` of one paper, with a lookup instead of the merge.
+def sentence_table(paper: Any) -> tuple[pd.DataFrame, bool]:
+    """The table :func:`text_search` searches (raw text), and whether *paper* was strings.
 
-    Every row has the paper's ID, so the merge key is ``section_id`` alone
-    (``NA`` finds ``NA``, as in the merge). ``None`` when the general path is
-    needed: no rows, a section ID that is not unique (the merge repeats rows),
-    columns the merge would rename, or key types it would convert.
+    The table of a paper or a paper list has each sentence's section ``header``
+    and ``section_type``; a table is returned as it is (a shallow copy). The
+    columns ``text_search()`` adds when they are missing are not added.
     """
-    if not isinstance(paper.paper_id, str):
-        return None
-    text = _one_table(paper, "text")
-    sections = _one_table(paper, "section", ["section_id", "header", "section_type"])
-    if (
-        text is None
-        or sections is None
-        or "section_id" not in text.columns
-        or "header" in text.columns
-        or "section_type" in text.columns
-        or not isinstance(text["section_id"].dtype, pd.Int64Dtype)
-        or not isinstance(sections["section_id"].dtype, pd.Int64Dtype)
-        or not all(
-            isinstance(sections[c].dtype, pd.StringDtype) for c in ("header", "section_type")
-        )
-    ):
-        return None
-    keys = [None if k is pd.NA else k for k in sections["section_id"].tolist()]
-    row_of = {k: j for j, k in enumerate(keys)}
-    if len(row_of) < len(keys):
-        return None
-    rows = [row_of.get(None if k is pd.NA else k, -1) for k in text["section_id"].tolist()]
-    for c in ("header", "section_type"):
-        text[c] = sections[c].array.take(rows, allow_fill=True)
-    return text
+    if isinstance(paper, pd.DataFrame):
+        return paper.copy(deep=False), False
+    if isinstance(paper, Paper):
+        return Doc.of(paper).base_frame().copy(deep=False), False
+    if _is_papers(paper):
+        return _list_frame(paper), False
+    strings = _strings(paper)
+    if strings is None:
+        raise _not_a_paper()
+    return pd.DataFrame({"text": pd.Series(strings, dtype="string")}), True
 
 
-def _empty_text_frame() -> pd.DataFrame:
-    """A zero-row text table with the columns :func:`text_search` returns for papers."""
-    return pd.DataFrame(
-        {
-            "text": pd.Series([], dtype="string"),
-            "text_id": pd.Series([], dtype="Int64"),
-            "section_id": pd.Series([], dtype="Int64"),
-            "paragraph_id": pd.Series([], dtype="Int64"),
-            "paper_id": pd.Series([], dtype="string"),
-            "header": pd.Series([], dtype="string"),
-            "section_type": pd.Series([], dtype="string"),
-        }
-    )
+class _Search:
+    """One ``text_search()`` call's view of a Doc: the rows it searches and R's tables."""
 
+    __slots__ = ("_rows", "doc", "is_vector", "within")
 
-def _paste_groups(df: pd.DataFrame, by: list[str], sep: str) -> pd.DataFrame:
-    """``summarise(text = paste(text, collapse = sep), .by = by)``."""
-    if len(df) == 0:
-        out = df.loc[:, by].iloc[0:0].copy()
-        out["text"] = pd.Series([], dtype="string")
-        return out
-    keys = df.loc[:, by]
-    texts = ["NA" if pd.isna(t) else str(t) for t in df["text"].tolist()]
-    groups: dict[tuple[Any, ...], list[str]] = {}
-    first_row: dict[tuple[Any, ...], int] = {}
-    for i, key in enumerate(keys.itertuples(index=False, name=None)):
-        norm = tuple(None if pd.isna(k) else k for k in key)
-        if norm not in groups:
-            groups[norm] = []
-            first_row[norm] = i
-        groups[norm].append(texts[i])
-    rows = [first_row[k] for k in groups]
-    out = keys.iloc[rows].reset_index(drop=True)
-    out["text"] = pd.Series([sep.join(v) for v in groups.values()], dtype="string")
-    return out
-
-
-def _section_headers(kept: pd.DataFrame, result: pd.DataFrame, groups: list[str]) -> pd.Series:
-    """The header of each section in *result*: its paragraphs' header when they share one.
-
-    metacheck groups ``return = "section"`` by ``section_type``, ``section_id``
-    and ``paper_id`` only, so the header column came back ``NA`` although each
-    section of a paper has one header (U80).
-    """
-
-    def key(row: tuple[Any, ...]) -> tuple[Any, ...]:
-        return tuple(None if pd.isna(k) else k for k in row)
-
-    seen: dict[tuple[Any, ...], set[Any]] = {}
-    for row, header in zip(
-        kept.loc[:, groups].itertuples(index=False, name=None), kept["header"].tolist(), strict=True
-    ):
-        seen.setdefault(key(row), set()).add(None if pd.isna(header) else header)
-    headers = []
-    for row in result.loc[:, groups].itertuples(index=False, name=None):
-        found = seen.get(key(row), set())
-        headers.append(next(iter(found)) if len(found) == 1 else None)
-    return pd.Series(headers, index=result.index, dtype=kept["header"].dtype)
-
-
-def _semi_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> pd.DataFrame:
-    """``dplyr::semi_join()`` (NA keys match NA keys), keeping x's row order."""
-
-    def key_set(df: pd.DataFrame) -> set[tuple[Any, ...]]:
-        return {
-            tuple(None if pd.isna(k) else k for k in row)
-            for row in df.loc[:, by].itertuples(index=False, name=None)
-        }
-
-    wanted = key_set(y)
-    mask = [
-        tuple(None if pd.isna(k) else k for k in row) in wanted
-        for row in x.loc[:, by].itertuples(index=False, name=None)
-    ]
-    return x.loc[mask].reset_index(drop=True)
-
-
-class _Table:
-    """What one :func:`text_search` call searches: its table, and the columns it scans as lists.
-
-    Built once per call, however many patterns are searched: every pattern is
-    matched against the same lists, and a DataFrame is built once, for the
-    result rows only (metacheck, and the old port, ran a full search per
-    pattern and row-bound the results).
-    """
-
-    __slots__ = (
-        "_cleaned",
-        "_folded",
-        "_ft",
-        "_paragraphs",
-        "_strings",
-        "frame",
-        "header",
-        "is_vector",
-        "missing",
-        "rows",
-        "text",
-    )
-
-    @classmethod
-    def of(cls, paper: Any, include_refs: bool) -> _Table:
-        """The table for *paper*."""
-        return cls(*_text_frame(paper), include_refs)
-
-    def __init__(self, frame: pd.DataFrame, is_vector: bool, include_refs: bool) -> None:
+    def __init__(self, doc: Doc, is_vector: bool, include_refs: bool) -> None:
+        self.doc = doc
         self.is_vector = is_vector
-        self.missing = [c for c in _REQUIRED if c not in frame.columns]
-        if self.missing:
-            frame = frame.copy(deep=False)
-            for m in self.missing:
-                frame[m] = pd.Series([pd.NA] * len(frame), index=frame.index, dtype=object)
-            if "text" in self.missing:
-                frame["text"] = frame.iloc[:, 0]
-        self.frame = frame
-        if include_refs:
-            self.rows: list[int] | None = None
-        else:
-            types = frame["section_type"].tolist()
-            refs = [i for i, t in enumerate(types) if isinstance(t, str) and t == "references"]
-            self.rows = None if not refs else sorted(set(range(len(frame))) - set(refs))
-        text = frame["text"].tolist()
-        header = frame["header"].tolist()
-        if self.rows is not None:
-            text = [text[i] for i in self.rows]
-            header = [header[i] for i in self.rows]
-        self.text = text
-        self.header = header
-        self._strings: dict[str, list[str | None]] = {}
-        self._cleaned: dict[int, Any] = {}
-        self._folded: dict[str, list[str | None]] = {}
-        self._ft: pd.DataFrame | None = None
-        self._paragraphs: pd.DataFrame | None = None
+        #: the searched rows: the references are skipped unless included
+        self.within = doc.all if include_refs else doc.body
+        self._rows: list[int] | None = None
 
-    @property
-    def ft(self) -> pd.DataFrame:
-        """The searched rows (references dropped) as a frame, index reset."""
-        if self._ft is None:
-            self._ft = self.take(None)
-        return self._ft
+    def searched(self) -> list[int]:
+        """The searched rows, in table order."""
+        if self._rows is None:
+            self._rows = list(bits(self.within))
+        return self._rows
 
-    def take(self, positions: list[int] | None) -> pd.DataFrame:
-        """Rows *positions* of the searched rows (all of them for ``None``), index reset."""
-        if positions is None:
-            positions = self.rows
-        elif self.rows is not None:
-            positions = [self.rows[i] for i in positions]
-        if positions is None:
-            return self.frame.reset_index(drop=True)
-        return self.frame.take(positions).reset_index(drop=True)
-
-    def matches(
-        self, pattern: str, ignore_case: bool, perl: bool, fixed: bool, exclude: bool, header: bool
-    ) -> list[int]:
-        """Positions of the searched rows whose text (or header) matches *pattern*."""
-        hits = self._scan("text", pattern, ignore_case, perl, fixed)
+    def matches(self, p: Pat, exclude: bool, header: bool) -> int:
+        """The searched rows whose text (or header) matches *p* (or does not)."""
+        d = self.doc
+        m = d.mask(p, 0, self.within)
         if header:
-            in_header = self._scan("header", pattern, ignore_case, perl, fixed)
-            hits = [a or b for a, b in zip(hits, in_header, strict=True)]
-        return [i for i, h in enumerate(hits) if h != exclude]
+            m |= d.header_mask(p, self.within)
+        return self.within & ~m if exclude else m
 
-    def _scan(
-        self, column: str, pattern: str, ignore_case: bool, perl: bool, fixed: bool
-    ) -> list[bool]:
-        """``grepl(pattern, column)``, with the column's strings and their folding made once."""
-        strings = self._strings.get(column)
-        if strings is None:
-            values = self.text if column == "text" else self.header
-            strings = self._strings[column] = [_as_str(v) for v in values]
-        match = detector(pattern, ignore_case, perl, fixed)
-        if not match.folds:
-            return [match(s) for s in strings]
-        folded = self._folded.get(column)
-        if folded is None:
-            folded = self._folded[column] = [None if s is None else fold(s) for s in strings]
-        return [match(s, f) for s, f in zip(strings, folded, strict=True)]
-
-    def sentences(self, positions: list[int]) -> pd.DataFrame:
-        """The result of a sentence search that found *positions* (in result order)."""
-        if not positions:
-            return self.take([])
-        result = self.take(positions)
-        cleaned = self._cleaned
-        todo = [i for i in dict.fromkeys(positions) if i not in cleaned]
-        cleaned.update(zip(todo, _clean([self.text[i] for i in todo]), strict=True))
-        result["text"] = pd.Series([cleaned[i] for i in positions], dtype="string")
-        if self._distinct(positions):
+    def sentences(self, rows: list[int]) -> pd.DataFrame:
+        """The result of a sentence search that found *rows* (in result order)."""
+        d = self.doc
+        if not rows:
+            return d.take([])
+        result = d.rows(rows, 1)
+        if d.distinct(rows):
             return result  # distinct() has nothing to drop
         return result.drop_duplicates().reset_index(drop=True)
 
-    def _distinct(self, positions: list[int]) -> bool:
-        """Whether the rows at *positions* have distinct, known ``(paper_id, text_id)``."""
-        rows = positions if self.rows is None else [self.rows[i] for i in positions]
-        pids = self.frame["paper_id"].tolist()
-        tids = self.frame["text_id"].tolist()
-        keys = set()
-        for i in rows:
-            pid, tid = pids[i], tids[i]
-            if is_missing(pid) or is_missing(tid):
-                return False
-            try:
-                keys.add((pid, tid))
-            except TypeError:  # an unhashable cell: let drop_duplicates() decide
-                return False
-        return len(keys) == len(rows)
-
-    def search(
-        self,
-        pattern: str,
-        return_: str,
-        ignore_case: bool,
-        fixed: bool,
-        perl: bool,
-        exclude: bool,
-        search_header: bool,
-    ) -> pd.DataFrame:
-        """One pattern's result table (before a dropped ``text`` column is removed)."""
-        found = self.matches(pattern, ignore_case, perl, fixed, exclude, search_header)
+    def search(self, p: Pat, return_: str, exclude: bool, header: bool) -> pd.DataFrame:
+        """One pattern's result table (before a ``text`` column it added is dropped)."""
+        matched = self.matches(p, exclude, header)
+        found = list(bits(matched))
         if return_ == "sentence":
             return self.sentences(found)
+        d = self.doc
         if return_ == "match":
-            hits = regextract_all(pattern, [self.text[i] for i in found], ignore_case, perl, fixed)
-            result = self.take([i for i, h in zip(found, hits, strict=True) for _ in h])
+            texts = d.text
+            hits = regextract_all(p.src, [texts[i] for i in found], p.icase, p.perl, p.fixed)
+            result = d.take([i for i, h in zip(found, hits, strict=True) for _ in h])
             result["text"] = pd.Series([h for each in hits for h in each], dtype="string")
             return result
-        ft = self.ft
-        all_cols = list(ft.columns)
-        groups = _GROUPS[return_]
-        kept = _semi_join(self.paragraphs(), ft.iloc[found], groups)
-        result = _paste_groups(kept, groups, _PARAGRAPH_MARKER)
-        if len(result) == 0:
-            return ft.iloc[0:0].reset_index(drop=True)
-        if return_ == "section":
-            result["header"] = _section_headers(kept, result, groups)
-        result["text"] = pd.Series(_clean(result["text"].tolist()), dtype="string")
-        for col in all_cols:
-            if col not in result.columns:
-                result[col] = pd.Series([pd.NA] * len(result), index=result.index, dtype=object)
-        return result.loc[:, all_cols].drop_duplicates().reset_index(drop=True)
-
-    def paragraphs(self) -> pd.DataFrame:
-        """The searched rows' text pasted by paragraph (the same for every pattern)."""
-        if self._paragraphs is None:
-            self._paragraphs = _paste_groups(self.ft, _GROUPS["paragraph"], " ")
-        return self._paragraphs
+        # the grouped modes (V5): the groups of the searched rows with a match
+        g = d.groups(return_, self.searched(), 0)
+        kept = g.kept(matched)
+        if not kept:
+            return d.take([])
+        return g.rows(list(bits(kept)), 1).drop_duplicates().reset_index(drop=True)
 
     def finish(self, result: pd.DataFrame) -> Any:
         """*result* as text_search() returns it: without an added ``text``, or as strings."""
-        if "text" in self.missing:
+        if "text" in self.doc.missing:
             result = result.drop(columns="text")
         if self.is_vector:
             return [None if pd.isna(t) else str(t) for t in result["text"].tolist()]
         return result
-
-
-def _clean(texts: list[Any]) -> list[Any]:
-    """Whitespace runs as one space, " , " as ", " and paragraph markers as blank lines."""
-    cleaned: list[Any] = gsub(r"\s+", " ", texts)
-    cleaned = gsub(" , ", ", ", cleaned, fixed=True)
-    cleaned = gsub(_PARAGRAPH_MARKER, "\n\n", cleaned, fixed=True)
-    return cleaned
 
 
 def _check_pattern(pattern: str, ignore_case: bool, perl: bool, fixed: bool) -> None:
@@ -440,28 +192,24 @@ def text_search(
     patterns = [pattern] if isinstance(pattern, str) else list(pattern)
     # R checks each pattern before it builds the table to search for it
     _check_pattern(patterns[0], ignore_case, perl, fixed)
-    table = _Table.of(paper, include_refs)
-    for p in patterns[1:]:
-        _check_pattern(p, ignore_case, perl, fixed)
+    doc, is_vector = search_doc(paper)
+    for src in patterns[1:]:
+        _check_pattern(src, ignore_case, perl, fixed)
+    s = _Search(doc, is_vector, include_refs)
+    pats = [Pat.from_r(src, perl=perl, fixed=fixed, ignore_case=ignore_case) for src in patterns]
 
-    if len(patterns) == 1:
-        found = table.search(patterns[0], return_, ignore_case, fixed, perl, exclude, search_header)
-        return table.finish(found)
+    if len(pats) == 1:
+        return s.finish(s.search(pats[0], return_, exclude, search_header))
 
-    if return_ == "sentence" and not exclude and not table.is_vector:
-        # bind_rows() of each pattern's rows, then distinct(): one pass over the rows
+    if return_ == "sentence" and not exclude and not is_vector:
+        # bind_rows() of each pattern's rows, then distinct(): pattern-major, first seen
         order: dict[int, None] = {}
-        for p in patterns:
-            order.update(
-                dict.fromkeys(table.matches(p, ignore_case, perl, fixed, False, search_header))
-            )
-        return table.finish(table.sentences(list(order)))
+        for p in pats:
+            order.update(dict.fromkeys(bits(s.matches(p, False, search_header))))
+        return s.finish(s.sentences(list(order)))
 
-    parts = [
-        table.finish(table.search(p, return_, ignore_case, fixed, perl, exclude, search_header))
-        for p in patterns
-    ]
-    if table.is_vector:
+    parts = [s.finish(s.search(p, return_, exclude, search_header)) for p in pats]
+    if is_vector:
         return _combine_vectors(parts, exclude)
     if exclude and len(parts) > 2:
         # dplyr::intersect(x, y, ...) on data frames: the dots must be empty

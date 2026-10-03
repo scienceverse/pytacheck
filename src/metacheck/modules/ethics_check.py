@@ -162,9 +162,9 @@ def _search_frame(paper: Any) -> pd.DataFrame:
     paper argument doesn't seem to be ...``) or a character vector, whose
     per-pattern results ``bind_rows()`` refuses.
     """
-    from metacheck.text.search import _text_frame
+    from metacheck.text.search import sentence_table
 
-    frame, is_vector = _text_frame(paper)
+    frame, is_vector = sentence_table(paper)
     if is_vector:
         text_search(paper, list(_ETHICS_WORDS))  # raises R's bind_rows() error
     return frame

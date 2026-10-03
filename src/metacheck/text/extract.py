@@ -15,9 +15,10 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._r.base import trimws
-from metacheck._r.regex import compile_r, grepl, gsub, regextract, strsplit
-from metacheck.papers.model import Paper, PaperList
-from metacheck.text.search import _text_frame, text_search
+from metacheck._r.regex import compile_r, grepl, gsub, regextract, regextract_all, strsplit
+from metacheck.core.doc import Doc, bits
+from metacheck.core.patterns import Pat, patterns
+from metacheck.text.search import _check_pattern, _Search, search_doc, text_search
 
 __all__ = ["extract_eq", "extract_p_values", "extract_urls"]
 
@@ -56,6 +57,13 @@ _EQ_PATTERN = (
 
 _OP_RUN = f"[{_OPS}]{{1,2}}"
 _OP_SPLIT = f"\\s*[{_OPS}]{{1,2}}\\s*"
+
+# the searches of extract_urls() (every URL contains ".xx", a domain, or "d.d", an
+# IPv4 address) and of extract_eq() (sentences with any operator, then each operator)
+_URL = Pat.from_r(_URL_PATTERN, perl=True)
+_URL_ANY = Pat.from_r(r"\.[a-z]{2}|\d\.\d", perl=True)
+_OPS_ANY = Pat(f"[{_OPS}]")
+_OPERATOR_PATS = patterns(_OPERATORS)
 
 _LIVE_WORDS = (
     # participant/subject/volunteer actions
@@ -108,24 +116,6 @@ _LIVE_WORDS = (
 )
 
 
-def _search_table(paper: Any, any_of: str | None = None, perl: bool = False) -> Any:
-    """The (uncleaned) table ``text_search()`` builds from *paper*.
-
-    Searching this table gives exactly the result of searching *paper*, so a
-    search for several patterns joins the paper's text and section tables
-    once instead of once per pattern. With *any_of* (a pattern, for the
-    engine chosen by *perl*, that matches case-insensitively whenever any of
-    the searched patterns does), rows that cannot match are dropped first;
-    ``text_search()`` then returns the same rows, in the same order, faster.
-    """
-    if isinstance(paper, Paper | PaperList):
-        paper = _text_frame(paper)[0]
-    if any_of is not None and isinstance(paper, pd.DataFrame) and "text" in paper.columns:
-        keep = grepl(any_of, paper["text"].tolist(), ignore_case=True, perl=perl)
-        paper = paper.loc[keep]
-    return paper
-
-
 def extract_urls(paper: Any) -> pd.DataFrame:
     """Extract URLs (port of ``R/text-extractors.R::extract_urls()``).
 
@@ -134,9 +124,13 @@ def extract_urls(paper: Any) -> pd.DataFrame:
     domains or IPv4 addresses) found in *paper* (a paper, paper list or
     text table).
     """
-    # every URL match contains ".xx" (a domain) or "d.d" (an IPv4 address)
-    table = _search_table(paper, r"\.[a-z]{2}|\d\.\d", perl=True)
-    return cast(pd.DataFrame, text_search(table, _URL_PATTERN, return_="match", perl=True))
+    _check_pattern(_URL.src, _URL.icase, _URL.perl, _URL.fixed)
+    doc, is_vector = search_doc(paper)
+    s = _Search(doc, is_vector, False)
+    if not is_vector and "text" not in doc.missing:
+        # every URL match contains a match of _URL_ANY, so only those rows are searched
+        s.within = doc.mask(_URL_ANY, 0, s.within)
+    return cast(pd.DataFrame, s.finish(s.search(_URL, "match", False, False)))
 
 
 def extract_p_values(paper: Any) -> pd.DataFrame:
@@ -231,9 +225,44 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     fails).
     """
     table = _strings_table(paper)
-    if not isinstance(table, pd.DataFrame):
-        table = _text_frame(table)[0]
-    table = _search_table(table, f"[{_OPS}]")
+    if isinstance(table, pd.DataFrame):
+        doc = Doc.from_frame(table.copy(deep=False))
+    else:
+        doc = search_doc(table)[0]
+    if "text" in doc.missing:  # its first column is searched instead, as text_search() does
+        return _eq_of_table(doc.base_frame())
+    return eq_table(doc)
+
+
+def eq_table(doc: Doc) -> pd.DataFrame:
+    """:func:`extract_eq` of the sentences of *doc* (a paper's, or a table's).
+
+    metacheck searches the sentences that have an operator (``text_search()``
+    with the list of operators: pattern by pattern, references skipped), then
+    the statistics in the text that search returned (cleaned once). The source
+    sentence of each statistic is its row, so no sentence is dropped as a
+    duplicate. A sentence without a statistic gives no row, so the statistics
+    are extracted without first detecting them (``text_search()`` did both).
+    """
+    rank: dict[int, int] = {}
+    found = doc.any(_OPERATOR_PATS, 0, doc.mask(_OPS_ANY, 0, doc.body), False, rank)
+    rows = sorted(bits(found), key=lambda i: (rank[i], i))
+    hits = regextract_all(_EQ_PATTERN, doc.stage_text(rows, 1), True, True)
+    source = [i for i, h in zip(rows, hits, strict=True) for _ in h]
+    if not source:
+        return _empty_eq()
+    pids = doc.values("paper_id")
+    return _eq_frame(
+        [h for each in hits for h in each],
+        doc.take_series("text_id", source),
+        doc.take_series("paper_id", source),
+        [None if _is_missing(pids[i]) else pids[i] for i in source],
+        source,
+    )
+
+
+def _eq_of_table(table: pd.DataFrame) -> pd.DataFrame:
+    """:func:`extract_eq` of a table without a ``text`` column, searched as metacheck does."""
     # the source row of each match, to tell sentences apart without text_id
     table = table.assign(**{_ROW: range(len(table))})
     eq = text_search(table, list(_OPERATORS))
@@ -242,8 +271,23 @@ def extract_eq(paper: Any) -> pd.DataFrame:
         raise TypeError("argument is of length zero")
     if len(eq) == 0:
         return _empty_eq()
+    return _eq_frame(
+        [str(t) for t in eq["text"].tolist()],
+        eq["text_id"].reset_index(drop=True),
+        eq["paper_id"].reset_index(drop=True),
+        [None if _is_missing(v) else v for v in eq["paper_id"].tolist()],
+        eq[_ROW].tolist(),
+    )
 
-    texts: list[str] = [str(t) for t in eq["text"].tolist()]
+
+def _eq_frame(
+    texts: list[str],
+    text_id: pd.Series,
+    paper_id: pd.Series,
+    paper_ids: list[Any],
+    rows: list[Any],
+) -> pd.DataFrame:
+    """The eq table of the statistics *texts*, found in rows *rows* of papers *paper_ids*."""
     df_rx = compile_r(r"(?:\([^)]*\))", perl=True)
     dfs: list[str | None] = []
     for i, t in enumerate(texts):
@@ -275,8 +319,6 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     # paper shared a grp_id), and sentences are told apart by their row, so a
     # table without text_id or paper_id works (metacheck fails on NA
     # comparisons)
-    paper_ids = [None if _is_missing(v) else v for v in eq["paper_id"].tolist()]
-    rows = eq[_ROW].tolist()
     grp: list[float] = []
     count: dict[Any, int] = {}
     last_row: dict[Any, Any] = {}
@@ -288,13 +330,13 @@ def extract_eq(paper: Any) -> pd.DataFrame:
 
     out = pd.DataFrame(
         {
-            "text_id": eq["text_id"].reset_index(drop=True),
+            "text_id": text_id,
             "grp_id": pd.Series(grp, dtype="float64"),
             "lhs": pd.Series(lhs, dtype="string"),
             "df": pd.Series(dfs, dtype="string"),
             "comp": pd.Series(comps, dtype="string"),
             "rhs": pd.Series(rhs, dtype="string"),
-            "paper_id": eq["paper_id"].reset_index(drop=True),
+            "paper_id": paper_id,
         }
     )
     keep = [not v for v in grepl("^[0-9]$", lhs)]

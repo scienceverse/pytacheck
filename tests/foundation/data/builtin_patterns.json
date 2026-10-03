@@ -1,11 +1,6 @@
 {
 "triples": [
 [
-"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\\d{1,2}%)\\s+)?[Ͱ-Ͽ²a-zA-Z-_\\.0-9\\{\\}\\^\\\\]+\\s*(?:\\((?:[0-9,\\.\\s]+|[nN]\\s*=\\s*[0-9]+)*\\))?\\s*[=<>~≈≠≤≥≪≫]{1,3}\\s*([0-9\\.,+-]*[0-9]|\\[[^\\]]+\\]|n\\.?\\s*s\\.?)\\s*(e\\s*-\\d+)?(\\s*[x\\*]\\s*10\\s*\\^\\s*-\\d+)?",
-true,
-true
-],
-[
 "(F(?i)inancial support(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s)(?-i)(|:|\\.)|S(?i)ource(|s) of financial support(|s)(?-i)(|:|\\.)|F(?i)inancial or other support(|s)(?-i)(|:|\\.)|F(?i)inancial assistance(?-i)(|:|\\.)|F(?i)inancial aid(?-i)(|:|\\.)|F(?i)inancial sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial support(|s) and sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s) for the stud(y|ies)(?-i)(|:|\\.)|F(?i)inancial information(?-i)(|:|\\.)|F(?i)inancial statement(|s)(?-i)(|:|\\.)|F(?i)inanciamento(?-i)(|:|\\.))",
 false,
 true
