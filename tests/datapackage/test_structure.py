@@ -169,7 +169,11 @@ def test_psych_ds_folders_pick_the_psych_ds_layout(tmp_path: Path) -> None:
     ]
     res = run(make(tmp_path / "pkg", files))
     assert res.layout_id == "psych-ds"
-    assert "also fits" not in res.checklist.set_index("item").loc["folder_layout", "detail"]
+    # without a required README, the generic layout fits too, but less closely
+    assert (
+        'also fits "Data, code and documentation"'
+        in res.checklist.set_index("item").loc["folder_layout", "detail"]
+    )
 
 
 def test_a_layout_that_also_fits_is_mentioned(tmp_path: Path) -> None:
@@ -275,11 +279,25 @@ def test_a_required_repeated_part_needs_its_minimum(tmp_path: Path) -> None:
     )
 
 
-def test_a_missing_readme_is_what_is_wrong(tmp_path: Path) -> None:
+def test_a_missing_readme_does_not_stop_a_default_layout(tmp_path: Path) -> None:
+    # the README is package_docs' concern; the default layouts are about folders
     res = run(
         make(tmp_path / "pkg", ["data/a.csv", "code/run.R", "docs/notes.md"]),
         layouts=default_layouts()[:1],
     )
+    assert res.layout_id == "data-code-docs"
+
+
+def test_a_required_root_file_is_what_is_wrong(tmp_path: Path) -> None:
+    layout = {
+        "id": "strict",
+        "title": "Strict",
+        "parts": [{"id": "data", "title": "Data", "match": ["^data$"], "required": True}],
+        "root_files": [
+            {"id": "readme", "title": "README", "match": ["^read ?me"], "required": True}
+        ],
+    }
+    res = run(make(tmp_path / "pkg", ["data/a.csv"]), layouts=[layout])
     assert res.layout_id == ""
     f = res.findings[res.findings["rule"] == "layout-part-missing"]
     assert f["detail"].tolist() == ["No README at the top level."]

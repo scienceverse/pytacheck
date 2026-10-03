@@ -41,7 +41,7 @@
         }
       ],
       "root_files": [
-        {"id": "readme", "title": "README", "match": ["^read ?me"], "required": true},
+        {"id": "readme", "title": "README", "match": ["^read ?me"]},
         {"id": "license", "title": "Licence", "match": ["^(licen[sc]e|copying)"]}
       ]
     },
@@ -85,7 +85,7 @@
         }
       ],
       "root_files": [
-        {"id": "readme", "title": "README", "match": ["^read ?me"], "required": true},
+        {"id": "readme", "title": "README", "match": ["^read ?me"]},
         {"id": "manuscript", "title": "Manuscript", "match": ["(manuscript|preprint|article)"]}
       ]
     }
