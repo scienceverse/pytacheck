@@ -58,6 +58,15 @@ def _ext(name: str) -> str:
     return stem.rsplit(".", 1)[1].lower() if "." in stem else ""
 
 
+def _readable(text: str) -> str:
+    """*text* with undecodable bytes (surrogate escapes) shown as U+FFFD."""
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
+        return text.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
+    return text
+
+
 def _rel(path: str, base: str) -> tuple[str, bool]:
     if not base:
         return path, True
@@ -110,8 +119,11 @@ def list_files(root: str | os.PathLike[str], base: str = "") -> Any:
         rows["size"].append(size)
         rows["hidden"].append(any(p.startswith(".") for p in parts))
         rows["link"].append(link)
-    names = rows["name"]
-    rows["data_type"] = data_classify_files(names, rows["rel"]) if names else []
+    # a name that is not valid UTF-8 (os.walk keeps its bytes as surrogates) would
+    # stop the classifier; classify a readable copy, and keep the real path
+    names = [_readable(n) for n in rows["name"]]
+    rels = [_readable(r) for r in rows["rel"]]
+    rows["data_type"] = data_classify_files(names, rels) if names else []
     rows["doc_role"] = _data_doc_role(names) if names else []
     dtypes = {
         "path": "string",

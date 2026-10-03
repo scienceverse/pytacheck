@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import os
 import tarfile
 import zipfile
 from pathlib import Path
@@ -220,3 +221,15 @@ def test_a_folder_given_as_dot_is_named_after_the_folder(
     monkeypatch.chdir(root)
     with open_package(".") as pkg:
         assert pkg.name == "study1"
+
+
+@pytest.mark.skipif(os.name == "nt", reason="Windows file names are always Unicode")
+def test_a_name_that_is_not_utf8_is_listed(tmp_path: Path) -> None:
+    root = tmp_path / "pkg"
+    root.mkdir()
+    (root / "ok.csv").write_text("a\n1\n")
+    with open(os.path.join(os.fsencode(root), b"caf\xe9.csv"), "w") as fh:
+        fh.write("a\n1\n")
+    files = list_files(root)
+    assert len(files) == 2
+    assert set(files["data_type"]) == {"data"}
