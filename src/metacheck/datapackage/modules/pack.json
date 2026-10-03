@@ -3,7 +3,7 @@
   "name": "datapackage",
   "version": "0.1.0",
   "title": "Data package checks",
-  "description": "Checks a data package (the folder or archive of data, code and documentation that comes with a paper) before it is archived or shared: file names and formats, junk files, folder structure, README and the parts a package should have.",
+  "description": "Checks a data package (the folder or archive of data, code and documentation that comes with a paper) before it is archived or shared: file names and formats, junk files, folder structure, README and the parts a package should have, and personal data by value in its data files.",
   "authors": ["Jakub Werner"],
   "license": "AGPL-3.0-or-later",
   "homepage": "https://github.com/scienceverse/pytacheck",
@@ -11,11 +11,12 @@
   "keywords": ["data package", "archiving", "FAIR", "README"],
   "presets": {
     "default": {
-      "description": "Check a data package: files, structure, documentation and the data files themselves",
+      "description": "Check a data package: files, structure, documentation, personal data and the data files themselves",
       "modules": [
         "package_files",
         "package_structure",
         "package_docs",
+        "package_pii",
         "metacheck::data_check",
         "metacheck::codebook_check"
       ]
