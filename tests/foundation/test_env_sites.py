@@ -132,6 +132,12 @@ def _read_cache_dir(ctx: Ctx) -> Any:
     return cache_dir()
 
 
+def _read_check_mutation(ctx: Ctx) -> Any:
+    from metacheck.core.scope import mutation_check_enabled
+
+    return mutation_check_enabled()
+
+
 def _read_data_dir(ctx: Ctx) -> Any:
     from metacheck.config import data_dir
 
@@ -557,6 +563,13 @@ SITES: dict[str, Site] = {
         read=_read_grobid,
         expect=lambda ctx, name: ["http://a.example", "http://b.example"],
         spaces=lambda ctx: _grobid_default(),
+    ),
+    "CHECK_MUTATION": Site(
+        value=" On ",
+        other="off",
+        read=_read_check_mutation,
+        expect=lambda ctx, name: True,
+        spaces=lambda ctx: False,
     ),
     "LITERALS": Site(
         value=" Off ",

@@ -44,7 +44,7 @@ import pandas as pd
 from metacheck._r.regex import _as_str, _compile, fold
 from metacheck._values import is_missing
 from metacheck.core.patterns import Pat, PatternSet, as_patterns
-from metacheck.core.scope import count, trusted_token
+from metacheck.core.scope import count, trusted_token, watch_paper
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.papers.schema import records_to_columns
 
@@ -415,6 +415,8 @@ class Doc:
             if _same_deps(deps, _deps(paper)) and (
                 _all_raw(deps) or (built_in is not None and built_in == token)
             ):
+                if token is not None:
+                    watch_paper(paper, False)  # the mutation check (CI), else nothing
                 return doc  # type: ignore[no-any-return]
         doc = cls._build(paper)
         count("doc_builds")
@@ -426,6 +428,8 @@ class Doc:
             derived["doc"] = (deps, token, doc)
         else:
             derived.pop("doc", None)
+        if token is not None:
+            watch_paper(paper, True)
         return doc
 
     @classmethod

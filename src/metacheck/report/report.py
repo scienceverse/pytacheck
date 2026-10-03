@@ -32,7 +32,8 @@ from types import ModuleType
 from typing import Any, cast
 
 from metacheck._r.regex import gsub, regextract_all, sub
-from metacheck.core.scope import trusted_scope
+from metacheck.core.errors import StaleDocumentError
+from metacheck.core.scope import check_mutation, running_module, trusted_scope
 from metacheck.module import SECTION_LEVELS, ModuleOutput, module_find, module_info, module_run
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.report.blocks import ReportTable, collapse_section
@@ -397,6 +398,11 @@ def report_module_run(
     :func:`~metacheck.module.get_prev_outputs`). A module that errors is
     recorded as a ``"fail"`` output, with a warning, and the chain goes on.
     ``args`` maps module names to extra arguments for them.
+
+    Each paper's tables are read once per run, so a module must not edit a paper
+    in place (the modules after it would not see the edit); with
+    ``METACHECK_CHECK_MUTATION=1`` such an edit raises
+    :class:`~metacheck.core.errors.StaleDocumentError` before the next module.
     """
     from metacheck.utils import pb
 
@@ -411,14 +417,19 @@ def report_module_run(
         try:
             bar.tick(0, tokens={"what": "Running modules"})
             op: Any = paper
+            ran: str | None = None
             for module in modules:
                 label = _label(module)
+                check_mutation(ran)  # the module before edited a paper in place (CI check)
                 bar.tick(0, tokens={"what": label})
                 mod_args = dict(args.get(label) or {})
                 mod_args.pop("paper", None)
                 mod_args.pop("module", None)
                 try:
-                    op = module_run(op, module, **mod_args)
+                    with running_module(label):
+                        op = module_run(op, module, **mod_args)
+                except StaleDocumentError:
+                    raise
                 except Exception as exc:
                     warnings.warn(f"Error in {label}", stacklevel=2)
                     prev: dict[str, ModuleOutput] = {}
@@ -443,6 +454,8 @@ def report_module_run(
                         prev_outputs=prev,
                     )
                 bar.tick(tokens={"what": label})
+                ran = label
+            check_mutation(ran)
         finally:
             bar.terminate()
 
