@@ -64,6 +64,7 @@ ENV_VARS: dict[str, EnvVar] = {
         secret=True,
     ),
     "GROBID_URL": EnvVar(("METACHECK_GROBID_URL", "PYTACHECK_GROBID_URL")),
+    "LITERALS": EnvVar(("METACHECK_LITERALS", "PYTACHECK_LITERALS")),
     # R's name ranks last: it is shared with R on purpose, so a setting for this package wins
     "LLM_CACHE_DIR": EnvVar(
         ("PYTACHECK_LLM_CACHE_DIR", "METACHECK_LLM_CACHE_DIR"), shared_with_r=True

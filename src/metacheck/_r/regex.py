@@ -36,6 +36,7 @@ from typing import Any, TypeVar
 import pandas as pd
 import regex
 
+from metacheck._env import env_get
 from metacheck._values import is_missing
 
 __all__ = [
@@ -394,6 +395,344 @@ def detector(
 ) -> Detector:
     """The :class:`Detector` of *pattern*, made once per pattern and options."""
     return Detector(pattern, ignore_case, perl, fixed)
+
+
+# ---------------------------------------------------------------------------
+# Required literals
+# ---------------------------------------------------------------------------
+
+#: clauses of pieces: every match contains, for each clause, one of its pieces
+CNF = tuple[tuple[str, ...], ...]
+
+#: pieces shorter than this are too common to filter with
+_MIN_PIECE = 3
+_PIECE_SPLIT = regex.compile(r"[\s,]+")
+_PRINTABLE = regex.compile(r"[!-~]+")  # ASCII without controls, space and DEL
+# inline flags that change how the rest is read (verbose, version 1), a comment
+_UNMODELLED = regex.compile(r"\(\?[a-zA-Z-]*[xXV]|\(\?#")
+# a counted quantifier; any other "{" (a literal brace, a fuzzy constraint) is not modelled
+_BRACE = regex.compile(r"\{(\d*)(?:,(\d*))?\}")
+_POSIX_CLASS = regex.compile(r"\[:\^?[A-Za-z_]+:\]")
+_HEX = "0123456789abcdefABCDEF"
+# zero-width escapes: they consume nothing, so a literal run goes on across them
+_ANCHOR_ESCAPES = set("bBmMAZGK")
+# group openers whose body every match of the group matches: plain, named, atomic,
+# and scoped flags (none of which changes how the body is read)
+_BODY_GROUP = regex.compile(r"\?(?::|>|P?<[A-Za-z_]\w*>|[aimsfuwLp-]+:)")
+# PCRE's \b and \B after translation (translate_pcre): still zero-width anchors
+_ANCHOR_GROUPS = frozenset({"?a:\\b", "?a:\\B"})
+
+
+class _Unmodelled(Exception):
+    """The pattern uses syntax the parser does not model: it requires nothing."""
+
+
+def literals_enabled() -> bool:
+    """Whether the required-literal prefilter is on (``METACHECK_LITERALS=off`` turns it off).
+
+    The switch lets a user who suspects that the prefilter drops a match rule it
+    out. It is read at call time. ``off``, ``0``, ``false`` and ``no`` (any case)
+    turn it off; ``grepl()``'s own literal prefilter is not affected.
+    """
+    value = env_get("LITERALS")
+    return value is None or value.strip().lower() not in {"off", "0", "false", "no"}
+
+
+def required_literals(src: str, perl: bool = False, icase: bool = False) -> CNF:
+    """Clauses of pieces such that every match of *src* contains one piece of each clause.
+
+    The pieces are casefolded (:func:`casefold`), ASCII printable, at least three
+    characters long, and contain no white space or comma. A string with a match
+    therefore has, for every clause, one of its pieces in ``fold(string)``. This
+    holds whether or not case is ignored, because casefolding works character by
+    character and folds at least what the engine's case-insensitive matching
+    folds; *icase* is accepted so that the key is the pattern's whole triple.
+
+    The requirement is only necessary: whatever the parser does not model
+    contributes nothing, so a pattern it cannot read gets no clauses (``()``),
+    and ``()`` also means the prefilter is off (:func:`literals_enabled`).
+    """
+    del icase
+    if not literals_enabled():
+        return ()
+    return _required_literals(src, perl)
+
+
+@functools.lru_cache(maxsize=8192)
+def _required_literals(src: str, perl: bool) -> CNF:
+    try:
+        translated = translate_pcre(src) if perl else translate_tre(src)
+    except RegexError:
+        return ()
+    if _UNMODELLED.search(translated):
+        return ()
+    try:
+        cnf = _cnf(translated)
+    except (_Unmodelled, IndexError, ValueError, RecursionError):
+        return ()
+    return tuple(dict.fromkeys(tuple(dict.fromkeys(clause)) for clause in cnf))
+
+
+def _pieces(literal: str) -> list[str]:
+    """The pieces of a literal run: casefolded, split on white space and commas."""
+    return [
+        piece
+        for piece in _PIECE_SPLIT.split(casefold(literal))
+        if len(piece) >= _MIN_PIECE and _PRINTABLE.fullmatch(piece)
+    ]
+
+
+def _set_end(p: str, i: int) -> int:
+    """The index after the set that opens at ``p[i] == "["`` (`regex` V0 syntax)."""
+    j = i + 1
+    if p.startswith("^", j):
+        j += 1
+    if p.startswith("]", j):  # a "]" first is a member
+        j += 1
+    while j < len(p):
+        c = p[j]
+        if c == "\\":
+            j += 2
+        elif c == "[" and p.startswith("[:", j):
+            m = _POSIX_CLASS.match(p, j)
+            if m is None:
+                raise _Unmodelled  # "[:" that is not a plain class name
+            j = m.end()
+        elif c == "]":
+            return j + 1
+        else:
+            j += 1
+    raise _Unmodelled
+
+
+def _group_end(p: str, i: int) -> int:
+    """The index after the group that opens at ``p[i] == "("``."""
+    depth, j = 0, i
+    while j < len(p):
+        c = p[j]
+        if c == "\\":
+            j += 2
+            continue
+        if c == "[":
+            j = _set_end(p, j)
+            continue
+        if c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                return j + 1
+        j += 1
+    raise _Unmodelled
+
+
+def _split_top(p: str) -> list[str]:
+    """*p* split on its top-level ``|``."""
+    out: list[str] = []
+    start = j = 0
+    while j < len(p):
+        c = p[j]
+        if c == "\\":
+            j += 2
+        elif c == "[":
+            j = _set_end(p, j)
+        elif c == "(":
+            j = _group_end(p, j)
+        else:
+            if c == "|":
+                out.append(p[start:j])
+                start = j + 1
+            j += 1
+    out.append(p[start:])
+    return out
+
+
+def _escape_end(p: str, i: int) -> int:
+    """The index after the escape at ``p[i] == "\\\\"`` that is a letter or a digit."""
+    e = p[i + 1]
+    j = i + 2
+
+    def braced(j: int, close: str) -> int:
+        end = p.find(close, j)
+        if end < 0:
+            raise _Unmodelled
+        return end + 1
+
+    if e.isdigit():  # a back reference or an octal escape
+        while j < len(p) and p[j].isdigit():
+            j += 1
+    elif e in "xuU":
+        if e == "x" and p.startswith("{", j):
+            return braced(j, "}")
+        for _ in range({"x": 2, "u": 4, "U": 8}[e]):
+            if j < len(p) and p[j] in _HEX:
+                j += 1
+    elif e in "pP":
+        if p.startswith("{", j):
+            return braced(j, "}")
+        if not (j < len(p) and p[j].isalpha()):
+            raise _Unmodelled
+        j += 1
+    elif e == "N":
+        if not p.startswith("{", j):
+            raise _Unmodelled
+        return braced(j, "}")
+    elif e == "g":
+        if not p.startswith("<", j):
+            raise _Unmodelled
+        return braced(j, ">")
+    elif not e.isascii() or e in "LcokQEe":  # named lists, or not escapes in `regex`
+        raise _Unmodelled
+    return j
+
+
+def _quantifier(p: str, i: int) -> tuple[int, int, bool]:
+    """``(minimum count, next index, quantified)`` for the quantifier (if any) at ``p[i]``."""
+    if i >= len(p):
+        return 1, i, False
+    c = p[i]
+    if c in "?*":
+        qmin, i = 0, i + 1
+    elif c == "+":
+        qmin, i = 1, i + 1
+    elif c == "{":
+        m = _BRACE.match(p, i)
+        if m is None:
+            raise _Unmodelled
+        qmin, i = (int(m[1]) if m[1] else 0), m.end()
+    else:
+        return 1, i, False
+    if i < len(p) and p[i] in "?+":  # lazy or possessive
+        i += 1
+    return qmin, i, True
+
+
+def _best(cnf: list[tuple[str, ...]]) -> tuple[str, ...]:
+    """The most selective clause: the longest shortest piece, then the fewest pieces."""
+    return max(cnf, key=lambda clause: (min(map(len, clause)), -len(clause)))
+
+
+def _cnf(p: str) -> list[tuple[str, ...]]:
+    """The clauses of a pattern in `regex` V0 syntax (translated from TRE or PCRE)."""
+    branches = _split_top(p)
+    if len(branches) > 1:  # each branch contributes its best clause, or nothing is known
+        union: list[str] = []
+        for branch in branches:
+            clauses = _cnf(branch)
+            if not clauses:
+                return []
+            union.extend(_best(clauses))
+        return [tuple(union)]
+
+    cnf: list[tuple[str, ...]] = []
+    run: list[str] = []
+
+    def flush() -> None:
+        if run:
+            cnf.extend((piece,) for piece in _pieces("".join(run)))
+            run.clear()
+
+    i, n = 0, len(p)
+    while i < n:
+        c = p[i]
+        char: str | None = None  # a literal character
+        inner: str | None = None  # a group body every match of the group matches
+        anchor = False
+        if c == "\\":
+            e = p[i + 1]
+            if e.isalnum():
+                anchor = e in _ANCHOR_ESCAPES
+                i = _escape_end(p, i)
+            else:  # an escaped symbol stands for itself
+                char = e
+                i += 2
+        elif c == "[":
+            i = _set_end(p, i)
+        elif c == "(":
+            j = _group_end(p, i)
+            body = p[i + 1 : j - 1]
+            if body in _ANCHOR_GROUPS:
+                anchor = True
+            elif not body.startswith("?"):
+                inner = body
+            elif m := _BODY_GROUP.match(body):
+                inner = body[m.end() :]
+            i = j  # lookarounds, conditionals, inline flags: nothing is known
+        elif c in "^$":
+            anchor = True
+            i += 1
+        elif c == ".":
+            i += 1
+        elif c in "*+?{)|":
+            raise _Unmodelled  # a quantifier without an atom, or a stray bracket
+        else:
+            char = c
+            i += 1
+        qmin, i, quantified = _quantifier(p, i)
+        if anchor:
+            continue  # zero-width, repeated or not
+        if char is not None and not quantified:
+            run.append(char)
+            continue
+        if char is not None and qmin >= 1:
+            run.append(char)
+        flush()
+        if inner is not None and qmin >= 1:
+            cnf.extend(_cnf(inner))
+    flush()
+    return cnf
+
+
+# ---------------------------------------------------------------------------
+# One text, many patterns
+# ---------------------------------------------------------------------------
+
+
+def detect_many(
+    patterns: Iterable[str],
+    text: str | None,
+    ignore_case: bool = False,
+    perl: bool = False,
+    fixed: bool = False,
+) -> list[bool]:
+    """``[detector(p, ignore_case, perl, fixed)(text) for p in patterns]``, faster.
+
+    The text is folded once, and a pattern runs only if, for every clause of its
+    :func:`required_literals`, one of the pieces is in the folded text. Each
+    piece is looked for once per call, and a pattern is compiled only when it
+    runs, so an invalid pattern raises :class:`RegexError` only then (as with
+    :func:`detector`; ``grepl()`` compiles first). ``METACHECK_LITERALS=off``
+    skips the filter; the result is the same either way.
+    """
+    pats = list(patterns)
+    if text is None:
+        return [False] * len(pats)
+    if fixed:
+        return [p in text for p in pats]
+    folded = fold(text)
+    found: dict[str, bool] = {}
+
+    def candidate(cnf: CNF) -> bool:
+        for clause in cnf:
+            for piece in clause:
+                hit = found.get(piece)
+                if hit is None:
+                    hit = found[piece] = piece in folded
+                if hit:
+                    break
+            else:
+                return False
+        return True
+
+    use = literals_enabled()
+    out = []
+    for p in pats:
+        if use and not candidate(_required_literals(p, perl)):
+            out.append(False)
+            continue
+        match = detector(p, ignore_case, perl, False)
+        out.append(match(text, folded if match.folds else None))
+    return out
 
 
 # ---------------------------------------------------------------------------
