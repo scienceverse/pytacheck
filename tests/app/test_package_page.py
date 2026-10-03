@@ -190,10 +190,24 @@ def test_the_report_file_is_html_under_the_report_policy(tmp_path: Path) -> None
     assert not list(root.rglob("*report*"))
 
 
-def test_a_folder_is_not_changed_and_nothing_is_downloaded(tmp_path: Path) -> None:
+def test_a_folder_is_not_changed_and_nothing_is_downloaded(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import socket
+
+    attempts: list[Any] = []
+
+    def refuse(*args: Any, **_kwargs: Any) -> Any:
+        attempts.append(args)
+        raise OSError("no network in this test")
+
+    # no lookup and no connection, for any reason: the page says nothing leaves the computer
+    monkeypatch.setattr(socket, "getaddrinfo", refuse)
+    monkeypatch.setattr(socket.socket, "connect", refuse)
     root = folder(tmp_path)
     before = sorted((p.relative_to(root), p.read_bytes()) for p in root.rglob("*") if p.is_file())
     run_on(root, tmp_path)  # the fixture refuses the concept model: it is not loaded
+    assert attempts == []
     after = sorted((p.relative_to(root), p.read_bytes()) for p in root.rglob("*") if p.is_file())
     assert before == after
     assert sorted(p.name for p in root.iterdir()) == ["README.md", "code", "data"]
