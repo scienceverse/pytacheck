@@ -11,7 +11,7 @@ import shutil
 import subprocess
 import zipfile
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -484,13 +484,19 @@ def _label_matches(
 
 @dataclass
 class _Found:
-    """Where a README has a section: its first line, heading as written, kind, last line, text."""
+    """Where a README has a section: its first line, heading as written, kind, last line, text.
+
+    ``body`` is its content; ``lines`` is every line in it, with the headings
+    inside it, where its fields are looked for ("Methods for processing the
+    data :" is a heading of its own when nothing follows the colon).
+    """
 
     index: int
     heading: str
     kind: str
     end: int
     body: list[tuple[int, str]]
+    lines: list[tuple[int, str]] = field(default_factory=list)
 
 
 def _is_long_title(h: Heading) -> bool:
@@ -517,8 +523,15 @@ def _locate(
     if matching:
         h = min(matching, key=lambda m: m.level)
         body = _body_lines(lines, headings, h, template)
+        underlines = {o.body_start - 1 for o in headings if o.style == "setext"}
+        inside = [(i, lines[i]) for i in range(h.body_start, h.end) if i not in underlines]
         return _Found(
-            h.index, h.raw, "heading", max([h.index, *(i for i, t in body if t.strip())]), body
+            h.index,
+            h.raw,
+            "heading",
+            max([h.index, *(i for i, t in body if t.strip())]),
+            body,
+            inside,
         )
     inline = _inline_matches(lines, skip, spec.match)
     if inline is not None:
@@ -578,11 +591,14 @@ def match_sections(text: str, template: ReadmeTemplate | Any = None) -> tuple[An
                 "kind": "" if found is None else found.kind,
             }
         )
+        inside = [] if found is None else (found.lines or found.body)
         for fld in spec.fields:
-            hit = None
-            if found is not None:
-                hit = next((i for i, t in found.body if any(p.search(t) for p in fld.match)), None)
-            expected = fld.expect is None or bool(_EXPECT[fld.expect].search(body_text))
+            at = next(
+                (k for k, (_, t) in enumerate(inside) if any(p.search(t) for p in fld.match)), None
+            )
+            hit = None if at is None else inside[at][0]
+            value = "" if at is None else _field_value(inside, at, spec.fields)
+            expected = fld.expect is None or bool(_EXPECT[fld.expect].search(value))
             field_rows.append(
                 {
                     "section": spec.id,
@@ -595,6 +611,29 @@ def match_sections(text: str, template: ReadmeTemplate | Any = None) -> tuple[An
                 }
             )
     return _table(rows, _SECTION_DTYPES), _table(field_rows, _FIELD_DTYPES)
+
+
+def _field_value(inside: list[tuple[int, str]], at: int, fields: Sequence[Any]) -> str:
+    """What the field on line *at* of a section says: its line and the lines under it.
+
+    The value runs to a blank line or the next field's line; a label with
+    nothing after it ("Contacts :") may have its value in the paragraph below.
+    """
+    first = inside[at][1]
+    out = [first]
+    pair = _INLINE.match(first)
+    label_only = pair is not None and not pair.group(2).strip()
+    started = False
+    for _, text in inside[at + 1 :]:
+        if not text.strip():
+            if label_only and not started:
+                continue
+            break
+        if any(p.search(text) for f in fields for p in f.match):
+            break
+        out.append(text)
+        started = True
+    return "\n".join(out)
 
 
 _SECTION_DTYPES = {

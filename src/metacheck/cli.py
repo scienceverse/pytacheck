@@ -467,9 +467,12 @@ def cmd_package(ns: argparse.Namespace) -> int:
     _print_outputs(outputs, ns.json, summary=False)
     lists = [o.extras["checklist"] for o in outputs if _has_checklist(o)]
     if lists and not ns.json:
+        checklist = pd.concat(lists, ignore_index=True)
+        # a pack may group its items, in a "part" column
+        columns = ["part"] if "part" in checklist.columns else []
         _print_table(
-            pd.concat(lists, ignore_index=True),
-            ["item", "title", "status", "detail"],
+            checklist.fillna(""),
+            [*columns, "item", "title", "status", "detail"],
             title="\nChecklist",
         )
     return _exit_status(outputs)

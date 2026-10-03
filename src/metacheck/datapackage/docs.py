@@ -144,6 +144,12 @@ _FORMAT_NAMES = {
 _MAX_DATA_FILES = 50
 
 
+def _ext(path: str) -> str:
+    """The extension of the file at *path*, in lower case ("" for none)."""
+    name = path.rsplit("/", 1)[-1]
+    return name.rsplit(".", 1)[-1].lower() if "." in name.lstrip(".") else ""
+
+
 def _type_allowed(spec: ComponentSpec, file_type: str) -> bool:
     """Whether a file of *file_type* may count for *spec* (unknown types always may)."""
     return not spec.file_types or file_type in ("NA", "") or file_type in spec.file_types
@@ -964,11 +970,9 @@ class _Run:
         self, spec: ComponentSpec, check: str, hits: list[str], shown: list[str], present: set[str]
     ) -> tuple[str, str]:
         if shown:
-            wrong = [
-                h for h in hits if spec.formats and h.rsplit(".", 1)[-1].lower() not in spec.formats
-            ]
+            wrong = [h for h in hits if spec.formats and _ext(h) not in spec.formats]
             for path in wrong:
-                ext = path.rsplit(".", 1)[-1].lower() if "." in path.rsplit("/", 1)[-1] else ""
+                ext = _ext(path)
                 wanted = " or ".join(f.upper() for f in spec.formats)
                 self.add(
                     check,

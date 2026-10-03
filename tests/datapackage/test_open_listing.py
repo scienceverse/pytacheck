@@ -210,6 +210,8 @@ def test_findings_and_checklist_tables() -> None:
     assert traffic_light(checklist_frame([{"item": "x", "status": "manual"}])) == "yellow"
     assert traffic_light(checklist_frame([{"item": "x", "status": "fail"}])) == "red"
     assert traffic_light(checklist_frame()) == "na"
+    grouped = checklist_frame([{"item": "x", "status": "pass", "part": "File checks"}])
+    assert list(grouped.columns) == ["item", "title", "status", "detail", "part"]
     with pytest.raises(ValueError, match="severity"):
         findings_frame([{"severity": "bad"}])
 

@@ -66,15 +66,22 @@ def findings_frame(rows: Iterable[Mapping[str, Any]] = ()) -> Any:
 
 
 def checklist_frame(rows: Iterable[Mapping[str, Any]] = ()) -> Any:
-    """Checklist rows as a table with :data:`CHECKLIST_COLUMNS` (all text)."""
+    """Checklist rows as a table with :data:`CHECKLIST_COLUMNS` (all text).
+
+    Other keys of the rows (a pack's ``part``, say) become columns after them.
+    """
     import pandas as pd
 
     rows = list(rows)
     for row in rows:
         if row.get("status") not in STATUSES:
             raise ValueError(f"status must be one of {STATUSES}, not {row.get('status')!r}")
+    extra = dict.fromkeys(k for row in rows for k in row if k not in CHECKLIST_COLUMNS)
     return pd.DataFrame(
-        {c: pd.Series([row.get(c, "") for row in rows], dtype="string") for c in CHECKLIST_COLUMNS}
+        {
+            c: pd.Series([row.get(c, "") for row in rows], dtype="string")
+            for c in (*CHECKLIST_COLUMNS, *extra)
+        }
     )
 
 

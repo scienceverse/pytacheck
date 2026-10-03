@@ -582,6 +582,51 @@ def test_a_template_style_readme_in_a_package(tmp_path: Path) -> None:
     assert "section" in r.components.set_index("id").loc["codebook", "files"]
 
 
+def test_a_field_is_judged_by_its_own_lines() -> None:
+    template = {
+        "sections": [
+            {
+                "id": "general",
+                "title": "General information",
+                "match": ["general"],
+                "required": True,
+                "fields": [
+                    {
+                        "id": "email",
+                        "label": "Email",
+                        "match": ["^\\s*e-?mail\\b"],
+                        "expect": "email",
+                    },
+                    {
+                        "id": "contacts",
+                        "label": "Contacts",
+                        "match": ["^\\s*contacts\\b"],
+                        "expect": "email",
+                    },
+                    {"id": "processing", "label": "Processing", "match": ["processing"]},
+                ],
+            }
+        ]
+    }
+    text = (
+        "1. GENERAL INFORMATION\n\n"
+        "Name : A. Smith\n"
+        "Email :\n\n"
+        "Contacts :\na@example.org\nb@example.org\n\n"
+        "Methods for processing the data :\n<describe how>\n"
+    )
+    _, fields = match_sections(text, template)
+    f = fields.set_index("id")
+    # empty, although there are e-mail addresses further on in the section
+    assert f.loc["email", "found"]
+    assert not f.loc["email", "ok"]
+    # a label on its own, with its value on the lines below
+    assert f.loc["contacts", "ok"]
+    assert f.loc["contacts", "line"] == 6
+    # a label with nothing after the colon is a heading of its own, and still a field
+    assert f.loc["processing", "found"]
+
+
 def test_label_lines_stand_in_for_headings() -> None:
     text = "Contact: jane@example.org\nLicense: CC BY 4.0\nSoftware: R 4.3\n"
     sections, _ = match_sections(text)
