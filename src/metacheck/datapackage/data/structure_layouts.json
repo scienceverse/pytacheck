@@ -1,0 +1,93 @@
+{
+  "layouts": [
+    {
+      "id": "data-code-docs",
+      "title": "Data, code and documentation",
+      "description": "a folder for the data (optionally split into raw, processed and analysed data), a folder for the code, a folder for the documentation and a README at the top",
+      "parts": [
+        {
+          "id": "data",
+          "title": "Data",
+          "match": ["^data( ?(sets?|files?))?$"],
+          "required": true,
+          "parts": [
+            {"id": "raw", "title": "Raw data", "match": ["^(raw|original|source)( data)?$"]},
+            {"id": "processed", "title": "Processed data", "match": ["^(processed|cleaned?|derived)( data)?$"]},
+            {"id": "analysed", "title": "Analysed data", "match": ["^(analy[sz]ed|analysis ready|final)( data)?$"]}
+          ]
+        },
+        {
+          "id": "code",
+          "title": "Code",
+          "match": ["^(code|scripts?|syntax|analysis|analyses|src|programs?)( and (code|scripts?|syntax))?$"]
+        },
+        {
+          "id": "docs",
+          "title": "Documentation",
+          "match": [
+            "^(docs?|documentation|documents|metadata)$",
+            "^(scientific|administrative|admin|project|study) (documents?|documentation)$",
+            "^(study |research )?materials$",
+            "^supplement(s|ary|al)?( (materials?|information|files?))?$"
+          ]
+        },
+        {
+          "id": "outputs",
+          "title": "Results and figures",
+          "match": [
+            "^(outputs?|results?|figures?|tables?|plots?|graphs?|images?|reports?)$",
+            "^(figures?|results?|tables?) and (figures?|results?|tables?)$"
+          ]
+        }
+      ],
+      "root_files": [
+        {"id": "readme", "title": "README", "match": ["^read ?me"], "required": true},
+        {"id": "license", "title": "Licence", "match": ["^(licen[sc]e|copying)"]}
+      ]
+    },
+    {
+      "id": "psych-ds",
+      "title": "Psych-DS style",
+      "description": "folders named as in the Psych-DS standard: data, analysis, materials, outputs and documentation",
+      "parts": [
+        {"id": "data", "title": "Data", "match": ["^data$"], "required": true},
+        {"id": "analysis", "title": "Analysis", "match": ["^analys[ie]s$"]},
+        {"id": "materials", "title": "Materials", "match": ["^materials$"]},
+        {"id": "outputs", "title": "Outputs", "match": ["^outputs?$"]},
+        {"id": "documentation", "title": "Documentation", "match": ["^(documentation|docs?)$"]}
+      ],
+      "root_files": [
+        {"id": "dataset_description", "title": "dataset_description.json", "match": ["^dataset description$"]},
+        {"id": "readme", "title": "README", "match": ["^read ?me"]},
+        {"id": "changes", "title": "CHANGES", "match": ["^(changes|changelog)"]}
+      ]
+    },
+    {
+      "id": "figure-folders",
+      "title": "One folder per figure",
+      "description": "a folder for each figure of the paper (Fig 1, Fig 2, ...) with the data behind it, and a README at the top",
+      "parts": [
+        {
+          "id": "figure",
+          "title": "Figure",
+          "match": ["^((supplement(ary|al)|extended data|ed|suppl?) )?(fig|figure)s? ?[a-z]?\\d+[a-z]?$"],
+          "required": true,
+          "repeat": true,
+          "min": 1,
+          "example": "Fig 1"
+        },
+        {
+          "id": "table",
+          "title": "Table",
+          "match": ["^((supplement(ary|al)|extended data|ed|suppl?) )?(tab|table)s? ?[a-z]?\\d+[a-z]?$"],
+          "repeat": true,
+          "example": "Table 1"
+        }
+      ],
+      "root_files": [
+        {"id": "readme", "title": "README", "match": ["^read ?me"], "required": true},
+        {"id": "manuscript", "title": "Manuscript", "match": ["(manuscript|preprint|article)"]}
+      ]
+    }
+  ]
+}
