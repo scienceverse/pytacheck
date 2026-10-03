@@ -150,8 +150,10 @@ What is reported is the file, the sheet, the column's name and the **number of c
 that matched, never a value, in the findings (`table`), in the extra `hits` table (one
 row for each flagged column: `path`, `sheet`, `column`, `column_index`, `rule`,
 `hits`, `checked`, `named`, `rows_read`, `rows_capped`) and in the report. A column
-name that looks like a value (an `@`, six digits in a row, more than 40 characters, or
-a file whose first row is data) is shown as `column 3`.
+or sheet name that is itself a value (a file without a header row has its first data
+row there: an `@`, six digits in a row, more than 40 characters, or something that passes
+one of the tests above, such as `5611 ZK` or `Jan de Vries`) is shown as `column 3` or
+`sheet 2`.
 
 Limits and options: at most `max_rows` rows of each file (5000) and the first 10 sheets
 of a workbook; files over `max_file_size` MB (100) and files beyond the first `max_files`

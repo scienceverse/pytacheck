@@ -386,3 +386,45 @@ def test_no_value_is_in_the_reports_or_json(
     assert "pii_bsn" in printed
     for sentinel in SENTINELS:
         assert sentinel not in printed, sentinel
+
+
+def test_a_file_without_a_header_row_does_not_leak_its_first_row(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # the first row is data, so a reader takes it for the column names
+    first = ["5612 PV", "2a02:aa::f1", "050 321 9876", "Jan de Vries", "2345671"]
+    rows = [
+        first,
+        ["1013 TX", "2a02:aa::f2", "(070) 888 1234", "Anna Smit", "3456782"],
+        ["5612 PV", "2a02:aa::f3", "06-11223344", "Piet van der Berg", "4567893"],
+        ["1013 TX", "2a02:aa::f4", "+31 6 55443322", "Sandra Zwart", "2345671"],
+    ]
+    root = _folder(tmp_path, {"data/raw.csv": "\n".join(",".join(r) for r in rows) + "\n"})
+    (out,) = check_package(root, modules=["package_pii"])
+    assert set(out["hits"]["rule"]) == {"postcode", "ipv6", "phone"}
+    assert set(out["hits"]["column"]) == {"column 1", "column 2", "column 3"}
+    texts = [_everything(out)]
+    assert main(["package", str(root), "-m", "package_pii", "--json"]) == 0
+    texts.append(capsys.readouterr().out)
+    report_package(root, tmp_path / "r.md", "md", modules=["package_pii"])
+    texts.append((tmp_path / "r.md").read_text(encoding="utf-8"))
+    for text in texts:
+        for value in first:
+            assert value not in text, value
+
+
+def test_a_sheet_named_like_a_value_is_shown_by_its_position(tmp_path: Path) -> None:
+    openpyxl = pytest.importorskip("openpyxl")
+    wb = openpyxl.Workbook()
+    wb.active.title = "Data"
+    wb.active.append(["x"])
+    sheet = wb.create_sheet("Jan de Vries")
+    sheet.append(["telefoon"])
+    for number in ("06-98765432", "+31 6 55443322", "06-11223344"):
+        sheet.append([number])
+    root = tmp_path / "pkg"
+    root.mkdir()
+    wb.save(root / "book.xlsx")
+    res = _scan(root)
+    assert list(res.hits["sheet"]) == ["sheet 2"]
+    assert "Jan de Vries" not in " ".join(res.findings["detail"])

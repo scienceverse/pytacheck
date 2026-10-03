@@ -36,7 +36,17 @@ from metacheck.datapackage._findings import (
     findings_frame,
     traffic_light,
 )
-from metacheck.datapackage._pii_detect import DETECTORS, Detector, judge_column
+from metacheck.datapackage._pii_detect import (
+    DETECTORS,
+    Detector,
+    is_bsn,
+    is_ipv6,
+    is_person_name,
+    is_phone,
+    is_postcode,
+    is_student_number,
+    judge_column,
+)
 
 __all__ = [
     "CHECK_TITLES",
@@ -230,7 +240,7 @@ def _read_with_reader(path: Path, ext: str, max_rows: int) -> list[_Table]:
             continue
         if df is None and i == 0:
             raise _Unreadable("no table")
-        label = "" if i == 0 else str(sheet)
+        label = "" if i == 0 else _label(str(sheet), i + 1, "sheet")
         table = _frame_table(df, label, max_rows)
         if table is not None:
             tables.append(table)
@@ -248,12 +258,24 @@ def _read_tables(path: Path, ext: str, max_rows: int) -> list[_Table]:
 _VALUE_LIKE = re.compile(r"\d{6,}|@")
 
 
-def _label(name: str, index: int) -> str:
-    """A column's name for a report; a name that looks like a value is shown as its position."""
-    if not name:
-        return f"column {index}"
+def _looks_like_a_value(name: str) -> bool:
+    """Whether a column or sheet name is itself a value (a file without a header row has data there)."""
     if len(name) > 40 or _VALUE_LIKE.search(name):
-        return f"column {index}"
+        return True
+    return (
+        is_bsn(name, True)
+        or is_phone(name, True)
+        or is_ipv6(name)
+        or is_postcode(name, True)
+        or is_student_number(name)
+        or is_person_name(name, minimum_words=2)
+    )
+
+
+def _label(name: str, index: int, kind: str = "column") -> str:
+    """A column's (or sheet's) name for a report; one that looks like a value is shown as its position."""
+    if not name or _looks_like_a_value(name):
+        return f"{kind} {index}"
     return name
 
 
