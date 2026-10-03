@@ -28,6 +28,7 @@ __all__ = [
     "ABOUT_EXPERIMENTAL",
     "ABOUT_VALIDATED",
     "BLOCKS_KWARGS",
+    "MAIN_PAGE_NAME",
     "MOUNT_KWARGS",
     "QUEUE_KWARGS",
     "REPORT_SANDBOX",
@@ -36,6 +37,8 @@ __all__ = [
     "report_frame",
 ]
 
+#: the name of the paper page in the links between pages (the local app has a second page)
+MAIN_PAGE_NAME = "Check a paper"
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 SCIENCEVERSE_URL = "https://www.scienceverse.org/"
 BIBR_DEMO_URL = "https://try.bibr.org/"
@@ -555,6 +558,8 @@ def build_app(
         else BLOCKS_KWARGS
     )
     with gr.Blocks(**blocks_kwargs) as app:
+        if not shared:
+            gr.Navbar(main_page_name=MAIN_PAGE_NAME)
         gr.HTML(header(__version__), elem_id="mc-header", js_on_load=None)
         upload = gr.File(
             label="Your paper (PDF, GROBID XML or bibr JSON)",
@@ -659,6 +664,11 @@ def build_app(
         reader.change(on_reader, reader, keys, api_visibility="private")
         if remember_keys:  # a shared server has no saved key, and nobody may remove one
             forget.click(on_forget, None, [note, forget], api_visibility="private")
+    if not shared:
+        from metacheck.app.ui_package import add_package_page
+
+        # a folder is named by a path on this computer: only the local app has the page
+        add_package_page(app, sessions)
     if hosted:
         app.queue(
             **{

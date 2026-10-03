@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import Callable
 from typing import Any
 
@@ -10,6 +11,7 @@ from fastapi import FastAPI
 from starlette.responses import FileResponse, JSONResponse, Response
 
 from metacheck.app.hosted import HostedConfig
+from metacheck.app.package import UPLOAD_LIMIT
 from metacheck.app.security import TokenGuard
 from metacheck.app.ui import CSS, MOUNT_KWARGS, Sessions, build_app, theme
 
@@ -59,15 +61,19 @@ def _assemble(port: int, hosted: HostedConfig | None, guard: Callable[[Any], Non
     # Only ``launch()`` sets this, and Gradio then refuses an upload field that names a
     # file outside its upload folder. Mounted apps skip that check unless it is set here.
     blocks.has_launched = True
-    api = gr.mount_gradio_app(
-        api,
-        blocks,
-        path="/",
-        server_name="127.0.0.1",
-        server_port=port,
-        theme=theme(),
-        css=CSS,
-        **MOUNT_KWARGS,
-    )
+    with warnings.catch_warnings():
+        # SSR is off already (MOUNT_KWARGS); Gradio says so again for an app with two pages
+        warnings.filterwarnings("ignore", message="SSR mode is not supported", category=UserWarning)
+        api = gr.mount_gradio_app(
+            api,
+            blocks,
+            path="/",
+            server_name="127.0.0.1",
+            server_port=port,
+            theme=theme(),
+            css=CSS,
+            # the local app's data package page takes a zip of up to 1 GB
+            **({**MOUNT_KWARGS, "max_file_size": UPLOAD_LIMIT} if hosted is None else MOUNT_KWARGS),
+        )
     guard(api)
     return api
