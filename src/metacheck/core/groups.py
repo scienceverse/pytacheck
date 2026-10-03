@@ -41,15 +41,14 @@ JOIN = MARKER
 
 
 class GroupDoc(Doc):
-    """The *level* groups of one call's searched rows of *source*, as a Doc."""
+    """The *level* groups of one call's searched rows of a Doc, as a Doc."""
 
-    __slots__ = ("_series", "first", "group_of", "level", "source")
+    __slots__ = ("_series", "first", "group_of", "level")
 
     _series: dict[str, pd.Series]
     first: list[int]  #: each group's first source row (in the call's row order)
     group_of: dict[int, int]  #: source row -> its group
     level: str
-    source: Doc
 
     def kept(self, matched: int) -> int:
         """The groups with a matched source row (R's ``semi_join``)."""
@@ -150,7 +149,6 @@ def build_groups(d: Doc, level: str, rows: Sequence[int], stage: int) -> GroupDo
         series["header"] = pd.Series(headers, dtype=d.take_series("header", []).dtype)
 
     g = GroupDoc()
-    g.source = d
     g.level = level
     g._series = series
     g.first = first
