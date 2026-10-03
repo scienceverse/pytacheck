@@ -66,6 +66,12 @@ About data files: the box "Check the shared data files" is ticked. When the pape
 - The data check is experimental too. It runs last, unless you untick its box.
 - The online checks are optional. They are slower, because they look things up on other servers.
 
+## Check a data package
+
+The app has a second page, "Check a data package" (the link at the top right of the page). Give it the folder of data, code and documentation that comes with a paper, or a zip of it, and it checks the files, the folder tree and the README, and shows a checklist. It runs on your computer only: nothing is uploaded. A shared server does not have this page. See [DATAPACKAGE.md](DATAPACKAGE.md) for what is checked.
+
+To open the app on that page, run the install line with `--steward` (`sh -s -- --steward`) or, on Windows, with `METACHECK_STEWARD=1` set first (the same way as for the uninstall line). Or run `metacheck-app --page package`.
+
 ## Open it again
 
 Run the same install line again. It takes a few seconds the second time. You can also run the app from its folder: `metacheck-app` in the `bin` folder.

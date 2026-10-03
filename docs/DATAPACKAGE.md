@@ -78,6 +78,25 @@ extra arguments for it, as in `report()`. Both also take `max_bytes` and `max_fi
 which lower the limits on an extracted archive (20 GB and 200,000 files otherwise);
 a folder has none.
 
+## In the app
+
+`metacheck-app` has a second page, "Check a data package" (`/package`; open the app on
+it with `metacheck-app --page package`). Name a folder on your computer or upload a zip
+(up to 1 GB; for a bigger package give the folder), choose the checks and press the
+button. The page shows one row per check, the checklist with one row per requirement
+(the status cell is red for `fail`, yellow for `warn` and `manual`, green for `pass`;
+the word is always shown) and the report to download. It runs on your machine only and
+is not part of the hosted app (`--hosted` has no such page, because a folder is named by
+a path on the machine that runs the app).
+
+The choice lists the presets that run a `datapackage::` check: `datapackage::default`
+and every preset of an installed pack or of your config that runs one (for example one
+that `extends` it), found through the pack registry. A preset for papers is not listed.
+`data_check` names the concept of each column with rules only, unless you tick the box
+for the local classifier (which downloads its model the first time). An uploaded
+archive is unpacked as described below, with lower limits: 5 GB unpacked and 100,000
+files.
+
 ## What is checked
 
 Each check is a module that takes the package as `local_path`. The sections below
