@@ -40,6 +40,7 @@ Most R files map to one Python file, grouped into subpackages by topic:
 | `modules/` | The checks, one file per metacheck module. Private helpers that a module needs start with `_` (`_funding.py`, `_power.py`, ...). `pack.json` lists the built-in presets. | `inst/modules/*.R` |
 | `papers/` | `Paper` and `PaperList` (bibr export schema 12.0, and the older format), reading and writing papers, cross-paper tables, validation. | `R/paper.R`, `R/import-read.R` |
 | `io/` | `read()` and conversion: bibr JSON, Grobid TEI, bibr run in-process, conversion servers. | `R/import-*.R`, `R/svutils-xml.R` |
+| `core/` | Python only. The indexed document under the text façades: a paper's sentences indexed once (`Doc`), R patterns as values, search chains (`Hits`) and their grouped views. | none |
 | `text/` | `text_search()`, `text_expand()` and the extractors (p-values, tests, URLs, causal sentences). | `R/text_search.R`, `R/text_expand.R`, `R/text-*.R`, `R/extract-tests.R`, `R/causal_sentences.R` |
 | `stats/` | `stats()` and a port of the statcheck package. | `R/stats.R`, `R/stat_helpers.R` |
 | `db/` | DOIs, Crossref, PubPeer, Retraction Watch, FLoRA, the registries, ORCID. | `R/doi.R`, `R/db-*.R`, `R/regcheck-local.R`, `R/svutils-orcid.R` |

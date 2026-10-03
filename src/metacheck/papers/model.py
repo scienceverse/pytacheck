@@ -31,7 +31,9 @@ from metacheck.papers.schema import empty_table, records_to_frame, required_tabl
 
 __all__ = ["Paper", "PaperList", "is_paper", "is_paper_list"]
 
-_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy"})
+_RESERVED = frozenset(
+    {"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy", "_derived"}
+)
 # Process-wide mutation counter: ``Paper._generation`` changes whenever a paper is
 # modified through its API, which invalidates ``run_session()`` memo entries.
 _GENERATION = itertools.count(1)
@@ -72,7 +74,16 @@ class Paper:
         not given starts as an empty, fully-typed table.
     """
 
-    __slots__ = ("_columns", "_generation", "_lazy", "_raw", "_tables", "extra", "paper_id")
+    __slots__ = (
+        "_columns",
+        "_derived",
+        "_generation",
+        "_lazy",
+        "_raw",
+        "_tables",
+        "extra",
+        "paper_id",
+    )
 
     paper_id: str | None
     extra: dict[str, Any]
@@ -84,11 +95,23 @@ class Paper:
         object.__setattr__(self, "_columns", {})
         object.__setattr__(self, "_generation", next(_GENERATION))
         object.__setattr__(self, "_lazy", {})  # a _Lazy per table read from JSON records
+        # what is computed from the tables (the indexed document of metacheck.core.doc):
+        # never pickled or copied, and checked against the tables it was built from
+        object.__setattr__(self, "_derived", {})
         store: dict[str, Any] = {}
         for name in required_tables():
             store[name] = tables.pop(name) if name in tables else None
         store.update(tables)
         object.__setattr__(self, "_tables", store)
+
+    def __getstate__(self) -> tuple[None, dict[str, Any]]:
+        """The slots to pickle or copy: all but ``_derived``, which is rebuilt when needed."""
+        state = {
+            name: getattr(self, name)
+            for name in self.__slots__
+            if name != "_derived" and hasattr(self, name)
+        }
+        return None, state
 
     # -- construction from raw JSON records (used by the readers) ----------
 
