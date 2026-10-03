@@ -255,7 +255,7 @@ def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
 
 
 def test_duplicate_paper_ids(demo: pc.Paper) -> None:
-    # U101: metacheck stops with "factor level [2] is duplicated"; U204: the second paper
+    # U101: metacheck stops with "factor level [2] is duplicated"; U208: the second paper
     # is renamed, so the list is two papers
     with pytest.warns(PytacheckWarning, match="'to_err_is_human' as 'to_err_is_human~2'"):
         mo = run(pc.PaperList([demo, demo]))

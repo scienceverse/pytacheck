@@ -289,7 +289,7 @@ def test_empty_paperlist_has_an_empty_result(paper: Any) -> None:
 
 
 def test_duplicated_paper_ids_are_two_papers() -> None:
-    # U101: metacheck stops with "factor level [2] is duplicated"; U204: the second paper
+    # U101: metacheck stops with "factor level [2] is duplicated"; U208: the second paper
     # is renamed `d1~2`, so each is summarised on its own
     papers = ec_papers(["d1", "d1"], [["The IRB approved it."], ["Participants were recruited."]])
     with pytest.warns(PytacheckWarning, match="'d1' as 'd1~2'"):

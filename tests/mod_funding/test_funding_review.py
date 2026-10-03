@@ -140,7 +140,7 @@ def test_funding_check_oi_section_spelling() -> None:
 
 
 def test_duplicate_paper_ids_are_separate_papers() -> None:
-    # U204: papers that share an ID are renamed (`id~2`), so each is grouped on its own;
+    # U208: papers that share an ID are renamed (`id~2`), so each is grouped on its own;
     # metacheck pools their sentences into one group
     p1 = pc.test_paper(["This research was funded by NIH.", "Funding", "", "We thank NIH."])
     p2 = pc.test_paper(["Our study was supported by the ERC."])

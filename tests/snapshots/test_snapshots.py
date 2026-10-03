@@ -365,7 +365,7 @@ def test_the_same_id_fixture_expects_the_output_under_f6s_ids(upstream_dir: Path
     expected = inputs.record(inputs.find("fixtures", "all_p_values.same_id"))
     before = inputs.record(inputs.find("fixtures", "all_p_values.same_id.before"))
     assert "X~2" in store.dumps(expected).decode()
-    # F6 is in the rewrite (U204): it resolves the repeated id where the list is taken in,
+    # F6 is in the rewrite (U208): it resolves the repeated id where the list is taken in,
     # so the run on the list with the repeated id is the expected output, not R's
     assert before == expected
     case = inputs.find("fixtures", "all_p_values.same_id")

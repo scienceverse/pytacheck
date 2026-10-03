@@ -199,7 +199,7 @@ def _paper_ids(paper: Any) -> list[str]:
         papers = list(paper.values()) if isinstance(paper, Mapping) else list(paper)
     else:
         return paper_id(paper)  # a table: "paper must be a paper or paperlist object."
-    # the sentences carry the resolved IDs (U204), so the summary rows must too; the
+    # the sentences carry the resolved IDs (U208), so the summary rows must too; the
     # search that built them has already warned
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", PytacheckWarning)
@@ -362,7 +362,7 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     lack one), a summary text and, for a single paper, the report.
 
     Like R, *paper* may also be a plain list of papers. Papers with duplicated
-    IDs are renamed (``ID~2``, U204) and summarised one by one, a paper without
+    IDs are renamed (``ID~2``, U208) and summarised one by one, a paper without
     an ``info`` row is summarised under its own ID, and a text table without a
     ``text`` column has no sentences (metacheck stops or mislabels these,
     U101/U102). An empty paper list gives an empty result (metacheck stops, U79). Reproduces R's errors

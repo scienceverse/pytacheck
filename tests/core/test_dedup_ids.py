@@ -1,7 +1,7 @@
 """V7 (a paragraph repeated word for word counts once) and F6 (repeated paper ids).
 
 Both change results on purpose, as the maintainer decided on 2026-09-27 (F6, decision 6)
-and 2026-09-28 (V7); docs/UPSTREAM_ISSUES.md D60 and U204 record them. The papers here are
+and 2026-09-28 (V7); docs/UPSTREAM_ISSUES.md D60 and U208 record them. The papers here are
 small and built by hand, so each test names what it pins:
 
 * a row repeated with every cell equal is one row, in every search mode;
