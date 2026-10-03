@@ -228,8 +228,11 @@ def test_a_name_that_is_not_utf8_is_listed(tmp_path: Path) -> None:
     root = tmp_path / "pkg"
     root.mkdir()
     (root / "ok.csv").write_text("a\n1\n")
-    with open(os.path.join(os.fsencode(root), b"caf\xe9.csv"), "w") as fh:
-        fh.write("a\n1\n")
+    try:
+        with open(os.path.join(os.fsencode(root), b"caf\xe9.csv"), "w") as fh:
+            fh.write("a\n1\n")
+    except OSError:  # macOS file systems only take UTF-8 names
+        pytest.skip("this file system does not allow names that are not UTF-8")
     files = list_files(root)
     assert len(files) == 2
     assert set(files["data_type"]) == {"data"}

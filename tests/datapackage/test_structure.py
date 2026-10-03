@@ -146,7 +146,7 @@ def test_layout_b_matches_the_figure_layout(tmp_path: Path) -> None:
 
 def test_reports_read_well(tmp_path: Path) -> None:
     for files, layout in ((LAYOUT_A, "Data, code and documentation"), (LAYOUT_B, "One folder per")):
-        res = run(make(tmp_path / layout[:4], files))
+        res = run(make(tmp_path / layout.split()[0], files))
         text = render_blocks(structure_report(res), lambda t: f"[table of {len(t.data)} rows]")
         assert "[table of 4 rows]" in text
         assert f'The folders follow the "{layout}' in text

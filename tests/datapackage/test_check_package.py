@@ -408,7 +408,7 @@ def test_the_default_report_file_is_named_after_the_package(tmp_path: Path, prob
     assert result.save_path == "mydata_report.html"
     assert (tmp_path / "mydata_report.html").exists()
     report_package(archive, output_format="md", modules=[probe])
-    assert "mydata" in (tmp_path / "mydata_report.md").read_text()
+    assert "mydata" in (tmp_path / "mydata_report.md").read_text(encoding="utf-8")
     report_package(archive, output_format="qmd", modules=[probe])
     assert (tmp_path / "mydata_report.qmd").exists()
     with pytest.raises(ValueError, match="output_format"):

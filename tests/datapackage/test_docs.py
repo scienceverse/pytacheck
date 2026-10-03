@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -1413,6 +1414,7 @@ def test_an_empty_package(tmp_path: Path) -> None:
     assert len(r.sections) == 7
 
 
+@pytest.mark.skipif(os.name == "nt", reason="file links work differently on Windows")
 def test_a_symlinked_readme_is_only_read_inside_the_package(tmp_path: Path) -> None:
     root = _tree(tmp_path / "pkg", {"docs/readme-source.md": GOOD_README, "a.csv": "a\n1\n"})
     outside = tmp_path / "outside.md"

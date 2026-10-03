@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -105,7 +106,18 @@ KEPT_FOLDERS = {
 }
 
 
-@pytest.mark.parametrize(("name", "rule"), list(JUNK_FILES.items()))
+# Windows does not allow these characters in a file name
+_WINDOWS_FORBIDDEN = set('<>:"/\\|?*\r')
+_NOT_ON_WINDOWS = pytest.mark.skipif(os.name == "nt", reason="not a valid file name on Windows")
+
+
+def _case(name: str, *values: str) -> Any:
+    """A test case for the file *name*, skipped on Windows when it cannot be created there."""
+    marks = [_NOT_ON_WINDOWS] if _WINDOWS_FORBIDDEN & set(name) else []
+    return pytest.param(name, *values, marks=marks)
+
+
+@pytest.mark.parametrize(("name", "rule"), [_case(n, r) for n, r in JUNK_FILES.items()])
 def test_junk_files_are_found(tmp_path: Path, name: str, rule: str) -> None:
     pkg = _tree(tmp_path / "pkg", {"README.txt": "x", f"sub/{name}": "x"})
     f = junk_findings(pkg)
@@ -687,7 +699,7 @@ def test_svg_files_must_not_hold_javascript_when_the_policy_asks(
 # -- file and folder names -------------------------------------------------------
 
 
-@pytest.mark.parametrize("char", list("~!@#$%^&*:?()[]{}+=,;'"))
+@pytest.mark.parametrize("char", [_case(c) for c in "~!@#$%^&*:?()[]{}+=,;'"])
 def test_special_characters(tmp_path: Path, char: str) -> None:
     pkg = _tree(tmp_path / "pkg", {f"a{char}b.txt": "x", "ok.txt": "x"})
     f = name_findings(pkg)
