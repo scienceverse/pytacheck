@@ -10,6 +10,7 @@ follow metacheck exactly.
 from __future__ import annotations
 
 import math
+import re
 from typing import Any, cast
 
 import pandas as pd
@@ -26,18 +27,32 @@ __all__ = ["extract_eq", "extract_p_values", "extract_urls"]
 _OPERATORS = ("=", "<", ">", "~", "≈", "≠", "≤", "≥", "≪", "≫")
 _OPS = "".join(_OPERATORS)
 
+# An e-mail address is matched whole, so that neither its local part ("k.aristovich") nor
+# its domain ("gmail.com") is listed as a host name; extract_urls() drops these matches (U206)
+_EMAIL = r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"
+_EMAIL_RX = re.compile(_EMAIL)
+
 # "et al." glued to the next word ("et al.Premotor") is not a host name (U158)
 _URL_PATTERN = (
     r"\b(?<!\bet )"
-    r"((doi:)?(https?://)?(([\w.-]+\.[a-z]{2,})|(\d{1,3}(\.\d{1,3}){3}))(:\d+)?(/[^\s]*)?)\b"
+    f"(?:{_EMAIL}|"
+    r"((doi:)?(https?://)?(([\w.-]+\.[a-z]{2,})|(\d{1,3}(\.\d{1,3}){3}))(:\d+)?(/[^\s]*)?))\b"
 )
 
+# Differs from metacheck (U204, U205): "ps", "p's" and "p-values" are ways to
+# write p, a minus sign may be the Unicode one (U+2212, as text from PDFs has
+# it), and "x 10^-5" may be written with "×" and without "^" ("1.8 × 10 -6",
+# "6.1 × 10−5", which metacheck read as p = 1.8 and p = 6.1)
+_MINUS_SIGN = "\u2212"  # U+2212, which text from PDFs often has for "-"
+_MINUS = f"-{_MINUS_SIGN}"
+_SCI_E = f"(e\\s*[{_MINUS}]\\d+)?"
+_SCI_10 = f"(\\s*[x\\*×]\\s*10\\s*\\^?\\s*[{_MINUS}]\\d+)?"
 _P_PATTERN = (
-    r"\b[pP]-?(value)?\s*"  # ways to write p (or P)
+    r"\b[pP]-?(values?|s|['’]s)?\s*"  # ways to write p (or P)
     f"[{_OPS}]{{1,2}}\\s*"  # 1-2 operators
     r"(n\.?s\.?|\d?\.\d+)"  # ns or valid numbers
-    r"\s*(e\s*-\d+)?"  # also match scientific notation
-    r"(\s*[x\*]\s*10\s*\^\s*-\d+)?"
+    f"\\s*{_SCI_E}"  # also match scientific notation
+    f"{_SCI_10}"
 )
 
 # A df-parenthetical: digits/commas/periods/whitespace, optionally with an
@@ -49,9 +64,11 @@ _EQ_PATTERN = (
     f"[{_GREEK}²a-zA-Z-_\\.0-9\\{{\\}}\\^\\\\]+\\s*"  # statistic name
     f"(?:\\({_DF_INNER}\\))?\\s*"  # optional df-shaped parentheses
     f"[{_OPS}]{{1,3}}\\s*"  # 1-3 operators
-    r"([0-9\.,+-]*[0-9]|\[[^\]]+\]|n\.?\s*s\.?)"  # numbers, anything in [], or NS
-    r"\s*(e\s*-\d+)?"  # also match scientific notation
-    r"(\s*[x\*]\s*10\s*\^\s*-\d+)?"
+    # numbers (a Unicode minus may have a space after it: "r = − 0.12"),
+    # anything in [], or NS
+    f"((?:{_MINUS_SIGN}\\s)?[0-9\\.,+\\-{_MINUS_SIGN}]*[0-9]|\\[[^\\]]+\\]|n\\.?\\s*s\\.?)"
+    f"\\s*{_SCI_E}"  # also match scientific notation
+    f"{_SCI_10}"
 )
 
 _OP_RUN = f"[{_OPS}]{{1,2}}"
@@ -136,7 +153,11 @@ def extract_urls(paper: Any) -> pd.DataFrame:
     """
     # every URL match contains ".xx" (a domain) or "d.d" (an IPv4 address)
     table = _search_table(paper, r"\.[a-z]{2}|\d\.\d", perl=True)
-    return cast(pd.DataFrame, text_search(table, _URL_PATTERN, return_="match", perl=True))
+    urls = text_search(table, _URL_PATTERN, return_="match", perl=True)
+    if not isinstance(urls, pd.DataFrame) or "text" not in urls.columns:
+        return cast(pd.DataFrame, urls)  # character input: text_search()'s result as it is
+    is_email = urls["text"].map(lambda t: isinstance(t, str) and _EMAIL_RX.fullmatch(t) is not None)
+    return urls.loc[~is_email.to_numpy(dtype=bool)].reset_index(drop=True)
 
 
 def extract_p_values(paper: Any) -> pd.DataFrame:
@@ -165,7 +186,9 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
             raise IndexError("subscript out of bounds")
         values.append(parts[1])
     values = gsub(r"\s", "", values)
-    values = gsub(r"[x*]10\^", "e", values)
+    # a Unicode minus is a minus, and "×" and a missing "^" are allowed (U204, U205)
+    values = gsub(_MINUS_SIGN, "-", values, fixed=True)
+    values = gsub(r"[x*×]10\^?", "e", values)
     p = p.copy()
     p["p_comp"] = pd.Series(comps, index=p.index, dtype="string")
     p["p_value"] = pd.Series([as_numeric(v) for v in values], index=p.index, dtype="float64")
@@ -266,6 +289,10 @@ def extract_eq(paper: Any) -> pd.DataFrame:
         rhs.append(parts[1])
     lhs = trimws(lhs)
     rhs = trimws(rhs)
+    # a Unicode minus becomes "-", without the space a leading one may have
+    # ("− 0.12" gives "-0.12"); metacheck matched no such value (U205)
+    rhs = gsub(f"^{_MINUS_SIGN}\\s?", "-", rhs, perl=True)
+    rhs = gsub(_MINUS_SIGN, "-", rhs, fixed=True)
 
     # set group equal to sentence for now: the matches of one source sentence
     # share a group, numbered per paper in search order (metacheck's numbering

@@ -5,6 +5,7 @@
 "all_urls.review.chain_single_after_open_practices": {"r": "e80489b5071fa921", "py": "48bbfe989bbf950c", "diff": ["summary_table.materials_statements[]", "summary_table.prereg_statements[]"]},
 "all_urls.review.empty_list": {"r": "ac5146cf65ca52a8", "py": "59e5a12de2c15805", "diff": ["<R error, Python value>"]},
 "all_urls.review.formats": {"r": "c8a3e9debab125e2", "py": "9cfbb25207b5e3b4", "diff": ["summary_table.urls[]", "table"]},
+"all_urls.review.tricky": {"r": "c369518e1f7ac5d0", "py": "66bcf86c98f9f98a", "diff": ["summary_table.urls[]", "table"]},
 "open_practices.review.chain_after_all_urls": {"r": "eaa13fbb5aafa387", "py": "982cfae3e1e6a73a", "diff": ["report[]", "summary_text[]"]},
 "open_practices.review.chain_after_marginal": {"r": "480652207a732356", "py": "9fd95f1fe6fb48a6", "diff": ["report[]", "summary_text[]"]},
 "open_practices.review.chain_twice": {"r": "825dd7679a9c1a95", "py": "a223f4beda783225", "diff": ["report[]", "summary_table.code_open.open_practices[]", "summary_table.data_open.open_practices[]", "summary_text[]"]},

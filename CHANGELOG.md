@@ -65,6 +65,17 @@ package's. The R commit each release is compared against is in
 ### Fixed: open_practices on papers from older bibr exports
 
 - `open_practices` stopped with "cannot use 'tuple' as a dict key" on papers read from an older (pre-12) bibr JSON export, whose text table has a list column (`_bbox_2d`): 36 of the first 40 papers of a bibr validation set. The list is now compared by its elements, as dplyr does when it joins on a list column. Results on papers without a list column, and on 12.x papers, do not change.
+### Fixed: p-values and statistics that were not read
+
+These change the results of validated checks (`all_p_values`, `stat_p_exact`, `stat_p_nonsig`, `stat_effect_size`); metacheck has the same bugs (docs/UPSTREAM_ISSUES.md U204, U205).
+
+- `extract_p_values()` reads p written as "ps", "p's" or "p-values": "ps < .05", the usual way to report several p-values at once, was not a p-value. In 450 Psychological Science papers read from Grobid TEI it occurs 216 times in 70 papers. `stat_p_exact` counts "ps < .05" as an imprecise p-value, so it turns red on 3 of the 21 papers of the realistic corpus.
+- Scientific notation may use "×", leave out "^" and use the Unicode minus: "p = 1.8 × 10 -6" was read as p = 1.8 and is now 1.8e-06.
+- `extract_eq()` and `extract_p_values()` read the Unicode minus sign (U+2212), which text from PDFs often has (bibr keeps it, Grobid writes "-"): "t(28) = −2.15" and "d = −0.80" were not found, so `stat_effect_size` saw no t-test in such a sentence. `rhs` and `p_value` now have "-"; the matched `text` is kept as written.
+
+### Fixed: e-mail addresses are not URLs
+
+- `all_urls` and `extract_urls()` no longer list the parts of an e-mail address as URLs: for `k.aristovich@ucl.ac.uk` metacheck lists `k.aristovich` and `ucl.ac.uk`, and `gmail.com` for every address at gmail.com. A URL that has an `@` after its host (`twitter.com/@user`) is still listed. On 120 papers read from bibr 12.x, 274 of 575 rows were such fragments (214 of 835 in 86 older bibr papers, 12 of 2,584 in 450 Grobid TEI papers); a paper whose only matches were e-mail addresses had the traffic light `info` and now has `na` (22 of the 120). This changes the result of a validated module; metacheck has the same bug (docs/UPSTREAM_ISSUES.md U206).
 
 ### Documentation
 
