@@ -318,6 +318,9 @@ def _n(count: int, one: str, many: str | None = None) -> str:
     return f"{count} {one if count == 1 else (many or one + 's')}"
 
 
+_EXPECTED = {"email": "e-mail address", "url": "web address", "doi": "DOI"}
+
+
 def _kind_of(ext: str) -> str:
     return _FORMAT_NAMES.get(ext, f"a .{ext} file" if ext else "a file without an extension")
 
@@ -583,7 +586,7 @@ class _Run:
                     self.add(
                         check,
                         "section-optional-missing",
-                        f"The README has no “{label}” section{hint}. It is optional, but readers look for it.",
+                        f"The README has no “{label}” section{hint}. It is optional.",
                         rel,
                         "file",
                     )
@@ -624,10 +627,13 @@ class _Run:
                     "file",
                 )
             elif row["found"] and not row["ok"]:
+                field = next(f for f in specs[str(row["section"])].fields if f.id == row["id"])
+                wanted = _EXPECTED.get(field.expect or "", "anything")
                 self.add(
                     check,
                     "field-invalid",
-                    f"The “{row['label']}” line in the “{section_title}” section (line {int(row['line'])}) has nothing filled in.",
+                    f"The “{row['label']}” line in the “{section_title}” section "
+                    f"(line {int(row['line'])}) has no {wanted} in it.",
                     rel,
                     "file",
                 )

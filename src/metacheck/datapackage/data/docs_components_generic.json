@@ -52,10 +52,9 @@
           "codebook"
         ],
         "names": [
-          "code[ _.-]?book",
+          "code[ _.-]?(?:book|boek)",
           "data[ _.-]?(?:dict|legend)",
-          "variable[ _.-]?(?:key|list|descr)",
-          "woordenboek"
+          "variab(?:le|elen)[ _.-]?(?:key|list|lijst|descr|beschrijving)"
         ],
         "readme_sections": [
           "variables"
