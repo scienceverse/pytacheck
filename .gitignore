@@ -25,3 +25,7 @@ parity/_out/
 .vscode/
 .DS_Store
 .upstream-sync/
+
+# written by code_check()/_code_expand_smcl() runs (R and Python differ, U146)
+tests/codecheck/fixtures/expand/code/analysis.do
+tests/mod_code/fixtures/expand/code/analysis.do

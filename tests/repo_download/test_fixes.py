@@ -150,7 +150,10 @@ def _dryad_rows(n: int) -> dict[str, list[Any]]:
     }
 
 
-def test_zip_gate_ignores_rows_without_a_repository(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.parametrize("dtype", [object, "string"])
+def test_zip_gate_ignores_rows_without_a_repository(
+    monkeypatch: pytest.MonkeyPatch, dtype: Any
+) -> None:
     # metacheck: sum(files$repo_url == repo) is NA with any NA repo_url, so the
     # Dryad archive is skipped (the other hosts' archive branches are gone, #424)
     import metacheck.archives.dryad as dryad
@@ -171,7 +174,9 @@ def test_zip_gate_ignores_rows_without_a_repository(monkeypatch: pytest.MonkeyPa
     rows["file_path"].append("c.csv")
     rows["file_url"].append(None)
     rows["file_size"].append(10.0)
-    out = download_repo_files(pd.DataFrame(rows))
+    df = pd.DataFrame(rows)
+    df["repo_url"] = df["repo_url"].astype(dtype)  # a string column holds pd.NA
+    out = download_repo_files(df)
     assert calls == [_DRYAD_ZIP]
     assert out["file_location"].notna().tolist() == [True] * 13 + [False]
 

@@ -29,6 +29,11 @@ The R reference is metacheck `dev` at 49f97ec5 merged into pull request #423 (th
   - OSF: the token check at start-up gives up after 5 seconds.
 - `cap_report()` keeps its name although metacheck made it internal (D60).
 - Metacheck fixed bugs that this version had marked: Dataverse DOI routing (U32) and empty code files (U67, U87); those cases match R again.
+- Fixed while porting (metacheck has these too):
+  - Files unpacked from an archive take their own extension's type (`data`, `code`, `text`) instead of the archive's (U208).
+  - An archive in `local_path` is no longer unpacked into the user's folder: metacheck writes `<archive>.contents/` next to it, and the next run lists every unpacked file twice. pytacheck unpacks it to `metacheck-archives/` in the temporary folder (U209).
+- `download_repo_files()` no longer fails when a file table read as text has a missing `repo_url` and a GitHub, GitLab or Dryad archive is still to be downloaded.
+- A zip whose HEAD request failed for a passing reason (429, 5xx, no connection) is not cached on disk as unlistable (U205), and zip-listing cache entries are written under unique temporary names, so two threads cannot interleave one.
 
 ### Parity tooling
 

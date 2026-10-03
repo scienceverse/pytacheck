@@ -681,7 +681,9 @@ def _archive_size_estimate(files: pd.DataFrame, repo: Any) -> float:
     """
     repos = files["repo_url"].tolist()
     sizes = _nums(files["file_size"].tolist()) if "file_size" in files.columns else []
-    est = sum(s for r, s in zip(repos, sizes, strict=False) if r == repo and not is_na(s))
+    est = sum(
+        s for r, s in zip(repos, sizes, strict=False) if not is_na(r) and r == repo and not is_na(s)
+    )
     return float(est) if est > 0 else math.nan
 
 

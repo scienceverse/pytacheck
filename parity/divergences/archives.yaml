@@ -354,15 +354,15 @@
 "repo_download/expand.gz":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U208)"
 "repo_download/expand.bz2":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U208)"
 "repo_download/expand.xz":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U208)"
 "repo_download/expand.gz_uncompressed":
   kind: r_bug_fixed
   ref: U69
@@ -371,6 +371,16 @@
   kind: r_bug_fixed
   ref: U69
   reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+# U208
+"repo_download/expand.zip_mixed": &u208_member_type
+  kind: r_bug_fixed
+  ref: U208
+  reason: "each file from the archive takes its own extension's type (code, text, data), not the archive's (archive)"
+"repo_download/expand.zip_skip_code": *u208_member_type
+"repo_download/expand.zip_stimuli": *u208_member_type
+"repo_download/expand.zip_comment": *u208_member_type
+"repo_download/expand.zip_unicode": *u208_member_type
+"repo_download/expand.tar": *u208_member_type
 # U70
 "repo_download/zip_crc_ok.near_miss_large":
   kind: r_bug_fixed

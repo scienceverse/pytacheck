@@ -21,9 +21,11 @@ All requests go through the storage retry policy and host authentication of
 
 from __future__ import annotations
 
+import atexit
 import math
 import os
 import re
+import shutil
 import threading
 import warnings
 import zlib
@@ -318,11 +320,17 @@ def _head_size(url: str, skip_on_api_limit: bool = False) -> float:
     page's); a missing, non-numeric or non-positive Content-Length gives
     ``nan`` (R ``NA``), as do a known rate limit under *skip_on_api_limit*
     and any error. 403 is not retried.
+
+    A rate limit, a connection failure or a 429/5xx answer flags the running
+    peek's failure as one that can pass (U205), so a listing the size would
+    have made possible is not cached as a failure. 403 is not flagged: S3
+    hosts always refuse HEAD.
     """
     from metacheck.archives.download import _storage_request, _wait_out_known_rate_limit
 
     try:
         if not _wait_out_known_rate_limit(url, skip_on_api_limit):
+            _note_transient()
             return math.nan
         resp = _storage_request(
             "HEAD",
@@ -332,12 +340,15 @@ def _head_size(url: str, skip_on_api_limit: bool = False) -> float:
         )
         status = int(resp.status_code)
         if status < 200 or status >= 300:
+            if status != 403:
+                _note_transient(status)
             return math.nan
         cl = _content_length(resp)
         if cl is None or is_na(cl) or cl <= 0:
             return math.nan
         return float(cl)
     except Exception:
+        _note_transient()
         return math.nan
 
 
@@ -910,6 +921,10 @@ def _archive_rows(
     ``file_location``, ``file_size`` and, where the columns exist,
     ``data_type``, ``doc_role``, ``data_format`` and ``file_url`` (``NA``).
     A 0-row frame when nothing worth keeping is inside.
+
+    ``file_type`` is the file's own extension type when the extension has
+    one (``NA`` otherwise); R keeps the archive's type, so a CSV from a zip
+    was typed "archive" (UPSTREAM_ISSUES U208).
     """
     import pandas as pd
 
@@ -962,7 +977,22 @@ def _archive_rows(
         rows["data_format"] = pd.Series(fmt, dtype="string")
     if "file_url" in rows.columns:
         rows["file_url"] = pd.Series([None] * len(loc), dtype="string")
+    if "file_type" in rows.columns:
+        rows["file_type"] = pd.Series(_ext_type(base), dtype="string")
     return rows
+
+
+def _ext_type(names: Sequence[str]) -> list[str | None]:
+    """The ``file_types`` type of each name's extension, ``None`` for none or several."""
+    from metacheck.fileinfo.types import ext_rows
+
+    lookup = ext_rows()
+    out: list[str | None] = []
+    for name in names:
+        ext = name.rsplit(".", 1)[1].lower() if "." in name else None
+        types = lookup.get(ext, ()) if ext is not None else ()
+        out.append(types[0][1] if len(types) == 1 else None)
+    return out
 
 
 def _missing_path(path: Any) -> bool:
@@ -1095,14 +1125,83 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
                 shutil.copyfileobj(src, fout)
 
 
+_LOCAL_CONTENTS: dict[tuple[str, int, int], str] = {}
+_local_contents_lock = threading.Lock()
+
+
+def _local_contents_root() -> str:
+    """``metacheck-archives`` in the temporary folder, where local archives are extracted.
+
+    The same folder in every session, so the extracted files' locations do not
+    change from run to run. When it belongs to someone else (a shared ``/tmp``)
+    or is open to other users, a private folder of this session is used instead,
+    removed when the session ends.
+    """
+    import stat
+    import tempfile
+
+    root = os.path.join(tempfile.gettempdir(), "metacheck-archives")
+    try:
+        os.makedirs(root, mode=0o700, exist_ok=True)
+        st = os.lstat(root)
+        owned = not hasattr(os, "getuid") or st.st_uid == os.getuid()
+        if stat.S_ISDIR(st.st_mode) and owned and not st.st_mode & 0o022:
+            return root
+    except OSError:
+        pass
+    root = tempfile.mkdtemp(prefix="metacheck-archives-")
+    atexit.register(shutil.rmtree, root, ignore_errors=True)
+    return root
+
+
+def _file_sha1(path: str) -> str:
+    import hashlib
+
+    h = hashlib.sha1(usedforsecurity=False)
+    with open(path, "rb") as fh:
+        while chunk := fh.read(1 << 20):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _contents_dir(archive_path: str) -> str:
+    """Where an on-disk archive is extracted (R: ``<archive>.contents/`` beside it).
+
+    Beside it for an archive metacheck downloaded (in the repository cache or
+    the temporary folder), as R does. Any other archive -- one in a user's
+    ``local_path`` -- is extracted to :func:`_local_contents_root`, in a
+    folder named by the archive's SHA-1 (an edited archive is extracted
+    afresh): R writes into the user's folder, and the next run then lists the
+    extracted files as well as the archive's members, so every member is
+    reported twice (U209).
+    """
+    import tempfile
+
+    from metacheck.archives.download import _repo_cache_dir
+
+    real = os.path.realpath(archive_path)
+    for root in (_repo_cache_dir(), tempfile.gettempdir()):
+        base = os.path.realpath(root)
+        if real.startswith(base.rstrip(os.sep) + os.sep):
+            return f"{archive_path}.contents"
+    st = os.stat(real)
+    key = (real, st.st_size, st.st_mtime_ns)
+    with _local_contents_lock:
+        folder = _LOCAL_CONTENTS.get(key)
+        if folder is None:
+            folder = os.path.join(_local_contents_root(), _file_sha1(real))
+            _LOCAL_CONTENTS[key] = folder
+    return os.path.join(folder, f"{os.path.basename(real)}.contents")
+
+
 def _expand_zip(
     zip_path: Any, zip_row: pd.DataFrame, skip_types: Any = "materials"
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_zip()``: rows for the data files inside a zip.
 
-    Extracts the zip once to ``<zip>.contents/`` beside it (reused when it
-    exists) and returns :func:`_archive_rows` for it, inheriting *zip_row*'s
-    columns; a 0-row frame when the zip is missing, unreadable or holds
+    Extracts the zip once to ``<zip>.contents/`` (reused when it exists; see
+    :func:`_contents_dir`) and returns :func:`_archive_rows` for it, inheriting
+    *zip_row*'s columns; a 0-row frame when the zip is missing, unreadable or holds
     nothing worth keeping.
     """
     import zipfile
@@ -1111,7 +1210,7 @@ def _expand_zip(
     if _missing_path(zip_path):
         return empty
     zip_path = str(zip_path)
-    dest = f"{zip_path}.contents"
+    dest = _contents_dir(zip_path)
     try:
         with zipfile.ZipFile(zip_path) as zf:
             n_entries = len(zf.infolist())
@@ -1166,7 +1265,7 @@ def _expand_tar(
     if _missing_path(tar_path):
         return empty
     tar_path = str(tar_path)
-    dest = f"{tar_path}.contents"
+    dest = _contents_dir(tar_path)
     try:
         with tarfile.open(tar_path, "r:*") as tf:
             n_entries = len(tf.getnames())
@@ -1223,7 +1322,7 @@ def _expand_compressed(
     ext = _tolower(_file_ext([gz_path])[0])
     if ext not in ("gz", "bz2", "xz"):
         return empty
-    dest = f"{gz_path}.contents"
+    dest = _contents_dir(gz_path)
     inner_name = sub("[.](gz|bz2|xz)$", "", os.path.basename(gz_path), ignore_case=True)
     out = f"{dest}/{inner_name}"
     if not os.path.exists(out):

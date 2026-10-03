@@ -22,6 +22,8 @@ import os
 from pathlib import Path
 from typing import Any
 
+from metacheck.archives._atomic import atomic_write
+
 __all__ = ["zip_peek_cache_clear"]
 
 _SUFFIX = ".json"
@@ -104,7 +106,8 @@ def _zip_peek_cache_put(url: str, value: Any) -> Any:
     """Port of ``R/zip-peek-cache.R::.zip_peek_cache_put()``: store a listing or ``None``.
 
     A failed peek (``None``) is stored too: a host's support for range
-    requests does not change. Write errors are ignored (a caching miss is
+    requests does not change. Entries are written to a temporary file with a
+    unique name and renamed into place. Write errors are ignored (a caching miss is
     never worse than the uncached behaviour).
     """
     import orjson
@@ -114,11 +117,8 @@ def _zip_peek_cache_put(url: str, value: Any) -> Any:
     with contextlib.suppress(Exception):
         # the URL itself is not stored: it can carry a token
         data = orjson.dumps({"format": _FORMAT, "version": _VERSION, "value": _encode(value)})
-        path = _zip_peek_cache_path(url)
-        tmp = f"{path}.{os.getpid()}.tmp"
-        with open(tmp, "wb") as fh:
+        with atomic_write(_zip_peek_cache_path(url)) as fh:
             fh.write(data)
-        os.replace(tmp, path)
     return value
 
 

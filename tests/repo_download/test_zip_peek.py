@@ -265,6 +265,57 @@ def test_expand_zip_reuses_extraction_and_filters_macosx(tmp_path: Path) -> None
     assert "extra.csv" in again["file_name"].tolist()
 
 
+def test_expand_zip_members_take_their_own_type(tmp_path: Path) -> None:
+    # U208: metacheck copies the archive's file_type ("archive") to every member
+    z = tmp_path / "mixed.zip"
+    shutil.copyfile(DATA / "mixed.zip", z)
+    rows = _expand_zip(z, _zip_row(z)).set_index("file_name")
+    assert rows.loc["study.csv", "file_type"] == "data"
+    assert rows.loc["analysis.R", "file_type"] == "code"
+    assert "archive" not in rows["file_type"].tolist()
+
+
+def test_local_archive_is_not_extracted_into_the_users_folder(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # U209: metacheck extracts to <archive>.contents/ beside it, in the user's folder,
+    # and the next run lists the extracted files too
+    import tempfile
+
+    from metacheck.utils import local_options
+
+    systmp = tmp_path / "systmp"
+    systmp.mkdir()
+    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(systmp))
+    monkeypatch.setattr(tempfile, "tempdir", str(systmp))
+    user = tmp_path / "user"
+    user.mkdir()
+    z = user / "mixed.zip"
+    shutil.copyfile(DATA / "mixed.zip", z)
+    cache = tmp_path / "cache"
+    with local_options({"metacheck.repo_cache.dir": str(cache)}):
+        rows = _expand_zip(z, _zip_row(z))
+        assert sorted(rows["file_name"]) == [
+            "README.txt",
+            "analysis.R",
+            "codebook.csv",
+            "study.csv",
+        ]
+        assert [p.name for p in user.iterdir()] == ["mixed.zip"]
+        assert all(
+            Path(p).is_relative_to(systmp / "metacheck-archives") for p in rows["file_location"]
+        )
+        # extracted once per session
+        again = _expand_zip(z, _zip_row(z))
+        assert again["file_location"].tolist() == rows["file_location"].tolist()
+        # an archive metacheck downloaded is still extracted beside itself
+        cached = cache / "repo" / "mixed.zip"
+        cached.parent.mkdir(parents=True)
+        shutil.copyfile(DATA / "mixed.zip", cached)
+        _expand_zip(cached, _zip_row(cached))
+        assert (cache / "repo" / "mixed.zip.contents" / "study.csv").exists()
+
+
 def test_expand_zip_unreadable_or_missing(tmp_path: Path) -> None:
     row = _zip_row(DATA / "mixed.zip")
     assert len(_expand_zip(tmp_path / "missing.zip", row)) == 0
@@ -752,6 +803,25 @@ def test_zip_peek_cache_keeps_a_lasting_failure_only(peek_cache_dir: Path) -> No
         router.route(url=url).mock(return_value=httpx.Response(503))
         assert zip_peek(url, cache=True) is None
     assert not _zip_peek_cache_has(url)
+
+
+def test_zip_peek_cache_does_not_keep_a_failure_after_a_failed_head(
+    peek_cache_dir: Path,
+) -> None:
+    # HEAD answers 503, so the size is unknown and the host's whole-file answer to
+    # the tail request cannot be used: with HEAD working the zip would be listed
+    from metacheck import http
+    from metacheck.archives.zip_peek_cache import _zip_peek_cache_has
+
+    handler, _ = _s3_like_host(_test_zip_bytes(), head_status=503, suffix_status=200)
+    with (
+        pytest.MonkeyPatch.context() as mp,
+        respx.mock(assert_all_mocked=True) as router,
+    ):
+        mp.setattr(http, "sleep", lambda s: None)
+        router.route(url=S3).mock(side_effect=handler)
+        assert zip_peek(S3, cache=True) is None
+    assert not _zip_peek_cache_has(S3)
 
 
 def test_zip_peek_skips_a_known_rate_limit() -> None:
