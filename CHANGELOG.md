@@ -58,6 +58,10 @@ package's. The R commit each release is compared against is in
 - The page starts on the bibr reader where the server supplies the bibr key (`SCIVRS_API_KEY`), as a hosted server does, and on GROBID otherwise, since GROBID needs no key.
 - The bibr option talks to bibr serve and the hosted bibr service in front of it: it sends a PDF to `/papers/jobs`. Before, it sent every PDF to the Scienceverse platform's `/jobs`, which those services answer with 404, so the page said the bibr service could not be found. `PYTACHECK_BIBR_BACKEND=scivrs` says that the address in `PYTACHECK_BIBR_URL` is the platform. For an address from metacheck's public server list, the entry's `protocol` decides; without one, an entry whose `api_key` is `SCIVRS_API_KEY` is the platform, and any other entry is bibr serve. A hosted server does not start with a `PYTACHECK_BIBR_BACKEND` other than `bibr` or `scivrs`, or with a `PYTACHECK_BIBR_URL` that cannot work, such as plain http to another machine for bibr (deploy/space/DEPLOY.md).
 
+### Fixed: GitHub and GitLab links of 12.x papers
+
+- `github_links()` and `gitlab_links()`, and so `repo_check`, find the GitHub and GitLab links of papers in the 12.x format: bibr 12.x JSON, and Grobid TEI, which is read as 12.x by default. They searched the url table's first column, which in a 12.x paper is the number `url_id`, so no such repository was found; they now search `href`, as the other repository finders do. metacheck has the same bug (docs/UPSTREAM_ISSUES.md U196). On 450 Psychological Science papers read from Grobid TEI, 9 papers now give 9 GitHub and 1 GitLab repositories, against none before. More repositories found means more calls to api.github.com, which allows 60 an hour without a token.
+
 ### Documentation
 
 - docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.
