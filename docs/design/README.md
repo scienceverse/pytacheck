@@ -23,6 +23,9 @@ not descriptions of the shipped code. (Earlier designs:
 - [ROADMAP.md](ROADMAP.md): the proposed order of the work from the rest of
   phase A to 1.0 (milestones, work packages, the validation plan and the open
   decisions D01-D20). It is a proposal until the maintainer answers them.
+- [SPIKE-2.md](SPIKE-2.md): the second spike's results (grouped search on the
+  core, read-time Docs, materialised papers, `detect_many`, the boundary
+  floor), the CORE-1b re-estimate and the decision it needs.
 
 Paths under `scratchpad/` in these documents refer to the session's
 working directory where the measurements were taken; the evidence that
