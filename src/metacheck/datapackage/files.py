@@ -144,12 +144,49 @@ def _requirement_pdfa(path: Path) -> bool:
     return pdfa_part(path) is not None
 
 
+_HDF5_SIGNATURE = b"\x89HDF\r\n\x1a\n"
+
+
+def _requirement_mat73(path: Path) -> bool:
+    """A MATLAB file in the v7.3 format, which is HDF5 (or a plain HDF5 file)."""
+    with open(path, "rb") as fh:
+        head = fh.read(520)
+    # v7.3 files start with a 512-byte text header, then the HDF5 signature
+    return head.startswith((b"MATLAB 7.3", _HDF5_SIGNATURE)) or head[512:520] == _HDF5_SIGNATURE
+
+
+_SVG_SCRIPT = re.compile(rb"<script\b|javascript:|\son[a-z]{3,20}\s*=\s*[\"']", re.IGNORECASE)
+
+
+def _requirement_svg_no_script(path: Path) -> bool:
+    """An SVG without JavaScript: no script element, ``javascript:`` link or event handler."""
+    keep = 64
+    tail = b""
+    with open(path, "rb") as fh:
+        while data := fh.read(1 << 20):
+            buf = tail + data
+            if _SVG_SCRIPT.search(buf):
+                return False
+            tail = buf[-keep:]
+    return True
+
+
 #: What an entry of the formats policy can require of a file, and what to say when
 #: the file does not meet it.
 _REQUIREMENTS: dict[str, tuple[Callable[[Path], bool], str]] = {
     "pdfa": (
         _requirement_pdfa,
         "This PDF does not say that it is PDF/A, the variant of PDF made for long-term archiving.",
+    ),
+    "mat-v7.3": (
+        _requirement_mat73,
+        "This MATLAB file is in an older format than v7.3, which only MATLAB reads well; "
+        "v7.3 files are HDF5, an open format.",
+    ),
+    "svg-no-script": (
+        _requirement_svg_no_script,
+        "This SVG contains JavaScript (a script or an event handler), which does not belong "
+        "in an image meant for archiving.",
     ),
 }
 
@@ -161,9 +198,11 @@ def load_formats(policy: PolicySource = None) -> dict[str, Any]:
     of a JSON file. A dict without a ``"formats"`` key is taken to be the ``formats``
     mapping itself. Extensions are lower case without the dot (``"tar.gz"`` works
     for compound extensions). An entry is ``{"level": "preferred" | "non-preferred",
-    "label": ..., "alternative": ...}``; ``"requires": "pdfa"`` (with ``"unmet_label"``)
+    "label": ..., "alternative": ...}``; ``"requires"`` (with ``"unmet_label"``)
     makes a preferred entry non-preferred for files that do not meet the
-    requirement. Extensions that are not listed are *unlisted*.
+    requirement: ``"pdfa"`` (the PDF declares PDF/A), ``"mat-v7.3"`` (a MATLAB file
+    in the HDF5-based v7.3 format) or ``"svg-no-script"`` (an SVG without
+    JavaScript). Extensions that are not listed are *unlisted*.
     """
     raw = _policy(policy, "formats_dans.json", "formats")
     if not isinstance(raw, dict):

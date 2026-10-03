@@ -636,6 +636,54 @@ def test_pdfa_requirement_with_a_link_or_an_unreadable_file_is_skipped(tmp_path:
     assert len(format_findings(pkg)) == 0
 
 
+@pytest.mark.parametrize(
+    ("data", "preferred"),
+    [
+        (b"MATLAB 7.3 MAT-file, Platform: GLNXA64".ljust(512, b" ") + b"\x89HDF\r\n\x1a\n", True),
+        (b"\x89HDF\r\n\x1a\n" + b"\0" * 100, True),  # saved as plain HDF5
+        (b"MATLAB 5.0 MAT-file, Platform: PCWIN64".ljust(128, b" ") + b"\0" * 100, False),
+    ],
+)
+def test_matlab_files_must_be_v73_when_the_policy_asks(
+    tmp_path: Path, data: bytes, preferred: bool
+) -> None:
+    pkg = _tree(tmp_path / "pkg", {"results.mat": data})
+    policy = {
+        "mat": {
+            "level": "preferred",
+            "label": "MATLAB v7.3",
+            "requires": "mat-v7.3",
+            "unmet_label": "MATLAB (older than v7.3)",
+            "alternative": "MATLAB v7.3 (save with -v7.3), or CSV",
+        }
+    }
+    f = format_findings(pkg, formats=policy)
+    assert len(f) == (0 if preferred else 1)
+    if not preferred:
+        assert "older format than v7.3" in f["detail"][0]
+        assert "save with -v7.3" in f["detail"][0]
+
+
+@pytest.mark.parametrize(
+    ("svg", "preferred"),
+    [
+        ('<svg xmlns="http://www.w3.org/2000/svg"><circle r="4"/></svg>', True),
+        ("<svg><script>alert(1)</script></svg>", False),
+        ('<svg><circle r="4" onclick="go()"/></svg>', False),
+        ('<svg><a href="javascript:go()">x</a></svg>', False),
+        # words starting with "on" in the text are not event handlers
+        ("<svg><text>one = two</text></svg>", True),
+    ],
+)
+def test_svg_files_must_not_hold_javascript_when_the_policy_asks(
+    tmp_path: Path, svg: str, preferred: bool
+) -> None:
+    pkg = _tree(tmp_path / "pkg", {"figure.svg": svg})
+    policy = {"svg": {"level": "preferred", "label": "SVG", "requires": "svg-no-script"}}
+    f = format_findings(pkg, formats=policy)
+    assert len(f) == (0 if preferred else 1)
+
+
 # -- file and folder names -------------------------------------------------------
 
 
