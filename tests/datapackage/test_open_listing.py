@@ -172,3 +172,42 @@ def test_the_datapackage_pack_is_always_there(tmp_path: Path) -> None:
     root = _tree(tmp_path / "pkg", PACKAGE)
     out = module_run(None, "datapackage::package_files", local_path=str(root))
     assert out.traffic_light != "fail"
+
+
+def test_findings_and_checklist_tables() -> None:
+    from metacheck.datapackage import (
+        checklist_frame,
+        findings_frame,
+        status_from_findings,
+        traffic_light,
+    )
+
+    f = findings_frame(
+        [
+            {
+                "path": "a b.csv",
+                "kind": "file",
+                "check": "file_names",
+                "rule": "spaces",
+                "severity": "suggestion",
+                "detail": "has a space",
+            },
+            {
+                "path": ".DS_Store",
+                "kind": "file",
+                "check": "junk_files",
+                "rule": "macos",
+                "severity": "problem",
+                "detail": "macOS folder settings",
+            },
+        ]
+    )
+    assert status_from_findings(f, "junk_files") == "fail"
+    assert status_from_findings(f, "file_names") == "warn"
+    assert status_from_findings(f, "folder_depth") == "pass"
+    assert traffic_light(checklist_frame([{"item": "x", "status": "pass"}])) == "green"
+    assert traffic_light(checklist_frame([{"item": "x", "status": "manual"}])) == "yellow"
+    assert traffic_light(checklist_frame([{"item": "x", "status": "fail"}])) == "red"
+    assert traffic_light(checklist_frame()) == "na"
+    with pytest.raises(ValueError, match="severity"):
+        findings_frame([{"severity": "bad"}])
