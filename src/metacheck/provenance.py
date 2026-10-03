@@ -297,7 +297,9 @@ class RunRecord:
     :func:`rerun` replays it. ``version`` is this package's version and
     ``r_reference`` the R metacheck release and commit it is compared against.
     Records of the older schema are read too, and keys a record does not
-    know are ignored.
+    know are ignored. A run on a data package (``metacheck package``) has no
+    papers; ``package`` then holds its ``name``, ``source`` and whether it was
+    an ``archive``.
     """
 
     created: str
@@ -313,6 +315,7 @@ class RunRecord:
     modules: list[dict[str, Any]] = field(default_factory=list)
     environment: dict[str, Any] = field(default_factory=dict)
     schema: str = RUN_SCHEMA
+    package: dict[str, Any] | None = None
 
     @classmethod
     def build(
@@ -398,6 +401,7 @@ class RunRecord:
             "papers": list(self.papers),
             "modules": [dict(m) for m in self.modules],
             "environment": dict(self.environment),
+            **({"package": dict(self.package)} if self.package else {}),
         }
 
     def to_json(self, indent: int | None = 2) -> str:

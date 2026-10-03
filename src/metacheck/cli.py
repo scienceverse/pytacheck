@@ -11,6 +11,8 @@ Examples::
     pytacheck run paper.json --preset psych -a power.seed=1 --record run.json
     pytacheck run paper.pdf -m marginal --json       # PDFs need metacheck[bibr]
     pytacheck report paper.json -o report.html
+    pytacheck package my_data_folder                 # check a data package (a folder or a zip), no paper
+    pytacheck package my_data.zip -o package.html    # ... and write the report
     pytacheck rerun run.json paper.json              # replay a run record
     pytacheck pack search trial --field medicine     # browse the store
     pytacheck pack install clinical_trials           # shows a consent card first
@@ -21,7 +23,7 @@ Examples::
     pytacheck app                                    # the local app in your browser (metacheck[app])
     pytacheck version
 
-Selection flags (run, report): ``-m`` modules (in order), ``--preset``,
+Selection flags (run, report, package): ``-m`` modules (in order), ``--preset``,
 ``-a MOD.KEY=VALUE`` (one module) or ``-a KEY=VALUE`` (every selected module
 that accepts KEY), ``--offline`` (skip network/LLM modules). See docs/MODULES.md.
 """
@@ -145,7 +147,7 @@ def _print_table(df: Any, columns: Sequence[str], *, title: str | None = None) -
 
 def _selection(ns: argparse.Namespace) -> Any:
     """The modules to run for ``run`` / ``report`` (config presets apply here)."""
-    from metacheck.presets import _entry_args, select
+    from metacheck.presets import select
 
     per, bare = _module_args(ns.arg or [])
     sel = select(
@@ -156,6 +158,13 @@ def _selection(ns: argparse.Namespace) -> Any:
         offline=True if ns.offline else None,
     )
     _check_module_args(sel, per)
+    return _apply_bare_args(sel, per, bare)
+
+
+def _apply_bare_args(sel: Any, per: dict[str, dict[str, Any]], bare: dict[str, Any]) -> Any:
+    """Give each bare ``-a KEY=VALUE`` to every selected module that accepts KEY."""
+    from metacheck.presets import _entry_args
+
     for key, value in bare.items():
         hits = [i for i, (ref, _) in enumerate(sel) if _accepts(ref, key)]
         if not hits:
@@ -212,7 +221,9 @@ def _announce(sel: Any) -> None:
 
 def _failed(o: Any) -> bool:
     """Whether an output is a module that failed to run (not a module's own verdict)."""
-    return (o.run_provenance or {}).get("status") == "fail"
+    if o.run_provenance is None:  # a report's failed module has no provenance
+        return bool(o.traffic_light == "fail" and o.summary_text == "This module failed to run")
+    return bool(o.run_provenance.get("status") == "fail")
 
 
 def _error_text(o: Any) -> str:
@@ -228,7 +239,16 @@ def _error_text(o: Any) -> str:
     return first
 
 
-def _print_outputs(outputs: Sequence[Any], as_json: bool) -> None:
+def _has_checklist(o: Any) -> bool:
+    """Whether a module returned a checklist (a table of items with a status)."""
+    return hasattr(getattr(o, "extras", {}).get("checklist"), "to_dict")
+
+
+def _records(df: Any) -> list[dict[str, Any]]:
+    return list(df.to_dict(orient="records"))
+
+
+def _print_outputs(outputs: Sequence[Any], as_json: bool, *, summary: bool = True) -> None:
     import orjson
 
     if as_json:
@@ -241,6 +261,7 @@ def _print_outputs(outputs: Sequence[Any], as_json: bool) -> None:
                 "table": (
                     o.table.to_dict(orient="records") if hasattr(o.table, "to_dict") else o.table
                 ),
+                **({"checklist": _records(o.extras["checklist"])} if _has_checklist(o) else {}),
                 **({"error": _error_text(o)} if _failed(o) else {}),
             }
             for o in outputs
@@ -264,7 +285,7 @@ def _print_outputs(outputs: Sequence[Any], as_json: bool) -> None:
         console.print(f"[{colour}]●[/] [bold]{_escape(o.title)}[/]{tag}: {_escape(o.summary_text)}")
         if _failed(o):
             console.print(f"  [magenta]error:[/] {_escape(_error_text(o))}")
-    if outputs and outputs[-1].summary_table is not None:
+    if summary and outputs and outputs[-1].summary_table is not None:
         console.print(outputs[-1].summary_table.to_string(index=False))
 
 
@@ -406,6 +427,52 @@ def cmd_report(ns: argparse.Namespace) -> int:
         console().print(f"[dim]Run record: {_escape(path)}[/]")
     print(result)
     return 0
+
+
+def cmd_package(ns: argparse.Namespace) -> int:
+    import pandas as pd
+
+    from metacheck.datapackage import PackageError, check_package, package_selection, report_package
+    from metacheck.packs.ui import console
+
+    per, bare = _module_args(ns.arg or [])
+    sel = package_selection(
+        modules=ns.module or None,
+        preset=ns.preset,
+        args=per,
+        offline=True if ns.offline else None,
+    )
+    _check_module_args(sel, per)
+    sel = _apply_bare_args(sel, per, bare)
+    _announce(sel)
+    if not sel:
+        _err("No modules to run (--offline leaves out the modules that need the network or an LLM)")
+        return 2
+    report_file = bool(ns.output or ns.format)
+    try:
+        if report_file:
+            report = report_package(
+                ns.path, ns.output, ns.format or "html", modules=sel, record=ns.record
+            )
+            outputs: list[Any] = list(report.values())
+        else:
+            outputs = list(check_package(ns.path, modules=sel, record=ns.record))
+    except (PackageError, ValueError) as exc:  # a path that is not a package, or a bad -o
+        _err(str(exc))
+        return 2
+    if ns.record:
+        console().print(f"[dim]Run record: {_escape(ns.record)}[/]")
+    if report_file:
+        console().print(f"[dim]Report: {_escape(report.save_path)}[/]")
+    _print_outputs(outputs, ns.json, summary=False)
+    lists = [o.extras["checklist"] for o in outputs if _has_checklist(o)]
+    if lists and not ns.json:
+        _print_table(
+            pd.concat(lists, ignore_index=True),
+            ["item", "title", "status", "detail"],
+            title="\nChecklist",
+        )
+    return _exit_status(outputs)
 
 
 def cmd_rerun(ns: argparse.Namespace) -> int:
@@ -918,6 +985,33 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("-o", "--output", default=None)
     p.add_argument("-f", "--format", default="html", choices=["html", "qmd", "md"])
     p.set_defaults(func=cmd_report)
+
+    p = sub.add_parser(
+        "package",
+        help="check a data package (a folder or archive), no paper needed",
+        description=(
+            "Check a data package: the folder (or zip or tar archive) of data, code and "
+            "documentation that comes with a paper. Everything runs on this machine; an "
+            "archive is extracted to a temporary folder and removed afterwards. Without -o the "
+            "results are printed; with -o (or -f) a report is written."
+        ),
+    )
+    p.add_argument("path", metavar="PATH", help="the package's folder, or a zip or tar archive")
+    _selection_flags(
+        p,
+        module_help="module name, pack::name or path (repeatable); "
+        "default: the datapackage::default preset",
+    )
+    p.add_argument("--json", action="store_true", help="print results as JSON")
+    p.add_argument("-o", "--output", default=None, help="write a report to this file")
+    p.add_argument(
+        "-f",
+        "--format",
+        default=None,
+        choices=["html", "qmd", "md"],
+        help="the report's format (default html); without -o the file is <name>_report.<format>",
+    )
+    p.set_defaults(func=cmd_package)
 
     p = sub.add_parser("rerun", help="replay a run record on papers")
     p.add_argument("record_file", metavar="RECORD")
