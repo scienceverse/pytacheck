@@ -4,6 +4,6 @@
 "stat_effect_size.green_paper": {"r": "bfee370efa08b0ce", "py": "9158dfde0e5c82ae", "diff": ["table.text[]"]},
 "stat_effect_size.preprint_tei": {"r": "02ce78736b29711a", "py": "bb3f37b64bd3f53b", "diff": ["summary_text[]", "table.text[]"]},
 "stat_effect_size.published_tei": {"r": "06f92c0dffe871a9", "py": "8ed854aedd9867b9", "diff": ["summary_text[]", "table.text[]"]},
-"stat_effect_size.tricky": {"r": "6aa5a9efcc96cbe9", "py": "bab117862172e391", "diff": ["report[]", "summary_text[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_n[]", "traffic_light[]"]},
+"stat_effect_size.tricky": {"r": "6aa5a9efcc96cbe9", "py": "ff68aeedc7a45d11", "diff": ["report[]", "summary_table.ttests_with_es[]", "summary_text[]", "table", "traffic_light[]"]},
 "stat_effect_size.xml_unsorted": {"r": "50b9fcf6d56dad86", "py": "34fbe346a7c6ac06", "diff": ["summary_text[]", "table.text[]"]}
 }

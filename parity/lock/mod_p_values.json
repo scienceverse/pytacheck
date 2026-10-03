@@ -1,5 +1,8 @@
 {
+"all_p_values.psychsci": {"r": "5a320101e6af5c2e", "py": "ae1a4c91a1829dac", "diff": ["summary_table.p_values[]", "summary_text[]", "table"]},
 "stat_p_exact.duplicates": {"r": "1fb5552c371b4b52", "py": "1cab4e69a94c6926", "diff": ["summary_text[]"]},
 "stat_p_exact.green_several": {"r": "2de60fd0caa29dc2", "py": "5bf2ae2de79f462e", "diff": ["report[]", "summary_table.n_zero[]", "summary_text[]", "table.zero[]", "traffic_light[]"]},
-"stat_p_exact.stars": {"r": "8c316f4b7eb9dc33", "py": "05b0ca551eebe67e", "diff": ["summary_table.n_imprecise[]", "summary_text[]", "table.imprecise[]"]}
+"stat_p_exact.psychsci": {"r": "e3494b247e5a84bf", "py": "93e5f96b75c0ad6f", "diff": ["summary_table.n_imprecise[]", "summary_text[]", "table"]},
+"stat_p_exact.stars": {"r": "8c316f4b7eb9dc33", "py": "05b0ca551eebe67e", "diff": ["summary_table.n_imprecise[]", "summary_text[]", "table.imprecise[]"]},
+"stat_p_nonsig.psychsci": {"r": "ec161d1d95ea6f02", "py": "a3b107b795f9a11d", "diff": ["summary_table.n_nonsignificant[]", "summary_text[]", "table"]}
 }
