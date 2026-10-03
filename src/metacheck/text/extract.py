@@ -10,6 +10,7 @@ follow metacheck exactly.
 from __future__ import annotations
 
 import math
+import re
 from typing import Any, cast
 
 import pandas as pd
@@ -26,10 +27,16 @@ __all__ = ["extract_eq", "extract_p_values", "extract_urls"]
 _OPERATORS = ("=", "<", ">", "~", "≈", "≠", "≤", "≥", "≪", "≫")
 _OPS = "".join(_OPERATORS)
 
+# An e-mail address is matched whole, so that neither its local part ("k.aristovich") nor
+# its domain ("gmail.com") is listed as a host name; extract_urls() drops these matches (U206)
+_EMAIL = r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"
+_EMAIL_RX = re.compile(_EMAIL)
+
 # "et al." glued to the next word ("et al.Premotor") is not a host name (U158)
 _URL_PATTERN = (
     r"\b(?<!\bet )"
-    r"((doi:)?(https?://)?(([\w.-]+\.[a-z]{2,})|(\d{1,3}(\.\d{1,3}){3}))(:\d+)?(/[^\s]*)?)\b"
+    f"(?:{_EMAIL}|"
+    r"((doi:)?(https?://)?(([\w.-]+\.[a-z]{2,})|(\d{1,3}(\.\d{1,3}){3}))(:\d+)?(/[^\s]*)?))\b"
 )
 
 # Differs from metacheck (U204, U205): "ps", "p's" and "p-values" are ways to
@@ -146,7 +153,11 @@ def extract_urls(paper: Any) -> pd.DataFrame:
     """
     # every URL match contains ".xx" (a domain) or "d.d" (an IPv4 address)
     table = _search_table(paper, r"\.[a-z]{2}|\d\.\d", perl=True)
-    return cast(pd.DataFrame, text_search(table, _URL_PATTERN, return_="match", perl=True))
+    urls = text_search(table, _URL_PATTERN, return_="match", perl=True)
+    if not isinstance(urls, pd.DataFrame) or "text" not in urls.columns:
+        return cast(pd.DataFrame, urls)  # character input: text_search()'s result as it is
+    is_email = urls["text"].map(lambda t: isinstance(t, str) and _EMAIL_RX.fullmatch(t) is not None)
+    return urls.loc[~is_email.to_numpy(dtype=bool)].reset_index(drop=True)
 
 
 def extract_p_values(paper: Any) -> pd.DataFrame:

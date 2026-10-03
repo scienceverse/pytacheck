@@ -150,7 +150,7 @@ modules is covered in [MODULES.md](MODULES.md).
 | Check | R file | Python | Tests | Parity areas | Status | Recorded differences |
 |---|---|---|---|---|---|---|
 | `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | U16, U204 |
-| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U77, U79, U158 |
+| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U77, U79, U158, U206 |
 | `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | U79, U84, U85 |
 | `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | U79, U82, U86, U87, U89 |
 | `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | D14, U91, U92 |

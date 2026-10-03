@@ -84,6 +84,13 @@ differences:
     kind: r_bug_fixed
     ref: U158
     reason: "'et al.Premotor' is not a URL (metacheck lists the host name 'al.Premotor')"
+  - module: all_urls
+    input: bibr12/preprint.json
+    field: [summary_table.urls, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U206
+    reason: "e-mail addresses are not URLs (metacheck lists 'gmail.com' and the parts of the other addresses: 17 rows, 15 here)"
   # module text -----------------------------------------------------------------
   - module: coi_check_oi
     input: "*"

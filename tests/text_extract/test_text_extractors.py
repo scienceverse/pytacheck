@@ -44,6 +44,19 @@ def test_extract_urls_et_al_glued_to_a_word_is_not_a_url() -> None:
     assert urls["text"].tolist() == ["al.com", "osf.io/abc"]
 
 
+def test_extract_urls_skips_email_addresses() -> None:
+    # U206: metacheck lists "k.aristovich" and "ucl.ac.uk" (and "gmail.com") as URLs
+    texts = [
+        "Contact k.aristovich@ucl.ac.uk or m.t.calcagni@sub.dept.univ.edu.",
+        "Email: someone@hotmail.com.br, then see osf.io/abc.",
+    ]
+    assert extract_urls(pc.test_paper(texts))["text"].tolist() == ["osf.io/abc"]
+    # a URL with an @ after its host is still a URL, and the table keeps rows 0..n-1
+    urls = extract_urls(pc.test_paper(["a@b.org", "see twitter.com/@user and https://x.org/a@b.c"]))
+    assert urls["text"].tolist() == ["twitter.com/@user", "https://x.org/a@b.c"]
+    assert urls.index.tolist() == [0, 1]
+
+
 def test_extract_urls_paperlist(psychsci) -> None:
     urls = extract_urls(psychsci)
     assert set(urls["paper_id"]) <= set(psychsci.names)

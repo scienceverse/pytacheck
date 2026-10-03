@@ -70,6 +70,10 @@ These change the results of validated checks (`all_p_values`, `stat_p_exact`, `s
 - Scientific notation may use "×", leave out "^" and use the Unicode minus: "p = 1.8 × 10 -6" was read as p = 1.8 and is now 1.8e-06.
 - `extract_eq()` and `extract_p_values()` read the Unicode minus sign (U+2212), which text from PDFs often has (bibr keeps it, Grobid writes "-"): "t(28) = −2.15" and "d = −0.80" were not found, so `stat_effect_size` saw no t-test in such a sentence. `rhs` and `p_value` now have "-"; the matched `text` is kept as written.
 
+### Fixed: e-mail addresses are not URLs
+
+- `all_urls` and `extract_urls()` no longer list the parts of an e-mail address as URLs: for `k.aristovich@ucl.ac.uk` metacheck lists `k.aristovich` and `ucl.ac.uk`, and `gmail.com` for every address at gmail.com. A URL that has an `@` after its host (`twitter.com/@user`) is still listed. On 120 papers read from bibr 12.x, 274 of 575 rows were such fragments (214 of 835 in 86 older bibr papers, 12 of 2,584 in 450 Grobid TEI papers); a paper whose only matches were e-mail addresses had the traffic light `info` and now has `na` (22 of the 120). This changes the result of a validated module; metacheck has the same bug (docs/UPSTREAM_ISSUES.md U206).
+
 ### Documentation
 
 - docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.
