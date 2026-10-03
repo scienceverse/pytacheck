@@ -6,7 +6,11 @@ Browsers send a cookie for 127.0.0.1 to every port, so another program on this c
 that a person visits in the same browser can see the token cookie. Nothing in a plain-http
 cookie prevents that. The guard therefore also refuses requests that another local page
 starts (``Origin`` and ``Sec-Fetch-Site``), and the app only reads files that were
-uploaded through the page.
+uploaded through the page. The one exception is the local app's "Check a data package"
+page, which reads the folder that the person types (see ``package.py``). The guard does
+not narrow that: a program on this computer that has the token cookie (see above) can ask
+the page to check any folder this user can read, and then download the report, which
+lists its files and quotes its README. A shared server has no such page.
 """
 
 from __future__ import annotations

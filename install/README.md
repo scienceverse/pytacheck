@@ -29,6 +29,19 @@ differs from the committed file. That includes a dependency update that
 changes `uv.lock`: run the command on that branch and commit the file. The
 install jobs run either way.
 
+## `--steward`
+
+`sh install.sh --steward` (Windows: `.\install.ps1 -Steward`, or
+`METACHECK_STEWARD=1` with `irm | iex`) is for a data steward who only checks
+data packages. It installs the same app and opens it on the "Check a data
+package" page (`metacheck-app --page package`). The installer has no PDF or bibr
+step, so there is nothing to skip: the page needs neither a PDF reader nor a key.
+
+The scripts open the page only when the installed app has the `--page` option
+(they ask it with `--help`). The pinned commit below can be older than the page;
+a steward install of such a commit opens the app on the paper page, and says so.
+`ui_smoke.py` also runs the data package page.
+
 ## The pinned commit
 
 Both scripts have a `REF` line near the top: the commit that a plain run
@@ -66,6 +79,7 @@ are not touched.
 |---|---|
 | `METACHECK_HOME` | the folder |
 | `METACHECK_NO_LAUNCH=1` | install, do not open the app |
+| `METACHECK_STEWARD=1` | same as `--steward` / `-Steward`: open the app on its "Check a data package" page |
 | `METACHECK_UNINSTALL=1` | uninstall |
 | `METACHECK_REF` | install this commit instead of the pinned one |
 | `METACHECK_SPEC` | install this requirement instead of the GitHub archive |

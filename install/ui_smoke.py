@@ -2,8 +2,8 @@
 python install/ui_smoke.py APP [--port N] [--shots DIR] [--browser-path EXE]
 
 Starts the app without a browser, opens its token link in Chromium (Playwright for
-Python), runs the demo paper, then uploads the demo JSON and checks it. The page may
-talk to 127.0.0.1 only. Needs `pip install playwright` and `playwright install chromium`.
+Python), runs the demo paper, then uploads the demo JSON and checks it, then checks a
+small data package on the "Check a data package" page. The page may talk to 127.0.0.1 only. Needs `pip install playwright` and `playwright install chromium`.
 """
 
 import argparse
@@ -11,6 +11,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -133,6 +134,35 @@ def click_through(page: Page, url: str, paper: Path) -> None:
     check_results(page, "uploaded JSON")
 
 
+def click_through_package(page: Page, url: str) -> None:
+    """The data package page: name a folder, run the default checks, see the checklist."""
+    parts = urlsplit(url)
+    with tempfile.TemporaryDirectory(prefix="metacheck-ui-package-") as tmp:
+        root = Path(tmp) / "study"
+        (root / "data").mkdir(parents=True)
+        (root / "README.md").write_text("# Study\n\nSurvey data.\n", encoding="utf-8")
+        (root / "data" / "survey.csv").write_text("id,age\n1,23\n2,31\n", encoding="utf-8")
+        page.goto(f"{parts.scheme}://{parts.netloc}/package")  # the token cookie is set
+        box = page.get_by_placeholder("/path/to/my_package")
+        box.wait_for(timeout=60_000)
+        box.fill(str(root))
+        page.get_by_role("button", name="Check the package").click()
+        page.get_by_text("Data Package Files").first.wait_for(timeout=SLOW)
+        page.get_by_text(re.compile(r"^Checked study in ")).wait_for(timeout=SLOW)
+        statuses = page.get_by_text(re.compile(r"^(Pass|Warning|Fail)$"))
+        statuses.first.wait_for(state="attached", timeout=60_000)
+        failed = page.get_by_text("Did not run", exact=True).count()
+        if failed:
+            raise AssertionError(f"data package: {failed} checks did not run")
+        print(f"data package: {statuses.count()} status cells", flush=True)
+        link = page.get_by_role("link", name="Download the report")
+        link.wait_for(timeout=60_000)
+        href = link.get_attribute("href") or ""
+        if not href.startswith("/report/"):
+            raise AssertionError(f"data package: odd download link {href!r}")
+        print("data package: report link ok", flush=True)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("app")
@@ -170,6 +200,7 @@ def main() -> int:
             failed = True
             try:
                 click_through(page, url, args.paper)
+                click_through_package(page, url)
                 failed = False
             finally:
                 for line in errors:

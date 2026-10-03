@@ -159,12 +159,16 @@ def test_second_start_reuses_the_running_app(
 
 def test_stale_state_starts_fresh(monkeypatch: pytest.MonkeyPatch) -> None:
     saved.write_state(9, "gone")
-    started: list[tuple[int, bool]] = []
+    started: list[tuple[int, bool, str | None]] = []
     monkeypatch.setattr(
-        launch, "_serve", lambda port, browser: started.append((port, browser)) or 0
+        launch,
+        "_serve",
+        lambda port, browser, page=None: started.append((port, browser, page)) or 0,
     )
     assert main(["--no-browser"]) == 0
-    assert started == [(0, False)]
+    assert started == [(0, False, None)]
+    assert main(["--no-browser", "--page", "package"]) == 0
+    assert started[-1] == (0, False, "package")
 
 
 def test_self_test_passes(capsys: pytest.CaptureFixture[str]) -> None:
