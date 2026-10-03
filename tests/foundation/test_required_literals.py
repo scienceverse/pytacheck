@@ -234,9 +234,15 @@ def test_the_builtin_triples_keep_their_literals() -> None:
     assert covered >= BUILTIN_COVERED_FLOOR, f"{covered} of {len(triples)} triples have literals"
 
 
-def test_the_recorded_builtin_triples_are_current() -> None:
+def test_the_recorded_builtin_triples_are_current(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """The JSON is what the recorder gives today: a module's new pattern means a re-record."""
     from tests.foundation.record_builtin_patterns import record
+
+    monkeypatch.setenv(
+        "PYTACHECK_CACHE_DIR", str(tmp_path)
+    )  # the accuracy run makes its cache here
 
     recorded = [list(t) for t in record()]
     stored = [list(t) for t in builtin_triples()]
