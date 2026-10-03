@@ -74,6 +74,10 @@ These change the results of validated checks (`all_p_values`, `stat_p_exact`, `s
 
 - `all_urls` and `extract_urls()` no longer list the parts of an e-mail address as URLs: for `k.aristovich@ucl.ac.uk` metacheck lists `k.aristovich` and `ucl.ac.uk`, and `gmail.com` for every address at gmail.com. A URL that has an `@` after its host (`twitter.com/@user`) is still listed. On 120 papers read from bibr 12.x, 274 of 575 rows were such fragments (214 of 835 in 86 older bibr papers, 12 of 2,584 in 450 Grobid TEI papers); a paper whose only matches were e-mail addresses had the traffic light `info` and now has `na` (22 of the 120). This changes the result of a validated module; metacheck has the same bug (docs/UPSTREAM_ISSUES.md U206).
 
+### Fixed: ref_consistency on papers from older bibr exports
+
+- `ref_consistency` counts the citations of an older bibr JSON export (bibr 0.3.0 and the v10 format), which marks them `bib` instead of Grobid's `bibr`. Before, such a paper had no citations: every reference was reported as not cited and the light was red. On 120 platform papers 4,973 of 4,973 references were reported, now 922, and 20 papers are green instead of none (86 older bibr papers: 3,700 to 375, 11 green). A 12.x export and Grobid TEI are unchanged. What the module still reports is mostly bibr's own noise (citations it did not link, author-year styles). metacheck has the same bug (docs/UPSTREAM_ISSUES.md U207).
+
 ### Documentation
 
 - docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.
