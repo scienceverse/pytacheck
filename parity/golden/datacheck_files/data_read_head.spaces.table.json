@@ -1,0 +1,26 @@
+{
+  "id": "data_read_head.spaces.table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "subject condition rt"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1 a 512.5",
+          "2 b 498",
+          "3 a 610",
+          "4 b 530"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -94,7 +94,14 @@ def test_file_download_edge_cases(mock_api: object) -> None:
     assert dspace7_file_download("https://example.org/x") is None
     assert dspace7_file_download(None) is None
     no_files = "https://scholarworks.umass.edu/items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-    assert dspace7_file_download(no_files) is None
+    # an item without files is an empty listing carrying its doi/licence
+    # (metacheck #435; it was NULL)
+    empty = dspace7_file_download(no_files)
+    assert empty is not None and len(empty) == 0
+    assert list(empty.columns) == [
+        "dspace7_url", "name", "file_url", "file_location", "size", "isdir", "ext", "type"
+    ]  # fmt: skip
+    assert empty.attrs == {"license": {no_files: None}, "doi": {no_files: None}}
     both = dspace7_file_download([GT_URL, no_files, None])
     assert both["dspace7_url"].iloc[-2] == no_files
     assert pd.isna(both["dspace7_url"].iloc[-1])
@@ -108,7 +115,8 @@ def test_file_lists_name_the_items_not_found(mock_api: object) -> None:
     from metacheck.archives.dspace7 import _dspace7_file_lists
 
     no_files = "https://scholarworks.umass.edu/items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-    assert _dspace7_file_lists(no_files) == (None, [])
+    files, unfound = _dspace7_file_lists(no_files)
+    assert files is not None and len(files) == 0 and unfound == []
     assert _dspace7_file_lists("https://example.org/x") == (None, ["https://example.org/x"])
     assert _dspace7_file_lists(None) == (None, [])
     files, unfound = _dspace7_file_lists([GT_URL, no_files, "https://example.org/x", None])
@@ -116,3 +124,68 @@ def test_file_lists_name_the_items_not_found(mock_api: object) -> None:
     assert files is not None and files["name"].tolist()[0] == "data.CSV"
     urls = ["https://example.org/a", "https://example.org/b"]
     assert _dspace7_file_lists(urls) == (None, urls)
+
+
+def test_file_download_carries_doi_and_licence(mock_api: object) -> None:
+    lic = "http://creativecommons.org/licenses/by/4.0/"
+    one = dspace7_file_download(GT_URL)
+    assert one is not None
+    assert one.attrs == {"license": {GT_URL: lic}, "doi": {GT_URL: None}}
+    no_files = "https://scholarworks.umass.edu/items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    both = dspace7_file_download([GT_URL, no_files, "https://example.org/x"])
+    assert both.attrs["license"] == {GT_URL: lic, no_files: None}
+    assert set(both.attrs["doi"]) == {GT_URL, no_files}
+
+
+# --------------------------------------------------------------------------- DOI mentions
+
+
+def _doi_redirect(serve: object, doi: str, target: str) -> list:
+    import httpx
+
+    return serve(  # type: ignore[operator,no-any-return]
+        {
+            f"https://doi.org/{doi}": httpx.Response(302, headers={"Location": target}),
+            target: httpx.Response(200, text="<html></html>"),
+        }
+    )
+
+
+def test_resolve_doi_url(serve: object) -> None:
+    from metacheck.archives.dspace7 import _dspace7_resolve_doi_url
+
+    target = f"https://repository.gatech.edu/entities/publication/{GT}"
+    _doi_redirect(serve, "10.35090/gatech/1", target)
+    assert _dspace7_resolve_doi_url("10.35090/gatech/1") == target
+    # not a DSpace 7 host, or one named only in the query string (U206)
+    _doi_redirect(serve, "10.1234/a", "https://example.org/a")
+    _doi_redirect(serve, "10.1234/b", "https://example.org/b?next=repository.gatech.edu")
+    assert _dspace7_resolve_doi_url("10.1234/a") is None
+    assert _dspace7_resolve_doi_url("10.1234/b") is None
+    # unresolvable (a 404 at doi.org)
+    assert _dspace7_resolve_doi_url("10.1234/missing") is None
+    # www. aside, a listed host matches
+    _doi_redirect(serve, "10.3929/x", "https://research-collection.ethz.ch/handle/20.500.11850/1")
+    assert (
+        _dspace7_resolve_doi_url("10.3929/x")
+        == "https://research-collection.ethz.ch/handle/20.500.11850/1"
+    )
+
+
+def test_links_resolve_doi_mentions(serve: object) -> None:
+    target = f"https://repository.gatech.edu/entities/publication/{GT}"
+    requests = _doi_redirect(serve, "10.35090/gatech/1", target)
+    paper = pc.test_paper(
+        [
+            "Data: https://doi.org/10.35090/gatech/1. and doi:10.1234/other.",
+            "Again 10.35090/gatech/1",
+        ],
+        ["https://osf.io/abcde"],
+    )
+    links = dspace7_links(paper)
+    # the mentions' href is the resolved landing page (one row per sentence);
+    # each distinct DOI is resolved once
+    assert links["href"].tolist() == [target, target]
+    assert links["text_id"].tolist() == [1, 2]
+    asked = [str(r.url) for r in requests if "doi.org" in str(r.url)]
+    assert sorted(asked) == ["https://doi.org/10.1234/other", "https://doi.org/10.35090/gatech/1"]

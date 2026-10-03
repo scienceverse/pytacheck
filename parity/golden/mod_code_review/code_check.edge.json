@@ -2,22 +2,7 @@
   "id": "code_check.edge",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `text`."
-  ],
+  "warnings": [],
   "value": {
     "t": "module_output",
     "names": [
@@ -82,8 +67,7 @@
           "percentage_comment",
           "has_docstring",
           "loaded_files_missing",
-          "loaded_files_missing_names",
-          "error"
+          "loaded_files_missing_names"
         ],
         "v": [
           {
@@ -246,8 +230,8 @@
               false,
               null,
               null,
-              null,
-              null,
+              false,
+              false,
               false
             ]
           },
@@ -276,8 +260,8 @@
               0,
               0,
               0,
-              null,
-              null,
+              0,
+              0,
               0
             ]
           },
@@ -291,8 +275,8 @@
               "",
               "",
               "",
-              null,
-              null,
+              "",
+              "",
               ""
             ]
           },
@@ -306,8 +290,8 @@
               0,
               0,
               0,
-              null,
-              null,
+              0,
+              0,
               0
             ]
           },
@@ -321,8 +305,8 @@
               "",
               "",
               "",
-              null,
-              null,
+              "",
+              "",
               ""
             ]
           },
@@ -336,8 +320,8 @@
               0,
               0,
               0,
-              null,
-              null,
+              0,
+              0,
               0
             ]
           },
@@ -351,8 +335,8 @@
               "",
               "",
               "",
-              null,
-              null,
+              "",
+              "",
               ""
             ]
           },
@@ -366,8 +350,8 @@
               0,
               0,
               0,
-              null,
-              null,
+              0,
+              0,
               0
             ]
           },
@@ -396,8 +380,8 @@
               0,
               0,
               0,
-              null,
-              null,
+              0,
+              0,
               0
             ]
           },
@@ -411,8 +395,8 @@
               "",
               "",
               "",
-              null,
-              null,
+              "",
+              "",
               ""
             ]
           },
@@ -422,12 +406,12 @@
               0,
               0,
               1,
-              null,
+              0,
               1,
-              null,
-              null,
-              null,
-              null,
+              0,
+              0,
+              0,
+              0,
               2
             ]
           },
@@ -437,12 +421,12 @@
               0,
               3,
               2,
-              null,
+              0,
               1,
-              null,
-              null,
-              null,
-              null,
+              0,
+              0,
+              0,
+              0,
               0
             ]
           },
@@ -467,10 +451,10 @@
               null,
               false,
               null,
+              false,
               null,
-              null,
-              null,
-              null,
+              false,
+              false,
               null,
               null,
               null
@@ -482,12 +466,12 @@
               0,
               0,
               1,
-              null,
               0,
-              null,
-              null,
-              null,
-              null,
+              0,
+              0,
+              0,
+              0,
+              0,
               0
             ]
           },
@@ -497,28 +481,13 @@
               "",
               "",
               "data.csv",
-              null,
               "",
-              null,
-              null,
-              null,
-              null,
+              "",
+              "",
+              "",
+              "",
+              "",
               ""
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              null,
-              "non-character argument",
-              null,
-              "non-character argument",
-              "non-character argument",
-              "subscript out of bounds",
-              "subscript out of bounds",
-              null
             ]
           }
         ]
@@ -527,7 +496,7 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"% Comments\" = c(\"\", \n\"0%\", \"33%\", \"\", \"50%\", \"\", \"\", \"\", \"\", \"100%\"), \"Missing Files\" = c(0L, \n0L, 1L, NA, 0L, NA, NA, NA, NA, 0L), \"Absolute Paths\" = c(0L, \n1L, 1L, 0L, 0L, 0L, 0L, NA, NA, 0L), \"Code Between Libraries\" = c(NA, \n2L, NA, NA, NA, NA, NA, NA, NA, NA)), row.names = c(NA, 10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"% Comments\" = c(\"\", \n\"0%\", \"33%\", \"\", \"50%\", \"\", \"\", \"\", \"\", \"100%\"), \"Missing Files\" = c(0L, \n0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L), \"Absolute Paths\" = c(0L, \n1L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L), \"Code Between Libraries\" = c(NA, \n2L, NA, NA, NA, NA, NA, NA, NA, NA)), row.names = c(NA, 10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code).",
           "#### Missing Files",

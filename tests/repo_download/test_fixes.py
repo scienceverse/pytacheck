@@ -136,10 +136,27 @@ def test_zip_timeout_message_with_a_fractional_timeout(
 # -- U74: the zip gates of download_repo_files() ------------------------------------------
 
 
-def test_zip_gate_ignores_rows_without_a_repository(monkeypatch: pytest.MonkeyPatch) -> None:
+_DRYAD_REPO = "https://doi.org/10.5061/dryad.u74"
+_DRYAD_ZIP = "https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.u74/download"
+
+
+def _dryad_rows(n: int) -> dict[str, list[Any]]:
+    return {
+        "repo_url": [_DRYAD_REPO] * n,
+        "file_name": [f"f{i}.csv" for i in range(n)],
+        "file_path": [f"f{i}.csv" for i in range(n)],
+        "file_url": [f"https://datadryad.org/api/v2/files/{i}/download" for i in range(n)],
+        "file_size": [10.0] * n,
+    }
+
+
+@pytest.mark.parametrize("dtype", [object, "string"])
+def test_zip_gate_ignores_rows_without_a_repository(
+    monkeypatch: pytest.MonkeyPatch, dtype: Any
+) -> None:
     # metacheck: sum(files$repo_url == repo) is NA with any NA repo_url, so the
-    # zip is skipped ("holds NA files")
-    import metacheck.archives.zenodo as zen
+    # Dryad archive is skipped (the other hosts' archive branches are gone, #424)
+    import metacheck.archives.dryad as dryad
 
     calls: list[str] = []
 
@@ -149,38 +166,29 @@ def test_zip_gate_ignores_rows_without_a_repository(monkeypatch: pytest.MonkeyPa
             files.iat[i, files.columns.get_loc("file_location")] = files[".cache_path"].iloc[i]
         return files
 
-    monkeypatch.setattr(zen, "_zenodo_id", lambda x: "123")
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 1024.0)
+    monkeypatch.setattr(dryad, "_dryad_doi", lambda x: "10.5061/dryad.u74")
     monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
-    files = pd.DataFrame(
-        {
-            "repo_url": ["https://zenodo.org/records/123"] * 2 + [None],
-            "file_name": ["a.csv", "b.csv", "c.csv"],
-            "file_path": ["a.csv", "b.csv", "c.csv"],
-            "file_url": [
-                "https://zenodo.org/records/123/files/a.csv",
-                "https://zenodo.org/records/123/files/b.csv",
-                None,
-            ],
-            "file_size": [10.0, 10.0, 10.0],
-        }
-    )
-    out = download_repo_files(files)
-    assert calls == ["https://zenodo.org/api/records/123/files-archive"]
-    assert out["file_location"].notna().tolist() == [True, True, False]
+    rows = _dryad_rows(13)
+    rows["repo_url"].append(None)
+    rows["file_name"].append("c.csv")
+    rows["file_path"].append("c.csv")
+    rows["file_url"].append(None)
+    rows["file_size"].append(10.0)
+    df = pd.DataFrame(rows)
+    df["repo_url"] = df["repo_url"].astype(dtype)  # a string column holds pd.NA
+    out = download_repo_files(df)
+    assert calls == [_DRYAD_ZIP]
+    assert out["file_location"].notna().tolist() == [True] * 13 + [False]
 
 
 def test_stale_file_location_is_still_fetched(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # metacheck drops rows with any file_location from the remaining downloads
-    import metacheck.archives.zenodo as zen
+    import metacheck.archives.dryad as dryad
 
-    monkeypatch.setattr(zen, "_zenodo_id", lambda x: "123")
-    monkeypatch.setattr(dlm, "_remote_content_length", lambda url, req_func=None: 1024.0)
+    monkeypatch.setattr(dryad, "_dryad_doi", lambda x: "10.5061/dryad.u74")
     monkeypatch.setattr(dlm, "_download_zip_to_cache", lambda files, *a, **k: files)  # zip fails
-    src = tmp_path / "a.csv"
-    src.write_text("x\n")
     fetched: list[str] = []
 
     def one(url: str, dest: str, **kw: Any) -> None:
@@ -189,23 +197,17 @@ def test_stale_file_location_is_still_fetched(
         Path(dest).write_text("x\n")
         return None
 
+    monkeypatch.setattr(dlm, "_download_one", one)
     monkeypatch.setattr(
         dlm,
         "_download_many_parallel",
         lambda urls, dests, *a, **k: [one(u, d) for u, d in zip(urls, dests, strict=True)],
     )
-    files = pd.DataFrame(
-        {
-            "repo_url": ["https://zenodo.org/records/123"],
-            "file_name": ["a.csv"],
-            "file_path": ["a.csv"],
-            "file_url": ["https://zenodo.org/records/123/files/a.csv"],
-            "file_size": [2.0],
-            "file_location": ["/stale/elsewhere/a.csv"],
-        }
-    )
+    rows = _dryad_rows(13)
+    files = pd.DataFrame(rows)
+    files["file_location"] = ["/stale/elsewhere/f0.csv"] + [None] * 12
     out = download_repo_files(files)
-    assert fetched == ["https://zenodo.org/records/123/files/a.csv"]
+    assert "https://datadryad.org/api/v2/files/0/download" in fetched
     assert Path(out["file_location"].iloc[0]).read_text() == "x\n"
 
 

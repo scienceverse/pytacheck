@@ -132,6 +132,65 @@ def test_private_info_parses_eml(mock_api: object) -> None:
     assert files[2] == {"key": None, "size": 1000.0, "pid": None}
 
 
+def test_private_info_entities_without_physical(mock_api: object) -> None:
+    # metacheck #434: an entity listed without <physical> is still a file: its
+    # entityName, the pid from a urn-uuid- id, the size from a HEAD request
+    info = _dataone_info("doi:10.5063/NOPHYS", host="knb.ecoinformatics.org")
+    files = info["files"].iloc[0]
+    assert [f["key"] for f in files] == [
+        "table.csv", "script.R", "shapes.zip", "notes.txt", "raster.tif"
+    ]  # fmt: skip
+    assert files[1] == {
+        "key": "script.R",
+        "size": 4096.0,
+        "pid": "urn:uuid:11111111-2222-3333-4444-555555555555",
+    }
+    # the HEAD answers 404: no size
+    assert files[2]["pid"] == "urn:uuid:66666666-7777-8888-9999-000000000000"
+    assert math.isnan(files[2]["size"])
+    # no urn-uuid- id: no pid and no request
+    assert files[3]["pid"] is None and math.isnan(files[3]["size"])
+    assert files[4]["pid"] is None
+
+
+def test_object_size(serve: object) -> None:
+    import httpx
+
+    from metacheck.archives.dataone import _dataone_object_size
+
+    base = "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/"
+    requests = serve(  # type: ignore[operator]
+        {
+            base + "urn%3Auuid%3Aa": httpx.Response(200, headers={"Content-Length": "123"}),
+            base + "urn%3Auuid%3Ab": httpx.Response(200, headers={"Content-Length": "n/a"}),
+        }
+    )
+    assert _dataone_object_size("knb.ecoinformatics.org", "/knb/d1/mn/v2/", "urn:uuid:a") == 123.0
+    assert math.isnan(
+        _dataone_object_size("knb.ecoinformatics.org", "/knb/d1/mn/v2/", "urn:uuid:b")
+    )
+    assert math.isnan(
+        _dataone_object_size("knb.ecoinformatics.org", "/knb/d1/mn/v2/", "urn:uuid:c")
+    )
+    assert {r.method for r in requests} == {"HEAD"}
+
+
+def test_knb_docids_and_view_urls() -> None:
+    # metacheck #435: KNB's #view/ URLs and a bare legacy docid (knb.<n>.<rev>)
+    urls = [
+        "https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87",
+        "https://knb.ecoinformatics.org/catalog/view/doi:10.5063/F1Z60M87",
+        "knb.1404.1",
+        "knb.1404",
+    ]
+    assert _dataone_host(urls) == ["knb.ecoinformatics.org"] * 3 + [None]
+    assert _dataone_pid(urls) == ["doi:10.5063/F1Z60M87"] * 2 + ["knb.1404.1", None]
+    paper = pc.test_paper(["The legacy package knb.1404.1 and not knb.1404."], [])
+    links = dataone_links(paper)
+    assert links["href"].tolist() == ["knb.1404.1"]
+    assert links["dataone_pid"].tolist() == ["knb.1404.1"]
+
+
 def test_private_info_errors(mock_api: object) -> None:
     assert _dataone_info("doi:1/x", host="example.org")["error"].iloc[0] == "unknown_host"
     for pid in ("doi:10.5063/NOTEML", "doi:10.5063/BROKEN"):

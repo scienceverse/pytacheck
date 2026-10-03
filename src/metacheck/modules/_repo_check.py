@@ -951,21 +951,34 @@ def list_dspace(
     return files_df, meta
 
 
-def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
-    """The DSpace 7+ block."""
+def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """The DSpace 7+ block: its files, and each item's DOI and licence."""
     from metacheck.archives.dspace7 import _dspace7_file_lists
 
     files_df = placeholder()
+    meta = meta_frame()
     if not urls:
-        return files_df
+        return files_df, meta
     try:
         # dspace7_file_download(), and the items it could not find (an item
         # without files was found): reported like other failed repositories;
         # R leaves them unflagged, or stores its join error when every item of
-        # several listed nothing, empty items included (UPSTREAM_ISSUES U43)
+        # several could not be found (UPSTREAM_ISSUES U43)
         ds, unfound = _dspace7_file_lists(urls, pb=pb)
         if unfound:
             repos.flag(unfound, _DSPACE_UNFOUND)
+        # the items' DOI and licence, carried in the listing's attrs
+        attrs = ds.attrs if isinstance(ds, pd.DataFrame) else {}
+        doi = attrs.get("doi") or None
+        license_ = attrs.get("license") or None
+        if doi or license_:
+            meta = r_frame(
+                [
+                    ("repo_url", urls, "string"),
+                    ("doi", _named_lookup(doi, urls), "string"),
+                    ("license", _named_lookup(license_, urls), "string"),
+                ]
+            )
         if ds is not None and len(ds) > 0:
             ds = _filter_not_dir(ds)
             names = _col(ds, "name")
@@ -982,7 +995,7 @@ def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
             )
     except Exception as e:
         repos.flag(urls, condition_message(e))
-    return files_df
+    return files_df, meta
 
 
 # -- data repositories with a JSON file list ------------------------------------

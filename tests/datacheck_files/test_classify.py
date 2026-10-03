@@ -99,3 +99,36 @@ def test_genomic_formats_compressed_or_not(stub_category: None) -> None:
     assert F.data_classify_files(["random_archive.tar.gz"]) == ["unknown"]
     assert F.data_classify_files(["random.gz"]) == ["unknown"]
     assert F.data_classify_files(["sample.dat.gz"]) == ["unknown"]
+
+
+# -- upstream test-data-checks.R: domain data formats by extension alone (issue #441) --
+
+
+def test_domain_formats_are_data_by_extension_alone() -> None:
+    # GIS vector data, phylogenetic trees, mass spectrometry, 3D scans and plain-text
+    # tables sit at the root of an archive with no data-named folder to hint at them
+    files = ["shoreline.shp", "shoreline.dbf", "shoreline.shx", "shoreline.prj",
+             "shoreline.sbn", "shoreline.sbx", "shoreline.cpg", "map.gpkg",
+             "tree.nex", "tree.nwk", "tree.tre", "tree.phy",
+             "spectrum.mzxml", "spectrum.mztab", "scan.ply",
+             "results.tab", "results.table"]  # fmt: skip
+    assert F.data_classify_files(files) == ["data"] * len(files)
+    assert F.data_classify_files([f.upper() for f in files]) == ["data"] * len(files)
+    # .stl stays "materials" (a 3D-printable model), not folded in with .ply
+    assert F.data_classify_files(["model.stl"]) == ["materials"]
+
+
+def test_data_format_of_plain_text_tables_and_domain_formats() -> None:
+    # .tab/.table are delimited text, read like .csv/.txt/.tsv/.dat
+    assert F.data_format(["tab", "table"]) == ["tabular", "tabular"]
+    # Shapefile/GIS and phylogenetic-tree formats have no reader
+    assert F.data_format(["shp", "nwk"]) == ["raw", "raw"]
+
+
+@pytest.mark.parametrize("name", ["results.tab", "results.table", "comma.tab"])
+def test_data_read_head_reads_tab_and_table(name: str) -> None:
+    df = F.data_read_head(DATA / name, n_rows=float("inf"))
+    assert df is not None
+    assert len(df) in (3, 4)
+    assert df.shape[1] == 3
+    assert df.columns[0] in ("subject", "id")

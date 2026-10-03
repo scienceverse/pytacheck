@@ -56,6 +56,7 @@
 "osf_check_id.fuzz": {"r": "17978730b6dde185", "py": "c7359c51c409ec69", "diff": ["[]"]},
 "osf_file_download.files_mode.6nt4v": {"r": "d580ed7f3b4d663c", "py": "cbdc7fe9ac341b4d", "diff": ["files", "value", "value.downloaded[]", "value.size_on_disk[]"]},
 "osf_file_download.select.empty": {"r": "ac5146cf65ca52a8", "py": "5267aa4366563a63", "diff": ["<R error, Python value>"]},
+"osf_file_download.zip.budget_partial": {"r": "ac5146cf65ca52a8", "py": "2d1051c7ff42637f", "diff": ["<R error, Python value>"]},
 "path_sanitize.fuzz.dash": {"r": "1c09f01c04532f9a", "py": "57db537c4c78a32e", "diff": ["[]"]},
 "path_sanitize.fuzz.default": {"r": "5459b8941c80a5cc", "py": "2f3f97c7e9ee2ec0", "diff": ["[]"]},
 "path_sanitize.fuzz.keep_ws": {"r": "0e042c8d453f5b53", "py": "6e03da359fb56360", "diff": ["[]"]},

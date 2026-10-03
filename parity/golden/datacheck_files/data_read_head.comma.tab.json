@@ -1,0 +1,43 @@
+{
+  "id": "data_read_head.comma.tab",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "id",
+      "score",
+      "grp"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.5,
+          2.25,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "a"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

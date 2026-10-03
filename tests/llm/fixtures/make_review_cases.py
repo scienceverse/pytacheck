@@ -675,7 +675,7 @@ net_case(
 
 expr_case(
     "msg.cap_report.basic",
-    "metacheck:::cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')",
+    "metacheck:::.cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')",
     f"{H}.L.cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')",
 )
 expr_case(

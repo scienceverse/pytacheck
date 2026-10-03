@@ -1952,3 +1952,486 @@
         - "renv.lock"
         "file_url":
         - !!null "null"
+- "id": "code_library_names.review.loop_var_issue"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "list.packages <- c(\"activity\", \"bbmle\","
+      - "                   \"Distance\")"
+      - "for (req.lib in list.packages) {"
+      - "  if (!require(req.lib, character.only = TRUE)) {"
+      - "    install.packages(req.lib)"
+      - "    library(req.lib, character.only = TRUE)"
+      - "  }"
+      - "}"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.loop_var_issue"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "list.packages <- c(\"activity\", \"bbmle\","
+      - "                   \"Distance\")"
+      - "for (req.lib in list.packages) {"
+      - "  if (!require(req.lib, character.only = TRUE)) {"
+      - "    install.packages(req.lib)"
+      - "    library(req.lib, character.only = TRUE)"
+      - "  }"
+      - "}"
+- "id": "code_library_names.review.new_packages_idiom"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "list.of.packages <- c(\"ggplot2\", \"Rcpp\")"
+      - "new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,\"Package\"])]"
+      - "if (length(new.packages)) install.packages(new.packages)"
+      - "install.packages(list.of.packages[!list.of.packages %in% rownames(installed.packages())])"
+      - "lapply(list.of.packages, require, character.only = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.new_packages_idiom"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "list.of.packages <- c(\"ggplot2\", \"Rcpp\")"
+      - "new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,\"Package\"])]"
+      - "if (length(new.packages)) install.packages(new.packages)"
+      - "install.packages(list.of.packages[!list.of.packages %in% rownames(installed.packages())])"
+      - "lapply(list.of.packages, require, character.only = TRUE)"
+- "id": "code_library_names.review.not_purely_literal"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c(\"zoo\", other)"
+      - "install.packages(pk)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.not_purely_literal"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c(\"zoo\", other)"
+      - "install.packages(pk)"
+- "id": "code_library_names.review.sapply_fun"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "pkgs = c(\"psych\", \"car\")"
+      - "sapply(pkgs, FUN = library, character.only = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.sapply_fun"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "pkgs = c(\"psych\", \"car\")"
+      - "sapply(pkgs, FUN = library, character.only = TRUE)"
+- "id": "code_library_names.review.pload_char"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"lme4\", \"car\")"
+      - "pacman::p_load(char = p)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.pload_char"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"lme4\", \"car\")"
+      - "pacman::p_load(char = p)"
+- "id": "code_library_names.review.pload_character_only"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"lme4\", \"car\")"
+      - "pacman::p_load(p, character.only = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.pload_character_only"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"lme4\", \"car\")"
+      - "pacman::p_load(p, character.only = TRUE)"
+- "id": "code_library_names.review.pload_mixed"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"lme4\", \"car\")"
+      - "pacman::p_load(dplyr, \"tidyr\", tibble)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.pload_mixed"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"lme4\", \"car\")"
+      - "pacman::p_load(dplyr, \"tidyr\", tibble)"
+- "id": "code_library_names.review.pload_named_arg"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "pacman::p_load(dplyr, install = FALSE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.pload_named_arg"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "pacman::p_load(dplyr, install = FALSE)"
+- "id": "code_library_names.review.literal_names"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "library(dplyr); library(\"tidyr\")"
+      - "install.packages(\"afex\", dependencies = TRUE)"
+      - "BiocManager::install(\"edgeR\")"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.literal_names"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "library(dplyr); library(\"tidyr\")"
+      - "install.packages(\"afex\", dependencies = TRUE)"
+      - "BiocManager::install(\"edgeR\")"
+- "id": "code_library_names.review.assign_forms"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "a <<- c(\"one\", \"two\")"
+      - "b = \"three\""
+      - "install.packages(a); install.packages(b)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.assign_forms"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "a <<- c(\"one\", \"two\")"
+      - "b = \"three\""
+      - "install.packages(a); install.packages(b)"
+- "id": "code_library_names.review.later_assignment_wins"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"first\")"
+      - "install.packages(p)"
+      - "p <- c(\"second\", \"third\")"
+      - "install.packages(p)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.later_assignment_wins"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- c(\"first\")"
+      - "install.packages(p)"
+      - "p <- c(\"second\", \"third\")"
+      - "install.packages(p)"
+- "id": "code_library_names.review.loop_over_unknown"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "for (p in pkgs) library(p, character.only = TRUE)"
+      - "for (p in c(\"a\", \"b\")) library(p, character.only = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.loop_over_unknown"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "for (p in pkgs) library(p, character.only = TRUE)"
+      - "for (p in c(\"a\", \"b\")) library(p, character.only = TRUE)"
+- "id": "code_library_names.review.single_quotes_and_T"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c('x1', 'y2')"
+      - "library(pk, character.only = T)"
+      - "require(pk, character.only = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.single_quotes_and_T"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c('x1', 'y2')"
+      - "library(pk, character.only = T)"
+      - "require(pk, character.only = TRUE)"
+- "id": "code_library_names.review.require_namespace_var"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "pkg <- \"stringr\""
+      - "requireNamespace(pkg, quietly = TRUE)"
+      - "requireNamespace(\"glue\", quietly = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.require_namespace_var"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "pkg <- \"stringr\""
+      - "requireNamespace(pkg, quietly = TRUE)"
+      - "requireNamespace(\"glue\", quietly = TRUE)"
+- "id": "code_library_names.review.bare_library_vs_char_only"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- \"tidyr\""
+      - "library(x)"
+      - "library(x, character.only = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.bare_library_vs_char_only"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- \"tidyr\""
+      - "library(x)"
+      - "library(x, character.only = TRUE)"
+- "id": "code_library_names.review.install_c_with_variable"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "extra <- c(\"p1\", \"p2\")"
+      - "install.packages(c(\"a\", \"b\"))"
+      - "install.packages(c(extra, \"z\"))"
+      - "renv::install(extra)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.install_c_with_variable"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "extra <- c(\"p1\", \"p2\")"
+      - "install.packages(c(\"a\", \"b\"))"
+      - "install.packages(c(extra, \"z\"))"
+      - "renv::install(extra)"
+- "id": "code_library_names.review.walk_map_purrr"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c(\"m1\", \"m2\")"
+      - "purrr::walk(pk, library, character.only = TRUE)"
+      - "purrr::map(pk, require, character.only = TRUE)"
+      - "vapply(pk, FUN = require, logical(1), character.only = TRUE)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.walk_map_purrr"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c(\"m1\", \"m2\")"
+      - "purrr::walk(pk, library, character.only = TRUE)"
+      - "purrr::map(pk, require, character.only = TRUE)"
+      - "vapply(pk, FUN = require, logical(1), character.only = TRUE)"
+- "id": "code_library_names.review.indexed_variable"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c(\"i1\", \"i2\")"
+      - "library(pk[1], character.only = TRUE)"
+      - "install.packages(pk[2])"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.indexed_variable"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "pk <- c(\"i1\", \"i2\")"
+      - "library(pk[1], character.only = TRUE)"
+      - "install.packages(pk[2])"
+- "id": "code_library_names.review.unclosed_and_odd"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "library(\"dplyr"
+      - "install.packages(1 + 2)"
+      - "install.packages(.hidden)"
+      - "pkgs <- c(\"a\", 'b\")"
+      - "install.packages(pkgs)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.unclosed_and_odd"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "library(\"dplyr"
+      - "install.packages(1 + 2)"
+      - "install.packages(.hidden)"
+      - "pkgs <- c(\"a\", 'b\")"
+      - "install.packages(pkgs)"
+- "id": "code_library_names.review.comment_removed_assignment"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "# pk <- c(\"hidden\")"
+      - "install.packages(pk)"
+      - "pk <- c(\"shown\") # trailing"
+      - "install.packages(pk)"
+    "lang": "R"
+- "id": "code_char_vector_vars.review.comment_removed_assignment"
+  "r": "metacheck:::.code_char_vector_vars"
+  "py": "metacheck.codecheck.core._code_char_vector_vars"
+  "args":
+    "code_text":
+      "$chr":
+      - "# pk <- c(\"hidden\")"
+      - "install.packages(pk)"
+      - "pk <- c(\"shown\") # trailing"
+      - "install.packages(pk)"
+- "id": "code_library_names.review.python_unchanged"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "import numpy as np"
+      - "pkgs = ['a']"
+      - "from scipy import stats"
+    "lang": "Python"
+- "id": "code_setwd.review.character0"
+  "r": "code_setwd"
+  "py": "metacheck.codecheck.core.code_setwd"
+  "args":
+    "code_text":
+      "$chr": []
+- "id": "code_setwd.review.empty_string"
+  "r": "code_setwd"
+  "py": "metacheck.codecheck.core.code_setwd"
+  "args":
+    "code_text": ""
+- "id": "code_install_packages.review.character0"
+  "r": "code_install_packages"
+  "py": "metacheck.codecheck.core.code_install_packages"
+  "args":
+    "code_text":
+      "$chr": []
+- "id": "code_install_packages.review.empty_string"
+  "r": "code_install_packages"
+  "py": "metacheck.codecheck.core.code_install_packages"
+  "args":
+    "code_text": ""
+- "id": "code_line_stats.review.character0_python"
+  "r": "code_line_stats"
+  "py": "metacheck.codecheck.core.code_line_stats"
+  "args":
+    "code_text":
+      "$chr": []
+    "lang": "Python"
+- "id": "code_remove_comments.review.character0_python"
+  "r": "code_remove_comments"
+  "py": "metacheck.codecheck.core.code_remove_comments"
+  "args":
+    "code_text":
+      "$chr": []
+    "lang": "Python"
+- "id": "code_has_docstring.review.character0"
+  "r": "metacheck:::.code_has_docstring"
+  "py": "metacheck.codecheck.core._code_has_docstring"
+  "args":
+    "code_text":
+      "$chr": []
+- "id": "code_has_docstring.review.empty_string"
+  "r": "metacheck:::.code_has_docstring"
+  "py": "metacheck.codecheck.core._code_has_docstring"
+  "args":
+    "code_text": ""
+- "id": "code_has_docstring.review.blocks"
+  "r": "metacheck:::.code_has_docstring"
+  "py": "metacheck.codecheck.core._code_has_docstring"
+  "args":
+    "code_text":
+      "$chr":
+      - "\"\"\"doc"
+      - "string\"\"\""
+      - "x = 1"
+- "id": "code_has_docstring.review.unclosed"
+  "r": "metacheck:::.code_has_docstring"
+  "py": "metacheck.codecheck.core._code_has_docstring"
+  "args":
+    "code_text":
+      "$chr":
+      - "'''open"
+      - "x = 1"
+- "id": "code_parse_r.review.empty_string"
+  "r": "code_parse_r"
+  "py": "metacheck.codecheck.core.code_parse_r"
+  "args":
+    "text": ""
+- "id": "code_parse_r.review.blank_lines"
+  "r": "code_parse_r"
+  "py": "metacheck.codecheck.core.code_parse_r"
+  "args":
+    "text":
+      "$chr":
+      - ""
+      - "  "
+- "id": "code_abs_path.review.character0"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr": []

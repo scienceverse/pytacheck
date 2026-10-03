@@ -140,21 +140,66 @@ def _dspace7_parse(url: Any) -> pd.DataFrame:
     )
 
 
+#: a DOI anywhere in the text, with an optional ``https://(dx.)doi.org/`` (R:
+#: ``doi_bare_regex`` in dspace7_links())
+_DOI_BARE = r"(?:https?://)?(?:dx\.)?(?:doi\.org/)?(10\.\d{3,9}/[-._;()/:<>A-Za-z0-9]+[A-Za-z0-9])"
+
+
 def dspace7_links(paper: Any) -> pd.DataFrame:
     """Port of R/archive-dspace7.R::dspace7_links(): DSpace 7+ links in papers.
 
     Hyperlinks from the paper's (or paper list's) ``url`` table to any host
     in :data:`DSPACE7_HOSTS`, plus bare mentions of such a host with a path
-    in the text. Trailing slashes are stripped and duplicate rows dropped.
+    in the text, plus the DOIs mentioned in the text that redirect to such a
+    host (each distinct DOI is resolved once through ``doi.org``; its row's
+    ``href`` is the URL it lands on). Trailing slashes are stripped and
+    duplicate rows dropped.
     """
+    from metacheck._r import regexec
     from metacheck.archives.dataone import _scan_links
-    from metacheck.archives.dataverse import _collect_links, _url_rows
+    from metacheck.archives.dataverse import _collect_links, _link_matches, _url_rows
 
     host_regex = _dspace7_host_regex()
     found_href = _url_rows(paper, host_regex)
     bare = f"(?:https?://)?(?:www\\.)?(?:{host_regex})/[A-Za-z0-9/._-]+"
     other = _scan_links(paper, bare, [f"{h}/" for h in DSPACE7_HOSTS])
-    return _collect_links([found_href, other])
+
+    # no DOI-prefix registry exists for DSpace 7, so a paper citing only a DOI
+    # (the host never named) is found by resolving the DOIs it mentions
+    mentions = _link_matches(paper, _DOI_BARE, r"10\.\d{3,9}/")
+    if len(mentions) > 0:
+        dois: list[str | None] = []
+        for href in mentions["href"].tolist():
+            groups = regexec(_DOI_BARE, href, perl=True, ignore_case=True)
+            dois.append(str(groups[1]) if len(groups) >= 2 else None)
+        resolved = {d: _dspace7_resolve_doi_url(d) for d in dict.fromkeys(dois) if d is not None}
+        urls = [None if d is None else resolved[d] for d in dois]
+        keep = [u is not None for u in urls]
+        mentions = mentions.loc[keep].copy()
+        mentions["href"] = pd.Series(
+            [u for u in urls if u is not None], index=mentions.index, dtype="string"
+        )
+    return _collect_links([found_href, other, mentions])
+
+
+def _dspace7_resolve_doi_url(doi: str) -> str | None:
+    """Port of R/archive-dspace7.R::.dspace7_resolve_doi_url().
+
+    The URL ``https://doi.org/<doi>`` redirects to, when it is on a host in
+    :data:`DSPACE7_HOSTS`; else (or when the DOI cannot be resolved) ``None``.
+    R accepts a URL that names a host anywhere (``grepl(host, resolved,
+    fixed = TRUE)``, a query string too); here the URL's host name must be
+    the listed host (``www.`` aside) or a subdomain of it (U206).
+    """
+    from metacheck.archives.dataverse import _on_host, _resolved_url, _url_host
+
+    resolved = _resolved_url(f"https://doi.org/{doi}")
+    url_host = None if resolved is None else _url_host(resolved)
+    if url_host is None:
+        return None
+    if any(_on_host(url_host, host) for host in DSPACE7_HOSTS):
+        return resolved
+    return None
 
 
 def _dspace7_rest(path: str, host: str) -> Any:
@@ -308,11 +353,26 @@ def dspace7_file_download(dspace7_url: Any, pb: Any = None) -> pd.DataFrame | No
     without downloading them: one row per file with ``dspace7_url``,
     ``name``, ``file_url`` (the bitstream's content URL, fetched later by
     ``download_repo_files()``), ``file_location`` (``NA``), ``size``,
-    ``isdir``, ``ext`` and ``type``. ``None`` when the URL names no known
-    host, the item cannot be found or it has no files. A sequence of URLs
-    gives one table, aligned with the input.
+    ``isdir``, ``ext`` and ``type``. Each item's licence and DOI are carried
+    in the table's ``attrs["license"]`` / ``attrs["doi"]`` (``{url: value}``;
+    R: named vectors in attributes), also for an item without files (a
+    zero-row table). ``None`` when the URL names no known host or the item
+    cannot be found. A sequence of URLs gives one table, aligned with the
+    input.
     """
     return _dspace7_file_lists(dspace7_url, pb)[0]
+
+
+_EMPTY_FILES = {
+    "dspace7_url": "string",
+    "name": "string",
+    "file_url": "string",
+    "file_location": "string",
+    "size": "float64",
+    "isdir": "boolean",
+    "ext": "string",
+    "type": "string",
+}
 
 
 def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame | None, list[str]]:
@@ -333,12 +393,22 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
         if len(urls) > 1:
             unique_urls = [u for u in dict.fromkeys(urls) if u is not None]
             results = [_dspace7_file_lists(u, pb=bar) for u in unique_urls]
+            file_lists = [df for df, _ in results]
             unfound = [u for _, failed in results for u in failed]
-            info = bind_rows([df for df, _ in results])
+            info = bind_rows(file_lists)
             orig = pd.DataFrame({"dspace7_url": pd.Series(urls, dtype="string")})
             if "dspace7_url" not in info.columns:
-                return None, unfound  # no URL listed a file (metacheck's join errors here: U43)
-            return left_join(orig, info, by="dspace7_url"), unfound
+                return None, unfound  # no URL found an item (metacheck's join errors here: U43)
+            df = left_join(orig, info, by="dspace7_url")
+            # R: unlist(lapply(file_lists, attr, "license")) -- NULL (no attribute) if none
+            for name in ("license", "doi"):
+                merged: dict[str, Any] = {}
+                for fl in file_lists:
+                    if fl is not None:
+                        merged.update(fl.attrs.get(name) or {})
+                if merged:
+                    df.attrs[name] = merged
+            return df, unfound
 
         url = urls[0] if urls else None
         unlisted = [] if url is None else [url]
@@ -356,10 +426,18 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
         if "error" in info.columns:
             return None, unlisted
 
+        def attr(col: str) -> dict[str, Any]:
+            v = info[col].iloc[0] if col in info.columns and len(info) else None
+            return {_paste(url): None if is_na(v) else v}
+
+        license_, doi = attr("license"), attr("doi")
         file_list = info["files"].iloc[0]
         if file_list is None or len(file_list) == 0:
             _tick(bar, f"- {_paste(url)} contained no files")
-            return None, []
+            empty = pd.DataFrame({k: pd.Series([], dtype=t) for k, t in _EMPTY_FILES.items()})
+            empty.attrs["license"] = license_
+            empty.attrs["doi"] = doi
+            return empty, []
 
         n = len(file_list)
         df = pd.DataFrame(
@@ -372,4 +450,7 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
                 "isdir": pd.Series([False] * n, dtype="boolean"),
             }
         )
-        return _add_ext_type(df), []
+        df = _add_ext_type(df)
+        df.attrs["license"] = license_
+        df.attrs["doi"] = doi
+        return df, []

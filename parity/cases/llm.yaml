@@ -688,7 +688,7 @@
   "args":
     "bytes": !!float "1073741823.9"
 - "id": "cap_report.basic"
-  "r": "cap_report"
+  "r": "metacheck:::.cap_report"
   "py": "metacheck.llm.cap_report"
   "args":
     "message": "The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it."

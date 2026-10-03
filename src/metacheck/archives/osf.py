@@ -13,6 +13,7 @@ A failed listing is an empty :class:`OsfResult` whose ``osf_error`` says why
 
 from __future__ import annotations
 
+import contextlib
 import math
 import os
 import shutil
@@ -34,6 +35,7 @@ from metacheck._r import (
     gsub,
     is_na,
     plural,
+    r_round,
     regextract,
     regextract_all,
     slashed,
@@ -801,7 +803,7 @@ _STORAGE_TRANSIENT = (403, 429, 500, 502, 503, 504)
 
 
 def _cap_helpers() -> tuple[Any, Any, Any]:
-    """``cap_report()``, ``.cap_size_str()`` (R/cap-prompt.R) and ``.cap_num()``."""
+    """``.cap_report()``, ``.cap_size_str()`` (R/cap-prompt.R) and ``.cap_num()``."""
     from metacheck.report.blocks import _cap_num
 
     _cap_size_str: Callable[[float | None], str]
@@ -838,10 +840,25 @@ def _storage_retry() -> tuple[Any, Any]:
     return _storage_is_transient, _storage_backoff
 
 
-def _stream_to_file(url: str, path: str, timeout_s: float = 1800, max_tries: int = 3) -> int:
+class _MaxFileSizeExceeded(Exception):
+    """A streamed body grew past its byte limit (curl's ``maxfilesize_large``)."""
+
+
+def _stream_to_file(
+    url: str,
+    path: str,
+    timeout_s: float = 1800,
+    max_tries: int = 3,
+    max_bytes: float = math.inf,
+) -> int:
     """GET *url* straight to *path* with the storage retry policy; returns the status.
 
-    Raises the last connection error when every try failed to connect.
+    Raises the last connection error when every try failed to connect. A finite
+    *max_bytes* stops the transfer once more bytes than that arrive (or at once
+    when the Content-Length says so), raising :class:`_MaxFileSizeExceeded` with
+    nothing left at *path*; a connection error is then not retried, since each
+    retry would download up to the limit again (R: ``req_retry(retry_on_failure
+    = !is.finite(max_bytes))`` with ``req_options(maxfilesize_large =)``).
     """
     import httpx
 
@@ -850,6 +867,7 @@ def _stream_to_file(url: str, path: str, timeout_s: float = 1800, max_tries: int
 
     is_transient, backoff = _storage_retry()
     headers = _osf_headers()["headers"]
+    limited = math.isfinite(max_bytes)
     last_exc: Exception | None = None
     status = 0
     for attempt in range(1, max_tries + 1):
@@ -859,13 +877,20 @@ def _stream_to_file(url: str, path: str, timeout_s: float = 1800, max_tries: int
             ) as resp:
                 status = resp.status_code
                 if status == 200 or not is_transient(resp) or attempt == max_tries:
+                    declared = resp.headers.get("content-length")
+                    if limited and declared and declared.isdigit() and int(declared) > max_bytes:
+                        raise _MaxFileSizeExceeded("Maximum file size exceeded")
                     with atomic_write(path) as fh:
+                        written = 0
                         for chunk in resp.iter_bytes():
+                            written += len(chunk)
+                            if limited and written > max_bytes:
+                                raise _MaxFileSizeExceeded("Maximum file size exceeded")
                             fh.write(chunk)
                     return status
         except (httpx.TransportError, httpx.TimeoutException) as exc:
             last_exc = exc
-            if attempt == max_tries:
+            if attempt == max_tries or limited:
                 raise
         http.sleep(backoff(attempt))
     if last_exc is not None:
@@ -990,31 +1015,38 @@ def _osf_zip_url(node: str) -> str:
     return f"https://files.osf.io/v1/resources/{node}/providers/osfstorage/?zip="
 
 
-def _osf_zip_content_length(url: str) -> float:
-    """HEAD the archive for its size (``NaN`` when not reported)."""
-    from metacheck import http
-    from metacheck.archives.osf_helpers import _osf_headers
-
-    try:
-        resp = http.request("HEAD", url, headers=_osf_headers()["headers"], max_tries=1)
-    except Exception:
-        return math.nan
-    if resp is None or resp.status_code >= 400:
-        return math.nan
-    try:
-        return float(resp.headers.get("content-length", "nan"))
-    except ValueError:
-        return math.nan
+def _remove_file(path: str) -> None:
+    """R ``unlink(path)``: remove a file if it is there."""
+    with contextlib.suppress(OSError):
+        os.remove(path)
 
 
-def _osf_download_zip(zip_url: str, zip_path: str, zip_size: float = math.nan) -> str:
-    """Stream one Waterbutler archive to disk, reporting each stage."""
+def _osf_download_zip(
+    zip_url: str,
+    zip_path: str,
+    zip_size: float = math.nan,
+    timeout_s: float = 1800,
+    max_bytes: float = math.inf,
+) -> str:
+    """Stream one Waterbutler archive to disk, reporting each stage.
+
+    Port of ``.osf_download_zip()`` (R/archive-osf.R). The OSF never reports an
+    archive's size, so *zip_size* is the size its files are listed at, and the
+    budget is enforced while the bytes arrive: past *max_bytes* the transfer
+    stops and an error says the archive exceeded the budget. A failed or
+    refused download leaves no file at *zip_path*.
+    """
     import time
 
     from metacheck.archives import _message
+    from metacheck.report.blocks import _cap_num
 
     t0 = time.monotonic()
-    size = f"{zip_size / 1024**2:.1f} MB" if math.isfinite(zip_size) else "unknown size"
+    size = (
+        f"files listed at {zip_size / 1024**2:.1f} MB"
+        if math.isfinite(zip_size)
+        else "unknown size"
+    )
     _message(f"[zip] requesting archive: {zip_url} ({size})")
     _message(
         "[zip] OSF builds the archive server-side first; for a large repo this can take "
@@ -1022,13 +1054,24 @@ def _osf_download_zip(zip_url: str, zip_path: str, zip_size: float = math.nan) -
     )
     _message("[zip]   ", zip_path)
     try:
-        status = _stream_to_file(zip_url, zip_path, timeout_s=1800)
+        status = _stream_to_file(zip_url, zip_path, timeout_s=timeout_s, max_bytes=max_bytes)
     except Exception as exc:
-        elapsed = round(time.monotonic() - t0, 1)
+        elapsed = _r_num(r_round(time.monotonic() - t0, 1))
+        _remove_file(zip_path)
+        if isinstance(exc, _MaxFileSizeExceeded):
+            left = _cap_num(float(r_round(max_bytes / 1024**2, 1)))
+            _message(
+                f"[zip] STOPPED after {elapsed}s: the archive grew past the {left} MB left "
+                "in the budget"
+            )
+            raise RuntimeError(
+                f"OSF zip archive for {zip_url} exceeded the download budget"
+            ) from exc
         _message(f"[zip] FAILED after {elapsed}s: {exc}")
         raise RuntimeError(f"OSF zip download failed for {zip_url}") from exc
-    elapsed = round(time.monotonic() - t0, 1)
+    elapsed = _r_num(r_round(time.monotonic() - t0, 1))
     if status != 200:
+        _remove_file(zip_path)  # an error page, not an archive
         _message(f"[zip] FAILED after {elapsed}s: HTTP {status}")
         raise RuntimeError(f"OSF zip download failed for {zip_url} (HTTP {status})")
     got = os.path.getsize(zip_path) if os.path.exists(zip_path) else 0
@@ -1280,6 +1323,9 @@ def _osf_file_download_ids(
     )
 
     files_to_copy: list[int] = []
+    # osf_ids of files left out because they did not fit in the budget
+    # (mode = "zip"); reported with attempted = FALSE
+    budget_skipped: list[Any] = []
     file_rows = [i for i, f in enumerate(kind_is_file(files)) if f]
     tmp_dirs: list[str] = []
     try:
@@ -1361,7 +1407,7 @@ def _osf_file_download_ids(
                     _copy_file(src, dest)
                 files_to_copy.append(i)
         elif file_rows and mode == "zip":
-            files_to_copy, files = _osf_zip_mode(
+            files_to_copy, files, budget_skipped = _osf_zip_mode(
                 files,
                 contents,
                 osf_id,
@@ -1444,7 +1490,10 @@ def _osf_file_download_ids(
                 check_size[i] = False
     ret = cast("pd.DataFrame", _osf_verify_downloads(ret, download_to, check_size=check_size))
 
+    # a file left out because it did not fit in the zip-mode budget was not
+    # attempted either (R: `!(ret$osf_id %in% budget_skipped)`)
     planned = set(files["osf_id"].tolist()) if "osf_id" in files else set()
+    planned -= set(budget_skipped)
     ret["attempted"] = pd.Series([o in planned for o in ret["osf_id"].tolist()], dtype="boolean")
     downloaded = [bool(d) for d in ret["downloaded"].fillna(False).tolist()] if len(ret) else []
     attempted = [bool(a) for a in ret["attempted"].tolist()] if len(ret) else []
@@ -1499,10 +1548,16 @@ def _osf_zip_mode(
     tmp_dirs: list[str],
     cap_report: Any,
     cap_num: Any,
-) -> tuple[list[int], pd.DataFrame]:
+) -> tuple[list[int], pd.DataFrame, list[Any]]:
     """``mode = "zip"``: one archive per node owning osfstorage files, the rest singly.
 
-    Returns the row numbers accounted for, and *files* with ``save_path``.
+    The zip-mode branch of ``osf_file_download()`` (R/archive-osf.R).
+    *max_download_size* is a budget for the whole project, shared by the
+    archives and the files downloaded one by one: a node whose listed files do
+    not fit in what is left is not archived, and the files left over are
+    fetched smallest first, as many as fit (one with no listed size is left out
+    while a limit is set). Returns the row numbers accounted for, *files* with
+    ``save_path``, and the ``osf_id`` of the files left out by the budget.
     """
     from metacheck.archives import _message, _tick
     from metacheck.utils import path_sanitize
@@ -1542,6 +1597,10 @@ def _osf_zip_mode(
     )
     save = files["save_path"].tolist()
     copied_rows: list[int] = []
+    budget_skipped: list[Any] = []
+    budget = max_download_size * _MB if math.isfinite(max_download_size) else math.inf
+    used = 0.0
+    sizes = pd.to_numeric(files["size"], errors="coerce").tolist()
     for node in zip_nodes:
         node_idx = [
             i
@@ -1551,36 +1610,30 @@ def _osf_zip_mode(
         if not node_idx:
             continue
         zip_url = _osf_zip_url(node)
-        zip_size = _osf_zip_content_length(zip_url)
-        shown = (
-            f"{zip_size / _MB:.1f} MB"
-            if math.isfinite(zip_size)
-            else "not reported by server (will stream blind)"
-        )
-        _message(f"[zip] {node}: {len(node_idx)} file(s), archive size {shown}")
-        if (
-            math.isfinite(max_download_size)
-            and math.isfinite(zip_size)
-            and zip_size > max_download_size * _MB
-        ):
-            need = math.ceil(zip_size / _MB)
-            cap_report(
-                f"Node {node} was not downloaded: its zip archive totals {cap_num(need)} MB, over "
-                f"the {cap_num(max_download_size)} MB per-repository limit. Set "
-                f"`max_download_size >= {cap_num(need)}` to download it."
+        # the OSF never reports an archive's size, so it is estimated from the
+        # listed file sizes (a zip is compressed: normally smaller than this)
+        zip_size = float(sum(x for x in (sizes[i] for i in node_idx) if x == x))
+        _message(f"[zip] {node}: {len(node_idx)} file(s), {zip_size / _MB:.1f} MB listed")
+        if used + zip_size > budget:
+            _message(
+                f"[zip] {node}: its files total {cap_num(float(r_round(zip_size / _MB, 1)))} MB, "
+                f"more than the {cap_num(float(r_round((budget - used) / _MB, 1)))} MB left of "
+                f"the {cap_num(max_download_size)} MB per-repository limit; they are downloaded "
+                "individually below, as many as fit in the limit."
             )
             continue
         zip_name = f"{path_sanitize(node, keep_sep=False)}.zip"
         zip_path = os.path.join(download_to, zip_name)
         _tick(pb, f"Downloading zip archive for {node}")
         try:
-            _osf_download_zip(zip_url, zip_path, zip_size=zip_size)
+            _osf_download_zip(zip_url, zip_path, zip_size=zip_size, max_bytes=budget - used)
         except Exception as exc:
             _message(
                 f"[zip] {node}: archive download failed ({exc}); its files are downloaded "
                 "individually below."
             )
             continue
+        used += os.path.getsize(zip_path) if os.path.exists(zip_path) else 0
         if unzip is True:
             unzip_dir = tempfile.mkdtemp(prefix="osf-zip-")
             tmp_dirs.append(unzip_dir)
@@ -1610,14 +1663,38 @@ def _osf_zip_mode(
     if left:
         _tick(pb, f"Downloading {len(left)} remaining file{plural(len(left))} individually")
         urls = files["download_url"].tolist()
+        ids = files["osf_id"].tolist()
         wanted = [i for i in left if not is_na(urls[i]) and str(urls[i]) != ""]
+        if math.isfinite(budget) and wanted:
+            # only as many as fit in what is left of the budget, smallest
+            # first; a file with no listed size cannot be counted against it
+            ord_ = sorted(wanted, key=lambda i: (sizes[i] != sizes[i], sizes[i]))
+            fits: list[int] = []
+            dropped: list[int] = []
+            total = 0.0
+            for i in ord_:
+                total = total + sizes[i] if sizes[i] == sizes[i] else math.inf
+                (fits if total <= budget - used else dropped).append(i)
+            if dropped:
+                budget_skipped.extend(ids[i] for i in dropped)
+                listed = sum(sizes[i] for i in wanted if sizes[i] == sizes[i])
+                need_total = math.ceil((used + listed) / _MB)
+                n = len(dropped)
+                # metacheck calls `cap_report()` here, which no longer exists
+                # (renamed `.cap_report()`), so it stops with an error: U204
+                cap_report(
+                    f"{n} file{plural(n)} in {osf_id} did not fit in the "
+                    f"{cap_num(max_download_size)} MB per-repository limit and "
+                    f"{'was' if n == 1 else 'were'} not downloaded. Set "
+                    f"`max_download_size >= {cap_num(need_total)}` to download "
+                    f"{'it' if n == 1 else 'them'}."
+                )
+            wanted = fits
         if wanted:
             from metacheck.archives.download import _download_many_parallel
 
             temppath2 = tempfile.mkdtemp()
             tmp_dirs.append(temppath2)
-            ids = files["osf_id"].tolist()
-            sizes = pd.to_numeric(files["size"], errors="coerce").tolist()
             dests = [os.path.join(temppath2, str(ids[i])) for i in wanted]
             expected2 = [sizes[i] if provs[i] in ("osfstorage", None) else math.nan for i in wanted]
             errs = list(_download_many_parallel([urls[i] for i in wanted], dests, expected2))
@@ -1637,4 +1714,4 @@ def _osf_zip_mode(
                     f"[zip] {nfail} of {len(wanted)} individually-downloaded "
                     f"file{plural(len(wanted))} failed."
                 )
-    return copied_rows, files
+    return copied_rows, files, budget_skipped

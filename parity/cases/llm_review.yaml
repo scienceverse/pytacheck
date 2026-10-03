@@ -978,7 +978,7 @@
   "args":
     "x":
       "$expr":
-        "r": "metacheck:::cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')"
+        "r": "metacheck:::.cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')"
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).L.cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')"
 - "id": "msg.llm_model_list.invalid"
   "r": "base::identity"

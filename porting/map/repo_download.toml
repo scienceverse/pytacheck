@@ -18,6 +18,7 @@
 [files]
 "R/repo-download.R" = ["src/metacheck/archives/download.py", "src/metacheck/fileinfo/_strings.py"]
 "R/zip-peek.R" = ["src/metacheck/archives/zip_peek.py", "src/metacheck/fileinfo/_strings.py"]
+"R/zip-peek-cache.R" = ["src/metacheck/archives/zip_peek_cache.py"]
 "R/file_category.R" = ["src/metacheck/fileinfo/category.py", "src/metacheck/fileinfo/_strings.py"]
 "R/file_types.R" = ["src/metacheck/fileinfo/types.py"]
 "R/file-naming.R" = ["src/metacheck/fileinfo/naming.py", "src/metacheck/fileinfo/_strings.py"]
@@ -35,7 +36,8 @@ repo_cache_dir = "metacheck.archives.download:repo_cache_dir"
 repo_cache_size = "metacheck.archives.download:repo_cache_size"
 repo_cache_clear = "metacheck.archives.download:repo_cache_clear"
 ".remote_size" = "metacheck.archives.download:_remote_size"
-".remote_content_length" = "metacheck.archives.download:_remote_content_length"
+".archive_size_estimate" = "metacheck.archives.download:_archive_size_estimate"
+".archive_size_refusal" = "metacheck.archives.download:_archive_size_refusal"
 ".auth_for_url" = "metacheck.archives.download:_auth_for_url"
 ".is_login_page" = "metacheck.archives.download:_is_login_page"
 ".storage_is_transient" = "metacheck.archives.download:_storage_is_transient"
@@ -56,7 +58,14 @@ download_repo_files = "metacheck.archives.download:download_repo_files"
 
 # R/zip-peek.R
 ".le_int" = "metacheck.archives.zip_peek:_le_int"
+".size_probe_is_transient_factory" = "metacheck.archives.zip_peek:_size_probe_is_transient_factory"
+".content_range_total" = "metacheck.archives.zip_peek:_content_range_total"
+".head_size" = "metacheck.archives.zip_peek:_head_size"
+".http_range_get" = "metacheck.archives.zip_peek:_http_range_get"
+".range_size" = "metacheck.archives.zip_peek:_range_size"
 ".http_range_tail" = "metacheck.archives.zip_peek:_http_range_tail"
+".http_range_suffix" = "metacheck.archives.zip_peek:_http_range_suffix"
+".range_status_is_transient" = "metacheck.archives.zip_peek:_range_status_is_transient"
 ".http_range_bytes" = "metacheck.archives.zip_peek:_http_range_bytes"
 ".parse_zip_central_dir" = "metacheck.archives.zip_peek:_parse_zip_central_dir"
 zip_peek = "metacheck.archives.zip_peek:zip_peek"
@@ -74,6 +83,15 @@ zip_peek = "metacheck.archives.zip_peek:zip_peek"
 ".expand_tar" = "metacheck.archives.zip_peek:_expand_tar"
 ".expand_compressed" = "metacheck.archives.zip_peek:_expand_compressed"
 zip_decision = "metacheck.archives.zip_peek:zip_decision"
+
+# R/zip-peek-cache.R
+zip_peek_cache_clear = "metacheck.archives.zip_peek_cache:zip_peek_cache_clear"
+".zip_peek_cache_dir" = "metacheck.archives.zip_peek_cache:_zip_peek_cache_dir"
+".zip_peek_cache_key" = "metacheck.archives.zip_peek_cache:_zip_peek_cache_key"
+".zip_peek_cache_path" = "metacheck.archives.zip_peek_cache:_zip_peek_cache_path"
+".zip_peek_cache_get" = "metacheck.archives.zip_peek_cache:_zip_peek_cache_get"
+".zip_peek_cache_put" = "metacheck.archives.zip_peek_cache:_zip_peek_cache_put"
+".zip_peek_cache_has" = "metacheck.archives.zip_peek_cache:_zip_peek_cache_has"
 
 # R/file_category.R, R/file_types.R
 file_category = "metacheck.fileinfo.category:file_category"

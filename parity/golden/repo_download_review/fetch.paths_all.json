@@ -20,7 +20,8 @@
           "name",
           "path",
           "size",
-          "ok"
+          "ok",
+          "error"
         ],
         "v": [
           {
@@ -81,6 +82,21 @@
               true,
               true,
               false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "could not write the extracted member to disk",
+              "entry path escapes the archive (path traversal)",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "entry path escapes the archive (path traversal)"
             ]
           }
         ]

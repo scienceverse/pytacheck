@@ -4484,3 +4484,113 @@
       "$expr":
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ { d <- tempfile(); dir.create(d); metacheck:::.osf_metadata_download(\"mixd2\", d); x <- readLines(file.path(d, \"_osf_metadata\", \"metadata.json\")); x[!grepl(\"\\\"retrieved\\\"\", x)] } }) })()"
         "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: (__import__(\"metacheck.archives.osf_metadata\", fromlist=[\"_\"])._osf_metadata_download(\"mixd2\", d), [l for l in __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).read_lines(d + \"/_osf_metadata\", \"metadata.json\") if '\"retrieved\"' not in l])[1])"
+# zip mode, a node whose listed files exceed the budget: no archive, the files that fit one by one (U204)
+- "id": "osf_file_download.zip.budget_partial"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/archives_osf/zip_budget_helpers.R'), local = TRUE); ob_zip_download})"
+        "py": "__import__('tests.archives_osf._zip_budget_helpers', fromlist=['x']).zip_download"
+    "args":
+      "name":
+        "$chr":
+        - "a.csv"
+        - "b.csv"
+        - "c.csv"
+      "size":
+        "$dbl":
+        - 10
+        - 20
+        - 100
+      "provider":
+        "$chr":
+        - "osfstorage"
+        - "osfstorage"
+        - "osfstorage"
+      "budget_bytes": 50
+      "unzip": true
+# zip mode within the budget: the archive with the budget as its byte limit, then the add-on file
+- "id": "osf_file_download.zip.budget_fits"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/archives_osf/zip_budget_helpers.R'), local = TRUE); ob_zip_download})"
+        "py": "__import__('tests.archives_osf._zip_budget_helpers', fromlist=['x']).zip_download"
+    "args":
+      "name":
+        "$chr":
+        - "a.csv"
+        - "b.csv"
+        - "g.csv"
+      "size":
+        "$dbl":
+        - 28
+        - 39
+        - 5
+      "provider":
+        "$chr":
+        - "osfstorage"
+        - "osfstorage"
+        - "github"
+      "budget_bytes": 2000
+      "archive": "child1.zip"
+      "unzip": true
+# zip mode, an archive larger than its listed files and the budget: stopped at the limit, files one by one
+- "id": "osf_file_download.zip.budget_stream_cap"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/archives_osf/zip_budget_helpers.R'), local = TRUE); ob_zip_download})"
+        "py": "__import__('tests.archives_osf._zip_budget_helpers', fromlist=['x']).zip_download"
+    "args":
+      "name":
+        "$chr":
+        - "a.csv"
+        - "b.csv"
+        - "g.csv"
+      "size":
+        "$dbl":
+        - 28
+        - 39
+        - 5
+      "provider":
+        "$chr":
+        - "osfstorage"
+        - "osfstorage"
+        - "github"
+      "budget_bytes": 200
+      "archive": "child1.zip"
+      "unzip": true
+# zip mode without a budget, archive kept: no byte limit on the archive
+- "id": "osf_file_download.zip.no_budget_keep"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/archives_osf/zip_budget_helpers.R'), local = TRUE); ob_zip_download})"
+        "py": "__import__('tests.archives_osf._zip_budget_helpers', fromlist=['x']).zip_download"
+    "args":
+      "name":
+        "$chr":
+        - "a.csv"
+        - "b.csv"
+        - "g.csv"
+      "size":
+        "$dbl":
+        - 28
+        - 39
+        - 5
+      "provider":
+        "$chr":
+        - "osfstorage"
+        - "osfstorage"
+        - "github"
+      "archive": "child1.zip"
+      "unzip": false

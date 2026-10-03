@@ -265,6 +265,73 @@ def test_expand_zip_reuses_extraction_and_filters_macosx(tmp_path: Path) -> None
     assert "extra.csv" in again["file_name"].tolist()
 
 
+def test_expand_zip_members_take_their_own_type(tmp_path: Path) -> None:
+    # U208: metacheck copies the archive's file_type ("archive") to every member
+    z = tmp_path / "mixed.zip"
+    shutil.copyfile(DATA / "mixed.zip", z)
+    rows = _expand_zip(z, _zip_row(z)).set_index("file_name")
+    assert rows.loc["study.csv", "file_type"] == "data"
+    assert rows.loc["analysis.R", "file_type"] == "code"
+    assert "archive" not in rows["file_type"].tolist()
+
+
+def test_finding_where_to_extract_does_not_create_the_repository_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # the repository cache is relative to the working folder by default; creating
+    # it just to compare paths left .metacheck_repo_cache in the user's folder
+    from metacheck.utils import local_options
+
+    z = tmp_path / "user" / "mixed.zip"
+    z.parent.mkdir()
+    shutil.copyfile(DATA / "mixed.zip", z)
+    cache = tmp_path / "not-yet"
+    with local_options({"metacheck.repo_cache.dir": str(cache)}):
+        zp._contents_dir(str(z))
+    assert not cache.exists()
+
+
+def test_local_archive_is_not_extracted_into_the_users_folder(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # U209: metacheck extracts to <archive>.contents/ beside it, in the user's folder,
+    # and the next run lists the extracted files too
+    import tempfile
+
+    from metacheck.utils import local_options
+
+    systmp = tmp_path / "systmp"
+    systmp.mkdir()
+    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(systmp))
+    monkeypatch.setattr(tempfile, "tempdir", str(systmp))
+    user = tmp_path / "user"
+    user.mkdir()
+    z = user / "mixed.zip"
+    shutil.copyfile(DATA / "mixed.zip", z)
+    cache = tmp_path / "cache"
+    with local_options({"metacheck.repo_cache.dir": str(cache)}):
+        rows = _expand_zip(z, _zip_row(z))
+        assert sorted(rows["file_name"]) == [
+            "README.txt",
+            "analysis.R",
+            "codebook.csv",
+            "study.csv",
+        ]
+        assert [p.name for p in user.iterdir()] == ["mixed.zip"]
+        assert all(
+            Path(p).is_relative_to(systmp / "metacheck-archives") for p in rows["file_location"]
+        )
+        # extracted once per session
+        again = _expand_zip(z, _zip_row(z))
+        assert again["file_location"].tolist() == rows["file_location"].tolist()
+        # an archive metacheck downloaded is still extracted beside itself
+        cached = cache / "repo" / "mixed.zip"
+        cached.parent.mkdir(parents=True)
+        shutil.copyfile(DATA / "mixed.zip", cached)
+        _expand_zip(cached, _zip_row(cached))
+        assert (cache / "repo" / "mixed.zip.contents" / "study.csv").exists()
+
+
 def test_expand_zip_unreadable_or_missing(tmp_path: Path) -> None:
     row = _zip_row(DATA / "mixed.zip")
     assert len(_expand_zip(tmp_path / "missing.zip", row)) == 0
@@ -488,3 +555,301 @@ def test_zip_fetch_members_host_ignoring_ranges_fails_cleanly(tmp_path: Path) ->
     # the listing works from the whole body, but a 200 is never a member's bytes
     assert out["ok"].tolist() == [False, False, True]  # only the empty member
     assert out["path"].isna().tolist() == [True, True, False]
+    # each failed member says why (#429)
+    assert out["error"].iloc[0] == "HTTP 200 (range not honoured)"
+    assert pd.isna(out["error"].iloc[2])
+
+
+# -- #429: why a member fetch failed --------------------------------------------------
+
+
+def _zip64_entry() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "name": ["big.dat"],
+            "size": [None],
+            "method": [8],
+            "csize": [None],
+            "offset": [None],
+            "crc": [1],
+        }
+    )
+
+
+def test_zip_member_fetch_records_why_it_failed() -> None:
+    reason: dict[str, str] = {}
+    assert _zip_member_fetch("http://example.invalid/x.zip", _zip64_entry(), reason=reason) is None
+    assert "Zip64" in reason["msg"]
+
+
+def test_zip_fetch_members_reports_a_per_member_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(zp, "zip_peek", lambda url, *a, **k: _zip64_entry())
+    got = _zip_fetch_members("http://example.invalid/x.zip", dest=str(tmp_path))
+    assert got is not None
+    assert got["ok"].tolist() == [False]
+    assert "Zip64" in got["error"].iloc[0]
+
+
+# -- hosts that refuse HEAD (metacheck #424) ----------------------------------------
+# Dryad, Figshare and Harvard Dataverse redirect downloads to Amazon S3, which
+# answers HEAD with 403 but a ranged GET with 206.
+
+
+def _test_zip_bytes() -> bytes:
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("data.csv", "id,x\n" * 50)
+        zf.writestr("notes.txt", "hello\n")
+    return buf.getvalue()
+
+
+def _s3_like_host(data: bytes, head_status: int = 403, suffix_status: int = 206):
+    """A host serving *data*: HEAD gets *head_status*; a Range is honoured with
+    206 and Content-Range, except a suffix range gets *suffix_status* when that
+    is not 206 (200: the whole file; 416: an over-long suffix refused)."""
+    total = len(data)
+    calls: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        rng = request.headers.get("Range")
+        calls.append(f"{request.method} {rng}")
+        if request.method == "HEAD":
+            return httpx.Response(head_status)
+        if rng is None:
+            return httpx.Response(200, content=data)
+        if rng.startswith("bytes=-"):
+            if suffix_status == 200:
+                return httpx.Response(200, content=data)
+            n = int(rng[len("bytes=-") :])
+            if suffix_status == 416 and n > total:
+                return httpx.Response(416, headers={"Content-Range": f"bytes */{total}"})
+            a, b = max(0, total - n), total - 1
+        else:
+            m = re.fullmatch(r"bytes=(\d+)-(\d+)", rng)
+            assert m is not None
+            a, b = int(m.group(1)), min(int(m.group(2)), total - 1)
+        return httpx.Response(
+            206, headers={"Content-Range": f"bytes {a}-{b}/{total}"}, content=data[a : b + 1]
+        )
+
+    return handler, calls
+
+
+S3 = "https://s3-like.example/refuses-head.zip"
+
+
+def test_content_range_total() -> None:
+    def resp(cr: str | None) -> httpx.Response:
+        return httpx.Response(206, headers={"Content-Range": cr} if cr else {})
+
+    assert zp._content_range_total(resp("bytes 0-0/2545568")) == 2545568
+    assert zp._content_range_total(resp("bytes */2246")) == 2246
+    assert pd.isna(zp._content_range_total(resp("bytes 0-99/*")))
+    assert pd.isna(zp._content_range_total(resp(None)))
+
+
+def test_zip_peek_lists_a_zip_on_a_host_that_refuses_head() -> None:
+    handler, calls = _s3_like_host(_test_zip_bytes())
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        cd = zip_peek(S3)
+    assert cd is not None
+    assert sorted(cd["name"]) == ["data.csv", "notes.txt"]
+    # the 403 was not retried: exactly one HEAD
+    assert sum(c.startswith("HEAD") for c in calls) == 1
+    assert any(c.startswith("GET bytes=-") for c in calls)
+
+
+def test_zip_peek_rejects_a_whole_file_answer_when_the_size_is_unknown() -> None:
+    # without a size, a host ignoring the range would send the whole file
+    handler, _ = _s3_like_host(_test_zip_bytes(), suffix_status=200)
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        assert zip_peek(S3) is None
+
+
+def test_range_status_is_transient() -> None:
+    for status in (400, 401, 403, 429, 500):
+        assert zp._range_status_is_transient(httpx.Response(status))
+    for status in (200, 206):
+        assert not zp._range_status_is_transient(httpx.Response(status))
+
+
+def test_http_range_bytes_retries_a_401(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck checks the request's retry policy; here the retries are real
+    from metacheck import http
+
+    monkeypatch.setattr(http, "sleep", lambda s: None)
+    answers = iter([httpx.Response(401), httpx.Response(206, content=b"abc")])
+    with respx.mock(assert_all_mocked=True) as router:
+        route = router.get("https://flaky.example/x.zip").mock(
+            side_effect=lambda req: next(answers)
+        )
+        got = zp._http_range_bytes("https://flaky.example/x.zip", 0, 2)
+    assert got == b"abc"
+    assert route.call_count == 2
+
+
+def test_zip_peek_handles_a_416_to_an_over_long_suffix() -> None:
+    # GitHub answers 416 to a tail longer than the file, with "bytes */N"
+    handler, _ = _s3_like_host(_test_zip_bytes(), suffix_status=416)
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        cd = zip_peek(S3)
+    assert cd is not None
+    assert sorted(cd["name"]) == ["data.csv", "notes.txt"]
+
+
+def test_zip_member_fetch_on_a_host_that_refuses_head() -> None:
+    handler, _ = _s3_like_host(_test_zip_bytes())
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        cd = zip_peek(S3)
+        assert cd is not None
+        got = _zip_member_fetch(S3, cd[cd["name"] == "notes.txt"])
+    assert got == b"hello\n"
+
+
+def test_remote_size_falls_back_to_a_ranged_request() -> None:
+    from metacheck.archives.download import _remote_size
+
+    handler, _ = _s3_like_host(bytes(range(200)))
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url="https://s3-like.example/file.csv").mock(side_effect=handler)
+        assert _remote_size("https://s3-like.example/file.csv") == 200
+    # a 403 error page's Content-Length is not the file's size
+    with respx.mock(assert_all_mocked=True) as router:
+        router.head("https://s3-like.example/private.csv").mock(
+            return_value=httpx.Response(403, headers={"Content-Length": "243"})
+        )
+        router.get("https://s3-like.example/private.csv").mock(return_value=httpx.Response(403))
+        assert pd.isna(_remote_size("https://s3-like.example/private.csv"))
+
+
+# -- the on-disk zip-peek cache (metacheck #427) -------------------------------------
+
+
+@pytest.fixture
+def peek_cache_dir(tmp_path: Path) -> Iterator[Path]:
+    from metacheck.utils import local_options
+
+    d = tmp_path / "zpc"
+    with local_options({"metacheck.zip_peek_cache.dir": str(d)}):
+        yield d
+
+
+def test_zip_peek_cache_persists_and_is_reused(peek_cache_dir: Path) -> None:
+    from metacheck.archives.zip_peek_cache import _zip_peek_cache_has
+
+    handler, calls = _s3_like_host(_test_zip_bytes())
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        cd = zip_peek(S3, cache=True)
+        assert cd is not None and calls
+        assert _zip_peek_cache_has(S3)
+        # a fresh session: the disk cache answers, with no request
+        zp._ZIP_PEEK_CACHE.clear()
+        calls.clear()
+        cd2 = zip_peek(S3, cache=True)
+    assert calls == []
+    pd.testing.assert_frame_equal(cd2, cd)
+
+
+def test_zip_peek_without_cache_never_touches_the_disk(peek_cache_dir: Path) -> None:
+    from metacheck.archives.zip_peek_cache import _zip_peek_cache_has
+
+    handler, _ = _s3_like_host(_test_zip_bytes())
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        zip_peek(S3)
+    assert not _zip_peek_cache_has(S3)
+
+
+def test_zip_peek_cache_clear_counts_the_entries(peek_cache_dir: Path) -> None:
+    from metacheck.archives.zip_peek_cache import (
+        _zip_peek_cache_has,
+        _zip_peek_cache_put,
+        zip_peek_cache_clear,
+    )
+
+    _zip_peek_cache_put("http://x/a.zip", pd.DataFrame({"name": ["a"], "size": [1.0]}))
+    _zip_peek_cache_put("http://x/b.zip", None)
+    assert _zip_peek_cache_has("http://x/a.zip")
+    assert zip_peek_cache_clear() == 2
+    assert not _zip_peek_cache_has("http://x/a.zip")
+
+
+def test_zip_peek_cache_unreadable_entry_is_a_miss(peek_cache_dir: Path) -> None:
+    # U205: metacheck reads an unreadable entry as a cached failure (NULL)
+    from metacheck.archives.zip_peek_cache import _zip_peek_cache_lookup, _zip_peek_cache_path
+
+    peek_cache_dir.mkdir(parents=True, exist_ok=True)
+    Path(_zip_peek_cache_path(S3)).write_bytes(b"{not json")
+    assert _zip_peek_cache_lookup(S3) == (False, None)
+    handler, _ = _s3_like_host(_test_zip_bytes())
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        cd = zip_peek(S3, cache=True)
+    assert cd is not None  # listed again, and the entry rewritten
+    hit, value = _zip_peek_cache_lookup(S3)
+    assert hit and value is not None
+
+
+def test_zip_peek_cache_keeps_a_lasting_failure_only(peek_cache_dir: Path) -> None:
+    # U205: a refused range (the host ignores it) is kept; a 503 is not
+    from metacheck.archives.zip_peek_cache import _zip_peek_cache_has
+
+    handler, _ = _s3_like_host(_test_zip_bytes(), suffix_status=200)
+    with respx.mock(assert_all_mocked=True) as router:
+        router.route(url=S3).mock(side_effect=handler)
+        assert zip_peek(S3, cache=True) is None
+    assert _zip_peek_cache_has(S3)
+
+    url = "https://s3-like.example/unavailable.zip"
+    zp._ZIP_PEEK_CACHE.clear()
+    from metacheck import http
+
+    with (
+        pytest.MonkeyPatch.context() as mp,
+        respx.mock(assert_all_mocked=True) as router,
+    ):
+        mp.setattr(http, "sleep", lambda s: None)
+        router.route(url=url).mock(return_value=httpx.Response(503))
+        assert zip_peek(url, cache=True) is None
+    assert not _zip_peek_cache_has(url)
+
+
+def test_zip_peek_cache_does_not_keep_a_failure_after_a_failed_head(
+    peek_cache_dir: Path,
+) -> None:
+    # HEAD answers 503, so the size is unknown and the host's whole-file answer to
+    # the tail request cannot be used: with HEAD working the zip would be listed
+    from metacheck import http
+    from metacheck.archives.zip_peek_cache import _zip_peek_cache_has
+
+    handler, _ = _s3_like_host(_test_zip_bytes(), head_status=503, suffix_status=200)
+    with (
+        pytest.MonkeyPatch.context() as mp,
+        respx.mock(assert_all_mocked=True) as router,
+    ):
+        mp.setattr(http, "sleep", lambda s: None)
+        router.route(url=S3).mock(side_effect=handler)
+        assert zip_peek(S3, cache=True) is None
+    assert not _zip_peek_cache_has(S3)
+
+
+def test_zip_peek_skips_a_known_rate_limit() -> None:
+    from metacheck import http
+    from metacheck.archives.download import _host_rate_limit_record
+
+    host = "s3-rate-limited-only.example"
+    _host_rate_limit_record(host, 999)
+    try:
+        # no route: a wait or a request would hang or fail; a quick None is the skip
+        with respx.mock(assert_all_mocked=True):
+            assert zip_peek(f"https://{host}/rate-limited.zip", skip_on_api_limit=True) is None
+    finally:
+        with http._reset_lock:
+            http._host_reset.pop(host, None)

@@ -506,7 +506,7 @@ false,
 false
 ],
 [
-"^(hedge.{0,3})?g$",
+"^(hedge.{0,3})?g(_?(z|s|av|rm))?$",
 false,
 false
 ],

@@ -474,7 +474,7 @@ for i, v in enumerate(
     fn_case(f"cap_size_str.{i + 1}", *CS, {"bytes": {"$NA": True} if v is None else v})
 fn_case(
     "cap_report.basic",
-    "cap_report",
+    "metacheck:::.cap_report",
     "metacheck.llm.cap_report",
     {
         "message": "The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it."

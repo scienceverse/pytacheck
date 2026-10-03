@@ -2,8 +2,8 @@
 
 4TU.ResearchData runs Djehuty, a backward-compatible implementation of the
 Figshare v2 API, so this module holds link detection and id extraction
-(``10.4121`` DOIs and ``data.4tu.nl`` URLs; the API accepts a numeric id or a
-uuid) and thin wrappers around the Figshare port called with
+(``10.4121`` DOIs and ``data.4tu.nl`` URLs; a uuid is resolved to the
+article's numeric id through its DOI) and thin wrappers around the Figshare port called with
 ``host = "data.4tu.nl"``.
 """
 
@@ -88,6 +88,39 @@ def _researchdata4tu_id(researchdata4tu_url: Any) -> Any:
     return _map(researchdata4tu_url, _researchdata4tu_id_one)
 
 
+_UUID = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+#: the numeric id at the end of a data.4tu.nl article URL
+#: (".../articles/_/12675218/1", ".../articles/dataset/<name>/12675218")
+_ARTICLE_ID = r"data\.4tu\.nl/articles/.*?([0-9]+)(?:/[0-9]+)?/?$"
+
+
+def _researchdata4tu_resolve_uuid(uuid: str) -> str:
+    """Port of R/archive-4tu.R::.researchdata4tu_resolve_uuid(): a uuid's numeric id.
+
+    data.4tu.nl's ``v2/articles/<id>`` does not accept every article's uuid,
+    so the uuid is resolved by following its DOI
+    (``https://doi.org/10.4121/uuid:<uuid>``) to the article page and reading
+    the numeric id off its URL. The uuid itself when that fails.
+    """
+    from metacheck._r import regexec
+    from metacheck.archives.dataverse import _resolved_url
+
+    resolved = _resolved_url(f"https://doi.org/10.4121/uuid:{uuid}")
+    if resolved is None:
+        return uuid
+    groups = regexec(_ARTICLE_ID, resolved, perl=True, ignore_case=True)
+    return str(groups[1]) if len(groups) >= 2 else uuid
+
+
+def _resolve_if_uuid(x: Any) -> Any:
+    """An id as it is, a uuid resolved by :func:`_researchdata4tu_resolve_uuid`."""
+    from metacheck._r import grepl
+
+    if is_na(x) or not grepl(_UUID, str(x), ignore_case=True):
+        return x
+    return _researchdata4tu_resolve_uuid(str(x))
+
+
 def researchdata4tu_info(
     researchdata4tu_url: Any, id_col: int | str = 1, pb: Any = None, cache: bool = False
 ) -> pd.DataFrame:
@@ -137,6 +170,11 @@ def researchdata4tu_info(
         ).astype({"researchdata4tu_url": table["researchdata4tu_url"].dtype})
         ids = ids.drop_duplicates()
         ids = ids[ids["researchdata4tu_url"].notna().to_numpy()].reset_index(drop=True)
+        # a uuid is not an id v2/articles/<id> accepts in general: resolved to
+        # the article's numeric id first, so the joins and cache keys use it
+        ids["researchdata4tu_id"] = _string_series(
+            [_resolve_if_uuid(v) for v in ids["researchdata4tu_id"].tolist()]
+        )
         valid = list(dict.fromkeys(v for v in ids["researchdata4tu_id"].tolist() if not is_na(v)))
 
         if not valid:
@@ -204,14 +242,17 @@ def researchdata4tu_file_download(
     :func:`figshare_file_download` with ``host = "data.4tu.nl"``, authenticated
     with :func:`researchdata4tu_pat` rather than :func:`figshare_pat`; the
     ``figshare_id`` column of the result is named ``researchdata4tu_id``.
-    Articles known only by their uuid are downloaded too (metacheck
-    re-resolves the ids as Figshare ids, which drops them: U41).
+    Articles known only by their uuid are downloaded too, by the numeric id
+    the uuid resolves to (metacheck re-resolves the ids as Figshare ids, which
+    drops them: U41).
     """
     from metacheck.archives.figshare import figshare_file_download
     from metacheck.archives.reshare import _unique_ids
     from metacheck.utils import local_options
 
     ids = _unique_ids(_researchdata4tu_id(researchdata4tu_id))
+    # a uuid is looked up by its numeric id, as in researchdata4tu_info()
+    ids = list(dict.fromkeys(_resolve_if_uuid(i) for i in ids))
     if not ids:
         return None
     with local_options({"metacheck.figshare.pat": _researchdata4tu_pat()}):

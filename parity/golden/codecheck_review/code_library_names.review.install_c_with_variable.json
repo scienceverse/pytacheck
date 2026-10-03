@@ -1,0 +1,58 @@
+{
+  "id": "code_library_names.review.install_c_with_variable",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "package",
+      "source",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "p1",
+          "p2",
+          "z",
+          "p1",
+          "p2",
+          "renv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "install",
+          "install",
+          "install",
+          "install",
+          "install",
+          "install",
+          "install",
+          "namespace"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          2,
+          3,
+          3,
+          3,
+          4,
+          4,
+          4
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

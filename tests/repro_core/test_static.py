@@ -655,3 +655,43 @@ def test_common_pkgs() -> None:
 )
 def test_classify_install_message(msg: str | None, category: str) -> None:
     assert core._repro_classify_install_message(msg) == category
+
+
+# package-list variables and install failures (issue #421) -------------------
+
+
+def test_not_loadable_msg_reports_the_unavailable_warning() -> None:
+    # install.packages() only WARNS for a name it cannot find, so the load
+    # check reported "installed but package 'x' is not loadable" -- claiming
+    # an install that never happened, classified as uncategorised. The
+    # warning is the real reason and is reported instead.
+    warn = "package 'list.packages' is not available for this version of R"
+    msg = core._repro_not_loadable_msg("list.packages", ["other warning", warn])
+    assert msg == warn
+    assert core._repro_classify_install_message(msg) == "cran_unavailable"
+
+    # with the CRAN Archive retry's own result appended, as repro_install_deps()
+    # does: a package the Archive has no folder for is not a network problem
+    msg2 = f"{msg} (CRAN Archive retry also failed: package not found in the CRAN Archive)"
+    assert core._repro_classify_install_message(msg2) == "cran_unavailable"
+
+    # without such a warning the original wording is kept
+    assert core._repro_not_loadable_msg("pkg", []) == "installed but package 'pkg' is not loadable"
+    assert core._repro_not_loadable_msg("pkg", None) == (
+        "installed but package 'pkg' is not loadable"
+    )
+    # repeated warnings are reported once, several distinct ones are joined
+    a, b = "package 'a' is not available (for R version 4.5.3)", warn
+    assert core._repro_not_loadable_msg("pkg", [a, b, a]) == f"{a}; {b}"
+
+
+def test_dependencies_does_not_list_a_package_list_variable() -> None:
+    deps = repro_dependencies(
+        [
+            'list.packages <- c("activity", "bbmle")',
+            "for (req.lib in list.packages) {",
+            "  if (!require(req.lib, character.only = TRUE)) install.packages(req.lib)",
+            "}",
+        ]
+    )
+    assert set(deps["package"]) == {"activity", "bbmle"}

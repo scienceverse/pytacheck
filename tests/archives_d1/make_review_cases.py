@@ -213,7 +213,8 @@ for fn, mod in [
         f"{fn}.review.generated_shapes",
         f"{fn}({TP_R})",
         f"lambda m: m.{mod}.{fn}({TP_PY})",
-        mock=False,
+        # dataverse_links() resolves a shared DOI prefix through doi.org
+        mock=fn == "dataverse_links",
         compare=IGNORE_PID,
     )
     fn_case(

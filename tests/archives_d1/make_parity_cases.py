@@ -47,9 +47,16 @@ def py_list(values: list[Any]) -> str:
 
 
 def fn_case(
-    id_: str, r: str, py: str, args: dict[str, Any], compare: dict[str, Any] | None = None
+    id_: str,
+    r: str,
+    py: str,
+    args: dict[str, Any],
+    compare: dict[str, Any] | None = None,
+    mock: str | None = None,
 ) -> None:
     c: dict[str, Any] = {"id": id_, "r": r, "py": py, "args": args}
+    if mock:
+        c["mock_dir"] = mock
     if compare:
         c["compare"] = compare
     cases.append(c)
@@ -201,6 +208,52 @@ fn_case(
     "metacheck.archives.figshare._figshare_id",
     {"figshare_url": {"$expr": {"r": r_chr(FS_URLS), "py": py_list(FS_URLS)}}},
 )
+# institutional DOIs whose suffix chains two sub-prefix segments (metacheck #439)
+# and collection URLs / DOIs, which are not article ids
+FS_CHAINED = [
+    "https://doi.org/10.17608/k6.auckland.25808182.v2",
+    "https://doi.org/10.15131/shef.data.13712533",
+    "10.17608/k6.auckland.25808182",
+    "https://doi.org/10.25375/a.b.c.14618526.v1.",
+    "https://doi.org/10.17608/k6.auckland.v2",
+    "https://figshare.com/collections/Some_collection/8742785",
+    "https://doi.org/10.6084/m9.figshare.c.8742785.v1",
+]
+fn_case(
+    ".figshare_id.chained_subprefix",
+    "metacheck:::.figshare_id",
+    "metacheck.archives.figshare._figshare_id",
+    {"figshare_url": {"$expr": {"r": r_chr(FS_CHAINED), "py": py_list(FS_CHAINED)}}},
+)
+COLL_URLS = [
+    "https://figshare.com/collections/Some_collection/8742785",
+    "https://figshare.com/collections/Some_collection/8742785/",
+    "https://FIGSHARE.COM/Collections/X/12",
+    "https://figshare.le.ac.uk/collections/Leicester/77",
+    "https://doi.org/10.6084/m9.figshare.c.6190228",
+    "10.6084/m9.figshare.c.6190228.v2",
+    "https://doi.org/10.6084/M9.FIGSHARE.C.42",
+    "https://figshare.com/collections/x/y/1",
+    "https://figshare.com/collections/x/1/files",
+    "https://figshare.com/projects/some_project/133332",
+    "https://doi.org/10.6084/m9.figshare.18093368",
+    "https://doi.org/10.26180/c.1234",
+    "not-a-figshare-url",
+    "",
+    None,
+]
+fn_case(
+    ".figshare_collection_id.shapes",
+    "metacheck:::.figshare_collection_id",
+    "metacheck.archives.figshare._figshare_collection_id",
+    {"figshare_url": {"$expr": {"r": r_chr(COLL_URLS), "py": py_list(COLL_URLS)}}},
+)
+fn_case(
+    ".figshare_collection_id.single",
+    "metacheck:::.figshare_collection_id",
+    "metacheck.archives.figshare._figshare_collection_id",
+    {"figshare_url": "https://doi.org/10.6084/m9.figshare.c.6190228"},
+)
 fn_case(
     ".figshare_id.numeric",
     "metacheck:::.figshare_id",
@@ -278,6 +331,9 @@ fn_case(
     "metacheck:::.dataverse_parse",
     "metacheck.archives.dataverse._dataverse_parse",
     {"url": {"$expr": {"r": r_chr(DV_MORE), "py": py_list(DV_MORE)}}},
+    # a prefix several installations share (10.17026) is resolved through
+    # doi.org: unrecorded here, so both sides fall back to the first host
+    mock=MOCK,
 )
 fn_case(
     ".dataverse_parse.empty",
@@ -309,6 +365,7 @@ fn_case(
     "metacheck:::.dataverse_host_from_doi",
     "metacheck.archives.dataverse._dataverse_host_from_doi",
     {"doi": {"$expr": {"r": r_chr(HOST_DOIS), "py": py_list(HOST_DOIS)}}},
+    mock=MOCK,
 )
 
 # ---------------------------------------------------------------- *_links
@@ -434,6 +491,50 @@ fn_case(
         },
     },
     IGNORE_PID,
+)
+fn_case(
+    "figshare_links.collections",
+    "figshare_links",
+    "metacheck.archives.figshare.figshare_links",
+    {
+        "paper": {
+            "$test_paper": {
+                "text": [
+                    "The collection figshare.com/collections/Some_collection/8742785 and "
+                    "its DOI 10.6084/m9.figshare.c.8742785.v1.",
+                    "Auckland 10.17608/k6.auckland.25808182.v2 and Sheffield "
+                    "https://doi.org/10.15131/shef.data.13712533.",
+                ],
+                "url": [
+                    "https://figshare.le.ac.uk/collections/Leicester/77",
+                    "https://doi.org/10.6084/m9.figshare.c.6190228",
+                ],
+            }
+        },
+    },
+    IGNORE_PID,
+)
+# 10.17026 is shared by the DANS Data Stations: resolved through doi.org
+# (unrecorded here, so the first listed station), and a Figshare collection
+# DOI is no longer read as a dataverse.no one (metacheck #434)
+fn_case(
+    "dataverse_links.shared_prefix",
+    "dataverse_links",
+    "metacheck.archives.dataverse.dataverse_links",
+    {
+        "paper": {
+            "$test_paper": {
+                "text": [
+                    "DANS: https://doi.org/10.17026/dans-zbt-uhma and 10.17026/PT/ABC123.",
+                    "Collection https://doi.org/10.6084/m9.figshare.c.8742785.v1.",
+                    "phys-techsciences.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/PT/X",
+                ],
+                "url": ["https://doi.org/10.17026/SS/Q1"],
+            }
+        },
+    },
+    IGNORE_PID,
+    mock=MOCK,
 )
 fn_case(
     "dataverse_links.test_paper",
@@ -582,6 +683,25 @@ expr_case(
     "figshare_info.mock.numeric",
     online("figshare_info(6934484)"),
     "lambda m: m.figshare.figshare_info(6934484.0)",
+)
+# collections are expanded into their articles like projects (metacheck #434)
+FS_COLL_IN = [
+    "https://figshare.com/collections/Some_collection/8742785",
+    "https://doi.org/10.6084/m9.figshare.c.8742785.v1",
+    "https://figshare.com/collections/Gone/404405",
+    "https://figshare.com/projects/Empty/999",
+    "18093368",
+]
+expr_case(
+    "figshare_info.mock.collection",
+    online(f"figshare_info({r_chr(FS_COLL_IN)})"),
+    f"lambda m: m.figshare.figshare_info({py_list(FS_COLL_IN)})",
+)
+expr_case(
+    "figshare_info.mock.collection_only",
+    online('figshare_info("https://figshare.com/collections/Some_collection/8742785")'),
+    "lambda m: m.figshare.figshare_info("
+    '"https://figshare.com/collections/Some_collection/8742785")',
 )
 
 DV_INFO_IN = [

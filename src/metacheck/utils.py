@@ -44,7 +44,7 @@ __all__ = [
 #: metacheck's ``.onLoad()`` defaults (R/zzz.R), plus the defaults the R code
 #: passes to ``getOption()`` where it matters for every caller. The default
 #: ``metacheck.llm.model`` depends on the API keys set and is an option set by
-#: :mod:`metacheck.llm.core` when it loads, as ``.onLoad()`` sets it.
+#: :func:`_init_default_model` when this module loads, as ``.onLoad()`` sets it.
 _DEFAULTS: dict[str, Any] = {
     "metacheck.llm_max_calls": RInt(30),
     "metacheck.llm.use": False,
@@ -103,6 +103,23 @@ def options(values: Mapping[str, Any] | None = None, /, **kwargs: Any) -> dict[s
             else:
                 _options[_canon(key)] = value
     return old
+
+
+def _init_default_model() -> None:
+    """metacheck's ``.onLoad()`` default model (R/zzz.R), applied when this module loads.
+
+    The first provider whose API key is set becomes ``metacheck.llm.model``,
+    unless a model is already set, so ``llm_model(None)`` can still unset it.
+    Applying it here, rather than when :mod:`metacheck.llm` loads, keeps the
+    option the same before and after the LLM code is first imported.
+    """
+    from metacheck.llm._onload import _default_model_from_env
+
+    model = _default_model_from_env()
+    if model is None:
+        return
+    with _options_lock:
+        _options.setdefault("metacheck.llm.model", model)
 
 
 @contextlib.contextmanager
@@ -733,3 +750,6 @@ def pb(
         bar.tick(0)
         return bar
     return _NullProgressBar()
+
+
+_init_default_model()

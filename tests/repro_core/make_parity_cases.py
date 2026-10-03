@@ -103,6 +103,33 @@ deps("empty", {"$chr": []})
 deps("no_packages", chr_("x <- 1", "y <- x + 2"))
 deps("bioc", chr_("library(edgeR)", "library(dplyr)"))
 deps("bioc_github", chr_("library(edgeR)", "remotes::install_github('Bioconductor/edgeR')"))
+# issue #421: a package-list variable is resolved to its literal names, or dropped
+deps(
+    "loop_variable",
+    chr_(
+        'list.packages <- c("activity", "bbmle")',
+        "for (req.lib in list.packages) {",
+        "  if (!require(req.lib, character.only = TRUE)) install.packages(req.lib)",
+        "}",
+    ),
+)
+deps(
+    "loop_variable_unresolved",
+    chr_(
+        "for (req.lib in list.packages) {",
+        "  if (!require(req.lib, character.only = TRUE)) install.packages(req.lib)",
+        "}",
+        "library(dplyr)",
+    ),
+)
+deps(
+    "lapply_variable",
+    chr_(
+        'pkgs <- c("psych", "car")',
+        "invisible(lapply(pkgs, library, character.only = TRUE))",
+        "pacman::p_load(char = pkgs)",
+    ),
+)
 deps(
     "mixed",
     chr_(
@@ -771,6 +798,14 @@ MSGS = [
     "",
     None,
     "HTTP error 404. Not Found",
+    # issue #421: the install step's own "not available" warning, and with the
+    # CRAN Archive retry's result appended
+    "package 'list.packages' is not available for this version of R",
+    "package 'list.packages' is not available for this version of R"
+    " (CRAN Archive retry also failed: package not found in the CRAN Archive)",
+    "package 'x' is not available for this version of R"
+    " (CRAN Archive retry also failed: could not reach the CRAN Archive listing)",
+    "package not found in the CRAN Archive",
 ]
 for i, msg in enumerate(MSGS):
     case(
@@ -778,6 +813,37 @@ for i, msg in enumerate(MSGS):
         "metacheck:::.repro_classify_install_message",
         f"{CORE}._repro_classify_install_message",
         {"msg": msg if msg is not None else {"$NA": True}},
+    )
+
+
+# .repro_not_loadable_msg(): the message for a package that cannot be loaded after
+# its install step (issue #421)
+NOT_AVAILABLE = "package 'list.packages' is not available for this version of R"
+for id_, warnings in [
+    ("not_available", chr_("other warning", NOT_AVAILABLE)),
+    ("not_available_twice", chr_(NOT_AVAILABLE, NOT_AVAILABLE)),
+    (
+        "two_unavailable",
+        chr_(NOT_AVAILABLE, "unrelated", "package 'b' is not available (for R version 4.5.3)"),
+    ),
+    ("no_warnings", chr_()),
+    ("other_warnings", chr_("installation of package 'x' had non-zero exit status")),
+    ("null_warnings", {"$null": True}),
+]:
+    case(
+        f"repro_not_loadable_msg.{id_}",
+        "metacheck:::.repro_not_loadable_msg",
+        f"{CORE}._repro_not_loadable_msg",
+        {"pkg": "list.packages", "warnings": warnings},
+    )
+
+# .repro_cran_archive_install(): a 404 on the Archive listing means the package is not
+# there, not that CRAN cannot be reached (issue #421); the request is mocked on both sides
+for mode in ("not_found", "server_error", "unreachable", "no_tarballs"):
+    expr(
+        f"repro_cran_archive_install.{mode}",
+        f"rc_archive_install('{mode}')",
+        f"lambda m: m.archive_install('{mode}')",
     )
 
 
@@ -1036,6 +1102,25 @@ case(
     f"{DOCKER}.repro_install_deps_docker",
     {"install_deps": {"$df": {"package": []}}, "lib_dir": "unused"},
 )
+# the install.R the container runs (its warning capture is issue #421)
+for id_, pkgs, srcs, refs in [
+    ("cran", ["dplyr", "list.packages"], ["cran", "cran"], [None, None]),
+    (
+        "mixed",
+        ["edgeR", "mypkg", "tarpkg"],
+        ["bioc", "github", "url"],
+        [None, "u/mypkg", "http://x/t.tar.gz"],
+    ),
+]:
+    r_ref = "c(" + ", ".join("NA_character_" if r is None else f"'{r}'" for r in refs) + ")"
+    r_pkgs = "c(" + ", ".join(f"'{p}'" for p in pkgs) + ")"
+    r_srcs = "c(" + ", ".join(f"'{s}'" for s in srcs) + ")"
+    expr(
+        f"repro_install_deps_docker.script.{id_}",
+        f"rc_docker_install_script(data.frame(package = {r_pkgs}, source = {r_srcs}, ref = {r_ref}))",
+        f"lambda m: m.docker._install_script(m.pd.DataFrame({{'package': {pkgs!r},"
+        f" 'source': {srcs!r}, 'ref': {refs!r}}}))",
+    )
 case(
     "repro_run_scripts_docker.empty",
     "repro_run_scripts_docker",
