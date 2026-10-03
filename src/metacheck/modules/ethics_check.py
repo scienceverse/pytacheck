@@ -7,6 +7,7 @@ The live-data helper the module relies on, ``.detect_live_data()``
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -15,7 +16,9 @@ import pandas as pd
 from metacheck._r.base import plural
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import grepl
+from metacheck.core.errors import PytacheckWarning
 from metacheck.module import module
+from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, is_paper_list
 from metacheck.text.search import text_search
 
@@ -196,6 +199,11 @@ def _paper_ids(paper: Any) -> list[str]:
         papers = list(paper.values()) if isinstance(paper, Mapping) else list(paper)
     else:
         return paper_id(paper)  # a table: "paper must be a paper or paperlist object."
+    # the sentences carry the resolved IDs (U208), so the summary rows must too; the
+    # search that built them has already warned
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", PytacheckWarning)
+        papers = list(resolve(papers))
     ids: list[str] = []
     for p in papers:
         own = paper_id(p)
@@ -354,10 +362,10 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     lack one), a summary text and, for a single paper, the report.
 
     Like R, *paper* may also be a plain list of papers. Papers with duplicated
-    IDs are summarised together, a paper without an ``info`` row is summarised
-    under its own ID, and a text table without a ``text`` column has no
-    sentences (metacheck stops or mislabels these, U101/U102). An empty paper
-    list gives an empty result (metacheck stops, U79). Reproduces R's errors
+    IDs are renamed (``ID~2``, U208) and summarised one by one, a paper without
+    an ``info`` row is summarised under its own ID, and a text table without a
+    ``text`` column has no sentences (metacheck stops or mislabels these,
+    U101/U102). An empty paper list gives an empty result (metacheck stops, U79). Reproduces R's errors
     for a table or a character vector instead of a paper.
     """
     from metacheck.text.extract import _detect_live_data

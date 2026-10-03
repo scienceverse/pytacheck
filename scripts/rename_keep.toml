@@ -391,6 +391,34 @@ match = 'pytacheck/pandas/Python'
 count = 1
 why = "prose"
 
+# --- the warning class named in the design (docs/design/ARCHITECTURE.md, core/errors.py)
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/core/errors.py"
+match = 'PytacheckWarning'
+count = 2
+why = "the warning class the design names for repeated IDs; renamed with the other class names (RENAME-4)"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/papers/ids.py"
+match = 'PytacheckWarning'
+count = 4
+why = "uses the warning class of core/errors.py; renamed with it (RENAME-4)"
+
+[[rule]]
+action = "keep"
+files = "src/metacheck/modules/ethics_check.py"
+match = 'PytacheckWarning'
+why = "uses the warning class of core/errors.py; renamed with it (RENAME-4)"
+
+[[rule]]
+action = "keep"
+files = "tests/*"
+match = 'PytacheckWarning'
+why = "tests that expect the warning class of core/errors.py; renamed with it (RENAME-4)"
+
 # --- last: the store id in the module-system tests (after the specific entries above)
 
 [[rule]]

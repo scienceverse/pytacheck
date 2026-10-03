@@ -209,3 +209,52 @@
       "$expr":
         "r": "paperlist(local({p <- test_paper(c('p = .03')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'a'; p}))"
         "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['p = .03'], 'b'), (['none'], 'a')]])"
+# ---------------------------------------------------------------- repeated rows and paper ids (V7, F6)
+- "id": "all_p_values.duplicate_paragraph"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('No difference was found (p = .20).', 'The other test was imprecise (p < .05).')); p$text <- rbind(p$text, p$text); p})"
+        "py": "(lambda p: (p.__setitem__('text', pd.concat([p['text'], p['text']], ignore_index=True)), p)[1])(pc.test_paper(['No difference was found (p = .20).', 'The other test was imprecise (p < .05).']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.duplicate_paragraph"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('No difference was found (p = .20).', 'The other test was imprecise (p < .05).')); p$text <- rbind(p$text, p$text); p})"
+        "py": "(lambda p: (p.__setitem__('text', pd.concat([p['text'], p['text']], ignore_index=True)), p)[1])(pc.test_paper(['No difference was found (p = .20).', 'The other test was imprecise (p < .05).']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.duplicate_paragraph"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('No difference was found (p = .20).', 'The other test was imprecise (p < .05).')); p$text <- rbind(p$text, p$text); p})"
+        "py": "(lambda p: (p.__setitem__('text', pd.concat([p['text'], p['text']], ignore_index=True)), p)[1])(pc.test_paper(['No difference was found (p = .20).', 'The other test was imprecise (p < .05).']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "all_p_values.duplicate_ids"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p1 <- test_paper(c('No difference was found (p = .20).', 'The other test was imprecise (p < .05).')); p2 <- test_paper(c('A second paper found p = .30 here.', 'And p < .10 there.')); p2$paper_id <- p1$paper_id; p2$text$paper_id <- p1$paper_id; paperlist(p1, p2)})"
+        "py": "(lambda p1, p2: (p2.__setitem__('paper_id', p1.paper_id), p2.__setitem__('text', p2['text'].assign(paper_id=p1.paper_id)), pc.PaperList([p1, p2]))[-1])(pc.test_paper(['No difference was found (p = .20).', 'The other test was imprecise (p < .05).']), pc.test_paper(['A second paper found p = .30 here.', 'And p < .10 there.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.duplicate_ids"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p1 <- test_paper(c('No difference was found (p = .20).', 'The other test was imprecise (p < .05).')); p2 <- test_paper(c('A second paper found p = .30 here.', 'And p < .10 there.')); p2$paper_id <- p1$paper_id; p2$text$paper_id <- p1$paper_id; paperlist(p1, p2)})"
+        "py": "(lambda p1, p2: (p2.__setitem__('paper_id', p1.paper_id), p2.__setitem__('text', p2['text'].assign(paper_id=p1.paper_id)), pc.PaperList([p1, p2]))[-1])(pc.test_paper(['No difference was found (p = .20).', 'The other test was imprecise (p < .05).']), pc.test_paper(['A second paper found p = .30 here.', 'And p < .10 there.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.duplicate_ids"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p1 <- test_paper(c('No difference was found (p = .20).', 'The other test was imprecise (p < .05).')); p2 <- test_paper(c('A second paper found p = .30 here.', 'And p < .10 there.')); p2$paper_id <- p1$paper_id; p2$text$paper_id <- p1$paper_id; paperlist(p1, p2)})"
+        "py": "(lambda p1, p2: (p2.__setitem__('paper_id', p1.paper_id), p2.__setitem__('text', p2['text'].assign(paper_id=p1.paper_id)), pc.PaperList([p1, p2]))[-1])(pc.test_paper(['No difference was found (p = .20).', 'The other test was imprecise (p < .05).']), pc.test_paper(['A second paper found p = .30 here.', 'And p < .10 there.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}

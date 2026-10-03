@@ -35,6 +35,7 @@ from metacheck._r.regex import gsub, regextract_all, sub
 from metacheck.core.errors import StaleDocumentError
 from metacheck.core.scope import check_mutation, running_module, trusted_scope
 from metacheck.module import SECTION_LEVELS, ModuleOutput, module_find, module_info, module_run
+from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.report.blocks import ReportTable, collapse_section
 from metacheck.report.emojis import emojis
@@ -789,7 +790,7 @@ def report(
     if is_paper_list(paper) and len(paper) == 1:
         paper = paper[0]
     elif is_paper_list(paper):
-        papers = list(paper)
+        papers = resolve(list(paper), stacklevel=3)  # F6: one report file per paper
         bar = pb(len(papers), ":what [:bar] :current/:total :elapsedfull")
         bar.tick(0, tokens={"what": "Creating reports"})
         if output_file is None:

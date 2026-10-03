@@ -1,4 +1,5 @@
 {
+"funding_check.duplicate_ids": {"r": "45a665bbf88e568f", "py": "641ea161e0a7cdd6", "diff": ["table"]},
 "funding_check.paperlist_empty": {"r": "ac5146cf65ca52a8", "py": "440fc6a0ec3ba3c8", "diff": ["<R error, Python value>"]},
 "funding_check.tre_caseless": {"r": "1b733855682a0064", "py": "073f6a2a6bdc1f77", "diff": ["report[]", "summary_table.funding_found[]", "summary_text[]", "table", "traffic_light[]"]},
 "funding_check.unicode_acknow_financial_aid": {"r": "1b733855682a0064", "py": "959b1e1a408bb025", "diff": ["report[]", "summary_table.funding_found[]", "summary_text[]", "table", "traffic_light[]"]},

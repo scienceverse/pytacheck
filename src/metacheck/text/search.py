@@ -93,11 +93,15 @@ def sentence_table(paper: Any) -> tuple[pd.DataFrame, bool]:
 class _Search:
     """One ``text_search()`` call's view of a Doc: the rows it searches and R's tables."""
 
-    __slots__ = ("_rows", "doc", "is_vector", "within")
+    __slots__ = ("_rows", "doc", "from_papers", "is_vector", "within")
 
-    def __init__(self, doc: Doc, is_vector: bool, include_refs: bool) -> None:
+    def __init__(
+        self, doc: Doc, is_vector: bool, include_refs: bool, from_papers: bool = False
+    ) -> None:
         self.doc = doc
         self.is_vector = is_vector
+        #: the rows are the text of a paper or paper list (not a table or strings given)
+        self.from_papers = from_papers
         #: the searched rows: the references are skipped unless included
         self.within = doc.all if include_refs else doc.body
         self._rows: list[int] | None = None
@@ -134,6 +138,10 @@ class _Search:
             return self.sentences(found)
         d = self.doc
         if return_ == "match":
+            if self.from_papers:
+                # V7 (deliberate; docs/UPSTREAM_ISSUES.md D60): a sentence repeated exactly
+                # in a paper gives its matches once. metacheck's unique() skips this mode.
+                found = d.first_rows(found, 0)
             texts = d.text
             hits = regextract_all(p.src, [texts[i] for i in found], p.icase, p.perl, p.fixed)
             result = d.take([i for i, h in zip(found, hits, strict=True) for _ in h])
@@ -195,7 +203,7 @@ def text_search(
     doc, is_vector = search_doc(paper)
     for src in patterns[1:]:
         _check_pattern(src, ignore_case, perl, fixed)
-    s = _Search(doc, is_vector, include_refs)
+    s = _Search(doc, is_vector, include_refs, isinstance(paper, Paper) or _is_papers(paper))
     pats = [Pat.from_r(src, perl=perl, fixed=fixed, ignore_case=ignore_case) for src in patterns]
 
     if len(pats) == 1:
