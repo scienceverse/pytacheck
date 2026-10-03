@@ -123,9 +123,16 @@ def _chain(frame: Any, *steps: tuple[str | Sequence[str], bool]) -> pd.DataFrame
     return out
 
 
+def _key_value(v: Any) -> Any:
+    if isinstance(v, list | tuple):  # a list column (an older bibr export's _bbox_2d)
+        return tuple(_key_value(x) for x in v)
+    return None if v is None or v is pd.NA or v != v else v
+
+
 def _key(values: Sequence[Any]) -> tuple[Any, ...]:
-    """A join key in which every missing value equals every other (dplyr's ``na_matches``)."""
-    return tuple(None if v is None or v is pd.NA or v != v else v for v in values)
+    """A join key in which every missing value equals every other (dplyr's ``na_matches``)
+    and a list is its elements (dplyr joins on list columns)."""
+    return tuple(_key_value(v) for v in values)
 
 
 def _full_join(
