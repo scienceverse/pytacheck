@@ -234,17 +234,33 @@ def test_the_builtin_triples_keep_their_literals() -> None:
     assert covered >= BUILTIN_COVERED_FLOOR, f"{covered} of {len(triples)} triples have literals"
 
 
-def test_the_recorded_builtin_triples_are_current(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
-    """The JSON is what the recorder gives today: a module's new pattern means a re-record."""
-    from tests.foundation.record_builtin_patterns import record
+def test_the_recorded_builtin_triples_are_current(tmp_path: Path) -> None:
+    """The JSON is what the recorder gives today: a module's new pattern means a re-record.
 
-    monkeypatch.setenv(
-        "PYTACHECK_CACHE_DIR", str(tmp_path)
-    )  # the accuracy run makes its cache here
+    The recorder runs in a fresh interpreter: in this one, detectors made at import
+    time and per-paper memos left by earlier tests would hide some patterns.
+    """
+    import os
+    import subprocess
+    import sys
 
-    recorded = [list(t) for t in record()]
+    root = Path(__file__).resolve().parents[2]
+    code = (
+        "import json, sys; sys.path.insert(0, sys.argv[1]); "
+        "from tests.foundation.record_builtin_patterns import record; "
+        "print(json.dumps([list(t) for t in record()]))"
+    )
+    # the accuracy run makes its temporary folder in the cache folder, which must exist
+    env = {**os.environ, "METACHECK_CACHE_DIR": str(tmp_path), "PYTACHECK_CACHE_DIR": str(tmp_path)}
+    out = subprocess.run(
+        [sys.executable, "-c", code, str(root)],
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=root,
+        env=env,
+    )
+    recorded = json.loads(out.stdout.strip().splitlines()[-1])
     stored = [list(t) for t in builtin_triples()]
     assert recorded == stored, (
         "the built-in patterns changed: run `python tests/foundation/record_builtin_patterns.py` "
