@@ -1,0 +1,124 @@
+{
+  "name": "Generic data package",
+  "source": "pytacheck default",
+  "components": [
+    {
+      "id": "readme",
+      "title": "README",
+      "group": "documentation",
+      "description": "Add a README that explains what the package contains and how to use it.",
+      "match": {
+        "names": [
+          "^read[ _-]?me",
+          "^lees[ _-]?mij"
+        ],
+        "doc_role": [
+          "readme"
+        ]
+      },
+      "required": "always"
+    },
+    {
+      "id": "data",
+      "title": "Data",
+      "group": "data",
+      "description": "Add the data the paper's results are based on.",
+      "match": {
+        "data_type": [
+          "data"
+        ]
+      },
+      "required": "always"
+    },
+    {
+      "id": "code",
+      "title": "Code",
+      "group": "code",
+      "description": "Add the scripts or software that process or analyse the data.",
+      "match": {
+        "data_type": [
+          "code"
+        ]
+      },
+      "required": "optional"
+    },
+    {
+      "id": "codebook",
+      "title": "Codebook",
+      "group": "documentation",
+      "description": "Add a codebook or data dictionary that describes the variables in the data.",
+      "match": {
+        "doc_role": [
+          "codebook"
+        ],
+        "names": [
+          "code[ _.-]?book",
+          "data[ _.-]?(?:dict|legend)",
+          "variable[ _.-]?(?:key|list|descr)",
+          "woordenboek"
+        ],
+        "readme_sections": [
+          "variables"
+        ]
+      },
+      "required": "recommended",
+      "when": [
+        "data"
+      ]
+    },
+    {
+      "id": "dmp",
+      "title": "Data management plan",
+      "group": "documentation",
+      "description": "Add the data management plan of the project.",
+      "match": {
+        "names": [
+          "data[ _-]?management[ _-]?plan",
+          "(?<![a-z0-9])dmp(?![a-z0-9])",
+          "gegevensbeheerplan"
+        ]
+      },
+      "required": "optional"
+    },
+    {
+      "id": "ethics",
+      "title": "Ethical approval",
+      "group": "ethics",
+      "description": "Add the approval of the ethics committee.",
+      "match": {
+        "names": [
+          "ethic",
+          "ethiek",
+          "ethisch",
+          "approval",
+          "goedkeuring",
+          "(?<![a-z0-9])(?:erb|irb|metc)(?![a-z0-9])"
+        ],
+        "folders": [
+          "^(?:ethics?|ethical|approvals?|erb|irb|metc|rec|ethiek|goedkeuring)$"
+        ]
+      },
+      "required": "human_participants",
+      "formats": [
+        "pdf"
+      ]
+    },
+    {
+      "id": "consent",
+      "title": "Informed consent",
+      "group": "ethics",
+      "description": "Add the informed consent form (or its blank template).",
+      "match": {
+        "names": [
+          "consent",
+          "toestemming",
+          "(?<![a-z])informed(?![a-z])"
+        ],
+        "folders": [
+          "^(?:consent|informed[ _-]?consent|toestemming)$"
+        ]
+      },
+      "required": "human_participants"
+    }
+  ]
+}
