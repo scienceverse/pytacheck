@@ -561,3 +561,16 @@ def test_empty_paperlist(name: str) -> None:
     out = module_run(pc.PaperList([]), name)
     assert out.summary_table.columns.tolist()[0] == "paper_id"
     assert len(out.summary_table) == 0
+
+
+def test_ref_consistency_counts_bib_xrefs_of_older_bibr_exports() -> None:
+    # U207: an older bibr export marks a citation "bib" (xref_id = bib_id), Grobid "bibr";
+    # metacheck only read "bibr", so all references of a bibr export were never cited
+    for xref_type in ("bib", "bibr"):
+        paper = ref_paper(["10.1/a", "10.1/b", "10.1/c"], cites=[0, 1])
+        paper.xref["xref_type"] = pd.array([xref_type] * 2, dtype="string")
+        summary = module_run(paper, "ref_consistency").summary_table
+        assert summary["n_bib"].tolist() == [3], xref_type
+        assert summary["n_xrefs"].tolist() == [2], xref_type
+        assert summary["n_extra"].tolist() == [1], xref_type  # reference 2 is not cited
+        assert summary["n_missing"].tolist() == [0], xref_type
