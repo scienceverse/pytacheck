@@ -47,6 +47,7 @@
         "text_id": [1, 2, 3]
         "paper_id": ["x", "x", "x"]
 - "id": "extract_p_values.review.unicode_space"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "'p = 1.5×10^-3' is read as 0.0015 (metacheck stops at the mantissa: p = 1.5)"}
   "r": "extract_p_values"
   "py": "metacheck.text.extract.extract_p_values"
   "args":
@@ -126,6 +127,7 @@
         "text_id": [1, 2, 3]
         "paper_id": ["x", "x", "x"]
 - "id": "extract_eq.review.unicode"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U205", "reason": "'M = −0.5' (Unicode minus) is a statistic, its rhs '-0.5'; metacheck matches only the ASCII hyphen"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":

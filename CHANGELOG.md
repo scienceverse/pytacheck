@@ -62,6 +62,14 @@ package's. The R commit each release is compared against is in
 
 - `github_links()` and `gitlab_links()`, and so `repo_check`, find the GitHub and GitLab links of papers in the 12.x format: bibr 12.x JSON, and Grobid TEI, which is read as 12.x by default. They searched the url table's first column, which in a 12.x paper is the number `url_id`, so no such repository was found; they now search `href`, as the other repository finders do. metacheck has the same bug (docs/UPSTREAM_ISSUES.md U196). On 450 Psychological Science papers read from Grobid TEI, 9 papers now give 9 GitHub and 1 GitLab repositories, against none before. More repositories found means more calls to api.github.com, which allows 60 an hour without a token.
 
+### Fixed: p-values and statistics that were not read
+
+These change the results of validated checks (`all_p_values`, `stat_p_exact`, `stat_p_nonsig`, `stat_effect_size`); metacheck has the same bugs (docs/UPSTREAM_ISSUES.md U204, U205).
+
+- `extract_p_values()` reads p written as "ps", "p's" or "p-values": "ps < .05", the usual way to report several p-values at once, was not a p-value. In 450 Psychological Science papers read from Grobid TEI it occurs 216 times in 70 papers. `stat_p_exact` counts "ps < .05" as an imprecise p-value, so it turns red on 3 of the 21 papers of the realistic corpus.
+- Scientific notation may use "×", leave out "^" and use the Unicode minus: "p = 1.8 × 10 -6" was read as p = 1.8 and is now 1.8e-06.
+- `extract_eq()` and `extract_p_values()` read the Unicode minus sign (U+2212), which text from PDFs often has (bibr keeps it, Grobid writes "-"): "t(28) = −2.15" and "d = −0.80" were not found, so `stat_effect_size` saw no t-test in such a sentence. `rhs` and `p_value` now have "-"; the matched `text` is kept as written.
+
 ### Documentation
 
 - docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.

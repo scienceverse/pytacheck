@@ -200,8 +200,30 @@ differences:
     reason: >-
       a local file whose extension has one type takes it (archive, image, config), so the
       local archive counts in files_zip as an online one does; metacheck leaves file_type NA
+  - module: [all_p_values, stat_p_exact, stat_p_nonsig]
+    input:
+      - formats/preprint.pdf.tei.xml
+      - bibr12/preprint.json
+      - problems/0956797617737129.xml
+      - psychsci/0956797614527830.json
+      - psychsci/0956797614522816.json
+    field: [traffic_light, summary_text, report, summary_table.*, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U204
+    reason: >-
+      'ps < .05', 'ps > .115' and the other 'ps' forms are p-values (8 more in the preprint, 7
+      in the two psychsci papers, 1 in 0956797617737129); metacheck matches only p, p-value
+      and P. Counted as imprecise, they turn stat_p_exact red on 3 of these papers
 
 floors:
+  - module: stat_p_exact
+    traffic_light: 0.85
+    kind: r_bug_fixed
+    ref: U204
+    reason: >-
+      3 of the 21 papers report several p-values as 'ps < .05': pytacheck counts them as
+      imprecise p-values (red), metacheck does not see them (green)
   - module: ref_accuracy
     traffic_light: 0.4
     kind: r_bug_fixed
