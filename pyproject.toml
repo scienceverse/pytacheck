@@ -100,6 +100,12 @@ metacheck-app = "metacheck.app:main"
 [project.entry-points."pytacheck.modules"]
 # Third-party packages can register modules under this entry-point group.
 
+[project.entry-points."pytacheck.packs"]
+# Packs installed with pip. metacheck registers its own data package checks this
+# way: they have no metacheck (R) counterpart, so they stay out of the built-in
+# metacheck:: modules that mirror it.
+datapackage = "metacheck.datapackage.modules"
+
 [build-system]
 requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"

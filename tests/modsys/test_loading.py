@@ -136,7 +136,8 @@ def test_module_list_default_unchanged_and_pack_column(ms) -> None:
     assert list(builtin.columns) == [*before.columns, "pack"]
     assert builtin.drop(columns="pack").equals(before)
     everything = module_list(pack="*")
-    assert set(everything["pack"]) == {"metacheck", "demo"}
+    # metacheck registers its own datapackage pack (pytacheck.packs entry point)
+    assert set(everything["pack"]) == {"metacheck", "datapackage", "demo"}
     assert everything.loc[everything["pack"] == "demo", "name"].tolist() == ["zeta"]
     assert module_list(pack="demo")["name"].tolist() == ["zeta"]
     with pytest.raises(ValueError, match="not both"):
