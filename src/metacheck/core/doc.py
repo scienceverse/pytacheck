@@ -61,6 +61,7 @@ __all__ = [
     "clean",
     "empty_text_frame",
     "merge_sections",
+    "sentence_frame",
     "table_frame",
 ]
 
@@ -160,6 +161,16 @@ def _paper_table(paper: Paper, name: str) -> pd.DataFrame:
     x = x.copy(deep=False)
     x["paper_id"] = pd.Series([paper.paper_id] * len(x), index=x.index, dtype="string")
     return x.reset_index(drop=True)
+
+
+def sentence_frame(paper: Paper) -> pd.DataFrame:
+    """The sentence table of one paper (:meth:`Doc.base_frame`), also when the text table
+    repeats its ``text`` column: no Doc can be made of that (nothing can search it,
+    as before), so the table is joined with pandas and returned as it is."""
+    text = paper._tables.get("text")  # a table still held as JSON records has no repeats
+    if isinstance(text, pd.DataFrame) and (text.columns == "text").sum() > 1:
+        return merge_sections(_paper_table(paper, "text"), lambda: _paper_table(paper, "section"))
+    return Doc.of(paper).base_frame()
 
 
 def table_frame(paper: Paper, name: str) -> pd.DataFrame | None:

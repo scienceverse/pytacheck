@@ -18,7 +18,7 @@ import pandas as pd
 
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import RegexError, compile_r, regextract_all
-from metacheck.core.doc import Doc, bits, merge_sections
+from metacheck.core.doc import Doc, bits, merge_sections, sentence_frame
 from metacheck.core.patterns import Pat
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.papers.tables import paper_table
@@ -81,7 +81,7 @@ def sentence_table(paper: Any) -> tuple[pd.DataFrame, bool]:
     if isinstance(paper, pd.DataFrame):
         return paper.copy(deep=False), False
     if isinstance(paper, Paper):
-        return Doc.of(paper).base_frame().copy(deep=False), False
+        return sentence_frame(paper).copy(deep=False), False
     if _is_papers(paper):
         return _list_frame(paper), False
     strings = _strings(paper)

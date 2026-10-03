@@ -344,3 +344,30 @@ def test_text_search_of_strings() -> None:
     cases.search("badret", strings, strings, "a", return_="nope")
     cases.search("emptypat", strings, strings, [])
     cases.assert_none()
+
+
+@pytest.mark.parametrize("sections", [True, False])
+def test_sentence_table_of_a_text_table_that_repeats_its_text_column(sections: bool) -> None:
+    """The table is returned as before (no search can use it: that raised, and still does)."""
+    p = pc.Paper("p1")
+    p.text = pd.DataFrame(
+        [["a b p = .04", 1, 1, 1, "a b"], ["c d", 2, 1, 1, "q"]],
+        columns=["text", "text_id", "section_id", "paragraph_id", "text"],
+    )
+    if sections:
+        p.section = pd.DataFrame(
+            {
+                "section_id": pd.array([1], dtype="Int64"),
+                "header": pd.array(["H"], dtype="string"),
+                "section_type": pd.array(["intro"], dtype="string"),
+            }
+        )
+    new, is_vector = sentence_table(p)
+    old, was_vector = LS._text_frame(p)
+    assert is_vector == was_vector is False
+    assert list(new.columns) == list(old.columns)
+    assert new.equals(old)
+    with pytest.raises(AttributeError, match="tolist"):
+        text_search(p, "a")
+    with pytest.raises(AttributeError, match="tolist"):
+        LS.text_search(p, "a")
