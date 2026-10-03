@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 
 import metacheck as pc
+from metacheck.core.errors import PytacheckWarning
 from metacheck.module import SECTION_LEVELS, ModuleError
 
 MODULE = "open_practices"
@@ -254,11 +255,15 @@ def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
 
 
 def test_duplicate_paper_ids(demo: pc.Paper) -> None:
-    # U101: metacheck stops with "factor level [2] is duplicated"
-    single = run(demo)
-    mo = run(pc.PaperList([demo, demo]))
-    assert mo.traffic_light == single.traffic_light
-    assert mo.summary_text == single.summary_text
+    # U101: metacheck stops with "factor level [2] is duplicated"; U204: the second paper
+    # is renamed, so the list is two papers
+    with pytest.warns(PytacheckWarning, match="'to_err_is_human' as 'to_err_is_human~2'"):
+        mo = run(pc.PaperList([demo, demo]))
+    assert mo.summary_table["paper_id"].tolist() == ["to_err_is_human", "to_err_is_human~2"]
+    assert (
+        mo.summary_text
+        == "2 papers shared both data and code, 0 only data, 0 only code, and 0 neither."
+    )
 
 
 def test_empty_paper_list() -> None:
