@@ -62,6 +62,10 @@ package's. The R commit each release is compared against is in
 
 - `github_links()` and `gitlab_links()`, and so `repo_check`, find the GitHub and GitLab links of papers in the 12.x format: bibr 12.x JSON, and Grobid TEI, which is read as 12.x by default. They searched the url table's first column, which in a 12.x paper is the number `url_id`, so no such repository was found; they now search `href`, as the other repository finders do. metacheck has the same bug (docs/UPSTREAM_ISSUES.md U196). On 450 Psychological Science papers read from Grobid TEI, 9 papers now give 9 GitHub and 1 GitLab repositories, against none before. More repositories found means more calls to api.github.com, which allows 60 an hour without a token.
 
+### Fixed: open_practices on papers from older bibr exports
+
+- `open_practices` stopped with "cannot use 'tuple' as a dict key" on papers read from an older (pre-12) bibr JSON export, whose text table has a list column (`_bbox_2d`): 36 of the first 40 papers of a bibr validation set. The list is now compared by its elements, as dplyr does when it joins on a list column. Results on papers without a list column, and on 12.x papers, do not change.
+
 ### Documentation
 
 - docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.
