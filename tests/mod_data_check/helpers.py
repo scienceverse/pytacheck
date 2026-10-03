@@ -325,7 +325,9 @@ def norm_paths(out: Any) -> Any:
     """Fixture locations as R's goldens hold them (twin of ``.dc_norm_paths()``).
 
     Paths under the repository become relative to it (R runs from the
-    repository root) and a temporary copy's become ``<copy>/<dir>/...``.
+    repository root), a temporary copy's become ``<copy>/<dir>/...`` and files
+    unpacked from a local archive (U209) become ``<archives>/<sha1>/...``, on
+    every system.
     """
     import re
 
@@ -336,9 +338,13 @@ def norm_paths(out: Any) -> Any:
             None
             if v is None or v is pd.NA
             else re.sub(
-                r"^.*/metacheck-repo-files/",
-                "<cache>/",
-                re.sub(r"^.*/dcrepo_[^/]*/", "<copy>/", str(v).removeprefix(root)),
+                r"^.*[/\\]metacheck-archives(?:-[^/\\]*)?[/\\]([0-9a-f]+)[/\\]",
+                r"<archives>/\1/",
+                re.sub(
+                    r"^.*/metacheck-repo-files/",
+                    "<cache>/",
+                    re.sub(r"^.*/dcrepo_[^/]*/", "<copy>/", str(v).removeprefix(root)),
+                ),
             )
             for v in st["file_location"].tolist()
         ]

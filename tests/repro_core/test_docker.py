@@ -166,10 +166,14 @@ def test_install_script_reports_the_unavailable_warning(rscript: str, tmp_path: 
     lib = tmp_path / "lib"
     # run the script with the container's paths swapped for local ones
     script = "\n".join(lines)
-    # forward slashes and a file URL, so a Windows path is not read as R escapes
+    # forward slashes and a file URL, so a Windows path is not read as R escapes;
+    # source packages, as Windows R otherwise looks for binaries the repository lacks
     script = script.replace('"/rlib"', f'"{lib.as_posix()}"')
     script = script.replace("/sandbox/", f"{tmp_path.as_posix()}/")
-    script = f'options(repos = c(CRAN = "{(tmp_path / "repo").as_uri()}"))\n' + script
+    script = (
+        f'options(repos = c(CRAN = "{(tmp_path / "repo").as_uri()}"), pkgType = "source")\n'
+        + script
+    )
     path = tmp_path / "install.R"
     path.write_text(script)
     subprocess.run([rscript, str(path)], capture_output=True, text=True, check=True)
