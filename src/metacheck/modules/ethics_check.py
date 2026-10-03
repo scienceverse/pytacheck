@@ -14,10 +14,10 @@ import pandas as pd
 
 from metacheck._r.base import plural
 from metacheck._r.frames import bind_rows
-from metacheck._r.regex import grepl
+from metacheck.core.doc import Doc
 from metacheck.module import module
 from metacheck.papers.model import Paper, is_paper_list
-from metacheck.text.search import text_search
+from metacheck.text.search import search_doc, text_search
 
 __all__ = ["ethics_check"]
 
@@ -99,41 +99,6 @@ _ETHICS_WORDS = (
     r"helsinki\s+declaration",
 )
 
-# Not in R: a match of every pattern above contains one of these literals
-# (case-insensitively), so sentences without any of them are dropped before the
-# 63 searches; text_search() then returns exactly the same rows, in the same
-# order. Keep this in sync when the patterns change (the pattern tests in
-# tests/mod_ethics check every pattern against it).
-_ETHICS_ANY = "|".join(
-    (
-        "ethic",
-        "board",
-        "committee",
-        "panel",
-        "institutional",
-        "protocol",
-        "approv",
-        "clearance",
-        "reviewed",
-        "exempt",
-        "waive",
-        "helsinki",
-        "irb",
-        "iec",
-        "metc",
-        "toetsingscommissie",
-        "thique",
-        "iacuc",
-        "awerb",
-        "dierexperimentencommissie",
-        "dierenwelzijn",
-        "ivd",
-        "tierversuchskommission",
-        "tvk",
-        "ceea",
-    )
-)
-
 _REPORT_APPROVED = "An ethics approval statement was detected, based on the following text:\n\n> {}"
 _REPORT_NONE = (
     "We did not detect an ethics approval statement, and this paper does not appear to "
@@ -151,32 +116,25 @@ _REPORT_NEEDS_MISSING = (
 )
 
 
-def _search_frame(paper: Any) -> pd.DataFrame:
-    """The sentence table ``text_search()`` builds from *paper*, built once.
+def _search_doc(paper: Any) -> Doc:
+    """The Doc both searches of the module (ethics statements and live data) run on.
 
-    Both searches of the module (ethics statements and live data) run on it,
-    so the paper's text and section tables are joined only once. *paper* may
-    be a paper, a paper list (also a plain list of papers, as R's
-    ``.is_paper_list()`` accepts) or a table. Raises R's errors for the
+    It is made once, so the paper's text and section tables are joined and
+    indexed once, and a literal is looked for once, whichever search asks. *paper*
+    may be a paper (its cached Doc), a paper list (also a plain list of papers,
+    as R's ``.is_paper_list()`` accepts) or a table. Raises R's errors for the
     inputs ``text_search(paper, ethics_words)`` rejects: another type (``The
     paper argument doesn't seem to be ...``) or a character vector, whose
     per-pattern results ``bind_rows()`` refuses.
     """
-    from metacheck.text.search import sentence_table
-
-    frame, is_vector = sentence_table(paper)
+    doc, is_vector = search_doc(paper)
     if is_vector:
         text_search(paper, list(_ETHICS_WORDS))  # raises R's bind_rows() error
-    return frame
-
-
-def _may_mention_ethics(frame: pd.DataFrame) -> pd.DataFrame:
-    """Rows of *frame* that can match one of :data:`_ETHICS_WORDS` (see ``_ETHICS_ANY``)."""
-    if "text" not in frame.columns or len(frame) == 0:
-        return frame
-    keep = grepl(_ETHICS_ANY, frame["text"].tolist(), ignore_case=True)
-    out: pd.DataFrame = frame.loc[keep]
-    return out
+    if "text" in doc.missing:
+        # a text table without a `text` column has no sentences to search
+        # (metacheck searches its first column instead and fails, U102)
+        doc = Doc.from_frame(doc.base_frame().iloc[0:0])
+    return doc
 
 
 def _paper_ids(paper: Any) -> list[str]:
@@ -364,22 +322,18 @@ def ethics_check(paper: Any) -> dict[str, Any]:
 
     # R runs text_search(paper, ethics_words) first, which rejects anything but a
     # paper, a paper list (a plain list of papers too) or a table
-    frame = _search_frame(paper)
-    if "text" not in frame.columns:
-        # a text table without a `text` column has no sentences to search
-        # (metacheck searches its first column instead and fails, U102)
-        frame = frame.iloc[0:0]
+    doc = _search_doc(paper)
     # a table fails here: "paper must be a paper or paperlist object."
     # An empty paper list has no IDs and gets a summary table without rows
     # (metacheck stops: data.frame(paper_id = NULL) has no column to join by, U79)
     paper_ids = _paper_ids(paper)
 
-    table = text_search(_may_mention_ethics(frame), list(_ETHICS_WORDS))
+    table = text_search(doc, list(_ETHICS_WORDS))
     table["ethics"] = pd.Series([True] * len(table), index=table.index, dtype="boolean")
     if "text" not in table.columns:
         table["text"] = pd.Series([], dtype="string")
 
-    live_table = _detect_live_data(frame).copy()
+    live_table = _detect_live_data(doc).copy()
     live_table["live_data"] = pd.Series(
         [True] * len(live_table), index=live_table.index, dtype="boolean"
     )
