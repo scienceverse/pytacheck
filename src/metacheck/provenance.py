@@ -571,13 +571,16 @@ def run_modules(
     """
     import warnings
 
+    from metacheck.core.scope import trusted_scope
     from metacheck.module import module_run, run_session
     from metacheck.presets import label as label_of
 
     entries = _entries(selection)
     outputs: list[Any] = []
     op = paper
-    with run_session():
+    # a trusted scope (run_session() alone grants none): the chain does not edit
+    # its papers, so each paper's Doc is built once for all the modules
+    with run_session(), trusted_scope():
         for ref, args in entries:
             label = label_of(ref)
             try:

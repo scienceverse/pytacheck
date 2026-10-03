@@ -54,7 +54,7 @@ package's. The R commit each release is compared against is in
 ### Text search on an indexed paper
 
 - `text_search()` (every `return_` mode, lists of patterns, `exclude`, `search_header`), `extract_eq()`, `extract_urls()`, `extract_p_values()`, `text_expand()` and the one-paper `paper_table()` now work on an index of the paper's sentences (`metacheck.core`), built once per paper and kept on it: each pattern is tested on each sentence at most once, however many searches ask, and a sentence whose text lacks a word the pattern needs (`required_literals`) is skipped without running the regex. The results do not change; the code before is kept in `tests/_legacy/`, and the tests compare against it (search chains generated at random, every return mode, paper lists, tables and strings, and every built-in pattern on the accuracy papers against the regex itself).
-- A paper read from JSON or Grobid XML keeps its tables as JSON records, and its index is reused for as long as it does. Once a table is a DataFrame, it may have been edited in place, so the index is built again for each search. `paper_table()` of one paper no longer turns the paper's JSON records into a DataFrame.
+- A paper read from Grobid XML or JSON keeps its tables as JSON records, and its index is reused for as long as it does. Once a table is a DataFrame, it may have been edited in place, so the index is built again for each search, except inside `run_modules()` and `report_module_run()`, which build it once per paper per run. `run_session()` is unchanged: it keeps module results, not indexes. `read()` builds the index while it reads the XML and finds the paper's equations with it. `paper_table()` of one paper no longer turns the paper's JSON records into a DataFrame.
 
 ### The app
 
