@@ -155,6 +155,8 @@ See [docs/MODULES.md](https://github.com/scienceverse/pytacheck/blob/main/docs/M
 * **Faster.** pytacheck prefers mature compiled libraries (pandas, orjson, lxml, the
   `regex` engine) to re-implementing R's internals, builds paper tables lazily, and
   assembles corpus-wide tables without per-paper overhead.
+* **Where things are.** [docs/CODEMAP.md](https://github.com/scienceverse/pytacheck/blob/main/docs/CODEMAP.md)
+  maps each metacheck check, R function and R package to its place in the Python code.
 
 Development continues in metacheck; pytacheck tracks it. Please report issues with
 the checks themselves (validity, false positives) upstream.
