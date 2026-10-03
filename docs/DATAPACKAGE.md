@@ -74,7 +74,9 @@ output_format="html", *, preset=None, modules=None, args=None)` returns the repo
 module outputs, with the file's path in `save_path`. Both raise
 `metacheck.datapackage.PackageError` for a path that cannot be opened.
 `modules` beats `preset`, which beats the default; `args` maps a module's name to
-extra arguments for it, as in `report()`.
+extra arguments for it, as in `report()`. Both also take `max_bytes` and `max_files`,
+which lower the limits on an extracted archive (20 GB and 200,000 files otherwise);
+a folder has none.
 
 ## What is checked
 
