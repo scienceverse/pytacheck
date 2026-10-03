@@ -665,3 +665,14 @@ def test_help_text_without_metacheck_typos() -> None:
     details = pc.module_info(MODULE).details
     assert "might be incorrect, the module provides a warning." in details
     assert "you the module" not in details
+
+
+def test_unicode_minus_t_test_and_its_d() -> None:
+    # U205: text from PDFs (bibr) has the Unicode minus; metacheck found neither the
+    # t-test nor its d, so the module had no test to check
+    paper = pc.test_paper(["We found t(28) = −2.15, p = .04, d = −0.80."])
+    out = module_run(paper, "stat_effect_size")
+    assert out.traffic_light == "green"
+    assert out.table["test_text"].tolist() == ["t(28) = -2.15"]
+    assert out.table["es"].tolist() == ["d = -0.80"]
+    assert out.table["d_reported"].tolist() == ["-0.8"]

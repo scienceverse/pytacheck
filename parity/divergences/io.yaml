@@ -228,3 +228,15 @@
   ref: U27
   reason: "12.0 body text is squished like captions, footnotes and bibr's own exports (R keeps runs of spaces: 'And an  undeclared prefix.')"
 "grobid12/.grobid_to_bibr.io.xlink_ns": *squish
+
+# 'ps' p-values (U204) ---------------------------------------------------------
+"bibr12/module.all_p_values.preprint": &u204_ps
+  kind: r_bug_fixed
+  ref: U204
+  reason: "'ps < .05', 'ps < .001' and the other 'ps' forms are p-values (8 more in the preprint); metacheck matches only p, p-value and P"
+"bibr12/module.all_p_values.mixed": *u204_ps
+"bibr12/module.stat_p_exact.preprint": *u204_ps
+"bibr12/module.stat_p_exact.mixed": *u204_ps
+"bibr12/module.stat_p_nonsig.preprint": *u204_ps
+"bibr12/module.stat_p_nonsig.mixed": *u204_ps
+"grobid12/module.all_p_values.preprint": *u204_ps

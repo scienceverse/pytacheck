@@ -142,6 +142,44 @@ def test_extract_p_values_formats() -> None:
     assert values[22:29] == pytest.approx([0.05] * 7)
 
 
+def test_extract_p_values_ps_and_notation() -> None:
+    # U204: "ps", "p's" and "p-values" are p; scientific notation may use "×",
+    # leave out "^" and use the Unicode minus (metacheck read 'p = 1.8 × 10 -6'
+    # as p = 1.8 and found none of the others)
+    texts = [
+        "ps < .05",
+        "p's > .10",
+        "p’s = .03",
+        "p-values < .01",
+        "Ps < .001",
+        "p = 1.8 × 10 -6",
+        "p = 6.1 × 10\u22125",
+        "p=2.14e\u2212213",
+        "p = 5.0 x 10^-5",
+    ]
+    p = extract_p_values(texts)
+    assert [t.strip() for t in p["text"]] == texts
+    assert p["p_comp"].tolist() == ["<", ">", "=", "<", "<", "=", "=", "=", "="]
+    assert p["p_value"].tolist() == pytest.approx(
+        [0.05, 0.10, 0.03, 0.01, 0.001, 1.8e-6, 6.1e-5, 2.14e-213, 5e-5]
+    )
+    assert len(extract_p_values(["maps < .05", "pss < .05", "p = \u22120.05"])) == 0
+
+
+def test_extract_eq_unicode_minus() -> None:
+    # U205: a number may have the Unicode minus (U+2212), with one space after a
+    # leading one; rhs has "-" (metacheck matched none of these)
+    eq = extract_eq(
+        [
+            "t(28) = \u22122.15, p = .04, d = \u22120.80",
+            "r = \u2212 0.12 and r(98) = \u2212.32",
+            "t(20) = -2.1",
+        ]
+    )
+    assert eq["lhs"].tolist() == ["t", "p", "d", "r", "r", "t"]
+    assert eq["rhs"].tolist() == ["-2.15", ".04", "-0.80", "-0.12", "-.32", "-2.1"]
+
+
 def test_extract_p_values_empty() -> None:
     p = extract_p_values(pc.test_paper(["No p-values here.", "The p-value is 0.03."]))
     assert len(p) == 0

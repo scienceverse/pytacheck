@@ -323,6 +323,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_report_qmd(demopaper(), c('stat_p_nonsig', 'all_p_values', 'rp_error', 'marginal', 'stat_check', 'rp_chained'))}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(pc.demopaper(), ['stat_p_nonsig', 'all_p_values', 'rp_error', 'marginal', 'stat_check', 'rp_chained'])"}}
 - "id": "report_module_run.psychsci.real_modules"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "stat_p_exact finds 5 imprecise 'ps' p-values (red, metacheck green) and stat_p_nonsig 3 more: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
