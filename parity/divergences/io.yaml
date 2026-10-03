@@ -240,3 +240,10 @@
 "bibr12/module.stat_p_nonsig.preprint": *u204_ps
 "bibr12/module.stat_p_nonsig.mixed": *u204_ps
 "grobid12/module.all_p_values.preprint": *u204_ps
+
+# e-mail addresses are not URLs (U206) -------------------------------------------
+"bibr12/module.all_urls.preprint": &u206_email
+  kind: r_bug_fixed
+  ref: U206
+  reason: "e-mail addresses are not URLs: 'gmail.com' and the parts of 'name@university.edu' are not listed (metacheck lists each as a host name)"
+"bibr12/module.all_urls.mixed": *u206_email

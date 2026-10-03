@@ -4,6 +4,8 @@
 "match_reported_output.descriptive_caption.older.summary": {"r": "5356e45f51744398", "py": "abb05c3c3a1638a7", "diff": ["n_found[]", "n_full[]", "n_tests[]", "pct_found[]"]},
 "module.all_p_values.mixed": {"r": "125e3f06fbf3ec1c", "py": "0f345bac12683a04", "diff": ["summary_table.p_values[]", "summary_text[]", "table"]},
 "module.all_p_values.preprint": {"r": "995a3675e59d1fb5", "py": "c88a0e5bb88b5975", "diff": ["summary_table.p_values[]", "summary_text[]", "table"]},
+"module.all_urls.mixed": {"r": "1fb4eb66666d4075", "py": "a07d5e001ffb1ffe", "diff": ["summary_table.urls[]", "table"]},
+"module.all_urls.preprint": {"r": "bba947cf0632e761", "py": "7979ef910160ce80", "diff": ["summary_table.urls[]", "table"]},
 "module.coi_check_oi.PMC4383902": {"r": "6f97028d1ba5d81e", "py": "fecec4eed0563d03", "diff": ["table.header[]"]},
 "module.coi_check_oi.mixed": {"r": "3765440024bb3510", "py": "df56b3061a511371", "diff": ["table.header[]"]},
 "module.coi_check_oi.preprint": {"r": "9c70a4074fded40e", "py": "06048d2374be406b", "diff": ["table.header[]"]},
