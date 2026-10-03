@@ -1261,6 +1261,9 @@ def test_the_report_reads_well(tmp_path: Path) -> None:
     assert "Would make the package better" in text
     assert "To fix before the package is archived" in text  # the ethical approval is missing
     assert "Line 2 still has template text" in text
+    # help text from the README is escaped, so it is not read as an HTML tag
+    assert "&lt;provide DOI of publication if applicable&gt;" in text
+    assert "<provide DOI of publication" not in text
     assert "Ethical approval is missing" in text
     assert "README sections" in text and "Parts of the package" in text
     # a package that needs nothing says so briefly
@@ -1280,3 +1283,80 @@ def test_check_docs_reads_hand_made_policy_objects(tmp_path: Path) -> None:
     assert load_components(cat) is cat
     r = _check(tmp_path, {"README.txt": LAB_README}, readme=tpl, components=cat)
     assert list(r.sections["id"]) == ["title", "pi", "extra"]
+
+
+# --------------------------------------------------------------------------
+# plain-text READMEs without markup, odd packages
+# --------------------------------------------------------------------------
+
+
+def test_short_lines_on_their_own_are_headings_in_plain_text() -> None:
+    text = (
+        "Dataset huisdieren\n\n"
+        "Omschrijving\nEen enquête onder 200 mensen over hun huisdieren, afgenomen in 2023 via een online vragenlijst.\n\n"
+        "Contactpersoon\nJane Doe, jane@example.org\n\n"
+        "Bestanden\ndata.csv - de data\nanalyse.R - het script\n"
+    )
+    sections, _ = match_sections(text)
+    s = sections.set_index("id")
+    assert [s.loc[i, "kind"] for i in ("description", "contact", "files")] == ["label"] * 3
+    assert s.loc["contact", "heading"] == "Contactpersoon"
+    assert (s.loc["files", "line"], s.loc["files", "end_line"]) == (9, 11)
+    assert not s.loc["methods", "found"]
+
+
+def test_bold_labels_and_pairs_of_label_and_value() -> None:
+    text = "# Pets\n\n**Description:** A survey of 200 people about their pets.\n\n**Contact:** jane@example.org\n\n**Files**\n\n- data.csv\n"
+    s = match_sections(text)[0].set_index("id")
+    assert s.loc["description", "kind"] == "inline"
+    assert s.loc["contact", "kind"] == "inline"
+    assert s.loc["files", "kind"] == "heading"
+    # a file name in a list is not a label, even when it looks like one
+    s = match_sections(
+        "# T\n\n## Files\n- codebook.csv: what the variables mean\n- `data/x.csv`: data\n"
+    )[0]
+    assert not s.set_index("id").loc["variables", "found"]
+
+
+def test_an_empty_package(tmp_path: Path) -> None:
+    (tmp_path / "pkg").mkdir()
+    with open_package(tmp_path / "pkg") as pkg:
+        r = check_docs(pkg)
+    assert _status(r)["readme_present"] == "fail"
+    assert _status(r)["component:data"] == "fail"
+    assert r.traffic_light == "red"
+    assert r.readme_text is None
+    assert len(r.sections) == 7
+
+
+def test_a_symlinked_readme_is_only_read_inside_the_package(tmp_path: Path) -> None:
+    root = _tree(tmp_path / "pkg", {"docs/readme-source.md": GOOD_README, "a.csv": "a\n1\n"})
+    outside = tmp_path / "outside.md"
+    outside.write_text("secret")
+    (root / "README.md").symlink_to("docs/readme-source.md")
+    with open_package(root) as pkg:
+        assert check_docs(pkg).readme_text == GOOD_README
+    (root / "README.md").unlink()
+    (root / "README.md").symlink_to(outside)
+    with open_package(root) as pkg:
+        r = check_docs(pkg)
+    assert r.readme_text is None
+    assert _status(r)["readme_sections"] == "manual"
+
+
+def test_a_docx_keeps_line_breaks_tabs_and_list_items(tmp_path: Path) -> None:
+    xml = (
+        '<w:document xmlns:w="x"><w:body>'
+        "<w:p><w:r><w:t>one</w:t><w:br/><w:t>two</w:t><w:tab/><w:t>three</w:t></w:r></w:p>"
+        "<w:p><w:pPr><w:numPr><w:ilvl/></w:numPr></w:pPr><w:r><w:t>item</w:t></w:r></w:p>"
+        "<w:p/>"
+        "</w:body></w:document>"
+    )
+    path = tmp_path / "README.docx"
+    with zipfile.ZipFile(path, "w") as zf:
+        zf.writestr("word/document.xml", xml)
+    assert read_readme_text(path) == "one\ntwo\tthree\n- item"
+    # a docx without a body is not read
+    with zipfile.ZipFile(tmp_path / "empty.docx", "w") as zf:
+        zf.writestr("other.xml", "x")
+    assert read_readme_text(tmp_path / "empty.docx") is None

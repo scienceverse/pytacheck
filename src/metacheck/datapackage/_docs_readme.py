@@ -33,7 +33,9 @@ SECTION_COLUMNS = (
     "heading",  # the heading as written in the README ("" when not found)
     "line",  # its line number (1-based; missing when not found)
     "end_line",  # the last line of its text
-    "kind",  # "heading", "inline" (a "Label: value" line), "intro" (the text at the top) or ""
+    # "heading", "inline" (a "Label: value" line), "label" (a short line on its own), "intro" (the
+    # text at the top) or ""
+    "kind",
 )
 
 #: Columns of the ``fields`` table (:func:`match_sections`).
@@ -105,7 +107,9 @@ def _zip_member(path: Path, member: str) -> str | None:
         info = zf.getinfo(member)
         if info.file_size > _MAX_XML_BYTES:
             return None
-        return zf.read(info).decode("utf-8", errors="replace")
+        with zf.open(info) as fh:
+            data = fh.read(_MAX_XML_BYTES + 1)  # the declared size may be wrong
+        return None if len(data) > _MAX_XML_BYTES else data.decode("utf-8", errors="replace")
 
 
 _W_PARA = re.compile(r"<w:p[ >].*?</w:p>", re.DOTALL)
@@ -409,6 +413,40 @@ def _inline_matches(
     return None
 
 
+def _label_matches(
+    lines: list[str], skip: set[int], patterns: Sequence[re.Pattern[str]]
+) -> tuple[int, str, list[tuple[int, str]]] | None:
+    """The first short line on its own, in front of a paragraph, whose text matches.
+
+    This is a heading in a plain-text README that has no markup: ``Contact`` or
+    ``Bestanden``, a blank line before it and its text straight after it. The
+    paragraph is its body.
+    """
+    for i, line in enumerate(lines):
+        text = line.strip()
+        if (
+            i in skip
+            or not 2 <= len(text) <= 60
+            or len(text.split()) > 6
+            or text.endswith((".", ",", ";", "!", "?"))
+            or _BULLET.match(line)
+            or _RULE.match(line)
+            or (i > 0 and lines[i - 1].strip())
+            or i + 1 >= len(lines)
+            or not lines[i + 1].strip()
+        ):
+            continue
+        if not any(p.search(_heading_key(text)) for p in patterns):
+            continue
+        body: list[tuple[int, str]] = []
+        for j in range(i + 1, len(lines)):
+            if not lines[j].strip() or j in skip:
+                break
+            body.append((j, lines[j]))
+        return i, text, body
+    return None
+
+
 @dataclass
 class _Found:
     """Where a README has a section: its first line, heading as written, kind, last line, text."""
@@ -447,6 +485,10 @@ def _locate(
     if inline is not None:
         i, raw, body = inline
         return _Found(i, raw, "inline", max([i, *(j for j, t in body if t.strip())]), body)
+    label = _label_matches(lines, skip, spec.match)
+    if label is not None:
+        i, raw, body = label
+        return _Found(i, raw, "label", body[-1][0], body)
     if not spec.intro:
         return None
     # the text at the top: up to the first heading, or, when the README opens with
@@ -466,7 +508,8 @@ def match_sections(text: str, template: ReadmeTemplate | Any = None) -> tuple[An
     """Which sections of *template* a README has: the ``sections`` and ``fields`` tables.
 
     A section is found by its heading (see :func:`find_headings`), failing
-    that by a ``Label: value`` line with a matching label, failing that, for
+    that by a ``Label: value`` line with a matching label, failing that by a
+    short matching line on its own in front of a paragraph, failing that, for
     a section with ``"intro": true``, by the text at the top of the README.
     ``empty`` means that it holds nothing but whitespace and template text.
     The ``fields`` table says, for each field of each section, whether a line

@@ -51,6 +51,7 @@ A file belongs to a component when any one of the ``match`` criteria hits.
 
 from __future__ import annotations
 
+import html
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -422,6 +423,17 @@ class _Run:
             return True
         return False
 
+    def _read(self, row: Any) -> str | None:
+        """The README's text. A link is only followed when it stays inside the package."""
+        path = self.package.root / str(row["path"])
+        if bool(row["link"]):
+            try:
+                if not path.resolve().is_relative_to(self.package.root.resolve()):
+                    return None
+            except OSError:
+                return None
+        return read_readme_text(path)
+
     # -- the run -----------------------------------------------------------
 
     def run(self) -> DocsResult:
@@ -430,7 +442,7 @@ class _Run:
         if len(readmes):
             first = readmes.iloc[0]
             self.readme_rel = str(first["rel"])
-            self.text = read_readme_text(self.package.root / str(first["path"]))
+            self.text = self._read(first)
         self.sections, self.fields = match_sections(self.text or "", self.template)
 
         self.check_present(readmes)
@@ -1044,6 +1056,11 @@ def summary_line(result: DocsResult) -> str:
     return f"{readme} Checklist: {', '.join(parts) if parts else 'nothing to check'}."
 
 
+def _esc(text: Any) -> str:
+    """Text for the report: ``<provide a DOI>`` from a README must not be read as a tag."""
+    return html.escape(str(text), quote=False)
+
+
 def report_blocks(result: DocsResult) -> list[Any]:
     """The module's report as blocks: markdown text and tables (see :mod:`metacheck.report`)."""
     import pandas as pd
@@ -1063,7 +1080,7 @@ def report_blocks(result: DocsResult) -> list[Any]:
         {
             "Check": overview["title"],
             "Result": [f"{symbol[s]} {_STATUS_LABEL[s]}" for s in overview["status"]],
-            "Details": overview["detail"],
+            "Details": [_esc(d) for d in overview["detail"]],
         }
     )
     blocks: list[Any] = [
@@ -1084,13 +1101,13 @@ def report_blocks(result: DocsResult) -> list[Any]:
         for check in dict.fromkeys(sub["check"]):
             title = titles.get(str(check), str(check))
             lines.append(f"**{title}**\n")
-            lines.extend(f"- {d}" for d in sub.loc[sub["check"] == check, "detail"])
+            lines.extend(f"- {_esc(d)}" for d in sub.loc[sub["check"] == check, "detail"])
             lines.append("")
         blocks.append("\n".join(lines).rstrip())
 
     info = findings.loc[findings["severity"] == "info"] if len(findings) else findings
     if len(info):
-        notes = pd.DataFrame({"Note": info["detail"]})
+        notes = pd.DataFrame({"Note": [_esc(d) for d in info["detail"]]})
         blocks.extend(
             _flat(collapse_section(scroll_table(notes, maxrows=10), title="Notes", callout="note"))
         )
@@ -1105,7 +1122,7 @@ def report_blocks(result: DocsResult) -> list[Any]:
                     "no" if not f else "empty" if e else "yes"
                     for f, e in zip(sec["found"], sec["empty"], strict=True)
                 ],
-                "Heading as written": sec["heading"],
+                "Heading as written": [_esc(h) for h in sec["heading"]],
                 "Line": [("" if pd.isna(v) else str(int(v))) for v in sec["line"]],
             }
         )
@@ -1124,7 +1141,7 @@ def report_blocks(result: DocsResult) -> list[Any]:
             {
                 "Part": comp["title"],
                 "Result": [f"{symbol[s]} {_STATUS_LABEL[s]}" for s in comp["status"]],
-                "Details": comp["detail"],
+                "Details": [_esc(d) for d in comp["detail"]],
             }
         )
         blocks.extend(
