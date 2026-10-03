@@ -2,7 +2,7 @@
 "all_urls.debruine": {"r": "e62c5bb3ce63fbf9", "py": "82b2d4609bc1f35a", "diff": ["table.formatted[]"]},
 "all_urls.psychsci": {"r": "7bc3dc10218d76dc", "py": "4ed4fbf37ee1df0a", "diff": ["summary_table.urls[]", "table"]},
 "open_practices.debruine": {"r": "cda5a8ece143f66f", "py": "eb0488ffa804ac1f", "diff": ["report[]", "summary_text[]", "traffic_light[]"]},
-"open_practices.duplicate_ids": {"r": "ac5146cf65ca52a8", "py": "a36230632c9ef454", "diff": ["<R error, Python value>"]},
+"open_practices.duplicate_ids": {"r": "ac5146cf65ca52a8", "py": "df78510dddde37d3", "diff": ["<R error, Python value>"]},
 "open_practices.on_request_multiple": {"r": "422193b45b811803", "py": "b7c47428ddf2d999", "diff": ["report[]", "table.on_request[]"]},
 "open_practices.paperlist_mixed": {"r": "387b721998adceeb", "py": "18dbf2f55144aa62", "diff": ["report[]", "summary_text[]"]},
 "open_practices.paperlist_none": {"r": "91c6c4a0b53a78bf", "py": "4d22d0b45b59769f", "diff": ["report[]", "summary_text[]", "traffic_light[]"]},
