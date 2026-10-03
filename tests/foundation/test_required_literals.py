@@ -47,7 +47,7 @@ def _literals_on(monkeypatch: pytest.MonkeyPatch) -> None:
 @pytest.mark.parametrize(
     ("pattern", "perl", "cnf"),
     [
-        # the funding module's examples (_funding._required), as pieces
+        # the examples of the funding module's former literal extractor, as pieces
         ("abc(|s)def", True, (("abc",), ("def",))),
         ("x?yzw", True, (("yzw",),)),
         ("[Ff]unded", True, (("unded",),)),
