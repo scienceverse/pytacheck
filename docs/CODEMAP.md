@@ -56,6 +56,7 @@ Most R files map to one Python file, grouped into subpackages by topic:
 | `resources/` | Data files: databases, demo papers, JSON schemas, the status snapshot. | `data/`, `inst/databases`, `inst/demos`, `inst/schema` |
 | `packs/` | Python only. Packs and stores: sharing modules outside the package ([MODULES.md](MODULES.md)). | none |
 | `app/` | Python only. The local demo app (a Gradio page). It is not a port of the Shiny apps. | none |
+| `datapackage/` | Python only. Checks of a data package, the folder or archive of data, code and documentation that comes with a paper: opening and listing it, and the `datapackage` pack (files, folder structure, README and parts) behind `metacheck package` ([DATAPACKAGE.md](DATAPACKAGE.md)). | none |
 
 A few top-level files hold shared pieces: [`module.py`](../src/metacheck/module.py)
 (the module system: `module_run()`, `module_list()`, `module_help()`, from
