@@ -327,6 +327,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('No difference p > .05 here.', 'Fine p = .012 here.', 'Also p = .3.')), 'stat_p_nonsig')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['No difference p > .05 here.', 'Fine p = .012 here.', 'Also p = .3.']), 'stat_p_nonsig')"}}
 - "id": "module_report.stat_p_nonsig.paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "3 more non-significant p-values ('ps > .115' and two more): 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
@@ -340,6 +341,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'all_p_values')"}}
 - "id": "report_tables.all_p_values.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
@@ -361,11 +363,13 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'stat_p_exact')"}}
 - "id": "report_tables.stat_p_exact.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more imprecise p-values such as 'ps < .05': 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'stat_p_exact')"}}
 - "id": "report_tables.stat_p_exact.real"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "6 more imprecise p-values such as 'ps < .05': 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
@@ -382,6 +386,7 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'stat_p_nonsig')"}}
 - "id": "report_tables.stat_p_nonsig.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "3 more non-significant p-values: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":

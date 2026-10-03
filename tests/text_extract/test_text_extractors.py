@@ -44,6 +44,19 @@ def test_extract_urls_et_al_glued_to_a_word_is_not_a_url() -> None:
     assert urls["text"].tolist() == ["al.com", "osf.io/abc"]
 
 
+def test_extract_urls_skips_email_addresses() -> None:
+    # U206: metacheck lists "k.aristovich" and "ucl.ac.uk" (and "gmail.com") as URLs
+    texts = [
+        "Contact k.aristovich@ucl.ac.uk or m.t.calcagni@sub.dept.univ.edu.",
+        "Email: someone@hotmail.com.br, then see osf.io/abc.",
+    ]
+    assert extract_urls(pc.test_paper(texts))["text"].tolist() == ["osf.io/abc"]
+    # a URL with an @ after its host is still a URL, and the table keeps rows 0..n-1
+    urls = extract_urls(pc.test_paper(["a@b.org", "see twitter.com/@user and https://x.org/a@b.c"]))
+    assert urls["text"].tolist() == ["twitter.com/@user", "https://x.org/a@b.c"]
+    assert urls.index.tolist() == [0, 1]
+
+
 def test_extract_urls_paperlist(psychsci) -> None:
     urls = extract_urls(psychsci)
     assert set(urls["paper_id"]) <= set(psychsci.names)
@@ -140,6 +153,44 @@ def test_extract_p_values_formats() -> None:
     assert values[:20] == pytest.approx([0.05] * 20)
     assert all(math.isnan(v) for v in values[20:22])
     assert values[22:29] == pytest.approx([0.05] * 7)
+
+
+def test_extract_p_values_ps_and_notation() -> None:
+    # U204: "ps", "p's" and "p-values" are p; scientific notation may use "×",
+    # leave out "^" and use the Unicode minus (metacheck read 'p = 1.8 × 10 -6'
+    # as p = 1.8 and found none of the others)
+    texts = [
+        "ps < .05",
+        "p's > .10",
+        "p’s = .03",
+        "p-values < .01",
+        "Ps < .001",
+        "p = 1.8 × 10 -6",
+        "p = 6.1 × 10\u22125",
+        "p=2.14e\u2212213",
+        "p = 5.0 x 10^-5",
+    ]
+    p = extract_p_values(texts)
+    assert [t.strip() for t in p["text"]] == texts
+    assert p["p_comp"].tolist() == ["<", ">", "=", "<", "<", "=", "=", "=", "="]
+    assert p["p_value"].tolist() == pytest.approx(
+        [0.05, 0.10, 0.03, 0.01, 0.001, 1.8e-6, 6.1e-5, 2.14e-213, 5e-5]
+    )
+    assert len(extract_p_values(["maps < .05", "pss < .05", "p = \u22120.05"])) == 0
+
+
+def test_extract_eq_unicode_minus() -> None:
+    # U205: a number may have the Unicode minus (U+2212), with one space after a
+    # leading one; rhs has "-" (metacheck matched none of these)
+    eq = extract_eq(
+        [
+            "t(28) = \u22122.15, p = .04, d = \u22120.80",
+            "r = \u2212 0.12 and r(98) = \u2212.32",
+            "t(20) = -2.1",
+        ]
+    )
+    assert eq["lhs"].tolist() == ["t", "p", "d", "r", "r", "t"]
+    assert eq["rhs"].tolist() == ["-2.15", ".04", "-0.80", "-0.12", "-.32", "-2.1"]
 
 
 def test_extract_p_values_empty() -> None:

@@ -321,15 +321,22 @@ def _tre_wide(match_pattern: str, texts: list[Any]) -> bool:
 
 def _host_links(paper: Any, host: str, host_regex: str) -> pd.DataFrame:
     """The shared body of github_links() / gitlab_links()."""
-    from metacheck._r import bind_rows
+    from metacheck._r import bind_rows, grepl
     from metacheck.papers.tables import paper_table
     from metacheck.text.search import text_search
 
     # strip punctuation off the end of sentences to avoid weird matches
     strip_text = text_search(paper, r".*[^\.$]", return_="match", perl=True)
 
-    found = text_search(paper_table(paper, "url"), host_regex, perl=True)
-    if "href" not in found.columns:
+    # Differs from metacheck (U196): the links are searched in `href`. metacheck
+    # passes the url table to text_search(), which searches its first column:
+    # `href` in an older-format paper, but the integer `url_id` in a 12.x one, so
+    # no link of a 12.x paper (bibr 12.x JSON, or Grobid TEI, which pytacheck
+    # reads as 12.x) was found
+    found = paper_table(paper, "url")
+    if "href" in found.columns:
+        found = found.loc[grepl(host_regex, found["href"], ignore_case=True, perl=True)]
+    else:
         # an empty paper list has a url table without columns: its links are the
         # usual (empty) columns; R's result has no href (UPSTREAM_ISSUES U79),
         # so repo_check() and the modules that call it stop

@@ -354,3 +354,20 @@ def test_chained_na_replace_leaves_open_practices_columns() -> None:
     assert pd.isna(st["materials_open"].tolist()[1])
     assert st["on_request"].tolist()[::2] == [False, True]
     assert st["urls"].tolist() == [1, 0, 1]
+
+
+def test_list_column_in_the_text_table() -> None:
+    # papers from older bibr exports have a list column (_bbox_2d) in the text table;
+    # it is part of the join key, and the module used to stop on the unhashable list
+    texts = [
+        "The data are available at https://osf.io/abc.",
+        "Code is on GitHub: github.com/a/b.",
+        "Data and code are available at https://osf.io/abc.",
+    ]
+    plain = run(pc.test_paper(texts))
+    paper = pc.test_paper(texts)
+    paper["text"]["_bbox_2d"] = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+    out = run(paper)
+    assert out.traffic_light == plain.traffic_light == "green"
+    assert out.summary_text == plain.summary_text
+    assert len(out.table) == len(plain.table)

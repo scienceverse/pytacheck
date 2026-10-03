@@ -5,6 +5,7 @@
   "module": "all_p_values"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "all_p_values.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values in two papers: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "module": "all_p_values"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
@@ -42,6 +43,7 @@
   "module": "stat_p_exact"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "stat_p_exact.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values in two papers, 'ps < .05' among them imprecise: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "module": "stat_p_exact"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
@@ -157,6 +159,7 @@
   "module": "stat_p_nonsig"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "stat_p_nonsig.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "3 more non-significant p-values ('ps > .115', 'ps > .169', 'ps > .131'): 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "module": "stat_p_nonsig"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
