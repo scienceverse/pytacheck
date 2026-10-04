@@ -1,0 +1,2647 @@
+{
+ "version": 1,
+ "replies": [
+  {
+   "key": "9631bdd82b1dddf9",
+   "file": "api.anthropic.com/v1/messages-0beae8-POST.json",
+   "request": {
+    "endpoint": "api.anthropic.com/v1/messages",
+    "model": "claude-3-5-haiku-latest",
+    "system": "Extract variables",
+    "user": "two vars",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "3de82cca4e45ff54",
+   "file": "api.anthropic.com/v1/messages-d8359d-POST.json",
+   "request": {
+    "endpoint": "api.anthropic.com/v1/messages",
+    "model": "claude-sonnet-4-5",
+    "system": "Sys",
+    "user": "hello",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "8f17f4ad7f39f5f8",
+   "file": "api.anthropic.com/v1/messages-f4c1ba-POST.json",
+   "request": {
+    "endpoint": "api.anthropic.com/v1/messages",
+    "model": "claude-sonnet-4-5",
+    "system": "Extract variables",
+    "user": "two vars",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "2de3e73f8de37c9a",
+   "file": "api.groq.com/openai/v1/chat/completions-189f2e-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "openai/gpt-oss-20b",
+    "system": "Extract variables",
+    "user": "two vars",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096,
+     "reasoning_effort": "low"
+    }
+   }
+  },
+  {
+   "key": "155411f7e58e5436",
+   "file": "api.groq.com/openai/v1/chat/completions-1e91ce-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "List things",
+    "user": "list",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "wrapper",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": ""
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "a7c8151da31d14f1",
+   "file": "api.groq.com/openai/v1/chat/completions-1ff8f1-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "openai/gpt-oss-20b",
+    "system": "Extract variables",
+    "user": "fenced",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096,
+     "reasoning_effort": "low"
+    }
+   }
+  },
+  {
+   "key": "d4590aae43a80bf8",
+   "file": "api.groq.com/openai/v1/chat/completions-27f076-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "openai/gpt-oss-20b",
+    "system": "Extract variables",
+    "user": "none again",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096,
+     "reasoning_effort": "low"
+    }
+   }
+  },
+  {
+   "key": "aa7a01bfccb456a5",
+   "file": "api.groq.com/openai/v1/chat/completions-335358-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply empty choices",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "4ebb81e4d1cc6ced",
+   "file": "api.groq.com/openai/v1/chat/completions-36389c-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe nulls",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "11cda45a4a444e23",
+   "file": "api.groq.com/openai/v1/chat/completions-365cd7-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe empty",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "774164bf181bbf1a",
+   "file": "api.groq.com/openai/v1/chat/completions-3c015b-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "openai/gpt-oss-20b",
+    "system": "Extract variables",
+    "user": "bad schema",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096,
+     "reasoning_effort": "low"
+    }
+   }
+  },
+  {
+   "key": "2ea4b4aa0a67f54a",
+   "file": "api.groq.com/openai/v1/chat/completions-41b706-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply null content",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "20b976c5dca33857",
+   "file": "api.groq.com/openai/v1/chat/completions-4ae626-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Single",
+    "user": "single full",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "6fe5a7a957432b27",
+   "file": "api.groq.com/openai/v1/chat/completions-4bd6c1-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply parts",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "ec382ed4d3c97fe6",
+   "file": "api.groq.com/openai/v1/chat/completions-50df8b-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Sys",
+    "user": "1",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "a44d10def476d7d0",
+   "file": "api.groq.com/openai/v1/chat/completions-5a2a67-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Sys",
+    "user": "hello",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "top_p": 0.9,
+     "seed": 8675309,
+     "max_tokens": 4096,
+     "stop": [
+      "END",
+      "STOP"
+     ]
+    }
+   }
+  },
+  {
+   "key": "bf38d69c6ff6d02b",
+   "file": "api.groq.com/openai/v1/chat/completions-63a01b-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe missing",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "bda6d44cb6ed5858",
+   "file": "api.groq.com/openai/v1/chat/completions-63fc28-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply no choices",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "20f851eccec97dec",
+   "file": "api.groq.com/openai/v1/chat/completions-690641-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Sys",
+    "user": "unauthorized",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "c10ed02e22fbda2d",
+   "file": "api.groq.com/openai/v1/chat/completions-79d99c-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Sys",
+    "user": "hello",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "d9f408fad5eb2640",
+   "file": "api.groq.com/openai/v1/chat/completions-7a0249-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe strings",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "8a3cca866e1bab36",
+   "file": "api.groq.com/openai/v1/chat/completions-81e1a0-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Tag it",
+    "user": "tags",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "tags",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y",
+          "z"
+         ]
+        }
+       }
+      ],
+      [
+       "meta",
+       false,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          false,
+          {
+           "t": "integer",
+           "d": ""
+          }
+         ],
+         [
+          "b",
+          false,
+          {
+           "t": "string",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ],
+      [
+       "text",
+       false,
+       {
+        "t": "string",
+        "d": ""
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "be17228147035fcc",
+   "file": "api.groq.com/openai/v1/chat/completions-8234bb-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Schema",
+    "user": "schema one",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "a",
+       false,
+       {
+        "t": "integer",
+        "d": ""
+       }
+      ],
+      [
+       "tags",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": ""
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "7784939a8626639e",
+   "file": "api.groq.com/openai/v1/chat/completions-82c1d8-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe extra",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "05b69ed167aeceff",
+   "file": "api.groq.com/openai/v1/chat/completions-864f8f-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Single",
+    "user": "single tags",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "d4057f116b5b757c",
+   "file": "api.groq.com/openai/v1/chat/completions-9309f5-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Single",
+    "user": "single nulls",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "d4851c4eab4a81cc",
+   "file": "api.groq.com/openai/v1/chat/completions-954aca-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe truncated",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "2d3daafd11ce88a0",
+   "file": "api.groq.com/openai/v1/chat/completions-9661ae-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Is this a number? Answer TRUE or FALSE",
+    "user": "12",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "a6a92627defe661e",
+   "file": "api.groq.com/openai/v1/chat/completions-9ffb08-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe object",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "9e0318cc6912265b",
+   "file": "api.groq.com/openai/v1/chat/completions-a825ea-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe overflow",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "141b9d162383a955",
+   "file": "api.groq.com/openai/v1/chat/completions-b9a3b2-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "openai/gpt-oss-20b",
+    "system": "Extract variables",
+    "user": "none",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096,
+     "reasoning_effort": "low"
+    }
+   }
+  },
+  {
+   "key": "83ff86541ab1f982",
+   "file": "api.groq.com/openai/v1/chat/completions-bff231-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Single",
+    "user": "single missing",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "ffa947bcd72a5e06",
+   "file": "api.groq.com/openai/v1/chat/completions-c53eda-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply null content",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "e2d69e639fb67d4a",
+   "file": "api.groq.com/openai/v1/chat/completions-c99609-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply parts",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "d442b850f61fd643",
+   "file": "api.groq.com/openai/v1/chat/completions-cd8afd-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply no choices",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "468f88beec2a0859",
+   "file": "api.groq.com/openai/v1/chat/completions-cea654-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Is this a number? Answer TRUE or FALSE",
+    "user": "hello",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "a0b5019eefcee91c",
+   "file": "api.groq.com/openai/v1/chat/completions-d76349-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Sys",
+    "user": "too long",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "b5f20df900005749",
+   "file": "api.groq.com/openai/v1/chat/completions-ecbe51-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Reply",
+    "user": "reply empty choices",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       true,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       true,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       true,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       true,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          true,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "35c66273cd1af1ec",
+   "file": "api.groq.com/openai/v1/chat/completions-f3889b-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Probe",
+    "user": "probe types",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "items",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "name",
+           false,
+           {
+            "t": "string",
+            "d": "n"
+           }
+          ],
+          [
+           "count",
+           true,
+           {
+            "t": "integer",
+            "d": "c"
+           }
+          ],
+          [
+           "score",
+           true,
+           {
+            "t": "number",
+            "d": "s"
+           }
+          ],
+          [
+           "flag",
+           true,
+           {
+            "t": "boolean",
+            "d": "f"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "k",
+            "e": [
+             "x",
+             "y"
+            ]
+           }
+          ],
+          [
+           "tags",
+           true,
+           {
+            "t": "array",
+            "d": "",
+            "i": {
+             "t": "string",
+             "d": ""
+            }
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "1bc5c2081e6b6670",
+   "file": "api.groq.com/openai/v1/chat/completions-f957d3-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "probe-model",
+    "system": "Schema",
+    "user": "schema two",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "a",
+       false,
+       {
+        "t": "integer",
+        "d": ""
+       }
+      ],
+      [
+       "tags",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": ""
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "deb39c6a00d902ba",
+   "file": "api.groq.com/openai/v1/chat/completions-ff894d-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Sys",
+    "user": "2",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "4e9c53b16d768010",
+   "file": "api.mistral.ai/v1/chat/completions-f25595-POST.json",
+   "request": {
+    "endpoint": "api.mistral.ai/v1/chat/completions",
+    "model": "mistral-small-latest",
+    "system": "Sys",
+    "user": "hello",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096,
+     "reasoning_effort": "none"
+    }
+   }
+  },
+  {
+   "key": "ec01a91bb82304ae",
+   "file": "api.openai.com/v1/responses-d5b011-POST.json",
+   "request": {
+    "endpoint": "api.openai.com/v1/responses",
+    "model": "gpt-4.1-mini",
+    "system": "Sys",
+    "user": "hello",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "0e1566476f6d0b13",
+   "file": "api.openai.com/v1/responses-e1a8ff-POST.json",
+   "request": {
+    "endpoint": "api.openai.com/v1/responses",
+    "model": "gpt-5-mini",
+    "system": "Extract variables",
+    "user": "two vars",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "60bdb5e75ec142d2",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-08d0e3-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Reply",
+    "user": "gemini two parts",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "a6dc3a0262bfe2d0",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-48ce1c-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Reply",
+    "user": "gemini blocked",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       false,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       false,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       false,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          false,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "66e49cb84d8a1b84",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-4bd554-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Reply",
+    "user": "gemini no candidates",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       false,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       false,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       false,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          false,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "d4ba6e6f39b71dee",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-854bfb-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Is this a vowel? Answer only TRUE or FALSE.",
+    "user": "B",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "6f3ccf1df2b49939",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-8b0dc6-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Extract variables",
+    "user": "two vars",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "variables",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "object",
+         "d": "",
+         "p": [
+          [
+           "variable_name",
+           false,
+           {
+            "t": "string",
+            "d": "Exact variable name/code in the data file"
+           }
+          ],
+          [
+           "label",
+           true,
+           {
+            "t": "string",
+            "d": "Verbatim description text from the codebook"
+           }
+          ],
+          [
+           "kind",
+           true,
+           {
+            "t": "string",
+            "d": "Kind",
+            "e": [
+             "a",
+             "b",
+             null
+            ]
+           }
+          ]
+         ]
+        }
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "eccc5d8a5c99cadb",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-9f76ca-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Reply",
+    "user": "gemini no candidates",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "416e66160f64c8cb",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-af9b10-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Is this a vowel? Answer only TRUE or FALSE.",
+    "user": "A",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "7d453d912cdcbd72",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-c3857c-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Reply",
+    "user": "gemini two parts",
+    "schema": {
+     "t": "object",
+     "d": "",
+     "p": [
+      [
+       "name",
+       false,
+       {
+        "t": "string",
+        "d": "n"
+       }
+      ],
+      [
+       "n",
+       false,
+       {
+        "t": "integer",
+        "d": "i"
+       }
+      ],
+      [
+       "tags",
+       false,
+       {
+        "t": "array",
+        "d": "",
+        "i": {
+         "t": "string",
+         "d": "",
+         "e": [
+          "x",
+          "y"
+         ]
+        }
+       }
+      ],
+      [
+       "sub",
+       false,
+       {
+        "t": "object",
+        "d": "",
+        "p": [
+         [
+          "a",
+          false,
+          {
+           "t": "number",
+           "d": ""
+          }
+         ]
+        ]
+       }
+      ]
+     ]
+    },
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "0871ec2f71dbfc07",
+   "file": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent-c3dc19-POST.json",
+   "request": {
+    "endpoint": "generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-generateContent",
+    "model": "gemini-2.5-flash",
+    "system": "Reply",
+    "user": "gemini blocked",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  }
+ ]
+}
