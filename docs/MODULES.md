@@ -130,6 +130,9 @@ its arguments (a typo is an error, not ignored). When a module fails, `run`
 shows why next to it (and in `--json` as `error`), runs the remaining modules,
 then exits with status 1.
 
+`pytacheck package PATH` takes the same flags and runs the `datapackage` pack's checks on
+a folder or archive of data and code instead of a paper (see [DATAPACKAGE.md](DATAPACKAGE.md)).
+
 In Python, the **library keeps metacheck's defaults**: `report(paper)` runs what
 metacheck's `report()` runs, whatever your config says. Choose explicitly:
 
@@ -282,7 +285,9 @@ metacheck module not ported yet) fails again rather than stopping the rerun.
 the version of this package and `r_reference` is the R metacheck release and commit
 it is compared against (`{"version": ..., "commit": ...}`). In HTML the record sits in
 `<script type="application/json" id="metacheck-run">`. Keys a reader does not know
-are ignored, so later versions can add keys to `/2` without a new schema id.
+are ignored, so later versions can add keys to `/2` without a new schema id. A run on a
+data package (`pytacheck package`) has no papers and adds `package`: `name`, `source`
+(the path that was checked) and `archive`.
 Records written by 0.4.0a1 (`pytacheck.run/1`, with the keys `pytacheck` and
 `metacheck`, and `id="pytacheck-run"` in HTML) still open and replay. They are
 upgraded when read, a key already under its new name wins, and a record written

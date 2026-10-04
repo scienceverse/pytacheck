@@ -1,0 +1,125 @@
+{
+  "name": "Generic README",
+  "source": "pytacheck default",
+  "sections": [
+    {
+      "id": "description",
+      "title": "Description",
+      "hint": "Overview or Description",
+      "required": true,
+      "intro": true,
+      "match": [
+        "^(?!.*\\b(?:files?|folders?|directory|directories|contents?)\\b)(?:[\\w-]+\\s+){0,2}(?:overview|description|summary|abstract|introduction)(?:\\s+of\\s+(?:the\\s+)?(?:study|project|dataset|data\\s?set|data\\s?package|package|paper|research|data))?\\s*$",
+        "^about(?:\\s+(?:this|the)\\s+[\\w -]+)?\\s*$",
+        "\\bgeneral\\s+information\\b",
+        "^(?:omschrijving|samenvatting|inleiding|over\\s+deze\\s+\\w+)\\s*$"
+      ],
+      "fields": []
+    },
+    {
+      "id": "contact",
+      "title": "Contact and authors",
+      "hint": "Authors or Contact",
+      "required": true,
+      "match": [
+        "\\bauthors?\\b",
+        "\\bauteurs?\\b",
+        "\\bcontact",
+        "\\bcontributors?\\b",
+        "\\bcreators?\\b",
+        "\\bcorrespondence\\b"
+      ],
+      "fields": [
+        {
+          "id": "email",
+          "label": "Contact e-mail address",
+          "match": [
+            "e-?mail"
+          ],
+          "required": false,
+          "expect": "email"
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "title": "Files and folders",
+      "hint": "File list or Folder structure",
+      "required": true,
+      "match": [
+        "\\bfiles?\\b",
+        "(?<!table of )\\bcontents?\\b",
+        "\\b(?:folders?|directory|directories)\\b",
+        "\\bbestand(?:en)?\\b",
+        "\\bmappen\\b|\\binhoud\\b"
+      ],
+      "fields": []
+    },
+    {
+      "id": "methods",
+      "title": "Methods",
+      "hint": "Methods or Data collection",
+      "required": false,
+      "match": [
+        "\\bmethod",
+        "\\bdata\\s+collection\\b",
+        "\\bprocedures?\\b",
+        "\\bprocessing\\b"
+      ],
+      "fields": []
+    },
+    {
+      "id": "reproduce",
+      "title": "How to reproduce",
+      "hint": "How to run, Software or Requirements",
+      "required": false,
+      "match": [
+        "\\breproduc",
+        "\\breplicat",
+        "\\bhow\\s+to\\s+(?:run|use)\\b",
+        "\\busage\\b",
+        "\\binstructions?\\b",
+        "\\brequirements?\\b",
+        "\\bsoftware\\b",
+        "\\bdependenc",
+        "\\binstall"
+      ],
+      "fields": []
+    },
+    {
+      "id": "licence",
+      "title": "Licence and reuse",
+      "hint": "Licence or Terms of use",
+      "required": false,
+      "match": [
+        "\\blicen[cs]",
+        "\\bterms\\s+of\\s+use\\b",
+        "\\bsharing\\b",
+        "\\baccess\\b",
+        "\\bre-?use\\b",
+        "\\bcopyright\\b",
+        "\\brestrictions?\\b"
+      ],
+      "fields": []
+    },
+    {
+      "id": "variables",
+      "title": "Variables and codebook",
+      "hint": "Variables or Data dictionary",
+      "required": false,
+      "match": [
+        "\\bvariab",
+        "\\bcode\\s?book\\b",
+        "\\bdata\\s+dictionary\\b",
+        "\\bdata[\\s-]+specific\\b"
+      ],
+      "fields": []
+    }
+  ],
+  "placeholders": [
+    "<(?!/?(?:a|abbr|b|blockquote|br|center|code|details|div|em|font|h[1-6]|hr|i|img|kbd|li|ol|p|pre|small|span|strong|sub|summary|sup|table|td|th|tr|u|ul)[\\s/>])(?!(?:https?|ftp)://|mailto:)(?![^<>\\s]*@)[A-Za-z][^<>\\n]{1,200}[^<>\\s]>",
+    "(?-i:\\[(?:YYYY(?:-MM(?:-DD)?)?|NAME|FILE ?NAME|DATE|TITLE|E-?MAIL|DOI|URL|AUTHOR|ORCID|INSTITUTION|AFFILIATION)\\])",
+    "lorem ipsum",
+    "(?-i:\\b(?:TODO|TBD)\\b)"
+  ]
+}

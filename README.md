@@ -78,6 +78,7 @@ Command line:
 pytacheck modules
 pytacheck run paper.pdf -m marginal -m all_p_values
 pytacheck report paper.json -o report.html
+pytacheck package my_data_folder                 # check a data package (a folder or zip), no paper
 ```
 
 ## The paper schema: bibr export schema 12.0
@@ -133,6 +134,14 @@ Installed packs are pinned to a commit and a file hash, every result records
 which code produced it, and `pytacheck rerun run.json paper.json` replays a run.
 See [docs/MODULES.md](https://github.com/scienceverse/pytacheck/blob/main/docs/MODULES.md) for the user and author guides and
 [docs/API.md](https://github.com/scienceverse/pytacheck/blob/main/docs/API.md) for the REST API and its API key.
+
+## Checking a data package
+
+Every installation can also check the folder (or zip) of data, code and documentation
+that goes with a paper, before it is archived: junk files, file names and formats,
+folder structure, README and codebook. `pytacheck package my_data_folder` runs on your
+own machine and needs no paper; `-o package.html` writes a report. See
+[docs/DATAPACKAGE.md](https://github.com/scienceverse/pytacheck/blob/main/docs/DATAPACKAGE.md).
 
 ## How it relates to metacheck
 

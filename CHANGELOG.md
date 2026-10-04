@@ -7,6 +7,12 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Added: data package checks
+
+- The `datapackage` pack, in every install, checks the folder or archive of data, code and documentation that comes with a paper: `datapackage::package_files`, `datapackage::package_structure` and `datapackage::package_docs`, and the preset `datapackage::default`, which adds `metacheck::data_check` and `metacheck::codebook_check`. Each check also returns a checklist (item, title, status `fail`, `warn`, `manual`, `pass` or `na`, detail) for a data steward to work down. A pack can supply its own policy as a preset.
+- `metacheck package PATH` (also `pytacheck package`) runs them on a folder, or on a zip or tar archive extracted to a temporary folder that is removed afterwards, without a paper. It takes `-m`, `--preset`, `-a`, `--offline`, `--record` and `--json` like `run`, and `-o FILE` (or `-f html|qmd|md`) writes a report titled with the package's name. A path that cannot be opened exits with status 2.
+- In Python: `metacheck.datapackage.check_package()` and `report_package()`. Modules that take `local_path` and `local_only` are given the package's folder and `local_only=True`, so nothing is looked up online; the run record has a new `package` key (name, source, archive) in place of a paper. Everything runs on your machine; the one download is `data_check`'s concept model (see "a local concept classifier" below), which `-a concepts=rules` skips. Guide: docs/DATAPACKAGE.md.
+
 ### The import package is metacheck
 
 - **Changed:** the import package is now `metacheck` (`src/metacheck`). `import pytacheck` and the `pytacheck` command keep working: every `pytacheck.<sub>` is the same module object as `metacheck.<sub>`, and type checkers see the public names through stubs. Packs may declare `requires.metacheck`; use `>=0.4.0a2.dev0` if the pack does `import metacheck`, because 0.4.0a1 has no `metacheck` import package. `requires.pytacheck` is still read, and `pack check` warns if both are given. The pack scanner treats `pytacheck.*` and `metacheck.*` alike. Saved tables and the repo-info cache keep their format, so files move between this version and 0.4.0a1 both ways (until the change below). Not renamed yet: the store id, the logger names (records still carry `pytacheck`), the install record and pack module names, the command's help name and the version line (the folders keep their name; see below).

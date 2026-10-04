@@ -291,7 +291,12 @@ def test_status_table_lists_the_builtins() -> None:
         "date",
         "note",
     ]
-    assert len(table) == len(snapshot().modules) == 30
+    builtin = table["module"].str.startswith("metacheck::")
+    assert int(builtin.sum()) == len(snapshot().modules) == 30
+    # the other rows are the datapackage pack metacheck registers itself, which the
+    # metacheck team's registry does not cover
+    assert set(table.loc[~builtin, "module"].str.split("::").str[0]) == {"datapackage"}
+    assert set(table.loc[~builtin, "label"]) == {"unvalidated"}
     power = table[table["module"] == "metacheck::power"].iloc[0]
     assert (power["label"], power["ppv"], power["sensitivity"], power["papers"]) == (
         "validated",
@@ -301,7 +306,10 @@ def test_status_table_lists_the_builtins() -> None:
     )
     assert power["fields"] == "psychology"
     assert power["note"] == PROVISIONAL_NOTE
-    assert table["label"].value_counts().to_dict() == {"experimental": 25, "validated": 5}
+    assert table.loc[builtin, "label"].value_counts().to_dict() == {
+        "experimental": 25,
+        "validated": 5,
+    }
 
 
 def test_status_table_takes_refs(lab) -> None:
