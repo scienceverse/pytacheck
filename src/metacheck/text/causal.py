@@ -31,13 +31,6 @@ _API = "/predict"
 _COLUMNS = ("sentence", "causal", "cause", "effect")
 
 
-def _user_agent() -> str:
-    """The ``User-Agent`` of the requests: this package and its version."""
-    from metacheck._version import __version__
-
-    return f"metacheck/{__version__}"
-
-
 def _message(msg: str) -> None:
     """R ``message()``: diagnostics go to stderr."""
     print(msg, file=sys.stderr)
@@ -208,7 +201,7 @@ def _post_enqueue(
         "POST",
         url,
         content=body.encode("utf-8"),
-        headers={"Content-Type": "application/json", "User-Agent": _user_agent()},
+        headers={"Content-Type": "application/json", "User-Agent": http._user_agent()},
         max_tries=1,
     )
     if resp is None:
@@ -255,7 +248,7 @@ def _get_until_complete(event_id: str, timeout: float, verbose: bool) -> str:
     deadline = time.monotonic() + timeout
     try:
         with http.client().stream(
-            "GET", url, headers={"User-Agent": _user_agent()}, timeout=timeout
+            "GET", url, headers={"User-Agent": http._user_agent()}, timeout=timeout
         ) as resp:
             for line in resp.iter_lines():
                 if time.monotonic() > deadline:

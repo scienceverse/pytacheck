@@ -187,8 +187,8 @@ def test_missing_sentence_is_sent_as_null() -> None:
     assert out["cause"].tolist() == ["a", "a"]
 
 
-def test_requests_name_this_package_as_user_agent() -> None:
-    from metacheck._version import __version__
+def test_requests_use_the_shared_user_agent() -> None:
+    from metacheck import http
 
     seen: list[str] = []
     payload = '["[{\\"causal\\": false, \\"relations\\": []}]"]'
@@ -206,4 +206,4 @@ def test_requests_name_this_package_as_user_agent() -> None:
             )[1]
         )
         causal_relations("x")
-    assert seen == [f"metacheck/{__version__}"] * 2
+    assert seen == [http._user_agent()] * 2
