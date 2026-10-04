@@ -83,6 +83,8 @@ def check_package(
     args: Mapping[str, Mapping[str, Any]] | None = None,
     record: str | os.PathLike[str] | None = None,
     offline: bool | None = None,
+    max_bytes: int | None = None,
+    max_files: int | None = None,
 ) -> ModuleChain:
     """Run the checks on the data package at *path*.
 
@@ -97,7 +99,8 @@ def check_package(
     returns: an archive's temporary folder is removed before. The run record
     (``chain.run_record``, also written to *record*) names the package, and the
     ``local_path`` of each module is the path that was given, not the temporary
-    folder.
+    folder. *max_bytes* and *max_files* lower the limits on an extracted archive
+    (see :func:`~metacheck.datapackage.open_package`); a folder has none.
 
     A module can hand back files (the README draft of ``package_readme`` is
     one): ``chain.files`` is ``{file name: text or bytes}`` for all of them, and
@@ -107,7 +110,7 @@ def check_package(
     from metacheck.provenance import run_modules
 
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
-    with open_package(path) as opened, using_package(opened):
+    with open_package(path, **_limits(max_bytes, max_files)) as opened, using_package(opened):
         run = _give_package(selection, opened)
         chain = run_modules(_stand_in_paper(_name(opened)), run)
         rec = _record(list(chain), run, opened)
@@ -127,6 +130,8 @@ def report_package(
     args: Mapping[str, Mapping[str, Any]] | None = None,
     record: str | os.PathLike[str] | None = None,
     offline: bool | None = None,
+    max_bytes: int | None = None,
+    max_files: int | None = None,
 ) -> ReportOutput:
     """Run the checks on the data package at *path* and write a report.
 
@@ -138,6 +143,7 @@ def report_package(
     is not one of the files that are checked. Returns the report's module
     outputs (:class:`~metacheck.report.report.ReportOutput`, with the file's
     path in ``save_path``, and the files that modules hand back in ``files``).
+    *max_bytes* and *max_files* are as for :func:`check_package`.
     """
     from metacheck.module import run_session
     from metacheck.presets import label
@@ -147,7 +153,11 @@ def report_package(
     if fmt not in _OUTPUT_FORMATS:
         raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
-    with open_package(path) as opened, using_package(opened), run_session():
+    with (
+        open_package(path, **_limits(max_bytes, max_files)) as opened,
+        using_package(opened),
+        run_session(),
+    ):
         name = _name(opened)
         dest = Path(output_file if output_file is not None else f"{name}_report.{fmt}")
         if not dest.parent.is_dir() or not os.access(dest.parent, os.W_OK):
@@ -178,6 +188,12 @@ def report_package(
 
 
 # -- helpers --------------------------------------------------------------------------
+
+
+def _limits(max_bytes: int | None, max_files: int | None) -> dict[str, int]:
+    """The archive limits that were given; ``open_package`` has the defaults for the rest."""
+    given = {"max_bytes": max_bytes, "max_files": max_files}
+    return {name: value for name, value in given.items() if value is not None}
 
 
 def _name(opened: OpenedPackage) -> str:
