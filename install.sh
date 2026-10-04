@@ -2,17 +2,22 @@
 # Installs the metacheck preview app into one folder and opens it.
 #
 #   curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh
-#   sh install.sh [--no-launch] [--uninstall]
+#   sh install.sh [--no-launch] [--steward] [--uninstall]
 #   curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --uninstall
 #
 # Everything goes into METACHECK_HOME (default: ~/.local/share/metacheck):
 # uv, its Python, the app and uv's cache. No shell profile and no PATH is
 # edited. Other settings:
 #   METACHECK_NO_LAUNCH=1     same as --no-launch
+#   METACHECK_STEWARD=1       same as --steward
 #   METACHECK_UNINSTALL=1     same as --uninstall
 #   METACHECK_REF=<commit>    install this commit instead of the pinned one
 #   METACHECK_SPEC=<spec>     install this requirement instead of the GitHub archive
 #   METACHECK_CONSTRAINTS=<file>  use this constraints file instead of the pinned one
+#
+# --steward is for a data steward who only checks data packages: the app opens
+# on its "Check a data package" page. The installer has no PDF or bibr step to
+# skip; the page needs neither a PDF reader nor a key.
 #
 # The whole script is one function called on the last line, so a download that
 # stops half way runs nothing.
@@ -37,18 +42,21 @@ main() {
   }
 
   launch=1
+  steward=0
   uninstall=0
   [ "${METACHECK_NO_LAUNCH:-}" = "1" ] && launch=0
+  [ "${METACHECK_STEWARD:-}" = "1" ] && steward=1
   [ "${METACHECK_UNINSTALL:-}" = "1" ] && uninstall=1
   for arg in "$@"; do
     case "$arg" in
       --no-launch) launch=0 ;;
+      --steward) steward=1 ;;
       --uninstall) uninstall=1 ;;
       -h | --help)
-        say "Usage: sh install.sh [--no-launch] [--uninstall]"
+        say "Usage: sh install.sh [--no-launch] [--steward] [--uninstall]"
         return 0
         ;;
-      *) die "unknown option: $arg (use --no-launch or --uninstall)" ;;
+      *) die "unknown option: $arg (use --no-launch, --steward or --uninstall)" ;;
     esac
   done
 
@@ -292,13 +300,31 @@ main() {
 
   say ""
   say "metacheck is installed in $root"
-  say "To open it again, run the same command again (it takes a few seconds),"
-  say "or run: $app"
+  # The app opens on the data package page only if the installed version has one
+  # (a build from before that page does not know --page).
+  page=""
+  if [ "$steward" = "1" ]; then
+    if "$app" --help 2>/dev/null | grep -q -e '--page'; then
+      page="package"
+    else
+      say "This version of the app has no data package page yet; it opens on the paper page."
+    fi
+  fi
+  if [ -n "$page" ]; then
+    say "To open it again, run the same command again (it takes a few seconds),"
+    say "or run: $app --page package"
+  else
+    say "To open it again, run the same command again (it takes a few seconds),"
+    say "or run: $app"
+  fi
   say "To remove it, run the same command with --uninstall:"
   say "  curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --uninstall"
   say ""
 
   if [ "$launch" = "1" ]; then
+    if [ -n "$page" ]; then
+      exec "$app" --page "$page"
+    fi
     exec "$app"
   fi
 }

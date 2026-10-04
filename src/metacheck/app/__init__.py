@@ -2,8 +2,9 @@
 
 Importing this package never imports gradio. The app needs the ``app`` extra
 (``pip install 'metacheck[app]>=0.4.0a1'``). ``run`` holds the checking code and
-needs no web server, ``security`` guards the local server, ``state`` lets a second
-start reuse a running app, ``ui`` builds the page and ``launch`` starts it.
+needs no web server, ``package`` is the same for a data package (the second page),
+``security`` guards the local server, ``state`` lets a second start reuse a running
+app, ``ui`` and ``ui_package`` build the pages and ``launch`` starts it.
 """
 
 from __future__ import annotations

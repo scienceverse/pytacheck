@@ -108,6 +108,16 @@ def _llm_setup(ctx: Ctx) -> dict[str, Any]:
     return seen
 
 
+def _app_roots(ctx: Ctx) -> list[str]:
+    """The folders the data package page may read besides the home folder (a test one)."""
+    from metacheck.app import package
+
+    home = str(ctx.tmp_path / "home")
+    ctx.monkeypatch.setenv("HOME", home)  # Path.home() on Linux and macOS
+    ctx.monkeypatch.setenv("USERPROFILE", home)  # ... and on Windows
+    return [str(root) for root in package.allowed_roots()[1:]]  # the first is home
+
+
 def _bibr_configured(ctx: Ctx) -> tuple[str, str] | None:
     from metacheck.app import bibr
 
@@ -664,6 +674,13 @@ SITES: dict[str, Site] = {
         expect=lambda ctx, name: 30.0,
         spaces=lambda ctx: 900.0,
     ),
+    "APP_ROOTS": Site(
+        value="<tmp>/shared",
+        other="",  # no other name
+        read=lambda ctx: _app_roots(ctx),
+        expect=lambda ctx, name: [str((ctx.tmp_path / "shared").resolve())],
+        spaces=lambda ctx: [],
+    ),
     "APP_TOKENS": Site(
         value=f" {_KEY}, {_KEY[:-1]}x ",
         other="",
@@ -929,8 +946,9 @@ def test_the_module_constants_keep_the_old_names() -> None:
     assert bibr.URL_ENVS == ("METACHECK_BIBR_URL", "PYTACHECK_BIBR_URL")
     assert bibr.BACKEND_ENVS == ("METACHECK_BIBR_BACKEND", "PYTACHECK_BIBR_BACKEND")
     assert (bibr.URL_ENV, bibr.BACKEND_ENV) == ("PYTACHECK_BIBR_URL", "PYTACHECK_BIBR_BACKEND")
-    from metacheck.app import hosted, run
+    from metacheck.app import hosted, package, run
 
+    assert package.ROOTS_ENV == "METACHECK_APP_ROOTS"
     assert run.GROBID_ENVS == ("METACHECK_GROBID_URL", "PYTACHECK_GROBID_URL")
     assert run.GROBID_ENV == "PYTACHECK_GROBID_URL"
     assert "GROBID_ENV" not in run.__all__ and "GROBID_ENVS" not in run.__all__
