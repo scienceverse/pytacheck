@@ -51,6 +51,15 @@
 ".zip_member_fetch" = "Fetches one member by two range requests (its local header, then its data), inflates it and checks size and CRC. zipfile does it over _RangeFile with one request; _zip_fetch_members() keeps the table and the per-member errors."
 ".zip_crc_ok" = "Compares a stored and a computed CRC-32 with all.equal() (U70). zipfile compares them exactly."
 
+# R/repo-download.R -- the retry, redirect and rate-limit loop, which metacheck.http.request() does
+".storage_backoff" = "min(2^attempt, 30) seconds between tries. metacheck.http.request() backs off as httr2 does by default (a random 1 to 2^attempt seconds, capped at 60); the maintainer decided on 2026-10-04 to keep one retry stack."
+".host_rate_limit_record" = "Records a host's rate-limit reset. metacheck.http keeps that memory (_record_reset(), host_reset_at()), and request() records it itself."
+".host_rate_limit_remaining" = "Seconds until a recorded reset. metacheck.http.host_reset_at() is the same lookup; request() waits for it before sending."
+".announce_rate_limit_wait" = "Says a wait over 5 s. metacheck.http.request() says it for every caller (_announce_wait())."
+".storage_retry_after_factory" = "The retry-after callback of the storage retry: the confirmed wait, recorded and announced. metacheck.http.request() reads Retry-After and the RateLimit-Reset headers, records the reset and waits for it."
+".storage_is_transient_factory" = "The storage retry rule, with skip_on_api_limit folded in. The rule is _storage_is_transient(); request() ends a rate-limited request at once under skip_on_api_limit."
+".wait_out_known_rate_limit" = "Waits out, or under skip_on_api_limit gives up on, a host's known rate limit before a request. metacheck.http.request() does it before every try (and raises RateLimited when asked to)."
+
 # ellmer providers metacheck can reach through ellmer::chat("provider/model")
 "ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (an SDK). metacheck.llm.providers raises a clear error (_UNSUPPORTED)."
 "ellmer::chat_google_vertex" = "Needs Google Cloud ADC/project auth. pytacheck raises a clear error; google_gemini works with AI Studio keys (the API default)."

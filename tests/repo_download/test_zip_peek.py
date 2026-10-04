@@ -14,6 +14,7 @@ import io
 import re
 import shutil
 import subprocess
+import time
 import zipfile
 import zlib
 from collections.abc import Iterator
@@ -497,9 +498,25 @@ def test_zip_fetch_members_by_range(tmp_path: Path) -> None:
         for name, path in zip(out["name"], out["path"], strict=True):
             assert Path(path).read_bytes() == zf.read(name)
     assert Path(out["path"].iloc[2]) == tmp_path / "sub" / "codebook.csv"
-    # the listing is the HEAD and the tail; every member costs at most one range request
-    assert [m for m, _ in calls].count("HEAD") == 2  # zip_peek(), then the fetch
-    assert len([r for m, r in calls if m == "GET"]) <= 2 + 3
+    # the listing is the HEAD and the tail (the fetch reuses them to open the archive);
+    # every member costs at most one range request
+    assert [m for m, _ in calls].count("HEAD") == 1
+    assert len([r for m, r in calls if m == "GET"]) <= 1 + 3
+
+
+def test_zip_fetch_members_after_a_listing_opens_the_archive_without_a_request(
+    tmp_path: Path,
+) -> None:
+    members = [(f"f{i}.csv", bytes([i + 1]) * 3000) for i in range(100)]  # larger than the tail
+    data = _build_zip(members, compression=zipfile.ZIP_STORED)
+    handler, calls = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        assert zip_peek(URL) is not None
+        before = len(calls)
+        out = _zip_fetch_members(URL, names=["f3.csv", "f4.csv"], dest=str(tmp_path))
+    assert out is not None and out["ok"].tolist() == [True, True]
+    assert [m for m, _ in calls[before:]] == ["GET", "GET"]  # one range request per member
 
 
 def test_zip_fetch_members_rejects_bad_crc_and_traversal(tmp_path: Path) -> None:
@@ -840,10 +857,9 @@ def test_zip_peek_cache_does_not_keep_a_failure_after_a_failed_head(
 
 def test_zip_peek_skips_a_known_rate_limit() -> None:
     from metacheck import http
-    from metacheck.archives.download import _host_rate_limit_record
 
     host = "s3-rate-limited-only.example"
-    _host_rate_limit_record(host, 999)
+    http._record_reset(host, time.time() + 999)
     try:
         # no route: a wait or a request would hang or fail; a quick None is the skip
         with respx.mock(assert_all_mocked=True):

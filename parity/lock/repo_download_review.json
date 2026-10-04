@@ -1,5 +1,6 @@
 {
 "decision.cp437.zip": {"r": "ac5146cf65ca52a8", "py": "e7190d25adc37929", "diff": ["<R error, Python value>"]},
+"download.rate_limit_skip": {"r": "767d2b09fbacd241", "py": "4c47f9225261bbe0", "diff": ["failed.error[]"]},
 "expand.abslink.tar.gz": {"r": "dd2c5cd73d6d8d27", "py": "5751ece53bf13260", "diff": ["<root>"]},
 "expand.cp437.zip": {"r": "ac5146cf65ca52a8", "py": "a9271e27e0150e27", "diff": ["<R error, Python value>"]},
 "expand.crc.zip": {"r": "0a5ccd7d8fe168e4", "py": "01636900f090fefd", "diff": ["<root>"]},

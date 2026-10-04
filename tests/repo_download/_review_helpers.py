@@ -18,6 +18,7 @@ import os
 import re
 import shutil
 import tempfile
+import time
 from collections.abc import Callable, Iterator
 from pathlib import Path
 from typing import Any
@@ -153,7 +154,7 @@ def peek_cached(
     """
     from metacheck import http
     from metacheck.archives import zip_peek_cache as zpc
-    from metacheck.archives.download import _host, _host_rate_limit_record
+    from metacheck.archives.download import _host
     from metacheck.archives.zip_peek import zip_peek
     from metacheck.utils import options
 
@@ -167,7 +168,7 @@ def peek_cached(
 
     try:
         if rate_limited:
-            _host_rate_limit_record(host, 999)
+            http._record_reset(host, time.time() + 999)
         one = serve(first, zip_peek, url, cache=True, skip_on_api_limit=rate_limited, **kw)
         forget()
         stored = zpc._zip_peek_cache_has(url)

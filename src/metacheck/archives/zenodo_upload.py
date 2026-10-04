@@ -19,7 +19,7 @@ import os
 import sys
 import tempfile
 import warnings
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
@@ -643,47 +643,44 @@ def _menu(choices: list[str], title: str) -> int:
     return int(answer) if answer.isdigit() and 1 <= int(answer) <= len(choices) else 0
 
 
+class _FileBody:
+    """A file as a request body that can be sent again: every pass opens it afresh."""
+
+    def __init__(self, path: str) -> None:
+        self.path = path
+
+    def __iter__(self) -> Iterator[bytes]:
+        with open(self.path, "rb") as fh:
+            while chunk := fh.read(1 << 20):
+                yield chunk
+
+
 def _upload_file(url: str, path: str, token: str) -> httpx.Response:
     """PUT a file's bytes to a bucket URL, streamed, with :func:`_zenodo_auth`'s retries."""
-    from metacheck import http
-
     auth = _zenodo_auth(token)
-    resp: httpx.Response | None = None
-    for attempt in range(1, auth["max_tries"] + 1):
-        with open(path, "rb") as fh:
-            resp = http.request("PUT", url, content=fh, headers=auth["headers"], max_tries=1)
-        if resp is not None and resp.status_code not in _TRANSIENT:
-            return resp
-        if attempt < auth["max_tries"]:
-            http.sleep(min(2**attempt, 60))
-    if resp is None:
-        raise ConnectionError(f"Failed to perform HTTP request: PUT {url}")
-    return resp
+    return _request(
+        "PUT",
+        url,
+        content=_FileBody(path),
+        headers={**auth["headers"], "Content-Length": str(os.path.getsize(path))},
+        max_tries=auth["max_tries"],
+        retry_statuses=auth["retry_statuses"],
+    )
 
 
 def _upload_form(url: str, path: str, name: str, token: str) -> httpx.Response:
     """POST a file to the deposition's form endpoint (``name`` + ``file`` fields)."""
-    from metacheck import http
-
     auth = _zenodo_auth(token)
-    resp: httpx.Response | None = None
-    for attempt in range(1, auth["max_tries"] + 1):
-        with open(path, "rb") as fh:
-            resp = http.request(
-                "POST",
-                url,
-                data={"name": name},
-                files={"file": (os.path.basename(path), fh)},
-                headers=auth["headers"],
-                max_tries=1,
-            )
-        if resp is not None and resp.status_code not in _TRANSIENT:
-            return resp
-        if attempt < auth["max_tries"]:
-            http.sleep(min(2**attempt, 60))
-    if resp is None:
-        raise ConnectionError(f"Failed to perform HTTP request: POST {url}")
-    return resp
+    with open(path, "rb") as fh:  # httpx rewinds the file for every try
+        return _request(
+            "POST",
+            url,
+            data={"name": name},
+            files={"file": (os.path.basename(path), fh)},
+            headers=auth["headers"],
+            max_tries=auth["max_tries"],
+            retry_statuses=auth["retry_statuses"],
+        )
 
 
 def _json_body(x: Any) -> bytes:

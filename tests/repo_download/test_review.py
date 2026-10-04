@@ -19,7 +19,6 @@ import pandas as pd
 import pytest
 import respx
 
-from metacheck.archives import download as dlm
 from metacheck.archives import zip_peek as zpm
 from metacheck.archives.download import (
     _download_zip_to_cache,
@@ -269,13 +268,12 @@ def test_zip_to_cache_does_not_match_a_missing_path_to_an_entry_named_na(tmp_pat
     assert out["file_location"].tolist() == [None, str(tmp_path / "out1")]
 
 
-def test_zip_to_cache_waits_once_unless_the_argument_says_skip(
+def test_zip_to_cache_waits_for_the_reset_unless_the_argument_says_skip(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # the metacheck.skip_on_api_limit option does not apply here, only the argument
     url = "https://zip.example.org/b.zip"
     slept: list[float] = []
-    monkeypatch.setattr(dlm, "_announce_rate_limit_wait", lambda *a, **k: None)
     monkeypatch.setattr("metacheck.http.sleep", lambda s: slept.append(s))
     limited = httpx.Response(
         429, headers={"ratelimit-remaining": "0", "ratelimit-reset": str(round(time.time()) + 60)}

@@ -5,7 +5,8 @@
 # src/metacheck/resources/data/file_types.json.gz (loaded by
 # metacheck.resources.data.load_data and metacheck.fileinfo.types). The storage
 # retry policy of httr2's req_retry() as metacheck configures it is
-# download.py's _storage_request(); the per-host rate-limit record
+# metacheck.http.request() (the one retry, redirect and rate-limit stack) with
+# download.py's _storage_request() on top; the per-host rate-limit record
 # (.host_rate_limit_cache) is metacheck.http's host reset memory; R's
 # format(<object_size>, units = "auto") in repo_cache_clear() is
 # download.py's _format_object_size(). Base R / package internals metacheck
@@ -41,15 +42,8 @@ repo_cache_clear = "metacheck.archives.download:repo_cache_clear"
 ".auth_for_url" = "metacheck.archives.download:_auth_for_url"
 ".is_login_page" = "metacheck.archives.download:_is_login_page"
 ".storage_is_transient" = "metacheck.archives.download:_storage_is_transient"
-".storage_backoff" = "metacheck.archives.download:_storage_backoff"
 ".rate_limit_wait" = "metacheck.archives.download:_rate_limit_wait"
-".host_rate_limit_record" = "metacheck.archives.download:_host_rate_limit_record"
-".host_rate_limit_remaining" = "metacheck.archives.download:_host_rate_limit_remaining"
-".format_wait_duration" = "metacheck.archives.download:_format_wait_duration"
-".announce_rate_limit_wait" = "metacheck.archives.download:_announce_rate_limit_wait"
-".storage_retry_after_factory" = "metacheck.archives.download:_storage_retry_after_factory"
-".storage_is_transient_factory" = "metacheck.archives.download:_storage_is_transient_factory"
-".wait_out_known_rate_limit" = "metacheck.archives.download:_wait_out_known_rate_limit"
+".format_wait_duration" = "metacheck.http:_format_wait_duration"
 ".download_one" = "metacheck.archives.download:_download_one"
 ".download_many_parallel" = "metacheck.archives.download:_download_many_parallel"
 ".zip_timeout_for_size" = "metacheck.archives.download:_zip_timeout_for_size"
@@ -57,7 +51,7 @@ repo_cache_clear = "metacheck.archives.download:repo_cache_clear"
 download_repo_files = "metacheck.archives.download:download_repo_files"
 
 # R/zip-peek.R
-".size_probe_is_transient_factory" = "metacheck.archives.zip_peek:_size_probe_is_transient_factory"
+".size_probe_is_transient_factory" = "metacheck.archives.zip_peek:_size_probe_is_transient"
 ".content_range_total" = "metacheck.archives.zip_peek:_content_range_total"
 ".head_size" = "metacheck.archives.zip_peek:_head_size"
 ".http_range_get" = "metacheck.archives.zip_peek:_http_range_get"

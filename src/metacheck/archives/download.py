@@ -15,13 +15,15 @@ everything else -- and every archive download that fails -- is fetched file
 by file (OSF osfstorage and Zenodo files in parallel, other hosts through a
 per-host throttle).
 
-Every storage request follows metacheck's policy (:func:`_storage_request`):
-host authentication (:func:`_auth_for_url`), 3 tries with retries on
-403/429/5xx and connection failures, ``min(2^attempt, 30)`` s backoff, and a
-confirmed exhausted rate limit (``RateLimit-Remaining: 0`` + reset) waited
-out -- or, with ``skip_on_api_limit``, given up on at once. Confirmed resets
-are remembered per host in :mod:`metacheck.http`'s rate-limit memory, so
-later requests to that host wait up front instead of rediscovering the 429.
+Every storage request goes through :func:`metacheck.http.request`, the one
+retry, redirect and rate-limit stack (:func:`_storage_request` adds what is
+specific to file bytes): host authentication (:func:`_auth_for_url`), 5 tries
+with retries on 403/429/5xx and connection failures, jittered backoff, and a
+rate limit's reset waited out -- or, with ``skip_on_api_limit``, given up on
+at once. A reset is remembered per host in :mod:`metacheck.http`'s rate-limit
+memory, so later requests to that host wait up front instead of
+rediscovering the 429. The OSF and Zenodo token is kept on every redirect hop
+to their storage hosts (``resend_headers``).
 """
 
 from __future__ import annotations
@@ -517,65 +519,6 @@ def _file_response(method: str, url: str, path: str | None) -> Any:
     return resp
 
 
-def _perform_once(
-    spec: Mapping[str, Any],
-    timeout: float | None = None,
-    path: str | None = None,
-    read_body: Callable[[Any], bool] | None = None,
-) -> Any:
-    """Send one request (no retries); the body goes to *path* when given.
-
-    ``spec`` is a request spec (``{"method", "url", "headers",
-    "unrestricted_auth"}``). ``unrestricted_auth`` re-sends the headers
-    (the token) on every redirect hop, as curl's option of that name does.
-    *read_body*, given the response before its body arrives, decides
-    whether the body is read at all (httr2 ``req_perform_connection()``: the
-    status is read first and an unwanted body is closed unread). Raises
-    :class:`_RequestError` on a connection failure.
-    """
-    import httpx
-
-    from metacheck import http
-
-    method = str(spec.get("method") or "GET")
-    url = str(spec["url"])
-    if url.lower().startswith("file:"):
-        return _file_response(method, url, path)
-    headers = dict(spec.get("headers") or {})
-    to = httpx.Timeout(timeout if timeout is not None else 60.0, connect=20.0)
-    client = http.client_for(url)
-    follow = not spec.get("unrestricted_auth")
-    try:
-        for _hop in range(20):
-            http.check_interrupt()
-            req = client.build_request(method, url, headers=headers, timeout=to)
-            resp = client.send(req, stream=True, follow_redirects=follow)
-            if not follow and resp.is_redirect and resp.next_request is not None:
-                url = str(resp.next_request.url)
-                if resp.status_code == 303:
-                    method = "GET"
-                resp.close()
-                continue
-            break
-        try:
-            if read_body is not None and not read_body(resp):
-                pass  # closed unread
-            elif path is not None:
-                with atomic_write(path) as fh:
-                    for chunk in resp.iter_bytes(chunk_size=1 << 20):
-                        http.check_interrupt()
-                        fh.write(chunk)
-            else:
-                resp.read()
-        finally:
-            resp.close()
-    except (httpx.TransportError, httpx.TimeoutException) as e:
-        raise _RequestError(
-            f"Failed to perform HTTP request.\nCaused by error in `curl::curl_fetch_disk()`:\n! {e}"
-        ) from e
-    return resp
-
-
 def _skip(skip_on_api_limit: Any) -> bool:
     """``isTRUE(skip_on_api_limit) || isTRUE(getOption("metacheck.skip_on_api_limit"))``.
 
@@ -591,6 +534,17 @@ def _skip(skip_on_api_limit: Any) -> bool:
     )
 
 
+class _ZipAborted(Exception):
+    """A whole-archive download that went past its byte cap or its time limit."""
+
+
+class _RateLimitSkipped(Exception):
+    """A request that was not sent: its host is rate-limited and ``skip_on_api_limit`` is on."""
+
+    def __init__(self) -> None:
+        super().__init__("API rate limit exhausted: known rate-limited host, skip_on_api_limit")
+
+
 def _storage_request(
     method: str,
     url: str,
@@ -599,61 +553,80 @@ def _storage_request(
     skip_on_api_limit: bool = False,
     timeout: float | None = None,
     path: str | None = None,
-    max_tries: int = 3,
+    max_tries: int = 5,
     auth: bool = True,
     throttle: Any = None,
     error: bool = False,
     is_transient: Callable[[Any], bool] | None = None,
     read_body: Callable[[Any], bool] | None = None,
+    sink: Callable[[Any], None] | None = None,
 ) -> Any:
-    """A storage request with metacheck's retry policy (httr2 ``req_retry()`` as R sets it).
+    """A storage request: :func:`metacheck.http.request` with the host's authentication.
 
-    ``request(url) |> .auth_for_url() |> req_retry(max_tries = 3,
-    retry_on_failure = TRUE, is_transient = .storage_is_transient_factory(),
-    backoff = .storage_backoff, after = .storage_retry_after_factory())``.
-    With *error* ``False`` (R: ``req_error(is_error = \\(r) FALSE)``) every
-    status is returned; with ``True`` a status >= 400 raises
-    :class:`_HttpError`. A connection failure on the last try raises
-    :class:`_RequestError`. *path* streams the body to a file; *throttle* is a
-    :class:`metacheck.http.Throttle` applied once per call. *is_transient*
-    replaces the storage rule for which answers are retried; *read_body* is
-    passed on to :func:`_perform_once`.
+    The retry rule is R's ``.storage_is_transient()`` (403, 429, 5xx), or
+    *is_transient* in its place; everything else (the tries, the backoff,
+    redirects, a rate limit's reset) is :func:`metacheck.http.request`'s. With
+    *error* ``False`` (R: ``req_error(is_error = \\(r) FALSE)``) every status is
+    returned; with ``True`` a status >= 400 raises :class:`_HttpError`. A
+    connection failure on the last try raises :class:`_RequestError`; a host
+    known to be rate-limited, under ``skip_on_api_limit``, raises
+    :class:`_RateLimitSkipped`. The body is read in full; or streamed to *path*
+    (a temporary file moved onto it once complete); or, when *read_body* is
+    given, read only if ``read_body(response)`` is true (httr2
+    ``req_perform_connection()``: an unwanted body is closed unread); or handed
+    to *sink*, which reads it. *throttle* is a :class:`metacheck.http.Throttle`.
     """
+    import httpx
+
     from metacheck import http
 
     spec: dict[str, Any] = {"method": method, "url": url, "headers": dict(headers or {})}
     if auth:
         spec = _auth_for_url(spec)
-    if is_transient is None:
-        is_transient = _storage_is_transient_factory(skip_on_api_limit)
-    after = _storage_retry_after_factory(skip_on_api_limit)
-    if throttle is not None:
-        throttle.acquire(_host(url) or "local")
-    tries = 0
-    delay = 0.0
-    resp: Any = None
-    err: Exception | None = None
-    while tries < max_tries:
-        http.sleep(delay)
+
+    if url.lower().startswith("file:"):
+        if throttle is not None:
+            throttle.acquire(_host(url) or "local")
+        resp = _file_response(method, url, path)
+    else:
+
+        def read(r: Any) -> None:
+            if sink is not None:
+                sink(r)
+            elif read_body is not None and not read_body(r):
+                return  # closed unread
+            elif path is not None:
+                with atomic_write(path) as fh:
+                    for chunk in r.iter_bytes(chunk_size=1 << 20):
+                        http.check_interrupt()
+                        fh.write(chunk)
+            else:
+                r.read()
+
         try:
-            resp, err = (
-                _perform_once(spec, timeout=timeout, path=path, read_body=read_body),
-                None,
-            )
-        except _RequestError as e:
-            resp, err = None, e
-        if err is not None:
-            tries += 1
-            delay = _storage_backoff(tries)
-        elif is_transient(resp):
-            tries += 1
-            wait = after(resp)
-            delay = _storage_backoff(tries) if is_na(wait) else float(wait)
-        else:
-            break
-    if err is not None:
-        raise err
-    if error and resp is not None and resp.status_code >= 400:
+            with http.skip_on_api_limit(_skip(skip_on_api_limit)):
+                resp = http.request(
+                    method,
+                    url,
+                    headers=spec["headers"],
+                    timeout=httpx.Timeout(timeout if timeout is not None else 60.0, connect=20.0),
+                    max_tries=max_tries,
+                    is_transient=is_transient or _storage_is_transient,
+                    throttle=throttle,
+                    sink=read,
+                    resend_headers=bool(spec.get("unrestricted_auth")),
+                    raise_errors=True,
+                )
+        except http.RateLimited as e:
+            raise _RateLimitSkipped() from e
+        except (httpx.TransportError, httpx.TimeoutException) as e:
+            raise _RequestError(
+                "Failed to perform HTTP request.\n"
+                f"Caused by error in `curl::curl_fetch_disk()`:\n! {e}"
+            ) from e
+        if resp is None:  # raise_errors makes this impossible
+            raise _RequestError("Failed to perform HTTP request.")
+    if error and resp.status_code >= 400:
         raise _HttpError(resp)
     return resp
 
@@ -817,11 +790,6 @@ def _storage_is_transient(resp: Any) -> bool:
     return int(resp.status_code) in _STORAGE_TRANSIENT
 
 
-def _storage_backoff(attempt: int) -> float:
-    """Port of ``R/repo-download.R::.storage_backoff()``: ``min(2^attempt, 30)`` seconds."""
-    return float(min(2**attempt, 30))
-
-
 def _rate_limit_wait(resp: Any) -> float:
     """Port of ``R/repo-download.R::.rate_limit_wait()``: seconds until a confirmed reset.
 
@@ -848,130 +816,6 @@ def _rate_limit_wait(resp: Any) -> float:
         return math.nan
     wait = reset_time - time.time()
     return 0.0 if is_na(wait) or wait < 0 else float(wait)
-
-
-def _host_rate_limit_record(host: str | None, wait: float) -> None:
-    """Port of ``R/repo-download.R::.host_rate_limit_record()``.
-
-    Records that *host* is rate-limited for *wait* more seconds, in
-    :mod:`metacheck.http`'s per-host memory (the later reset wins).
-    """
-    from metacheck import http
-
-    if host is None or is_na(wait):
-        return
-    http._record_reset(host, time.time() + float(wait))
-
-
-def _host_rate_limit_remaining(host: str | None) -> float:
-    """Port of ``R/repo-download.R::.host_rate_limit_remaining()``.
-
-    Seconds until *host*'s recorded rate-limit reset, or ``nan`` (R ``NA``)
-    when nothing is recorded or the window has passed (a passed window is
-    forgotten).
-    """
-    from metacheck import http
-
-    if host is None:
-        return math.nan
-    reset_at = http.host_reset_at(host)
-    if reset_at is None:
-        return math.nan
-    remaining = reset_at - time.time()
-    if remaining <= 0:
-        with http._reset_lock:
-            http._host_reset.pop(host, None)
-        return math.nan
-    return remaining
-
-
-def _format_wait_duration(seconds: float) -> str:
-    """Port of ``R/repo-download.R::.format_wait_duration()``: ``47s``, ``12.3 min``, ``1.4 hours``."""
-    if seconds < 60:
-        return f"{math.ceil(seconds)}s"
-    if seconds < 3600:
-        return f"{seconds / 60:.1f} min"
-    return f"{seconds / 3600:.1f} hours"
-
-
-def _announce_rate_limit_wait(wait: float, resp: Any = None, host: str | None = None) -> None:
-    """Port of ``R/repo-download.R::.announce_rate_limit_wait()``: say a wait over 5 s."""
-    if wait > 5:
-        if host is None and resp is not None:
-            try:
-                host = _host(resp.request.url)
-            except Exception:
-                host = None
-        host_part = f" from {host}" if host is not None else ""
-        _message(
-            f"Rate limit reached{host_part}; waiting {_format_wait_duration(wait)} for the "
-            "host's own reset before retrying (Ctrl+C to stop, or use skip_on_api_limit = "
-            "TRUE to skip this file instead of waiting)."
-        )
-
-
-def _storage_retry_after_factory(skip_on_api_limit: bool = False) -> Callable[[Any], float]:
-    """Port of ``R/repo-download.R::.storage_retry_after_factory()``.
-
-    The ``after`` callback of the storage retry: the confirmed rate-limit wait
-    of a response (recorded for its host and announced), or ``nan`` to fall
-    back to the backoff. Always ``nan`` under ``skip_on_api_limit`` (argument
-    or option).
-    """
-    skip = _skip(skip_on_api_limit)
-
-    def after(resp: Any) -> float:
-        if skip:
-            return math.nan
-        wait = _rate_limit_wait(resp)
-        if not is_na(wait):
-            try:
-                host = _host(resp.request.url)
-            except Exception:
-                host = None
-            _host_rate_limit_record(host, wait)
-            _announce_rate_limit_wait(wait, resp)
-        return wait
-
-    return after
-
-
-def _storage_is_transient_factory(skip_on_api_limit: bool = False) -> Callable[[Any], bool]:
-    """Port of ``R/repo-download.R::.storage_is_transient_factory()``.
-
-    :func:`_storage_is_transient`, except that under ``skip_on_api_limit`` a
-    429 with a confirmed exhausted bucket is not transient (give up now); a
-    plain 429 still retries.
-    """
-    skip = _skip(skip_on_api_limit)
-
-    def is_transient(resp: Any) -> bool:
-        if not _storage_is_transient(resp):
-            return False
-        return not (skip and int(resp.status_code) == 429 and not is_na(_rate_limit_wait(resp)))
-
-    return is_transient
-
-
-def _wait_out_known_rate_limit(url: str, skip_on_api_limit: bool = False) -> bool:
-    """Port of ``R/repo-download.R::.wait_out_known_rate_limit()``.
-
-    Before a request to *url*: when its host is known to be rate-limited,
-    wait out the remaining time (``True``) -- or, under ``skip_on_api_limit``,
-    give up at once (``False``). ``True`` straight away for any other host.
-    """
-    from metacheck import http
-
-    skip = _skip(skip_on_api_limit)
-    host = _host(url)
-    remaining = _host_rate_limit_remaining(host)
-    if is_na(remaining):
-        return True
-    if skip:
-        return False
-    _announce_rate_limit_wait(remaining, host=host)
-    http.sleep(remaining)
-    return True
 
 
 def _zip_timeout_for_size(
@@ -1035,8 +879,6 @@ def _download_one(
     """
     _dir_create(os.path.dirname(dest))
     try:
-        if not _wait_out_known_rate_limit(url, skip_on_api_limit):
-            return "API rate limit exhausted: known rate-limited host, skip_on_api_limit"
         _storage_request(
             "GET",
             url,
@@ -1206,8 +1048,8 @@ def _download_zip_to_cache(
     ``file_path``, or ``file_name`` where that is empty; *strip_dir* drops
     the archive's top-level folder first, as GitHub/GitLab add one). The
     transfer is streamed and aborted past *max_bytes* or the (size-scaled)
-    *timeout_s*; a 429 with a confirmed reset is waited out once (unless
-    ``skip_on_api_limit``). Rows not filled are left for the caller's
+    *timeout_s*; it is retried like any request (:func:`metacheck.http.request`:
+    a 429 waits for the host's reset unless ``skip_on_api_limit``). Rows not filled are left for the caller's
     file-by-file fallback. *req_func* adds the host's headers to the request
     spec.
     """
@@ -1222,78 +1064,66 @@ def _download_zip_to_cache(
     if "file_path" not in files.columns and "file_name" not in files.columns:
         return files  # nothing to match the archive's members on: no download
     timeout_s = _zip_timeout_for_size(timeout_s, expected_bytes)
-    skip = skip_on_api_limit is True  # R: isTRUE(skip_on_api_limit), the argument only
-
     fd, zip_tmp = tempfile.mkstemp(suffix=".zip")
     os.close(fd)
     extract_dir: str | None = None
     try:
-        resp: Any = None
-        conn_err: Exception | None = None
         spec: dict[str, Any] = {"method": "GET", "url": zip_url, "headers": {}}
         if req_func is not None:
             spec = req_func(spec)
-        client = http.client()
         dl_err: str | None = None
-        for attempt in (1, 2):
-            try:
-                req = client.build_request(
+        got_body = False
+        deadline: list[float] = []  # started with the first body, shared by the tries
+
+        def write_zip(resp: Any) -> None:
+            nonlocal got_body
+            got_body = True
+            if not deadline:
+                deadline.append(time.monotonic() + timeout_s)
+            written = 0
+            with open(zip_tmp, "wb") as con:
+                for chunk in resp.iter_bytes(chunk_size=512 * 1024):
+                    http.check_interrupt()
+                    if time.monotonic() > deadline[0]:
+                        # a whole number of seconds (metacheck's sprintf("%d") fails on the
+                        # size-scaled fractional timeout: U73)
+                        raise _ZipAborted(
+                            f"archive download exceeded the {math.ceil(timeout_s):d}s timeout"
+                        )
+                    con.write(chunk)
+                    written += len(chunk)
+                    if math.isfinite(max_bytes) and written > max_bytes:
+                        cap = _cap_num(float(r_round(max_bytes / _MB)))
+                        raise _ZipAborted(
+                            f"archive exceeded the {cap} MB cap during download and was aborted"
+                        )
+
+        try:
+            # R: isTRUE(skip_on_api_limit), the argument only (not the option)
+            with http.skip_on_api_limit(skip_on_api_limit is True or http.skipping_api_limits()):
+                http.request(
                     "GET",
                     zip_url,
                     headers=dict(spec.get("headers") or {}),
                     timeout=httpx.Timeout(timeout_s, connect=min(timeout_s, 20.0)),
+                    sink=write_zip,
+                    raise_errors=True,
                 )
-                attempt_resp = client.send(req, stream=True, follow_redirects=True)
-            except (httpx.TransportError, httpx.TimeoutException) as e:
-                conn_err = e
-                break
-            if attempt_resp.status_code == 429:
-                wait = _rate_limit_wait(attempt_resp)
-                host = _host(attempt_resp.request.url)
-                attempt_resp.close()
-                if not skip and attempt == 1 and not is_na(wait) and wait > 0:
-                    _announce_rate_limit_wait(wait, host=host)
-                    http.sleep(wait)
-                    continue
-                return files
-            resp = attempt_resp
-            break
-        if resp is None:
-            if conn_err is not None:
-                _message(
-                    f"Zip download failed ({zip_url}): Failed to perform HTTP request.\n"
-                    f"Caused by error: {conn_err}"
-                )
+        except http.RateLimited:
             return files
-
-        try:
-            written = 0
-            over_cap = False
-            timed_out = False
-            deadline = time.monotonic() + timeout_s
-            with open(zip_tmp, "wb") as con:
-                for chunk in resp.iter_bytes(chunk_size=512 * 1024):
-                    if time.monotonic() > deadline:
-                        timed_out = True
-                        break
-                    con.write(chunk)
-                    written += len(chunk)
-                    if math.isfinite(max_bytes) and written > max_bytes:
-                        over_cap = True
-                        break
-            if over_cap:
-                cap = _cap_num(float(r_round(max_bytes / _MB)))
-                dl_err = f"archive exceeded the {cap} MB cap during download and was aborted"
-            elif timed_out:
-                # a whole number of seconds (metacheck's sprintf("%d") fails on the
-                # size-scaled fractional timeout: U73)
-                dl_err = f"archive download exceeded the {math.ceil(timeout_s):d}s timeout"
-            elif not os.path.exists(zip_tmp) or os.path.getsize(zip_tmp) == 0:
-                dl_err = "empty response"
+        except (httpx.TransportError, httpx.TimeoutException) as e:
+            _message(
+                f"Zip download failed ({zip_url}): Failed to perform HTTP request.\n"
+                f"Caused by error: {e}"
+            )
+            return files
         except Exception as e:
             dl_err = str(e)
-        finally:
-            resp.close()
+        if dl_err is None:
+            if not got_body:
+                return files  # a 429 or a 5xx on every try: nothing to read
+            if not os.path.exists(zip_tmp) or os.path.getsize(zip_tmp) == 0:
+                dl_err = "empty response"
         if dl_err is not None:
             _message(f"Zip download failed ({zip_url}): {dl_err}")
             return files

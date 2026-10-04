@@ -405,6 +405,11 @@
 "repo_download/zip_fetch_members.deflated": *d67_in_hand
 "repo_download/download_repo_files.archive_members": *d67_in_hand
 "repo_download_review/fetch.range_ignored": *d67_in_hand
+# D68 (a file is not requested from a host known to be rate-limited, when asked to skip)
+"repo_download_review/download.rate_limit_skip":
+  kind: deliberate
+  ref: D68
+  reason: "the second file, asked for after the host's limit is known, is not requested: its error says 'known rate-limited host, skip_on_api_limit' (R sends it and reports 'HTTP 429 Too Many Requests.')"
 # U76
 "repo_download_review/peek.cp437.zip":
   kind: r_bug_fixed

@@ -26,6 +26,7 @@ All requests go through the storage retry policy and host authentication of
 from __future__ import annotations
 
 import atexit
+import contextlib
 import io
 import math
 import os
@@ -34,7 +35,7 @@ import shutil
 import threading
 import warnings
 import zipfile
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from contextvars import ContextVar
 from typing import TYPE_CHECKING, Any
 
@@ -48,7 +49,7 @@ __all__ = ["zip_decision", "zip_peek"]
 
 #: R: .zip_peek_cache -- same-session cache of zip_peek() results (a success
 #: or a failure, ``None``), keyed by URL. Never persisted.
-_ZIP_PEEK_CACHE: dict[str, Any] = {}
+_ZIP_PEEK_CACHE: dict[Any, Any] = {}  # a URL -> its listing; (URL, "tail") -> its last bytes
 _CACHE_LOCK = threading.Lock()
 
 _ZIP64 = 0xFFFFFFFF  # the Zip64 sentinel in a 4-byte field
@@ -162,25 +163,16 @@ def _note_transient(status: Any = None) -> None:
         flag[0] = True
 
 
-class _Status:
-    """A stand-in response carrying only a status code."""
-
-    def __init__(self, status_code: int) -> None:
-        self.status_code = status_code
-
-
-def _size_probe_is_transient_factory(skip_on_api_limit: bool = False) -> Callable[[Any], bool]:
+def _size_probe_is_transient(resp: Any) -> bool:
     """Port of ``R/zip-peek.R::.size_probe_is_transient_factory()``.
 
     The retry rule of a size request: the storage rule
-    (:func:`metacheck.archives.download._storage_is_transient_factory`)
-    minus 403, which S3 answers to every HEAD (retrying it only adds
-    backoff).
+    (:func:`metacheck.archives.download._storage_is_transient`) minus 403,
+    which S3 answers to every HEAD (retrying it only adds backoff).
     """
-    from metacheck.archives.download import _storage_is_transient_factory
+    from metacheck.archives.download import _storage_is_transient
 
-    is_transient = _storage_is_transient_factory(skip_on_api_limit)
-    return lambda resp: int(resp.status_code) != 403 and is_transient(resp)
+    return int(resp.status_code) != 403 and _storage_is_transient(resp)
 
 
 def _content_range_total(resp: Any) -> float:
@@ -208,17 +200,14 @@ def _head_size(url: str, skip_on_api_limit: bool = False) -> float:
     have made possible is not cached as a failure. 403 is not flagged: S3
     hosts always refuse HEAD.
     """
-    from metacheck.archives.download import _storage_request, _wait_out_known_rate_limit
+    from metacheck.archives.download import _storage_request
 
     try:
-        if not _wait_out_known_rate_limit(url, skip_on_api_limit):
-            _note_transient()
-            return math.nan
         resp = _storage_request(
             "HEAD",
             url,
             skip_on_api_limit=skip_on_api_limit,
-            is_transient=_size_probe_is_transient_factory(skip_on_api_limit),
+            is_transient=_size_probe_is_transient,
         )
         status = int(resp.status_code)
         if status < 200 or status >= 300:
@@ -245,20 +234,20 @@ def _http_range_get(
     rate limit under *skip_on_api_limit* gives ``(None, nan, None)``. 403 is
     not retried. A connection failure raises.
     """
-    from metacheck.archives.download import _storage_request, _wait_out_known_rate_limit
+    from metacheck.archives.download import _RateLimitSkipped, _storage_request
 
-    if not _wait_out_known_rate_limit(url, skip_on_api_limit):
-        _note_transient()
-        return None, math.nan, None
     try:
         resp = _storage_request(
             "GET",
             url,
             headers={"Range": rng},
             skip_on_api_limit=skip_on_api_limit,
-            is_transient=_size_probe_is_transient_factory(skip_on_api_limit),
+            is_transient=_size_probe_is_transient,
             read_body=lambda r: int(r.status_code) == 206,
         )
+    except _RateLimitSkipped:
+        _note_transient()
+        return None, math.nan, None
     except Exception:
         _note_transient()
         raise
@@ -295,7 +284,7 @@ def _http_range_tail(
     file's size as ``.total``, or ``None`` on failure. A 200 (range ignored)
     to a request by position still yields the tail of the whole body.
     """
-    from metacheck.archives.download import _storage_request, _wait_out_known_rate_limit
+    from metacheck.archives.download import _storage_request
 
     try:
         if total is None:
@@ -306,27 +295,34 @@ def _http_range_tail(
         if total <= 0:
             return None
         start = max(0.0, total - n)
-        if not _wait_out_known_rate_limit(url, skip_on_api_limit):
-            _note_transient()
-            return None
+        keep = max(0, int(n))
+        got = bytearray()
+
+        def read(r: Any) -> None:
+            # a 206 body is the tail; a 200 (range ignored) is the whole file, of which
+            # only the last *keep* bytes are held at a time
+            got.clear()
+            if r.status_code not in (200, 206):
+                return
+            for chunk in r.iter_bytes():
+                got.extend(chunk)
+                if r.status_code == 200 and len(got) > keep:
+                    del got[: len(got) - keep]
+
         try:
             r = _storage_request(
                 "GET",
                 url,
                 headers={"Range": f"bytes={start:.0f}-{total - 1:.0f}"},
                 skip_on_api_limit=skip_on_api_limit,
+                sink=read,
             )
         except Exception:
             _note_transient()
             raise
         _note_transient(r.status_code)
-        if r.status_code == 206:
-            return _with_total(bytes(r.content), total)
-        if r.status_code == 200:
-            body = bytes(r.content)
-            k = int(n)
-            tail = body[-k:] if 0 < k < len(body) else (body if k > 0 else b"")
-            return _with_total(tail, total)
+        if r.status_code in (200, 206):
+            return _with_total(bytes(got), total)
         return None
     except Exception:
         return None
@@ -374,10 +370,10 @@ def _http_range_bytes(
 
     0-based and inclusive. Only a 206 answer of exactly the requested length
     counts: a 200 (range ignored, the whole archive) is a failure here. Any
-    status but 200/206 is retried (up to 3 tries). On failure *reason*, when
-    given, gets a one-line explanation under ``"msg"``.
+    status but 200/206 is retried. On failure *reason*, when given, gets a
+    one-line explanation under ``"msg"``.
     """
-    from metacheck.archives.download import _storage_request, _wait_out_known_rate_limit
+    from metacheck.archives.download import _RateLimitSkipped, _storage_request
 
     try:
         if from_ is None or to is None or is_na(from_) or is_na(to):
@@ -387,15 +383,13 @@ def _http_range_bytes(
         if not math.isfinite(f) or not math.isfinite(t) or f < 0 or t < f:
             _set_reason(reason, "invalid byte range")
             return None
-        if not _wait_out_known_rate_limit(url, skip_on_api_limit):
-            _set_reason(reason, "host is rate-limited (waiting skipped by skip_on_api_limit)")
-            return None
         r = _storage_request(
             "GET",
             url,
             headers={"Range": f"bytes={f:.0f}-{t:.0f}"},
             skip_on_api_limit=skip_on_api_limit,
             is_transient=_range_status_is_transient,
+            read_body=lambda r: int(r.status_code) == 206,  # a 200 is the whole file: unread
         )
         _note_transient(r.status_code)
         if r.status_code != 206:
@@ -406,6 +400,10 @@ def _http_range_bytes(
             _set_reason(reason, "short read (range request returned the wrong length)")
             return None
         return body
+    except _RateLimitSkipped:
+        _note_transient()
+        _set_reason(reason, "host is rate-limited (waiting skipped by skip_on_api_limit)")
+        return None
     except Exception as e:
         _note_transient()
         _set_reason(reason, str(e))
@@ -428,9 +426,9 @@ _MAX_DIRECTORY = 268435456
 class _RangeFile(io.RawIOBase):
     """A read-only, seekable view of a remote file that :class:`zipfile.ZipFile` can read.
 
-    It holds one span of the file, at first the *tail* already fetched. A read
-    outside the span fetches the next ``max(read, _READ_AHEAD)`` bytes with one
-    range request (:func:`_http_range_bytes`), so a central directory larger
+    It holds the *tail* already fetched, and one more span. A read outside
+    both fetches the next ``max(read, _READ_AHEAD)`` bytes (up to the tail) with
+    one range request (:func:`_http_range_bytes`), so a central directory larger
     than the tail costs one request, and :meth:`prefetch` brings a whole member
     in with one. A failed request raises :class:`OSError` saying why.
     """
@@ -440,8 +438,10 @@ class _RangeFile(io.RawIOBase):
         self.url = url
         self.size = len(tail) if is_na(size) else int(size)  # no size: the tail is all there is
         self._skip = skip_on_api_limit
-        self._buf = bytes(tail)
-        self._start = max(0, self.size - len(tail))
+        self._tail = bytes(tail)
+        self._tail_start = max(0, self.size - len(tail))
+        self._buf = b""
+        self._start = 0
         self._pos = 0
 
     def readable(self) -> bool:
@@ -460,7 +460,7 @@ class _RangeFile(io.RawIOBase):
 
     def prefetch(self, start: int, end: int) -> None:
         """Hold the bytes ``[start, end)`` of the file (up to its end), fetching them if needed."""
-        end = min(end, self.size)
+        end = min(end, self.size, self._tail_start)  # the tail holds the rest
         if start >= end or (self._start <= start and end <= self._start + len(self._buf)):
             return
         reason: dict[str, str] = {}
@@ -473,12 +473,16 @@ class _RangeFile(io.RawIOBase):
         n = min(len(b), self.size - self._pos)
         if n <= 0:
             return 0
-        if not self._start <= self._pos < self._start + len(self._buf):
-            if n > _MAX_DIRECTORY:
-                raise OSError("the archive's central directory is too large to read")
-            self.prefetch(self._pos, self._pos + max(n, _READ_AHEAD))
-        i = self._pos - self._start
-        chunk = self._buf[i : i + n]
+        if self._pos >= self._tail_start:
+            buf, start = self._tail, self._tail_start
+        else:
+            if not self._start <= self._pos < self._start + len(self._buf):
+                if n > _MAX_DIRECTORY:
+                    raise OSError("the archive's central directory is too large to read")
+                self.prefetch(self._pos, self._pos + max(n, _READ_AHEAD))
+            buf, start = self._buf, self._start
+        i = self._pos - start
+        chunk = buf[i : i + n]
         b[: len(chunk)] = chunk
         self._pos += len(chunk)
         return len(chunk)
@@ -496,6 +500,12 @@ def _open_zip(
     directory is longer. Zip64, a comment after the directory, bzip2 and lzma
     members are zipfile's.
     """
+    memo = (url, "tail")  # in the session cache, so that clearing it clears this too
+    with _CACHE_LOCK:
+        held = _ZIP_PEEK_CACHE.get(memo)
+    if held is not None:  # members after the listing: no request to open the archive again
+        with contextlib.suppress(Exception):
+            return _wrap_zip(url, held[0], held[1], skip_on_api_limit)
     total: Any = _head_size(url, skip_on_api_limit)
     # A host that ignores ranges sends the whole file for every request: the
     # tail of it is then all this can hold, so a larger one is tried once (1 MB).
@@ -505,17 +515,27 @@ def _open_zip(
             return None
         if is_na(total):
             total = raw.total
-        rf = _RangeFile(url, raw, total, skip_on_api_limit)
         try:
-            return zipfile.ZipFile(io.BufferedReader(rf, _READ_AHEAD)), rf
+            opened = _wrap_zip(url, bytes(raw), total, skip_on_api_limit)
         except OSError as e:
             if "range not honoured" not in str(e):
                 return None
         except Exception:  # not a zip, or a damaged one
             return None
+        else:
+            with _CACHE_LOCK:
+                _ZIP_PEEK_CACHE[memo] = (bytes(raw), total)
+            return opened
         if not is_na(total) and nb >= total:
             break  # the whole file was in hand
     return None
+
+
+def _wrap_zip(
+    url: str, tail: bytes, total: float, skip_on_api_limit: bool
+) -> tuple[zipfile.ZipFile, _RangeFile]:
+    rf = _RangeFile(url, tail, total, skip_on_api_limit)
+    return zipfile.ZipFile(io.BufferedReader(rf, _READ_AHEAD)), rf
 
 
 def _entry_table(infos: Sequence[zipfile.ZipInfo]) -> pd.DataFrame:

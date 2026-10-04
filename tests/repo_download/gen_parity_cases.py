@@ -347,14 +347,8 @@ def download_cases() -> list[dict[str, Any]]:
             fn_case(
                 f"format_wait_duration.s{sid}",
                 ".format_wait_duration",
-                DL + "_format_wait_duration",
+                "metacheck.http._format_wait_duration",
                 {"seconds": float(s)},
-            )
-        )
-    for a in (1, 2, 3, 4, 5, 6):
-        cases.append(
-            fn_case(
-                f"storage_backoff.a{a}", ".storage_backoff", DL + "_storage_backoff", {"attempt": a}
             )
         )
     statuses = [200, 206, 301, 403, 404, 429, 500, 501, 502, 503, 504]

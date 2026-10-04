@@ -1214,84 +1214,54 @@
     "timeout_s": 60
 - "id": "format_wait_duration.s0_2"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 0.2
 - "id": "format_wait_duration.s5"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 5.0
 - "id": "format_wait_duration.s47_2"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 47.2
 - "id": "format_wait_duration.s59_99"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 59.99
 - "id": "format_wait_duration.s60"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 60.0
 - "id": "format_wait_duration.s740"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 740.0
 - "id": "format_wait_duration.s3599"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 3599.0
 - "id": "format_wait_duration.s3600"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 3600.0
 - "id": "format_wait_duration.s5040"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 5040.0
 - "id": "format_wait_duration.s86400"
   "r": ".format_wait_duration"
-  "py": "metacheck.archives.download._format_wait_duration"
+  "py": "metacheck.http._format_wait_duration"
   "args":
     "seconds": 86400.0
-- "id": "storage_backoff.a1"
-  "r": ".storage_backoff"
-  "py": "metacheck.archives.download._storage_backoff"
-  "args":
-    "attempt": 1
-- "id": "storage_backoff.a2"
-  "r": ".storage_backoff"
-  "py": "metacheck.archives.download._storage_backoff"
-  "args":
-    "attempt": 2
-- "id": "storage_backoff.a3"
-  "r": ".storage_backoff"
-  "py": "metacheck.archives.download._storage_backoff"
-  "args":
-    "attempt": 3
-- "id": "storage_backoff.a4"
-  "r": ".storage_backoff"
-  "py": "metacheck.archives.download._storage_backoff"
-  "args":
-    "attempt": 4
-- "id": "storage_backoff.a5"
-  "r": ".storage_backoff"
-  "py": "metacheck.archives.download._storage_backoff"
-  "args":
-    "attempt": 5
-- "id": "storage_backoff.a6"
-  "r": ".storage_backoff"
-  "py": "metacheck.archives.download._storage_backoff"
-  "args":
-    "attempt": 6
 - "id": "storage_is_transient.statuses"
   "r": "identity"
   "py": "tests.repo_download._parity_helpers.identity"
