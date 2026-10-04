@@ -7,6 +7,6 @@
 "stat_effect_size.hedges_g_variants": {"r": "4d07f7215060147d", "py": "c51fc768a85a0226", "diff": ["report[]", "summary_table.ttests_with_es[]", "summary_table.ttests_without_es[]", "summary_text[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_indep_equal_n[]", "table.d_implied_indep_unequal_max[]", "table.d_implied_indep_unequal_min[]", "table.d_implied_n[]", "table.d_implied_paired_drm_r05[]", "table.d_implied_paired_dz[]", "table.d_reported[]", "table.d_reported_text[]", "table.df[]", "table.es[]", "table.t_value[]", "traffic_light[]"]},
 "stat_effect_size.preprint_tei": {"r": "02ce78736b29711a", "py": "bb3f37b64bd3f53b", "diff": ["summary_text[]", "table.text[]"]},
 "stat_effect_size.published_tei": {"r": "06f92c0dffe871a9", "py": "8ed854aedd9867b9", "diff": ["summary_text[]", "table.text[]"]},
-"stat_effect_size.tricky": {"r": "6aa5a9efcc96cbe9", "py": "ff68aeedc7a45d11", "diff": ["report[]", "summary_table.ttests_with_es[]", "summary_text[]", "table", "traffic_light[]"]},
+"stat_effect_size.tricky": {"r": "9fea56f7609096c6", "py": "faa6bd0e1e26fb72", "diff": ["report[]", "summary_table.ttests_with_es[]", "summary_text[]", "table", "traffic_light[]"]},
 "stat_effect_size.xml_unsorted": {"r": "50b9fcf6d56dad86", "py": "34fbe346a7c6ac06", "diff": ["summary_text[]", "table.text[]"]}
 }
