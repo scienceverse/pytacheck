@@ -757,6 +757,10 @@ def test_batch_runs_papers_concurrently(tmp_path: Path, monkeypatch: pytest.Monk
             summary_table=pd.DataFrame({"paper_id": [pid], "repro_code_n": [1]}),
         )
 
+    from metacheck.repro import docker
+
+    # the sandbox is checked before the batch starts; the worker is faked, so no Docker is needed
+    monkeypatch.setattr(docker, "repro_docker_available", lambda: {"ok": True, "msg": ""})
     monkeypatch.setattr(h, "_batch_worker", fake_worker)
     monkeypatch.setattr(h, "_process_executor", lambda n: ThreadPoolExecutor(max_workers=n))
     mo = module_run(

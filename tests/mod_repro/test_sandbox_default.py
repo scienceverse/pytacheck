@@ -747,6 +747,7 @@ def test_real_container_links_in_the_sandbox_never_reach_the_host(
     assert "script 3" in rr["stdout"].iloc[2]
 
 
+@pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="named pipes need a POSIX system")
 def test_the_scrub_removes_what_the_host_must_not_follow_or_open(tmp_path: Path) -> None:
     """Links that leave the sandbox, pipes and sockets go; files, directories, inner links stay."""
     root = tmp_path / "sandbox"
