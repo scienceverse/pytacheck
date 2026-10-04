@@ -246,3 +246,11 @@
         - "Negative d only, t(40) = 2.9, d = -0.45."
         - "Semi, F(2, 40) = 3.1; ηp² = .13."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.duplicate_ids"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p1 <- test_paper(c('The effect was significant, t(20) = 2.5, p = .02.', 'The result was F(1, 30) = 5.1, p = .03.')); p2 <- test_paper(c('A second paper found t(15) = 3.1, p = .007, d = 0.8.')); p2$paper_id <- p1$paper_id; p2$text$paper_id <- p1$paper_id; paperlist(p1, p2)})"
+        "py": "(lambda p1, p2: (p2.__setitem__('paper_id', p1.paper_id), p2.__setitem__('text', p2['text'].assign(paper_id=p1.paper_id)), pc.PaperList([p1, p2]))[-1])(pc.test_paper(['The effect was significant, t(20) = 2.5, p = .02.', 'The result was F(1, 30) = 5.1, p = .03.']), pc.test_paper(['A second paper found t(15) = 3.1, p = .007, d = 0.8.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}

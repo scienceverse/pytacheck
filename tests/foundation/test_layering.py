@@ -27,7 +27,7 @@ feeds three rules.
 
 **Foundation.** §2.1 says ``core/**`` imports only ``_r``, ``_values``,
 ``_json``, ``_env``, ``_logging``, ``papers.model``, ``papers.schema`` and
-``papers.ids``. ``papers/ids.py`` does not exist yet. The modules that exist are the
+``papers.ids``. The modules that exist are the
 foundation the core will build on, and they must already keep that promise: they
 import only each other, and nothing else in ``metacheck``. Attribute access
 counts as an import, so ``metacheck.text_search(...)``, which loads ``text``
@@ -151,7 +151,7 @@ CHECK_MODULES = f"{PKG}.modules"
 # what a migrated module may not use; a name is banned along with everything under it
 BANNED = _names("text.search", "papers.tables", "_r.frames", "_r.regex.grepl")
 # named by §2.1 but not written yet
-NOT_YET = frozenset(_names("doc", "papers.ids", "compat"))
+NOT_YET = frozenset(_names("doc", "compat"))
 
 # (rule, file under src/metacheck, banned target) -> why it is still there. It
 # holds today's violations and only shrinks; a new need changes the design first.

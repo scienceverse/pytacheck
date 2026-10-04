@@ -51,6 +51,7 @@ import pandas as pd
 
 from metacheck._r.base import as_character, r_sort_key
 from metacheck.core.errors import StaleDocumentError
+from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList
 
 __all__ = [
@@ -988,11 +989,12 @@ def module_run(
         stripped = replace(prev, paper=None, summary_table=None, prev_outputs={})
         prev_outputs[prev.module] = stripped
     elif isinstance(paper, PaperList):
+        paper = resolve(paper)  # F6: one rule for repeated IDs, so the join below is 1:1
         summary_table = pd.DataFrame({"paper_id": pd.Series(paper.names, dtype="string")})
     elif isinstance(paper, Paper):
         summary_table = pd.DataFrame({"paper_id": pd.Series([paper.paper_id], dtype="string")})
     elif isinstance(paper, list | tuple) and all(isinstance(p, Paper) for p in paper):
-        paper = PaperList(paper)
+        paper = resolve(PaperList(paper))
         summary_table = pd.DataFrame({"paper_id": pd.Series(paper.names, dtype="string")})
     elif isinstance(paper, pd.DataFrame):
         # a text table: data.frame(paper_id = paper$paper_id) has one row per table
