@@ -114,11 +114,11 @@
   reason: a Latin-1 script's data-file references are found (its lines are read as Latin-1); R's gregexpr() matches nothing on invalid UTF-8 (or fails)
 
 # U64: a valid UTF-8 table with an NA cell is re-read as Latin-1
-"datacheck_files_review/review.read_head_typed.rt_fallback_latin1.csv": &u64
+# (review.read_head_typed.rt_fallback_latin1.csv shows it too, and is marked D70 below)
+"datacheck_columns/parse_codebook.utf8_na.csv":
   kind: r_bug_fixed
   ref: U64
   reason: only text that is not valid UTF-8 triggers the Latin-1 re-read; R's is.na(iconv()) is also TRUE for an NA cell, so "café" becomes "cafÃ©"
-"datacheck_columns/parse_codebook.utf8_na.csv": *u64
 
 # U98: data_check's early return when no tabular file could be read
 "mod_data_check/data_check.nodata": &u98
@@ -273,3 +273,50 @@
   ref: U79
   reason: an empty paper or paper list gives the "na" result ("We found no files to analyse."); R's repo_check stops ("subscript out of bounds" from paper_id(paper)[[1]], or the link tables' missing href)
 "mod_data_check_review/data_check.empty_paperlist": *u79_dc
+
+# The delimited-file reader is pandas' C parser behind a small layer (datacheck/_files_delim.py),
+# not a port of data.table::fread() (the maintainer decided on 2026-10-04). Where the two differ:
+
+# U216: fread keeps a doubled quote inside a quoted field
+"datacheck_files/data_read_head.quoted.csv":
+  kind: r_bug_fixed
+  ref: U216
+  reason: a doubled quote inside a quoted field is one quote (he said "hi"); fread keeps both (he said ""hi"")
+
+# U217: a UTF-16 file is read as bytes
+"datacheck_files/data_read_head.utf16_table.txt":
+  kind: r_bug_fixed
+  ref: U217
+  reason: a file that starts with a UTF-16 byte order mark is decoded and its table (Subject, Trial, RT; 2 rows) is read; R reads the bytes, so the first name is ÿþS and there are no rows
+"datacheck_files/txt_classify_content.utf16_table.txt":
+  kind: r_bug_fixed
+  ref: U217
+  reason: the decoded first lines of a UTF-16 file are what the separator sniffer reads, so its tab-separated header makes it a data file; R's readLines() cuts each line at the first NUL byte, finds no separator and keeps the name-based class
+"mod_data_check_review/review_tables.text":
+  kind: r_bug_fixed
+  ref: U217
+  reason: the repository's UTF-16 table (utf16_table.txt) is read as 3 columns (Subject, Trial, RT), which adds 2 rows to the column table; R reads one empty column from the bytes
+
+# D70: quotes that are not CSV quoting
+"datacheck_files_review/review.read_head_typed.rt_blank_na.csv": &d70
+  kind: deliberate
+  ref: D70
+  reason: a one-column file with an improper quote ("x"y) keeps its blank lines as rows and the quote as text; R's fread fails on it and read.delim drops the blank lines and reads xy
+"datacheck_files_review/review.read_head_typed.rt_cr_cr.csv": *d70
+"datacheck_files_review/review.read_head_typed.rt_fallback_latin1.csv":
+  kind: deliberate
+  ref: D70
+  reason: the improper quote ("a"b) stays as text where R's read.delim reads ab; the Latin-1 re-read of a valid UTF-8 table with an NA cell (café becomes cafÃ© in R) is U64
+
+# D71: files without a regular table
+"datacheck_files/data_read_head.whitespace.csv": &d71
+  kind: deliberate
+  ref: D71
+  reason: a file of blanks is an empty frame (0 rows, 0 columns); R returns a data frame of 1 row and no columns
+"datacheck_checks/fixture_profile.files.whitespace.csv": *d71
+"datacheck_files_review/review.read_head_typed.tab_in_quotes.tsv": *d71
+"datacheck_files_review/review.read_head_typed.fread_cr_ws_first.tsv": *d71
+"datacheck_files_review/review.read_head_typed.rt_nul_quote_header.csv":
+  kind: deliberate
+  ref: D70
+  reason: an improper quote on the first line sends the whole file down the unquoted path, so the properly quoted "a,b" on line 2 is split at its comma (2 columns, no rows); R's read.delim reads one column

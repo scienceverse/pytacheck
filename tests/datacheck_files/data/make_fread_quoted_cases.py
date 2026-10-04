@@ -1,4 +1,4 @@
-"""Write fread_quoted_cases.json: quote-heavy delimited files for test_fread.py.
+"""Write fread_quoted_cases.json: quote-heavy delimited files for test_delim.py.
 
 Run from the repository root, then record R's answers with
 ``Rscript tests/datacheck_files/data/make_fread_ref.R fread_quoted`` (see that

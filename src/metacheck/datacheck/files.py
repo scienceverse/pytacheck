@@ -1675,6 +1675,15 @@ class _LineReader:
         self.fh = Path(path).open("rb")  # noqa: SIM115 - closed at eof / on delete
         self.buf = b""
         self.eof = False
+        if self.fh.read(2) in (b"\xff\xfe", b"\xfe\xff"):
+            # UTF-16, which the reader decodes (U217): its first lines are what a sniffer sees
+            self.fh.seek(0)
+            raw = self.fh.read(16 * self._CHUNK)
+            self.buf = raw.decode("utf-16", errors="replace").encode("utf-8", "surrogatepass")
+            self.eof = True
+            self.close()
+        else:
+            self.fh.seek(0)
 
     def __del__(self) -> None:
         self.close()
@@ -1815,21 +1824,19 @@ def _is_single_field_blob(path: str | os.PathLike[str], sep: str) -> bool:
 def _read_delim_fast(
     path: str | os.PathLike[str], sep: str, header: bool, n_rows: float = math.inf
 ) -> pd.DataFrame:
-    """Read a delimited file as ``data.table::fread()`` does (``.read_delim_fast()``).
+    """Read a delimited file the way ``data.table::fread()`` does (``.read_delim_fast()``).
 
-    Falls back to a ``utils::read.delim()`` emulation (with a Latin-1 retry for
-    invalid UTF-8) when fread fails, as R does.
+    pandas' C parser splits the text and ``_files_delim`` types the columns. A file it
+    cannot split is read again as ``utils::read.delim()`` would (every line a row, short
+    lines padded), with a Latin-1 retry for invalid UTF-8.
     """
-    from metacheck.datacheck._files_fread import FreadError, fread
-    from metacheck.datacheck._files_readers import read_delim
+    from metacheck.datacheck._files_delim import read_delim
 
     try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            return fread(Path(path), sep=sep, header=header, nrows=n_rows)
-    except (FreadError, ValueError, OSError):  # tryCatch(fread(...), error = NULL)
+        return read_delim(path, sep=sep, header=header, nrows=n_rows)
+    except (ValueError, OSError):  # tryCatch(fread(...), error = NULL)
         pass
-    df = read_delim(path, sep=sep, header=header, nrows=n_rows)
+    df = read_delim(path, sep=sep, header=header, nrows=n_rows, fill=True)
     # re-read as Latin-1 only when a text cell is not valid UTF-8 (metacheck's
     # is.na(iconv(col, "UTF-8", "UTF-8")) is also TRUE for an NA cell, so a
     # valid UTF-8 file with an empty cell is re-read and "é" becomes "Ã©")
@@ -1839,7 +1846,7 @@ def _read_delim_fast(
         for j in range(df.shape[1])
     )
     if has_invalid:
-        df = read_delim(path, sep=sep, header=header, nrows=n_rows, encoding="latin1")
+        df = read_delim(path, sep=sep, header=header, nrows=n_rows, encoding="latin1", fill=True)
     return df
 
 

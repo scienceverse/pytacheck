@@ -1,7 +1,12 @@
 {
 "review.data_classify_files.invalid_utf8.glibc_valid": {"r": "fa97bfa2889213b6", "py": "d9233ceee22a42b4", "diff": ["[]"]},
 "review.read_head_typed.era_date.xlsx": {"r": "e66b8c805317f287", "py": "7485c47209a8263b", "diff": ["data.date_jp", "types[]"]},
-"review.read_head_typed.rt_fallback_latin1.csv": {"r": "e2ee1b877bf58b95", "py": "62f04ac5a97aed33", "diff": ["data.v[]"]},
+"review.read_head_typed.fread_cr_ws_first.tsv": {"r": "b9c680ff18a88ce2", "py": "38a5d34454947386", "diff": ["data", "names", "types"]},
+"review.read_head_typed.rt_blank_na.csv": {"r": "c4576011ded82388", "py": "2402c90754a50641", "diff": ["data"]},
+"review.read_head_typed.rt_cr_cr.csv": {"r": "b7daae417923d1c5", "py": "54450dd08370112d", "diff": ["data"]},
+"review.read_head_typed.rt_fallback_latin1.csv": {"r": "e2ee1b877bf58b95", "py": "e2c0848e658832ab", "diff": ["data.v[]"]},
+"review.read_head_typed.rt_nul_quote_header.csv": {"r": "2b6a9a9b55447798", "py": "d4370684b0924b31", "diff": ["data", "names", "types"]},
+"review.read_head_typed.tab_in_quotes.tsv": {"r": "da555fd190328bef", "py": "64abe3da1fda8d5e", "diff": ["data", "names", "types"]},
 "review.write_manifest.no_repo_url": {"r": "2902b4a1861f5af4", "py": "22a27bc30c635a37", "diff": ["not_downloaded.unintentional_files"]},
 "review.write_manifest.no_repo_url_gated": {"r": "ac5146cf65ca52a8", "py": "58ddefd0e4ddb7a2", "diff": ["<R error, Python value>"]}
 }

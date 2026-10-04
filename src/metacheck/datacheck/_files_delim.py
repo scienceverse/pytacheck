@@ -1,0 +1,509 @@
+"""Delimited text files: pandas' C parser, then R's column types.
+
+metacheck reads a data file with ``data.table::fread()`` and falls back to
+``utils::read.delim()``. pytacheck lets pandas' C tokenizer split the text (every
+field a string) and gives each column the type ``fread`` would have given it:
+logical, integer (``integer64`` beyond 32 bits), double, ``IDate``, ``POSIXct`` or
+character. What it keeps of ``fread``'s way of finding the table: lines before the
+first block of lines with one number of fields are skipped, reading stops at the
+first line with another number of fields (a footer, a ragged line, a blank line),
+blanks around an unquoted field are dropped, ``NA`` is missing (text when quoted, in a
+text column), and a quote that never closes is an ordinary character.
+"""
+
+from __future__ import annotations
+
+import csv
+import datetime as dt
+import io
+import math
+import os
+import re
+from pathlib import Path
+from typing import Any, NamedTuple
+
+import numpy as np
+import pandas as pd
+
+from metacheck.datacheck._colattrs import ColAttrs
+from metacheck.datacheck._files_time import posixct_series
+from metacheck.datacheck._strings import RAW_STRING
+
+__all__ = ["read_delim"]
+
+_SAMPLE_LINES = 100  # fread looks at this many lines to find the table
+_NO_SEP = "\x7f"  # the separator of a single-column table: none
+_QUOTED_NA = "\x1aNA"  # a quoted NA: missing in a number, text in a text column
+_NUL = "\x1c"  # a NUL byte
+_PREFIX = 1 << 16  # the bytes a head scans first
+_INT32_MAX = 2**31 - 1
+
+_LOGICAL = (("TRUE", "FALSE"), ("True", "False"), ("true", "false"))
+_BOOLS = frozenset(w for pair in _LOGICAL for w in pair)
+_INTEGER = re.compile(r"[+-]?[0-9]+")
+
+
+def _double_grammar(dec: str) -> re.Pattern[str]:
+    """What ``fread`` reads as a double, with *dec* as the decimal mark."""
+    d = re.escape(dec)
+    return re.compile(
+        rf"[+-]?(?:[0-9]+{d}[0-9]*|{d}[0-9]+|[0-9]+(?=[eE])|0*[0-9]{{1,18}})(?:[eE][+-]?[0-9]{{1,3}})?"
+        rf"|[+-]?(?:nan|NaN|NAN|inf|INF|Inf|Infinity|1{d}#(?:SNAN|QNAN|IND|INF)"
+        r"|#DIV/0!|#VALUE!|#NULL!|#NAME\?|#NUM!|#REF!|#N/A"
+        r"|0[xX][01](?:\.[0-9a-fA-F]{0,13})?[pP][+-]?[0-9]{1,4})"  # the hexadecimal form of C's %a
+    )
+
+
+_DOUBLE = {".": _double_grammar("."), ",": _double_grammar(",")}
+_DATE = re.compile(r"[0-9]+-[0-9]+-[0-9]+")
+_TIME = re.compile(
+    r"[0-9]{4}-[0-9]{2}-[0-9]{2}(?:[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?"
+    r"(?:Z|[+-][0-9]{2}(?::?[0-9]{2})?)?)?"
+)
+
+
+# -----------------------------------------------------------------------------
+# Finding the table
+# -----------------------------------------------------------------------------
+
+
+def _outside(buf: np.ndarray, sep: int, escape: bool) -> tuple[np.ndarray, np.ndarray]:
+    """Which bytes of *buf* lie outside a quoted field, and where a quoted field is followed
+    by more text (``"a"b``: improper quoting).
+
+    A quote opens a field only at the start of one (after a separator or line end, blanks
+    apart); a quote inside a field is an ordinary character.  An open field ends at the next
+    quote, and a doubled quote is two of them.  With *escape* a quote after an odd number of
+    backslashes is an ordinary character too.
+    """
+    quote = np.flatnonzero(buf == 34)
+    if escape:
+        for q in quote[buf[np.maximum(quote - 1, 0)] == 92].tolist():
+            run = 1
+            while q - run - 1 >= 0 and buf[q - run - 1] == 92:
+                run += 1
+            if run % 2:
+                quote = quote[quote != q]
+    before = buf[np.maximum(quote - 1, 0)]
+    start = (quote == 0) | np.isin(before, (sep, 10, 13))
+    for i in np.flatnonzero(before == 32):  # blanks before the quote
+        j = quote[i]
+        while j > 0 and buf[j - 1] == 32:
+            j -= 1
+        start[i] = j == 0 or buf[j - 1] in (sep, 10, 13)
+    toggle = np.zeros(len(buf), bool)
+    closing = quote[1::2]
+    if (start | (before == 34))[0::2].all():
+        toggle[quote] = True
+    else:  # a quote inside a field: walk the quotes
+        inside, closed, marks = False, -2, []
+        for q, opens in zip(quote.tolist(), start.tolist(), strict=True):
+            if inside or opens or q == closed + 1:
+                inside = not inside
+                marks.append(q)
+                if not inside:
+                    closed = q
+        toggle[marks] = True
+        closing = np.array(marks[1::2], dtype=np.intp)
+    after = buf[np.minimum(closing + 1, len(buf) - 1)]
+    improper = closing[
+        np.isin(after, (sep, 10, 13, 34, 32), invert=True) & (closing + 1 < len(buf))
+    ]
+    return ~np.bitwise_xor.accumulate(toggle), improper
+
+
+def _lines(
+    buf: np.ndarray, sep: int, quoted: bool, escape: bool
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Where each line of *buf* starts, how many fields it has, whether it is blank, which
+    bytes lie outside quotes, and where the quoting is improper.  A separator or a line end
+    inside a quoted field does not count.
+    """
+    outside, improper = _outside(buf, sep, escape) if quoted else (np.ones(len(buf), bool), buf[:0])
+    after = np.append(buf[1:], 0)
+    eol = ((buf == 10) | ((buf == 13) & (after != 10))) & outside
+    starts = np.append(0, np.flatnonzero(eol) + 1)
+    starts = starts[starts < len(buf)]
+    seps = np.add.reduceat(((buf == sep) & outside).view(np.uint8), starts, dtype=np.int64)
+    space = np.zeros(256, bool)
+    space[[10, 13, 32] + ([9] if sep != 9 else [])] = True
+    text = np.add.reduceat((~space[buf]).view(np.uint8), starts, dtype=np.int64)
+    return starts, seps + 1, text == 0, outside, improper
+
+
+def _table(counts: np.ndarray, blank: np.ndarray, jump: int) -> tuple[int, int]:
+    """``(line where the table starts, fields)``, as ``fread`` finds them in its first *jump* lines.
+
+    The table is the first block of two or more lines with one number of fields; a blank line
+    ends a block of one line only by restarting it after the blank line.  A file whose block has
+    one field is a single column, and starts at its first line.
+    """
+    n = len(counts)
+    first = int(np.argmax(~blank))
+    start, run, last = first, 1, int(counts[first])
+    k = first + 1
+    while k < n and k - first < jump:
+        if not blank[k] and counts[k] == last:
+            run += 1
+            k += 1
+            continue
+        if last > 1 and run > 1:
+            break
+        while k < n and blank[k]:
+            k += 1
+        if k < n:
+            start, run, last = k, 1, int(counts[k])
+            k += 1
+    return (first if last == 1 else start), last
+
+
+class _Plan(NamedTuple):
+    """The lines of a file that hold its table: ``first`` to ``last``, ``ncol`` fields wide."""
+
+    starts: np.ndarray  # where each line starts
+    outside: np.ndarray  # which bytes lie outside quotes
+    first: int
+    last: int
+    ncol: int
+    single: bool  # one column: the separator is part of the value, a blank line a row
+    rows: int  # lines that hold a row
+    improper: int  # the first line among those sampled with an improper quote, or -1
+    bad: int  # improper quotes in the table
+    complete: bool  # the lines beyond the scanned ones cannot change this plan
+
+
+def _plan(
+    buf: np.ndarray,
+    sep: int,
+    quoted: bool,
+    escape: bool,
+    header: bool,
+    nrows: float,
+    jump: int,
+    fill: bool,
+) -> _Plan | None:
+    starts, counts, blank, outside, improper = _lines(buf, sep, quoted, escape)
+    if blank.all():
+        return None
+    n = len(starts)
+    if fill:  # from the first line, as wide as the widest line read
+        first, ncol = int(np.argmax(~blank)), 0
+    else:
+        first, ncol = _table(counts, blank, jump)
+    single = ncol == 1
+    last, ended = n, False
+    if single and blank[-1] and buf[-1] not in (10, 13):  # blanks after the final newline go
+        last = n - 1
+    if not (single or fill):  # a line of another width, or a blank one, ends the table
+        end = n - int(np.argmax(~blank[::-1]))
+        bad = (counts != ncol)[first:end] | blank[first:end]
+        last = first + (int(bad.argmax()) if bad.any() else end - first)
+        ended = bool(bad.any()) and last < n - 1
+    rows = np.flatnonzero(np.ones(last - first, bool) if single else ~blank[first:last])
+    limit = header + nrows  # lines to read: the header and *nrows* data rows
+    truncated = len(rows) > limit
+    if truncated:
+        last = first + (int(rows[int(limit) - 1]) + 1 if limit else 0)
+        rows = rows[: int(limit)]
+    if fill:
+        ncol = int(counts[first + rows].max()) if len(rows) else 1
+    sample = np.searchsorted(starts, improper, "right") - 1  # the lines of improper quotes
+    sample = sample[(sample >= first) & (sample < min(first + jump, last))]
+    complete = (truncated or ended) and first + jump < n - 1
+    top = starts[last] if last < n else len(buf)
+    n_bad = int(np.count_nonzero((improper >= starts[first]) & (improper < top)))
+    return _Plan(
+        starts, outside, first, last, ncol, single, len(rows),
+        int(sample[0]) if len(sample) else -1, n_bad, complete,
+    )  # fmt: skip
+
+
+# -----------------------------------------------------------------------------
+# Reading it
+# -----------------------------------------------------------------------------
+
+
+def _unpadded(chunk: np.ndarray, outside: np.ndarray, sep: int, tabs: bool) -> bytes:
+    """*chunk* without the blanks around its fields, except in a quoted one (``strip.white``);
+    a tab is a blank unless it separates fields (*tabs*)."""
+    blank = (chunk == 32) | ((chunk == 9) & tabs)
+    pos = np.flatnonzero(blank & outside)
+    solid = np.flatnonzero(~blank)
+    if not len(pos) or not len(solid):
+        return chunk.tobytes()
+    edge = np.isin(chunk, (sep, 10, 13))
+    k = np.searchsorted(solid, pos)  # the solid bytes on both sides of each blank
+    at_start = (k == 0) | edge[solid[np.maximum(k - 1, 0)]]
+    at_end = (k == len(solid)) | edge[solid[np.minimum(k, len(solid) - 1)]]
+    return np.delete(chunk, pos[at_start | at_end]).tobytes()
+
+
+def _escaped(chunk: bytes) -> bytes:
+    r"""*chunk* for a reader that takes a backslash as its escape character, though the text
+    keeps every backslash (``fread`` does not unescape): each is doubled, and one more goes
+    before a quote that an odd run of them escapes."""
+
+    def double(m: re.Match[bytes]) -> bytes:
+        run, quote = m[1], m[2] or b""
+        return run * 2 + (b"\\" if quote and len(run) % 2 else b"") + quote
+
+    return re.sub(rb'(\\+)(")?', double, chunk)
+
+
+def _read_strings(
+    chunk: bytes, sep: str, ncol: int, quoted: bool, escape: bool, latin1: bool, blanks: bool
+) -> pd.DataFrame:
+    try:
+        return pd.read_csv(
+            io.BytesIO(chunk),
+            sep=sep,
+            header=None,
+            names=range(ncol),
+            dtype=object,
+            keep_default_na=False,
+            na_values=[],
+            engine="c",
+            encoding="latin-1" if latin1 else "utf-8",
+            encoding_errors="surrogateescape",
+            quoting=csv.QUOTE_MINIMAL if quoted else csv.QUOTE_NONE,
+            escapechar="\\" if escape else None,
+            skip_blank_lines=not blanks,
+        )
+    except pd.errors.EmptyDataError:
+        return pd.DataFrame(columns=range(ncol), dtype=object)
+
+
+def _split(
+    buf: np.ndarray, sep: str, header: bool, nrows: float, jump: int, fill: bool, latin1: bool
+) -> tuple[pd.DataFrame, int, bool] | None:
+    """The table in *buf* as strings, its width, and whether *buf* held all it needed;
+    ``None`` for a blank *buf*."""
+    backslash = bool(((buf[:-1] == 92) & (buf[1:] == 34)).any())
+    args = (header, nrows, jump, fill)
+    for quoted in (True, False):  # a quote that never closes is read as a character
+        plan = _plan(buf, ord(sep), quoted, False, *args)
+        if plan is None:
+            return None
+        escape = False
+        if quoted and plan.bad and backslash:  # fread's quote rule 1: a backslash escapes a quote
+            alt = _plan(buf, ord(sep), True, True, *args)
+            if alt is not None and alt.bad < plan.bad:
+                plan, escape = alt, True
+        starts, outside, first, last, ncol, single, rows, improper, _, complete = plan
+        if quoted and single and improper >= 0:  # fread reads the quotes of a column so
+            alt = _plan(buf, ord(sep), False, False, *args)  # quoted as characters
+            if alt is not None and alt.last - alt.first > improper - first:
+                continue
+        lo, hi = starts[first], starts[last] if last < len(starts) else len(buf)
+        chunk = _unpadded(
+            buf[lo:hi], outside[lo:hi], ord(_NO_SEP if single else sep), not single and sep != "\t"
+        )
+        if b"\r" in chunk:  # pandas' parser overflows on some lines that end in a lone CR
+            chunk = chunk.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+        if quoted and not fill:  # a quoted NA is text in a text column: mark it, pandas cannot tell
+            around = b"[^" + re.escape(sep.encode()) + b"\r\n]"
+            chunk = re.sub(rb'(?<!%b)"NA"(?!%b)' % (around, around), b'"\x1aNA"', chunk)
+        if escape:
+            chunk = _escaped(chunk)
+        try:
+            raw = _read_strings(
+                chunk, _NO_SEP if single else sep, ncol, quoted, escape, latin1, single and not fill
+            )
+        except pd.errors.ParserError:
+            continue
+        if len(raw) == rows:
+            if single and not quoted and not fill:  # fread's quote rule 2: the outer quotes of a
+                raw[0] = raw[0].str.replace(r'^"(.*)"$', r"\1", regex=True)  # field come off
+            return raw, ncol, complete
+    raise ValueError("cannot tokenize the file")
+
+
+def read_delim(
+    path: str | os.PathLike[str],
+    sep: str,
+    header: bool,
+    nrows: float = math.inf,
+    encoding: str | None = None,
+    fill: bool = False,
+) -> pd.DataFrame:
+    """Read a delimited file: a data frame of typed columns.
+
+    *nrows* counts data rows (not the header row). ``encoding="latin1"`` reads the
+    bytes as Latin-1, otherwise they are UTF-8 with undecodable bytes kept as lone
+    surrogates (``errors="surrogateescape"``), which ``_utf8_repair_df()`` repairs.
+    An empty file is an empty frame.  With *fill* the table starts at the first line,
+    has as many columns as the widest line read, and a short line is padded
+    (``read.delim()``'s way) instead of ending the table.  A head (finite *nrows*) scans
+    a prefix of the file, as much of it as the head needs.
+    """
+    data = Path(path).read_bytes()
+    if data[:2] in (b"\xff\xfe", b"\xfe\xff"):  # UTF-16, which R reads as bytes
+        data = data.decode("utf-16", errors="replace").encode("utf-8")
+    elif data.startswith(b"\xef\xbb\xbf"):
+        data = data[3:]
+    nul = b"\0" in data
+    if nul:  # a name ends at a NUL byte, a value loses it
+        if not data.strip(b"\0"):
+            raise ValueError("empty beginning of file")
+        data = data.replace(b"\0", _NUL.encode())
+    jump = _SAMPLE_LINES if not 0 < nrows < _SAMPLE_LINES else int(nrows)
+    size = _PREFIX if math.isfinite(nrows) else len(data)
+    while True:
+        buf = np.frombuffer(data, np.uint8, count=min(size, len(data)))
+        try:
+            found = _split(buf, sep, header, nrows, jump, fill, encoding == "latin1")
+        except ValueError:
+            if size >= len(data):
+                raise
+            found = None
+        if size >= len(data) or (found is not None and found[2]):
+            break
+        size *= 16
+    if found is None:
+        return pd.DataFrame()
+    raw, ncol, _ = found
+    if header:
+        given = [str(v).replace(_QUOTED_NA, "NA").split(_NUL)[0] for v in raw.iloc[0]]
+        names = [nm if nm not in ("", "NA") else f"V{j + 1}" for j, nm in enumerate(given)]
+        raw = raw.iloc[1:]
+    else:
+        names = [f"V{j + 1}" for j in range(ncol)]
+    if nul:  # values lose their NUL bytes
+        raw = raw.apply(lambda col: col.str.replace(_NUL, "", regex=False))
+    dec = "." if sep == "," else _decimal_mark(raw, jump)
+    return _typed(raw, names, dec)
+
+
+# -----------------------------------------------------------------------------
+# Typing the columns
+# -----------------------------------------------------------------------------
+
+
+def _decimal_mark(raw: pd.DataFrame, jump: int) -> str:
+    """``fread``'s vote on ``dec="auto"``: a comma if more numbers in the first rows spell
+    one with a comma than with a point (a number's first value that is no integer, and every
+    value after it, votes)."""
+    votes = 0
+    for col in raw.iloc[:jump].T.to_numpy():
+        numeric = False
+        for v in col:
+            if v in ("", "NA"):
+                continue
+            if _DOUBLE["."].fullmatch(v):
+                if numeric or not _INTEGER.fullmatch(v):
+                    votes += 1
+                    numeric = True
+            elif _DOUBLE[","].fullmatch(v):
+                votes -= 1
+                numeric = True
+            elif not (_INTEGER.fullmatch(v) or v in _BOOLS):
+                break
+    return "," if votes < 0 else "."
+
+
+def _typed(raw: pd.DataFrame, names: list[str], dec: str) -> pd.DataFrame:
+    """The columns of *raw* (strings) as R types them; ``df.attrs["col_attrs"]`` the classes."""
+    cells = raw.to_numpy()
+    columns: dict[int, pd.Series] = {}
+    classes: list[dict[str, Any] | None] = []
+    for j in range(cells.shape[1]):
+        columns[j], cls = _typed_column(cells[:, j], dec)
+        classes.append(cls)
+    out = pd.DataFrame(columns, index=range(len(raw)))
+    out.columns = pd.Index(names, dtype=object)
+    attrs = ColAttrs(names, classes)
+    if attrs.any():
+        out.attrs["col_attrs"] = attrs
+    return out
+
+
+def _typed_column(cells: np.ndarray, dec: str) -> tuple[pd.Series, dict[str, Any] | None]:
+    """One column of strings as the lowest of R's types that reads all of it.
+
+    The type is decided on the distinct values, which a survey column has few of."""
+    quoted_na = cells == _QUOTED_NA
+    gap = quoted_na | (cells == "NA") | (cells == "")
+    values = cells[~gap]
+    if not len(values):
+        return pd.Series([None] * len(cells), dtype="boolean"), None
+    kinds = pd.unique(values)
+
+    def spread(found: Any, dtype: Any) -> pd.Series:
+        out = np.full(len(cells), None, dtype=object)
+        out[~gap] = found
+        typed: pd.Series = pd.Series(out, dtype=dtype)
+        return typed
+
+    for yes, no in _LOGICAL:
+        if set(kinds) <= {yes, no}:
+            return spread(values == yes, "boolean"), None
+    if _all_match(kinds, _INTEGER):
+        try:
+            ints = values.astype("int64")
+        except OverflowError:
+            ints = None
+        if ints is not None:
+            big = bool(np.abs(ints).max() > _INT32_MAX)
+            return spread(ints, "Int64"), ({"class": "integer64"} if big else None)
+    if _all_match(kinds, _DOUBLE[dec]):
+        found = _doubles(values, kinds, dec)
+        if found is not None:
+            nums = np.full(len(cells), np.nan)
+            nums[~gap] = found
+            return pd.Series(nums), None
+    if _all_match(kinds, _DATE):
+        try:
+            days = {v: dt.date(*map(int, v.split("-"))) for v in kinds}
+        except ValueError:
+            days = None
+        if days is not None:
+            return spread([days[v] for v in values], object), {"class": ["IDate", "Date"]}
+    if _all_match(kinds, _TIME):
+        try:
+            stamps = {v: dt.datetime.fromisoformat(v.replace("Z", "+00:00")) for v in kinds}
+        except ValueError:
+            stamps = None
+        if stamps is not None:
+            seconds = {
+                v: (t if t.tzinfo else t.replace(tzinfo=dt.UTC)).timestamp()
+                for v, t in stamps.items()
+            }
+            full = np.full(len(cells), np.nan)
+            full[~gap] = [seconds[v] for v in values]
+            return posixct_series(full), {"class": ["POSIXct", "POSIXt"], "tzone": "UTC"}
+    text = cells.copy()
+    text[cells == "NA"] = None
+    text[quoted_na] = "NA"
+    return pd.Series(text, dtype=RAW_STRING), None
+
+
+def _doubles(values: np.ndarray, kinds: np.ndarray, dec: str) -> np.ndarray | None:
+    """The doubles *values* spell (Excel's ``#N/A`` and ``#DIV/0!`` are not a number); ``None``
+    when one is beyond a double (``1e400``).  *kinds* are the distinct *values*."""
+    joined = "\0".join(kinds)
+    text = values
+    if dec == ",":
+        text = np.array([v.replace(",", ".") for v in text], dtype=object)
+    if "#" in joined:
+        text = np.array([_excel_special(v) for v in text], dtype=object)
+    if "x" in joined or "X" in joined:
+        nums = np.array([float.fromhex(v) if "x" in v.lower() else float(v) for v in text])
+    else:
+        nums = text.astype("float64")
+    inf = np.isinf(nums)
+    if inf.any() and not all(re.search("inf|Inf|INF", v) for v in text[inf]):
+        return None
+    return nums
+
+
+def _excel_special(v: str) -> str:
+    """``1.#INF`` is infinity and the other ``#`` codes are not a number."""
+    if "#" not in v:
+        return v
+    if "1.#INF" in v:
+        return "-inf" if v.startswith("-") else "inf"
+    return "nan"
+
+
+def _all_match(values: np.ndarray, pattern: re.Pattern[str]) -> bool:
+    return all(map(pattern.fullmatch, values))

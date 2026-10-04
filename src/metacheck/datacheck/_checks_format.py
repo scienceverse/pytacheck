@@ -637,11 +637,11 @@ def _read_csv_header(path: str, sep: str) -> pd.DataFrame | None:
     The ``fileEncoding`` connection is emulated byte-wise (see
     :func:`_utf8_bom_connection`) -- the BOM goes before ``read.table()``
     looks for blank lines, and reading stops at invalid UTF-8 -- and the
-    result is parsed by the ``read.table()`` port.
+    result is read like ``read.table()`` (every line a row, short lines padded).
     """
     import tempfile
 
-    from metacheck.datacheck._files_readtable import read_table
+    from metacheck.datacheck._files_delim import read_delim
 
     with open(path, "rb") as fh:
         raw = fh.read(_SNIFF_BYTES + 1)
@@ -650,7 +650,7 @@ def _read_csv_header(path: str, sep: str) -> pd.DataFrame | None:
         tmp_path = os.path.join(tmp, "header.txt")
         with open(tmp_path, "wb") as fh:
             fh.write(data)
-        return read_table(tmp_path, sep=sep, header=True, nrows=1)
+        return read_delim(tmp_path, sep=sep, header=True, nrows=1, fill=True)
 
 
 def _names(df: Any) -> list[str]:

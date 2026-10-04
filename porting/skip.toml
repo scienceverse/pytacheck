@@ -43,6 +43,13 @@
 "print.metacheck_module_output" = "S3 print method. Covered by ModuleOutput.__repr__ ('<title>: <summary_text>')."
 "print.metacheck_module_help" = "S3 print method. Covered by module_help(), which returns the printed text."
 
+# R's delimited-text readers, no longer reproduced by hand (the maintainer decided on 2026-10-04)
+"data.table::fread" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D70-D72, U216 and U217."
+"utils::read.delim" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D70-D72, U216 and U217."
+"utils::read.table" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D70-D72, U216 and U217."
+"utils::scan" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D70-D72, U216 and U217."
+"utils::type.convert" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D70-D72, U216 and U217."
+
 # R/zip-peek.R -- base-R fallbacks for what Python's standard library does
 ".crc32" = "Pure-R CRC-32, used when the digest package is missing. Use zlib.crc32 (fast, so .zip_crc_ok() needs no size limit, as when R has digest)."
 ".le_int" = "Little-endian integer from raw bytes. Use int.from_bytes(b, 'little') or struct."
@@ -105,3 +112,28 @@
 "_metacheck.Rproj" = "RStudio project file."
 "makefile" = "R package build helper."
 "codecov.yml" = "R CI coverage configuration."
+
+[drop.delimited_reader]
+reason = """The hand-written ports of data.table::fread and of the read.table/scan/type.convert \
+tokenizer (1,937 lines in datacheck/_files_fread.py and datacheck/_files_readtable.py). The \
+maintainer decided on 2026-10-04 to stop maintaining reproductions of R libraries where Python \
+libraries do the job: pandas' C parser reads the fields, and datacheck/_files_delim.py finds \
+the table and types the columns. Only the strtod helpers of the old read.table port survive, in \
+datacheck/_files_strtod.py. Removed together with their fuzz and pin tests; the behaviour is \
+kept by tests/datacheck_files/test_delim.py (recorded fread output) and test_delim_reader.py."""
+r = [
+    "data.table::fread",
+    "utils::read.delim",
+    "utils::read.table",
+    "utils::scan",
+    "utils::type.convert",
+]
+python = [
+    "metacheck.datacheck._files_fread:fread",
+    "metacheck.datacheck._files_readtable:read_table",
+    "metacheck.datacheck._files_readtable:type_convert",
+]
+files = [
+    "src/metacheck/datacheck/_files_fread.py",
+    "src/metacheck/datacheck/_files_readtable.py",
+]
