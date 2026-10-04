@@ -98,6 +98,11 @@ def check_package(
     (``chain.run_record``, also written to *record*) names the package, and the
     ``local_path`` of each module is the path that was given, not the temporary
     folder.
+
+    A module can hand back files (the README draft of ``package_readme`` is
+    one): ``chain.files`` is ``{file name: text or bytes}`` for all of them, and
+    ``metacheck.module.write_module_files`` writes them to a folder. The package itself is
+    never written to.
     """
     from metacheck.provenance import run_modules
 
@@ -132,7 +137,7 @@ def report_package(
     and moved into place, so a report written inside the package's own folder
     is not one of the files that are checked. Returns the report's module
     outputs (:class:`~metacheck.report.report.ReportOutput`, with the file's
-    path in ``save_path``).
+    path in ``save_path``, and the files that modules hand back in ``files``).
     """
     from metacheck.module import run_session
     from metacheck.presets import label

@@ -144,6 +144,13 @@ class ReportOutput(dict[str, ModuleOutput]):
         self.paper = paper
         self.save_path = save_path
 
+    @property
+    def files(self) -> dict[str, str | bytes]:
+        """The files the modules handed back, by file name (``{}`` when none did)."""
+        from metacheck.module import module_files
+
+        return module_files(self)
+
     def __str__(self) -> str:
         return self.save_path if self.save_path is not None else self.__repr__()
 
