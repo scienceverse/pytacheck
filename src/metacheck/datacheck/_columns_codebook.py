@@ -531,7 +531,7 @@ def _strip_rtf(text: str) -> str:
     ``.strip_rtf()`` in R removes control words and braces with four regular
     expressions, which leaves the font table's text, runs the lines together
     and drops the characters written as ``\\'e9`` or ``\\u233``; striprtf reads
-    RTF properly (see D63). Text that is not valid UTF-8 is still an error, as
+    RTF properly (see U215). Text that is not valid UTF-8 is still an error, as
     in R. Without striprtf this raises ``ImportError``, which
     :func:`_extract_rich_text` turns into ``""``: the codebook is then read as
     raw lines, as any other file whose text cannot be extracted is.
