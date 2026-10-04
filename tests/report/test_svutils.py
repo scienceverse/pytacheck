@@ -1,13 +1,15 @@
-"""Port of tests/testthat/test-svutils-message.R and test-svutils-pb.R."""
+"""Port of tests/testthat/test-svutils-message.R; progress bars (pb()) on rich."""
 
 from __future__ import annotations
 
 import io
+import sys
 
 import pytest
 
+import metacheck.utils as utils
 from metacheck.config import verbose
-from metacheck.utils import ProgressBar, message, pb, suppress_messages
+from metacheck.utils import message, pb, suppress_messages
 
 
 @pytest.fixture(autouse=True)
@@ -15,6 +17,13 @@ def _restore_verbose():
     old = verbose()
     yield
     verbose(old)
+    utils._stop_progress()  # a test that leaves a bar open must not leak the display
+    utils._open_bars = 0
+
+
+class TTY(io.StringIO):
+    def isatty(self) -> bool:
+        return True
 
 
 def test_message(capsys):
@@ -59,6 +68,8 @@ def test_pb_requires_total():
     verbose(True)
     with pytest.raises(TypeError):
         pb()  # type: ignore[call-arg]
+    with pytest.raises(ValueError, match="non-negative"):
+        pb(-1)
 
 
 def test_pb_basic():
@@ -68,56 +79,83 @@ def test_pb_basic():
         assert not pbar.finished
         pbar.tick()
     assert pbar.finished
-    with pytest.raises(RuntimeError):
-        pbar.tick()
+    pbar.tick()  # a finished bar ignores ticks
 
-    # terminate
     pbar = pb(10)
     pbar.terminate()
-    with pytest.raises(RuntimeError):
-        pbar.tick()
-
-    # spin
-    pbar = pb(None, "(:spin)")
-    for _ in range(100):
-        pbar.tick()
-    pbar.terminate()
     assert pbar.finished
-    with pytest.raises(RuntimeError):
-        pbar.tick()
+    pbar.tick()
 
-    # what
-    pbar = pb(float("nan"), ":what is the letter")
-    pbar.tick(tokens={"what": "A"})
-    assert pbar.render() == "A is the letter"
-    pbar.tick(tokens={"what": "B"})
-    assert pbar.render() == "B is the letter"
-    pbar.terminate()
+    # an unknown total never finishes on its own
+    for total in (None, float("nan")):
+        pbar = pb(total, "(:spin) :what")
+        for _ in range(100):
+            pbar.tick(tokens={"what": "A"})
+        assert not pbar.finished
+        pbar.terminate()
+        assert pbar.finished
+    with pytest.raises(RuntimeError, match="unknown total"):
+        pb(None).update(0.5)
+
+    pbar = pb(4)
+    pbar.update(0.5)
+    assert pbar.current == 2
+    pbar.update(1)
     assert pbar.finished
 
 
-def test_pb_dummy_when_quiet():
+def test_pb_prints_nothing_off_a_terminal(capsys):
+    verbose(True)
+    pbar = pb(3, ":what [:bar] :current/:total")
+    for i in range(3):
+        pbar.tick(tokens={"what": i})
+    pbar.message("x")
+    assert capsys.readouterr().err == ""
+    assert utils._progress is None
+
+
+def test_pb_prints_nothing_when_quiet(monkeypatch):
+    stream = TTY()
+    monkeypatch.setattr(sys, "stderr", stream)
     verbose(False)
     pbar = pb(3)
-    assert not isinstance(pbar, ProgressBar)
     for _ in range(5):
         pbar.tick()
     pbar.message("x")
     pbar.terminate()
+    assert stream.getvalue() == ""
+    assert utils._progress is None
 
 
-def test_pb_renders_on_a_terminal():
-    class TTY(io.StringIO):
-        def isatty(self) -> bool:
-            return True
-
+def test_pb_draws_on_a_terminal(monkeypatch):
     stream = TTY()
-    bar = ProgressBar(4, ":what [:bar] :current/:total :percent", width=40, stream=stream)
+    monkeypatch.setattr(sys, "stderr", stream)
+    verbose(True)
+    bar = pb(4, ":what [:bar] :current/:total :elapsedfull")
     bar.tick(0, tokens={"what": "Running"})
     bar.tick(2)
-    assert "Running [" in stream.getvalue() and "2/4  50%" in stream.getvalue()
+    utils._progress.refresh()
+    drawn = stream.getvalue()
+    assert "Running" in drawn and "2/4" in drawn
     bar.tick(2)
     assert bar.finished
-    assert stream.getvalue().endswith("\n")
-    text = bar.render()
-    assert text.startswith("Running [" + "=" * 10)
+    assert utils._progress is None  # the display is stopped with its last bar
+
+
+def test_pb_bars_share_one_display(monkeypatch):
+    # a spinner with a bar inside it (repo_check, the archive downloads): rich allows one live display
+    stream = TTY()
+    monkeypatch.setattr(sys, "stderr", stream)
+    verbose(True)
+    spinner = pb(None, "(:spin) :what")
+    spinner.tick(0, {"what": "Reading"})
+    bar = pb(2, "Reading zip contents [:bar] :current/:total")
+    bar.tick()
+    utils._progress.refresh()
+    drawn = stream.getvalue()
+    assert "Reading" in drawn and "Reading zip contents" in drawn and "1/2" in drawn
+    bar.tick()
+    assert utils._progress is not None  # the spinner is still open
+    spinner.terminate()
+    assert utils._progress is None
+    assert sys.stderr is stream  # rich gave stderr back

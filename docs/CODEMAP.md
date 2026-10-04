@@ -1101,7 +1101,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `gitcreds` | the GitHub token | `git credential fill`, as gitcreds does ([`archives/github.py`](../src/metacheck/archives/github.py)) |
 | `roxygen2` | reading module headers (`module_info()`) | module metadata is given to the `@module` decorator ([`module.py`](../src/metacheck/module.py)) |
 | `jpeg` | `fig_image_view()` | not ported (an R graphics viewer) |
-| `progress` | progress bars | [`utils.py`](../src/metacheck/utils.py) |
+| `progress` | progress bars | `rich.progress`, behind `pb()` in [`utils.py`](../src/metacheck/utils.py) |
 | `graphics`, `grDevices` | SPSS chart images in `export_spv_html()`; `fig_image_view()` | SVG drawn in [`statout/spv.py`](../src/metacheck/statout/spv.py) (D26); `fig_image_view()` not ported |
 | `utils` | `unzip()`, `URLencode()`, `read.csv()`, `head()` and so on | Python's standard library (`zipfile`, `urllib.parse`) and pandas |
 | `ggplot2` | the distribution figure of `data_check` | matplotlib (`metacheck[data]`), in [`modules/_data_check.py`](../src/metacheck/modules/_data_check.py) |
