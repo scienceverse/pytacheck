@@ -392,6 +392,11 @@ record the bug as a U-entry and add the mark to your lane's divergences file.
   "r")`, ...) need the reference R: without `PYTACHECK_RSCRIPT` naming an R >= 4.5
   they are reported as `skip`, never as pass or fail. The harness notices any case
   whose Python side starts `Rscript`/`R`; `needs_r: true` marks one explicitly.
+* **`execute = TRUE` cases name the sandbox.** `reproducibility_check` runs the code in
+  Docker unless told otherwise (UPSTREAM_ISSUES D62), metacheck on this machine. The
+  R call of such a case is left as it is and the Python call adds `sandbox="process"`,
+  which is what metacheck does; the case `exec_docker` names `sandbox="docker"` on both
+  sides.
 
 ## Goldens
 

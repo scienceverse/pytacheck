@@ -1,8 +1,16 @@
-"""Errors of the core (docs/design/ARCHITECTURE.md §2.12)."""
+"""Warnings and errors of the core (docs/design/ARCHITECTURE.md §2.12)."""
 
 from __future__ import annotations
 
-__all__ = ["StaleDocumentError"]
+__all__ = ["PytacheckWarning", "StaleDocumentError"]
+
+
+class PytacheckWarning(UserWarning):
+    """A warning about the input that changes what a run does, such as repeated paper ids.
+
+    Never raised for what metacheck would also warn about: those keep their own
+    messages.
+    """
 
 
 class StaleDocumentError(RuntimeError):

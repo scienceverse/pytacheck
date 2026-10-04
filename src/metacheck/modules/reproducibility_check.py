@@ -3,9 +3,12 @@
 The module assesses whether a paper's code can be run on its data: a static
 phase (dependencies, Psych-DS path rewriting, run order, missing inputs)
 that always runs, and an opt-in execution phase (``execute=True``) that runs
-the R scripts in isolated ``Rscript`` subprocesses or Docker containers.
-The building blocks are :mod:`metacheck.repro`; the module-local pieces are
-in :mod:`metacheck.modules._reproducibility`.
+the R scripts in Docker containers (the default, ``sandbox="docker"``) or, only
+when asked for with ``sandbox="process"``, in ``Rscript`` subprocesses on this
+machine with no filesystem or network isolation. This is a deliberate
+difference from metacheck, whose default is ``"process"`` (D62 in
+docs/UPSTREAM_ISSUES.md). The building blocks are :mod:`metacheck.repro`; the
+module-local pieces are in :mod:`metacheck.modules._reproducibility`.
 """
 
 from __future__ import annotations
@@ -125,16 +128,33 @@ def _pick(values: Sequence[Any], idx: Sequence[int | None]) -> list[Any]:
     return [None if i is None else values[i] for i in idx]
 
 
-_SANDBOXES = ("process", "docker")
+#: The sandboxes ``execute = TRUE`` can run the code in, the safe one first: ``match.arg()``
+#: takes the first choice as the default, so this order IS the default (metacheck's is the
+#: reverse, ``c("process", "docker")``: D62).
+_SANDBOXES = ("docker", "process")
+
+_OLD_DEFAULT = ("process", "docker")
 
 
 def _match_sandbox(sandbox: Any) -> str:
-    """``match.arg(sandbox)``: exact or unique partial match (``"proc"`` is ``"process"``)."""
+    """``match.arg(sandbox)``: exact or unique partial match (``"d"`` is ``"docker"``).
+
+    ``None`` and the whole choice vector give ``"docker"``. The choice vector that is
+    metacheck's default, ``("process", "docker")``, is refused: a caller that passes
+    metacheck's default on would otherwise get a Docker run where it expected a run on
+    this machine, or the reverse, and must say which one it wants.
+    """
     from metacheck.utils import match_arg
 
     if isinstance(sandbox, list | tuple):
         if list(sandbox) == list(_SANDBOXES):
             return _SANDBOXES[0]
+        if list(sandbox) == list(_OLD_DEFAULT):
+            raise ValueError(
+                '\'arg\' must be of length 1: c("process", "docker") is metacheck\'s default, '
+                'which runs the code on this machine; the default here is "docker". Name the '
+                'sandbox you want: "docker", or "process" to run WITHOUT isolation.'
+            )
         if len(sandbox) != 1:
             raise ValueError("'arg' must be of length 1")
         sandbox = sandbox[0]
@@ -155,8 +175,8 @@ def _match_sandbox(sandbox: Any) -> str:
         **execution** phase (opt-in, `execute = TRUE`) then actually runs the code:
         it materialises the Psych-DS layout into a throwaway directory, optionally
         installs the declared dependencies into a throwaway library, runs each script
-        in order in an isolated subprocess with a per-script timeout, and captures the
-        outcome and full output of each run.
+        in order in its own Docker container (the default) with a per-script timeout,
+        and captures the outcome and full output of each run.
     """,
     details="""
         By default (`execute = FALSE`) the module does **not run any code** — it
@@ -165,12 +185,38 @@ def _match_sandbox(sandbox: Any) -> str:
         plan from `psychds_check`, and building a run-order dependency graph. It
         reports what *would* be installed and run rather than doing it.
 
-        When `execute = TRUE`, the module additionally **runs the downloaded code on
-        your machine** — a deliberate, opt-in action gated behind that argument
-        (`callr` is required). Each script runs in an isolated subprocess so a crash
-        cannot take down the R session; note this isolates crashes, **not** the
-        filesystem or network. Installs (when `install_missing = TRUE`) and the
-        throwaway run library never touch your main R library. Each script's outcome
+        When `execute = TRUE`, the module additionally **runs the downloaded code** —
+        a deliberate, opt-in action gated behind that argument. By default
+        (`sandbox = "docker"`) every script runs in its own locked-down Docker
+        container, so Docker must be installed and running; if it is not, the module
+        stops with an error and runs nothing. In the run phase the container has no
+        network (`--network none`), a read-only root filesystem (with a writable,
+        in-memory `/tmp`), only the throwaway sandbox directory and the package
+        library (read-only) mounted — never your home folder or any other file of
+        yours — a non-root user, no Linux capabilities, no privilege escalation and a
+        limit of 512 processes, and it is stopped at the timeout. The CPU and memory
+        of a container are limited only in a batch run (`workers > 1`).
+
+        What the container does **not** isolate: the optional install phase (only
+        with `install_missing = TRUE`) has network access by design, because packages
+        must be fetched. It runs the packages' install scripts, as a non-root user
+        with all capabilities dropped, and sees only its install script and the
+        package library, never the paper's data. The image is the pre-built
+        `ghcr.io/scienceverse/metacheck_r:latest` (or `rocker/r-ver:<version>` with
+        `docker_use_declared_version = TRUE`), which Docker pulls under its `:latest`
+        tag, so it can change between runs — a known limit. A container shares the
+        host's kernel: it is a strong boundary for ordinary code, not a promise
+        against a kernel exploit.
+
+        `sandbox = "process"` is the explicit, unsafe alternative (it needs R, an
+        `Rscript`): it runs the code **on your machine, as you, with no filesystem or
+        network isolation**. A subprocess isolates a crash and nothing else, so the
+        code can read, change or delete your files and use the network. Never use it
+        for code you do not trust; the module warns each time it is used. Installs
+        (when `install_missing = TRUE`) and the throwaway run library never touch
+        your main R library, unless `cran_install_main = TRUE`. (metacheck's default
+        is `"process"`; pytacheck's is `"docker"`, a deliberate difference, D62 in
+        docs/UPSTREAM_ISSUES.md.) Each script's outcome
         is one of `ran_ok`, `errored`, `timed_out`, `skipped_missing_inputs`,
         `dependency_unavailable`, or `not_parsed`; a timeout means "still running at
         the cutoff", not a failure, so raise `timeout` for legitimately long-running
@@ -210,18 +256,26 @@ def _match_sandbox(sandbox: Any) -> str:
         "upstream modules whose study grouping the path rewrite relies on)",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
         "execute": "if TRUE, actually RUN the paper's code (against a throwaway\n"
-        "copy of the Psych-DS layout). This runs downloaded code on your machine\n"
-        "and is off by default; it is a deliberate, opt-in action. See `sandbox`\n"
-        "for how it is isolated.",
-        "sandbox": 'how `execute = TRUE` runs each script. `"process"`\n'
-        "(default) runs it in an isolated `callr` subprocess on this machine —\n"
-        "this isolates a CRASH, but NOT the filesystem or network: the code can\n"
-        "still read/write/delete anywhere this R session can, and reach the\n"
-        'network freely. `"docker"` runs it inside a locked-down Docker container\n'
-        "instead (network disabled, filesystem read-only outside the sandbox, a\n"
-        "non-root user) — a real containment boundary, appropriate for running\n"
-        "code you do not trust. Requires Docker to be installed and running (see\n"
-        "[repro_docker_available()]).",
+        "copy of the Psych-DS layout). This runs downloaded code and is off by\n"
+        "default; it is a deliberate, opt-in action. By default it runs in a Docker\n"
+        "container (see `sandbox`).",
+        "sandbox": 'how `execute = TRUE` runs each script. `"docker"` (the default)\n'
+        "runs it inside a locked-down Docker container. In the run phase: no\n"
+        "network, a read-only root filesystem (a writable in-memory `/tmp`), only\n"
+        "the throwaway sandbox directory and the package library (read-only)\n"
+        "mounted, a non-root user, all capabilities dropped, a process limit. It\n"
+        "needs Docker installed and running (see [repro_docker_available()]);\n"
+        "without it the module stops with an error and runs nothing. The optional\n"
+        "install phase (`install_missing = TRUE`) is NOT isolated from the\n"
+        "network, by design, because packages must be fetched: it runs their\n"
+        "install scripts non-root with capabilities dropped and sees only its\n"
+        "install script and the package library, never the paper's data. The image\n"
+        "is pulled and tagged `:latest`, so it can change between runs (a known\n"
+        'limit). `"process"` runs it in a subprocess on this machine with NO\n'
+        "filesystem or network isolation: the code can read, change and delete\n"
+        "anything you can, and use the network. Pass it only for code you trust;\n"
+        'the module warns each time. (metacheck\'s default is `"process"`; this is\n'
+        "a deliberate difference, D62.)",
         "docker_use_declared_version": 'if TRUE (and `sandbox = "docker"`), use\n'
         "the R version `code_check`'s version-pinning detection found declared in\n"
         "the repository instead of the pre-built `metacheck_r` image.",
@@ -255,7 +309,7 @@ def reproducibility_check(
     model: str | None = None,
     params: Mapping[str, Any] | None = None,
     execute: bool = False,
-    sandbox: str | Sequence[str] = "process",
+    sandbox: str | Sequence[str] = "docker",
     docker_use_declared_version: bool = False,
     install_missing: bool = False,
     cran_install_main: bool = False,
@@ -277,14 +331,36 @@ def reproducibility_check(
     Reads ``code_check``'s ``table``/``version_pin``, ``psychds_check``'s
     ``table`` (the path-rewrite plan) and ``data_check``'s ``structure`` from
     the chain, else from *tables_dir*, else runs the missing modules (LLM
-    off). ``model=None`` means ``llm_model()``. With ``execute=True`` the R
-    scripts run in ``Rscript`` subprocesses (``sandbox="process"``) or
-    Docker containers (``sandbox="docker"``); a paper list with
-    ``workers > 1`` under Docker runs its papers concurrently.
+    off). ``model=None`` means ``llm_model()``.
+
+    With ``execute=True`` the paper's R scripts are RUN. By default
+    (``sandbox="docker"``; metacheck's default is ``"process"``: D62) each one
+    runs in its own locked-down Docker container: in the run phase no network, a
+    read-only root filesystem, only the throwaway sandbox directory (and the
+    package library, read-only) mounted, a non-root user, all capabilities dropped
+    and a process limit. Without a running Docker the call raises ``RuntimeError``
+    and nothing runs; it never falls back to the host. What the container does not
+    isolate: the optional install phase (``install_missing=True``), which has
+    network access by design (packages must be fetched), runs the packages' install
+    scripts non-root with capabilities dropped and sees only its install script and
+    the package library, never the paper's data; and the image is pulled and tagged
+    ``:latest``, so it can change between runs (a known limit).
+
+    ``sandbox="process"`` runs the scripts in ``Rscript`` subprocesses on this
+    machine, as you, with NO filesystem or network isolation: not for code you do
+    not trust. It must be asked for by name, and each run with it emits one
+    :class:`~metacheck.core.errors.PytacheckWarning`. A paper list with
+    ``workers > 1`` under Docker runs its papers concurrently. The static phase
+    (``execute=False``, the default) needs no Docker and runs nothing.
     """
     sandbox = _match_sandbox(sandbox)
 
     from metacheck.papers.model import is_paper_list
+
+    if h._is_true(execute):
+        # Refuse before anything is downloaded, installed or run, and before a batch starts
+        # its workers. A missing Docker is never answered by a process run.
+        _require_sandbox(sandbox)
 
     if (
         is_paper_list(paper)
@@ -317,22 +393,6 @@ def reproducibility_check(
             skip_on_api_limit=skip_on_api_limit,
             tables_dir=tables_dir,
         )
-
-    if h._is_true(execute) and sandbox == "process":
-        from metacheck.repro.core import _rscript
-
-        if _rscript() is None:
-            raise RuntimeError(
-                'execute = TRUE with sandbox = "process" needs R (an `Rscript` on PATH or '
-                "PYTACHECK_RSCRIPT): it runs each script in an isolated subprocess. "
-                'Install R, or use sandbox = "docker".'
-            )
-    if h._is_true(execute) and sandbox == "docker":
-        from metacheck.repro.docker import repro_docker_available
-
-        docker_ok = repro_docker_available()
-        if not docker_ok.get("ok"):
-            raise RuntimeError(f'execute = TRUE with sandbox = "docker": {docker_ok.get("msg")}')
 
     from metacheck.http import skip_on_api_limit as _skip_limit
     from metacheck.utils import local_options
@@ -369,6 +429,46 @@ def reproducibility_check(
     finally:
         for d in cleanup:
             shutil.rmtree(d, ignore_errors=True)
+
+
+_PROCESS_WARNING = (
+    'reproducibility_check(execute = TRUE, sandbox = "process") runs the paper\'s code on this '
+    "machine, as you, with no filesystem or network isolation: it can read, change or delete "
+    'your files and use the network. Use it only for code you trust. sandbox = "docker" (the '
+    "default) runs it in a container with no network and no access to your files."
+)
+
+
+def _require_sandbox(sandbox: str) -> None:
+    """Check that the sandbox ``execute = TRUE`` asked for is available, or refuse.
+
+    ``"docker"`` needs a running Docker, else :class:`RuntimeError` says why and how to go on
+    (install or start Docker, or ask for ``sandbox = "process"`` by name). ``"process"`` needs
+    an ``Rscript`` and warns once that nothing isolates the code. There is no fallback from
+    one to the other.
+    """
+    if sandbox == "docker":
+        from metacheck.repro.docker import repro_docker_available
+
+        docker_ok = repro_docker_available()
+        if not docker_ok.get("ok"):
+            raise RuntimeError(
+                f'execute = TRUE with sandbox = "docker": {docker_ok.get("msg")} The paper\'s '
+                "code is run in a Docker container, with no network and no access to your files, "
+                'so nothing was run. Install or start Docker; or pass sandbox = "process" to run '
+                "the code on this machine WITHOUT any isolation (not for code you do not trust)."
+            )
+        return
+    from metacheck.core.errors import PytacheckWarning
+    from metacheck.repro.core import _rscript
+
+    if _rscript() is None:
+        raise RuntimeError(
+            'execute = TRUE with sandbox = "process" needs R (an `Rscript` on PATH or '
+            "PYTACHECK_RSCRIPT): it runs each script in a subprocess. "
+            'Install R, or use sandbox = "docker".'
+        )
+    warnings.warn(_PROCESS_WARNING, PytacheckWarning, stacklevel=3)
 
 
 def _new_sandbox(keep_sandbox: bool, cleanup: list[str]) -> str:
@@ -1315,6 +1415,10 @@ def _execute(
     )
 
     sandbox = a["sandbox"]
+    if sandbox not in _SANDBOXES:
+        # run() and the install step below treat anything but "docker" as the host process,
+        # so a value that skipped _match_sandbox() must stop here, not get that backend
+        raise ValueError(f"unknown sandbox {sandbox!r}: expected one of {', '.join(_SANDBOXES)}")
     timeout = a["timeout"]
     install_missing = h._is_true(a["install_missing"])
 

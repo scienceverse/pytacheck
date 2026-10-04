@@ -30,21 +30,34 @@ def paper() -> pc.Paper:
 
 
 def test_sandbox_is_matched_like_match_arg() -> None:
-    # match.arg(): exact or unique partial match, the full choice vector is the default
+    # match.arg(): exact or unique partial match, the full choice vector is the default; the
+    # choices are ("docker", "process"), the reverse of metacheck's (D62)
     assert _match_sandbox("process") == "process"
     assert _match_sandbox("proc") == "process"
+    assert _match_sandbox("p") == "process"
+    assert _match_sandbox("docker") == "docker"
     assert _match_sandbox("d") == "docker"
-    assert _match_sandbox(["process", "docker"]) == "process"
+    assert _match_sandbox(["docker", "process"]) == "docker"
+    assert _match_sandbox(("docker", "process")) == "docker"
     assert _match_sandbox(("docker",)) == "docker"
-    assert _match_sandbox(None) == "process"
+    assert _match_sandbox(["proc"]) == "process"
+    assert _match_sandbox(None) == "docker"
     with pytest.raises(ValueError, match="'arg' must be of length 1"):
-        _match_sandbox(["docker", "process"])
-    with pytest.raises(ValueError, match="'arg' should be one of “process”, “docker”"):
+        _match_sandbox(["docker", "docker", "process"])
+    with pytest.raises(ValueError, match="'arg' should be one of “docker”, “process”"):
         _match_sandbox("")
     with pytest.raises(ValueError, match="'arg' should be one of"):
         _match_sandbox("vm")
     with pytest.raises(ValueError, match="must be NULL or a character vector"):
         _match_sandbox(1)
+
+
+@pytest.mark.parametrize("old_default", [["process", "docker"], ("process", "docker")])
+def test_the_old_default_vector_is_refused(old_default: Any) -> None:
+    # metacheck's c("process", "docker") used to mean "process"; a caller that still passes it
+    # must say which sandbox it wants, not get one of them silently
+    with pytest.raises(ValueError, match=r"'arg' must be of length 1: .*metacheck's default"):
+        _match_sandbox(old_default)
 
 
 def test_partial_sandbox_runs_the_static_check(paper: pc.Paper) -> None:

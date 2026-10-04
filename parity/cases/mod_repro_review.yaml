@@ -314,7 +314,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_ok', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_ok', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_ok', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_errors_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -322,7 +322,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_errors', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_errors', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_errors', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_setwd_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -330,7 +330,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_setwd', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_setwd', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_setwd', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_undefined_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -338,7 +338,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_undefined', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_undefined', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_undefined', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_library_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -346,7 +346,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_library', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_library', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_library', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_mixed_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -354,7 +354,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_mixed', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_mixed', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_mixed', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_font_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -362,7 +362,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_font', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_font', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_font', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_model_object_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -370,7 +370,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_model_object', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_model_object', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_model_object', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_install_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -378,7 +378,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run_mocked('exec_install', execute = TRUE, timeout = 60, keep_sandbox = TRUE, install_missing = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run_mocked('exec_install', execute=True, timeout=60, keep_sandbox=True, install_missing=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run_mocked('exec_install', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\", install_missing=True)"
 - "id": "tables.exec_docker_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -394,7 +394,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_chatty', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_chatty', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_chatty', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "tables.exec_jasp_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -402,7 +402,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_jasp', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_jasp', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_jasp', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "review.rv_demo_jasp"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -586,7 +586,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_rv_latin1', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_rv_latin1', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_rv_latin1', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
   "compare":
     "ignore": &id001 []
 - "id": "tables.exec_rv_latin1_exec"
@@ -596,7 +596,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_rv_latin1', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_rv_latin1', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_rv_latin1', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "review.exec_rv_definers"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -604,7 +604,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_rv_definers', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_rv_definers', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_rv_definers', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
   "compare":
     "ignore": *id001
 - "id": "tables.exec_rv_definers_exec"
@@ -614,7 +614,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_rv_definers', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_rv_definers', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_rv_definers', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "review.exec_rv_both"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -622,7 +622,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_rv_both', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_rv_both', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_rv_both', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
   "compare":
     "ignore": *id001
 - "id": "tables.exec_rv_both_exec"
@@ -632,7 +632,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_rv_both', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_rv_both', execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_rv_both', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "review.exec_rv_base_pkgs"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -640,7 +640,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run_mocked('exec_rv_base_pkgs', execute = TRUE, timeout = 60, keep_sandbox = TRUE, install_missing = TRUE)})"
-        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run_mocked('exec_rv_base_pkgs', execute=True, timeout=60, keep_sandbox=True, install_missing=True)"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run_mocked('exec_rv_base_pkgs', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\", install_missing=True)"
   "compare":
     "ignore": *id001
 - "id": "tables.exec_rv_base_pkgs_exec"
@@ -650,7 +650,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run_mocked('exec_rv_base_pkgs', execute = TRUE, timeout = 60, keep_sandbox = TRUE, install_missing = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run_mocked('exec_rv_base_pkgs', execute=True, timeout=60, keep_sandbox=True, install_missing=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run_mocked('exec_rv_base_pkgs', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\", install_missing=True)"
 - "id": "review.saved_rds"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -674,7 +674,7 @@
     "x":
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_chain(execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
-        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_chain(execute=True, timeout=60, keep_sandbox=True)"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_chain(execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "review.chain_proc"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"

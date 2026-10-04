@@ -26,6 +26,10 @@ ROOT = HERE.parent.parent
 
 EXEC = "execute = TRUE, timeout = 60, keep_sandbox = TRUE"
 EXEC_PY = "execute=True, timeout=60, keep_sandbox=True"
+# D62: execute = TRUE runs the code in Docker unless told otherwise in pytacheck, on this machine
+# in metacheck. These cases compare what the code produces, not where it ran, so the Python call
+# names the sandbox metacheck defaults to (R's call strings are left as they are).
+EXEC_PROCESS_PY = EXEC_PY + ', sandbox="process"'
 EXEC_IGNORE: list[str] = []
 
 U = "upstream/metacheck/tests/testthat/fixtures/repro/"
@@ -254,7 +258,10 @@ def main() -> None:
             continue
         if name == "exec_install":
             add_tables(
-                name, f"{EXEC}, install_missing = TRUE", f"{EXEC_PY}, install_missing=True", True
+                name,
+                f"{EXEC}, install_missing = TRUE",
+                f"{EXEC_PROCESS_PY}, install_missing=True",
+                True,
             )
         elif name == "exec_docker":
             add_tables(
@@ -264,7 +271,7 @@ def main() -> None:
                 True,
             )
         else:
-            add_tables(name, EXEC, EXEC_PY)
+            add_tables(name, EXEC, EXEC_PROCESS_PY)
 
     mocked = {"exec_rv_base_pkgs"}
     for name in REVIEW:
@@ -272,9 +279,13 @@ def main() -> None:
             r_extra = ", install_missing = TRUE" if name in mocked else ""
             py_extra = ", install_missing=True" if name in mocked else ""
             add_module(
-                name, EXEC + r_extra, EXEC_PY + py_extra, name in mocked, {"ignore": EXEC_IGNORE}
+                name,
+                EXEC + r_extra,
+                EXEC_PROCESS_PY + py_extra,
+                name in mocked,
+                {"ignore": EXEC_IGNORE},
             )
-            add_tables(name, EXEC + r_extra, EXEC_PY + py_extra, name in mocked)
+            add_tables(name, EXEC + r_extra, EXEC_PROCESS_PY + py_extra, name in mocked)
         else:
             add_module(name)
             add_tables(name)
@@ -299,7 +310,7 @@ def main() -> None:
     # a real piped chain (the upstream outputs come from get_prev_outputs())
     for cid, r_args, py_args in [
         ("review.chain", "", ""),
-        ("review.chain_exec", EXEC, EXEC_PY),
+        ("review.chain_exec", EXEC, EXEC_PROCESS_PY),
         ("review.chain_proc", 'sandbox = "proc"', 'sandbox="proc"'),
     ]:
         CASES.append(

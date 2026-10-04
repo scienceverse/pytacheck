@@ -7,6 +7,12 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: reproducibility_check runs the paper's code in Docker by default
+
+- **Changed:** `reproducibility_check(execute=True)` now runs the paper's R code in a Docker container: `sandbox` defaults to `"docker"` (metacheck's default is `"process"`, which runs the code on your own machine, D62). In the run phase the container has no network, a read-only root file system, a throwaway sandbox directory, a non-root user and no capabilities. Without Docker, `execute=True` stops with an error that says why and how to go on, and nothing is run; it never falls back to your machine.
+- **To run on your machine:** pass `sandbox="process"`. It works as before, and each run warns (`PytacheckWarning`) that nothing is isolated, so use it only for code you trust. A caller that passes metacheck's own default `c("process", "docker")` now gets a `ValueError`: name the sandbox you want.
+- **Unchanged:** the static phase (`execute=False`) needs no Docker and runs nothing. The install phase (only with `install_missing=True`) still has network access, by design, and sees only the install script and the package library.
+
 ### Added: data package checks
 
 - The `datapackage` pack, in every install, checks the folder or archive of data, code and documentation that comes with a paper: `datapackage::package_files`, `datapackage::package_structure` and `datapackage::package_docs` (and `package_pii`, below), and the preset `datapackage::default`, which adds `metacheck::data_check` and `metacheck::codebook_check`. Each check also returns a checklist (item, title, status `fail`, `warn`, `manual`, `pass` or `na`, detail) for a data steward to work down. A pack can supply its own policy as a preset.
