@@ -902,7 +902,9 @@ def test_a_root_host_hands_the_sandbox_to_the_container_user(
     (root / "to_host").symlink_to(outside)
     (root / "to_dir").symlink_to(tmp_path, target_is_directory=True)
     owned: list[tuple[str, int, int]] = []
-    monkeypatch.setattr(os, "lchown", lambda p, u, g: owned.append((os.fspath(p), u, g)))
+    monkeypatch.setattr(
+        os, "lchown", lambda p, u, g: owned.append((os.fspath(p), u, g)), raising=False
+    )
 
     docker._repro_docker_hand_over(root)
     names = sorted(os.path.relpath(p, root) for p, u, g in owned)
