@@ -185,3 +185,25 @@ def test_missing_sentence_is_sent_as_null() -> None:
         out = causal_relations([None, "x"])
     assert out["sentence"].isna().tolist() == [True, False]
     assert out["cause"].tolist() == ["a", "a"]
+
+
+def test_requests_name_this_package_as_user_agent() -> None:
+    from metacheck._version import __version__
+
+    seen: list[str] = []
+    payload = '["[{\\"causal\\": false, \\"relations\\": []}]"]'
+    with respx.mock(assert_all_called=False) as router:
+        route = _mock(router, {"x": payload})
+        post = route.side_effect
+        route.side_effect = lambda request: (
+            seen.append(request.headers["user-agent"]),
+            post(request),
+        )[1]
+        router.get(url__regex=rf"{BASE}/ev\d+").mock(
+            side_effect=lambda request: (
+                seen.append(request.headers["user-agent"]),
+                httpx.Response(200, text=_sse(payload)),
+            )[1]
+        )
+        causal_relations("x")
+    assert seen == [f"metacheck/{__version__}"] * 2

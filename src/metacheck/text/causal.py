@@ -28,8 +28,14 @@ __all__ = ["causal_relations"]
 _BASE = "https://lakens-causal-sentences.hf.space"
 _PREFIX = "gradio_api/call"
 _API = "/predict"
-_USER_AGENT = "causal_relations/0.1 (R curl/jsonlite)"
 _COLUMNS = ("sentence", "causal", "cause", "effect")
+
+
+def _user_agent() -> str:
+    """The ``User-Agent`` of the requests: this package and its version."""
+    from metacheck._version import __version__
+
+    return f"metacheck/{__version__}"
 
 
 def _message(msg: str) -> None:
@@ -202,7 +208,7 @@ def _post_enqueue(
         "POST",
         url,
         content=body.encode("utf-8"),
-        headers={"Content-Type": "application/json", "User-Agent": _USER_AGENT},
+        headers={"Content-Type": "application/json", "User-Agent": _user_agent()},
         max_tries=1,
     )
     if resp is None:
@@ -249,7 +255,7 @@ def _get_until_complete(event_id: str, timeout: float, verbose: bool) -> str:
     deadline = time.monotonic() + timeout
     try:
         with http.client().stream(
-            "GET", url, headers={"User-Agent": _USER_AGENT}, timeout=timeout
+            "GET", url, headers={"User-Agent": _user_agent()}, timeout=timeout
         ) as resp:
             for line in resp.iter_lines():
                 if time.monotonic() > deadline:
