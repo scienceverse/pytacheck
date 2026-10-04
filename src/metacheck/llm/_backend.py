@@ -657,6 +657,7 @@ def _gemini(
     except ImportError as exc:  # pragma: no cover - the client above imported it
         raise _missing_extra(exc) from exc
     cfg: dict[str, Any] = {k: v for k, v in std.items() if not k.startswith("thinking_")}
+    cfg["automatic_function_calling"] = types.AutomaticFunctionCallingConfig(disable=True)
     thinking = {k: v for k, v in std.items() if k.startswith("thinking_")}
     if thinking:
         cfg["thinking_config"] = types.ThinkingConfig(**thinking)
