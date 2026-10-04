@@ -112,33 +112,36 @@
 "grobid12/write_read.edges": *tei
 "grobid12/write_read.preprint": *tei
 "grobid12/write_read.published": *tei
-"grobid12/written.0956797615569889": *tei
-"grobid12/written.0956797617737129": *tei
-"grobid12/written.203020": *tei
-"grobid12/written.apis.tue.06d588": *tei
-"grobid12/written.apis.tue.1181af": *tei
-"grobid12/written.apis.tue.479883": *tei
-"grobid12/written.apis.tue.4b4691": *tei
-"grobid12/written.apis.tue.619fd9": *tei
-"grobid12/written.apis.tue.9c61e4": *tei
-"grobid12/written.apis.tue.d2308a": *tei
-"grobid12/written.apis.tue.d67d70": *tei
-"grobid12/written.debruine-child": *tei
-"grobid12/written.debruine-fret": *tei
-"grobid12/written.debruine-sex": *tei
-"grobid12/written.debruine-tnl": *tei
-"grobid12/written.demo": *tei
-"grobid12/written.edges": *tei
-"grobid12/written.preprint": *tei
-"grobid12/written.published": *tei
+"grobid12/written.0956797615569889": &d64_tei
+  kind: deliberate
+  ref: D64
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.'), with Grobid's sentence tags unwrapped, body text squished (U27), reference DOIs broken by line breaks joined and URL hrefs printed only where their link is (U28) (U16)"
+"grobid12/written.0956797617737129": *d64_tei
+"grobid12/written.203020": *d64_tei
+"grobid12/written.apis.tue.06d588": *d64_tei
+"grobid12/written.apis.tue.1181af": *d64_tei
+"grobid12/written.apis.tue.479883": *d64_tei
+"grobid12/written.apis.tue.4b4691": *d64_tei
+"grobid12/written.apis.tue.619fd9": *d64_tei
+"grobid12/written.apis.tue.9c61e4": *d64_tei
+"grobid12/written.apis.tue.d2308a": *d64_tei
+"grobid12/written.apis.tue.d67d70": *d64_tei
+"grobid12/written.debruine-child": *d64_tei
+"grobid12/written.debruine-fret": *d64_tei
+"grobid12/written.debruine-sex": *d64_tei
+"grobid12/written.debruine-tnl": *d64_tei
+"grobid12/written.demo": *d64_tei
+"grobid12/written.edges": *d64_tei
+"grobid12/written.preprint": *d64_tei
+"grobid12/written.published": *d64_tei
 "grobid12_review/.grobid_to_bibr.review_inline": *tei
 "grobid12_review/.grobid_to_bibr.review_noapp": *tei
 "grobid12_review/.grobid_to_bibr.review_unicode": *tei
 "grobid12_review/write_read.review_inline": *tei
 "grobid12_review/write_read.review_noapp": *tei
 "grobid12_review/write_read.review_unicode": *tei
-"grobid12_review/written.review_inline": *tei
-"grobid12_review/written.review_noapp": *tei
+"grobid12_review/written.review_inline": *d64_tei
+"grobid12_review/written.review_noapp": *d64_tei
 "grobid12_review/written.review_unicode": *tei
 "grobid12/.grobid_to_bibr.io.bib_page_from": &tei_io
   kind: r_bug_fixed
@@ -216,7 +219,10 @@
   ref: U28
   reason: "an author with several ORCIDs keeps the first (R's greedy '.*(' keeps the last)"
 "grobid12_review/write_read.review_header": *orcid
-"grobid12_review/written.review_header": *orcid
+"grobid12_review/written.review_header": &d64_orcid
+  kind: deliberate
+  ref: D64
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also an author with several ORCIDs keeps the first (R's greedy '.*(' keeps the last; U28)"
 "grobid12_review/.grobid_to_bibr.review_sentences": &sentences
   kind: r_bug_fixed
   ref: U28
@@ -231,7 +237,10 @@
 "grobid12_review/write_read.review_url_na": *urls
 "grobid12_review/write_read.review_urls": *urls
 "grobid12_review/written.review_url_na": *urls
-"grobid12_review/written.review_urls": *urls
+"grobid12_review/written.review_urls": &d64_urls
+  kind: deliberate
+  ref: D64
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also each URL is printed only at its own link, once (R: 'https://https://osf.io/q2.io/q2' and link texts replaced in other rows and references); a link in words keeps them with the href after them ('osf https://osf.io/q2'), and a URL without a target leaves its rows alone (R: NA; U28)"
 "bibr12_review/paper_write.text.edge_types": &d64_df_u22
   kind: deliberate
   ref: D64
