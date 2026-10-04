@@ -29,6 +29,7 @@ import secrets
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 import time
 from collections.abc import Mapping, Sequence
@@ -65,7 +66,8 @@ __all__ = [
     "repro_run_scripts_docker",
 ]
 
-#: Fixed non-root uid:gid every docker run in this backend uses (``.repro_docker_uid``).
+#: The non-root uid:gid of R's backend (``.repro_docker_uid``). Here it is what a container runs
+#: as unless :func:`_repro_docker_user` finds the host's own to be a better one.
 _REPRO_DOCKER_UID = "1000:1000"
 
 #: The pre-built metacheck image with ~750 common packages (``.repro_docker_default_image``).
@@ -176,6 +178,46 @@ def _repro_docker_scrub(root: str | os.PathLike[str]) -> list[str]:
                 os.unlink(path)
                 removed.append(os.path.relpath(path, top))
     return removed
+
+
+def _repro_docker_user() -> str:
+    """The ``--user`` of every container in this backend: ``uid:gid``, never root.
+
+    On Linux a bind mount keeps the host's owner and mode, and the sandbox directory is private
+    (``tempfile.mkdtemp``: mode 0700). A container user who is not the host user cannot even
+    enter it, so with a fixed uid every script failed with "Permission denied" on a host whose
+    uid is not 1000. The container therefore runs as the host user's own uid and gid. What it
+    writes then belongs to the host user, which also keeps the host's cleanup and
+    :func:`_repro_docker_scrub` working in directories the code created. Where that does not
+    apply, the fixed :data:`_REPRO_DOCKER_UID` is used: a host user who is root (never run the
+    code as root; see :func:`_repro_docker_hand_over`), and Docker Desktop on macOS and Windows,
+    which does not enforce the host's file ownership.
+    """
+    if sys.platform.startswith("linux") and hasattr(os, "getuid") and os.getuid() != 0:
+        return f"{os.getuid()}:{os.getgid()}"
+    return _REPRO_DOCKER_UID
+
+
+def _repro_docker_hand_over(path: str | os.PathLike[str], *, tree: bool = True) -> None:
+    """Give the container user what it is to read and write, when the host user is root.
+
+    A root host runs the container as :data:`_REPRO_DOCKER_UID`, who is not the owner of the
+    private directories made here. *path*, and with *tree* everything below it, is handed to
+    that user, links as links (``lchown``: a link is never followed). A no-op unless the host
+    is Linux and root, since nothing else needs it (see :func:`_repro_docker_user`).
+    """
+    if not (sys.platform.startswith("linux") and hasattr(os, "getuid") and os.getuid() == 0):
+        return
+    uid, gid = (int(x) for x in _REPRO_DOCKER_UID.split(":"))
+    top = os.fspath(path)
+    with contextlib.suppress(OSError):
+        os.lchown(top, uid, gid)
+    if not tree:
+        return
+    for here, dirs, files in os.walk(top, followlinks=False):
+        for name in [*dirs, *files]:
+            with contextlib.suppress(OSError):
+                os.lchown(os.path.join(here, name), uid, gid)
 
 
 def _repro_docker_container_name() -> str:
@@ -401,10 +443,12 @@ def repro_install_deps_docker(
         Path(script_path).write_bytes(
             ("\n".join(_install_script(install_deps)) + "\n").encode("utf-8")
         )
+        _repro_docker_hand_over(sandbox_dir)
+        _repro_docker_hand_over(lib, tree=False)  # what is in it was written by the container
         container_name = _repro_docker_container_name()
         args = [
             "run", "--rm", "--name", container_name,
-            "--user", _REPRO_DOCKER_UID,
+            "--user", _repro_docker_user(),
             "--cap-drop", "ALL",
             "--security-opt", "no-new-privileges",
             "--pids-limit", "512",
@@ -560,7 +604,7 @@ def repro_run_scripts_docker(
     Port of ``R/reproducibility_check_docker.R::repro_run_scripts_docker()``:
     the same outcomes and columns as
     :func:`~metacheck.repro.core.repro_run_scripts`, but each script runs via
-    ``docker run --network none --read-only --user 1000:1000`` with
+    ``docker run --network none --read-only --user <non-root>`` with
     *sandbox_root* mounted at ``/sandbox`` (the working directory) and
     *lib_dir* read-only at ``/rlib``.
     """
@@ -581,6 +625,9 @@ def repro_run_scripts_docker(
     preamble = _repro_docker_capture_preamble()
     cap_file_container = "/sandbox/.capture.json"
     cap_file_host = os.path.join(root, ".capture.json")
+
+    user = _repro_docker_user()
+    _repro_docker_hand_over(root)  # the scripts and data the container reads, and where it writes
 
     bar = pb(len(ordered), ":what [:bar] :current/:total")
     rows: list[dict[str, Any]] = []
@@ -609,13 +656,14 @@ def repro_run_scripts_docker(
                     + "\n"
                 ).encode("utf-8")
             )
+            _repro_docker_hand_over(wrapper_path, tree=False)
             container_wrapper = _repro_docker_container_path(wrapper_path, root)
             container_name = _repro_docker_container_name()
             args = [
                 "run", "--rm", "--name", container_name,
                 "--network", "none", "--read-only",
                 "--tmpfs", "/tmp",  # noqa: S108 - inside the container
-                "--user", _REPRO_DOCKER_UID,
+                "--user", user,
                 "--cap-drop", "ALL",
                 "--security-opt", "no-new-privileges",
                 "--pids-limit", "512",
