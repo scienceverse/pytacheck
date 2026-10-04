@@ -119,6 +119,7 @@ __all__ = [
     "load_components",
     "load_readme_template",
     "match_sections",
+    "package_readme_text",
     "read_readme_text",
     "report_blocks",
     "resolve_human_participants",
@@ -235,6 +236,31 @@ def find_readmes(package_or_files: Any) -> Any:
         ),
     )
     return found.iloc[order]
+
+
+def _read_readme(package: Any, row: Any) -> str | None:
+    """The text of the README in *row* of the package's file listing.
+
+    A link is only followed when it stays inside the package.
+    """
+    path = package.root / str(row["path"])
+    if bool(row["link"]):
+        try:
+            if not path.resolve().is_relative_to(package.root.resolve()):
+                return None
+        except OSError:
+            return None
+    return read_readme_text(path)
+
+
+def package_readme_text(package: Any) -> str | None:
+    """The text of the package's best README (see :func:`find_readmes`), or ``None``.
+
+    ``None`` when there is no README or it cannot be read; the same reading
+    :func:`check_docs` does.
+    """
+    readmes = find_readmes(package)
+    return _read_readme(package, readmes.iloc[0]) if len(readmes) else None
 
 
 def _licence_files(files: Any) -> Any:
@@ -361,6 +387,7 @@ def check_docs(
     min_file_list_coverage: float = 0.8,
     severity: Any = None,
     licences: Any = None,
+    human_participants_note: str | None = None,
 ) -> DocsResult:
     """Check the README of a data package and whether it has the parts it should have.
 
@@ -375,6 +402,9 @@ def check_docs(
     and files (and its data files, up to 50) that the README has to mention.
     *severity* maps rule ids (:data:`RULES`) to ``"problem"``, ``"suggestion"``
     or ``"info"``. *licences* is the table of licences to recognise.
+    *human_participants_note* is one sentence on where *human_participants* came
+    from (or why it is still open); it is added to the details of the parts that
+    depend on it.
     """
     run = _Run(
         package,
@@ -384,6 +414,7 @@ def check_docs(
         float(min_file_list_coverage),
         {**RULES, **_load_severity(severity)},
         _load_licences(licences),
+        human_participants_note,
     )
     return run.run()
 
@@ -400,11 +431,13 @@ class _Run:
         min_coverage: float,
         severity: Mapping[str, str],
         licences: Any,
+        people_note: str | None = None,
     ) -> None:
         self.package = package
         self.template = template
         self.catalogue = catalogue
         self.human_participants = human_participants
+        self.people_note = people_note
         self.min_coverage = min_coverage
         self.severity = severity
         self.licences = licences
@@ -454,15 +487,7 @@ class _Run:
         return False
 
     def _read(self, row: Any) -> str | None:
-        """The README's text. A link is only followed when it stays inside the package."""
-        path = self.package.root / str(row["path"])
-        if bool(row["link"]):
-            try:
-                if not path.resolve().is_relative_to(self.package.root.resolve()):
-                    return None
-            except OSError:
-                return None
-        return read_readme_text(path)
+        return _read_readme(self.package, row)
 
     # -- the run -----------------------------------------------------------
 
@@ -1006,13 +1031,14 @@ class _Run:
             )
         needed = spec.required
         if needed == "human_participants":
+            note = f" {self.people_note}" if self.people_note else ""
             if self.human_participants is None:
                 self.add(
                     check,
                     "component-undecided",
-                    f"{spec.title} is needed if the research involved people. Check by hand.",
+                    f"{spec.title} is needed if the research involved people. Check by hand.{note}",
                 )
-                return "manual", "Needed if the research involved people. Check by hand."
+                return "manual", f"Needed if the research involved people. Check by hand.{note}"
             if not self.human_participants:
                 return "na", "Not needed: the research did not involve people."
             return (
@@ -1020,9 +1046,9 @@ class _Run:
                     check,
                     "component-missing",
                     f"{spec.title} is missing from the package. The research involved people. "
-                    f"{spec.description}".strip(),
+                    f"{' '.join(x for x in (spec.description, self.people_note) if x)}".strip(),
                 ),
-                "Missing. The research involved people, so it should be included.",
+                f"Missing. The research involved people, so it should be included.{note}",
             )
         if needed == "always":
             return (
