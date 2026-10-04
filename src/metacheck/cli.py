@@ -443,6 +443,16 @@ def cmd_package(ns: argparse.Namespace) -> int:
         offline=True if ns.offline else None,
     )
     _check_module_args(sel, per)
+    if ns.abstract_lookup or ns.paper_doi:
+        if not any(_accepts(ref, "abstract_lookup") for ref, _ in sel):
+            _err(
+                "--abstract-lookup and --paper-doi need the package_docs check, which is not selected"
+            )
+            return 2
+        # the flags are bare -a arguments; MODULE.KEY=... in -a still wins
+        bare.setdefault("abstract_lookup", True)
+        if ns.paper_doi:
+            bare.setdefault("paper_doi", ns.paper_doi)
     sel = _apply_bare_args(sel, per, bare)
     _announce(sel)
     if not sel:
@@ -995,7 +1005,9 @@ def build_parser() -> argparse.ArgumentParser:
         description=(
             "Check a data package: the folder (or zip or tar archive) of data, code and "
             "documentation that comes with a paper. Everything runs on this machine; an "
-            "archive is extracted to a temporary folder and removed afterwards. Without -o the "
+            "archive is extracted to a temporary folder and removed afterwards. The one "
+            "exception is --abstract-lookup, which you have to ask for: it fetches the "
+            "paper's abstract by its DOI, and sends nothing but the DOI. Without -o the "
             "results are printed; with -o (or -f) a report is written."
         ),
     )
@@ -1013,6 +1025,23 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         choices=["html", "qmd", "md"],
         help="the report's format (default html); without -o the file is <name>_report.<format>",
+    )
+    p.add_argument(
+        "--abstract-lookup",
+        action="store_true",
+        help="decide whether the research involved people (for the ethical approval and "
+        "informed consent rows) from the paper's abstract, fetched online from Crossref or "
+        "OpenAlex by the paper's DOI. Off by default. Only the DOI is sent: no file name, "
+        "README text or other content of the package leaves this machine. A hit means "
+        "people were involved; anything else leaves the rows to a person. With --offline "
+        "nothing is fetched",
+    )
+    p.add_argument(
+        "--paper-doi",
+        default=None,
+        metavar="DOI",
+        help="the paper's DOI for --abstract-lookup (which it implies); default: the DOI on "
+        "the README's line for the publication, if it has one",
     )
     p.set_defaults(func=cmd_package)
 

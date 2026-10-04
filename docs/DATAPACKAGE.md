@@ -152,6 +152,10 @@ at the paper's text if there is one, and otherwise leaves them to a person
 (`manual`). The README template and the catalogue of parts are options, so a pack
 can supply its institution's own.
 
+A package usually comes without its paper, so that last question is often open. You
+can let the check ask the paper's abstract, online and only when you switch it on:
+see [Ethics from the paper's abstract](#ethics-from-the-papers-abstract-opt-in).
+
 Options: see `metacheck modules datapackage::package_docs`.
 
 ### `package_pii`
@@ -226,6 +230,98 @@ package, and use `hits` for its detail line: the file, the column and the count,
 is all there is; the values are never kept. The pack's preset can add `package_pii` to
 its modules, or leave it out of `datapackage::default` with `exclude`.
 
+## Ethics from the paper's abstract (opt-in)
+
+The ethical approval and the informed consent form are needed only when the research
+involved people, and a package seldom says so. `package_docs` can ask the paper's
+**abstract**, and it does so only when you ask it to. Off by default: with no switch
+no request is ever made.
+
+**What it does.** With a DOI, the check fetches the paper's abstract (from Crossref,
+and from OpenAlex when Crossref has none) and runs on it the same live-data detection
+that `ethics_check` uses (sentences about recruiting participants, informed consent,
+online recruitment platforms, and the like). When that finds something, the check
+decides "the research involved people": the ethical approval and consent rows become
+required, and are `fail` when the package does not have them. The row says where the
+decision came from, and quotes the one sentence that matched:
+
+```text
+Decided from the abstract of 10.1234/abc (Crossref): “Participants were recruited
+from a panel (N = 120) and completed a survey.”
+```
+
+**What it never does.** It never decides that the research did *not* involve people.
+An abstract that does not mention participants proves nothing (a short abstract
+leaves out a lot), so those rows stay with a person (`manual`), as they do without the
+lookup. The detection is the one `ethics_check` has: it also flags abstracts that
+describe animal studies, and it does not read anything but the abstract. The answer
+comes from the abstract only when `human_participants` is not given and the paper's own
+text (when there is one) did not decide it. The abstract itself is not kept: the result
+holds the decision, the name of the service, the DOI and that one sentence.
+
+**What leaves the machine.** Only the DOI: one `GET` for one record, with the DOI in
+the URL (`https://api.crossref.org/works/<doi>`, then
+`https://api.openalex.org/works/https://doi.org/<doi>`). No file name, README text,
+column name or any other content of the package is sent, and the request has no body.
+Like every request of this tool it carries the User-Agent, which names the tool and
+its version, and the contact e-mail address if you have set one with
+`metacheck.email()` (`METACHECK_EMAIL`); the two services are told who is asking so
+that they can rate-limit politely. The DOI is checked before it is used (it has to
+look like `10.xxxx/...`, with no space, `?`, `#` or `%`), a `https://doi.org/` or `doi:`
+prefix is removed, and it is percent-encoded into the path.
+
+**How to switch it on.**
+
+```bash
+metacheck package my_data_folder --abstract-lookup                  # the DOI is on the README's line for the publication
+metacheck package my_data_folder --paper-doi 10.1234/abc            # a DOI of your own (implies --abstract-lookup)
+metacheck package my_data_folder -a package_docs.abstract_lookup=true -a package_docs.paper_doi=10.1234/abc
+```
+
+```python
+from metacheck.datapackage import check_package
+
+check_package(
+    "my_data_folder",
+    modules=["package_docs"],
+    args={"package_docs": {"abstract_lookup": True, "paper_doi": "10.1234/abc"}},
+)
+```
+
+There is no environment variable or setting that turns it on for every run; you ask
+each time. With no `paper_doi`, the DOI comes from the README, from a line that is
+about the publication, such as `DOI of the publication: 10.1234/abc`, `Related paper:
+https://doi.org/10.1234/abc` or the `Project or Paper Title : ...` line of a README
+template (or the field of your own template that has `"expect": "doi"`). A DOI that
+stands in a sentence, in a list of references, or on a line about the data (`Dataset
+DOI`) is never taken, because it may be another work's or the package's own. A DOI you
+give with `paper_doi` always wins over the README's.
+
+**When it cannot decide.** Nothing here fails the run or waits long. `--offline`
+(`offline=True`), no network, a timeout (10 seconds a try, two tries), a service that
+answers with an error or with something that is not a record, a record without an
+abstract, a bad DOI and a README with no DOI all give the result the package would
+have had without the lookup, and one line says why:
+
+```text
+Offline: the abstract of 10.1234/abc was not looked up.
+No abstract was found for 10.1234/abc (Crossref has no record; OpenAlex has no abstract).
+The abstract of 10.1234/abc could not be fetched: Crossref and OpenAlex did not answer.
+The abstract of 10.1234/abc (Crossref) does not mention participants, which proves nothing either way.
+```
+
+The same line is in the module's `human_participants_note`, next to
+`human_participants_source` (`given`, `paper`, `abstract` or `unknown`), in the
+`abstract_decision` result and in the detail of the two rows.
+
+**Why `package_docs` does not declare `requires=["network"]`.** `--offline` leaves out
+every module that declares it needs the network. `package_docs` works fully offline
+and does the same without the switch, so it must stay in an offline run; it reads the
+offline setting itself (`metacheck.module.use_setting("offline")`) and does not ask
+when it is set. The lookup is in `metacheck.datapackage.abstract`, which also keeps
+the network code out of the pack module (`pack check` flags `metacheck.http` imports in
+a pack's module files).
+
 ## The checklist
 
 A package check does not end with a traffic light. Each check also returns a
@@ -264,9 +360,16 @@ A data package can hold personal data, so the checks do not upload it.
   folder and `local_only=True`, so nothing is looked up online. A value you give
   yourself (`-a MODULE.local_only=false`), or that a preset sets, is not overridden.
   The modules run on a stand-in paper with no content, titled with the package's name.
+* The one thing that goes online is a request you make: `--abstract-lookup` (or
+  `--paper-doi`) fetches the paper's abstract by its DOI, to decide whether the research
+  involved people. Nothing but the DOI is sent; see
+  [Ethics from the paper's abstract](#ethics-from-the-papers-abstract-opt-in). Without
+  the switch there is no request.
 * `--offline` leaves out the modules that declare they need the network or an LLM.
   Note that `metacheck::data_check` declares both, so with `--offline` it is
   left out of the list (`codebook_check` still reads the data files itself).
+  `package_docs` is not left out: it does not declare the network, and with `--offline`
+  its abstract lookup is skipped, with a note.
 * No LLM is used unless you have turned it on yourself (`llm_use(True)` in Python).
 * One thing does download: `data_check` fills the concept of a data column (age,
   reaction time, ...) with a local classifier when the `concepts` extra is installed
