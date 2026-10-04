@@ -2,7 +2,7 @@
 #
 # metacheck reaches LLMs through ellmer; pytacheck reaches them through the
 # official provider SDKs (openai, anthropic, google-genai: the `metacheck[llm]`
-# extra), as the maintainer decided on 2026-10-04 (D65). What is ported is
+# extra), as the maintainer decided on 2026-10-04 (D69). What is ported is
 # behaviour -- prompts, schemas, parameters, result columns -- never ellmer's
 # internals:
 #   the provider table, requests, retries and error text
