@@ -58,6 +58,13 @@ def hermetic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     refresh()
 
 
+def default_checks() -> int:
+    """How many checks the default preset holds, read from the preset, not written down here."""
+    from metacheck.presets import expand
+
+    return len(expand("datapackage::default"))
+
+
 def folder(tmp_path: Path, name: str = "study1", files: dict[str, str] | None = None) -> Path:
     root = tmp_path / name
     for rel, text in (FILES if files is None else files).items():
@@ -287,7 +294,7 @@ def test_a_folder_is_checked_and_the_report_is_written(tmp_path: Path) -> None:
         "Data Package Structure",
         "Data Package Documentation",
     ]
-    assert len(titles) == 5  # the default preset's five checks
+    assert len(titles) == default_checks()
     assert set(result.checks["Status"]) <= {"Pass", "Warning", "Fail", "Info", "Not applicable"}
     # the checklist holds the items of the three checks that have one, and one row for each
     # of the others
@@ -378,7 +385,7 @@ def test_without_the_extra_the_run_falls_back_to_rules_and_says_so(
     assert seen[-1] == {"data_check": {"concepts": "rules"}}
     assert analysis.note == pk.NO_CLASSIFIER
     assert 'pip install "metacheck[concepts]"' in analysis.note and "rules only" in analysis.note
-    assert len(analysis.checks) == 5  # the checks ran all the same
+    assert len(analysis.checks) == default_checks()  # the checks ran all the same
     assert "Did not run" not in set(analysis.checks["Status"])
     # a person who did not ask for the classifier is not told about it
     assert run_on(root, tmp_path, local_classifier=False).note == ""
@@ -404,7 +411,7 @@ def test_a_tar_gz_is_checked(tmp_path: Path) -> None:
         tf.add(root, arcname="pkg")
     result = run_on(archive, tmp_path)
     assert result.name == "pkg"
-    assert len(result.checks) == 5
+    assert len(result.checks) == default_checks()
 
 
 def test_a_preset_that_does_not_exist_is_a_plain_message(tmp_path: Path) -> None:
@@ -715,7 +722,7 @@ def test_the_page_runs_a_folder_through_the_app(tmp_path: Path) -> None:
             done["output"]["data"][5],
         )
         assert summary.startswith("Checked **study1**")
-        assert len(checks["data"]) == 5 and checks["headers"] == pk.CHECK_COLUMNS
+        assert len(checks["data"]) == default_checks() and checks["headers"] == pk.CHECK_COLUMNS
         assert {row[2] for row in checklist["data"]} >= {"Pass", "Warning"}
         assert checklist["headers"] == pk.CHECKLIST_COLUMNS
         assert 'href="/report/p1package/study1_report.html"' in download
