@@ -57,8 +57,10 @@ def search_doc(paper: Any) -> tuple[Doc, bool]:
     """The Doc a search of *paper* searches, and whether *paper* was character strings.
 
     A paper's Doc is its cached one; a table, a paper list or strings get a Doc
-    of their own.
+    of their own. A Doc is searched as it is, so that several searches can share it.
     """
+    if isinstance(paper, Doc):
+        return paper, False
     if isinstance(paper, pd.DataFrame):
         return Doc.from_frame(paper.copy(deep=False)), False
     if isinstance(paper, Paper):

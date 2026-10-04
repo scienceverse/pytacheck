@@ -2,13 +2,12 @@
 
 Ports tests/testthat/test-module-ethics_check.R, plus checks of R's quirks
 (errors, report on a one-paper list, duplicated statements in the report)
-measured with R 4.5.3 / metacheck, and of the Python-only sentence prefilter.
+measured with R 4.5.3 / metacheck, and of the literal prefilter.
 """
 
 from __future__ import annotations
 
 import re
-import re._parser as sre_parse  # type: ignore[import-not-found]
 from pathlib import Path
 from typing import Any
 
@@ -17,7 +16,7 @@ import pytest
 
 import metacheck as pc
 from metacheck._r import grepl
-from metacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
+from metacheck.modules.ethics_check import _ETHICS_WORDS
 from tests.mod_ethics.make_parity_cases import SWEEP
 from tests.mod_ethics.parity_support import ec_paper, ec_papers
 
@@ -470,44 +469,7 @@ def test_rows_sorted_by_text_id_with_missing_last() -> None:
     assert ethics["text"].tolist() == ["Ethics approval was obtained.", "The IRB approved it."]
 
 
-# -- the Python-only prefilter ---------------------------------------------------
-
-_LITERALS = _ETHICS_ANY.split("|")
-
-
-def _covered(items: Any, literals: list[str] = _LITERALS) -> bool:
-    """Does every match of the parsed sequence *items* contain a prefilter literal?
-
-    True when a run of literal characters contains one of the literals, or a
-    group, alternation (all branches) or repeat (at least once) is covered.
-    """
-    run_chars: list[str] = []
-
-    def flush() -> bool:
-        s = "".join(run_chars).lower()
-        run_chars.clear()
-        return any(lit in s for lit in literals)
-
-    for op, av in items:
-        name = str(op)
-        if name == "LITERAL":
-            run_chars.append(chr(av))
-            continue
-        if flush():
-            return True
-        if name == "SUBPATTERN" and _covered(av[-1], literals):
-            return True
-        if name == "BRANCH" and all(_covered(b, literals) for b in av[1]):
-            return True
-        if name in ("MAX_REPEAT", "MIN_REPEAT") and av[0] >= 1 and _covered(av[2], literals):
-            return True
-    return flush()
-
-
-@pytest.mark.parametrize("pattern", _ETHICS_WORDS)
-def test_prefilter_covers_every_pattern(pattern: str) -> None:
-    # the patterns are also valid Python regexes with the same structure
-    assert _covered(sre_parse.parse(pattern))
+# -- the literal prefilter never changes the result ---------------------------------
 
 
 def test_sweep_sentences_match_their_patterns() -> None:
@@ -515,22 +477,13 @@ def test_sweep_sentences_match_their_patterns() -> None:
         assert grepl(pattern, [sentence], ignore_case=True) == [True], pattern
 
 
-def test_prefilter_keeps_every_matching_sentence(fixtures_dir: Path) -> None:
-    papers = pc.read(
-        [
-            *sorted((fixtures_dir / "psychsci").glob("*.json")),
-            *sorted((fixtures_dir / "debruine").glob("*.xml")),
-            fixtures_dir / "problems" / "0956797615569889.xml",
-        ]
-    )
-    texts = [t for p in papers for t in p.text["text"].tolist()] + SWEEP
-    keep = grepl(_ETHICS_ANY, texts, ignore_case=True)
-    for pattern in _ETHICS_WORDS:
-        hits = grepl(pattern, texts, ignore_case=True)
-        assert all(k for h, k in zip(hits, keep, strict=True) if h), pattern
+def _ethics_rows(table: pd.DataFrame) -> pd.DataFrame:
+    rows = table.loc[table["ethics"].fillna(False).astype(bool)]
+    rows = rows.drop(columns=["ethics", "live_data"], errors="ignore")
+    return rows.sort_values(["paper_id", "text_id"], kind="stable").reset_index(drop=True)
 
 
-def test_prefiltered_search_equals_plain_search() -> None:
+def test_module_search_equals_plain_search() -> None:
     paper = pc.test_paper(SWEEP)
     mo = run(paper)
     ethics = mo.table.loc[mo.table["ethics"].fillna(False).astype(bool)]
@@ -538,3 +491,22 @@ def test_prefiltered_search_equals_plain_search() -> None:
     plain = pc.text_search(paper, list(_ETHICS_WORDS))
     plain = plain.sort_values("text_id", kind="stable").reset_index(drop=True)
     pd.testing.assert_frame_equal(ethics, plain, check_dtype=False)
+
+
+def test_module_search_equals_the_search_before_the_core(fixtures_dir: Path) -> None:
+    # the frozen text_search() of tests/_legacy/ has no literal prefilter at all
+    from tests._legacy import search as legacy
+
+    papers = pc.read(
+        [
+            *sorted((fixtures_dir / "psychsci").glob("*.json")),
+            *sorted((fixtures_dir / "debruine").glob("*.xml")),
+            fixtures_dir / "problems" / "0956797615569889.xml",
+        ]
+    )
+    for source in (papers, pc.test_paper(SWEEP)):
+        expected = legacy.text_search(source, list(_ETHICS_WORDS))
+        got = _ethics_rows(run(source).table)
+        expected = expected.sort_values(["paper_id", "text_id"], kind="stable")
+        assert len(got) > 0
+        pd.testing.assert_frame_equal(got, expected.reset_index(drop=True), check_dtype=False)

@@ -861,11 +861,6 @@ true,
 false
 ],
 [
-"ethic|board|committee|panel|institutional|protocol|approv|clearance|reviewed|exempt|waive|helsinki|irb|iec|metc|toetsingscommissie|thique|iacuc|awerb|dierexperimentencommissie|dierenwelzijn|ivd|tierversuchskommission|tvk|ceea",
-true,
-false
-],
-[
 "exempt(ed)?\\s+from\\s+(ethics|irb|institutional\\s+review)",
 true,
 false

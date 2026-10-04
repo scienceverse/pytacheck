@@ -236,18 +236,6 @@ def _all_patterns() -> list[str]:
     return list(dict.fromkeys(pats))
 
 
-def test_required_literals() -> None:
-    assert F._required("(ab|cd)e\\bfg") == [("ab", "cd"), ("e",), ("fg",)]
-    assert F._required("a(|s)b") == [("a",), ("b",)]
-    assert F._required("x?yz") == [("yz",)]
-    assert F._required("[Ff]unded") == [("unded",)]
-    assert F._required("(?<![Ss]pecialty) [Ff]ellowship") == [(" ",), ("ellowship",)]
-    assert F._required("ab|c") == [("ab", "c")]
-    assert F._required("ab|") == []
-    assert F._required("N(?i)O") == [("n",), ("o",)]
-    assert F._required("(?:\\s+\\w+){0,3}ab{2,}") == [("ab",)]
-
-
 def test_prefilter_matches_full_scan(psychsci: pc.PaperList) -> None:
     from metacheck._r.regex import grepl
     from metacheck.text import text_search
@@ -272,6 +260,27 @@ def test_prefilter_matches_full_scan(psychsci: pc.PaperList) -> None:
         for ignore_case in (False, True):
             full = np.array(grepl(pattern, texts, ignore_case=ignore_case, perl=True))
             fast = F._Article(texts).mask(pattern, ignore_case)
+            assert (full == fast).all(), pattern
+
+
+def test_prefilter_matches_full_scan_for_tre_patterns() -> None:
+    # the two patterns the module runs with TRE (perl = FALSE)
+    from metacheck._r.regex import grepl
+
+    texts: list[str | None] = [
+        None,
+        "",
+        "1. Introduction",
+        "1 Introduction",
+        "12 Introduction",
+        "Authors are required to disclose what they disclosed none",
+        "required to disclose.\nSomething disclosed none",
+        "REQUIRED TO DISCLOSE ... DISCLOSED NONE",
+    ]
+    for pattern in ("^1(|\\.)\\s+[A-Z]", "required to disclose.*disclosed none"):
+        for ignore_case in (False, True):
+            full = np.array(grepl(pattern, texts, ignore_case=ignore_case))
+            fast = F._Article(texts).mask(pattern, ignore_case, perl=False)
             assert (full == fast).all(), pattern
 
 
