@@ -380,6 +380,27 @@ def test_every_process_run_warns(
     assert len([x for x in w if issubclass(x.category, PytacheckWarning)]) == 2
 
 
+def test_a_preset_that_names_the_process_still_warns(
+    paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # the arguments of a preset (or of report(args = ...)) reach the module as any others do
+    entries = select(
+        modules=["reproducibility_check"],
+        args={"reproducibility_check": {"execute": True, "sandbox": "process"}},
+    )
+    ((ref, args),) = list(entries)
+    monkeypatch.setattr(core, "_rscript", lambda: "Rscript")
+    monkeypatch.setattr(
+        core,
+        "repro_run_scripts",
+        lambda *a, **k: _run_frame([{"fn": "ok.R", "outcome": "ran_ok"}]),
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        module_run(exec_chain(paper, "ok.R", repro_fixture), ref, **args)
+    assert len([x for x in w if issubclass(x.category, PytacheckWarning)]) == 1
+
+
 def test_the_process_warning_is_a_pytacheck_warning_that_can_be_made_an_error(
     paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch, tripwire: Tripwire
 ) -> None:
@@ -541,11 +562,8 @@ say("home_entries_visible", sum(file.exists(file.path(home, __ENTRIES__))))
 NETWORK_R = 'con <- socketConnection(host = "1.1.1.1", port = 53, open = "r+", timeout = 3)\n'
 
 
-@pytest.mark.slow
-def test_real_container_isolates_the_run_phase(
-    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """The default sandbox, for real: no network, no writes outside, no host files, no HOME."""
+def _real_docker_image(monkeypatch: pytest.MonkeyPatch) -> str:
+    """Make the module use a local image with R, or skip: Docker, Linux containers, an image."""
     if not docker.repro_docker_available()["ok"]:
         pytest.skip("Docker not available")
     info = subprocess.run(
@@ -557,6 +575,15 @@ def test_real_container_isolates_the_run_phase(
     if image is None:
         pytest.skip("no Docker image with R is on this machine (a pull is never made)")
     monkeypatch.setattr(docker, "_REPRO_DOCKER_DEFAULT_IMAGE", image)
+    return image
+
+
+@pytest.mark.slow
+def test_real_container_isolates_the_run_phase(
+    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The default sandbox, for real: no network, no writes outside, no host files, no HOME."""
+    image = _real_docker_image(monkeypatch)
 
     # host files that the container must not see: another temporary directory, and the HOME
     other = tmp_path / "elsewhere"
@@ -569,9 +596,9 @@ def test_real_container_isolates_the_run_phase(
     ]
     r_entries = "c(" + ", ".join(f'"{e}"' for e in entries) + ")"
 
-    def at(
-        path: str,
-    ) -> str:  # a path the R script spells without a literal, so it is run, not skipped
+    def at(path: str) -> str:
+        # the R script spells its paths without a literal, or the module would skip it as one
+        # with missing inputs
         return path.replace("/", "@")
 
     scripts = tmp_path / "scripts"
@@ -658,3 +685,166 @@ def test_real_container_isolates_the_run_phase(
     ]
     assert sandboxes
     assert not [d for d in sandboxes if os.path.exists(d)]
+
+
+# -- what the container leaves in its sandbox directory ---------------------------------------------
+
+PLANT_R = r"""
+p <- function(x) gsub("@", "/", x, fixed = TRUE)
+nxt <- paste0("02_next", ".R")
+# the sandbox directory is writable, and a link there can name a path on the host: the host would
+# follow it where it writes the next script's runner, and where it reads the next script
+file.symlink(p("__VICTIM__"), paste0(".runner_X", nxt, ".R"))
+unlink(nxt)
+file.symlink(p("__SECRET__"), nxt)
+file.symlink("01_plant.R", "inside_link.R")
+cat("planted\n")
+"""
+
+
+def _plant_chain(paper: pc.Paper, scripts: Path) -> Any:
+    names = ["01_plant.R", "02_next.R", "03_last.R"]
+    for i, name in enumerate(names[1:], start=2):  # different texts: equal scripts count once
+        (scripts / name).write_text(f'cat("script {i}\\n")\n')
+    code_tbl = code_tbl_row(paper, names, [str(scripts / n) for n in names])
+    structure_df = pd.DataFrame({"paper_id": [], "file_name": [], "file_location": []})
+    return chain(paper, code_tbl, structure_df, PLAN)
+
+
+@pytest.mark.slow
+def test_real_container_links_in_the_sandbox_never_reach_the_host(
+    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A link the code leaves in its sandbox is not followed by the host (no write, no read)."""
+    _real_docker_image(monkeypatch)
+    other = tmp_path / "elsewhere"
+    other.mkdir()
+    secret = other / "secret.txt"
+    secret.write_text("TOPSECRET-host-file\n")
+    victim = other / "victim.txt"
+    victim.write_text("KEEP-this-file\n")
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    (scripts / "01_plant.R").write_text(
+        PLANT_R.replace("__VICTIM__", str(victim).replace("/", "@")).replace(
+            "__SECRET__", str(secret).replace("/", "@")
+        )
+    )
+    mo = module_run(
+        _plant_chain(paper, scripts), "reproducibility_check", execute=True, timeout=120
+    )
+    rr = mo.run_results
+    assert rr["file_name"].tolist() == ["01_plant.R", "02_next.R", "03_last.R"]
+    assert rr["outcome"].tolist()[0] == "ran_ok", rr[["file_name", "outcome", "error"]]
+    # the host wrote no runner script through a link, and read no file through one
+    assert victim.read_text() == "KEEP-this-file\n"
+    everything = "\n".join(
+        str(v) for col in rr.columns for v in rr[col].tolist() if v is not None
+    ) + str(mo.report)
+    assert "TOPSECRET" not in everything
+    # the script the code replaced by a link is gone, so it errors; the one it left alone runs
+    assert rr["outcome"].tolist() == ["ran_ok", "errored", "ran_ok"]
+    assert "script 3" in rr["stdout"].iloc[2]
+
+
+def test_the_scrub_removes_what_the_host_must_not_follow_or_open(tmp_path: Path) -> None:
+    """Links that leave the sandbox, pipes and sockets go; files, directories, inner links stay."""
+    root = tmp_path / "sandbox"
+    (root / "output").mkdir(parents=True)
+    (root / "script.R").write_text("x <- 1\n")
+    (root / "output" / "result.csv").write_text("a\n1\n")
+    outside = tmp_path / "outside.txt"
+    outside.write_text("host\n")
+    (root / "to_host").symlink_to(outside)
+    (root / "to_host_dir").symlink_to(tmp_path, target_is_directory=True)
+    (root / "output" / "dangling").symlink_to("/no/such/host/path")
+    (root / "output" / "up").symlink_to("../../outside.txt")
+    (root / "inner").symlink_to("script.R")
+    (root / "inner_dir").symlink_to("output", target_is_directory=True)
+    os.mkfifo(root / "pipe.R")
+    removed = docker._repro_docker_scrub(root)
+    assert sorted(removed) == sorted(
+        ["to_host", "to_host_dir", "output/dangling", "output/up", "pipe.R"]
+    )
+    assert sorted(p.name for p in root.iterdir()) == ["inner", "inner_dir", "output", "script.R"]
+    assert (root / "output" / "result.csv").read_text() == "a\n1\n"
+    assert outside.read_text() == "host\n"  # nothing was followed
+    assert docker._repro_docker_scrub(root) == []
+
+
+def test_the_scrub_runs_after_every_container_and_before_the_host_reads(
+    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The host's reads and writes in the sandbox come after the scrub (container mocked)."""
+    order: list[str] = []
+    real_scrub = docker._repro_docker_scrub
+    real_read = docker._script_lines
+
+    def scrub(root: Any) -> list[str]:
+        order.append("scrub")
+        return real_scrub(root)
+
+    def read(path: Any) -> list[str]:
+        order.append("read")
+        return real_read(path)
+
+    def fake_docker(args: Any, **kw: Any) -> dict[str, Any]:
+        order.append("container")
+        return {"status": 0, "timeout": False, "stdout": ""}
+
+    monkeypatch.setattr(docker, "_repro_docker_scrub", scrub)
+    monkeypatch.setattr(docker, "_script_lines", read)
+    monkeypatch.setattr(docker, "_docker", fake_docker)
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    for n in ("a.R", "b.R"):
+        (scripts / n).write_text("x <- 1\n")
+    run_tbl = pd.DataFrame(
+        {
+            "file_name": ["a.R", "b.R"],
+            "script_path": [str(scripts / "a.R"), str(scripts / "b.R")],
+            "run_dir": [str(scripts)] * 2,
+        }
+    )
+    docker.repro_run_scripts_docker(run_tbl, ["a.R", "b.R"], scripts, image="img")
+    assert order == ["read", "container", "scrub", "read", "container", "scrub"]
+
+
+def _chunks_outside_fences(text: str) -> list[str]:
+    """The lines that open an executable Quarto chunk at the top level (CommonMark fences)."""
+    opened: int | None = None
+    found: list[str] = []
+    for line in text.split("\n"):
+        m = re.match(r"^(`{3,})(.*)$", line)
+        if opened is None:
+            if m:
+                if m.group(2).startswith("{"):
+                    found.append(line)
+                opened = len(m.group(1))
+        elif m and len(m.group(1)) >= opened and m.group(2).strip() == "":
+            opened = None
+    return found
+
+
+@pytest.mark.parametrize(
+    ("stdout", "fence"),
+    [("> 1 + 1\n[1] 2\n", "````"), ("````\n```{r}\nsystem('id')\n```\n````\n", "`````")],
+)
+def test_the_output_of_the_code_cannot_close_its_fence_in_the_report(
+    paper: pc.Paper,
+    repro_fixture: Any,
+    monkeypatch: pytest.MonkeyPatch,
+    stdout: str,
+    fence: str,
+) -> None:
+    """A run of backticks in the output must not end the fence: Quarto would run what follows."""
+    monkeypatch.setattr(docker, "repro_docker_available", lambda: DOCKER_OK)
+    monkeypatch.setattr(
+        docker,
+        "repro_run_scripts_docker",
+        lambda *a, **kw: _run_frame([{"fn": "ok.R", "outcome": "ran_ok", "stdout": stdout}]),
+    )
+    mo = module_run(exec_chain(paper, "ok.R", repro_fixture), "reproducibility_check", execute=True)
+    text = mo.report if isinstance(mo.report, str) else "\n".join(str(x) for x in mo.report)
+    assert f"\n{fence}\n" in text
+    assert _chunks_outside_fences(text) == []

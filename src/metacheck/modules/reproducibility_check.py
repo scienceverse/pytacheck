@@ -14,6 +14,7 @@ module-local pieces are in :mod:`metacheck.modules._reproducibility`.
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import tempfile
 import warnings
@@ -97,6 +98,20 @@ def _tail_cap(txt: Any, state: dict[str, bool]) -> list[str]:
             *lines[-_MAX_LINES:],
         ]
     return lines
+
+
+def _fence(*streams: Sequence[Any]) -> str:
+    """A code fence longer than any run of backticks in *streams*.
+
+    metacheck's four backticks can be closed by the code's own output, and what follows is then
+    part of the report: a ``{r}`` chunk there is run by Quarto when the report is rendered. An
+    output without a long run of backticks (every ordinary one) still gets four.
+    """
+    longest = max(
+        (len(run) for s in streams for line in s for run in re.findall(r"`+", str(line))),
+        default=0,
+    )
+    return "`" * max(4, longest + 1)
 
 
 def _order_names(order_tbl: pd.DataFrame) -> list[str]:
@@ -1795,12 +1810,14 @@ def _execution_report(
         if not so and not se and not h._nzchar(err):
             continue
         body: list[str] = []
+        err_text = "NA" if err is None else err
+        fence = _fence(so, se, [err_text])
         if so:
-            body += ["**Output (stdout):**", "````", *so, "````"]
+            body += ["**Output (stdout):**", fence, *so, fence]
         if se:
-            body += ["**Messages / errors (stderr):**", "````", *se, "````"]
+            body += ["**Messages / errors (stderr):**", fence, *se, fence]
         if not body and h._nzchar(err):
-            body = ["````", "NA" if err is None else err, "````"]
+            body = [fence, err_text, fence]
         output_blocks.append(
             collapse_section(
                 "\n".join(body),
