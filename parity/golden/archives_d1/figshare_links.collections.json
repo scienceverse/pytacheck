@@ -1,0 +1,116 @@
+{
+  "id": "figshare_links.collections",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "figshare_url",
+      "figshare_id",
+      "figshare_unsupported"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.le.ac.uk/collections/Leicester/77",
+          "https://doi.org/10.6084/m9.figshare.c.6190228",
+          "figshare.com/collections/Some_collection/8742785",
+          "10.6084/m9.figshare.c.8742785.v1.",
+          "10.17608/k6.auckland.25808182.v2",
+          "https://doi.org/10.15131/shef.data.13712533."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          1,
+          2,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.le.ac.uk/collections/Leicester/77",
+          "https://doi.org/10.6084/m9.figshare.c.6190228",
+          "figshare.com/collections/Some_collection/8742785",
+          "10.6084/m9.figshare.c.8742785.v1.",
+          "10.17608/k6.auckland.25808182.v2",
+          "https://doi.org/10.15131/shef.data.13712533."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "25808182",
+          "13712533"
+        ],
+        "names": [
+          "https://figshare.le.ac.uk/collections/Leicester/77",
+          "https://doi.org/10.6084/m9.figshare.c.6190228",
+          "figshare.com/collections/Some_collection/8742785",
+          "10.6084/m9.figshare.c.8742785.v1.",
+          "10.17608/k6.auckland.25808182.v2",
+          "https://doi.org/10.15131/shef.data.13712533."
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "names": [
+          "https://figshare.le.ac.uk/collections/Leicester/77",
+          "https://doi.org/10.6084/m9.figshare.c.6190228",
+          "figshare.com/collections/Some_collection/8742785",
+          "10.6084/m9.figshare.c.8742785.v1.",
+          "10.17608/k6.auckland.25808182.v2",
+          "https://doi.org/10.15131/shef.data.13712533."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

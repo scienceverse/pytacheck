@@ -166,7 +166,7 @@ jobs:
 
       - name: Regenerate goldens with the new metacheck
         run: |
-          uv run python -m parity generate || true
+          uv run python -m parity generate --jobs 0 || true
           uv run python -m parity accuracy --generate \
             --report .upstream-sync/accuracy-before.json || true
           uv run python -m parity check --jobs 0 \

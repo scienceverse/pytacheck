@@ -40,6 +40,7 @@ export PYTACHECK_RSCRIPT=$(which Rscript)
 
 python -m parity generate --area text          # R -> parity/golden/text/*.json
 python -m parity generate --area text --only text_search.demo.significant
+python -m parity generate --jobs 0             # every area, one R session per CPU
 python -m parity check --area text -v          # Python vs goldens
 python -m parity check --tier 1 --jobs 4       # the realistic corpus, 4 processes
 python -m parity check --jobs 0 --md summary.md  # everything, one process per CPU

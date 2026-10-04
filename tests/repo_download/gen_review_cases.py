@@ -168,6 +168,158 @@ def main() -> None:
         )
     )
 
+    # -- hosts that refuse HEAD (S3: Dryad, Figshare, Harvard Dataverse) --------
+    # A HEAD answered 403 (an error page's Content-Length must not count), the
+    # tail then asked for by a suffix range whose Content-Range gives the size.
+    crc = f"{SRV}/crc.zip"
+    head_403 = {
+        "url": crc,
+        "method": "HEAD",
+        "status": 403,
+        "length": False,
+        "headers": {"Content-Length": "243"},
+    }
+    cases += [
+        call(
+            "peek.s3_head_refused",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", suffix="206")], "url": crc},
+        ),
+        call(
+            "peek.s3_head_refused_small_tail",
+            "rv_peek",
+            "peek",
+            {
+                "routes": [head_403, route("crc.zip", suffix="206")],
+                "url": crc,
+                "tail_bytes": 100,
+            },
+        ),
+        call(
+            "peek.no_length_suffix",
+            "rv_peek",
+            "peek",
+            {"routes": [route("crc.zip", length=False, suffix="206")], "url": crc},
+        ),
+        call(
+            "peek.suffix_ignored",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", suffix="ignore")], "url": crc},
+        ),
+        call(
+            "peek.suffix_416",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", suffix="416")], "url": crc},
+        ),
+        call(
+            "peek.suffix_refused",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", status=403)], "url": crc},
+        ),
+        call(
+            "decision.s3_head_refused",
+            "rv_decision",
+            "decision",
+            {"routes": [head_403, route("crc.zip", suffix="206")], "url": crc},
+        ),
+        call(
+            "fetch.s3_head_refused",
+            "rv_fetch",
+            "fetch",
+            {"routes": [head_403, route("crc.zip", suffix="206")], "url": crc},
+        ),
+        call(
+            "fetch.s3_suffix_416",
+            "rv_fetch",
+            "fetch",
+            {
+                "routes": [
+                    {**head_403, "url": f"{SRV}/paths.zip"},
+                    route("paths.zip", suffix="416"),
+                ],
+                "url": f"{SRV}/paths.zip",
+                "names": ["ok/data.csv", "dup.csv"],
+            },
+        ),
+    ]
+
+    # -- .remote_size(): HEAD, then a one-byte ranged GET ------------------------
+    sz = f"{SRV}/sz"
+    cases += [
+        call("size.head", "rv_size", "size", {"routes": [route("crc.zip")], "url": crc}),
+        call(
+            "size.head_refused",
+            "rv_size",
+            "size",
+            {"routes": [head_403, route("crc.zip")], "url": crc},
+        ),
+        call(
+            "size.no_length",
+            "rv_size",
+            "size",
+            {"routes": [route("crc.zip", length=False)], "url": crc},
+        ),
+        call(
+            "size.range_ignored",
+            "rv_size",
+            "size",
+            {"routes": [route("crc.zip", length=False, range=False)], "url": crc},
+        ),
+        call(
+            "size.private",
+            "rv_size",
+            "size",
+            {
+                "routes": [{"url": f"{sz}/p.csv", "status": 403, "body": "denied"}],
+                "url": f"{sz}/p.csv",
+            },
+        ),
+        call(
+            "size.head_404",
+            "rv_size",
+            "size",
+            {
+                "routes": [
+                    {"url": f"{sz}/h.csv", "method": "HEAD", "status": 404},
+                    {"url": f"{sz}/h.csv", "body": "abcdef"},
+                ],
+                "url": f"{sz}/h.csv",
+            },
+        ),
+        call("size.no_route", "rv_size", "size", {"routes": [], "url": f"{sz}/none.csv"}),
+    ]
+
+    # -- zip_peek(cache = TRUE): the on-disk cache across sessions ---------------
+    cases += [
+        call(
+            "peek_cache.reused",
+            "rv_peek_cached",
+            "peek_cached",
+            {"first": [route("crc.zip")], "second": [], "url": crc},
+        ),
+        call(
+            "peek_cache.failure_kept",
+            "rv_peek_cached",
+            "peek_cached",
+            {"first": [route("crc.zip", range=False)], "second": [route("crc.zip")], "url": crc},
+        ),
+        call(
+            "peek_cache.rate_limited_not_kept",
+            "rv_peek_cached",
+            "peek_cached",
+            {
+                "first": [route("crc.zip")],
+                "second": [route("crc.zip")],
+                "url": crc,
+                "rate_limited": True,
+            },
+        ),
+    ]
+
     # -- .zip_fetch_members() / .zip_member_fetch() ------------------------------
     cases += [
         call(
@@ -308,11 +460,8 @@ def main() -> None:
             "rv_expand",
             "expand",
             {"fn": TAR_FN, "fixture": "review/abslink.tar.gz"},
-            known_divergence=(
-                "GNU tar (R's untar) extracts a symlink to an absolute path; pytacheck "
-                "refuses links that leave the extraction folder (tarfile's data filter), "
-                "so abs_link.csv is not listed"
-            ),
+            # its mark (a link that leaves the folder is refused) is in
+            # parity/divergences/archives.yaml
         )
     )
 
@@ -614,6 +763,61 @@ def main() -> None:
             },
         )
     )
+
+    # -- GitHub's zipball: the size estimated from the listed files -------------
+    # No whole-repository archive reports its size: an archive with no listed
+    # sizes, or an estimate above 2x the budget, is not used, and one that grows
+    # past 2x the budget while downloading is stopped (files then one by one).
+    csv = 817  # bytes of the CSV each member holds
+
+    def gh(case_id: str, name: str, sizes: list[Any], **kw: Any) -> dict[str, Any]:
+        raw = f"https://raw.githubusercontent.com/owner/{name}/main"
+        body = "id,x\n" + "".join(f"{i},{i * 3}\n" for i in range(120))
+        return call(
+            case_id,
+            "rv_download_spy",
+            "download_spy",
+            {
+                "routes": [
+                    {"url": f"https://github.com/owner/{name}", "body": ""},
+                    {
+                        "url": f"https://api.github.com/repos/owner/{name}/zipball",
+                        "fixture": "review/gh.zip",
+                    },
+                    {"url": f"{raw}/a.csv", "body": body},
+                    {"url": f"{raw}/sub/b.csv", "body": body},
+                ],
+                "files": {
+                    "$df": {
+                        "repo_url": [f"https://github.com/owner/{name}"] * 2,
+                        "file_name": ["a.csv", "b.csv"],
+                        "file_path": ["a.csv", "sub/b.csv"],
+                        "file_url": [f"{raw}/a.csv", f"{raw}/sub/b.csv"],
+                        "file_size": sizes,
+                    }
+                },
+                **kw,
+            },
+        )
+
+    cases += [
+        gh("download.github_archive", "repo-zip", [csv, csv]),
+        gh("download.github_unsized", "repo-unsized", [None, None]),
+        gh(
+            "download.github_too_large",
+            "repo-big",
+            [csv, 5 * 1024 * 1024],
+            max_file_size=1,
+            max_download_size=1,
+        ),
+        gh("download.github_capped", "repo-cap", [1, 1], max_download_size=0.0001),
+        gh(
+            "download.github_no_budget",
+            "repo-inf",
+            [csv, csv],
+            max_download_size={"$expr": {"r": "Inf", "py": "float('inf')"}},
+        ),
+    ]
 
     # -- file names that are not valid UTF-8 --------------------------------------
     bad_r = 'c("caf\\x82.csv", "ok.R", "READ\\x82ME.txt", "code\\x82book.csv", "x\\x82.R")'

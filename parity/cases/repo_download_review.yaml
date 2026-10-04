@@ -266,6 +266,300 @@
       "url": "https://srv.example.org/crc.zip"
       "skip_types":
       - "data"
+- "id": "peek.s3_head_refused"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek"
+    "args":
+      "routes":
+      - &id001
+        "url": "https://srv.example.org/crc.zip"
+        "method": "HEAD"
+        "status": 403
+        "length": false
+        "headers": &id002
+          "Content-Length": "243"
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "suffix": "206"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "peek.s3_head_refused_small_tail"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek"
+    "args":
+      "routes":
+      - *id001
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "suffix": "206"
+      "url": "https://srv.example.org/crc.zip"
+      "tail_bytes": 100
+- "id": "peek.no_length_suffix"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek"
+    "args":
+      "routes":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "length": false
+        "suffix": "206"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "peek.suffix_ignored"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek"
+    "args":
+      "routes":
+      - *id001
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "suffix": "ignore"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "peek.suffix_416"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek"
+    "args":
+      "routes":
+      - *id001
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "suffix": "416"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "peek.suffix_refused"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek"
+    "args":
+      "routes":
+      - *id001
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "status": 403
+      "url": "https://srv.example.org/crc.zip"
+- "id": "decision.s3_head_refused"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_decision})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).decision"
+    "args":
+      "routes":
+      - *id001
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "suffix": "206"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "fetch.s3_head_refused"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_fetch})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).fetch"
+    "args":
+      "routes":
+      - *id001
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "suffix": "206"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "fetch.s3_suffix_416"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_fetch})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).fetch"
+    "args":
+      "routes":
+      - "url": "https://srv.example.org/paths.zip"
+        "method": "HEAD"
+        "status": 403
+        "length": false
+        "headers": *id002
+      - "url": "https://srv.example.org/paths.zip"
+        "fixture": "review/paths.zip"
+        "suffix": "416"
+      "url": "https://srv.example.org/paths.zip"
+      "names":
+      - "ok/data.csv"
+      - "dup.csv"
+- "id": "size.head"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_size})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).size"
+    "args":
+      "routes":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "size.head_refused"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_size})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).size"
+    "args":
+      "routes":
+      - *id001
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "size.no_length"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_size})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).size"
+    "args":
+      "routes":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "length": false
+      "url": "https://srv.example.org/crc.zip"
+- "id": "size.range_ignored"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_size})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).size"
+    "args":
+      "routes":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "length": false
+        "range": false
+      "url": "https://srv.example.org/crc.zip"
+- "id": "size.private"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_size})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).size"
+    "args":
+      "routes":
+      - "url": "https://srv.example.org/sz/p.csv"
+        "status": 403
+        "body": "denied"
+      "url": "https://srv.example.org/sz/p.csv"
+- "id": "size.head_404"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_size})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).size"
+    "args":
+      "routes":
+      - "url": "https://srv.example.org/sz/h.csv"
+        "method": "HEAD"
+        "status": 404
+      - "url": "https://srv.example.org/sz/h.csv"
+        "body": "abcdef"
+      "url": "https://srv.example.org/sz/h.csv"
+- "id": "size.no_route"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_size})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).size"
+    "args":
+      "routes": []
+      "url": "https://srv.example.org/sz/none.csv"
+- "id": "peek_cache.reused"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek_cached})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek_cached"
+    "args":
+      "first":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+      "second": []
+      "url": "https://srv.example.org/crc.zip"
+- "id": "peek_cache.failure_kept"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek_cached})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek_cached"
+    "args":
+      "first":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+        "range": false
+      "second":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+      "url": "https://srv.example.org/crc.zip"
+- "id": "peek_cache.rate_limited_not_kept"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_peek_cached})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).peek_cached"
+    "args":
+      "first":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+      "second":
+      - "url": "https://srv.example.org/crc.zip"
+        "fixture": "review/crc.zip"
+      "url": "https://srv.example.org/crc.zip"
+      "rate_limited": true
 - "id": "fetch.paths_all"
   "r": "do.call"
   "py": "tests.repo_download._parity_helpers.do_call"
@@ -493,7 +787,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": &id001
+      "fn": &id003
         "$expr":
           "r": "'.expand_zip'"
           "py": "'_expand_zip'"
@@ -507,7 +801,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id001
+      "fn": *id003
       "fixture": "review/climb.zip"
 - "id": "expand.dots.zip"
   "r": "do.call"
@@ -518,7 +812,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id001
+      "fn": *id003
       "fixture": "review/dots.zip"
 - "id": "expand.lzma.zip"
   "r": "do.call"
@@ -529,7 +823,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id001
+      "fn": *id003
       "fixture": "review/lzma.zip"
 - "id": "expand.bzcrc.zip"
   "r": "do.call"
@@ -540,7 +834,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id001
+      "fn": *id003
       "fixture": "review/bzcrc.zip"
 - "id": "expand.cp437.zip"
   "r": "do.call"
@@ -551,7 +845,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id001
+      "fn": *id003
       "fixture": "review/cp437.zip"
 - "id": "expand.crc.zip"
   "r": "do.call"
@@ -562,7 +856,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id001
+      "fn": *id003
       "fixture": "review/crc.zip"
 - "id": "expand.climb.zip_skip_data"
   "r": "do.call"
@@ -573,7 +867,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id001
+      "fn": *id003
       "fixture": "review/climb.zip"
       "skip_types":
       - "data"
@@ -586,7 +880,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": &id002
+      "fn": &id004
         "$expr":
           "r": "'.expand_tar'"
           "py": "'_expand_tar'"
@@ -600,7 +894,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id002
+      "fn": *id004
       "fixture": "review/dirlink.tar.gz"
 - "id": "expand.abslink.tar.gz"
   "r": "do.call"
@@ -611,7 +905,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
     "args":
-      "fn": *id002
+      "fn": *id004
       "fixture": "review/abslink.tar.gz"
 - "id": "download.archive_members"
   "r": "do.call"
@@ -939,7 +1233,7 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_download})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).download"
     "args":
-      "routes": &id003
+      "routes": &id005
       - "url": "https://srv.example.org/par/ok.csv"
         "body": "a,b\n1,2\n"
       - "url": "https://srv.example.org/par/unsized.csv"
@@ -949,7 +1243,7 @@
       - "url": "https://srv.example.org/par/gone.csv"
         "status": 404
         "body": "gone"
-      "files": &id004
+      "files": &id006
         "$df":
           "repo_url":
           - "https://example.org/par2"
@@ -990,8 +1284,8 @@
         "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_download})"
         "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).download"
     "args":
-      "routes": *id003
-      "files": *id004
+      "routes": *id005
+      "files": *id006
       "twice": true
 - "id": "download.rate_limit_skip"
   "r": "do.call"
@@ -1081,6 +1375,278 @@
           - "osfstorage"
           - "osfstorage"
       "max_download_size": 0.002
+- "id": "download.github_archive"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_download_spy})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).download_spy"
+    "args":
+      "routes":
+      - "url": "https://github.com/owner/repo-zip"
+        "body": ""
+      - "url": "https://api.github.com/repos/owner/repo-zip/zipball"
+        "fixture": "review/gh.zip"
+      - "url": "https://raw.githubusercontent.com/owner/repo-zip/main/a.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      - "url": "https://raw.githubusercontent.com/owner/repo-zip/main/sub/b.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      "files":
+        "$df":
+          "repo_url":
+          - "https://github.com/owner/repo-zip"
+          - "https://github.com/owner/repo-zip"
+          "file_name":
+          - "a.csv"
+          - "b.csv"
+          "file_path":
+          - "a.csv"
+          - "sub/b.csv"
+          "file_url":
+          - "https://raw.githubusercontent.com/owner/repo-zip/main/a.csv"
+          - "https://raw.githubusercontent.com/owner/repo-zip/main/sub/b.csv"
+          "file_size":
+          - 817
+          - 817
+- "id": "download.github_unsized"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_download_spy})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).download_spy"
+    "args":
+      "routes":
+      - "url": "https://github.com/owner/repo-unsized"
+        "body": ""
+      - "url": "https://api.github.com/repos/owner/repo-unsized/zipball"
+        "fixture": "review/gh.zip"
+      - "url": "https://raw.githubusercontent.com/owner/repo-unsized/main/a.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      - "url": "https://raw.githubusercontent.com/owner/repo-unsized/main/sub/b.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      "files":
+        "$df":
+          "repo_url":
+          - "https://github.com/owner/repo-unsized"
+          - "https://github.com/owner/repo-unsized"
+          "file_name":
+          - "a.csv"
+          - "b.csv"
+          "file_path":
+          - "a.csv"
+          - "sub/b.csv"
+          "file_url":
+          - "https://raw.githubusercontent.com/owner/repo-unsized/main/a.csv"
+          - "https://raw.githubusercontent.com/owner/repo-unsized/main/sub/b.csv"
+          "file_size":
+          - null
+          - null
+- "id": "download.github_too_large"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_download_spy})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).download_spy"
+    "args":
+      "routes":
+      - "url": "https://github.com/owner/repo-big"
+        "body": ""
+      - "url": "https://api.github.com/repos/owner/repo-big/zipball"
+        "fixture": "review/gh.zip"
+      - "url": "https://raw.githubusercontent.com/owner/repo-big/main/a.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      - "url": "https://raw.githubusercontent.com/owner/repo-big/main/sub/b.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      "files":
+        "$df":
+          "repo_url":
+          - "https://github.com/owner/repo-big"
+          - "https://github.com/owner/repo-big"
+          "file_name":
+          - "a.csv"
+          - "b.csv"
+          "file_path":
+          - "a.csv"
+          - "sub/b.csv"
+          "file_url":
+          - "https://raw.githubusercontent.com/owner/repo-big/main/a.csv"
+          - "https://raw.githubusercontent.com/owner/repo-big/main/sub/b.csv"
+          "file_size":
+          - 817
+          - 5242880
+      "max_file_size": 1
+      "max_download_size": 1
+- "id": "download.github_capped"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_download_spy})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).download_spy"
+    "args":
+      "routes":
+      - "url": "https://github.com/owner/repo-cap"
+        "body": ""
+      - "url": "https://api.github.com/repos/owner/repo-cap/zipball"
+        "fixture": "review/gh.zip"
+      - "url": "https://raw.githubusercontent.com/owner/repo-cap/main/a.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      - "url": "https://raw.githubusercontent.com/owner/repo-cap/main/sub/b.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      "files":
+        "$df":
+          "repo_url":
+          - "https://github.com/owner/repo-cap"
+          - "https://github.com/owner/repo-cap"
+          "file_name":
+          - "a.csv"
+          - "b.csv"
+          "file_path":
+          - "a.csv"
+          - "sub/b.csv"
+          "file_url":
+          - "https://raw.githubusercontent.com/owner/repo-cap/main/a.csv"
+          - "https://raw.githubusercontent.com/owner/repo-cap/main/sub/b.csv"
+          "file_size":
+          - 1
+          - 1
+      "max_download_size": 0.0001
+- "id": "download.github_no_budget"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_download_spy})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).download_spy"
+    "args":
+      "routes":
+      - "url": "https://github.com/owner/repo-inf"
+        "body": ""
+      - "url": "https://api.github.com/repos/owner/repo-inf/zipball"
+        "fixture": "review/gh.zip"
+      - "url": "https://raw.githubusercontent.com/owner/repo-inf/main/a.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      - "url": "https://raw.githubusercontent.com/owner/repo-inf/main/sub/b.csv"
+        "body": "id,x\n0,0\n1,3\n2,6\n3,9\n4,12\n5,15\n6,18\n7,21\n8,24\n9,27\n10,30\n11,33\n12,36\n13,39\n\
+          14,42\n15,45\n16,48\n17,51\n18,54\n19,57\n20,60\n21,63\n22,66\n23,69\n24,72\n25,75\n26,78\n\
+          27,81\n28,84\n29,87\n30,90\n31,93\n32,96\n33,99\n34,102\n35,105\n36,108\n37,111\n38,114\n39,117\n\
+          40,120\n41,123\n42,126\n43,129\n44,132\n45,135\n46,138\n47,141\n48,144\n49,147\n50,150\n51,153\n\
+          52,156\n53,159\n54,162\n55,165\n56,168\n57,171\n58,174\n59,177\n60,180\n61,183\n62,186\n63,189\n\
+          64,192\n65,195\n66,198\n67,201\n68,204\n69,207\n70,210\n71,213\n72,216\n73,219\n74,222\n75,225\n\
+          76,228\n77,231\n78,234\n79,237\n80,240\n81,243\n82,246\n83,249\n84,252\n85,255\n86,258\n87,261\n\
+          88,264\n89,267\n90,270\n91,273\n92,276\n93,279\n94,282\n95,285\n96,288\n97,291\n98,294\n99,297\n\
+          100,300\n101,303\n102,306\n103,309\n104,312\n105,315\n106,318\n107,321\n108,324\n109,327\n110,330\n\
+          111,333\n112,336\n113,339\n114,342\n115,345\n116,348\n117,351\n118,354\n119,357\n"
+      "files":
+        "$df":
+          "repo_url":
+          - "https://github.com/owner/repo-inf"
+          - "https://github.com/owner/repo-inf"
+          "file_name":
+          - "a.csv"
+          - "b.csv"
+          "file_path":
+          - "a.csv"
+          - "sub/b.csv"
+          "file_url":
+          - "https://raw.githubusercontent.com/owner/repo-inf/main/a.csv"
+          - "https://raw.githubusercontent.com/owner/repo-inf/main/sub/b.csv"
+          "file_size":
+          - 817
+          - 817
+      "max_download_size":
+        "$expr":
+          "r": "Inf"
+          "py": "float('inf')"
 - "id": "invalid.file_category"
   "r": "do.call"
   "py": "tests.repo_download._parity_helpers.do_call"
@@ -1150,7 +1716,7 @@
   "r": "check_file_naming"
   "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
-    "file_name": &id005
+    "file_name": &id007
     - "~/data 1.csv"
     - "dir/"
     - "/"
@@ -1188,12 +1754,12 @@
     - "f13.csv"
     - "f14.csv"
     - "f15.csv"
-    "file_path": *id005
+    "file_path": *id007
 - "id": "file_category.generated_names"
   "r": "file_category"
   "py": "metacheck.fileinfo.category.file_category"
   "args":
-    "contents": &id006
+    "contents": &id008
     - " . pls"
     - " . tar"
     - " .Geojson"
@@ -2002,12 +2568,12 @@
   "r": "filetype"
   "py": "metacheck.fileinfo.category.filetype"
   "args":
-    "filename": *id006
+    "filename": *id008
 - "id": "check_file_naming.generated_names"
   "r": "check_file_naming"
   "py": "metacheck.fileinfo.naming.check_file_naming"
   "args":
-    "file_name": *id006
+    "file_name": *id008
     "data_type":
       "$chr":
       - "unknown"

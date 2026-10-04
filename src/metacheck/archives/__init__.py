@@ -41,6 +41,7 @@ _EXPORTS: dict[str, str] = {
     "osf_user_projects": "metacheck.archives.osf_helpers",
     "repo_info_cache": "metacheck.archives.info_cache",
     "repo_info_cache_clear": "metacheck.archives.info_cache",
+    "zip_peek_cache_clear": "metacheck.archives.zip_peek_cache",
 }
 
 __all__ = sorted(_EXPORTS)

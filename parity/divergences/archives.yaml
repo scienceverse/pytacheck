@@ -14,35 +14,6 @@
   kind: r_bug_fixed
   ref: U31
   reason: "each URL gets its own Dataverse host (metacheck's regmatches() realignment gives a host-less URL the next URL's host)"
-# U32
-"archives_d1/.dataverse_doi_prefix_hosts":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/.dataverse_doi_prefix_regex":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/.dataverse_host_from_doi.shapes":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/dataverse_links.problem_203020":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/dataverse_links.paperlist":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1/dataverse_links.test_paper":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
-"archives_d1_review/dataverse_links.review.generated_shapes":
-  kind: r_bug_fixed
-  ref: U32
-  reason: "Figshare's prefix 10.6084 is not a DataverseNO prefix, so Figshare DOIs are no longer Dataverse links"
 # U33
 "archives_d1/dryad_info.mock.id_col_name":
   kind: r_bug_fixed
@@ -383,15 +354,15 @@
 "repo_download/expand.gz":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U213)"
 "repo_download/expand.bz2":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U213)"
 "repo_download/expand.xz":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U213)"
 "repo_download/expand.gz_uncompressed":
   kind: r_bug_fixed
   ref: U69
@@ -400,6 +371,16 @@
   kind: r_bug_fixed
   ref: U69
   reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
+# U213
+"repo_download/expand.zip_mixed": &u208_member_type
+  kind: r_bug_fixed
+  ref: U213
+  reason: "each file from the archive takes its own extension's type (code, text, data), not the archive's (archive)"
+"repo_download/expand.zip_skip_code": *u208_member_type
+"repo_download/expand.zip_stimuli": *u208_member_type
+"repo_download/expand.zip_comment": *u208_member_type
+"repo_download/expand.zip_unicode": *u208_member_type
+"repo_download/expand.tar": *u208_member_type
 # U70
 "repo_download/zip_crc_ok.near_miss_large":
   kind: r_bug_fixed
@@ -411,22 +392,18 @@
   ref: U71
   reason: "without a size the whole member is inflated (zip::inflate() stops at 32768 bytes)"
 # U72
-"repo_download/zip_peek.nolength.zip":
-  kind: r_bug_fixed
-  ref: U72
-  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
 "repo_download_review/cd.emptyname":
   kind: r_bug_fixed
   ref: U72
-  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
+  reason: "an empty member name is '' (metacheck reads 2 bytes backwards)"
 "repo_download_review/cd.emptyname_last":
   kind: r_bug_fixed
   ref: U72
-  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
+  reason: "an empty member name is '' (metacheck reads 2 bytes backwards)"
 "repo_download_review/cd.bigoffset":
   kind: r_bug_fixed
   ref: U72
-  reason: "a HEAD answer without Content-Length peeks with a suffix range; an empty member name is '' (metacheck reads 2 bytes backwards)"
+  reason: "an empty member name is '' (metacheck reads 2 bytes backwards)"
 # U76
 "repo_download_review/peek.cp437.zip":
   kind: r_bug_fixed
@@ -536,6 +513,10 @@
   kind: r_bug_fixed
   ref: U69
   reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
+"mod_data_check/data_check.archives_default":
+  kind: r_bug_fixed
+  ref: U69
+  reason: "the file decompressed from a .gz has its real size (metacheck reads it before the last buffer is flushed: 0)"
 "mod_data_check/data_check.archives_skip_none":
   kind: r_bug_fixed
   ref: U69
@@ -549,3 +530,13 @@
   kind: r_bug_fixed
   ref: U76
   reason: "file names with bytes that are not valid UTF-8 are classified by their extension (R's grepl() is FALSE for invalid strings, so they were 'unknown')"
+# U210
+"repo_download_review/peek_cache.rate_limited_not_kept":
+  kind: r_bug_fixed
+  ref: U210
+  reason: "a peek that failed only because the host was rate-limited is not kept in the disk cache, so the next session lists the zip (metacheck keeps the failure for good)"
+# U209
+"archives_osf_review/osf_file_download.zip.budget_partial":
+  kind: r_bug_fixed
+  ref: U209
+  reason: "the files that fit in the zip-mode budget are downloaded and the rest reported (metacheck stops: its call to the renamed cap_report() fails)"

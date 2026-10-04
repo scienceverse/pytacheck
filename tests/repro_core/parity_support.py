@@ -228,7 +228,34 @@ def _namespace() -> types.SimpleNamespace:
         tmp=tmp,
         with_options=with_options,
         r_sorted=r_sorted,
+        archive_install=archive_install,
     )
+
+
+def archive_install(mode: str) -> Any:
+    """``_repro_cran_archive_install()`` with the Archive listing request mocked.
+
+    Twin of ``rc_archive_install()``: a 404, a server error, an unreachable
+    host, and a listing without tarballs. The install step is never reached.
+    """
+    from unittest import mock
+
+    import httpx
+
+    from metacheck.repro.core import _repro_cran_archive_install
+
+    def fake(method: str, url: str, **kwargs: Any) -> httpx.Response | None:
+        request = httpx.Request(method, url)
+        if mode == "not_found":
+            return httpx.Response(404, request=request)
+        if mode == "server_error":
+            return httpx.Response(503, request=request)
+        if mode == "unreachable":
+            return None
+        return httpx.Response(200, text="<html>\nnothing here\n</html>\n", request=request)
+
+    with mock.patch("metacheck.http.request", fake):
+        return _repro_cran_archive_install("somepkg", "/lib", "/lib")
 
 
 def with_options(values: dict[str, Any], fn: Callable[[], Any]) -> Any:

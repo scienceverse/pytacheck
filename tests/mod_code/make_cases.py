@@ -131,6 +131,11 @@ REVIEW_LOCAL_CASES: list[tuple[str, str, dict[str, Any]]] = [
     ("parse_errors", "upstream/metacheck/tests/testthat/fixtures/parse-errors", {}),
     ("pins", "tests/mod_code/fixtures/review/pins", {}),
     ("mixed_local_only", "tests/mod_code/fixtures/mixed", {"local_only": True}),
+    # empty code files (an empty __init__.py marks a Python package, issue #425)
+    ("empty_py", "tests/mod_code/fixtures/review/local_empty", {}),
+    # green needs the package versions recorded: an renv.lock beside the code
+    ("clean_pinned", "tests/mod_code/fixtures/review/local_clean", {}),
+    ("parse_error_pinned", "tests/mod_code/fixtures/review/local_parse_bad", {}),
 ]
 
 REVIEW_ERROR_CASES: list[tuple[str, str, dict[str, Any]]] = [

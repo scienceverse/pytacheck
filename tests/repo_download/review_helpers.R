@@ -7,11 +7,14 @@
 # and download_repo_files() run against real bytes on both sides:
 #
 #   routes: a list of list(url, fixture | body, status = 200, headers = list(),
-#           range = TRUE, length = TRUE, method = NULL)
+#           range = TRUE, length = TRUE, method = NULL, suffix = NULL)
 #
 # `fixture` is a file under tests/repo_download/data; `range` = FALSE ignores a
 # Range header (the whole body, with `status`); `length` = FALSE sends no
-# Content-Length on a HEAD. Unknown URLs get a 404.
+# Content-Length on a HEAD. `suffix` answers a suffix range ("bytes=-n"):
+# "206" honours it (the last n bytes; S3), "416" refuses one longer than the
+# file with "bytes */<size>" (GitHub), "ignore" sends the whole body with 200;
+# without it a suffix range is an error, as before. Unknown URLs get a 404.
 
 rv_dir <- file.path(root, "tests", "repo_download", "data")
 
@@ -63,6 +66,23 @@ rv_mock <- function(routes) {
     }
     rng <- req$headers$Range
     if (!is.null(rng) && !isFALSE(hit$range) && status == 200L) {
+      total <- length(body)
+      if (!is.null(hit$suffix) && grepl("^bytes=-[0-9]+$", rng)) {
+        n <- as.numeric(sub("^bytes=-", "", rng))
+        if (identical(hit$suffix, "ignore")) {
+          return(httr2::response(status_code = 200L, url = req$url, method = method,
+                                 headers = headers, body = body))
+        }
+        if (identical(hit$suffix, "416") && n > total) {
+          headers[["Content-Range"]] <- sprintf("bytes */%d", total)
+          return(httr2::response(status_code = 416L, url = req$url, method = method,
+                                 headers = headers, body = raw(0)))
+        }
+        from <- max(0, total - n)
+        headers[["Content-Range"]] <- sprintf("bytes %.0f-%.0f/%d", from, total - 1, total)
+        return(httr2::response(status_code = 206L, url = req$url, method = method,
+                               headers = headers, body = body[(from + 1):total]))
+      }
       m <- regmatches(rng, regexec("^bytes=([0-9]+)-([0-9]+)$", rng))[[1]]
       from <- as.numeric(m[2])
       to <- min(as.numeric(m[3]), length(body) - 1)
@@ -96,6 +116,38 @@ rv_serve <- function(routes, fn, ...) {
 
 rv_peek <- function(routes, url, ...) {
   rv_df_bytes(rv_serve(routes, zip_peek, url, ...))
+}
+
+rv_size <- function(routes, url) {
+  rv_serve(routes, metacheck:::.remote_size, url)
+}
+
+# zip_peek(cache = TRUE) twice, the in-memory cache cleared in between (a new
+# session): `first` answers the first peek, `second` the second, and the disk
+# cache sits in a fresh temporary folder. `rate_limited` records a long rate
+# limit for the host before the first peek (made with skip_on_api_limit =
+# TRUE) and forgets it after.
+rv_peek_cached <- function(first, second, url, rate_limited = FALSE, ...) {
+  d <- tempfile("rv_zpc_")
+  dir.create(d)
+  old <- options(metacheck.zip_peek_cache.dir = d)
+  host <- httr2::url_parse(url)$hostname
+  forget <- function() {
+    suppressWarnings(rm(list = host, envir = metacheck:::.host_rate_limit_cache))
+  }
+  on.exit({
+    forget()
+    options(old)
+    unlink(d, recursive = TRUE)
+  })
+  if (isTRUE(rate_limited)) metacheck:::.host_rate_limit_record(host, 999)
+  one <- rv_serve(first, zip_peek, url, cache = TRUE,
+                  skip_on_api_limit = isTRUE(rate_limited), ...)
+  forget()
+  stored <- metacheck:::.zip_peek_cache_has(url)
+  two <- rv_serve(second, zip_peek, url, cache = TRUE, ...)
+  list(first = rv_df_bytes(one), stored = stored, second = rv_df_bytes(two),
+       entries = length(list.files(d)))
 }
 
 rv_decision <- function(routes, url, ...) {
@@ -164,6 +216,40 @@ rv_download <- function(routes, files, twice = FALSE, disk = TRUE, ...) {
     out$sizes <- unname(file.size(file.path(sess, on_disk)))
   }
   out
+}
+
+# download_repo_files() with its two transports replaced by recorders: which
+# archive is requested (and with what byte limit), and which files are then
+# fetched one by one. httr2's mocked responses are not streamed to a file, so
+# the real transports cannot finish in R; this keeps the routing comparable.
+rv_download_spy <- function(routes, files, ...) {
+  ns <- asNamespace("metacheck")
+  zips <- list()
+  ones <- character(0)
+  real_zip <- get(".download_zip_to_cache", envir = ns)
+  real_one <- get(".download_one", envir = ns)
+  spy_zip <- function(files, row_idx, zip_url, strip_dir, req_func, timeout_s,
+                      max_bytes = Inf, skip_on_api_limit = FALSE,
+                      expected_bytes = NA_real_) {
+    zips[[length(zips) + 1]] <<- list(zip_url = zip_url, rows = length(row_idx),
+                                      strip_dir = strip_dir, max_bytes = max_bytes,
+                                      expected_bytes = expected_bytes)
+    files
+  }
+  spy_one <- function(url, dest, skip_on_api_limit = FALSE, expected_bytes = NA_real_) {
+    ones <<- c(ones, url)
+    dir.create(dirname(dest), showWarnings = FALSE, recursive = TRUE)
+    writeBin(as.raw(1), dest)
+    NA_character_
+  }
+  utils::assignInNamespace(".download_zip_to_cache", spy_zip, "metacheck")
+  utils::assignInNamespace(".download_one", spy_one, "metacheck")
+  on.exit({
+    utils::assignInNamespace(".download_zip_to_cache", real_zip, "metacheck")
+    utils::assignInNamespace(".download_one", real_one, "metacheck")
+  })
+  out <- rv_download(routes, files, disk = FALSE, ...)
+  c(list(zips = zips, downloaded = ones), out)
 }
 
 rv_expand <- function(fn, fixture, skip_types = "materials") {

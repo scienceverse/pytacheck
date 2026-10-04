@@ -5,11 +5,12 @@
 "decision.cp437.zip": {"r": "ac5146cf65ca52a8", "py": "e7190d25adc37929", "diff": ["<R error, Python value>"]},
 "expand.abslink.tar.gz": {"r": "dd2c5cd73d6d8d27", "py": "5751ece53bf13260", "diff": ["<root>"]},
 "expand.cp437.zip": {"r": "ac5146cf65ca52a8", "py": "a9271e27e0150e27", "diff": ["<R error, Python value>"]},
-"fetch.cp437_all": {"r": "ac5146cf65ca52a8", "py": "1a898e922b838066", "diff": ["<R error, Python value>"]},
+"fetch.cp437_all": {"r": "ac5146cf65ca52a8", "py": "f6e90c53ff74c5ff", "diff": ["<R error, Python value>"]},
 "invalid.check_file_naming": {"r": "ac5146cf65ca52a8", "py": "d09467717014d431", "diff": ["<R error, Python value>"]},
 "invalid.check_file_naming_path": {"r": "ac5146cf65ca52a8", "py": "4ddb4503aeb7ede3", "diff": ["<R error, Python value>"]},
 "invalid.file_category": {"r": "694a81b306aba2c0", "py": "ee1dbb8f583cd3d6", "diff": ["file_category[]", "filetype[]"]},
 "invalid.filetype": {"r": "a1a9351313dfbed0", "py": "e3b13884b0f99b93", "diff": ["[]"]},
 "invalid.is_readable_archive": {"r": "b5180bac7dcb6876", "py": "3ad7922bd1e6941c", "diff": ["[]"]},
-"peek.cp437.zip": {"r": "4829b9ed26630dbf", "py": "501f1a91388def2c", "diff": ["<root>"]}
+"peek.cp437.zip": {"r": "4829b9ed26630dbf", "py": "501f1a91388def2c", "diff": ["<root>"]},
+"peek_cache.rate_limited_not_kept": {"r": "51f37d9c0c25c9f0", "py": "ee3ceb10000b1b60", "diff": ["second", "stored[]"]}
 }

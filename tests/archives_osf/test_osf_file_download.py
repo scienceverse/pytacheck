@@ -284,9 +284,8 @@ def zip_project(monkeypatch: pytest.MonkeyPatch):  # type: ignore[no-untyped-def
         monkeypatch.setattr(osf, "osf_type", lambda *a, **k: "nodes")
         router = respx.mock(assert_all_called=False)
         url = f"https://files.osf.io/v1/resources/{node}/providers/osfstorage/?zip="
-        router.head(url).mock(
-            return_value=httpx.Response(200, headers={"content-length": str(len(archive))})
-        )
+        # no size request is made first: the OSF never reports an archive's
+        # size, so it is estimated from the listing (metacheck #424)
         router.get(url).mock(return_value=httpx.Response(200, content=archive))
         return router
 
@@ -365,3 +364,130 @@ def test_zip_unzip_can_flatten(zip_project, tmp_path: Path) -> None:  # type: ig
     assert (tmp_path / "abcde" / "README").exists()
     assert (tmp_path / "abcde" / "file2-README").exists()
     assert os.path.getsize(tmp_path / "abcde" / "README") == len(files["README"])
+
+
+# -- mode = "zip" with a budget (metacheck #424) -------------------------------
+
+
+def _budget_contents(sizes: list[float | None]) -> pd.DataFrame:
+    names = [f"{c}.csv" for c in "abcdefgh"[: len(sizes)]]
+    n = len(sizes)
+    return pd.DataFrame(
+        {
+            "osf_type": ["files"] * n + ["nodes"],
+            "osf_id": [f"file{i + 1}" for i in range(n)] + ["child1"],
+            "name": [*names, "Data"],
+            "provider": ["osfstorage"] * n + [None],
+            "path": [f"/{x}" for x in names] + [None],
+            "kind": ["file"] * n + ["folder"],
+            "size": [float("nan") if s is None else float(s) for s in sizes] + [float("nan")],
+            "download_url": [f"https://example.test/{x}" for x in names] + [None],
+            "parent": ["child1"] * n + ["abcde"],
+            "project": ["child1"] * n + ["abcde"],
+            "filetype": ["csv"] * n + [None],
+            "downloads": [1.0] * n + [float("nan")],
+        }
+    )
+
+
+@pytest.fixture
+def budget_project(monkeypatch: pytest.MonkeyPatch):  # type: ignore[no-untyped-def]
+    from metacheck.archives import download
+
+    fetched: list[str] = []
+
+    def many(urls, dests, expected=None, **kw):  # type: ignore[no-untyped-def]
+        fetched.extend(urls)
+        for dest, s in zip(dests, expected, strict=True):
+            Path(dest).parent.mkdir(parents=True, exist_ok=True)
+            Path(dest).write_bytes(bytes(1 if s != s else int(s)))
+        return [None] * len(urls)
+
+    def setup(contents: pd.DataFrame) -> list[str]:
+        monkeypatch.setattr(osf, "osf_info", lambda *a, **k: contents)
+        monkeypatch.setattr(osf, "osf_type", lambda *a, **k: "nodes")
+        monkeypatch.setattr(download, "_download_many_parallel", many)
+        return fetched
+
+    return setup
+
+
+def test_zip_node_over_budget_is_fetched_file_by_file_within_it(  # type: ignore[no-untyped-def]
+    budget_project, tmp_path: Path
+) -> None:
+    # 130 listed bytes do not fit in 50: no archive is requested; a.csv and
+    # b.csv (30 bytes) fit, c.csv does not and is not attempted. metacheck
+    # stops here instead (its cap_report() call was not renamed): U209
+    fetched = budget_project(_budget_contents([10, 20, 100]))
+    with respx.mock(assert_all_mocked=True), pytest.warns(UserWarning, match="did not fit"):
+        dl = osf_file_download(
+            "abcde", str(tmp_path), mode="zip", max_download_size=50 / 1024**2, metadata=False
+        )
+    assert sorted(fetched) == ["https://example.test/a.csv", "https://example.test/b.csv"]
+    by_id = dl.set_index("osf_id")
+    assert by_id.loc[["file1", "file2", "file3"], "downloaded"].tolist() == [True, True, False]
+    assert by_id.loc[["file1", "file2", "file3"], "attempted"].tolist() == [True, True, False]
+
+
+def test_zip_budget_leaves_out_files_without_a_size(  # type: ignore[no-untyped-def]
+    budget_project, tmp_path: Path
+) -> None:
+    # the node's 110 listed bytes do not fit in 50; of the files, only a.csv
+    # does (b.csv has no listed size, so it cannot be counted against the limit)
+    fetched = budget_project(_budget_contents([10, None, 100]))
+    with respx.mock(assert_all_mocked=True), pytest.warns(UserWarning, match="2 files"):
+        dl = osf_file_download(
+            "abcde", str(tmp_path), mode="zip", max_download_size=50 / 1024**2, metadata=False
+        )
+    assert fetched == ["https://example.test/a.csv"]
+    attempted = dl.set_index("osf_id").loc[["file1", "file2", "file3"], "attempted"]
+    assert attempted.tolist() == [True, False, False]
+
+
+def test_zip_archive_past_the_budget_is_stopped_and_removed(  # type: ignore[no-untyped-def]
+    budget_project, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # 30 listed bytes fit in 100, but the archive streams 500 (no
+    # Content-Length): it is stopped at the limit, nothing is left on disk, and
+    # the files come one by one
+    fetched = budget_project(_budget_contents([10, 20]))
+    body = b"PK" + b"\0" * 498
+
+    def chunks() -> Iterator[bytes]:
+        for i in range(0, len(body), 50):
+            yield body[i : i + 50]
+
+    with respx.mock(assert_all_mocked=True) as router:
+        route = router.get(url__regex=r"\?zip=$").mock(
+            side_effect=lambda req: httpx.Response(200, content=chunks())
+        )
+        dl = osf_file_download(
+            "abcde", str(tmp_path), mode="zip", max_download_size=100 / 1024**2, metadata=False
+        )
+    assert route.call_count == 1  # a stopped transfer is not retried
+    assert "the archive grew past the" in capsys.readouterr().err
+    assert not (tmp_path / "abcde" / "child1.zip").exists()
+    assert sorted(fetched) == ["https://example.test/a.csv", "https://example.test/b.csv"]
+    assert dl["downloaded"].tolist() == [True, True]
+
+
+def test_osf_download_zip_removes_an_error_page(tmp_path: Path) -> None:
+    dest = tmp_path / "n.zip"
+    with respx.mock(assert_all_mocked=True) as router:
+        router.get("https://example.test/z").mock(return_value=httpx.Response(404, text="no"))
+        with pytest.raises(RuntimeError, match="HTTP 404"):
+            osf._osf_download_zip("https://example.test/z", str(dest))
+    assert not dest.exists()
+
+
+def test_stream_to_file_refuses_a_declared_length_over_the_limit(tmp_path: Path) -> None:
+    dest = tmp_path / "n.zip"
+    with respx.mock(assert_all_mocked=True) as router:
+        router.get("https://example.test/z").mock(
+            return_value=httpx.Response(200, content=b"x" * 10)
+        )
+        with pytest.raises(osf._MaxFileSizeExceeded):
+            osf._stream_to_file("https://example.test/z", str(dest), max_bytes=9)
+        assert not dest.exists()
+        assert osf._stream_to_file("https://example.test/z", str(dest), max_bytes=10) == 200
+    assert dest.read_bytes() == b"x" * 10

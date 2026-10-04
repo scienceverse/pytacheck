@@ -47,9 +47,8 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository)
       && vars.CI_RUNNER || 'ubuntu-latest' }}
     container: ubuntu:noble-20260911@sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffbb1bf33ca3 # the goldens' glibc (see the header)
-    # 30-40 minutes usually, but `parity generate` runs the areas one at a time
-    # and on a busy runner the job has taken just over 60 minutes with every
-    # step passing
+    # `parity generate --jobs 0` runs one R session per CPU; one at a time the
+    # areas took 30-40 minutes, and just over 60 on a busy runner
     timeout-minutes: 120
     env:
       UV_PYTHON_PREFERENCE: only-managed # as in ci.yml
@@ -112,7 +111,7 @@ jobs:
         shell: bash
 
       - name: Regenerate all goldens
-        run: uv run python -m parity generate
+        run: uv run python -m parity generate --jobs 0
 
       - name: Regenerate the accuracy report's R outputs, and score them
         run: >-

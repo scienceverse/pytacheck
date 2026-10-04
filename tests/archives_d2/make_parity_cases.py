@@ -54,9 +54,16 @@ def py_list(values: list[Any]) -> str:
 
 
 def fn_case(
-    id_: str, r: str, py: str, args: dict[str, Any], compare: dict[str, Any] | None = None
+    id_: str,
+    r: str,
+    py: str,
+    args: dict[str, Any],
+    compare: dict[str, Any] | None = None,
+    mock: str | None = None,
 ) -> None:
     c: dict[str, Any] = {"id": id_, "r": r, "py": py, "args": args}
+    if mock:
+        c["mock_dir"] = mock
     if compare:
         c["compare"] = compare
     cases.append(c)
@@ -135,11 +142,15 @@ def links_cases(name: str, module: str, text: list[str], url: list[str]) -> None
         compare=IGNORE_PID,
     )
     fn_case(f"{name}.demo", name, f"{PKG}.{module}.{name}", {"paper": {"$paper": "demo"}})
+    # dspace7_links() follows each DOI mention's doi.org redirect: replay
+    # metacheck's own recorded responses (a corpus input) so neither side goes
+    # online and an unrecorded DOI resolves to nothing on both
     fn_case(
         f"{name}.psychsci",
         name,
         f"{PKG}.{module}.{name}",
         {"paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci"]}},
+        mock="apis" if name == "dspace7_links" else None,
     )
 
 
@@ -300,12 +311,64 @@ for pid, host, label in [
     ("doi:10.5063/NOTEML", "knb.ecoinformatics.org", "not_eml"),
     ("doi:10.5063/BROKEN", "knb.ecoinformatics.org", "not_xml"),
     ("doi:10.18739/MISSING", "arcticdata.io", "unfound"),
+    ("doi:10.5063/NOPHYS", "knb.ecoinformatics.org", "no_physical"),
+    ("knb.1404.1", "knb.ecoinformatics.org", "knb_docid"),
 ]:
     expr_case(
         f".dataone_info.mock.{label}",
         f"metacheck:::.dataone_info({rq(pid)}, host = {rq(host)})",
         f"lambda m: m.dataone._dataone_info({rq(pid)}, host={rq(host)})",
     )
+# KNB's #view/ and catalog/view/ URL shapes and a bare legacy docid (metacheck #435)
+KNB_URLS = [
+    "https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87",
+    "https://knb.ecoinformatics.org/catalog/view/doi:10.5063/F1Z60M87",
+    "knb.1404.1",
+    " knb.1404.1 ",
+    "KNB.1404.1",
+    "knb.1404",
+    "see knb.1404.1 here",
+    "https://knb.ecoinformatics.org/view/knb.1404.1",
+]
+for fn in ("host", "pid"):
+    fn_case(
+        f".dataone_{fn}.knb",
+        f"metacheck:::.dataone_{fn}",
+        f"{PKG}.dataone._dataone_{fn}",
+        {"dataone_url": {"$expr": {"r": r_chr(KNB_URLS), "py": py_list(KNB_URLS)}}},
+    )
+expr_case(
+    "dataone_links.knb",
+    "dataone_links("
+    + tp_r(
+        [
+            "KNB: https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87 and the "
+            "legacy package knb.1404.1.",
+            "Also knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD, not knb.1404 "
+            "or xknb.1.2y, and KNB.77.3.",
+        ],
+        ["https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87/"],
+    )
+    + ")",
+    "lambda m: m.dataone.dataone_links("
+    + tp_py(
+        [
+            "KNB: https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87 and the "
+            "legacy package knb.1404.1.",
+            "Also knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD, not knb.1404 "
+            "or xknb.1.2y, and KNB.77.3.",
+        ],
+        ["https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87/"],
+    )
+    + ")",
+    mock=None,
+    compare=IGNORE_PID,
+)
+expr_case(
+    "dataone_info.mock.knb",
+    online('dataone_info(c("knb.1404.1", "https://doi.org/10.5063/NOPHYS"))'),
+    'lambda m: m.dataone.dataone_info(["knb.1404.1", "https://doi.org/10.5063/NOPHYS"])',
+)
 
 # ================================================================= DSpace 7
 GT = "bac086e5-c606-474b-af1e-4a6122694af5"
@@ -336,6 +399,23 @@ links_cases(
         "https://open.fau.de/handle/1/2",
         "https://osf.io/abcde",
     ],
+)
+# DOI mentions are resolved through doi.org and kept only when they land on a
+# DSpace 7 host (metacheck #435): unrecorded here, so none is kept
+DS7_DOI_TEXT = [
+    "Data: https://doi.org/10.35090/gatech/67239 and doi:10.7275/abcd-1234.",
+    "Also repository.gatech.edu/handle/1853/67239 and 10.35090/gatech/67239 again.",
+]
+expr_case(
+    "dspace7_links.mock.doi_mentions",
+    f"dspace7_links({tp_r(DS7_DOI_TEXT, ['https://dx.doi.org/10.7275/xyz'])})",
+    f"lambda m: m.dspace7.dspace7_links({tp_py(DS7_DOI_TEXT, ['https://dx.doi.org/10.7275/xyz'])})",
+    compare=IGNORE_PID,
+)
+expr_case(
+    ".dspace7_resolve_doi_url.mock.unresolved",
+    'metacheck:::.dspace7_resolve_doi_url("10.35090/gatech/67239")',
+    'lambda m: m.dspace7._dspace7_resolve_doi_url("10.35090/gatech/67239")',
 )
 for label, args_r, args_py in [
     ("uuid", f"uuid = {rq(GT)}", f"uuid={rq(GT)}"),
@@ -441,6 +521,22 @@ expr_case(
     "researchdata4tu_info.mock.vector",
     online(f"researchdata4tu_info({r_chr(T4_VEC)})"),
     f"lambda m: m.fourtu.researchdata4tu_info({py_list(T4_VEC)})",
+)
+# a uuid is resolved to the numeric id through doi.org (metacheck #431); the
+# redirect is unrecorded here, so both sides keep the uuid and query it as is
+expr_case(
+    ".researchdata4tu_resolve_uuid.unresolved",
+    'metacheck:::.researchdata4tu_resolve_uuid("ce413614-1c82-4e81-90c0-323aa7d2fabd")',
+    'lambda m: m.fourtu._researchdata4tu_resolve_uuid("ce413614-1c82-4e81-90c0-323aa7d2fabd")',
+)
+expr_case(
+    "researchdata4tu_info.mock.uuid_doi",
+    online(
+        'researchdata4tu_info(c("https://doi.org/10.4121/uuid:ce413614-1c82-4e81-90c0-323aa7d2fabd", '
+        '"16766929"))'
+    ),
+    "lambda m: m.fourtu.researchdata4tu_info(["
+    '"https://doi.org/10.4121/uuid:ce413614-1c82-4e81-90c0-323aa7d2fabd", "16766929"])',
 )
 expr_case(
     "researchdata4tu_info.mock.links_table",

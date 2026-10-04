@@ -327,14 +327,17 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         "skip_types": "an optional character vector of `data_type`s never to\n"
         'download even under `download = "all"`.',
         "peek_zips": "if TRUE, look inside each `.zip` (via an HTTP range request)\n"
-        "and only fetch zips that contain actual data or a codebook.",
+        "and only fetch zips that contain actual data or a codebook. A\n"
+        "downloaded zip is also unpacked, and its files are classified and\n"
+        "listed as their own rows. On by default.",
         "max_file_size": "largest single file to download, in MB (default 100).",
         "max_download_size": "largest total download per repository, in MB (default 500).",
         "max_files_per_repo": "largest file COUNT a single repository may have\n"
         "before it is refused outright (default `Inf`, no cap).",
         "cache": "if `TRUE`, keep downloaded files in a persistent on-disk cache.",
         "skip_on_api_limit": "if `TRUE`, a 429 that carries a confirmed\n"
-        "rate-limit-exhausted signal skips that file instead of waiting.",
+        "rate-limit-exhausted signal skips that file instead of waiting. Also\n"
+        "forwarded to `repo_check` and to the zip-peeking step (`peek_zips`).",
         "manifest": "optional path to write a per-paper file manifest as JSON.",
         "plot_distributions": "if TRUE, draw a distribution plot for each numeric\n"
         "column and embed it in the report.",
@@ -357,7 +360,7 @@ def data_check(
     local_only: bool = False,
     download: Any = "data",
     skip_types: Sequence[str] | str | None = None,
-    peek_zips: bool = False,
+    peek_zips: bool = True,
     max_file_size: float = 100,
     max_download_size: float = 500,
     max_files_per_repo: float = math.inf,
@@ -430,7 +433,14 @@ def data_check(
         rc_args: dict[str, Any] = {}
         if local_path is not None:
             rc_args["local_path"] = local_path
-        mo = module_run(paper, "repo_check", **rc_args, local_only=local_only, cache=cache)
+        mo = module_run(
+            paper,
+            "repo_check",
+            **rc_args,
+            local_only=local_only,
+            cache=cache,
+            skip_on_api_limit=skip_on_api_limit,
+        )
         all_files = mo.table
         if all_files is None:
             all_files = pd.DataFrame(
@@ -919,7 +929,10 @@ def _download(
             if not z:
                 continue
             d = zip_decision(
-                file_url[i], skip_types=skip_types if skip_types is not None else "materials"
+                file_url[i],
+                skip_types=skip_types if skip_types is not None else "materials",
+                cache=cache,
+                skip_on_api_limit=skip_on_api_limit,
             )
             if h._is_false(d.get("worth")):
                 want[i] = False

@@ -220,13 +220,23 @@ dc_mock_llm <- function(spec) {
 
 # module_run(<test paper p1>, "data_check", local_path = <fixture dir>): the
 # real pipeline, with repo_check listing the directory.
-dc_run_local <- function(dir, ...) {
+dc_run_local <- function(dir, ..., copy = NULL) {
   p <- test_paper("Some text.")
   p$paper_id <- "p1"
   .dc_careless_off()
+  src <- file.path(dc_fixtures, "repos", dir)
+  # archives are unpacked beside themselves: work on a copy at a fixed relative
+  # path, so that the repository URL (and the report) is the same on every run;
+  # `copy` names the case's own folder
+  if (!is.null(copy)) {
+    work <- file.path("parity", "_out", "dc_local_copy", copy)
+    unlink(work, recursive = TRUE)
+    dir.create(work, recursive = TRUE)
+    file.copy(src, work, recursive = TRUE)
+    src <- file.path(work, basename(src))
+  }
   mo <- suppressWarnings(withr::with_options(list(metacheck.llm.use = FALSE),
-    module_run(p, "data_check", local_path = file.path(dc_fixtures, "repos", dir),
-               local_only = TRUE, ...)))
+    module_run(p, "data_check", local_path = src, local_only = TRUE, ...)))
   .dc_norm_paths(mo)
 }
 

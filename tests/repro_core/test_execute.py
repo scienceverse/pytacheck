@@ -379,10 +379,10 @@ def test_install_deps_failure_is_classified(
     assert out["installed"].tolist() == [False, False]
     assert out["message"].iloc[0] == (
         "package 'nopkg' is not available for this version of R "
-        "(CRAN Archive retry also failed: could not reach the CRAN Archive listing)"
+        "(CRAN Archive retry also failed: package not found in the CRAN Archive)"
     )
-    # "could not reach" (the Archive retry) reads as a network failure, as in R
-    assert out["category"].tolist() == ["network", "cran_unavailable"]
+    # a 404 on the Archive listing is "not found", not a network problem (issue #421)
+    assert out["category"].tolist() == ["cran_unavailable", "cran_unavailable"]
     assert out["via_archive"].tolist() == [False, False]
 
 
@@ -466,3 +466,104 @@ def test_install_deps_main_library_archive_target(
     assert seen["install_lib"] == "/main/lib"
     assert out["message"].tolist() == ["boom (CRAN Archive retry also failed: still boom)"]
     assert out["category"].tolist() == ["other"]
+
+
+# a package that is not on CRAN (issue #421) -------------------------------------------
+
+
+def test_install_deps_unavailable_package_is_reported_as_unavailable(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """install.packages() only warns for a name it cannot find: that warning is the reason."""
+    warn = "package 'list.packages' is not available for this version of R"
+
+    def fake_install_r(mode: str, lib_dir: str, **values: Any) -> dict[str, Any]:
+        if mode == "install":
+            return {"ok": False, "msg": "", "not_loadable": True, "warnings": ["other", warn]}
+        raise AssertionError(mode)
+
+    monkeypatch.setattr(core, "_install_r", fake_install_r)
+    with respx.mock() as router:
+        router.get("https://cran.r-project.org/src/contrib/Archive/list.packages/").mock(
+            return_value=httpx.Response(404)
+        )
+        out = repro_install_deps(
+            pd.DataFrame({"package": ["list.packages"], "source": ["cran"], "ref": [None]}),
+            tmp_path / "lib",
+        )
+    assert out["message"].tolist() == [
+        f"{warn} (CRAN Archive retry also failed: package not found in the CRAN Archive)"
+    ]
+    assert out["category"].tolist() == ["cran_unavailable"]
+
+
+def test_install_deps_not_loadable_without_a_warning_keeps_the_old_wording(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    def fake_install_r(mode: str, lib_dir: str, **values: Any) -> dict[str, Any]:
+        return {"ok": False, "msg": "", "not_loadable": True}
+
+    monkeypatch.setattr(core, "_install_r", fake_install_r)
+    with respx.mock() as router:
+        router.get("https://cran.r-project.org/src/contrib/Archive/p/").mock(
+            return_value=httpx.Response(503)
+        )
+        out = repro_install_deps(
+            pd.DataFrame({"package": ["p"], "source": ["cran"], "ref": [None]}), tmp_path / "lib"
+        )
+    assert out["message"].tolist() == [
+        "installed but package 'p' is not loadable "
+        "(CRAN Archive retry also failed: could not reach the CRAN Archive listing)"
+    ]
+    assert out["category"].tolist() == ["network"]
+
+
+@pytest.mark.parametrize(
+    ("response", "msg"),
+    [
+        (httpx.Response(404), "package not found in the CRAN Archive"),
+        (httpx.Response(503), "could not reach the CRAN Archive listing"),
+        (httpx.ConnectError("no route"), "could not reach the CRAN Archive listing"),
+    ],
+    ids=["404", "503", "unreachable"],
+)
+def test_cran_archive_listing_failures(
+    monkeypatch: pytest.MonkeyPatch, response: Any, msg: str
+) -> None:
+    # a 404 means the Archive has no folder for the package (never archived, or not a
+    # CRAN package at all), not that CRAN was unreachable
+    monkeypatch.setattr(core, "_install_r", lambda *a, **k: {"ok": True})
+    with respx.mock() as router:
+        route = router.get("https://cran.r-project.org/src/contrib/Archive/zzz/")
+        if isinstance(response, Exception):
+            route.mock(side_effect=response)
+        else:
+            route.mock(return_value=response)
+        res = core._repro_cran_archive_install("zzz", "/lib", "/lib")
+    assert res == {"ok": False, "msg": msg, "version": None}
+
+
+def test_install_r_reports_an_unavailable_package_with_its_warning(
+    rscript: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Real R, against an empty local CRAN-like repository: no network needed."""
+    repo = tmp_path / "repo" / "src" / "contrib"
+    repo.mkdir(parents=True)
+    (repo / "PACKAGES").write_text("")
+    profile = tmp_path / "Rprofile"
+    # a file URL and forward slashes, so a Windows path is not read as R escapes;
+    # source packages, as Windows R otherwise looks for binaries the repository lacks
+    profile.write_text(
+        f'options(repos = c(CRAN = "{(tmp_path / "repo").as_uri()}"), pkgType = "source")\n'
+    )
+    monkeypatch.setenv("R_PROFILE_USER", str(profile))
+    res = core._install_r(
+        "install", str(tmp_path / "lib"), pkg="zzznotapackagezzz", src="cran", ref=None,
+        cran_to_main_lib=False,
+    )  # fmt: skip
+    assert res["ok"] is False
+    assert res["not_loadable"] is True
+    assert any("is not available" in w for w in res["warnings"]), res
+    msg = core._repro_not_loadable_msg("zzznotapackagezzz", res["warnings"])
+    assert "zzznotapackagezzz" in msg and "is not available" in msg
+    assert core._repro_classify_install_message(msg) == "cran_unavailable"

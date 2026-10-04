@@ -182,13 +182,15 @@ DATAVERSE_HOSTS: tuple[str, ...] = (
 )
 
 #: R ``.dataverse_doi_prefix_hosts()``: host -> DOI prefixes individually
-#: verified to belong to that installation (87 of the 121 hosts), in R's order.
-#: A prefix shared by several hosts resolves to the first one listed.
+#: verified to belong to that installation, in R's order. A DOI under a prefix
+#: shared by several hosts is resolved through doi.org (_dataverse_host_from_doi()).
 DATAVERSE_DOI_PREFIX_HOSTS: dict[str, tuple[str, ...]] = {
     "agh.rodbuk.pl": ("10.58032",),
     "akf.rodbuk.pl": ("10.58145",),
     "arcadados.fiocruz.br": ("10.35078",),
     "archaeology.datastations.nl": ("10.17026",),
+    # shared with the three other DANS Data Stations (see _dataverse_host_from_doi())
+    "phys-techsciences.datastations.nl": ("10.17026",),
     "archivdv.soc.cas.cz": ("10.14473",),
     "borealisdata.ca": ("10.14285", "10.23685", "10.34990", "10.5203", "10.5683", "10.7939"),
     "danebadawcze.uw.edu.pl": ("10.58132",),
@@ -228,8 +230,6 @@ DATAVERSE_DOI_PREFIX_HOSTS: dict[str, tuple[str, ...]] = {
     "dataverse.lib.unb.ca": ("10.25545",),
     "dataverse.lib.virginia.edu": ("10.18130",),
     "dataverse.nl": ("10.34894",),
-    # metacheck also lists 10.6084, Figshare's prefix, which made every Figshare
-    # DOI a DataverseNO dataset (U32)
     "dataverse.no": ("10.18710", "10.23642"),
     "dataverse.openforestdata.pl": ("10.48370",),
     "dataverse.orc.gmu.edu": ("10.13021",),
@@ -927,7 +927,9 @@ def _download_file_table(
     ``self``. Applies the size caps (a zip named in *unzip_types* is exempt),
     creates the target folder, extracts wanted zip members or downloads each
     file, copies files under their names, verifies them and warns about any
-    that did not arrive. Returns the verified table and the folder.
+    that did not arrive. Returns the verified table and the folder; the table's
+    ``attrs["failed"]`` lists the zip members that could not be extracted
+    (``key``, ``member``, ``error``; metacheck #429's ``attr(, "failed")``).
 
     Files omitted by the size caps stay in the table with ``downloaded =
     False``, as metacheck documents (its code drops them: U36); when every
@@ -1005,6 +1007,7 @@ def _download_file_table(
         ids = [None if is_na(v) else str(v) for v in files["id"].tolist()]
         selfs = [None if is_na(v) else str(v) for v in files["self"].tolist()]
         n_wanted = n - sum(omitted)
+        failed_rows: list[tuple[str | None, str | None, str | None]] = []
         k = 0
         for i in range(n):
             if omitted[i]:
@@ -1029,6 +1032,12 @@ def _download_file_table(
                         pb,
                         f"- extracted {extracted[i]} file{plural(extracted[i])} from {_paste(keys[i])}",
                     )
+                    # a member that failed left a row with ok = FALSE: say why,
+                    # so a passing failure can be told from a lasting one
+                    bad = _failed_members(got)
+                    failed_rows.extend((keys[i], name, why) for name, why in bad)
+                    for name, why in bad:
+                        _tick(pb, f"  - failed to extract {_paste(name)}: {_paste(why)}")
                     continue
                 _tick(
                     pb,
@@ -1081,6 +1090,7 @@ def _download_file_table(
 
     # --- verify what actually reached the disk ----
     files = verify(files, download_to)
+    files.attrs["failed"] = _failed_frame(failed_rows)
 
     missing = [
         not bool(v) and not o for v, o in zip(files["downloaded"].tolist(), omitted, strict=True)
@@ -1098,10 +1108,58 @@ def _download_file_table(
     return files, download_to
 
 
+def _failed_members(got: pd.DataFrame) -> list[tuple[str | None, str | None]]:
+    """``got[!(got$ok %in% TRUE), ]``: (name, error) of the members that failed."""
+    n = len(got)
+    oks = got["ok"].tolist() if "ok" in got else [None] * n
+    names = got["name"].tolist() if "name" in got else [None] * n
+    errors = got["error"].tolist() if "error" in got else ["unknown failure"] * n
+    return [
+        (None if is_na(nm) else str(nm), None if is_na(e) else str(e))
+        for nm, ok, e in zip(names, oks, errors, strict=True)
+        if not _is_true(ok)
+    ]
+
+
+def _failed_frame(rows: Sequence[tuple[str | None, str | None, str | None]]) -> pd.DataFrame:
+    """The ``failed`` table of the ``*_file_download()`` functions (key, member, error)."""
+    return pd.DataFrame(
+        {
+            "key": _string_series([r[0] for r in rows]),
+            "member": _string_series([r[1] for r in rows]),
+            "error": _string_series([r[2] for r in rows]),
+        }
+    )
+
+
+def _bind_downloads(frames: Sequence[pd.DataFrame]) -> pd.DataFrame:
+    """``dplyr::bind_rows()`` of several ``*_file_download()`` tables.
+
+    dplyr keeps the first table's attributes (so its ``failed`` table); pandas
+    would instead compare every frame's ``attrs``, which fails for a DataFrame
+    value.
+    """
+    from metacheck._r import bind_rows
+
+    first = dict(frames[0].attrs)
+    stripped = []
+    for f in frames:
+        f = f.copy()
+        f.attrs = {}
+        stripped.append(f)
+    out = bind_rows(stripped)
+    out.attrs = first
+    return out
+
+
 def _finish_file_table(
     files: pd.DataFrame, download_to: str | None, ids: dict[str, Any], columns: Sequence[str]
 ) -> pd.DataFrame:
-    """``files$folder <- basename(download_to)``, the id columns, then R's column order."""
+    """``files$folder <- basename(download_to)``, the id columns, then R's column order.
+
+    Keeps ``attrs["failed"]`` (R sets ``attr(files, "failed")`` after this).
+    """
+    failed = files.attrs.get("failed")
     files = files.copy()
     n = len(files)
     folder = None if download_to is None else download_to.rstrip("/").rpartition("/")[2]
@@ -1112,7 +1170,10 @@ def _finish_file_table(
             if value is None or isinstance(value, str)
             else pd.Series([value] * n)
         )
-    return files.loc[:, list(columns)].reset_index(drop=True)
+    out = files.loc[:, list(columns)].reset_index(drop=True)
+    if failed is not None:
+        out.attrs["failed"] = failed
+    return out
 
 
 def _download_many(
@@ -1124,7 +1185,6 @@ def _download_many(
     done: str,
 ) -> pd.DataFrame | None:
     """The ``# --- iterate over multiple ...`` branch of the ``*_file_download()`` functions."""
-    from metacheck._r import bind_rows
     from metacheck.archives import _tick
 
     _tick(pb, start)
@@ -1138,7 +1198,7 @@ def _download_many(
     frames = [r for r in results if r is not None]
     if not frames:
         return None
-    dl = bind_rows(frames)
+    dl = _bind_downloads(frames)
     _tick(pb, done)
     return dl
 
@@ -1172,30 +1232,99 @@ def _dataverse_doi_prefix_regex() -> str:
 
 
 @functools.cache
-def _prefix_host() -> dict[str, str]:
-    """DOI prefix -> the first host listing it (R's loop fills each DOI once, in list order)."""
-    out: dict[str, str] = {}
+def _prefix_hosts() -> dict[str, tuple[str, ...]]:
+    """DOI prefix -> every host listing it, in list order."""
+    out: dict[str, list[str]] = {}
     for host, prefixes in DATAVERSE_DOI_PREFIX_HOSTS.items():
         for p in prefixes:
-            out.setdefault(p, host)
-    return out
+            out.setdefault(p, []).append(host)
+    return {p: tuple(hosts) for p, hosts in out.items()}
 
 
 def _dataverse_host_from_doi(doi: Any) -> Any:
     """Port of R/archive-dataverse.R::.dataverse_host_from_doi().
 
     The installation a DOI belongs to, from its verified prefix (``None`` when
-    the prefix is not on the allowlist). A string gives a string, a sequence a
-    list.
+    the prefix is not on the allowlist). A prefix that several installations
+    share (the four DANS Data Stations share 10.17026) is resolved by
+    following the DOI's redirect (:func:`_dataverse_resolve_doi_host`). A
+    string gives a string, a sequence a list.
     """
     vals, scalar = _chr_values(doi)
     px = sub(r"^(10\.\d+).*", r"\1", vals)
-    table = _prefix_host()
-    out = [
-        table.get(p) if d is not None and d != "" and p is not None else None
-        for d, p in zip(vals, px, strict=True)
-    ]
+    table = _prefix_hosts()
+    out: list[str | None] = []
+    for d, p in zip(vals, px, strict=True):
+        candidates = table.get(p) if d is not None and d != "" and p is not None else None
+        if not candidates or d is None:
+            out.append(None)
+        elif len(candidates) == 1:
+            out.append(candidates[0])
+        else:
+            out.append(_dataverse_resolve_doi_host(d, candidates))
     return out[0] if scalar else out
+
+
+def _resolved_url(url: str) -> str | None:
+    """The URL a GET of *url* ends on, after redirects; ``None`` when it cannot be sent.
+
+    R: ``tryCatch(resp_url(req_perform(req_error(request(url), is_error = \\(r) FALSE))),
+    error = \\(e) NA)`` -- one try, any status.
+    """
+    from metacheck import http
+
+    try:
+        resp = http.request("GET", url, max_tries=1)
+    except Exception:
+        return None
+    return None if resp is None else str(resp.url)
+
+
+def _bare_host(host: str) -> str:
+    host = host.lower()
+    return host[4:] if host.startswith("www.") else host
+
+
+def _url_host(url: str) -> str | None:
+    """The host name of *url*, lower case and without a leading ``www.``."""
+    from urllib.parse import urlsplit
+
+    try:
+        host = urlsplit(url).hostname
+    except ValueError:
+        return None
+    return None if not host else _bare_host(host)
+
+
+def _on_host(url_host: str, host: str) -> bool:
+    """Whether *url_host* (see :func:`_url_host`) is *host* or one of its subdomains."""
+    h = _bare_host(host)
+    return url_host == h or url_host.endswith("." + h)
+
+
+def _dataverse_resolve_doi_host(doi: str, candidates: Sequence[str]) -> str:
+    """Port of R/archive-dataverse.R::.dataverse_resolve_doi_host().
+
+    The candidate whose host the URL ``https://doi.org/<doi>`` redirects to,
+    else the first candidate (also when the DOI cannot be resolved).
+
+    R takes the first candidate whose name occurs anywhere in the resolved
+    URL (``grepl(host, resolved, fixed = TRUE)``), so with the candidates
+    ``rodbuk.pl`` and ``uj.rodbuk.pl``, in that order, a dataset on
+    ``uj.rodbuk.pl`` is given ``rodbuk.pl``. Here the resolved URL's host
+    name is compared: the candidate it equals, else the longest candidate it
+    is a subdomain of (U211).
+    """
+    resolved = _resolved_url(f"https://doi.org/{doi}")
+    url_host = None if resolved is None else _url_host(resolved)
+    if url_host is not None:
+        for host in candidates:
+            if _bare_host(host) == url_host:
+                return host
+        parents = [h for h in candidates if _on_host(url_host, h)]
+        if parents:
+            return max(parents, key=len)
+    return candidates[0]
 
 
 @functools.cache

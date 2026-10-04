@@ -58,6 +58,7 @@ import io
 import math
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import time
@@ -257,8 +258,47 @@ def _r_env(library: str) -> dict[str, str]:
     return env
 
 
+def _tree(folder: Path) -> set[Path]:
+    """Every file and folder under *folder*."""
+    out: set[Path] = set()
+    for dirpath, dirs, files in os.walk(folder):
+        out.update(Path(dirpath) / name for name in (*dirs, *files))
+    return out
+
+
+def _remove_new(before: dict[Path, set[Path]]) -> list[Path]:
+    """Remove what appeared under each folder of *before* since it was listed."""
+    removed: list[Path] = []
+    for folder, had in before.items():
+        for path in sorted(_tree(folder) - had, key=lambda p: len(p.parts)):
+            if not os.path.lexists(path):
+                continue  # inside a folder removed already
+            if path.is_dir() and not path.is_symlink():
+                shutil.rmtree(path)
+            else:
+                path.unlink()
+            removed.append(path)
+    return removed
+
+
 def generate(outputs: list[Output], rscript: str) -> float:
-    """Run *outputs* in the reference R and rewrite their modules' goldens; the seconds R took."""
+    """Run *outputs* in the reference R and rewrite their modules' goldens; the seconds R took.
+
+    R's data_check unpacks an archive in ``local_path`` into that folder (U214),
+    so what R adds to a repository input is removed afterwards: left there, it
+    would be listed by the Python runs and parity cases that come later. Within
+    the R run, the modules after data_check see it, as they would in metacheck.
+    """
+    inputs = {ROOT / o.input for o in outputs if o.kind == "repository"}
+    before = {folder: _tree(folder) for folder in sorted(inputs) if folder.is_dir()}
+    try:
+        return _generate(outputs, rscript)
+    finally:
+        for path in _remove_new(before):
+            print(f"removed {path.relative_to(ROOT)}, which the R run left in its input (U214)")
+
+
+def _generate(outputs: list[Output], rscript: str) -> float:
     with tempfile.TemporaryDirectory(prefix="pytacheck-accuracy-") as tmp:
         cases = Path(tmp) / f"{AREA}.yaml"
         spec = {"area": AREA, "cases": [o.spec() for o in outputs]}

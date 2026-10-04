@@ -85,6 +85,7 @@ from metacheck.archives.zenodo_upload import zenodo_pat as zenodo_pat
 from metacheck.archives.zenodo_upload import zenodo_upload as zenodo_upload
 from metacheck.archives.zip_peek import zip_decision as zip_decision
 from metacheck.archives.zip_peek import zip_peek as zip_peek
+from metacheck.archives.zip_peek_cache import zip_peek_cache_clear as zip_peek_cache_clear
 from metacheck.codecheck.core import code_abs_path as code_abs_path
 from metacheck.codecheck.core import code_extract_py as code_extract_py
 from metacheck.codecheck.core import code_extract_qmd_py as code_extract_qmd_py

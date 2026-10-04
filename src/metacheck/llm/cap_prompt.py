@@ -17,7 +17,7 @@ __all__ = ["cap_report"]
 
 
 def cap_report(message: str) -> None:
-    """Port of ``cap_report()``: show *message* now and raise it as a warning."""
+    """Port of ``.cap_report()`` (R keeps it internal; here it stays public): show *message* now and raise it as a warning."""
     print(message, file=sys.stderr)
     warnings.warn(message, stacklevel=2)
 

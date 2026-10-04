@@ -87,6 +87,37 @@ add(
 )
 add("data_format.empty", fn("data_format", f"{PY}.data_format", ext={"$chr": []}))
 add("data_format.na", fn("data_format", f"{PY}.data_format", ext={"$chr": [None, "tsv"]}))
+add(
+    "data_format.domain_formats",
+    fn(
+        "data_format",
+        f"{PY}.data_format",
+        ext={
+            "$chr": [
+                "tab",
+                "table",
+                "TAB",
+                "Table",
+                "shp",
+                "dbf",
+                "shx",
+                "prj",
+                "sbn",
+                "sbx",
+                "cpg",
+                "gpkg",
+                "nex",
+                "nwk",
+                "tre",
+                "phy",
+                "mzxml",
+                "mztab",
+                "ply",
+                "stl",
+            ]
+        },
+    ),
+)
 
 # -- data_is_manifest ---------------------------------------------------------
 repo = {"$chr": ["Study 1.r", "Study 1.csv", "notes.txt"]}
@@ -331,6 +362,8 @@ promote_sensitive = {
     "readxl_deaths.xls",
 }
 # data_read_head.odd.rds (integer64) is marked in parity/divergences/data.yaml (D10)
+# .tab / .table are read like .csv/.txt/.tsv/.dat (metacheck 505e19cb)
+read_files += ["results.tab", "results.table", "spaces.table", "comma.tab"]
 for name in read_files:
     add(
         f"data_read_head.{name}",
@@ -349,6 +382,8 @@ for name in [
     "iris.sas7bdat",
     "title_line.csv",
     "footer.csv",
+    "results.tab",
+    "results.table",
 ]:
     add(f"data_read_head.{name}.n5", fn("data_read_head", f"{PY}.data_read_head", path=f(name)))
 add(
@@ -1027,6 +1062,39 @@ classify_names = [
 add(
     "data_classify_files.names",
     fn("data_classify_files", f"{PY}.data_classify_files", file_name={"$chr": classify_names}),
+    dep=True,
+)
+# Tier-1 extension rules of metacheck 505e19cb (issue #441): GIS vector data,
+# phylogenetic trees, mass spectrometry, 3D scan data and plain-text tables are data by
+# extension alone, wherever they sit; .stl stays materials
+domain_names = [
+    "shoreline.shp", "shoreline.dbf", "shoreline.shx", "shoreline.prj", "shoreline.sbn",
+    "shoreline.sbx", "shoreline.cpg", "map.gpkg", "tree.nex", "tree.nwk", "tree.tre",
+    "tree.phy", "spectrum.mzxml", "spectrum.mztab", "scan.ply", "results.tab", "results.table",
+    "model.stl",
+]  # fmt: skip
+add(
+    "data_classify_files.domain_formats",
+    fn("data_classify_files", f"{PY}.data_classify_files", file_name={"$chr": domain_names}),
+    dep=True,
+)
+add(
+    "data_classify_files.domain_formats_upper",
+    fn(
+        "data_classify_files",
+        f"{PY}.data_classify_files",
+        file_name={"$chr": [n.upper() for n in domain_names]},
+    ),
+    dep=True,
+)
+add(
+    "data_classify_files.domain_formats_paths",
+    fn(
+        "data_classify_files",
+        f"{PY}.data_classify_files",
+        file_name={"$chr": domain_names},
+        file_path={"$chr": [f"Materials/Docs/{n}" for n in domain_names]},
+    ),
     dep=True,
 )
 add(

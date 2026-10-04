@@ -14,6 +14,42 @@ package's. The R commit each release is compared against is in
 - **Fixed with it:** the sandbox directory is writable from the container, so the paper's code could leave a symbolic link in it that named a file on your machine, and the host followed that link when it wrote the next runner script (the file was overwritten) or read the next script (its text went into the report). After every container, links that leave the sandbox directory, and named pipes, are now removed. This applies to `sandbox="docker"` only; with `sandbox="process"` the code runs as you anyway. The report also shows the code's output in a fence that its own output cannot close (a longer fence is used when the output holds a run of four or more backticks), so output cannot add a `{r}` chunk that Quarto would run when the report is rendered.
 - **Unchanged:** the static phase (`execute=False`) needs no Docker and runs nothing. The install phase (only with `install_missing=True`) still has network access, by design, and sees only the install script and the package library.
 
+### Upstream sync: metacheck dev 49f97ec5 (metacheck #424-#452)
+
+The R reference is metacheck `dev` at 49f97ec5 merged into pull request #423 (the bibr export schema 12.0 work this version already follows). Ported:
+
+- **Zip archives and downloads:**
+  - `zip_peek()` lists zips on hosts that refuse HEAD (S3-backed storage) with ranged requests, and `zip_peek(cache = TRUE)` keeps listings on disk; new `zip_peek_cache_clear()`. A failed peek that may pass later is not cached (U210).
+  - `download_repo_files()` downloads OSF, Zenodo and Dataverse repositories file by file. GitHub, GitLab and Dryad archives need listed sizes and are cut at twice `max_download_size`. Archive members that fail to download are reported with the reason, in `attr(, "failed")` of the `*_file_download()` functions too.
+  - `osf_file_download(mode = "zip")` keeps the whole project within `max_download_size`: an archive is taken only while its listed files fit, its download stops past the budget, and the rest is downloaded file by file, smallest first; files left out are `attempted = FALSE` (metacheck stops on this path: U209).
+- **data_check:** `peek_zips` is on by default: a downloaded zip is unpacked and its files are classified and listed as their own rows. `cache` and `skip_on_api_limit` are passed on to `repo_check` and to the zip peek. GIS (`.shp .dbf .shx .prj .sbn .sbx .cpg .gpkg`), phylogenetic (`.nex .nwk .tre .phy`), mass-spectrometry (`.mzxml .mztab`) and `.ply` files are data by their extension; `.tab` and `.table` are readable plain-text tables.
+- **stat_effect_size:** Hedges' g (`g`, `Hedges' g`, `gs`) is checked for coherence like Cohen's d. `gav`, `gz` and `grm` count as reported effect sizes (U212).
+- **code_check:** R package-list variables (`pkgs <- c(...)`, loop variables, `character.only`, `lapply(pkgs, library)`, `p_load(char = )`) are resolved to the names they hold or dropped; their own names are no longer reported or installed as packages. Empty code files are checked like any other file. `cache` and `skip_on_api_limit` reach the zip peek, and `skip_on_api_limit` reaches `repo_check`.
+- **reproducibility_check:** a package CRAN cannot find is reported as unavailable, with `install.packages()`'s own warning, instead of "installed but not loadable"; a 404 on the CRAN Archive listing is "package not found in the CRAN Archive" and no longer counts as a network failure (the Docker install script does the same). `peek_zips` defaults to TRUE.
+- **repo_check:** new `skip_on_api_limit`; `cache` and `skip_on_api_limit` also apply to zip peeking. A DSpace 7 repository gets its doi and licence row in `repo_metadata`.
+- **Repository hosts:**
+  - 4TU.ResearchData: articles cited by a uuid DOI are looked up, and downloaded, by the numeric id the DOI resolves to.
+  - Dataverse: phys-techsciences.datastations.nl is added; a DOI prefix shared by several installations (10.17026, the DANS Data Stations) is resolved through doi.org by the resolved host name (U211).
+  - DSpace 7: `dspace7_links()` finds DOI mentions that resolve to a DSpace 7 repository; `dspace7_file_download()` carries the item's doi and licence and returns an empty listing for an item without files.
+  - DataONE: KNB `#view/` and `catalog/view/` URLs and bare `knb.<n>.<rev>` package ids are recognised; files listed without a `<physical>` description are included, with their size from the member node.
+  - Figshare: collections (URL or `10.6084/m9.figshare.c.` DOI) expand into their articles; institutional DOIs with two sub-prefix segments give their article id.
+  - OSF: the token check at start-up gives up after 5 seconds.
+- `cap_report()` keeps its name although metacheck made it internal (D61).
+- Metacheck fixed bugs that this version had marked: Dataverse DOI routing (U32) and empty code files (U67, U87); those cases match R again.
+- Fixed while porting (metacheck has these too):
+  - Files unpacked from an archive take their own extension's type (`data`, `code`, `text`) instead of the archive's (U213).
+  - An archive in `local_path` is no longer unpacked into the user's folder: metacheck writes `<archive>.contents/` next to it, and the next run lists every unpacked file twice. pytacheck unpacks it to `metacheck-archives/` in the temporary folder (U214).
+- `download_repo_files()` no longer fails when a file table read as text has a missing `repo_url` and a GitHub, GitLab or Dryad archive is still to be downloaded.
+- A zip whose HEAD request failed for a passing reason (429, 5xx, no connection) is not cached on disk as unlistable (U210), and zip-listing cache entries are written under unique temporary names, so two threads cannot interleave one.
+
+### Parity tooling
+
+- `python -m parity generate --jobs N` runs the case files' R sessions side by side (`0`: one per CPU). A full regeneration took about 6 minutes instead of about 45; the parity and upstream-sync workflows use it. `generate` warns when the R sessions leave files in the checkout outside the goldens.
+
+### Fixed
+
+- The default LLM model (the first provider whose API key is set) is now set when metacheck loads, as R's `.onLoad()` does, not when the LLM code is first imported. Before, a module run before and after that import used different session-cache keys.
+
 ### Added: data package checks
 
 - The `datapackage` pack, in every install, checks the folder or archive of data, code and documentation that comes with a paper: `datapackage::package_files`, `datapackage::package_structure` and `datapackage::package_docs` (and `package_pii`, below), and the preset `datapackage::default`, which adds `metacheck::data_check` and `metacheck::codebook_check`. Each check also returns a checklist (item, title, status `fail`, `warn`, `manual`, `pass` or `na`, detail) for a data steward to work down. A pack can supply its own policy as a preset.

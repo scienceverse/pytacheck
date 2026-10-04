@@ -68,6 +68,64 @@ def r404(path: str, url: str, body: str = '{"message": "Not Found"}') -> None:
     )
 
 
+def r_head(path: str, url: str, status: int, length: str | None) -> None:
+    """A recorded HEAD answer (httptest2 names it ``<path>-HEAD.R``)."""
+    headers = '`content-type` = "application/octet-stream"'
+    if length is not None:
+        headers += f', `Content-Length` = "{length}"'
+    f = ROOT / f"{path}-HEAD.R"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(
+        f'structure(list(method = "HEAD", url = "{url}", status_code = {status}L, '
+        f'headers = structure(list({headers}), class = "httr2_headers"), '
+        "body = raw(0), cache = new.env(parent = emptyenv())), "
+        'class = "httr2_response")\n',
+        encoding="utf-8",
+    )
+
+
+EML_NO_PHYSICAL = """<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" packageId="doi:10.5063/NOPHYS" system="knb">
+  <dataset>
+    <title>Entities without a physical description</title>
+    <creator><individualName><givenName>Ann</givenName><surName>Lee</surName></individualName></creator>
+    <dataTable id="urn-uuid-aaaaaaaa-0000-0000-0000-000000000000">
+      <entityName>table.csv</entityName>
+      <physical>
+        <objectName>table.csv</objectName>
+        <size unit="bytes">2048</size>
+        <distribution><online><url>https://cn.dataone.org/cn/v2/resolve/urn%3Auuid%3Aaaaaaaaa-0000-0000-0000-000000000000</url></online></distribution>
+      </physical>
+    </dataTable>
+    <otherEntity id="urn-uuid-11111111-2222-3333-4444-555555555555">
+      <entityName>script.R</entityName>
+      <entityType>text/x-rsrc</entityType>
+    </otherEntity>
+    <spatialVector id="urn-uuid-66666666-7777-8888-9999-000000000000">
+      <entityName>shapes.zip</entityName>
+    </spatialVector>
+    <otherEntity id="local-id-1">
+      <entityName>notes.txt</entityName>
+    </otherEntity>
+    <spatialRaster>
+      <entityName>raster.tif</entityName>
+    </spatialRaster>
+  </dataset>
+</eml:eml>
+"""
+
+EML_DOCID = """<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" packageId="knb.1404.1" system="knb">
+  <dataset>
+    <title>A legacy KNB data package</title>
+    <otherEntity>
+      <entityName>legacy.dat</entityName>
+      <physical><objectName>legacy.dat</objectName><size>10</size></physical>
+    </otherEntity>
+  </dataset>
+</eml:eml>
+"""
+
 EML_FULL = """<?xml version="1.0" encoding="UTF-8"?>
 <eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" packageId="doi:10.18739/A2GT5FG86" system="https://arcticdata.io">
   <dataset>
@@ -212,6 +270,23 @@ def dataone() -> None:
     knb = "knb.ecoinformatics.org/knb/d1/mn/v2/object"
     put(f"{knb}/doi%3A10.5063%2FNOTEML", ISO_XML, ".xml")
     put(f"{knb}/doi%3A10.5063%2FBROKEN", "this is not xml at all\n", ".txt")
+    # entities listed with no <physical> (metacheck #434): the name is the
+    # entityName, the pid comes from a urn-uuid- id and the size from a HEAD
+    put(f"{knb}/doi%3A10.5063%2FNOPHYS", EML_NO_PHYSICAL, ".xml")
+    r_head(
+        f"{knb}/urn%3Auuid%3A11111111-2222-3333-4444-555555555555",
+        "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A11111111-2222-3333-4444-555555555555",
+        200,
+        "4096",
+    )
+    r_head(
+        f"{knb}/urn%3Auuid%3A66666666-7777-8888-9999-000000000000",
+        "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A66666666-7777-8888-9999-000000000000",
+        404,
+        None,
+    )
+    # a bare legacy KNB docid (knb.<n>.<rev>) is its own pid
+    put(f"{knb}/knb.1404.1", EML_DOCID, ".xml")
 
 
 GATECH_ITEM = "bac086e5-c606-474b-af1e-4a6122694af5"

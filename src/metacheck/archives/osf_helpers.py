@@ -435,7 +435,8 @@ def _osf_pat_validate(osf_pat: str | None = None) -> bool:
 
     Fetches a public preprint anonymously and with the token; a token that is
     refused (401/403) where anonymous access works is cleared from
-    ``OSF_PAT`` for this session, with a warning.
+    ``OSF_PAT`` for this session, with a warning. Each request waits 5 seconds
+    at most.
     """
     from metacheck import http
     from metacheck.utils import online
@@ -450,7 +451,10 @@ def _osf_pat_validate(osf_pat: str | None = None) -> bool:
 
     def status(extra: dict[str, str]) -> int | None:
         try:
-            resp = http.request("GET", probe, headers={**headers, **extra}, max_tries=1)
+            # 5 s at most, so an unresponsive OSF cannot hang the caller
+            resp = http.request(
+                "GET", probe, headers={**headers, **extra}, max_tries=1, timeout=5.0
+            )
         except Exception:
             return None
         return None if resp is None else resp.status_code
