@@ -40,7 +40,6 @@ pydantic==2.13.5
 pydantic-core==2.46.5
 pydub==0.25.1
 pygments==2.21.0
-python-calamine==0.8.2
 python-dateutil==2.9.0.post0
 python-multipart==0.0.32
 pytz==2026.4
