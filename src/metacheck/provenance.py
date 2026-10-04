@@ -502,6 +502,18 @@ class ModuleChain(list):  # type: ignore[type-arg]
         """Outputs by label (R's ``report_module_run()`` list, before sorting)."""
         return {o.module: o for o in self}
 
+    @property
+    def files(self) -> dict[str, str | bytes]:
+        """The files the modules handed back, by file name (``{}`` when none did).
+
+        Each value is the file's content: ``str`` (text, to be written as UTF-8) or
+        ``bytes``. See :func:`metacheck.module.module_files`; a name that clashes
+        with an earlier module's file gets the module's name in front.
+        """
+        from metacheck.module import module_files
+
+        return module_files(self)
+
 
 def _entries(selection: Any) -> list[tuple[Any, dict[str, Any]]]:
     if selection is None:

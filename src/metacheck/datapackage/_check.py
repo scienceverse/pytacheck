@@ -3,10 +3,14 @@
 :func:`check_package` opens a package (a folder, or a zip or tar archive of one),
 runs a selection of modules on it and returns their outputs.
 :func:`report_package` does the same and writes the report.
-Both run on this machine only: an archive is extracted to a private folder
+Both run on this machine: an archive is extracted to a private folder
 that is removed when the run is over, and every module that takes
 ``local_path`` and ``local_only`` is given the package's folder and
-``local_only=True``, so nothing is looked up online or uploaded.
+``local_only=True``, so nothing is looked up online or uploaded. The one thing
+that goes online is a request you make: ``package_docs`` with
+``abstract_lookup=True`` fetches the paper's abstract by its DOI (nothing but
+the DOI is sent; see :mod:`metacheck.datapackage.abstract`). With ``offline``
+it does not, and says so.
 
 The modules have no paper to read, so they get an empty stand-in paper titled
 with the package's name (what :func:`metacheck.report.report_repository` does
@@ -101,11 +105,20 @@ def check_package(
     ``local_path`` of each module is the path that was given, not the temporary
     folder. *max_bytes* and *max_files* lower the limits on an extracted archive
     (see :func:`~metacheck.datapackage.open_package`); a folder has none.
+
+    A module can hand back files (the README draft of ``package_readme`` is
+    one): ``chain.files`` is ``{file name: text or bytes}`` for all of them, and
+    ``metacheck.module.write_module_files`` writes them to a folder. The package itself is
+    never written to.
     """
     from metacheck.provenance import run_modules
 
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
-    with open_package(path, **_limits(max_bytes, max_files)) as opened, using_package(opened):
+    with (
+        open_package(path, **_limits(max_bytes, max_files)) as opened,
+        using_package(opened),
+        _offline(selection),
+    ):
         run = _give_package(selection, opened)
         chain = run_modules(_stand_in_paper(_name(opened)), run)
         rec = _record(list(chain), run, opened)
@@ -137,8 +150,8 @@ def report_package(
     and moved into place, so a report written inside the package's own folder
     is not one of the files that are checked. Returns the report's module
     outputs (:class:`~metacheck.report.report.ReportOutput`, with the file's
-    path in ``save_path``). *max_bytes* and *max_files* are as for
-    :func:`check_package`.
+    path in ``save_path``, and the files that modules hand back in ``files``).
+    *max_bytes* and *max_files* are as for :func:`check_package`.
     """
     from metacheck.module import run_session
     from metacheck.presets import label
@@ -152,6 +165,7 @@ def report_package(
         open_package(path, **_limits(max_bytes, max_files)) as opened,
         using_package(opened),
         run_session(),
+        _offline(selection),
     ):
         name = _name(opened)
         dest = Path(output_file if output_file is not None else f"{name}_report.{fmt}")
@@ -189,6 +203,18 @@ def _limits(max_bytes: int | None, max_files: int | None) -> dict[str, int]:
     """The archive limits that were given; ``open_package`` has the defaults for the rest."""
     given = {"max_bytes": max_bytes, "max_files": max_files}
     return {name: value for name, value in given.items() if value is not None}
+
+
+def _offline(selection: Selection) -> Any:
+    """``use(offline=True)`` when the run is offline, otherwise the setting around it.
+
+    A module that only sometimes needs the network (``package_docs`` with
+    ``abstract_lookup``) cannot declare ``requires=["network"]``, since
+    ``--offline`` would then leave the whole module out; it reads this setting.
+    """
+    from metacheck.module import use
+
+    return use(offline=True if selection.offline else None)
 
 
 def _name(opened: OpenedPackage) -> str:

@@ -18,6 +18,11 @@ Declare one with :func:`module`::
         ...
         return {"table": table, "traffic_light": "red", ...}
 
+A module can also hand back files (a generated README, an export): a ``files``
+result, a dict of file name to ``str`` or ``bytes``. :func:`module_files` collects
+them from outputs and :func:`write_module_files` writes them to a folder; see
+"Files a module hands back" below.
+
 Modules are found, in order, among the built-ins (``metacheck.modules``),
 ``pack::name`` refs to active packs, installed plugins (entry-point group
 ``pytacheck.modules``), ``./<name>.py`` and ``./modules/<name>.py``, the
@@ -35,6 +40,7 @@ import hashlib
 import importlib
 import importlib.util
 import inspect
+import os
 import pkgutil
 import re
 import sys
@@ -58,11 +64,15 @@ __all__ = [
     "SECTION_LEVELS",
     "TRAFFIC_LIGHTS",
     "ModuleError",
+    "ModuleFileError",
     "ModuleOutput",
     "ModuleSpec",
     "RunSession",
+    "check_file_name",
+    "check_files_directory",
     "get_prev_outputs",
     "module",
+    "module_files",
     "module_find",
     "module_help",
     "module_info",
@@ -70,6 +80,7 @@ __all__ = [
     "module_run",
     "run_session",
     "use",
+    "write_module_files",
 ]
 
 SECTION_LEVELS = ("general", "intro", "method", "results", "discussion", "reference")
@@ -1013,6 +1024,8 @@ def module_run(
     try:
         _check_unused_args(spec, kwargs)
         results = spec.func(paper, **kwargs)
+        if isinstance(results, Mapping) and isinstance(results.get("files"), Mapping):
+            _checked_files(results["files"])  # a bad `files` result fails this module
     except StaleDocumentError:
         raise  # the CI mutation check: a failed module would hide it
     except Exception as exc:
@@ -1099,6 +1112,196 @@ def _shallow_copy(out: ModuleOutput) -> ModuleOutput:
         extras={k: _detach(v) for k, v in out.extras.items()},
         run_provenance=None if prov is None else copy.deepcopy(prov),
     )
+
+
+# ---------------------------------------------------------------------------
+# Files a module hands back
+# ---------------------------------------------------------------------------
+
+
+class ModuleFileError(ValueError):
+    """A module returned a file that cannot be used, or the files cannot be written where asked."""
+
+
+_MAX_FILE_NAME_BYTES = 255
+
+
+def check_file_name(name: Any) -> str:
+    """*name* if it is a plain file name, else :class:`ModuleFileError`.
+
+    A plain name is text, not empty, at most 255 bytes in UTF-8, not ``.`` or
+    ``..``, and has no path separator (``/`` or ``\\``), no control character
+    (NUL included) and no drive (``C:name``): it can only ever name a file in the
+    folder it is written to.
+    """
+    if not isinstance(name, str) or not name:
+        raise ModuleFileError(f"A file name must be non-empty text, not {name!r}")
+    if name in (".", ".."):
+        raise ModuleFileError(f"{name!r} is not a file name")
+    if "/" in name or "\\" in name:
+        raise ModuleFileError(f"A file name has no folders in it: {name!r}")
+    if any(ord(c) < 32 or ord(c) == 127 for c in name):
+        raise ModuleFileError(f"A file name has no control characters: {name!r}")
+    if re.match(r"[A-Za-z]:", name):
+        raise ModuleFileError(f"A file name has no drive in it: {name!r}")
+    try:
+        too_long = len(name.encode("utf-8")) > _MAX_FILE_NAME_BYTES
+    except UnicodeEncodeError as exc:  # a lone surrogate
+        raise ModuleFileError(f"A file name must be valid text: {name!r}") from exc
+    if too_long:
+        raise ModuleFileError(
+            f"A file name is at most {_MAX_FILE_NAME_BYTES} bytes: {name[:40]!r}..."
+        )
+    return name
+
+
+def _checked_files(files: Mapping[Any, Any]) -> dict[str, str | bytes]:
+    """The ``files`` result of a module, checked: plain names, ``str`` or bytes contents."""
+    out: dict[str, str | bytes] = {}
+    seen: dict[str, str] = {}
+    for name, content in files.items():
+        check_file_name(name)
+        if isinstance(content, bytearray | memoryview):
+            content = bytes(content)
+        if not isinstance(content, str | bytes):
+            raise ModuleFileError(
+                f"The content of file {name!r} must be str or bytes, not {type(content).__name__}"
+            )
+        if isinstance(content, str):
+            try:
+                content.encode("utf-8")
+            except UnicodeEncodeError as exc:
+                raise ModuleFileError(f"The text of file {name!r} is not valid text") from exc
+        if (key := name.casefold()) in seen:
+            raise ModuleFileError(
+                f"The files {seen[key]!r} and {name!r} differ only in case, so one would "
+                "overwrite the other on some systems"
+            )
+        seen[key] = name
+        out[name] = content
+    return out
+
+
+def module_files(outputs: Any) -> dict[str, str | bytes]:
+    """The files that modules handed back, by name.
+
+    A module hands back files in its result's ``files`` key: a dict of file name
+    to the file's content (``str``, written as UTF-8, or ``bytes``). *outputs* is
+    a :class:`~metacheck.provenance.ModuleChain`, the outputs of a report or any
+    list of :class:`ModuleOutput`; the files come in run order. Names must be
+    plain file names (:func:`check_file_name`), else :class:`ModuleFileError`.
+    A ``files`` result that is not a dict (a table, say) is another module's own
+    result and is left alone. When two modules return the same name the later
+    one's file is renamed ``<module>_<name>`` so that none is lost.
+    """
+    if isinstance(outputs, Mapping):
+        outputs = outputs.values()
+    collected: dict[str, str | bytes] = {}
+    taken: set[str] = set()
+    for out in outputs:
+        files = out.get("files") if isinstance(out, ModuleOutput) else None
+        if not isinstance(files, Mapping):
+            continue
+        for name, content in _checked_files(files).items():
+            final = name
+            if final.casefold() in taken:
+                label = str(getattr(out, "module", "") or "module").split("::")[-1]
+                base = label.replace("\\", "/").rsplit("/", 1)[-1].removesuffix(".py")
+                prefix = re.sub(r"[^\w.-]+", "_", base)[:60] or "module"
+                final = f"{prefix}_{name}"
+                n = 2
+                while final.casefold() in taken:
+                    final = f"{prefix}_{n}_{name}"
+                    n += 1
+            taken.add(final.casefold())
+            collected[final] = content
+    return collected
+
+
+def check_files_directory(
+    directory: str | os.PathLike[str], *, protect: Sequence[str | os.PathLike[str]] = ()
+) -> Path:
+    """*directory* as a path, if files can be written into it, else :class:`ModuleFileError`.
+
+    It must not be, or lie inside, one of the *protect* folders (the data package that was
+    checked, which must stay as it is), and must not be a file. It need not exist yet.
+    """
+    target = Path(directory).expanduser()
+    where = Path(os.path.realpath(target))
+    for guarded in protect:
+        guard = Path(os.path.realpath(os.fspath(guarded)))
+        if where == guard or guard in where.parents:
+            raise ModuleFileError(
+                f"{os.fspath(directory)} is inside the data package {os.fspath(guarded)}, "
+                "which is never changed; choose another folder"
+            )
+    if target.exists() and not target.is_dir():
+        raise ModuleFileError(f"{os.fspath(directory)} exists and is not a folder")
+    return target
+
+
+def write_module_files(
+    files: Mapping[str, str | bytes],
+    directory: str | os.PathLike[str],
+    *,
+    force: bool = False,
+    protect: Sequence[str | os.PathLike[str]] = (),
+) -> list[Path]:
+    """Write *files* (name to content, see :func:`module_files`) into *directory*.
+
+    The folder (and its parents) is created. Nothing is written unless all of it
+    can be: a name that is not plain (:func:`check_file_name`), a name that
+    already exists there (unless *force*, which replaces a file, never a folder)
+    or a *directory* that is, or lies inside, one of the *protect* folders (the
+    data package that was checked, which must stay as it is) raises
+    :class:`ModuleFileError`. Text is written as UTF-8, exactly as given (no line-end translation).
+    Returns the paths written.
+    """
+    import shutil
+    import tempfile
+
+    names = _checked_files(files)
+    target = check_files_directory(directory, protect=protect)
+    clashes = [n for n in names if os.path.lexists(target / n)]
+    if clashes and not force:
+        shown = ", ".join(clashes[:5]) + (" ..." if len(clashes) > 5 else "")
+        raise ModuleFileError(
+            f"{shown} already exist{'s' if len(clashes) == 1 else ''} in {os.fspath(directory)}; "
+            "nothing was written (use --force to replace)"
+        )
+    for n in clashes:
+        if (target / n).is_dir() and not (target / n).is_symlink():
+            raise ModuleFileError(f"{n} is a folder in {os.fspath(directory)}; it is not replaced")
+    try:
+        target.mkdir(parents=True, exist_ok=True)
+        written: list[Path] = []
+        for name, content in names.items():
+            data = content.encode("utf-8") if isinstance(content, str) else content
+            path = target / name
+            if force and os.path.lexists(path):
+                # replace atomically, and replace a link itself rather than what it points to
+                fd, tmp = tempfile.mkstemp(prefix=".metacheck-", dir=target)
+                try:
+                    with os.fdopen(fd, "wb") as fh:
+                        fh.write(data)
+                    if path.is_file() and not path.is_symlink():
+                        shutil.copymode(path, tmp)  # the file keeps its permissions
+                    else:
+                        os.chmod(tmp, 0o644)
+                    os.replace(tmp, path)
+                except BaseException:
+                    with contextlib.suppress(OSError):
+                        os.unlink(tmp)
+                    raise
+            else:
+                with open(path, "xb") as fh:  # fails if the name appeared meanwhile
+                    fh.write(data)
+            written.append(path)
+    except OSError as exc:
+        raise ModuleFileError(
+            f"Could not write to {os.fspath(directory)}: {exc.strerror or exc}"
+        ) from exc
+    return written
 
 
 from metacheck._callable import callable_module  # noqa: E402

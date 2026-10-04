@@ -433,6 +433,7 @@ def cmd_package(ns: argparse.Namespace) -> int:
     import pandas as pd
 
     from metacheck.datapackage import PackageError, check_package, package_selection, report_package
+    from metacheck.module import ModuleFileError, check_files_directory
     from metacheck.packs.ui import console
 
     per, bare = _module_args(ns.arg or [])
@@ -443,11 +444,33 @@ def cmd_package(ns: argparse.Namespace) -> int:
         offline=True if ns.offline else None,
     )
     _check_module_args(sel, per)
+    if ns.abstract_lookup or ns.paper_doi:
+        if not any(_accepts(ref, "abstract_lookup") for ref, _ in sel):
+            _err(
+                "--abstract-lookup and --paper-doi need the package_docs check, which is not selected"
+            )
+            return 2
+        # the flags are bare -a arguments; MODULE.KEY=... in -a still wins
+        bare.setdefault("abstract_lookup", True)
+        if ns.paper_doi:
+            bare.setdefault("paper_doi", ns.paper_doi)
     sel = _apply_bare_args(sel, per, bare)
     _announce(sel)
     if not sel:
         _err("No modules to run (--offline leaves out the modules that need the network or an LLM)")
         return 2
+    files_dir = ns.files_dir
+    if ns.force and not files_dir:
+        _err("--force only goes with --files-dir (it replaces files already in that folder)")
+        return 2
+    # the package folder, if it is one, is never written to (an archive is only read)
+    protect = [Path(ns.path).expanduser()] if Path(ns.path).expanduser().is_dir() else []
+    if files_dir:
+        try:  # refuse before anything runs
+            check_files_directory(files_dir, protect=protect)
+        except ModuleFileError as exc:
+            _err(str(exc))
+            return 2
     report_file = bool(ns.output or ns.format)
     try:
         if report_file:
@@ -475,7 +498,34 @@ def cmd_package(ns: argparse.Namespace) -> int:
             [*columns, "item", "title", "status", "detail"],
             title="\nChecklist",
         )
-    return _exit_status(outputs)
+    status = _exit_status(outputs)
+    if files_dir:
+        refused = _write_files(outputs, files_dir, ns.force, protect=protect)
+        status = refused or status
+    return status
+
+
+def _write_files(
+    outputs: Sequence[Any], directory: str, force: bool, *, protect: Sequence[Path]
+) -> int:
+    """Write the files that modules handed back into *directory*; 0, or 2 when that is refused."""
+    from metacheck.module import ModuleFileError, module_files, write_module_files
+    from metacheck.packs.ui import console
+
+    files = module_files(outputs)
+    if not files:
+        console().print(
+            f"[dim]No module handed back a file, so nothing was written to {_escape(directory)}.[/]"
+        )
+        return 0
+    try:
+        paths = write_module_files(files, directory, force=force, protect=protect)
+    except ModuleFileError as exc:
+        _err(str(exc))
+        return 2
+    for path in paths:
+        console().print(f"[dim]File: {_escape(path)}[/]")
+    return 0
 
 
 def cmd_rerun(ns: argparse.Namespace) -> int:
@@ -995,7 +1045,9 @@ def build_parser() -> argparse.ArgumentParser:
         description=(
             "Check a data package: the folder (or zip or tar archive) of data, code and "
             "documentation that comes with a paper. Everything runs on this machine; an "
-            "archive is extracted to a temporary folder and removed afterwards. Without -o the "
+            "archive is extracted to a temporary folder and removed afterwards. The one "
+            "exception is --abstract-lookup, which you have to ask for: it fetches the "
+            "paper's abstract by its DOI, and sends nothing but the DOI. Without -o the "
             "results are printed; with -o (or -f) a report is written."
         ),
     )
@@ -1013,6 +1065,37 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         choices=["html", "qmd", "md"],
         help="the report's format (default html); without -o the file is <name>_report.<format>",
+    )
+    p.add_argument(
+        "--files-dir",
+        default=None,
+        metavar="DIR",
+        help="write the files that modules hand back (such as the README draft of "
+        "-m datapackage::package_readme) into this folder, which is created; it must not be "
+        "the package itself or inside it",
+    )
+    p.add_argument(
+        "--force",
+        action="store_true",
+        help="with --files-dir: replace files that are already in the folder "
+        "(by default one that exists stops the whole write)",
+    )
+    p.add_argument(
+        "--abstract-lookup",
+        action="store_true",
+        help="decide whether the research involved people (for the ethical approval and "
+        "informed consent rows) from the paper's abstract, fetched online from Crossref or "
+        "OpenAlex by the paper's DOI. Off by default. Only the DOI is sent: no file name, "
+        "README text or other content of the package leaves this machine. A hit means "
+        "people were involved; anything else leaves the rows to a person. With --offline "
+        "nothing is fetched",
+    )
+    p.add_argument(
+        "--paper-doi",
+        default=None,
+        metavar="DOI",
+        help="the paper's DOI for --abstract-lookup (which it implies); default: the DOI on "
+        "the README's line for the publication, if it has one",
     )
     p.set_defaults(func=cmd_package)
 
