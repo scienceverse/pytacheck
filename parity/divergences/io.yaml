@@ -1,11 +1,25 @@
 # Cases in the io lane's generated case files (bibr12*, grobid12*) that differ from R
 # because pytacheck fixes metacheck bugs (docs/UPSTREAM_ISSUES.md). Format: see
 # parity/cases.py (load_divergences()).
-"bibr12/paper_write.text.PMC4383902": &u22
-  kind: r_bug_fixed
-  ref: U22
-  reason: "doubles that 15 significant digits would change are written in full (R/jsonlite: 0.704934775829315 for 0.7049347758293152)"
-"bibr12/paper_write.text.preprint": *u22
+"bibr12/paper_write.text.PMC4383902": &d64_u22
+  kind: deliberate
+  ref: D64
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also doubles that 15 significant digits would change are written in full (U22; R: 0.704934775829315 for 0.7049347758293152)"
+"bibr12/paper_write.text.preprint": *d64_u22
+"bibr12/paper_write.text.full": &d64
+  kind: deliberate
+  ref: D64
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); every value reads back equal"
+"bibr12/paper_write.text.probe_docx": *d64
+"bibr12/paper_write.text.probe_docx.images": *d64
+"bibr12/paper_write.text.probe_html": *d64
+"bibr12/paper_write.text.pyfull": *d64
+"bibr12/paper_write.text.inspect": *d64
+"bibr12/paper_write.text.add_bib_match": *d64
+"bibr12/paper_write.text.match_variants": *d64
+"bibr12_review/paper_write.text.add_bib_match.replay": *d64
+"bibr12_review/malformed.write.contents_object": *d64
+"bibr12_review/malformed.write.int_array_na": *d64
 "bibr12_review/malformed.read.metadata_null_array": &malformed
   kind: r_bug_fixed
   ref: U24
@@ -218,11 +232,11 @@
 "grobid12_review/write_read.review_urls": *urls
 "grobid12_review/written.review_url_na": *urls
 "grobid12_review/written.review_urls": *urls
-"bibr12_review/paper_write.text.edge_types": &df_u22
-  kind: r_bug_fixed
-  ref: U24
-  reason: "an empty df is no df (R writes '' and 'NULL'), and doubles that 15 significant digits would change are written in full (U22: R writes 3.14159265358979 for pi)"
-"bibr12_review/paper_write.text.modified": *df_u22
+"bibr12_review/paper_write.text.edge_types": &d64_df_u22
+  kind: deliberate
+  ref: D64
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also an empty df is no df (R writes '' and 'NULL', U24) and doubles that 15 significant digits would change are written in full (U22: R writes 3.14159265358979 for pi)"
+"bibr12_review/paper_write.text.modified": *d64_df_u22
 "grobid12/.grobid_to_bibr.io.nonfatal_errors": &squish
   kind: r_bug_fixed
   ref: U27
