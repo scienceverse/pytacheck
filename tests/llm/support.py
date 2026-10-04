@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 HERE = Path(__file__).resolve().parent
-FIXTURES = HERE / "fixtures"
 MOCKS = HERE / "mocks"
 
 KEYS = (
@@ -20,11 +18,6 @@ KEYS = (
     "OPENROUTER_API_KEY",
     "VLLM_API_KEY",
 )
-
-
-def load_json(name: str) -> Any:
-    """A JSON fixture written by ``fixtures/make_fixtures.R``."""
-    return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
 
 
 class FakeChat:
