@@ -27,10 +27,10 @@ Conventions of the port:
   :class:`_Article` whose regex matches are computed once for all papers and
   shared by the per-paper views (every locator matches sentence by sentence,
   so this gives exactly R's per-paper results);
-* before running a PCRE pattern, :class:`_Article` skips the sentences that
-  lack the literal text every match needs (:func:`_required`, looked up in a
-  word index of the column): a necessary condition only, so results are
-  unchanged (``tests/mod_funding`` compares against full scans).
+* before running a pattern, :class:`_Article` skips the sentences that lack the
+  literal text every match needs (:func:`metacheck._r.regex.required_literals`,
+  looked up in a word index of the column): a necessary condition only, so
+  results are unchanged (``tests/mod_funding`` compares against full scans).
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ from typing import Any
 
 import numpy as np
 
-from metacheck._r.regex import casefold, grepl
+from metacheck._r.regex import casefold, grepl, required_literals
 
 __all__ = [
     "get_acknow_1",
@@ -85,206 +85,6 @@ __all__ = [
     "negate_absence_1",
     "rtransparent_funding",
 ]
-
-
-# ---------------------------------------------------------------------------
-# Literal prefilter: skip the regex engine for sentences that cannot match
-# ---------------------------------------------------------------------------
-
-
-def _class_end(p: str, i: int) -> int:
-    """Index after the ``]`` closing the character class opened at ``p[i]``."""
-    j = i + 1
-    if j < len(p) and p[j] == "^":
-        j += 1
-    if j < len(p) and p[j] == "]":
-        j += 1
-    while j < len(p):
-        c = p[j]
-        if c == "\\":
-            j += 2
-            continue
-        if c == "[" and p.startswith("[:", j):
-            end = p.find(":]", j + 2)
-            if end != -1:
-                j = end + 2
-                continue
-        if c == "]":
-            return j + 1
-        j += 1
-    raise ValueError(f"unterminated character class in {p!r}")
-
-
-def _group_end(p: str, i: int) -> int:
-    """Index after the ``)`` closing the group opened at ``p[i]``."""
-    depth = 0
-    j = i
-    while j < len(p):
-        c = p[j]
-        if c == "\\":
-            j += 2
-            continue
-        if c == "[":
-            j = _class_end(p, j)
-            continue
-        if c == "(":
-            depth += 1
-        elif c == ")":
-            depth -= 1
-            if depth == 0:
-                return j + 1
-        j += 1
-    raise ValueError(f"unbalanced parentheses in {p!r}")
-
-
-def _split_top(p: str) -> list[str]:
-    """Split a PCRE pattern on its top-level ``|``."""
-    out: list[str] = []
-    start = 0
-    j = 0
-    while j < len(p):
-        c = p[j]
-        if c == "\\":
-            j += 2
-            continue
-        if c == "[":
-            j = _class_end(p, j)
-            continue
-        if c == "(":
-            j = _group_end(p, j)
-            continue
-        if c == "|":
-            out.append(p[start:j])
-            start = j + 1
-        j += 1
-    out.append(p[start:])
-    return out
-
-
-def _brace_bounds(p: str, i: int) -> tuple[int, int] | None:
-    """``(min, index after "}")`` for a ``{m}`` / ``{m,}`` / ``{m,n}`` quantifier at ``p[i]``."""
-    end = p.find("}", i)
-    if end == -1:
-        return None
-    lo, _, hi = p[i + 1 : end].partition(",")
-    if not lo.isdigit() or not (hi == "" or hi.isdigit()):
-        return None
-    return int(lo), end + 1
-
-
-def _quantifier(p: str, i: int) -> tuple[int, int, bool]:
-    """``(min, next index, quantified)`` for the quantifier (if any) at ``p[i]``."""
-    if i >= len(p):
-        return 1, i, False
-    c = p[i]
-    if c in "?*":
-        qmin, i = 0, i + 1
-    elif c == "+":
-        qmin, i = 1, i + 1
-    elif c == "{" and (bounds := _brace_bounds(p, i)) is not None:
-        qmin, i = bounds
-    else:
-        return 1, i, False
-    if i < len(p) and p[i] in "?+":  # lazy / possessive
-        i += 1
-    return qmin, i, True
-
-
-def _best(conj: list[tuple[str, ...]]) -> tuple[str, ...] | None:
-    """The most selective requirement of a conjunction (longest shortest literal)."""
-    if not conj:
-        return None
-    return max(conj, key=lambda d: min(len(x) for x in d))
-
-
-def _required(p: str) -> list[tuple[str, ...]]:
-    """Literals any match of PCRE pattern *p* must contain.
-
-    A conjunction of disjunctions: every match contains, for each tuple, at
-    least one of its (casefolded) strings. Only plain literal characters
-    count; anything else (classes, escapes like ``\\b``, lookarounds, inline
-    flags, optional or repeated atoms) just ends a literal run, so the
-    requirement is always necessary (never too strict).
-    """
-    branches = _split_top(p)
-    if len(branches) > 1:
-        union: list[str] = []
-        for b in branches:
-            best = _best(_required(b))
-            if best is None:
-                return []
-            union.extend(best)
-        return [tuple(dict.fromkeys(union))]
-
-    conj: list[tuple[str, ...]] = []
-    run: list[str] = []
-
-    def flush() -> None:
-        if run:
-            conj.append(("".join(run).casefold(),))
-            run.clear()
-
-    i, n = 0, len(p)
-    while i < n:
-        c = p[i]
-        inner: str | None = None
-        char: str | None = None
-        if c == "\\":
-            e = p[i + 1]
-            i += 2
-            if not e.isalnum():
-                char = e
-        elif c == "[":
-            i = _class_end(p, i)
-        elif c == "(":
-            j = _group_end(p, i)
-            body = p[i + 1 : j - 1]
-            if not body.startswith("?"):
-                inner = body
-            elif body.startswith("?:"):
-                inner = body[2:]
-            i = j
-        elif c in ".^$":
-            i += 1
-        else:
-            char = c
-            i += 1
-        qmin, i, quantified = _quantifier(p, i)
-        if char is not None and not quantified:
-            run.append(char)
-            continue
-        if char is not None and qmin >= 1:
-            run.append(char)
-        flush()
-        if inner is not None and qmin >= 1:
-            conj.extend(_required(inner))
-    flush()
-    return conj
-
-
-@cache
-def _prefilter(pattern: str) -> tuple[tuple[str, ...], ...]:
-    """:func:`_required` for a PCRE pattern (cached; ``()`` when nothing is known)."""
-    try:
-        return tuple(dict.fromkeys(_required(pattern)))
-    except (ValueError, IndexError):  # pragma: no cover - unparsable: no prefilter
-        return ()
-
-
-#: shorter literals ("by", "id") are too common to make a useful prefilter
-_MIN_LITERAL = 3
-
-
-@cache
-def _prefilter_pieces(pattern: str) -> tuple[tuple[str, ...], ...]:
-    """:func:`_prefilter` for word lookups: each literal becomes its longest
-    whitespace-free piece; requirements with a short piece are dropped."""
-    out: list[tuple[str, ...]] = []
-    for disj in _prefilter(pattern):
-        pieces = [max(lit.split(), key=len, default="") for lit in disj]
-        if min(len(p) for p in pieces) >= _MIN_LITERAL:
-            out.append(tuple(dict.fromkeys(pieces)))
-    return tuple(out)
 
 
 # ---------------------------------------------------------------------------
@@ -365,12 +165,12 @@ class _Article:
             self._cache[key] = mask
         return mask
 
-    def _candidates(self, pattern: str, perl: bool) -> np.ndarray | None:
+    def _candidates(self, pattern: str, ignore_case: bool, perl: bool) -> np.ndarray | None:
         """Rows that can match *pattern* (``None``: all rows)."""
-        if not perl:
+        if not perl:  # the two TRE patterns are run on every row, as before
             return None
         cand: np.ndarray | None = None
-        for pieces in _prefilter_pieces(pattern):
+        for pieces in required_literals(pattern, perl, ignore_case):
             m = self._literal_mask(pieces[0])
             for piece in pieces[1:]:
                 m = m | self._literal_mask(piece)
@@ -382,7 +182,7 @@ class _Article:
         mask = self._cache.get(key)
         if mask is None:
             texts = self._texts
-            cand = self._candidates(pattern, perl)
+            cand = self._candidates(pattern, ignore_case, perl)
             if cand is None:
                 hits = grepl(pattern, texts, ignore_case=ignore_case, perl=perl)
                 mask = np.fromiter(hits, dtype=bool, count=len(texts))

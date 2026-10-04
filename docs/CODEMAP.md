@@ -40,6 +40,7 @@ Most R files map to one Python file, grouped into subpackages by topic:
 | `modules/` | The checks, one file per metacheck module. Private helpers that a module needs start with `_` (`_funding.py`, `_power.py`, ...). `pack.json` lists the built-in presets. | `inst/modules/*.R` |
 | `papers/` | `Paper` and `PaperList` (bibr export schema 12.0, and the older format), reading and writing papers, cross-paper tables, validation. | `R/paper.R`, `R/import-read.R` |
 | `io/` | `read()` and conversion: bibr JSON, Grobid TEI, bibr run in-process, conversion servers. | `R/import-*.R`, `R/svutils-xml.R` |
+| `core/` | Python only. The indexed document under the text façades: a paper's sentences indexed once (`Doc`), R patterns as values, search chains (`Hits`) and their grouped views. | none |
 | `text/` | `text_search()`, `text_expand()` and the extractors (p-values, tests, URLs, causal sentences). | `R/text_search.R`, `R/text_expand.R`, `R/text-*.R`, `R/extract-tests.R`, `R/causal_sentences.R` |
 | `stats/` | `stats()` and a port of the statcheck package. | `R/stats.R`, `R/stat_helpers.R` |
 | `db/` | DOIs, Crossref, PubPeer, Retraction Watch, FLoRA, the registries, ORCID. | `R/doi.R`, `R/db-*.R`, `R/regcheck-local.R`, `R/svutils-orcid.R` |
@@ -150,8 +151,8 @@ modules is covered in [MODULES.md](MODULES.md).
 
 | Check | R file | Python | Tests | Parity areas | Status | Recorded differences |
 |---|---|---|---|---|---|---|
-| `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | U16 |
-| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U77, U79, U158 |
+| `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | U16, U204 |
+| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U77, U79, U158, U206 |
 | `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | U79, U84, U85 |
 | `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | U79, U82, U86, U87, U89 |
 | `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | D14, U91, U92 |
@@ -177,9 +178,9 @@ modules is covered in [MODULES.md](MODULES.md).
 | `repo_check`<br>Repository Check | `inst/modules/repo_check.R` | [modules/repo_check.py](../src/metacheck/modules/repo_check.py)<br>[modules/_repo_check.py](../src/metacheck/modules/_repo_check.py) | [tests/mod_repo_check](../tests/mod_repo_check) | mod_repo_check | experimental | U79 |
 | `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | — |
 | `stat_check`<br>StatCheck | `inst/modules/stat_check.R` | [modules/stat_check.py](../src/metacheck/modules/stat_check.py) | [tests/stats](../tests/stats) | stats, bibr12, grobid12 | experimental | U4, U16 |
-| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126 |
-| `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | U16, U127 |
-| `stat_p_nonsig`<br>Non-Significant P Value Check | `inst/modules/stat_p_nonsig.R` | [modules/stat_p_nonsig.py](../src/metacheck/modules/stat_p_nonsig.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | U16, U127 |
+| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U205 |
+| `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | U16, U127, U204 |
+| `stat_p_nonsig`<br>Non-Significant P Value Check | `inst/modules/stat_p_nonsig.R` | [modules/stat_p_nonsig.py](../src/metacheck/modules/stat_p_nonsig.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | U16, U127, U204 |
 <!-- END codemap:modules -->
 
 ## R functions
@@ -941,8 +942,8 @@ Python: [text/extract.py](../src/metacheck/text/extract.py). Tests: [tests/text_
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
 | `extract_urls()` | [`metacheck.text.extract:extract_urls`](../src/metacheck/text/extract.py) | yes | U158 |  |
-| `extract_p_values()` | [`metacheck.text.extract:extract_p_values`](../src/metacheck/text/extract.py) | yes | U150 |  |
-| `extract_eq()` | [`metacheck.text.extract:extract_eq`](../src/metacheck/text/extract.py) | yes | U10, U150 |  |
+| `extract_p_values()` | [`metacheck.text.extract:extract_p_values`](../src/metacheck/text/extract.py) | yes | U150, U204 |  |
+| `extract_eq()` | [`metacheck.text.extract:extract_eq`](../src/metacheck/text/extract.py) | yes | U10, U150, U205 |  |
 
 ### `R/text-json_expand.R`
 

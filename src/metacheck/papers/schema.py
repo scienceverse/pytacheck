@@ -360,10 +360,24 @@ def records_to_frame(
             for k in r:
                 order.setdefault(k, None)
         columns = list(order)
+    data = records_to_columns(table, rows, columns)
+    if not data:
+        return pd.DataFrame(index=range(len(rows)))
+    return pd.DataFrame(data)
+
+
+def records_to_columns(
+    table: str, records: Sequence[Mapping[str, Any]], columns: Iterable[str]
+) -> dict[str, pd.Series]:
+    """The columns :func:`records_to_frame` builds from *records*, as Series by name.
+
+    Each column is typed on its own, from all of its values, so a column is the
+    same whichever other columns are built with it.
+    """
     types = _column_types(table)
     data: dict[str, pd.Series] = {}
     for col in columns:
-        vals = [r.get(col) for r in rows]
+        vals = [r.get(col) for r in records]
         typ = types.get(col)
         if typ is None:
             data[col] = infer_column(vals)
@@ -372,6 +386,4 @@ def records_to_frame(
         else:
             fast = _fast_column(vals, typ)
             data[col] = fast if fast is not None else coerce_column(infer_column(vals), typ)
-    if not data:
-        return pd.DataFrame(index=range(len(rows)))
-    return pd.DataFrame(data)
+    return data

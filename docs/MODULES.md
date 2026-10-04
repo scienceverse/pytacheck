@@ -471,7 +471,13 @@ The contract (the same one the built-in modules follow):
 
 * the function's name equals the file name, and it has a title, a description and
   one section keyword;
-* it never modifies the paper it receives (copy tables before changing them);
+* it never modifies the paper it receives (copy tables before changing them).
+  `run_modules()` and `report()` read each paper's text and section tables once per
+  run, and the later modules reuse what was read, so an in-place edit by one module
+  (such as `paper.text.loc[...] = ...`) is not seen by the modules after it. Run
+  your tests with `METACHECK_CHECK_MUTATION=1`: a run that finds a table edited in
+  place raises `StaleDocumentError` before the next module, naming the module that
+  made the edit (CI runs this way);
 * `traffic_light` is one of `na`, `fail`, `info`, `green`, `yellow`, `red`;
 * `summary_table` has a `paper_id` column and at most one row per paper;
 * it works on a single paper and on a paper list, and on bibr 12.x papers as well

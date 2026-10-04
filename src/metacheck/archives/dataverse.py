@@ -640,10 +640,10 @@ def _search_frame(paper: Any) -> pd.DataFrame | None:
     if isinstance(paper, str | pd.DataFrame):
         return None
     try:
-        from metacheck.text.search import _text_frame
+        from metacheck.text.search import sentence_table
     except ImportError:  # pragma: no cover - search the whole paper instead
         return None
-    frame, is_vector = _text_frame(paper)
+    frame, is_vector = sentence_table(paper)
     if is_vector or "text" not in frame.columns:
         return None
     return frame

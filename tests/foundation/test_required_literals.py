@@ -32,7 +32,8 @@ from tests.foundation.record_regex_calls import DATA, load
 BUILTIN = Path(__file__).with_name("data") / "builtin_patterns.json"
 
 #: the built-in triples with at least one clause: a floor that only goes up
-BUILTIN_COVERED_FLOOR = 229  # of 273
+# of 271; 229 of 272 while the ethics module's own prefilter pattern (with clauses) was recorded
+BUILTIN_COVERED_FLOOR = 228
 
 
 @pytest.fixture(autouse=True)
@@ -47,7 +48,7 @@ def _literals_on(monkeypatch: pytest.MonkeyPatch) -> None:
 @pytest.mark.parametrize(
     ("pattern", "perl", "cnf"),
     [
-        # the funding module's examples (_funding._required), as pieces
+        # the examples of the funding module's former literal extractor, as pieces
         ("abc(|s)def", True, (("abc",), ("def",))),
         ("x?yzw", True, (("yzw",),)),
         ("[Ff]unded", True, (("unded",),)),

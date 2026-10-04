@@ -50,6 +50,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.base import as_character, r_sort_key
+from metacheck.core.errors import StaleDocumentError
 from metacheck.papers.model import Paper, PaperList
 
 __all__ = [
@@ -1010,6 +1011,8 @@ def module_run(
     try:
         _check_unused_args(spec, kwargs)
         results = spec.func(paper, **kwargs)
+    except StaleDocumentError:
+        raise  # the CI mutation check: a failed module would hide it
     except Exception as exc:
         from metacheck.log import logger
 

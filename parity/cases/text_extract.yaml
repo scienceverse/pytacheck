@@ -155,6 +155,7 @@
         - "The p-value is 0.03."
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_p_values.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values: 'ps < .05', 'ps <.03', 'ps > .115' and the other 'ps' forms (metacheck matches only p, p-value and P)"}
   "r": "extract_p_values"
   "py": "metacheck.text.extract.extract_p_values"
   "args":
@@ -227,6 +228,7 @@
         - "(..., Hedges's g = 0.32, ...)"
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.tricky"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U205", "reason": "'r(98) = −.32' (Unicode minus) is a statistic, its rhs '-.32'; metacheck matches only the ASCII hyphen"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
