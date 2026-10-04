@@ -23,6 +23,7 @@ from __future__ import annotations
 import itertools
 import math
 import os
+import re
 import sys
 import threading
 import time
@@ -351,72 +352,31 @@ def _r_dollar(x: Any, name: str) -> Any:
 
 def _llm_error_message(e: BaseException) -> str:
     """Port of ``.llm_error_message()``: the error text plus the provider's own reason."""
-    from metacheck.llm._json import parse_json
-
     msg = str(e)
-    resp = _cond_resp(e)
-    if resp is None:
-        return msg
-    detail: Any = None
-    try:
-        body = parse_json(resp.content.decode("utf-8", "replace"))
-        err = _r_dollar(body, "error")
-        if isinstance(err, str):
-            detail = err
-        else:
-            detail = _r_dollar(err, "message")
-            if detail is None:
-                detail = _r_dollar(body, "message")
-    except Exception:
-        detail = None
-    if detail is None:
-        try:
-            detail = resp.content.decode("utf-8", "replace")
-        except Exception:
-            detail = None
-    if not isinstance(detail, str) or not detail:  # e.g. a number, object or array
+    detail = getattr(e, "detail", None)
+    if not isinstance(detail, str) or not detail:
         return msg
     if len(detail) > 500:
         detail = detail[:500] + " [truncated]"
     return f"{msg}\n  Provider says: {detail}"
 
 
-_RETRYABLE = (
-    "Failed to (generate|validate) JSON|lexical error|malformed number|premature EOF|"
-    "parse error|```json"
-)
-_TRANSPORT = (
-    "could not resolve|connection refused|couldn't connect|timed out|timeout|"
-    "connection reset|network is unreachable|no route to host|failed to connect|"
-    "empty reply from server|handshake|ssl"
-)
+_RETRYABLE = "Failed to (generate|validate|parse) JSON"
 
 
 def _llm_json_retryable(e: BaseException) -> bool:
     """Port of ``.llm_json_retryable()``: a structured-output failure worth retrying."""
-    from metacheck._r import grepl
-
-    return bool(grepl(_RETRYABLE, [_llm_error_message(e)], ignore_case=True)[0])
+    return re.search(_RETRYABLE, _llm_error_message(e), re.IGNORECASE) is not None
 
 
 def _llm_is_systemic_error(e: BaseException) -> bool:
     """Port of ``.llm_is_systemic_error()``: will every call this run fail this way?"""
-    from metacheck._r import grepl
-
-    resp = _cond_resp(e)
-    status = getattr(resp, "status_code", None) if resp is not None else None
-    if status in (401, 403):
-        return True
-    if status is not None and status >= 500:
-        return True
-    if resp is not None:
+    status = getattr(e, "status", None)
+    if status is not None:
+        return bool(status in (401, 403) or status >= 500)
+    if getattr(e, "timeout", False) or _llm_json_retryable(e):
         return False
-    parent = getattr(e, "parent", None)
-    if getattr(e, "timeout", False) or getattr(parent, "timeout", False):
-        return False
-    if _llm_json_retryable(e):
-        return False
-    return bool(grepl(_TRANSPORT, [str(e)], ignore_case=True)[0])
+    return bool(getattr(e, "transport", False))
 
 
 class _SystemicNotice:
@@ -1328,10 +1288,11 @@ def llm(
     import pandas as pd
 
     from metacheck._r import plural, trimws
+    from metacheck.llm import _backend as backend
     from metacheck.llm import providers as prov
     from metacheck.llm._rds import EllmerOutput
     from metacheck.llm.cache import _llm_cache_get, _llm_cache_key, _llm_cache_put, llm_cache
-    from metacheck.llm.types import as_type
+    from metacheck.llm.types import as_type, convert_from_type
 
     if not llm_use():
         raise RuntimeError("Set llm_use(TRUE) to use LLM functions")
@@ -1410,34 +1371,6 @@ def llm(
                 f"Ollama is installed, but the model {ollama_model} is not available"
             )
 
-    def make_chat() -> Any:
-        if model.startswith("vllm/"):
-            from metacheck.utils import get_option
-
-            vllm_model = model[len("vllm/") :]
-            vllm_base_url = get_option("metacheck.llm.vllm.base_url")
-            if not vllm_model:
-                raise ValueError("For vllm, set model as 'vllm/<model-name>'")
-            if vllm_base_url is None or not str(vllm_base_url):
-                raise ValueError(
-                    "Set options(metacheck.llm.vllm.base_url = '<vllm-endpoint>/v1') "
-                    "to use vllm models"
-                )
-            return prov.chat_vllm(
-                base_url=str(vllm_base_url),
-                model=vllm_model,
-                system_prompt=system_prompt,
-                params=ellmer_params,
-                api_args=reasoning_api_args or None,
-                credentials=lambda: os.environ.get("VLLM_API_KEY", ""),
-            )
-        return prov.chat(
-            model,
-            system_prompt=system_prompt,
-            params=ellmer_params,
-            api_args=reasoning_api_args or None,
-        )
-
     # R shows a progress bar labelled with the phase (or a generic label) and model
     label = phase if phase else ("Extracting data" if structured else "Querying LLM")
     label = f"{label} ({model})"
@@ -1462,32 +1395,41 @@ def llm(
                 if key is not None:
                     _llm_cache_put(key, out)
                 return out
-            with _capture_messages() as msgs:
-                chat_obj = make_chat()
-            if msgs and i == 0:
-                for m in msgs:
-                    _message(m)
+            system = (
+                "\n\n".join(system_prompt)
+                if isinstance(system_prompt, list | tuple)
+                else system_prompt
+            )
             if not structured:
                 # chat$chat() returns an "ellmer_output"; trimws() keeps the class
-                out = {"answer": EllmerOutput(trimws(chat_obj.chat(ut)))}
+                out = {
+                    "answer": EllmerOutput(
+                        trimws(
+                            backend.complete(
+                                model, system, ut, None, params_list, reasoning_api_args
+                            )
+                        )
+                    )
+                }
                 if key is not None:
                     _llm_cache_put(key, out)
                 return out
             # Structured output: a reply that fails JSON generation/validation is
-            # retried with a fresh chat, up to five attempts in all.
+            # asked for again, up to five attempts in all.
             for attempt in range(1, 6):
                 try:
-                    result = chat_obj.chat_structured(ut, type=type_obj)
+                    data = backend.complete(
+                        model, system, ut, type_obj, params_list, reasoning_api_args
+                    )
+                    result = convert_from_type(data, type_obj)
                     break
                 except Exception as e:
                     if attempt == 5 or not _llm_json_retryable(e):
                         raise
-                    with _capture_messages():
-                        chat_obj = make_chat()
             df = _unnest_result(_as_rlists(result))
             if len(df) > 0:
                 df[".join_key."] = pd.Series([ut] * len(df), dtype="string")
-            thinking = _llm_extract_thinking(chat_obj) if capture_reasoning else None
+            thinking = None
             if capture_reasoning and len(df) > 0:
                 df[".reasoning"] = pd.Series([thinking] * len(df), dtype="string")
             if key is not None:

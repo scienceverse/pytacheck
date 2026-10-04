@@ -36,6 +36,7 @@ import struct
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
+from unittest import mock
 from urllib.parse import urlsplit
 
 import httpx
@@ -208,6 +209,38 @@ def _log_llm_reply(root: Path, path: str, asked: dict[str, Any], log: str) -> No
 
 
 @contextlib.contextmanager
+def _httpx2_bridge() -> Iterator[None]:
+    """Send the requests of ``httpx2`` through ``httpx``, where respx serves them.
+
+    The ``openai`` and ``anthropic`` SDKs run on ``httpx2`` (Pydantic's fork of
+    httpx), which respx does not see. Their default transport is replaced for
+    the block by one that hands each request to ``httpx`` and converts the
+    answer back, so one router serves every library.
+    """
+    try:
+        import httpx2
+    except ImportError:  # the `llm` extra is not installed: no SDK traffic to serve
+        yield
+        return
+
+    def handle_request(self: Any, request: Any) -> Any:
+        sent = httpx.Request(
+            request.method, str(request.url), headers=list(request.headers.items()),
+            content=request.read(),
+        )  # fmt: skip
+        with httpx.Client() as client:
+            resp = client.send(sent)
+        skip = {"content-encoding", "content-length", "transfer-encoding"}
+        headers = [(k, v) for k, v in resp.headers.items() if k.lower() not in skip]
+        return httpx2.Response(
+            resp.status_code, headers=headers, content=resp.content, request=request
+        )
+
+    with mock.patch.object(httpx2.HTTPTransport, "handle_request", handle_request):
+        yield
+
+
+@contextlib.contextmanager
 def replay(*mock_dirs: str | Path, assert_all_called: bool = False) -> Iterator[respx.MockRouter]:
     """Serve requests from httptest2 mock directories (relative to metacheck's tests)."""
     roots = [
@@ -231,9 +264,12 @@ def replay(*mock_dirs: str | Path, assert_all_called: bool = False) -> Iterator[
             if resp is not None:
                 return resp
         host = urlsplit(str(request.url)).hostname
+        if asked is not None:  # say what was asked, so a missing reply can be recorded
+            what = f"{llmreplies.llm_key(asked)}: {json.dumps(asked, ensure_ascii=False)}"
+            return httpx.Response(404, json={"error": f"no recorded reply for {what}"})
         return httpx.Response(404, json={"error": f"no recorded fixture for {path} ({host})"})
 
-    with respx.mock(assert_all_called=assert_all_called) as router:
+    with respx.mock(assert_all_called=assert_all_called) as router, _httpx2_bridge():
         router.route().mock(side_effect=handler)
         yield router
 
