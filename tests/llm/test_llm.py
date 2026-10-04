@@ -5,17 +5,15 @@ from __future__ import annotations
 import warnings
 from pathlib import Path
 
-import httpx
 import pandas as pd
 import pytest
-import respx
 
 import metacheck.llm as L
-from metacheck.llm import core, providers
-from metacheck.llm.providers import LLMError
+from metacheck.llm import _backend, core
+from metacheck.llm._backend import LLMError
 from metacheck.utils import get_option, local_options, options
 from tests.httpmock import replay
-from tests.llm.support import MOCKS, FakeChat
+from tests.llm.support import MOCKS, Asked, FakeChat
 
 # ---------------------------------------------------------------------------
 # argument checking (no network)
@@ -28,10 +26,6 @@ def test_llm_argument_errors(llm_on: Path) -> None:
         L.llm()  # type: ignore[call-arg]
     with pytest.raises(TypeError):
         L.llm("hi")  # type: ignore[call-arg]
-    with pytest.raises(ValueError, match="`top_p` must be a number"):
-        L.llm("hi", "repeat this", model="groq/x", params={"top_p": "a"})
-    with pytest.raises(ValueError, match="`top_p` must be a number"):
-        L.llm("hi", "repeat this", model="groq/x", params={"top_p": -3})
     L.llm_use(False)
     with pytest.raises(RuntimeError, match=r"llm_use\(TRUE\)"):
         L.llm("hi", "repeat this", model="groq")
@@ -43,15 +37,6 @@ def test_llm_fails_fast_when_model_unset_or_params_malformed(llm_on: Path) -> No
             L.llm("hi", "repeat this")
     with pytest.raises(ValueError, match="params must be a named list"):
         L.llm("hi", "repeat this", model="groq/llama-3.1-8b-instant", params=1)  # type: ignore[arg-type]
-
-
-def test_misspecified_params_message(llm_on: Path) -> None:
-    with pytest.raises(ValueError) as err:
-        L.llm("hi", "s", model="groq/x", params={"max_tokens": 0})
-    assert str(err.value) == (
-        "Misspecified params argument:\n`max_tokens` must be a whole number larger than or "
-        "equal to 1 or `NULL`, not the number 0."
-    )
 
 
 def test_max_calls(llm_on: Path, restore_llm_options: None) -> None:
@@ -84,40 +69,19 @@ def test_no_calls(llm_on: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_llm_error_message_surfaces_provider_body() -> None:
-    resp = httpx.Response(
-        400, json={"error": {"message": "Please reduce the length of the messages."}}
-    )
-    e = LLMError("HTTP 400 Bad Request.", resp=resp)
-    msg = core._llm_error_message(e)
-    assert "HTTP 400 Bad Request" in msg
-    assert "Please reduce the length of the messages" in msg
-    # the response on the parent condition (ellmer-style wrapping)
-    wrapper = LLMError("Failed to call chat API.", parent=e)
-    assert "Please reduce the length of the messages" in core._llm_error_message(wrapper)
-    # no response attached: the original message comes back unchanged
-    assert core._llm_error_message(LLMError("boom")) == "boom"
-    assert core._llm_error_message(ValueError("plain")) == "plain"
-
-
-def test_llm_error_message_truncates_long_bodies() -> None:
-    resp = httpx.Response(500, content=b"x" * 600, headers={"content-type": "text/plain"})
-    msg = core._llm_error_message(LLMError("HTTP 500 Internal Server Error.", resp=resp))
-    assert msg.endswith("x" * 500 + " [truncated]")
-
-
 def test_llm_json_retryable() -> None:
     assert core._llm_json_retryable(LLMError("Failed to generate JSON"))
     assert core._llm_json_retryable(
         LLMError('lexical error: invalid char in json text. ```json { "studies": [] }')
     )
+    assert core._llm_json_retryable(LLMError("Failed to parse JSON: Expecting value"))
     assert not core._llm_json_retryable(LLMError("HTTP 401 Unauthorized"))
 
 
 def test_llm_is_systemic_error() -> None:
-    assert core._llm_is_systemic_error(LLMError("x", resp=httpx.Response(401)))
-    assert core._llm_is_systemic_error(LLMError("x", resp=httpx.Response(503)))
-    assert not core._llm_is_systemic_error(LLMError("x", resp=httpx.Response(400)))
+    assert core._llm_is_systemic_error(LLMError("x", status=401))
+    assert core._llm_is_systemic_error(LLMError("x", status=503))
+    assert not core._llm_is_systemic_error(LLMError("x", status=400))
     assert core._llm_is_systemic_error(LLMError("Could not resolve host: api.groq.com"))
     assert not core._llm_is_systemic_error(LLMError("Operation timed out", timeout=True))
     assert not core._llm_is_systemic_error(LLMError("parse error: premature EOF"))
@@ -161,26 +125,8 @@ def test_apply_reasoning_defaults_to_low(restore_llm_options: None) -> None:
 
 
 # ---------------------------------------------------------------------------
-# vllm routing
+# vllm
 # ---------------------------------------------------------------------------
-
-
-def test_llm_routes_vllm_through_chat_vllm(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    seen: dict[str, object] = {}
-
-    def fake_chat_vllm(**kwargs: object) -> FakeChat:
-        seen.update(kwargs)
-        seen["token"] = kwargs["credentials"]()  # type: ignore[operator]
-        return FakeChat(chat=lambda text: "TRUE")
-
-    monkeypatch.setattr(providers, "chat_vllm", fake_chat_vllm)
-    monkeypatch.setenv("VLLM_API_KEY", "test-key")
-    with local_options({"metacheck.llm.vllm.base_url": "https://example.test/v1"}):
-        out = L.llm("hello", "Answer TRUE", model="vllm/GLM-5.2-NVFP4")
-    assert seen["model"] == "GLM-5.2-NVFP4"
-    assert seen["base_url"] == "https://example.test/v1"
-    assert seen["token"] == "test-key"
-    assert out["answer"].iloc[0] == "TRUE"
 
 
 def test_llm_reports_clear_error_when_vllm_base_url_missing(llm_on: Path) -> None:
@@ -243,13 +189,42 @@ def test_default_model_from_environment(monkeypatch: pytest.MonkeyPatch) -> None
 
 
 # ---------------------------------------------------------------------------
-# llm() with a mocked chat (R: local_mocked_bindings(chat = ...))
+# llm() with a stand-in back end (R: local_mocked_bindings(chat = ...))
 # ---------------------------------------------------------------------------
 
 
-def test_llm_warns_on_unrecognised_provider(llm_on: Path) -> None:
-    with pytest.warns(UserWarning, match="Can't find provider"):
-        L.llm("hi", "repeat this", model="not a model")
+def _use(monkeypatch: pytest.MonkeyPatch, chat: FakeChat | Asked) -> None:
+    monkeypatch.setattr(_backend, "complete", chat.complete if isinstance(chat, FakeChat) else chat)
+
+
+def test_llm_reports_an_unknown_provider(llm_on: Path) -> None:
+    with pytest.warns(UserWarning, match="Unknown LLM provider `not a model`"):
+        out = L.llm("hi", "repeat this", model="not a model")
+    assert out["error"].tolist() == [True]
+
+
+def test_llm_sends_the_documented_defaults(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    asked = Asked("TRUE")
+    _use(monkeypatch, asked)
+    L.llm("hello", ["Is this a number?", "Answer TRUE or FALSE"], model="groq/openai/gpt-oss-20b")
+    (call,) = asked.asked
+    assert call["model"] == "groq/openai/gpt-oss-20b"
+    assert call["system"] == "Is this a number?\n\nAnswer TRUE or FALSE"
+    assert call["user"] == "hello"
+    assert call["params"] == {"temperature": 0.0, "max_tokens": 4096}
+    assert call["api_args"] == {"reasoning_effort": "low"}  # the default for gpt-oss
+
+
+def test_llm_passes_params_and_options_through(
+    llm_on: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    asked = Asked("x")
+    _use(monkeypatch, asked)
+    with local_options({"metacheck.llm_max_tokens": 1000}):
+        L.llm("t", "s", model="groq/llama", params={"top_p": 0.5, "seed": 7})
+    assert asked.asked[0]["params"] == {
+        "top_p": 0.5, "seed": 7, "temperature": 0.0, "max_tokens": 1000,
+    }  # fmt: skip
 
 
 def test_llm_use_true_with_mocked_chat(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -260,7 +235,7 @@ def test_llm_use_true_with_mocked_chat(llm_on: Path, monkeypatch: pytest.MonkeyP
             return "FALSE"
         return "TRUE"
 
-    monkeypatch.setattr(providers, "chat", lambda *a, **k: FakeChat(chat=is_num))
+    _use(monkeypatch, FakeChat(chat=is_num))
     text = ["hello", "number", "ten", "12"]
     out = L.llm(text, "Is this a number? Answer only 'TRUE' or 'FALSE'", model="groq/x")
     assert out["text"].tolist() == text
@@ -274,7 +249,7 @@ def test_llm_use_true_with_mocked_chat(llm_on: Path, monkeypatch: pytest.MonkeyP
         calls.append(text)
         return "TRUE" if text.isalpha() and len(text) == 1 else "FALSE"
 
-    monkeypatch.setattr(providers, "chat", lambda *a, **k: FakeChat(chat=letter))
+    _use(monkeypatch, FakeChat(chat=letter))
     text = ["A", "A", "1", "1"]
     out = L.llm(text, "Is this a letter A-Z? Answer only 'TRUE' or 'FALSE'", model="groq/x")
     assert out["text"].tolist() == text
@@ -284,11 +259,7 @@ def test_llm_use_true_with_mocked_chat(llm_on: Path, monkeypatch: pytest.MonkeyP
 
 
 def test_gemini_with_mocked_chat(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        providers,
-        "chat",
-        lambda *a, **k: FakeChat(chat=lambda t: "TRUE" if t in "AEIOU" else "FALSE"),
-    )
+    _use(monkeypatch, FakeChat(chat=lambda t: "TRUE" if t in "AEIOU" else "FALSE"))
     out = L.llm(
         ["A", "B"], "Is this a vowel? Answer only 'TRUE' or 'FALSE'.", model="google_gemini"
     )
@@ -301,11 +272,7 @@ def test_llm_handles_an_empty_structured_result(
     ts = L.type_object(
         variables=L.type_array(L.type_object(variable_name=L.type_string(), label=L.type_string()))
     )
-    monkeypatch.setattr(
-        providers,
-        "chat",
-        lambda *a, **k: FakeChat(chat_structured=lambda text, type: {"variables": []}),
-    )
+    _use(monkeypatch, FakeChat(chat_structured=lambda text, type: {"variables": []}))
     res = L.llm(pd.DataFrame({"text": ["a", "b"]}), "x", type=ts, text_col="text", model="groq/x")
     assert len(res) == 2
     assert "variable_name" not in res.columns or res["variable_name"].isna().all()
@@ -318,12 +285,12 @@ def test_llm_handles_an_empty_structured_result(
             return {"variables": [{"variable_name": "dv", "label": "outcome"}]}
         return {"variables": []}
 
-    monkeypatch.setattr(providers, "chat", lambda *a, **k: FakeChat(chat_structured=mixed))
+    _use(monkeypatch, FakeChat(chat_structured=mixed))
     res2 = L.llm(
         pd.DataFrame({"text": ["has", "empty"]}), "x", type=ts, text_col="text", model="groq/x"
     )
-    assert res2["variable_name"].tolist()[0] == "dv"
-    assert pd.isna(res2["variable_name"].tolist()[1])
+    assert res2["variables.variable_name"].tolist()[0] == "dv"
+    assert pd.isna(res2["variables.variable_name"].tolist()[1])
 
 
 def test_structured_retries_malformed_json(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -332,17 +299,38 @@ def test_structured_retries_malformed_json(llm_on: Path, monkeypatch: pytest.Mon
     def flaky(text: str, type: object) -> dict[str, str]:
         attempts.append(text)
         if len(attempts) < 3:
-            raise LLMError("HTTP 400 Bad Request.\nℹ Failed to generate JSON")
+            raise LLMError("Failed to parse JSON: Expecting value: line 1 column 1 (char 0)")
         return {"a": "ok"}
 
-    monkeypatch.setattr(providers, "chat", lambda *a, **k: FakeChat(chat_structured=flaky))
+    _use(monkeypatch, FakeChat(chat_structured=flaky))
     out = L.llm("t", "s", type=L.type_object(a=L.type_string()), model="groq/x")
     assert len(attempts) == 3
     assert out["a"].tolist() == ["ok"]
 
 
+def test_structured_gives_up_after_five_attempts(
+    llm_on: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    asked = Asked(*[LLMError("Failed to parse JSON: bad")] * 9)
+    _use(monkeypatch, asked)
+    with pytest.warns(UserWarning, match="1 of 1 LLM extraction failed"):
+        out = L.llm("t", "s", type=L.type_object(a=L.type_string()), model="groq/x")
+    assert len(asked.calls) == 5
+    assert out[".error"].tolist() == [True]
+    assert "Failed to parse JSON" in out[".error_msg"].iloc[0]
+
+
+def test_other_errors_are_not_retried(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    asked = Asked(LLMError("HTTP 400 Bad Request.", status=400), {"a": "never"})
+    _use(monkeypatch, asked)
+    with pytest.warns(UserWarning):
+        out = L.llm("t", "s", type=L.type_object(a=L.type_string()), model="groq/x")
+    assert len(asked.calls) == 1
+    assert out[".error"].tolist() == [True]
+
+
 def test_llm_result_attributes(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(providers, "chat", lambda *a, **k: FakeChat(chat=lambda t: " x "))
+    _use(monkeypatch, FakeChat(chat=lambda t: " x "))
     out = L.llm("t", "the prompt", model="groq/x")
     assert out["answer"].tolist() == ["x"]
     assert out.attrs["llm"] == {"system_prompt": "the prompt", "model": "groq/x", "type": None}
@@ -350,7 +338,7 @@ def test_llm_result_attributes(llm_on: Path, monkeypatch: pytest.MonkeyPatch) ->
 
 
 def test_llm_parallel_workers_keep_order(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(providers, "chat", lambda *a, **k: FakeChat(chat=lambda t: t.upper()))
+    _use(monkeypatch, FakeChat(chat=lambda t: t.upper()))
     texts = [f"t{i}" for i in range(12)]
     with local_options({"pytacheck.llm.workers": 4}):
         out = L.llm(texts, "s", model="groq/x")
@@ -358,70 +346,11 @@ def test_llm_parallel_workers_keep_order(llm_on: Path, monkeypatch: pytest.Monke
 
 
 # ---------------------------------------------------------------------------
-# recorded responses
+# recorded responses (R's replies, found by what was asked)
 # ---------------------------------------------------------------------------
 
 
-def test_llm_model_list(upstream_dir: Path) -> None:
-    with pytest.raises(ValueError, match="Invalid platform"):
-        L.llm_model_list("notamodel")
-    with replay("apis"):
-        o = L.llm_model_list("ollama")
-    assert len(o) == 2
-    assert o.columns.tolist() == ["platform", "id", "created_at", "size", "capabilities"]
-    assert o["capabilities"].tolist() == ["completion,tools", "completion"]
-    # without internet: every request fails, the platform is skipped
-    with respx.mock() as router:
-        router.route().mock(side_effect=httpx.ConnectError("no internet"))
-        o = L.llm_model_list("ollama")
-    assert len(o) == 0
-
-
-def test_llm_model_list_groq(upstream_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    import datetime as dt
-
-    import metacheck.utils
-
-    monkeypatch.setattr(metacheck.utils, "online", lambda *a, **k: True)
-    with pytest.raises(TypeError):
-        core._llm_model_list_groq(1)  # type: ignore[call-arg]
-    with replay("apis"):
-        g1 = core._llm_model_list_groq()
-        g2 = L.llm_model_list("groq")
-    assert "platform" in g2.columns
-    assert "platform" not in g1.columns
-    assert set(g1["id"]) == set(g2["id"])
-    assert all(isinstance(d, dt.date) for d in g1["created_at"])
-    assert not g1["id"].str.contains("whisper|vision").any()
-
-
-def test_llm_ollama_native(upstream_dir: Path, llm_on: Path) -> None:
-    system_prompt = "Is this a vowel? Answer only 'TRUE' or 'FALSE'."
-    with replay("apis"):
-        resp = core._llm_ollama_native("A", system_prompt, "qwen2.5:3b")
-        assert resp in ("TRUE", "FALSE")
-        resp2 = L.llm("A", system_prompt, model="ollama/qwen2.5:3b")
-        resp3 = L.llm("A", system_prompt, model="ollama")
-        assert resp2.columns.tolist() == ["text", "answer"]
-        assert resp3.columns.tolist() == ["text", "answer"]
-        with pytest.raises(LLMError, match="HTTP 404 Not Found"):
-            core._llm_ollama_native("A", system_prompt, "notamodel")
-        with pytest.raises(
-            RuntimeError, match="Ollama is installed, but the model notamodel is not available"
-        ):
-            L.llm("A", system_prompt, model="ollama/notamodel")
-
-
-def test_ollama_not_running(llm_on: Path) -> None:
-    with respx.mock() as router:
-        router.route().mock(side_effect=httpx.ConnectError("refused"))
-        with pytest.raises(RuntimeError, match="Ollama is not running at http://localhost:11434"):
-            L.llm("A", "s", model="ollama/x")
-
-
 def test_unnest_result() -> None:
-    with pytest.raises(NameError):
-        core._unnest_result(bad_arg)  # type: ignore[name-defined]  # noqa: F821
     df = core._unnest_result({"n_letters": 5, "is_number": False})
     assert df.columns.tolist() == ["n_letters", "is_number"]
     assert df["n_letters"].tolist() == [5]

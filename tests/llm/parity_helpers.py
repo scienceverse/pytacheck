@@ -111,7 +111,9 @@ def cond(
 
     detail = None
     if status is not None:
-        detail = _body_detail(_json.dumps(json, separators=(",", ":")) if json is not None else (text or ""))[0]
+        detail = _body_detail(
+            _json.dumps(json, separators=(",", ":")) if json is not None else (text or "")
+        )[0]
     return LLMError(
         message if wrap is None else wrap,
         status=status,

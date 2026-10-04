@@ -380,19 +380,23 @@ def _convert(x: Any, s: Mapping[str, Any], required: bool) -> Any:
     return x
 
 
-def _convert_array(x: Any, items: Mapping[str, Any]) -> Any:
+def _convert_array(x: Any, items: Mapping[str, Any], required: bool | None = None) -> Any:
+    """An array whose items have the schema *items* (``required``: whether that item may not be null)."""
     import pandas as pd
 
+    if required is None:
+        required = getattr(items, "required", True)
     seq = _elements(x)
     typ, _ = _base(items)
     if "enum" in items and typ in (None, "string"):
-        levels = {v for v in items["enum"] if v is not None}  # a factor: other values are NA
-        labels = [_as_character(v) for v in seq]
-        return pd.Series([v if v in levels else None for v in labels], dtype="string")
+        levels = [v for v in dict.fromkeys(items["enum"]) if v is not None]
+        return pd.Series(  # a factor: a value that is not a level is NA
+            pd.Categorical([_as_character(v) for v in seq], categories=levels)
+        )
     if typ in _BASIC:
         return _atomic(seq, typ)
     if typ == "array" and isinstance(items.get("items"), Mapping):
-        return [_convert(y, items, True) for y in seq]
+        return [_convert(y, items, bool(required)) for y in seq]
     if typ == "object":
         props = items.get("properties") or {}
         if items.get("additionalProperties") is True:
@@ -402,7 +406,8 @@ def _convert_array(x: Any, items: Mapping[str, Any]) -> Any:
                 out.append({k: src.get(k) for k in dict.fromkeys([*props, *src])})
             return out
         cols = {
-            n: _column(_convert_array([_subscript(y, n) for y in seq], p)) for n, p in props.items()
+            n: _column(_convert_array([_subscript(y, n) for y in seq], p, _required(items, n, p)))
+            for n, p in props.items()
         }
         if not cols:
             return pd.DataFrame(index=range(0))

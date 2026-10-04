@@ -51,3 +51,35 @@ class FakeChat:
     ) -> Any:
         """The seam :func:`metacheck.llm._backend.complete`: the reply, as the model's JSON."""
         return self.chat(user) if type is None else self.chat_structured(user, type)
+
+
+class Asked:
+    """A stand-in for :func:`metacheck.llm._backend.complete` that records what it is asked.
+
+    It answers with *replies* in order (an exception in the list is raised).
+    ``calls`` holds ``(user, type)`` and ``asked`` the whole request of each call.
+    """
+
+    def __init__(self, *replies: Any) -> None:
+        self.replies = list(replies)
+        self.calls: list[tuple[str, Any]] = []
+        self.asked: list[dict[str, Any]] = []
+
+    def __call__(
+        self,
+        model: str,
+        system: str,
+        user: str,
+        type: Any = None,
+        params: Any = None,
+        api_args: Any = None,
+    ) -> Any:
+        self.calls.append((user, type))
+        self.asked.append(
+            {"model": model, "system": system, "user": user, "type": type,
+             "params": dict(params or {}), "api_args": dict(api_args or {})}
+        )  # fmt: skip
+        reply = self.replies.pop(0)
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
