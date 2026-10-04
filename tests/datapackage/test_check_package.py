@@ -252,6 +252,19 @@ def test_a_zip_is_extracted_and_removed_afterwards(tmp_path: Path, probe: str) -
     assert out.table is not None  # the results are data, complete after the folder is gone
 
 
+def test_an_archive_over_the_limits_given_is_refused(tmp_path: Path, probe: str) -> None:
+    archive = _zip(tmp_path)  # four small files
+    with pytest.raises(PackageError, match="more than 3 files"):
+        check_package(archive, modules=[probe], max_files=3)
+    with pytest.raises(PackageError, match="bigger than"):
+        check_package(archive, modules=[probe], max_bytes=10)
+    with pytest.raises(PackageError, match="more than 3 files"):
+        report_package(archive, tmp_path / "r.html", modules=[probe], max_files=3)
+    assert len(check_package(archive, modules=[probe], max_files=4, max_bytes=10_000)) == 1
+    # a folder has no limits
+    assert len(check_package(_folder(tmp_path), modules=[probe], max_files=1)) == 1
+
+
 def test_the_temporary_folder_is_removed_when_a_module_fails(
     tmp_path: Path, probe: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:

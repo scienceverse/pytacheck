@@ -462,3 +462,112 @@ def test_fresh_install_has_no_force(tmp_path):
     failing = _run_installer({**env, "FAKE_UV_FAIL": "1"})
     assert failing.returncode != 0
     assert "earlier version" not in failing.stderr
+
+
+# A stand-in uv whose app answers --help (with or without the --page option, as
+# FAKE_APP_PAGE says) and records the arguments it was started with.
+FAKE_UV_APP = """\
+#!/bin/sh
+case "$1" in
+  --version) echo "uv 0.12.20" ;;
+  tool)
+    echo "$@" >>"$UV_TOOL_BIN_DIR/../calls"
+    mkdir -p "$UV_TOOL_BIN_DIR"
+    cat >"$UV_TOOL_BIN_DIR/metacheck-app" <<'APP'
+#!/bin/sh
+if [ "$1" = "--help" ]; then
+  echo "usage: metacheck-app [-h] [--no-browser] [--port PORT]"
+  [ -z "${FAKE_APP_PAGE:-}" ] || echo "  --page {paper,package}"
+  exit 0
+fi
+echo "started: $*" >"$(dirname "$0")/../launched"
+APP
+    chmod 755 "$UV_TOOL_BIN_DIR/metacheck-app"
+    ;;
+esac
+"""
+
+
+def _steward_env(tmp_path, **extra):
+    root, env = _fake_install_env(tmp_path, **extra)
+    (root / "uv" / "uv").write_text(FAKE_UV_APP)
+    env.pop("METACHECK_NO_LAUNCH")  # these tests launch the app
+    return root, env
+
+
+def _install(env, *args):
+    return subprocess.run(
+        ["sh", str(SH), *args], env=env, capture_output=True, text=True, timeout=60
+    )
+
+
+@needs_sh
+def test_a_plain_install_opens_the_app_without_arguments(tmp_path):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1")
+    result = _install(env)
+    assert result.returncode == 0, result.stderr
+    assert (root / "launched").read_text().strip() == "started:"
+    assert "--page" not in result.stdout
+
+
+@needs_sh
+@pytest.mark.parametrize("how", ["flag", "variable"])
+def test_steward_opens_the_data_package_page(tmp_path, how):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1")
+    if how == "variable":
+        result = _install({**env, "METACHECK_STEWARD": "1"})
+    else:
+        result = _install(env, "--steward")
+    assert result.returncode == 0, result.stderr
+    assert (root / "launched").read_text().strip() == "started: --page package"
+    assert f"or run: {root}/bin/metacheck-app --page package" in result.stdout
+    # no step for a PDF reader or a key: the installer has none
+    assert "bibr" not in result.stdout.lower() and "grobid" not in result.stdout.lower()
+
+
+@needs_sh
+def test_steward_with_an_app_that_has_no_such_page_still_opens_the_app(tmp_path):
+    # the pinned commit can be older than the page: --page would be an unknown option there
+    root, env = _steward_env(tmp_path)
+    result = _install(env, "--steward")
+    assert result.returncode == 0, result.stderr
+    assert (root / "launched").read_text().strip() == "started:"
+    assert "no data package page yet" in result.stdout
+    assert "--page" not in result.stdout
+
+
+@needs_sh
+def test_steward_and_no_launch_install_only(tmp_path):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1")
+    result = _install({**env, "METACHECK_NO_LAUNCH": "1"}, "--steward")
+    assert result.returncode == 0, result.stderr
+    assert (root / "bin" / "metacheck-app").exists()
+    assert not (root / "launched").exists()
+
+
+@needs_sh
+def test_steward_does_not_change_what_is_installed(tmp_path):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1")
+    _install({**env, "METACHECK_NO_LAUNCH": "1"})
+    plain = (root / "calls").read_text()
+    (root / "calls").unlink()
+    _install({**env, "METACHECK_NO_LAUNCH": "1"}, "--steward")
+    assert (root / "calls").read_text() == plain
+
+
+@needs_sh
+def test_help_and_unknown_options_name_steward(tmp_path):
+    env = {"PATH": os.environ["PATH"], "HOME": str(tmp_path)}
+    result = subprocess.run(["sh", str(SH), "--help"], env=env, capture_output=True, text=True)
+    assert result.returncode == 0 and "--steward" in result.stdout
+    bad = subprocess.run(["sh", str(SH), "--bogus"], env=env, capture_output=True, text=True)
+    assert "--steward" in bad.stderr
+
+
+def test_both_scripts_have_the_steward_option():
+    sh, ps1 = SH.read_text(), PS1.read_text()
+    assert "--steward) steward=1" in sh and "METACHECK_STEWARD" in sh
+    assert "'^-Steward$' { $steward = $true }" in ps1 and "METACHECK_STEWARD" in ps1
+    # both open the app on the page the same way, and only when the app knows the option
+    assert 'exec "$app" --page "$page"' in sh and "grep -q -e '--page'" in sh
+    assert "& $app --page package" in ps1 and ".Contains('--page')" in ps1

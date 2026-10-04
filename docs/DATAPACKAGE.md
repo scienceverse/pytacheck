@@ -74,7 +74,40 @@ output_format="html", *, preset=None, modules=None, args=None)` returns the repo
 module outputs, with the file's path in `save_path`. Both raise
 `metacheck.datapackage.PackageError` for a path that cannot be opened.
 `modules` beats `preset`, which beats the default; `args` maps a module's name to
-extra arguments for it, as in `report()`.
+extra arguments for it, as in `report()`. Both also take `max_bytes` and `max_files`,
+which lower the limits on an extracted archive (20 GB and 200,000 files otherwise);
+a folder has none.
+
+## In the app
+
+`metacheck-app` has a second page, "Check a data package" (`/package`; open the app on
+it with `metacheck-app --page package`). Name a folder on your computer or upload a zip
+(up to 1 GB; for a bigger package give the folder), choose the checks and press the
+button. The page shows one row per check, the checklist with one row per requirement
+(the status cell is red for `fail`, yellow for `warn` and `manual`, green for `pass`;
+the word is always shown) and the report to download. It runs on your machine only and
+is not part of the hosted app (`--hosted` has no such page, because a folder is named by
+a path on the machine that runs the app).
+
+The choice lists the presets that run a `datapackage::` check: `datapackage::default`
+and every preset of an installed pack or of your config that runs one (for example one
+that `extends` it), found through the pack registry. A preset for papers is not listed.
+The box for the local classifier is ticked, because the classifier is the default of
+`metacheck package` too: `data_check` names the concept of each data column with it,
+which downloads its model (about 840 MB) the first time. Without the `concepts` extra
+(the installer does not add it) the page does not fail. It names the concepts by rules
+only, says so under the results and gives the command that installs the extra. Untick
+the box to use rules only and download nothing. An uploaded archive is unpacked as
+described below, with lower limits: 5 GB unpacked and 100,000 files.
+
+A folder you type must be inside your home folder. The path is resolved first (`~` and
+`..` are worked out and links are followed), and the folder that results is the one
+tested, so a link in your home folder that leads elsewhere is refused. The page quotes
+the README in its report, and another program on your computer that holds the app's
+token could otherwise ask the page to read any folder you can. The refusal says where
+folders may be and why. To allow other folders, set `METACHECK_APP_ROOTS` to them
+(separated by `:` on Linux and macOS, `;` on Windows) before you start the app; see
+[ENVIRONMENT.md](ENVIRONMENT.md). A zip that you upload can come from anywhere.
 
 ## What is checked
 
