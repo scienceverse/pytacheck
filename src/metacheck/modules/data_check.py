@@ -343,7 +343,7 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         "column and embed it in the report.",
         "max_facets": "the most distribution panels to draw in one plot when\n"
         "`plot_distributions = TRUE`.",
-        "model": "the LLM model name (see `llm_model_list()`) used only when\n`llm_use(TRUE)`",
+        "model": "the LLM model name (`provider/model`, for example `groq/openai/gpt-oss-20b`) used only when\n`llm_use(TRUE)`",
         "params": "a named list passed to `llm()` (e.g., `list(seed = 123)`),\n"
         "used only when `llm_use(TRUE)`",
         "concepts": "(pytacheck only) how columns the rules leave without a concept get\n"

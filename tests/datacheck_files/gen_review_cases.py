@@ -243,8 +243,6 @@ add(
 )
 
 
-
-
 # file names that are not valid UTF-8 (UPSTREAM_ISSUES U76): tools::file_ext()'s
 # substring() and tolower() raise in R; names are written with R's \xff escapes
 def _r_chr(xs: list[str | None]) -> str:
