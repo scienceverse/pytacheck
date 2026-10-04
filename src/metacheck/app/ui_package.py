@@ -112,10 +112,6 @@ def add_package_page(app: gr.Blocks, sessions: Sessions) -> None:
     def on_source(kind: str) -> tuple[Any, ...]:
         return gr.update(visible=kind == pk.FOLDER), gr.update(visible=kind == pk.ZIP)
 
-    def refresh_presets() -> Any:
-        found = pk.package_presets()
-        return gr.update(choices=found, value=found[0][1] if found else None)
-
     with app.route(PAGE_NAME, PAGE_PATH):
         gr.Navbar(main_page_name=MAIN_PAGE_NAME)
         gr.HTML(
@@ -179,5 +175,8 @@ def add_package_page(app: gr.Blocks, sessions: Sessions) -> None:
             [results, summary, checks, checklist, download, frame],
             api_visibility="private",
         )
-        # a pack installed while the app runs is offered on the next visit
-        app.load(refresh_presets, None, preset, api_visibility="private")
+        # There is no ``app.load`` here, on purpose: a load event runs at page load, and a click
+        # that lands as it completes loses its answer (Gradio closes the event stream between
+        # the two, so the result never arrives and nothing says so). The presets are found
+        # once, when the page is built, so a pack installed while the app runs is offered
+        # after the app is restarted.

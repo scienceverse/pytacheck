@@ -505,6 +505,16 @@ def test_the_local_app_has_the_package_page_and_a_link_to_the_paper_page() -> No
         assert "Check a data package" in links and ui.MAIN_PAGE_NAME in links
 
 
+def test_the_package_page_has_no_load_event() -> None:
+    """A load event races with an early click: Gradio closes the event stream between the two
+    and the click's answer never arrives (the CI smoke lost it in about 4 of 10 runs)."""
+    config = ui.build_app().get_config_file()
+    loads = [
+        d for d in config["dependencies"] if any(event == "load" for _id, event in d["targets"])
+    ]
+    assert loads == []
+
+
 def test_the_token_link_to_the_package_page_keeps_the_page() -> None:
     tc = TestClient(
         create_app(PORT + 1, TOKEN),

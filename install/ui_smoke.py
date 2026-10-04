@@ -142,6 +142,9 @@ def click_through_package(page: Page, url: str) -> None:
         (root / "data").mkdir(parents=True)
         (root / "README.md").write_text("# Study\n\nSurvey data.\n", encoding="utf-8")
         (root / "data" / "survey.csv").write_text("id,age\n1,23\n2,31\n", encoding="utf-8")
+        # Leave the paper page only when its event stream is closed: Gradio logs a console
+        # error for a stream that is cut by a navigation, and this script fails on any.
+        page.wait_for_load_state("networkidle", timeout=60_000)
         page.goto(f"{parts.scheme}://{parts.netloc}/package")  # the token cookie is set
         box = page.get_by_placeholder("/path/to/my_package")
         box.wait_for(timeout=60_000)
