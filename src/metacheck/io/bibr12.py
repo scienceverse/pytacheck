@@ -35,7 +35,7 @@ import os
 import re
 from collections.abc import Mapping, Sequence
 from os import PathLike
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Any
 
 import numpy as np
@@ -1445,6 +1445,8 @@ def _json_default(x: Any) -> Any:
         return [{k: _json_scalar(v) for k, v in r.items()} for r in x.to_dict("records")]
     if isinstance(x, Mapping):
         return dict(x)
+    if isinstance(x, PurePath):  # the same file on every system: "/" between parts
+        return x.as_posix()
     return str(x)
 
 
