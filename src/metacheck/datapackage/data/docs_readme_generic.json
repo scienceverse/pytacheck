@@ -6,6 +6,7 @@
       "id": "description",
       "title": "Description",
       "hint": "Overview or Description",
+      "prompt": "Describe in two or three sentences what the study is about, why the data were collected and what the package contains",
       "required": true,
       "intro": true,
       "match": [
@@ -20,6 +21,7 @@
       "id": "contact",
       "title": "Contact and authors",
       "hint": "Authors or Contact",
+      "prompt": "Give the names and affiliations of the authors, and who can answer questions about the data",
       "required": true,
       "match": [
         "\\bauthors?\\b",
@@ -45,6 +47,7 @@
       "id": "files",
       "title": "Files and folders",
       "hint": "File list or Folder structure",
+      "prompt": "Describe the files and folders of the package",
       "required": true,
       "match": [
         "\\bfiles?\\b",
@@ -59,6 +62,7 @@
       "id": "methods",
       "title": "Methods",
       "hint": "Methods or Data collection",
+      "prompt": "Describe how the data were collected and processed: participants or sources, materials, procedure and any cleaning or exclusions",
       "required": false,
       "match": [
         "\\bmethod",
@@ -72,6 +76,7 @@
       "id": "reproduce",
       "title": "How to reproduce",
       "hint": "How to run, Software or Requirements",
+      "prompt": "Explain how to reproduce the results: the software and versions needed, and the order in which to run the code",
       "required": false,
       "match": [
         "\\breproduc",
@@ -90,6 +95,7 @@
       "id": "licence",
       "title": "Licence and reuse",
       "hint": "Licence or Terms of use",
+      "prompt": "State the licence of the data and of the code, and say where its full text is",
       "required": false,
       "match": [
         "\\blicen[cs]",
@@ -106,6 +112,7 @@
       "id": "variables",
       "title": "Variables and codebook",
       "hint": "Variables or Data dictionary",
+      "prompt": "Describe each variable: what it measures, its unit and the meaning of its codes",
       "required": false,
       "match": [
         "\\bvariab",
@@ -116,6 +123,13 @@
       "fields": []
     }
   ],
+  "prompts": {
+    "title": "Give the title of the study or dataset",
+    "folder": "Describe what is in this folder",
+    "file": "Describe what this file holds or does",
+    "other_files": "Describe these files",
+    "licence_file": "Add a LICENSE file with the full text of the licence"
+  },
   "placeholders": [
     "<(?!/?(?:a|abbr|b|blockquote|br|center|code|details|div|em|font|h[1-6]|hr|i|img|kbd|li|ol|p|pre|small|span|strong|sub|summary|sup|table|td|th|tr|u|ul)[\\s/>])(?!(?:https?|ftp)://|mailto:)(?![^<>\\s]*@)[A-Za-z][^<>\\n]{1,200}[^<>\\s]>",
     "(?-i:\\[(?:YYYY(?:-MM(?:-DD)?)?|NAME|FILE ?NAME|DATE|TITLE|E-?MAIL|DOI|URL|AUTHOR|ORCID|INSTITUTION|AFFILIATION)\\])",

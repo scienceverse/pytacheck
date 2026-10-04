@@ -20,6 +20,7 @@ metacheck package my_data.zip -o package.html      # write a report instead of p
 metacheck package my_data.zip -f md                # ... as Markdown, to my_data_report.md
 metacheck package my_data_folder --json            # the results as JSON
 metacheck package my_data_folder --record run.json # also write a run record
+metacheck package my_data_folder -m package_readme --files-dir drafts   # draft a README into drafts/
 ```
 
 (`pytacheck package ...` is the same command.) Without `-o` the results are printed,
@@ -31,7 +32,9 @@ inside the package's own folder is not counted among its files.
 The exit status is 0 when every check ran, 1 when a check failed to run (the others
 still run, and the failure is shown next to it), and 2 when the path cannot be
 opened: it does not exist, it is a file that is not a supported archive, or an
-archive is unreadable or too big (more than 20 GB extracted, or 200,000 files).
+archive is unreadable or too big (more than 20 GB extracted, or 200,000 files). It is
+also 2 when `--files-dir` or `--force` is refused (see
+[Files a check hands back](#files-a-check-hands-back)).
 
 Choose the checks like for papers, with `-m`, `--preset` and `-a` (see
 [MODULES.md](MODULES.md#choosing-modules-at-run-time)):
@@ -45,7 +48,9 @@ metacheck package my_data_folder -a concepts=rules              # ... for every 
 
 With no `-m` and no `--preset`, the preset `datapackage::default` runs, whatever
 preset you have configured for papers. It runs, in this order, the four checks
-below and then two of metacheck's modules that read the data files themselves:
+below that give a verdict (`package_files`, `package_structure`, `package_docs` and
+`package_pii`; `package_readme` makes a file, so it is not in the preset and is
+selected by name) and then two of metacheck's modules that read the data files themselves:
 `metacheck::data_check` (classifies the files and describes every column of the
 data files, with a data-quality screen) and `metacheck::codebook_check` (whether
 each column is documented in a codebook or README).
@@ -66,12 +71,16 @@ check_package("my_data_folder", args={"data_check": {"concepts": "rules"}})
 check_package("my_data_folder", preset="myoffice::archive", record="run.json")
 
 report_package("my_data.zip", "package.html")         # html, qmd or md; the title is the package's name
+
+chain = check_package("my_data_folder", modules=["package_readme"])
+chain.files                                           # {"README.md": "# ...", ...}: files that checks hand back
 ```
 
 `check_package(path, *, preset=None, modules=None, args=None, record=None)` returns
 the outputs in run order (a `ModuleChain`). `report_package(path, output_file=None,
 output_format="html", *, preset=None, modules=None, args=None)` returns the report's
-module outputs, with the file's path in `save_path`. Both raise
+module outputs, with the file's path in `save_path`. Both results have `.files`, the
+files that checks handed back (see [Files a check hands back](#files-a-check-hands-back)). Both raise
 `metacheck.datapackage.PackageError` for a path that cannot be opened.
 `modules` beats `preset`, which beats the default; `args` maps a module's name to
 extra arguments for it, as in `report()`. Both also take `max_bytes` and `max_files`,
@@ -152,6 +161,10 @@ at the paper's text if there is one, and otherwise leaves them to a person
 (`manual`). The README template and the catalogue of parts are options, so a pack
 can supply its institution's own.
 
+A package usually comes without its paper, so that last question is often open. You
+can let the check ask the paper's abstract, online and only when you switch it on:
+see [Ethics from the paper's abstract](#ethics-from-the-papers-abstract-opt-in).
+
 Options: see `metacheck modules datapackage::package_docs`.
 
 ### `package_pii`
@@ -226,6 +239,194 @@ package, and use `hits` for its detail line: the file, the column and the count,
 is all there is; the values are never kept. The pack's preset can add `package_pii` to
 its modules, or leave it out of `datapackage::default` with `exclude`.
 
+### `package_readme`
+
+Drafts a README for the package, filled in by rules, and hands it back as a file.
+It is not in `datapackage::default`, because it makes a file and not a verdict; select
+it by name:
+
+```bash
+metacheck package my_data_folder -m package_readme --files-dir drafts   # writes drafts/README.md
+```
+
+There is no LLM and the package is never written to: the draft is a separate output
+(see [Files a check hands back](#files-a-check-hands-back)). What goes into it:
+
+| Part of the draft | Where it comes from |
+|---|---|
+| The author's own text | If the package has a README, the draft **is** that text, character for character (a byte-order mark and the kind of line end aside). A section it lacks is added at the end, in the template's order and in the heading style the README already uses (a plain-text README with `1. NUMBERED` or `CAPITAL` headings gets headings like that, because Markdown headings would make the README check stop seeing the author's own). A heading with nothing under it gets its text inserted. Nothing the author wrote is removed or changed. A README with every section comes back unchanged. |
+| File list | A folder tree with the number of files and the size of the package (long folders are summarised), then one line for each top-level folder and file, so that `package_docs` finds the README naming them. |
+| File formats | Extension counts (`.csv` (3 files), `.R` (1 file)); the more common spelling when `.R` and `.r` both occur. |
+| Naming convention | One or two sentences, only when it is evident: at least five names with several words, at least 80% of them with the same word separator, and names in lower case; dates in names in the form `YYYY-MM-DD`. Otherwise nothing is claimed. |
+| Variables | For each tabular data file (csv, tsv, Excel, ODS, SPSS, Stata, SAS): a table of **names, types and number of empty cells**. Files with the same variables share one table. A file with a header and no rows says so. Types are `integer`, `decimal`, `date`, `date-time`, `time`, `logical`, `text`, or `empty` / `not known` when there is nothing to tell. |
+| Licence | A `LICENSE` file, named with the licence recognised from its text (the same table `package_docs` uses), or the licence the README names with a request to add the file; with neither, a placeholder. An unrecognised licence file is named, never guessed. |
+| Everything else | A **placeholder** such as `<Describe how the data were collected and processed: ...>`. |
+
+**No cell value is ever in the draft**, the report or any other output of the module:
+a data file is read for its header, the type of each column and the count of its empty
+cells, and the objects that carry that have no place for a value. A column name that is
+itself a value (a file without a header row has its first data row there) is shown as
+`column 3`, as in `package_pii`; the same goes for sheet names.
+
+**The placeholders are the README check's own syntax.** They are `<help text>` (what
+`package_docs` reports as `template-text`; also the form of `[FILENAME]` and `TODO`
+when the template's patterns call for it). So running `package_docs` on the package with
+the draft saved as its README lists every gap that is left, and
+`metacheck package my_data_folder -m package_docs` is how a person works down them.
+The wording of a placeholder is the template's `prompt`; a prompt that starts with an
+HTML tag name (`a`, `p`, `i`) would hide it from the check, so the draft falls back to
+`TODO: ...` and `[...]` in that case. A file name that looks like template text
+(`TODO notes.txt`, `[FILENAME].csv`) is written in code spans and never counts as a gap.
+
+**The sections and headings come from the README template data**: the `readme` option,
+a dict or the path to a JSON file (default `data/docs_readme_generic.json`), the same
+one `package_docs` takes, so a pack can supply its own template and get its own
+sections, headings and prompts. Each section may have a `prompt` (what its placeholder
+asks for) and a `fill` (`files`, `variables` or `licence`; the section's id by default,
+so a section called `files` is filled from the file list). The top-level `prompts` map
+has the wording for the title, a folder, a file and the request for a licence file. The
+keys are documented in `metacheck.datapackage.docs`.
+
+The module's `table` has one row for each section of the template: whether it was in the
+README (`yes`, `empty`, `no`) and what the draft did (`kept`, `filled from the package`,
+`added from the package`, `added as a placeholder`, `left as written`, `not needed`), and
+how many placeholders are in it. `variables` has one row for each variable listed, `placeholders`
+is the number of gaps left, `notes` are things worth knowing (a README that could not be
+read, data files that were not read), and `files` is `{"README.md": text}`.
+
+Options: `readme`, `max_rows` (100,000: rows read from each file to count its empty
+cells), `max_file_size` (50 MB) and `max_files` (30); see
+`metacheck modules datapackage::package_readme`.
+
+**Limits.** Naming conventions are detected conservatively, so a package with few files,
+or a mixed convention, gets no note. A column name that looks like a value is hidden
+by the rules `package_pii` uses (a postcode, a phone number, an IP address, a long
+number, a full name such as `Jan Jansen`); an ordinary capitalised header (`Total Score`)
+is shown. A single first name in the first row of a file without a header row cannot be
+told from a variable name, so it is shown. Variables are read only from the formats
+above, and only the first `max_rows` rows of a file count. The
+draft is always Markdown and always called `README.md`; the text of a README in another
+format (docx, pdf) is carried over as the plain text that could be extracted from it, and
+a note says so. Which sections of the author's README are found is decided by the same
+code as the README check, so it is as good as that check.
+
+## Files a check hands back
+
+A check can return a **file** besides its findings (the README draft is one). In a
+module's result, `files` maps a plain file name to its content, text or bytes
+(see [MODULES.md](MODULES.md#write-a-module)). A name has no folder in it, so a module
+can only name a file in the folder the caller chooses. Nothing writes a file unless the
+caller asks:
+
+* In Python, `check_package(...).files` (and `report_package(...).files`) is
+  `{file name: text or bytes}` for all the checks that ran, and
+  `metacheck.module.write_module_files(files, directory)` writes them. The attribute is
+  new; nothing that read the result before changes.
+* On the command line, `metacheck package PATH --files-dir DIR` writes every returned file
+  into `DIR`, which is created, and prints each path. `-o` is still the report, and the
+  two can be used together; with `--json` the results are the only thing on standard
+  output.
+* `DIR` must not be the package folder or lie inside it (a package is never written to;
+  this is checked before anything runs, also through a symbolic link, and the exit status
+  is 2). If a file with the same name is already in `DIR`, nothing is written and the
+  exit status is 2, unless `--force`, which replaces the file (a folder of that name is
+  never replaced). `--force` without `--files-dir` is an error.
+* When no check that ran hands back a file, a note says so and nothing is created. When
+  two checks hand back the same name, the later one's file is stored as
+  `<module>_<name>`.
+
+## Ethics from the paper's abstract (opt-in)
+
+The ethical approval and the informed consent form are needed only when the research
+involved people, and a package seldom says so. `package_docs` can ask the paper's
+**abstract**, and it does so only when you ask it to. Off by default: with no switch
+no request is ever made.
+
+**What it does.** With a DOI, the check fetches the paper's abstract (from Crossref,
+and from OpenAlex when Crossref has none) and runs on it the same live-data detection
+that `ethics_check` uses (sentences about recruiting participants, informed consent,
+online recruitment platforms, and the like). When that finds something, the check
+decides "the research involved people": the ethical approval and consent rows become
+required, and are `fail` when the package does not have them. The row says where the
+decision came from, and quotes the one sentence that matched:
+
+```text
+Decided from the abstract of 10.1234/abc (Crossref): “Participants were recruited
+from a panel (N = 120) and completed a survey.”
+```
+
+**What it never does.** It never decides that the research did *not* involve people.
+An abstract that does not mention participants proves nothing (a short abstract
+leaves out a lot), so those rows stay with a person (`manual`), as they do without the
+lookup. The detection is the one `ethics_check` has: it also flags abstracts that
+describe animal studies, and it does not read anything but the abstract. The answer
+comes from the abstract only when `human_participants` is not given and the paper's own
+text (when there is one) did not decide it. The abstract itself is not kept: the result
+holds the decision, the name of the service, the DOI and that one sentence.
+
+**What leaves the machine.** Only the DOI: one `GET` for one record, with the DOI in
+the URL (`https://api.crossref.org/works/<doi>`, then
+`https://api.openalex.org/works/https://doi.org/<doi>`). No file name, README text,
+column name or any other content of the package is sent, and the request has no body.
+Like every request of this tool it carries the User-Agent, which names the tool and
+its version, and the contact e-mail address if you have set one with
+`metacheck.email()` (`METACHECK_EMAIL`); the two services are told who is asking so
+that they can rate-limit politely. The DOI is checked before it is used (it has to
+look like `10.xxxx/...`, with no space, `?`, `#` or `%`), a `https://doi.org/` or `doi:`
+prefix is removed, and it is percent-encoded into the path.
+
+**How to switch it on.**
+
+```bash
+metacheck package my_data_folder --abstract-lookup                  # the DOI is on the README's line for the publication
+metacheck package my_data_folder --paper-doi 10.1234/abc            # a DOI of your own (implies --abstract-lookup)
+metacheck package my_data_folder -a package_docs.abstract_lookup=true -a package_docs.paper_doi=10.1234/abc
+```
+
+```python
+from metacheck.datapackage import check_package
+
+check_package(
+    "my_data_folder",
+    modules=["package_docs"],
+    args={"package_docs": {"abstract_lookup": True, "paper_doi": "10.1234/abc"}},
+)
+```
+
+There is no environment variable or setting that turns it on for every run; you ask
+each time. With no `paper_doi`, the DOI comes from the README, from a line that is
+about the publication, such as `DOI of the publication: 10.1234/abc`, `Related paper:
+https://doi.org/10.1234/abc` or the `Project or Paper Title : ...` line of a README
+template (or the field of your own template that has `"expect": "doi"`). A DOI that
+stands in a sentence, in a list of references, or on a line about the data (`Dataset
+DOI`) is never taken, because it may be another work's or the package's own. A DOI you
+give with `paper_doi` always wins over the README's.
+
+**When it cannot decide.** Nothing here fails the run or waits long. `--offline`
+(`offline=True`), no network, a timeout (10 seconds a try, two tries), a service that
+answers with an error or with something that is not a record, a record without an
+abstract, a bad DOI and a README with no DOI all give the result the package would
+have had without the lookup, and one line says why:
+
+```text
+Offline: the abstract of 10.1234/abc was not looked up.
+No abstract was found for 10.1234/abc (Crossref has no record; OpenAlex has no abstract).
+The abstract of 10.1234/abc could not be fetched: Crossref and OpenAlex did not answer.
+The abstract of 10.1234/abc (Crossref) does not mention participants, which proves nothing either way.
+```
+
+The same line is in the module's `human_participants_note`, next to
+`human_participants_source` (`given`, `paper`, `abstract` or `unknown`), in the
+`abstract_decision` result and in the detail of the two rows.
+
+**Why `package_docs` does not declare `requires=["network"]`.** `--offline` leaves out
+every module that declares it needs the network. `package_docs` works fully offline
+and does the same without the switch, so it must stay in an offline run; it reads the
+offline setting itself (`metacheck.module.use_setting("offline")`) and does not ask
+when it is set. The lookup is in `metacheck.datapackage.abstract`, which also keeps
+the network code out of the pack module (`pack check` flags `metacheck.http` imports in
+a pack's module files).
+
 ## The checklist
 
 A package check does not end with a traffic light. Each check also returns a
@@ -264,9 +465,16 @@ A data package can hold personal data, so the checks do not upload it.
   folder and `local_only=True`, so nothing is looked up online. A value you give
   yourself (`-a MODULE.local_only=false`), or that a preset sets, is not overridden.
   The modules run on a stand-in paper with no content, titled with the package's name.
+* The one thing that goes online is a request you make: `--abstract-lookup` (or
+  `--paper-doi`) fetches the paper's abstract by its DOI, to decide whether the research
+  involved people. Nothing but the DOI is sent; see
+  [Ethics from the paper's abstract](#ethics-from-the-papers-abstract-opt-in). Without
+  the switch there is no request.
 * `--offline` leaves out the modules that declare they need the network or an LLM.
   Note that `metacheck::data_check` declares both, so with `--offline` it is
   left out of the list (`codebook_check` still reads the data files itself).
+  `package_docs` is not left out: it does not declare the network, and with `--offline`
+  its abstract lookup is skipped, with a note.
 * No LLM is used unless you have turned it on yourself (`llm_use(True)` in Python).
 * One thing does download: `data_check` fills the concept of a data column (age,
   reaction time, ...) with a local classifier when the `concepts` extra is installed
