@@ -422,6 +422,12 @@ why = "uses the warning class of core/errors.py; renamed with it (RENAME-4)"
 
 [[rule]]
 action = "keep"
+files = "src/metacheck/modules/reproducibility_check.py"
+match = 'PytacheckWarning'
+why = "uses the warning class of core/errors.py; renamed with it (RENAME-4)"
+
+[[rule]]
+action = "keep"
 files = "tests/*"
 match = 'PytacheckWarning'
 why = "tests that expect the warning class of core/errors.py; renamed with it (RENAME-4)"

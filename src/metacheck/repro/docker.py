@@ -27,6 +27,7 @@ import contextlib
 import os
 import secrets
 import shutil
+import stat
 import subprocess
 import tempfile
 import time
@@ -136,6 +137,45 @@ def repro_docker_available() -> dict[str, Any]:
             "msg": "Docker does not appear to be running. Start Docker Desktop and try again.",
         }
     return {"ok": True, "msg": ""}
+
+
+def _repro_docker_scrub(root: str | os.PathLike[str]) -> list[str]:
+    """Delete from *root* what a container left there that the host must not follow or open.
+
+    The sandbox directory is mounted read-write, so the paper's code can leave symbolic links in
+    it that point at host paths: the container only sees a dangling link, but the host follows
+    it when it writes the next runner script, reads the next script, the capture file or the
+    install results. The code can also leave a named pipe or a socket, which a host read waits
+    on for ever. Links that stay inside *root* are harmless and kept; every other link, and every
+    file that is not a regular file or a directory, is removed. Returns what was removed, as
+    paths relative to *root*.
+    """
+    top = os.fspath(root)
+    real_top = os.path.realpath(top)
+    removed: list[str] = []
+
+    def inside(path: str) -> bool:
+        try:
+            return os.path.commonpath([real_top, os.path.realpath(path)]) == real_top
+        except ValueError:  # another drive
+            return False
+
+    for here, dirs, files in os.walk(top, topdown=True, followlinks=False):
+        for name in [*dirs, *files]:
+            path = os.path.join(here, name)
+            try:
+                mode = os.lstat(path).st_mode
+            except OSError:
+                continue
+            if stat.S_ISLNK(mode):
+                if inside(path):
+                    continue
+            elif stat.S_ISREG(mode) or stat.S_ISDIR(mode):
+                continue
+            with contextlib.suppress(OSError):
+                os.unlink(path)
+                removed.append(os.path.relpath(path, top))
+    return removed
 
 
 def _repro_docker_container_name() -> str:
@@ -378,6 +418,7 @@ def repro_install_deps_docker(
         if res is None or res.get("timeout"):
             _repro_docker_stop(container_name)
 
+        _repro_docker_scrub(sandbox_dir)  # a link the install left must not be read through
         results_path = os.path.join(sandbox_dir, ".install_results.rds")
         tbl = (
             _read_install_results(results_path)
@@ -598,6 +639,15 @@ def repro_run_scripts_docker(
                 ) or (isinstance(res, dict) and bool(res.get("timeout")))
                 if is_timeout:
                     _repro_docker_stop(container_name)
+                # the code may have left links to host paths (or pipes) in its sandbox: nothing
+                # the host does next, reading the capture file or a script, writing the next
+                # runner, may follow or open them
+                removed = _repro_docker_scrub(root)
+                if removed:
+                    _message(
+                        "[repro/docker]   removed from the sandbox after '", fn, "': ",
+                        ", ".join(removed[:10]), " ..." if len(removed) > 10 else "",
+                    )  # fmt: skip
                 captures = _read_captures(cap_file_host) if os.path.exists(cap_file_host) else None
                 with contextlib.suppress(OSError):
                     os.unlink(cap_file_host)

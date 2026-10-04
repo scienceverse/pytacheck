@@ -424,7 +424,7 @@ def test_argument_checks(paper: pc.Paper, monkeypatch: pytest.MonkeyPatch) -> No
 
     monkeypatch.setattr(core, "_rscript", lambda: None)
     with pytest.raises(pc.ModuleError, match='sandbox = "process" needs R'):
-        module_run(paper, "reproducibility_check", execute=True)
+        module_run(paper, "reproducibility_check", execute=True, sandbox="process")
     from metacheck.repro import docker
 
     monkeypatch.setattr(docker, "repro_docker_available", lambda: {"ok": False, "msg": "no daemon"})
@@ -516,7 +516,11 @@ def test_execute_runs_script_and_records_ran_ok(
     rscript: str, paper: pc.Paper, repro_fixture: Any
 ) -> None:
     mo = module_run(
-        exec_chain(paper, "ok.R", repro_fixture), "reproducibility_check", execute=True, timeout=60
+        exec_chain(paper, "ok.R", repro_fixture),
+        "reproducibility_check",
+        execute=True,
+        sandbox="process",
+        timeout=60,
     )
     assert mo.table["outcome"].tolist() == ["ran_ok"]
     assert mo.run_results["outcome"].tolist() == ["ran_ok"]
@@ -531,6 +535,7 @@ def test_execute_error_forces_red(rscript: str, paper: pc.Paper, repro_fixture: 
         exec_chain(paper, "errors.R", repro_fixture),
         "reproducibility_check",
         execute=True,
+        sandbox="process",
         timeout=60,
     )
     assert mo.traffic_light == "red"
@@ -544,6 +549,7 @@ def test_execute_strips_setwd(rscript: str, paper: pc.Paper, repro_fixture: Any)
         exec_chain(paper, "bad_setwd.R", repro_fixture),
         "reproducibility_check",
         execute=True,
+        sandbox="process",
         timeout=60,
     )
     assert mo.table["outcome"].tolist() == ["ran_ok"]
@@ -560,7 +566,11 @@ def test_execute_output_feeds_stat_output_and_match(rscript: str, repro_fixture:
     p = pc.test_paper("t(4.96) = -4.04, p = .010.")
     p.paper_id = "p1"
     mo = module_run(
-        exec_chain(p, "ok.R", repro_fixture), "reproducibility_check", execute=True, timeout=60
+        exec_chain(p, "ok.R", repro_fixture),
+        "reproducibility_check",
+        execute=True,
+        sandbox="process",
+        timeout=60,
     )
     assert len(mo.stat_output) > 0
     assert mo.stat_output[0]["source"] == "r_output"
@@ -576,6 +586,7 @@ def test_execute_model_described_across_statements_unites(
         exec_chain(paper, "model_object.R", repro_fixture),
         "reproducibility_check",
         execute=True,
+        sandbox="process",
         timeout=60,
     )
     assert mo.table["outcome"].tolist() == ["ran_ok"]
@@ -588,11 +599,11 @@ def test_execute_model_described_across_statements_unites(
 @pytest.mark.r  # exec_library loads stringr
 @pytest.mark.slow
 def test_execute_reorders_and_injects_library(rscript: str) -> None:
-    mo = rh.rc_run("exec_undefined", execute=True, timeout=60)
+    mo = rh.rc_run("exec_undefined", execute=True, sandbox="process", timeout=60)
     assert "re-ran once" in report_text(mo)
     assert "undef_definer.R" in report_text(mo) or mo.run_results.attrs["reran_for_reorder"]
     assert mo.run_results.attrs == {"reran_for_order": True, "reran_for_reorder": True}
-    mo = rh.rc_run("exec_library", execute=True, timeout=60)
+    mo = rh.rc_run("exec_library", execute=True, sandbox="process", timeout=60)
     assert mo.table["outcome"].tolist() == ["ran_ok"]
     mods = mo.modifications
     assert mods.loc[mods["change_type"] == "library_injected", "detail"].tolist() == [
@@ -613,6 +624,7 @@ def test_execute_install_missing_installs_cran_dependency(
         chain(paper, code_tbl, structure_df),
         "reproducibility_check",
         execute=True,
+        sandbox="process",
         install_missing=True,
         timeout=300,
     )
@@ -672,6 +684,7 @@ def test_install_report_and_dependency_unavailable(
         chain(paper, code_tbl, data_structure(paper, repro_fixture), PLAN),
         "reproducibility_check",
         execute=True,
+        sandbox="process",
         install_missing=True,
         cran_install_main=True,
     )
@@ -744,6 +757,10 @@ def test_batch_runs_papers_concurrently(tmp_path: Path, monkeypatch: pytest.Monk
             summary_table=pd.DataFrame({"paper_id": [pid], "repro_code_n": [1]}),
         )
 
+    from metacheck.repro import docker
+
+    # the sandbox is checked before the batch starts; the worker is faked, so no Docker is needed
+    monkeypatch.setattr(docker, "repro_docker_available", lambda: {"ok": True, "msg": ""})
     monkeypatch.setattr(h, "_batch_worker", fake_worker)
     monkeypatch.setattr(h, "_process_executor", lambda n: ThreadPoolExecutor(max_workers=n))
     mo = module_run(
@@ -812,14 +829,20 @@ def test_batch_real_worker_processes(monkeypatch: pytest.MonkeyPatch) -> None:
     """Spawned worker processes: without Docker each paper's check fails on its own.
 
     Docker is hidden from ``PATH``, which the workers inherit, so the test runs
-    the same whether or not the machine (a CI runner, say) has Docker.
+    the same whether or not the machine (a CI runner, say) has Docker. The parent's
+    own check (which refuses a batch up front, see
+    ``test_a_batch_without_docker_is_refused_before_any_worker_starts``) is stepped
+    over, so that the workers, fresh interpreters that know nothing of the patch,
+    meet the missing Docker themselves.
     """
     import sys
 
+    from metacheck.modules import reproducibility_check as rc
     from metacheck.repro import docker
 
     monkeypatch.setenv("PATH", str(Path(sys.executable).parent))
     assert not docker.repro_docker_available()["ok"]
+    monkeypatch.setattr(rc, "_require_sandbox", lambda sandbox: None)
     papers = pc.read([ROOT / f for f in rh.PSYCHSCI[:2]])
     mo = module_run(papers, "reproducibility_check", execute=True, sandbox="docker", workers=2)
     assert mo.traffic_light == "error"
