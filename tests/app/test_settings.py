@@ -71,10 +71,15 @@ def test_mount_settings(monkeypatch: pytest.MonkeyPatch) -> None:
     assert seen["ssr_mode"] is False
     assert seen["enable_monitoring"] is False
     assert seen["mcp_server"] is False
-    assert seen["max_file_size"] == "50mb"
+    assert seen["max_file_size"] == "1gb"  # a zip of a data package, on the local page
     assert seen["run_history"] is False
     assert seen["server_name"] == "127.0.0.1"
     assert seen["server_port"] == 1234
+    # a shared server has no such page, and keeps the small limit
+    from metacheck.app.hosted import HostedConfig
+
+    server.create_hosted_app(1234, HostedConfig(("a" * 32,), ("example.org",)))
+    assert seen["max_file_size"] == "50mb"
 
 
 def test_the_app_never_shares() -> None:

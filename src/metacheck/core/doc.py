@@ -45,6 +45,7 @@ from metacheck._r.regex import _as_str, _compile, fold
 from metacheck._values import is_missing
 from metacheck.core.patterns import Pat, PatternSet, as_patterns
 from metacheck.core.scope import count, trusted_token, watch_paper
+from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.papers.schema import records_to_columns
 
@@ -647,6 +648,23 @@ class Doc:
             self._uniq = self.distinct(range(self.n))
         return self._uniq
 
+    def first_rows(self, rows: Sequence[int], stage: int) -> list[int]:
+        """*rows* (in the order given) without a row identical to an earlier one (V7).
+
+        Identical means every cell equal, the text compared as it is at *stage*; rows
+        that differ in whitespace or punctuation are different rows.
+        """
+        if self.distinct(rows):
+            return list(rows)
+        seen: set[tuple[Any, ...]] = set()
+        out: list[int] = []
+        for i in rows:
+            key = self.row_key(i, stage)
+            if key not in seen:
+                seen.add(key)
+                out.append(i)
+        return out
+
     def row_key(self, i: int, stage: int) -> tuple[Any, ...]:
         """Every cell of row *i* with its text at *stage* (what ``distinct()`` compares)."""
         field = self.field(stage)
@@ -874,7 +892,8 @@ class Docs:
     papers: tuple[Paper, ...]
 
     def __init__(self, papers: Sequence[Paper]) -> None:
-        self.papers = tuple(papers)
+        # F6: papers that share an ID are renamed once, here (a no-op without repeats)
+        self.papers = tuple(resolve(list(papers), stacklevel=5))
         self.docs = tuple(Doc.of(p) for p in self.papers)
 
     @classmethod
@@ -902,6 +921,24 @@ class Docs:
 
     def __getitem__(self, i: int) -> Doc:
         return self.docs[i]
+
+    def info_ids(self) -> list[str]:
+        """``paper_id(paper)``: each paper's ID once per ``info`` row, in list order."""
+        out: list[str] = []
+        for p in self.papers:
+            out.extend(_info_ids(p))
+        return out
+
+    def paper_ids(self) -> list[str]:
+        """metacheck's ``paper_id(paper)`` rule, each ID once: the papers' ``info`` IDs, and
+        the paper's own ID for a paper without an ``info`` row (the IDs are F6's)."""
+        ids: list[str] = []
+        for p in self.papers:
+            own = _info_ids(p)
+            if not own and isinstance(p.paper_id, str):
+                own = [p.paper_id]
+            ids.extend(own)
+        return list(dict.fromkeys(ids))
 
     def template(self) -> pd.DataFrame | None:
         """The empty table of the whole list when its papers' columns differ (else ``None``).
@@ -938,3 +975,20 @@ class Docs:
         from metacheck.core.hits import Hits
 
         return Hits.first(self, ps, include_refs=include_refs, header=header)
+
+
+def _info_ids(p: Paper) -> list[str]:
+    """The paper's ID once per row of its ``info`` table (``paper_id(paper)``)."""
+    raw = p._raw_records("info")
+    if raw is not None:
+        n = len(raw[0])
+    elif "info" in p:
+        x = p.get("info")
+        n = len(x) if isinstance(x, pd.DataFrame) else 0
+    else:
+        n = 0
+    if not n:
+        return []
+    pid = p.paper_id
+    label = "<NA>" if pid is None else str(pd.Series([pid], dtype="string").iloc[0])
+    return [label] * n

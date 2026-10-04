@@ -17,19 +17,20 @@ grouped modes)
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
+from metacheck._values import is_missing
 from metacheck.core.doc import bits, empty_text_frame
 from metacheck.core.patterns import Pat, PatternSet, as_patterns
 
 if TYPE_CHECKING:
     from metacheck.core.doc import Doc, Docs
 
-__all__ = ["Hits"]
+__all__ = ["Hits", "Ordered"]
 
 Order = tuple[dict[int, Any], ...]
 
@@ -293,6 +294,45 @@ class Hits:
             out = bind_rows(frames)
         return _drop_text(out.reset_index(drop=True), self.docs)
 
+    def ordered(self, levels: Sequence[str] | None = None) -> Ordered:
+        """``arrange(factor(paper_id, levels), text_id)`` of the table, ``NA`` last.
+
+        *levels* default to the IDs of the papers (:meth:`Docs.paper_ids`). The sort is
+        stable over R's order of the table. Each row is labelled with its paper's ID
+        when that is a level (else ``None``). The rows are the table's: a row identical
+        to an earlier one of its paper was dropped by the call that found it (V7), and
+        papers have distinct IDs (F6), so nothing else is dropped here.
+        """
+        names = list(self.docs.paper_ids()) if levels is None else list(levels)
+        level = {p: k for k, p in enumerate(names)}
+        inf = float("inf")
+        rows: list[tuple[Any, ...]] = []
+        for k, (d, m) in enumerate(zip(self.docs, self.masks, strict=True)):
+            if not m:
+                continue
+            pid = d.paper_id
+            lv = level.get(pid) if isinstance(pid, str) else None
+            text_id = d.values("text_id")
+            for i in bits(m):
+                t = None if is_missing(text_id[i]) else text_id[i]
+                rows.append(
+                    (
+                        inf if lv is None else lv,
+                        t is None,
+                        0 if t is None else t,
+                        self._pos(k, i),
+                        d,
+                        i,
+                        None if lv is None else pid,
+                    )
+                )
+        rows.sort(key=lambda r: r[:4])
+        return Ordered([(r[4], r[5], r[6]) for r in rows], self.stage, names)
+
+    def statements(self, levels: Sequence[str] | None = None) -> dict[str, list[str | None]]:
+        """``list(unique(text))`` per paper: :meth:`ordered`'s distinct texts by paper ID."""
+        return self.ordered(levels).statements()
+
     def _combine(self, other: Hits, op: Any) -> Hits:
         if other.docs is not self.docs or other.stage != self.stage:
             raise ValueError("combine hits of the same documents and stage")
@@ -344,11 +384,43 @@ def _dedup(docs: Docs, masks: tuple[int, ...], order: Order | None, stage: int) 
         rows = list(bits(m))
         if order is not None:
             rows.sort(key=order[k].__getitem__)
-        seen: set[tuple[Any, ...]] = set()
-        for i in rows:
-            key = d.row_key(i, stage)
-            if key in seen:
-                out[k] &= ~(1 << i)
-            else:
-                seen.add(key)
+        out[k] = sum(1 << i for i in d.first_rows(rows, stage))
     return tuple(out)
+
+
+class Ordered:
+    """Rows in output order: ``(doc, row, label)``, the text at *stage*.
+
+    The label is the paper's ID when it is one of the levels the rows were ordered
+    by, else ``None`` (``as.character()`` of a factor gives ``NA`` for a value that
+    is not a level).
+    """
+
+    __slots__ = ("levels", "rows", "stage")
+
+    def __init__(self, rows: list[tuple[Doc, int, str | None]], stage: int, levels: list[str]):
+        self.rows = rows
+        self.stage = stage
+        self.levels = levels
+
+    def __len__(self) -> int:
+        return len(self.rows)
+
+    def __iter__(self) -> Iterator[tuple[Doc, int, str | None]]:
+        return iter(self.rows)
+
+    def texts(self) -> list[str | None]:
+        """The text of each row, at the stage of the call that found them."""
+        return [d.field(self.stage)[i] for d, i, _ in self.rows]
+
+    def statements(self) -> dict[str, list[str | None]]:
+        """``list(unique(text))`` per paper with rows, in output order.
+
+        Rows whose paper is not a level have no label and are left out; a text that
+        repeats in one paper (in two places) is listed once.
+        """
+        out: dict[str, dict[str | None, None]] = {}
+        for d, i, label in self.rows:
+            if label is not None:
+                out.setdefault(label, {})[d.field(self.stage)[i]] = None
+        return {k: list(v) for k, v in out.items()}

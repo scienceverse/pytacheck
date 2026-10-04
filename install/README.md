@@ -10,7 +10,7 @@ the app. [docs/TRY.md](../docs/TRY.md) is the page for users.
 |---|---|
 | `constraints-app.txt` | The exact version of every dependency of `metacheck[app]`. Generated from `uv.lock`; never edited by hand. |
 | `smoke.py` | Starts an installed `metacheck-app` and checks the self-test, `/healthz` and the token gate. Used by CI. |
-| `ui_smoke.py` | Starts an installed `metacheck-app` and clicks through the page in Chromium (Playwright): the demo paper, then an uploaded file. Fails on a console error or a request to any host but 127.0.0.1, and saves a screenshot. Used by CI; `--browser-path` uses a Chromium you already have. |
+| `ui_smoke.py` | Starts an installed `metacheck-app` and clicks through the pages in Chromium (Playwright): the demo paper, then an uploaded file, then a data package. Fails on a console error or a request to any host but 127.0.0.1, and saves a screenshot. The one console error it accepts is the pair that Gradio logs when the script's own navigation cuts an open event stream. Used by CI; `--browser-path` uses a Chromium you already have. |
 
 ## The constraints file
 
@@ -28,6 +28,29 @@ The `installer` workflow runs the same command and fails when the result
 differs from the committed file. That includes a dependency update that
 changes `uv.lock`: run the command on that branch and commit the file. The
 install jobs run either way.
+
+## `--steward`
+
+`sh install.sh --steward` (Windows: `.\install.ps1 -Steward`, or
+`METACHECK_STEWARD=1` with `irm | iex`) is for a data steward who only checks
+data packages. It installs the same app and opens it on the "Check a data
+package" page (`metacheck-app --page package`). The installer has no PDF or bibr
+step, so there is nothing to skip: the page needs neither a PDF reader nor a key.
+
+The scripts open the page only when the installed app has the `--page` option
+(they ask it with `--help`). The pinned commit below can be older than the page;
+a steward install of such a commit opens the app on the paper page, and says so.
+
+The page reads folders only inside the home folder (`METACHECK_APP_ROOTS` adds more), and
+its classifier box is ticked, as the classifier is the default of `metacheck package`. The
+installer installs `metacheck[app]` without the `concepts` extra, so the page falls back to
+rules and says that the classifier is not installed; nothing is downloaded.
+
+`ui_smoke.py` also runs the data package page: a folder outside home is refused (the page is
+loaded eight times, with a click the moment it is there, so that a click lost at the page's
+start-up shows), and a package under the home folder is checked with the page's defaults,
+which must end in that message. It therefore expects an app without the `concepts` extra, which is what the
+installer makes.
 
 ## The pinned commit
 
@@ -66,6 +89,7 @@ are not touched.
 |---|---|
 | `METACHECK_HOME` | the folder |
 | `METACHECK_NO_LAUNCH=1` | install, do not open the app |
+| `METACHECK_STEWARD=1` | same as `--steward` / `-Steward`: open the app on its "Check a data package" page |
 | `METACHECK_UNINSTALL=1` | uninstall |
 | `METACHECK_REF` | install this commit instead of the pinned one |
 | `METACHECK_SPEC` | install this requirement instead of the GitHub archive |

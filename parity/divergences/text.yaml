@@ -63,8 +63,8 @@
   reason: the paper with an empty info table is summarised under its own ID, so the two-paper list gets the paper-list summary ("1 of 2 papers ...") and no single-paper report
 "mod_ethics/ethics_check.duplicate_ids":
   kind: r_bug_fixed
-  ref: U101
-  reason: papers with duplicated IDs are summarised together; metacheck stops ("factor level [2] is duplicated")
+  ref: U208
+  reason: papers that share an ID are summarised as separate papers (d1 and d1~2); metacheck stops ("factor level [2] is duplicated")
 "mod_ethics/ethics_check.empty_paper":
   kind: r_bug_fixed
   ref: U102
@@ -382,3 +382,29 @@
 "mod_reg_review/reg_check.review.http.poll503": *u30_reg_fail
 "mod_reg_review/reg_check.review.http.success_null": *u30_reg_fail
 "mod_reg_review/reg_check.review.refused": *u30_reg_fail
+
+# repeated paper IDs in a list (F6; U208) ----------------------------------------------
+"mod_urls_open/open_practices.duplicate_ids":
+  kind: r_bug_fixed
+  ref: U208
+  reason: two papers that share an ID are summarised as two papers (the second one as ID~2); metacheck stops ("factor level [2] is duplicated")
+"mod_funding_review/funding_check.duplicate_ids":
+  kind: r_bug_fixed
+  ref: U208
+  reason: papers that share an ID are searched as separate papers (the second as ID~2), so each gets its own statement row; metacheck pools them into one row
+"mod_p_values/all_p_values.duplicate_ids": &u204_p_values
+  kind: r_bug_fixed
+  ref: U208
+  reason: papers that share an ID are searched as separate papers, each with its own p-values; metacheck pools their sentences, so its sentence-table join repeats each paper's p-values (8 rows here, 4 in pytacheck)
+"mod_p_values/stat_p_exact.duplicate_ids": *u204_p_values
+"mod_p_values/stat_p_nonsig.duplicate_ids": *u204_p_values
+"mod_effect_size/stat_effect_size.duplicate_ids":
+  kind: r_bug_fixed
+  ref: U208
+  reason: papers that share an ID are checked as separate papers, each with its own tests and summary row; metacheck pools their sentences, so a test of one paper is matched with the effect sizes of the other
+"mod_marginal/marginal.duplicate_ids":
+  kind: r_bug_fixed
+  ref: U208
+  reason: papers that share an ID are searched as separate papers, each with its own count; metacheck pools them (3 and 3 here, 2 and 1 in pytacheck); the guidance cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)' (U3)
+  r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]
+  xfail: true

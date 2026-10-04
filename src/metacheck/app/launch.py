@@ -26,6 +26,9 @@ from metacheck.app import state as saved
 
 MISSING_EXTRA = "The app needs the app extra: pip install 'metacheck[app]>=0.4.0a1'"
 HOST = "127.0.0.1"
+#: ``--page`` value -> path of the page on the local server
+PAGES = ("paper", "package")
+PAGE_PATHS = {"paper": "", "package": "package"}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,6 +49,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="serve other people over https behind a proxy (needs METACHECK_APP_TOKENS)",
     )
     parser.add_argument("--host", default=None, help="address to listen on (--hosted only)")
+    parser.add_argument(
+        "--page",
+        choices=PAGES,
+        default=None,
+        help="the page to open: paper (the default) or package, which checks a data package "
+        "(not offered with --hosted)",
+    )
     parser.add_argument(
         "--self-test",
         action="store_true",
@@ -74,8 +84,9 @@ def _self_test() -> int:
     return 0
 
 
-def _url(port: int, token: str) -> str:
-    return f"http://{HOST}:{port}/?token={token}"
+def _url(port: int, token: str, page: str | None = None) -> str:
+    """The link that opens the app (on *page*, a ``--page`` value) and hands over the token."""
+    return f"http://{HOST}:{port}/{PAGE_PATHS.get(page or 'paper', '')}?token={token}"
 
 
 def _launcher_page(url: str) -> Path:
@@ -158,7 +169,11 @@ def uvicorn_config(app: Any, *, hosted: bool) -> Any:
 
 
 def _serve(
-    port: int, open_browser: bool, config: hosting.HostedConfig | None = None, host: str = HOST
+    port: int,
+    open_browser: bool,
+    config: hosting.HostedConfig | None = None,
+    host: str = HOST,
+    page: str | None = None,
 ) -> int:
     import uvicorn
 
@@ -186,7 +201,7 @@ def _serve(
             time.sleep(0.05)
         if server.started:
             if config is None:
-                _announce(_url(port, token), open_browser)
+                _announce(_url(port, token, page), open_browser)
             elif config.proxy_auth:
                 print(
                     f"metacheck is serving on port {port}; the proxy in front signs people in",
@@ -240,6 +255,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not 0 <= port <= 65535:
         print("The port must be a number from 0 to 65535.", file=sys.stderr)
         return 2
+    if ns.page is not None and ns.hosted:
+        print("--page only works in the local app, not with --hosted.", file=sys.stderr)
+        return 2
     if ns.hosted:
         try:
             config = hosting.HostedConfig.from_env()
@@ -253,6 +271,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _serve(port, False, config, ns.host or HOST)
     running = saved.find_running()
     if running is not None and port in (0, running["port"]):
-        _announce(_url(running["port"], running["token"]), not ns.no_browser)
+        _announce(_url(running["port"], running["token"], ns.page), not ns.no_browser)
         return 0
-    return _serve(port, not ns.no_browser)
+    return _serve(port, not ns.no_browser, page=ns.page)

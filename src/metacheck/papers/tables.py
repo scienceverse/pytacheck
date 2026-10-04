@@ -8,6 +8,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.frames import bind_rows
+from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.papers.schema import empty_table, records_to_frame, table_names
 
@@ -15,14 +16,17 @@ __all__ = ["as_paper_list", "empty_paper_table", "paper_id", "paper_table", "ref
 
 
 def as_paper_list(paper: Any) -> PaperList:
-    """Wrap a single paper in a :class:`PaperList`; validate the argument."""
+    """Wrap a single paper in a :class:`PaperList`; validate the argument.
+
+    Papers of a list that share an ID get distinct ones (F6, :func:`~metacheck.papers.ids.resolve`).
+    """
     if isinstance(paper, PaperList):
-        return paper
+        return resolve(paper, stacklevel=4)
     if isinstance(paper, Paper):
         return PaperList([paper])
     if is_paper_list(paper):
         values = paper.values() if isinstance(paper, dict) else paper
-        return PaperList(values)
+        return resolve(PaperList(values), stacklevel=4)
     raise TypeError("paper must be a paper or paperlist object.")
 
 

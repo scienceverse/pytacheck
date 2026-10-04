@@ -16,6 +16,7 @@ import pytest
 
 import metacheck as pc
 from metacheck._r import grepl
+from metacheck.core.errors import PytacheckWarning
 from metacheck.modules.ethics_check import _ETHICS_WORDS
 from tests.mod_ethics.make_parity_cases import SWEEP
 from tests.mod_ethics.parity_support import ec_paper, ec_papers
@@ -286,14 +287,17 @@ def test_empty_paperlist_has_an_empty_result(paper: Any) -> None:
     assert len(mo.summary_table) == 0
 
 
-def test_duplicated_paper_ids_are_summarised_together() -> None:
-    # U101: metacheck stops with "factor level [2] is duplicated"
+def test_duplicated_paper_ids_are_two_papers() -> None:
+    # U101: metacheck stops with "factor level [2] is duplicated"; U208: the second paper
+    # is renamed `d1~2`, so each is summarised on its own
     papers = ec_papers(["d1", "d1"], [["The IRB approved it."], ["Participants were recruited."]])
-    out = direct(papers)
-    assert out["summary_table"]["paper_id"].tolist() == ["d1"]
-    assert out["summary_table"]["ethics_approved"].tolist() == [True]
-    assert out["summary_table"]["needs_ethics"].tolist() == [True]
-    assert run(papers).traffic_light == "green"
+    with pytest.warns(PytacheckWarning, match="'d1' as 'd1~2'"):
+        out = direct(papers)
+    assert out["summary_table"]["paper_id"].tolist() == ["d1", "d1~2"]
+    assert out["summary_table"]["ethics_approved"].tolist() == [True, False]
+    assert out["summary_table"]["needs_ethics"].tolist() == [False, True]
+    with pytest.warns(PytacheckWarning):
+        assert run(papers).traffic_light == "red"
 
 
 def test_paper_without_info_row_is_summarised() -> None:

@@ -156,7 +156,6 @@
     "paper": {"$test_paper": {"text": ["Data , , are available , , at https://osf.io/x.", "The code<~p~>is available at https://github.com/x/y.", "Data can be found on the open\n\nscience framework.", "Materials were shared by\n  reasonable\trequest."]}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.duplicate_ids"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U101", "reason": "Papers with duplicated IDs are summarised together; metacheck stops ('factor level [2] is duplicated')."}
   "module": "open_practices"
   "args":
     "paper": {"$expr": {"r": "paperlist(demopaper(), demopaper())", "py": "pc.PaperList([pc.demopaper(), pc.demopaper()])"}}
