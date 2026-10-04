@@ -554,7 +554,6 @@
  ".crc32": {
   "file": "R/zip-peek.R",
   "line": 578,
-  "ported": true,
   "python": "metacheck.archives.zip_peek:_crc32"
  },
  ".create_synonyms": {
@@ -1748,7 +1747,6 @@
  ".le_int": {
   "file": "R/zip-peek.R",
   "line": 27,
-  "ported": true,
   "python": "metacheck.archives.zip_peek:_le_int"
  },
  ".llm_apply_reasoning": {
@@ -2406,7 +2404,6 @@
  ".parse_zip_central_dir": {
   "file": "R/zip-peek.R",
   "line": 285,
-  "ported": true,
   "python": "metacheck.archives.zip_peek:_parse_zip_central_dir"
  },
  ".pb_all": {
@@ -4266,7 +4263,6 @@
  ".zip_crc_ok": {
   "file": "R/zip-peek.R",
   "line": 600,
-  "ported": true,
   "python": "metacheck.archives.zip_peek:_zip_crc_ok"
  },
  ".zip_fetch_members": {
@@ -4278,13 +4274,11 @@
  ".zip_inflate_member": {
   "file": "R/zip-peek.R",
   "line": 491,
-  "ported": true,
   "python": "metacheck.archives.zip_peek:_zip_inflate_member"
  },
  ".zip_member_fetch": {
   "file": "R/zip-peek.R",
   "line": 518,
-  "ported": true,
   "python": "metacheck.archives.zip_peek:_zip_member_fetch"
  },
  ".zip_peek_cache_dir": {

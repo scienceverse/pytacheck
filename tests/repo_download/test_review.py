@@ -6,6 +6,7 @@ are in ``parity/cases/repo_download_review.yaml``.
 
 from __future__ import annotations
 
+import io
 import os
 import time
 import warnings
@@ -29,8 +30,6 @@ from metacheck.archives.zip_peek import (
     _expand_tar,
     _expand_zip,
     _is_readable_archive,
-    _parse_zip_central_dir,
-    _raw_to_char,
     _unzip_all,
     _zip_fetch_members,
     zip_decision,
@@ -59,27 +58,6 @@ def _isolated(tmp_path_factory: pytest.TempPathFactory) -> Iterator[None]:
 
 def _routes(*names: str, **kw: object) -> list[dict[str, object]]:
     return [{"url": f"{SRV}/{n}", "fixture": f"review/{n}", **kw} for n in names]
-
-
-# -- rawToChar() and the central directory -----------------------------------
-
-
-def test_raw_to_char_drops_trailing_nuls_and_refuses_embedded_ones() -> None:
-    assert _raw_to_char(b"data.csv\x00\x00") == "data.csv"
-    assert _raw_to_char(b"P\x00") == "P"
-    assert _raw_to_char(b"\x00\x00") == ""
-    assert _raw_to_char(b"caf\x82.csv") == "caf\udc82.csv"
-    with pytest.raises(ValueError, match="embedded nul"):
-        _raw_to_char(b"a\x00b.csv")
-
-
-def test_empty_member_name_is_empty() -> None:
-    # U72: metacheck's raw[(p+46):(p+45)] reads two bytes backwards ("P")
-    cd = _parse_zip_central_dir((REVIEW / "emptyname.cd").read_bytes())
-    assert cd is not None
-    assert cd["name"].tolist() == ["", "b.R"]
-    cd = _parse_zip_central_dir((REVIEW / "bigoffset.cd").read_bytes())
-    assert cd is not None and cd["name"].tolist() == ["", "z.R"]
 
 
 # -- names that are not valid UTF-8 (CP437 zips) ------------------------------
@@ -171,17 +149,42 @@ def test_unzip_member_paths_cannot_climb_out_on_windows() -> None:
     assert w(b"C:/drive.csv", windows=False) == b"C:/drive.csv"
 
 
-def test_unzip_stops_at_a_member_it_cannot_write_or_open(tmp_path: Path) -> None:
+def test_unzip_stops_at_a_member_it_cannot_write(tmp_path: Path) -> None:
     with pytest.raises(RuntimeError, match="cannot open file"):
         _unzip_all(str(REVIEW / "dots.zip"), str(tmp_path / "d"))
     assert "after.csv" not in _extracted(tmp_path / "d")
-    for name, kept in (("lzma.zip", ["first.csv"]), ("crc.zip", ["good.csv"])):
-        with pytest.warns(UserWarning, match="zip file is corrupt"):
+
+
+def test_unzip_reads_what_zipfile_reads(tmp_path: Path) -> None:
+    # R's unzip stopped at an lzma member, or at one whose local header disagreed with
+    # the central directory ("zip file is corrupt"); zipfile reads them, CRCs unchecked
+    for name, got in (
+        ("lzma.zip", ["first.csv", "last.csv", "lz.csv"]),
+        ("crc.zip", ["badcrc.csv", "badsize.csv", "empty.csv", "good.csv", "stored.txt"]),
+        ("bzcrc.zip", ["badcrc.csv", "bz.csv", "last.csv"]),
+    ):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
             _unzip_all(str(REVIEW / name), str(tmp_path / name))
-        assert _extracted(tmp_path / name) == kept
-    # bzip2 is readable and a wrong CRC in both headers is not checked
-    _unzip_all(str(REVIEW / "bzcrc.zip"), str(tmp_path / "bz"))
-    assert _extracted(tmp_path / "bz") == ["badcrc.csv", "bz.csv", "last.csv"]
+        assert _extracted(tmp_path / name) == got
+
+
+def test_unzip_skips_a_member_in_a_method_zipfile_lacks(tmp_path: Path) -> None:
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_STORED) as zf:
+        zf.writestr("first.csv", "a\n1\n")
+        zf.writestr("odd.csv", "b\n2\n")
+        zf.writestr("last.csv", "c\n3\n")
+    data = bytearray(buf.getvalue())
+    local = data.index(b"odd.csv") - 30
+    central = data.rindex(b"odd.csv") - 46
+    for at in (local + 8, central + 10):  # the method field of both headers: 9, Deflate64
+        data[at : at + 2] = (9).to_bytes(2, "little")
+    z = tmp_path / "odd.zip"
+    z.write_bytes(bytes(data))
+    with pytest.warns(UserWarning, match="zip file is corrupt"):
+        _unzip_all(str(z), str(tmp_path / "out"))
+    assert _extracted(tmp_path / "out") == ["first.csv", "last.csv"]  # the rest is extracted
 
 
 def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:

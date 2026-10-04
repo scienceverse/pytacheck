@@ -1,10 +1,11 @@
 """Tests for peeking inside remote zips (port of test-zip-peek.R).
 
-The first part ports ``tests/testthat/test-zip-peek.R`` (the central-directory
-parser, CRC32, member inflation, ``zip_decision()`` with a stubbed
-``zip_peek()``, the session cache and ``.expand_zip()``). The rest exercises the
-HTTP side that metacheck's tests leave to live runs: local zip fixtures served
-through respx by a handler that honours ``Range`` requests.
+The first part ports ``tests/testthat/test-zip-peek.R`` (``zip_decision()``
+with a stubbed ``zip_peek()``, the session cache and ``.expand_zip()``); the zip
+format itself is :mod:`zipfile`'s now, so what is tested here is what metacheck
+asks of it: the listing, the members, the requests made. The rest exercises the
+HTTP side that metacheck's tests leave to live runs: zips served through respx by
+a handler that honours ``Range`` requests.
 """
 
 from __future__ import annotations
@@ -25,7 +26,6 @@ import respx
 
 from metacheck.archives import zip_peek as zp
 from metacheck.archives.zip_peek import (
-    _crc32,
     _expand_compressed,
     _expand_tar,
     _expand_zip,
@@ -33,12 +33,7 @@ from metacheck.archives.zip_peek import (
     _is_single_compress,
     _is_tar_archive,
     _is_zip,
-    _le_int,
-    _parse_zip_central_dir,
-    _zip_crc_ok,
     _zip_fetch_members,
-    _zip_inflate_member,
-    _zip_member_fetch,
     zip_decision,
     zip_peek,
 )
@@ -62,104 +57,137 @@ def _cli_zip(d: Path, names: list[str]) -> Path:
     return d / "test.zip"
 
 
-def _local_member(raw: bytes, entry: pd.Series) -> bytes:
-    off = int(entry["offset"])
-    lh = raw[off : off + 30]
-    start = off + 30 + int(_le_int(lh, 27, 2) + _le_int(lh, 29, 2))
-    return raw[start : start + int(entry["csize"])]
+def _build_zip(
+    members: list[tuple[str, bytes]],
+    compression: int = zipfile.ZIP_DEFLATED,
+    zip64_limit: int | None = None,
+    monkeypatch: pytest.MonkeyPatch | None = None,
+) -> bytes:
+    """A zip of *members* made by zipfile.
+
+    With *zip64_limit* (and *monkeypatch*) zipfile's Zip64 limit is lowered while
+    writing, so small members get real Zip64 records.
+    """
+    if zip64_limit is not None:
+        assert monkeypatch is not None
+        monkeypatch.setattr(zipfile, "ZIP64_LIMIT", zip64_limit)
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", compression) as zf:
+        for name, content in members:
+            zf.writestr(name, content)
+    return buf.getvalue()
 
 
 # -- test-zip-peek.R ----------------------------------------------------------
 
 
-def test_parse_zip_central_dir_reads_names_and_sizes(tmp_path: Path) -> None:
-    (tmp_path / "data.csv").write_text("x\n" * 100)
-    (tmp_path / "stim.png").write_text("img\n")
-    z = _cli_zip(tmp_path, ["data.csv", "stim.png"])
-    cd = _parse_zip_central_dir(z.read_bytes())
+def test_zip_peek_lists_names_sizes_and_fetch_fields() -> None:
+    members = [("data.csv", b"id,x\n" * 200), ("notes.txt", b"hello\n")]
+    handler, _ = _range_route(_build_zip(members))
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        cd = zip_peek(URL)
     assert cd is not None
-    assert {"data.csv", "stim.png"} <= set(cd["name"])
-    assert cd.loc[cd["name"] == "data.csv", "size"].iloc[0] > 0
-
-
-def test_parse_zip_central_dir_reports_fetch_fields(tmp_path: Path) -> None:
-    (tmp_path / "data.csv").write_text("id,x\n" * 200)
-    (tmp_path / "notes.txt").write_text("hello\n")
-    z = _cli_zip(tmp_path, ["data.csv", "notes.txt"])
-    cd = _parse_zip_central_dir(z.read_bytes())
-    assert cd is not None
-    assert list(cd.columns)[:2] == ["name", "size"]
-    assert {"method", "csize", "offset", "crc"} <= set(cd.columns)
+    assert list(cd.columns) == ["name", "size", "method", "csize", "offset", "crc"]
+    assert cd["name"].tolist() == ["data.csv", "notes.txt"]
+    assert cd["size"].tolist() == [1000.0, 6.0]
     assert cd["offset"].min() == 0
     assert set(cd["method"]) <= {0.0, 8.0}
-    for name, crc in zip(cd["name"], cd["crc"], strict=True):
-        assert _crc32((tmp_path / name).read_bytes()) == crc
+    for (name, content), crc in zip(members, cd["crc"], strict=True):
+        assert zlib.crc32(content) == crc, name
 
 
-def test_crc32_check_value() -> None:
-    assert _crc32(b"123456789") == 3421780262
-    assert _crc32(b"") == 0
-
-
-def test_zip_crc_ok_match_mismatch_and_no_check() -> None:
-    b = b"123456789"
-    assert _zip_crc_ok(b, 3421780262) is True
-    assert _zip_crc_ok(b, 12345) is False
-    assert _zip_crc_ok(b, None) is None
-    assert _zip_crc_ok(b, float("nan")) is None
-
-
-def test_zip_crc_ok_above_integer_max() -> None:
-    big = b"123456789"
-    assert _crc32(big) > 2147483647
-    assert _zip_crc_ok(big, _crc32(big)) is True
-
-
-def test_zip_crc_ok_is_exact() -> None:
-    # U70: metacheck's all.equal() tolerance accepts a CRC 40 off
-    assert _zip_crc_ok(b"123456789", 3421780262) is True
-    assert _zip_crc_ok(b"123456789", 3421780262 + 40) is False
-    assert _zip_crc_ok(b"123456789", 3421780262 + 10000) is False
-    assert _zip_crc_ok(b"123456789", None) is None
-
-
-def test_zip_inflate_member_stored_and_unsupported() -> None:
-    assert _zip_inflate_member(bytes([1, 2, 3, 4, 5]), 0) == bytes([1, 2, 3, 4, 5])
-    assert _zip_inflate_member(bytes([1, 2, 3, 4, 5]), 12) is None
-
-
-def test_zip_inflate_member_larger_than_32768(tmp_path: Path) -> None:
-    content = [f"line {i} {'x' * 20}" for i in range(1, 3001)]
-    (tmp_path / "big.R").write_text("\n".join(content) + "\n")
-    z = _cli_zip(tmp_path, ["big.R"])
-    raw = z.read_bytes()
-    cd = _parse_zip_central_dir(raw)
+def test_zip_peek_reads_a_zip64_archive(monkeypatch: pytest.MonkeyPatch) -> None:
+    # real Zip64 records (sizes and offsets in the extra field): the sizes are known
+    members = [("a.csv", b"x,y\n" * 100), ("b.csv", b"1,2\n" * 100)]
+    data = _build_zip(members, zip64_limit=100, monkeypatch=monkeypatch)
+    assert b"PK\x06\x06" in data  # the Zip64 end of central directory record
+    handler, calls = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        cd = zip_peek(URL)
     assert cd is not None
-    entry = cd.loc[cd["name"] == "big.R"].iloc[0]
-    assert entry["size"] > 32768
-    comp = _local_member(raw, entry)
-
-    # U71: without a size the whole member is inflated (metacheck: 32768 bytes)
-    whole = _zip_inflate_member(comp, entry["method"])
-    assert whole is not None and len(whole) == entry["size"]
-
-    fixed = _zip_inflate_member(comp, entry["method"], size=entry["size"])
-    assert fixed is not None and len(fixed) == entry["size"]
-    assert re.split(r"\r?\n", fixed.decode())[:-1] == content
+    assert cd["size"].tolist() == [400.0, 400.0]
+    assert not cd["offset"].isna().any() and not cd["csize"].isna().any()
+    assert len(calls) == 2  # HEAD and the tail
 
 
-def test_zip_member_fetch_refuses_zip64_entry() -> None:
-    entry = pd.DataFrame(
-        {
-            "name": ["big.dat"],
-            "size": [None],
-            "method": [8],
-            "csize": [None],
-            "offset": [None],
-            "crc": [1],
-        }
-    )
-    assert _zip_member_fetch("http://example.invalid/x.zip", entry) is None
+def test_zip_peek_leaves_an_unresolved_zip64_field_unknown() -> None:
+    cd = zip_peek_from_bytes((DATA / "zip64.zip").read_bytes())
+    assert cd is not None
+    assert cd["size"].isna().tolist() == [True, False, True]
+    assert cd["offset"].isna().tolist() == [True, False, True]
+
+
+def zip_peek_from_bytes(data: bytes) -> pd.DataFrame | None:
+    handler, _ = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        return zip_peek(URL)
+
+
+def test_zip_peek_edge_cases() -> None:
+    assert zip_peek_from_bytes((DATA / "empty.zip").read_bytes()) is None
+    zp._ZIP_PEEK_CACHE.clear()
+    assert zip_peek_from_bytes((DATA / "notzip.bin").read_bytes()) is None
+    zp._ZIP_PEEK_CACHE.clear()
+    cd = zip_peek_from_bytes((DATA / "comment.zip").read_bytes())
+    assert cd is not None and cd["name"].tolist() == ["folder/results.csv", "folder/plot.png"]
+    zp._ZIP_PEEK_CACHE.clear()
+    cd = zip_peek_from_bytes((DATA / "unicode.zip").read_bytes())
+    assert cd is not None and cd["name"].tolist()[0] == "données/résumé.csv"
+
+
+def test_zip_peek_reads_a_directory_larger_than_the_tail() -> None:
+    members = [(f"folder/with/a/long/name/file_{i:04d}.csv", b"a\n") for i in range(600)]
+    data = _build_zip(members)
+    handler, calls = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        cd = zip_peek(URL, tail_bytes=4096)
+    assert cd is not None and len(cd) == 600
+    # the HEAD, the tail, and one more request for the rest of the directory
+    assert [m for m, _ in calls] == ["HEAD", "GET", "GET"]
+
+
+def test_zip_fetch_members_inflates_a_member_over_32768_bytes(tmp_path: Path) -> None:
+    # U71: metacheck's inflate() stopped at 32768 bytes
+    content = [f"line {i} {'x' * 20}" for i in range(1, 3001)]
+    text = "\n".join(content) + "\n"
+    data = _build_zip([("big.R", text.encode()), ("other.R", b"x <- 1\n")])
+    handler, _ = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        out = _zip_fetch_members(URL, names="big.R", dest=str(tmp_path))
+    assert out is not None and out["ok"].tolist() == [True]
+    assert Path(out["path"].iloc[0]).read_text() == text
+    assert out["size"].iloc[0] > 32768
+
+
+@pytest.mark.parametrize("method", [zipfile.ZIP_STORED, zipfile.ZIP_BZIP2, zipfile.ZIP_LZMA])
+def test_zip_fetch_members_reads_every_method_zipfile_does(tmp_path: Path, method: int) -> None:
+    # metacheck's reader knew stored and deflate only
+    members = [("a.csv", b"id,x\n" * 300), ("b.csv", b"9,9\n" * 40)]
+    handler, _ = _range_route(_build_zip(members, compression=method))
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        out = _zip_fetch_members(URL, dest=str(tmp_path))
+    assert out is not None and out["ok"].tolist() == [True, True]
+    for (_, content), path in zip(members, out["path"], strict=True):
+        assert Path(path).read_bytes() == content
+
+
+def test_zip_fetch_members_of_a_zip64_archive(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    members = [("a.csv", b"x,y\n" * 100), ("b.csv", b"1,2\n" * 100)]
+    data = _build_zip(members, zip64_limit=100, monkeypatch=monkeypatch)
+    handler, _ = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        out = _zip_fetch_members(URL, dest=str(tmp_path))
+    assert out is not None and out["ok"].tolist() == [True, True]
+    assert Path(out["path"].iloc[1]).read_bytes() == members[1][1]
 
 
 def test_zip_decision_keeps_data_and_links_assets(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -374,29 +402,6 @@ def test_archive_classification() -> None:
     assert _is_zip("one.zip") == [True]
 
 
-def test_parse_zip_central_dir_edge_cases() -> None:
-    assert _parse_zip_central_dir(b"") is None
-    assert _parse_zip_central_dir((DATA / "empty.zip").read_bytes()) is None
-    assert _parse_zip_central_dir((DATA / "notzip.bin").read_bytes()) is None
-    big = (DATA / "big.zip").read_bytes()
-    assert _parse_zip_central_dir(big[-22:]) is None  # central directory not in the tail
-    cd = _parse_zip_central_dir((DATA / "zip64.zip").read_bytes())
-    assert cd is not None
-    assert cd["size"].isna().tolist() == [True, False, True]
-    assert cd["offset"].isna().tolist() == [True, False, True]
-    cd = _parse_zip_central_dir((DATA / "comment.zip").read_bytes())
-    assert cd is not None and cd["name"].tolist()[0] == "folder/"
-    cd = _parse_zip_central_dir((DATA / "unicode.zip").read_bytes())
-    assert cd is not None and cd["name"].tolist()[0] == "données/résumé.csv"
-
-
-def test_le_int() -> None:
-    raw = bytes([0x50, 0x4B, 5, 6, 255, 255, 255, 255])
-    assert _le_int(raw, 1, 4) == 0x06054B50
-    assert _le_int(raw, 5, 4) == 4294967295
-    assert _le_int(raw, 7, 4) == 0xFFFF  # bytes past the end read as 00
-
-
 # -- HTTP: range requests served by respx ------------------------------------
 
 
@@ -439,17 +444,16 @@ def test_zip_peek_over_range_requests() -> None:
     assert calls[1] == ("GET", f"bytes=0-{len(data) - 1}")
 
 
-def test_zip_peek_retries_with_a_bigger_tail() -> None:
+def test_zip_peek_asks_for_the_rest_of_a_larger_directory() -> None:
     data = (DATA / "mixed.zip").read_bytes()
     handler, calls = _range_route(data)
     with respx.mock(assert_all_called=False) as router:
         router.route(url=URL).mock(side_effect=handler)
         cd = zip_peek(URL, tail_bytes=50)
     assert cd is not None and len(cd) == 6
-    assert [c[1] for c in calls[1:]] == [
-        f"bytes={len(data) - 50}-{len(data) - 1}",
-        f"bytes=0-{len(data) - 1}",
-    ]
+    ranges = [c[1] for c in calls[1:]]
+    assert ranges[0] == f"bytes={len(data) - 50}-{len(data) - 1}"
+    assert len(ranges) == 2  # the tail, then the directory zipfile found it needs
 
 
 def test_zip_peek_whole_body_answer_and_failures() -> None:
@@ -493,36 +497,26 @@ def test_zip_fetch_members_by_range(tmp_path: Path) -> None:
         for name, path in zip(out["name"], out["path"], strict=True):
             assert Path(path).read_bytes() == zf.read(name)
     assert Path(out["path"].iloc[2]) == tmp_path / "sub" / "codebook.csv"
-    # two range requests per member: the local header, then the data
-    assert sum(1 for m, r in calls if m == "GET" and r and r.endswith(f"-{0 + 29}")) >= 1
+    # the listing is the HEAD and the tail; every member costs at most one range request
+    assert [m for m, _ in calls].count("HEAD") == 2  # zip_peek(), then the fetch
+    assert len([r for m, r in calls if m == "GET"]) <= 2 + 3
 
 
 def test_zip_fetch_members_rejects_bad_crc_and_traversal(tmp_path: Path) -> None:
     buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_STORED) as zf:
         zf.writestr("../evil.csv", "a,b\n1,2\n")
         zf.writestr("/abs/ok.csv", "a,b\n3,4\n")
         zf.writestr("good.csv", "a,b\n5,6\n")
     data = bytearray(buf.getvalue())
-    # corrupt the stored CRC of good.csv in the central directory
-    cd = _parse_zip_central_dir(bytes(data))
-    assert cd is not None
-    eocd = data.rfind(b"PK\x05\x06")
-    cd_off = int.from_bytes(data[eocd + 16 : eocd + 20], "little")
-    p = cd_off
-    for name in cd["name"]:
-        nlen = int.from_bytes(data[p + 28 : p + 30], "little")
-        xlen = int.from_bytes(data[p + 30 : p + 32], "little")
-        clen = int.from_bytes(data[p + 32 : p + 34], "little")
-        if name == "good.csv":
-            data[p + 16 : p + 20] = (zlib.crc32(b"other") & 0xFFFFFFFF).to_bytes(4, "little")
-        p += 46 + nlen + xlen + clen
+    data[data.index(b"a,b\n5,6\n")] ^= 1  # a byte of good.csv changed: its CRC32 no longer matches
     handler, _ = _range_route(bytes(data))
     with respx.mock(assert_all_called=False) as router:
         router.route(url=URL).mock(side_effect=handler)
         out = _zip_fetch_members(URL, dest=str(tmp_path / "dest"))
         assert out is not None
         assert out["ok"].tolist() == [False, True, False]  # traversal, absolute ok, bad CRC
+        assert "CRC32" in out["error"].iloc[2]
         assert Path(out["path"].iloc[1]) == tmp_path / "dest" / "abs" / "ok.csv"
         assert not (tmp_path / "evil.csv").exists()
         # without verification the corrupt-CRC member is accepted
@@ -545,19 +539,30 @@ def test_zip_fetch_members_nothing_wanted_and_unlistable(tmp_path: Path) -> None
         )
 
 
-def test_zip_fetch_members_host_ignoring_ranges_fails_cleanly(tmp_path: Path) -> None:
+def test_zip_fetch_members_host_ignoring_ranges(tmp_path: Path) -> None:
     data = (DATA / "stored.zip").read_bytes()
     handler, _ = _range_route(data, honour_range=False)
     with respx.mock(assert_all_called=False) as router:
         router.route(url=URL).mock(side_effect=handler)
         out = _zip_fetch_members(URL, dest=str(tmp_path))
     assert out is not None
-    # the listing works from the whole body, but a 200 is never a member's bytes
-    assert out["ok"].tolist() == [False, False, True]  # only the empty member
-    assert out["path"].isna().tolist() == [True, True, False]
-    # each failed member says why (#429)
+    # an archive smaller than the tail came whole with the listing: its members are in hand
+    assert out["ok"].tolist() == [True, True, True]
+
+
+def test_zip_fetch_members_host_ignoring_ranges_for_a_larger_archive(tmp_path: Path) -> None:
+    members = [(f"f{i}.csv", bytes([i]) * 3000) for i in range(100)]  # more than the tail
+    handler, _ = _range_route(
+        _build_zip(members, compression=zipfile.ZIP_STORED), honour_range=False
+    )
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        out = _zip_fetch_members(URL, names=["f0.csv", "f99.csv"], dest=str(tmp_path))
+    assert out is not None
+    # a 200 is never a member's bytes; each failed member says why (#429)
+    assert out["ok"].tolist() == [False, True]  # the last member is in the tail that came
     assert out["error"].iloc[0] == "HTTP 200 (range not honoured)"
-    assert pd.isna(out["error"].iloc[2])
+    assert pd.isna(out["error"].iloc[1])
 
 
 # -- #429: why a member fetch failed --------------------------------------------------
@@ -574,12 +579,6 @@ def _zip64_entry() -> pd.DataFrame:
             "crc": [1],
         }
     )
-
-
-def test_zip_member_fetch_records_why_it_failed() -> None:
-    reason: dict[str, str] = {}
-    assert _zip_member_fetch("http://example.invalid/x.zip", _zip64_entry(), reason=reason) is None
-    assert "Zip64" in reason["msg"]
 
 
 def test_zip_fetch_members_reports_a_per_member_error(
@@ -702,14 +701,13 @@ def test_zip_peek_handles_a_416_to_an_over_long_suffix() -> None:
     assert sorted(cd["name"]) == ["data.csv", "notes.txt"]
 
 
-def test_zip_member_fetch_on_a_host_that_refuses_head() -> None:
+def test_zip_fetch_members_on_a_host_that_refuses_head(tmp_path: Path) -> None:
     handler, _ = _s3_like_host(_test_zip_bytes())
     with respx.mock(assert_all_mocked=True) as router:
         router.route(url=S3).mock(side_effect=handler)
-        cd = zip_peek(S3)
-        assert cd is not None
-        got = _zip_member_fetch(S3, cd[cd["name"] == "notes.txt"])
-    assert got == b"hello\n"
+        out = _zip_fetch_members(S3, names="notes.txt", dest=str(tmp_path))
+    assert out is not None and out["ok"].tolist() == [True]
+    assert Path(out["path"].iloc[0]).read_bytes() == b"hello\n"
 
 
 def test_remote_size_falls_back_to_a_ranged_request() -> None:

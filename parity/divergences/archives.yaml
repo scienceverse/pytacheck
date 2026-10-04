@@ -381,29 +381,30 @@
 "repo_download/expand.zip_comment": *u208_member_type
 "repo_download/expand.zip_unicode": *u208_member_type
 "repo_download/expand.tar": *u208_member_type
-# U70
-"repo_download/zip_crc_ok.near_miss_large":
-  kind: r_bug_fixed
-  ref: U70
-  reason: "CRCs are compared exactly (metacheck's all.equal() tolerance accepts a CRC 40 off)"
-# U71
-"repo_download/zip_inflate_member.big_without_size":
-  kind: r_bug_fixed
-  ref: U71
-  reason: "without a size the whole member is inflated (zip::inflate() stops at 32768 bytes)"
-# U72
-"repo_download_review/cd.emptyname":
-  kind: r_bug_fixed
-  ref: U72
-  reason: "an empty member name is '' (metacheck reads 2 bytes backwards)"
-"repo_download_review/cd.emptyname_last":
-  kind: r_bug_fixed
-  ref: U72
-  reason: "an empty member name is '' (metacheck reads 2 bytes backwards)"
-"repo_download_review/cd.bigoffset":
-  kind: r_bug_fixed
-  ref: U72
-  reason: "an empty member name is '' (metacheck reads 2 bytes backwards)"
+# D65 (zip members are read by zipfile: bzip2 and lzma members work)
+"repo_download_review/fetch.bzip2":
+  kind: deliberate
+  ref: D65
+  reason: "a bzip2 member of a remote zip is fetched (metacheck reads stored and deflated members only: 'unsupported compression method (12)')"
+# D66 (local archives are extracted by zipfile)
+"repo_download_review/expand.lzma.zip":
+  kind: deliberate
+  ref: D66
+  reason: "an lzma member is extracted like any other (R's unzip stops at it, 'zip file is corrupt', and drops the rest of the archive)"
+"repo_download_review/expand.crc.zip":
+  kind: deliberate
+  ref: D66
+  reason: "the members of an archive whose records disagree (CRC, sizes) are still extracted, CRCs unchecked as in R (R's unzip stops at the first member whose local header disagrees with the central directory and drops the rest)"
+# D67 (a zip that came whole with its listing needs no request per member)
+"repo_download/zip_fetch_members.all": &d67_in_hand
+  kind: deliberate
+  ref: D67
+  reason: "members of an archive that fit the listing's first request are read from it (metacheck asks again for each member, two requests apiece, and a host that ignores range requests fails every one)"
+"repo_download/zip_fetch_members.subset": *d67_in_hand
+"repo_download/zip_fetch_members.zip64": *d67_in_hand
+"repo_download/zip_fetch_members.deflated": *d67_in_hand
+"repo_download/download_repo_files.archive_members": *d67_in_hand
+"repo_download_review/fetch.range_ignored": *d67_in_hand
 # U76
 "repo_download_review/peek.cp437.zip":
   kind: r_bug_fixed

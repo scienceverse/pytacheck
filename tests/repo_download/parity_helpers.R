@@ -15,32 +15,6 @@ rd_dir <- file.path(root, "tests", "repo_download", "data")
 
 rd_data <- function(rel) file.path(rd_dir, rel)
 
-rd_raw <- function(rel, tail = NULL, head = NULL) {
-  p <- rd_data(rel)
-  x <- readBin(p, "raw", file.size(p))
-  if (!is.null(tail)) x <- utils::tail(x, tail)
-  if (!is.null(head)) x <- utils::head(x, head)
-  x
-}
-
-rd_member_bytes <- function(rel, name) {
-  raw <- rd_raw(rel)
-  cd <- metacheck:::.parse_zip_central_dir(raw)
-  e <- cd[cd$name == name, , drop = FALSE][1, ]
-  lh <- raw[(e$offset + 1):(e$offset + 30)]
-  start <- e$offset + 30 + metacheck:::.le_int(lh, 27, 2) + metacheck:::.le_int(lh, 29, 2)
-  list(comp = raw[(start + 1):(start + e$csize)], method = e$method, size = e$size)
-}
-
-rd_inflate <- function(rel, name, with_size = TRUE, method = NULL) {
-  m <- rd_member_bytes(rel, name)
-  out <- metacheck:::.zip_inflate_member(
-    m$comp, if (is.null(method)) m$method else method,
-    size = if (isTRUE(with_size)) m$size else NA_real_)
-  if (is.null(out)) return(NULL)
-  list(length = length(out), crc = metacheck:::.crc32(out))
-}
-
 rd_row <- function(name) {
   data.frame(
     repo_url = "r", file_name = name, file_path = name, file_url = "u",

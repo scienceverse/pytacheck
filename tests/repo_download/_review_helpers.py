@@ -238,26 +238,6 @@ def fetch(
         shutil.rmtree(d, ignore_errors=True)
 
 
-def member(routes: list[dict[str, Any]], url: str, name: str, verify: bool = True) -> Any:
-    from metacheck.archives.zip_peek import _crc32, _zip_member_fetch, zip_peek
-
-    def run() -> Any:
-        cd = zip_peek(url)
-        assert cd is not None
-        return _zip_member_fetch(url, cd.loc[cd["name"] == name], verify=verify)
-
-    out = serve(routes, run)
-    if out is None:
-        return None
-    return {"length": len(out), "crc": _crc32(out)}
-
-
-def cd(fixture: str) -> Any:
-    from metacheck.archives.zip_peek import _parse_zip_central_dir
-
-    return _df_bytes(_parse_zip_central_dir((DATA / fixture).read_bytes()))
-
-
 def download(
     routes: list[dict[str, Any]],
     files: pd.DataFrame,

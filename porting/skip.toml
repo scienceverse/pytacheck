@@ -43,9 +43,13 @@
 "print.metacheck_module_output" = "S3 print method. Covered by ModuleOutput.__repr__ ('<title>: <summary_text>')."
 "print.metacheck_module_help" = "S3 print method. Covered by module_help(), which returns the printed text."
 
-# R/zip-peek.R -- base-R fallbacks for what Python's standard library does
-".crc32" = "Pure-R CRC-32, used when the digest package is missing. Use zlib.crc32 (fast, so .zip_crc_ok() needs no size limit, as when R has digest)."
-".le_int" = "Little-endian integer from raw bytes. Use int.from_bytes(b, 'little') or struct."
+# R/zip-peek.R -- reading the zip format, which Python's zipfile does (D65)
+".crc32" = "Pure-R CRC-32, used when the digest package is missing. zipfile checks the CRC-32 of every member it reads."
+".le_int" = "Little-endian integer from raw bytes, for metacheck's own zip parser. zipfile reads the format."
+".parse_zip_central_dir" = "metacheck's own parser of a zip's central directory (the maintainer decided on 2026-10-04 to stop reproducing it). zipfile.ZipFile reads it, over a file whose reads are range requests (_RangeFile in archives/zip_peek.py): Zip64, archive comments and a directory over 1 MB included."
+".zip_inflate_member" = "Inflates one stored or deflated member by hand (zip::inflate()). zipfile inflates every method it supports (bzip2 and lzma too)."
+".zip_member_fetch" = "Fetches one member by two range requests (its local header, then its data), inflates it and checks size and CRC. zipfile does it over _RangeFile with one request; _zip_fetch_members() keeps the table and the per-member errors."
+".zip_crc_ok" = "Compares a stored and a computed CRC-32 with all.equal() (U70). zipfile compares them exactly."
 
 # ellmer providers metacheck can reach through ellmer::chat("provider/model")
 "ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (an SDK). metacheck.llm.providers raises a clear error (_UNSUPPORTED)."
