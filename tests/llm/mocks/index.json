@@ -1,5 +1,289 @@
 {
  "version": 1,
+ "schemas": {
+  "schema-0ac7d77b": {
+   "t": "object",
+   "d": "",
+   "p": [
+    [
+     "a",
+     false,
+     {
+      "t": "integer",
+      "d": ""
+     }
+    ],
+    [
+     "tags",
+     false,
+     {
+      "t": "array",
+      "d": "",
+      "i": {
+       "t": "string",
+       "d": ""
+      }
+     }
+    ]
+   ]
+  },
+  "schema-13327e38": {
+   "t": "object",
+   "d": "",
+   "p": [
+    [
+     "name",
+     true,
+     {
+      "t": "string",
+      "d": "n"
+     }
+    ],
+    [
+     "n",
+     true,
+     {
+      "t": "integer",
+      "d": "i"
+     }
+    ],
+    [
+     "tags",
+     true,
+     {
+      "t": "array",
+      "d": "",
+      "i": {
+       "t": "string",
+       "d": "",
+       "e": [
+        "x",
+        "y"
+       ]
+      }
+     }
+    ],
+    [
+     "sub",
+     true,
+     {
+      "t": "object",
+      "d": "",
+      "p": [
+       [
+        "a",
+        true,
+        {
+         "t": "number",
+         "d": ""
+        }
+       ]
+      ]
+     }
+    ]
+   ]
+  },
+  "schema-41743bc2": {
+   "t": "object",
+   "d": "",
+   "p": [
+    [
+     "wrapper",
+     false,
+     {
+      "t": "array",
+      "d": "",
+      "i": {
+       "t": "string",
+       "d": ""
+      }
+     }
+    ]
+   ]
+  },
+  "schema-4756b984": {
+   "t": "object",
+   "d": "",
+   "p": [
+    [
+     "variables",
+     false,
+     {
+      "t": "array",
+      "d": "",
+      "i": {
+       "t": "object",
+       "d": "",
+       "p": [
+        [
+         "variable_name",
+         false,
+         {
+          "t": "string",
+          "d": "Exact variable name/code in the data file"
+         }
+        ],
+        [
+         "label",
+         true,
+         {
+          "t": "string",
+          "d": "Verbatim description text from the codebook"
+         }
+        ],
+        [
+         "kind",
+         true,
+         {
+          "t": "string",
+          "d": "Kind",
+          "e": [
+           "a",
+           "b",
+           null
+          ]
+         }
+        ]
+       ]
+      }
+     }
+    ]
+   ]
+  },
+  "schema-9083f3d9": {
+   "t": "object",
+   "d": "",
+   "p": [
+    [
+     "tags",
+     false,
+     {
+      "t": "array",
+      "d": "",
+      "i": {
+       "t": "string",
+       "d": "",
+       "e": [
+        "x",
+        "y",
+        "z"
+       ]
+      }
+     }
+    ],
+    [
+     "meta",
+     false,
+     {
+      "t": "object",
+      "d": "",
+      "p": [
+       [
+        "a",
+        false,
+        {
+         "t": "integer",
+         "d": ""
+        }
+       ],
+       [
+        "b",
+        false,
+        {
+         "t": "string",
+         "d": ""
+        }
+       ]
+      ]
+     }
+    ],
+    [
+     "text",
+     false,
+     {
+      "t": "string",
+      "d": ""
+     }
+    ]
+   ]
+  },
+  "schema-cc328108": {
+   "t": "object",
+   "d": "",
+   "p": [
+    [
+     "items",
+     false,
+     {
+      "t": "array",
+      "d": "",
+      "i": {
+       "t": "object",
+       "d": "",
+       "p": [
+        [
+         "name",
+         false,
+         {
+          "t": "string",
+          "d": "n"
+         }
+        ],
+        [
+         "count",
+         true,
+         {
+          "t": "integer",
+          "d": "c"
+         }
+        ],
+        [
+         "score",
+         true,
+         {
+          "t": "number",
+          "d": "s"
+         }
+        ],
+        [
+         "flag",
+         true,
+         {
+          "t": "boolean",
+          "d": "f"
+         }
+        ],
+        [
+         "kind",
+         true,
+         {
+          "t": "string",
+          "d": "k",
+          "e": [
+           "x",
+           "y"
+          ]
+         }
+        ],
+        [
+         "tags",
+         true,
+         {
+          "t": "array",
+          "d": "",
+          "i": {
+           "t": "string",
+           "d": ""
+          }
+         }
+        ]
+       ]
+      }
+     }
+    ]
+   ]
+  }
+ },
  "replies": [
   {
    "key": "9631bdd82b1dddf9",
@@ -9,55 +293,7 @@
     "model": "claude-3-5-haiku-latest",
     "system": "Extract variables",
     "user": "two vars",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "variables",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "variable_name",
-           false,
-           {
-            "t": "string",
-            "d": "Exact variable name/code in the data file"
-           }
-          ],
-          [
-           "label",
-           true,
-           {
-            "t": "string",
-            "d": "Verbatim description text from the codebook"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "Kind",
-            "e": [
-             "a",
-             "b",
-             null
-            ]
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-4756b984",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -87,55 +323,7 @@
     "model": "claude-sonnet-4-5",
     "system": "Extract variables",
     "user": "two vars",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "variables",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "variable_name",
-           false,
-           {
-            "t": "string",
-            "d": "Exact variable name/code in the data file"
-           }
-          ],
-          [
-           "label",
-           true,
-           {
-            "t": "string",
-            "d": "Verbatim description text from the codebook"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "Kind",
-            "e": [
-             "a",
-             "b",
-             null
-            ]
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-4756b984",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -150,55 +338,7 @@
     "model": "openai/gpt-oss-20b",
     "system": "Extract variables",
     "user": "two vars",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "variables",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "variable_name",
-           false,
-           {
-            "t": "string",
-            "d": "Exact variable name/code in the data file"
-           }
-          ],
-          [
-           "label",
-           true,
-           {
-            "t": "string",
-            "d": "Verbatim description text from the codebook"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "Kind",
-            "e": [
-             "a",
-             "b",
-             null
-            ]
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-4756b984",
     "params": {
      "temperature": 0,
      "max_tokens": 4096,
@@ -214,24 +354,7 @@
     "model": "test-model",
     "system": "List things",
     "user": "list",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "wrapper",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": ""
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-41743bc2",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -246,55 +369,7 @@
     "model": "openai/gpt-oss-20b",
     "system": "Extract variables",
     "user": "fenced",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "variables",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "variable_name",
-           false,
-           {
-            "t": "string",
-            "d": "Exact variable name/code in the data file"
-           }
-          ],
-          [
-           "label",
-           true,
-           {
-            "t": "string",
-            "d": "Verbatim description text from the codebook"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "Kind",
-            "e": [
-             "a",
-             "b",
-             null
-            ]
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-4756b984",
     "params": {
      "temperature": 0,
      "max_tokens": 4096,
@@ -310,55 +385,7 @@
     "model": "openai/gpt-oss-20b",
     "system": "Extract variables",
     "user": "none again",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "variables",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "variable_name",
-           false,
-           {
-            "t": "string",
-            "d": "Exact variable name/code in the data file"
-           }
-          ],
-          [
-           "label",
-           true,
-           {
-            "t": "string",
-            "d": "Verbatim description text from the codebook"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "Kind",
-            "e": [
-             "a",
-             "b",
-             null
-            ]
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-4756b984",
     "params": {
      "temperature": 0,
      "max_tokens": 4096,
@@ -374,82 +401,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe nulls",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -464,82 +416,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe empty",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -554,55 +431,7 @@
     "model": "openai/gpt-oss-20b",
     "system": "Extract variables",
     "user": "bad schema",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "variables",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "variable_name",
-           false,
-           {
-            "t": "string",
-            "d": "Exact variable name/code in the data file"
-           }
-          ],
-          [
-           "label",
-           true,
-           {
-            "t": "string",
-            "d": "Verbatim description text from the codebook"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "Kind",
-            "e": [
-             "a",
-             "b",
-             null
-            ]
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-4756b984",
     "params": {
      "temperature": 0,
      "max_tokens": 4096,
@@ -618,62 +447,7 @@
     "model": "probe-model",
     "system": "Single",
     "user": "single full",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "name",
-       true,
-       {
-        "t": "string",
-        "d": "n"
-       }
-      ],
-      [
-       "n",
-       true,
-       {
-        "t": "integer",
-        "d": "i"
-       }
-      ],
-      [
-       "tags",
-       true,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": "",
-         "e": [
-          "x",
-          "y"
-         ]
-        }
-       }
-      ],
-      [
-       "sub",
-       true,
-       {
-        "t": "object",
-        "d": "",
-        "p": [
-         [
-          "a",
-          true,
-          {
-           "t": "number",
-           "d": ""
-          }
-         ]
-        ]
-       }
-      ]
-     ]
-    },
+    "schema": "schema-13327e38",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -724,82 +498,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe missing",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -844,82 +543,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe strings",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -934,63 +558,7 @@
     "model": "test-model",
     "system": "Tag it",
     "user": "tags",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "tags",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": "",
-         "e": [
-          "x",
-          "y",
-          "z"
-         ]
-        }
-       }
-      ],
-      [
-       "meta",
-       false,
-       {
-        "t": "object",
-        "d": "",
-        "p": [
-         [
-          "a",
-          false,
-          {
-           "t": "integer",
-           "d": ""
-          }
-         ],
-         [
-          "b",
-          false,
-          {
-           "t": "string",
-           "d": ""
-          }
-         ]
-        ]
-       }
-      ],
-      [
-       "text",
-       false,
-       {
-        "t": "string",
-        "d": ""
-       }
-      ]
-     ]
-    },
+    "schema": "schema-9083f3d9",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1005,32 +573,7 @@
     "model": "probe-model",
     "system": "Schema",
     "user": "schema one",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "a",
-       false,
-       {
-        "t": "integer",
-        "d": ""
-       }
-      ],
-      [
-       "tags",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": ""
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-0ac7d77b",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1045,82 +588,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe extra",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1135,62 +603,7 @@
     "model": "probe-model",
     "system": "Single",
     "user": "single tags",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "name",
-       true,
-       {
-        "t": "string",
-        "d": "n"
-       }
-      ],
-      [
-       "n",
-       true,
-       {
-        "t": "integer",
-        "d": "i"
-       }
-      ],
-      [
-       "tags",
-       true,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": "",
-         "e": [
-          "x",
-          "y"
-         ]
-        }
-       }
-      ],
-      [
-       "sub",
-       true,
-       {
-        "t": "object",
-        "d": "",
-        "p": [
-         [
-          "a",
-          true,
-          {
-           "t": "number",
-           "d": ""
-          }
-         ]
-        ]
-       }
-      ]
-     ]
-    },
+    "schema": "schema-13327e38",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1205,62 +618,7 @@
     "model": "probe-model",
     "system": "Single",
     "user": "single nulls",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "name",
-       true,
-       {
-        "t": "string",
-        "d": "n"
-       }
-      ],
-      [
-       "n",
-       true,
-       {
-        "t": "integer",
-        "d": "i"
-       }
-      ],
-      [
-       "tags",
-       true,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": "",
-         "e": [
-          "x",
-          "y"
-         ]
-        }
-       }
-      ],
-      [
-       "sub",
-       true,
-       {
-        "t": "object",
-        "d": "",
-        "p": [
-         [
-          "a",
-          true,
-          {
-           "t": "number",
-           "d": ""
-          }
-         ]
-        ]
-       }
-      ]
-     ]
-    },
+    "schema": "schema-13327e38",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1275,82 +633,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe truncated",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1380,82 +663,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe object",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1470,82 +678,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe overflow",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1560,55 +693,7 @@
     "model": "openai/gpt-oss-20b",
     "system": "Extract variables",
     "user": "none",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "variables",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "variable_name",
-           false,
-           {
-            "t": "string",
-            "d": "Exact variable name/code in the data file"
-           }
-          ],
-          [
-           "label",
-           true,
-           {
-            "t": "string",
-            "d": "Verbatim description text from the codebook"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "Kind",
-            "e": [
-             "a",
-             "b",
-             null
-            ]
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-4756b984",
     "params": {
      "temperature": 0,
      "max_tokens": 4096,
@@ -1624,62 +709,7 @@
     "model": "probe-model",
     "system": "Single",
     "user": "single missing",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "name",
-       true,
-       {
-        "t": "string",
-        "d": "n"
-       }
-      ],
-      [
-       "n",
-       true,
-       {
-        "t": "integer",
-        "d": "i"
-       }
-      ],
-      [
-       "tags",
-       true,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": "",
-         "e": [
-          "x",
-          "y"
-         ]
-        }
-       }
-      ],
-      [
-       "sub",
-       true,
-       {
-        "t": "object",
-        "d": "",
-        "p": [
-         [
-          "a",
-          true,
-          {
-           "t": "number",
-           "d": ""
-          }
-         ]
-        ]
-       }
-      ]
-     ]
-    },
+    "schema": "schema-13327e38",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1724,82 +754,7 @@
     "model": "probe-model",
     "system": "Probe",
     "user": "probe types",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "items",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "object",
-         "d": "",
-         "p": [
-          [
-           "name",
-           false,
-           {
-            "t": "string",
-            "d": "n"
-           }
-          ],
-          [
-           "count",
-           true,
-           {
-            "t": "integer",
-            "d": "c"
-           }
-          ],
-          [
-           "score",
-           true,
-           {
-            "t": "number",
-            "d": "s"
-           }
-          ],
-          [
-           "flag",
-           true,
-           {
-            "t": "boolean",
-            "d": "f"
-           }
-          ],
-          [
-           "kind",
-           true,
-           {
-            "t": "string",
-            "d": "k",
-            "e": [
-             "x",
-             "y"
-            ]
-           }
-          ],
-          [
-           "tags",
-           true,
-           {
-            "t": "array",
-            "d": "",
-            "i": {
-             "t": "string",
-             "d": ""
-            }
-           }
-          ]
-         ]
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-cc328108",
     "params": {
      "temperature": 0,
      "max_tokens": 4096
@@ -1814,32 +769,7 @@
     "model": "probe-model",
     "system": "Schema",
     "user": "schema two",
-    "schema": {
-     "t": "object",
-     "d": "",
-     "p": [
-      [
-       "a",
-       false,
-       {
-        "t": "integer",
-        "d": ""
-       }
-      ],
-      [
-       "tags",
-       false,
-       {
-        "t": "array",
-        "d": "",
-        "i": {
-         "t": "string",
-         "d": ""
-        }
-       }
-      ]
-     ]
-    },
+    "schema": "schema-0ac7d77b",
     "params": {
      "temperature": 0,
      "max_tokens": 4096

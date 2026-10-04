@@ -19,7 +19,9 @@ does not matter.
 
 ``index.json`` is written by :func:`write_index` from the entries
 ``tests.httpmock.replay`` logs when ``PYTACHECK_LLM_INDEX_LOG`` names a file
-(``python -m tests.llmreplies merge LOG``); it is read-only for the tests.
+(``python -m tests.llmreplies merge LOG``); it is read-only for the tests. An entry shows the
+request it answers; a schema that several entries share is written once, under ``schemas``,
+and the entries name it.
 """
 
 from __future__ import annotations
@@ -289,6 +291,31 @@ def load_index(root: Path) -> dict[str, str] | None:
     return _loaded[root]
 
 
+def _share_schemas(replies: list[dict[str, Any]]) -> dict[str, Any]:
+    """Move each distinct schema of *replies* to one table; the requests name theirs."""
+    schemas: dict[str, Any] = {}
+    for e in replies:
+        schema = e["request"].get("schema")
+        if isinstance(schema, dict):
+            raw = json.dumps(schema, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+            name = "schema-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:8]
+            schemas[name] = schema
+            e["request"] = {**e["request"], "schema": name}
+    return dict(sorted(schemas.items()))
+
+
+def read_replies(data: dict[str, Any]) -> list[dict[str, Any]]:
+    """The entries of an index file with their schemas written out again."""
+    schemas = data.get("schemas", {})
+    out = []
+    for e in data["replies"]:
+        schema = e["request"].get("schema")
+        if isinstance(schema, str):
+            e = {**e, "request": {**e["request"], "schema": schemas[schema]}}
+        out.append(e)
+    return out
+
+
 def write_index(root: Path, entries: list[dict[str, Any]]) -> None:
     """Write ``root/index.json``: every reply file with the request it answers."""
     keyed: dict[str, dict[str, Any]] = {}
@@ -300,8 +327,11 @@ def write_index(root: Path, entries: list[dict[str, Any]]) -> None:
                 f"  {json.dumps(e['request'], ensure_ascii=False)[:300]}"
             )
         keyed[e["key"]] = e
-    replies = sorted(keyed.values(), key=lambda e: e["file"])
-    text = json.dumps({"version": 1, "replies": replies}, indent=1, ensure_ascii=False)
+    replies = sorted(({**e} for e in keyed.values()), key=lambda e: e["file"])
+    schemas = _share_schemas(replies)
+    text = json.dumps(
+        {"version": 1, "schemas": schemas, "replies": replies}, indent=1, ensure_ascii=False
+    )
     (root / _INDEX).write_text(text + "\n", encoding="utf-8")
 
 
@@ -316,7 +346,7 @@ def merge_log(log: Path) -> None:
         existing = []
         f = root / _INDEX
         if f.exists():
-            existing = json.loads(f.read_text(encoding="utf-8"))["replies"]
+            existing = read_replies(json.loads(f.read_text(encoding="utf-8")))
         write_index(root, existing + entries)
         print(f"{root}: {len({e['key'] for e in existing + entries})} replies")
 
