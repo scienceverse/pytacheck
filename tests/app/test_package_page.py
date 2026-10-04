@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import stat
 import zipfile
@@ -35,16 +36,23 @@ HOST = "metacheck.example.org"
 
 @pytest.fixture(autouse=True)
 def hermetic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
-    """No user config or packs, and the concept model is never loaded (a download)."""
+    """No user config or packs, the concept model is never loaded (a download), and the home
+    folder is ``tmp_path``: the page reads only inside home, and a test's folders are there."""
     monkeypatch.setenv("PYTACHECK_CONFIG", str(tmp_path / "config.json"))
     monkeypatch.setenv("PYTACHECK_DATA_DIR", str(tmp_path / "data"))
     monkeypatch.delenv("PYTACHECK_PRESET", raising=False)
     monkeypatch.delenv("METACHECK_PRESET", raising=False)
+    monkeypatch.delenv("METACHECK_APP_ROOTS", raising=False)
+    monkeypatch.setenv("HOME", str(tmp_path))  # Path.home() on Linux and macOS
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))  # ... and on Windows
 
     def refuse(*_args: Any, **_kwargs: Any) -> None:
         raise AssertionError("the local concept model must not be loaded in a test")
 
     monkeypatch.setattr("metacheck.datacheck.concepts.load_classifier", refuse)
+    # the page asks for the classifier by default: say the concepts extra is not installed (as
+    # in the app's own install), whatever this environment has, so nothing is ever downloaded
+    monkeypatch.setattr("metacheck.datacheck.concepts.classifier_available", lambda: False)
     refresh()
     yield
     refresh()
@@ -145,6 +153,122 @@ def test_a_zip_or_tar_upload_is_accepted(tmp_path: Path) -> None:
         assert pk.resolve_source(pk.ZIP, "", str(tmp_path / name)) == tmp_path / name
 
 
+# -- where a folder may be ----------------------------------------------------------------
+# The fixture makes ``tmp_path`` the home folder; ``elsewhere`` is a folder outside it.
+
+
+@pytest.fixture
+def elsewhere(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    return folder(tmp_path_factory.mktemp("elsewhere"), "secrets", {"README.md": "# Private\n"})
+
+
+def _link(link: Path, target: Path) -> None:
+    try:
+        link.symlink_to(target, target_is_directory=True)
+    except (OSError, NotImplementedError):  # Windows without the right to make links
+        pytest.skip("this system does not let the test make a symbolic link")
+
+
+def test_a_folder_inside_home_is_read(tmp_path: Path) -> None:
+    root = folder(tmp_path)
+    assert pk.resolve_source(pk.FOLDER, str(root), None) == root.resolve()
+    assert pk.resolve_source(pk.FOLDER, "~/study1", None) == root.resolve()  # ~ is home
+    assert pk.resolve_source(pk.FOLDER, str(tmp_path), None) == tmp_path.resolve()  # home itself
+    deep = folder(tmp_path, "a/b/c")
+    assert pk.resolve_source(pk.FOLDER, str(deep), None) == deep.resolve()
+
+
+def test_a_folder_outside_home_is_refused_and_says_where_and_why(
+    tmp_path: Path, elsewhere: Path
+) -> None:
+    with pytest.raises(UserError) as caught:
+        pk.resolve_source(pk.FOLDER, str(elsewhere), None)
+    message = str(caught.value)
+    assert str(tmp_path.resolve()) in message  # where folders may be
+    assert "home folder" in message and "no other program" in message  # and why
+    assert pk.ROOTS_ENV == "METACHECK_APP_ROOTS" and pk.ROOTS_ENV in message  # how to widen it
+    # the answer does not say whether a folder outside exists
+    ghost = elsewhere.parent / "not-there"
+    with pytest.raises(UserError) as other:
+        pk.resolve_source(pk.FOLDER, str(ghost), None)
+    assert str(other.value) == message
+    with pytest.raises(UserError, match="outside the places"):
+        pk.resolve_source(pk.FOLDER, str(Path(tmp_path.anchor) / "etc"), None)
+
+
+def test_a_link_in_home_that_points_out_of_it_is_refused(tmp_path: Path, elsewhere: Path) -> None:
+    link = tmp_path / "innocent"
+    _link(link, elsewhere)
+    assert link.is_dir()  # it looks like a folder inside home
+    with pytest.raises(UserError, match="outside the places"):
+        pk.resolve_source(pk.FOLDER, str(link), None)
+    with pytest.raises(UserError, match="outside the places"):  # a link in the middle, too
+        pk.resolve_source(pk.FOLDER, str(link / "data"), None)
+    # a link that stays inside home is fine, and the folder that is checked is its target
+    inside = folder(tmp_path, "real")
+    _link(tmp_path / "shortcut", inside)
+    assert pk.resolve_source(pk.FOLDER, str(tmp_path / "shortcut"), None) == inside.resolve()
+
+
+def test_going_up_with_dot_dot_does_not_leave_home(tmp_path: Path, elsewhere: Path) -> None:
+    root = folder(tmp_path)
+    up = os.path.relpath(elsewhere, root)  # ../../elsewhereN/secrets
+    assert ".." in up
+    for text in (str(root / up), f"~/study1/{up}", f"{root}/data/../{up}"):
+        with pytest.raises(UserError, match="outside the places"):
+            pk.resolve_source(pk.FOLDER, text, None)
+    # going up and down inside home is fine
+    assert pk.resolve_source(pk.FOLDER, f"{root}/data/../code/..", None) == root.resolve()
+
+
+def test_a_home_folder_that_is_a_link_still_holds_its_folders(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    real = folder(tmp_path, "real_home/study1")
+    home = tmp_path / "home_link"
+    _link(home, tmp_path / "real_home")
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))
+    assert pk.resolve_source(pk.FOLDER, str(home / "study1"), None) == real.resolve()
+    assert pk.resolve_source(pk.FOLDER, str(real), None) == real.resolve()
+
+
+def test_the_environment_variable_adds_folders(
+    tmp_path: Path,
+    elsewhere: Path,
+    tmp_path_factory: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    other = folder(tmp_path_factory.mktemp("other"), "study2")
+    monkeypatch.setenv("METACHECK_APP_ROOTS", str(elsewhere.parent))
+    assert pk.resolve_source(pk.FOLDER, str(elsewhere), None) == elsewhere.resolve()
+    with pytest.raises(UserError, match="outside the places"):  # a sibling is not added
+        pk.resolve_source(pk.FOLDER, str(other), None)
+    # several, separated as a PATH is; blanks and nothing-there entries do no harm
+    value = os.pathsep.join([str(elsewhere.parent), " ", str(other.parent), str(tmp_path / "gone")])
+    monkeypatch.setenv("METACHECK_APP_ROOTS", value)
+    assert pk.resolve_source(pk.FOLDER, str(other), None) == other.resolve()
+    assert pk.resolve_source(pk.FOLDER, str(elsewhere), None) == elsewhere.resolve()
+    assert pk.resolve_source(pk.FOLDER, str(tmp_path), None) == tmp_path.resolve()  # home stays
+    # a folder added by the variable is also checked after its links are followed
+    stray = other.parent.parent / "stray"
+    stray.mkdir()
+    _link(other.parent / "to_stray", stray)
+    with pytest.raises(UserError, match="outside the places"):
+        pk.resolve_source(pk.FOLDER, str(other.parent / "to_stray"), None)
+    # the message names the folders that are allowed
+    with pytest.raises(UserError) as caught:
+        pk.resolve_source(pk.FOLDER, str(stray), None)
+    assert str(other.parent.resolve()) in str(caught.value)
+
+
+def test_a_zip_upload_is_not_tested_for_its_place(elsewhere: Path) -> None:
+    archive = elsewhere.parent / "upload.zip"
+    with zipfile.ZipFile(archive, "w") as zf:
+        zf.writestr("README.md", "# Study\n")
+    assert pk.resolve_source(pk.ZIP, "", str(archive)) == archive
+
+
 # -- running a package --------------------------------------------------------------------
 
 
@@ -213,9 +337,8 @@ def test_a_folder_is_not_changed_and_nothing_is_downloaded(
     assert sorted(p.name for p in root.iterdir()) == ["README.md", "code", "data"]
 
 
-def test_the_classifier_is_used_only_when_asked_for(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def _selection_args(monkeypatch: pytest.MonkeyPatch) -> list[Any]:
+    """The ``args`` each run hands to the library's module selection, in order."""
     from metacheck.datapackage import _check
 
     seen: list[Any] = []
@@ -226,11 +349,39 @@ def test_the_classifier_is_used_only_when_asked_for(
         return real(**kw)
 
     monkeypatch.setattr(_check, "package_selection", spy)
+    return seen
+
+
+def test_the_classifier_is_the_default_as_on_the_command_line(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    seen = _selection_args(monkeypatch)
+    # the extra is there (the model itself is not loaded: it would be a download)
+    monkeypatch.setattr("metacheck.datacheck.concepts.classifier_available", lambda: True)
+    monkeypatch.setattr("metacheck.datacheck.concepts.load_classifier", lambda *_a, **_k: None)
     root = folder(tmp_path)
-    run_on(root, tmp_path)
+    analysis = run_on(root, tmp_path)  # no argument: the page's box is ticked
+    # nothing is passed to data_check, as `metacheck package` does without -a, so that
+    # METACHECK_CONCEPTS and the option decide
+    assert not seen[-1]
+    assert analysis.note == ""
+    run_on(root, tmp_path, local_classifier=False)  # the box is unticked
     assert seen[-1] == {"data_check": {"concepts": "rules"}}
-    run_on(root, tmp_path, local_classifier=True)
-    assert seen[-1] is None  # data_check's own default
+
+
+def test_without_the_extra_the_run_falls_back_to_rules_and_says_so(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    seen = _selection_args(monkeypatch)  # the fixture says the extra is not installed
+    root = folder(tmp_path)
+    analysis = run_on(root, tmp_path)  # the classifier is asked for, by default
+    assert seen[-1] == {"data_check": {"concepts": "rules"}}
+    assert analysis.note == pk.NO_CLASSIFIER
+    assert 'pip install "metacheck[concepts]"' in analysis.note and "rules only" in analysis.note
+    assert len(analysis.checks) == 5  # the checks ran all the same
+    assert "Did not run" not in set(analysis.checks["Status"])
+    # a person who did not ask for the classifier is not told about it
+    assert run_on(root, tmp_path, local_classifier=False).note == ""
 
 
 def test_a_zip_is_checked_and_named_without_its_ending(tmp_path: Path) -> None:
@@ -587,6 +738,54 @@ def test_the_page_says_what_is_wrong_in_plain_words(tmp_path: Path) -> None:
         ]:
             done = _join(tc, data, "p3")
             assert not done["success"] and message in json.dumps(done)
+
+
+def test_the_page_refuses_a_folder_outside_home_in_plain_words(
+    elsewhere: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = ["folder", str(elsewhere), None, "datapackage::default", False]
+    with _client() as tc:
+        done = _join(tc, data, "p4")
+        assert not done["success"]
+        text = json.dumps(done)
+        assert "outside the places this page may read" in text
+        assert "METACHECK_APP_ROOTS" in text
+        assert "Private" not in text  # nothing of the folder came back
+        # the folder is read once the variable allows it
+        monkeypatch.setenv("METACHECK_APP_ROOTS", str(elsewhere.parent))
+        assert _join(tc, data, "p5")["success"]
+
+
+def _checkbox(config: dict[str, Any]) -> dict[str, Any]:
+    (box,) = [
+        c["props"]
+        for c in config["components"]
+        if c["type"] == "checkbox" and c["props"].get("label") == ui_package.CLASSIFIER_LABEL
+    ]
+    return box  # type: ignore[no-any-return]
+
+
+def test_the_classifier_box_is_ticked_and_says_when_the_extra_is_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    missing = _checkbox(ui.build_app().get_config_file())  # the fixture: no extra
+    assert missing["value"] is True  # the classifier is the default, as in `metacheck package`
+    assert missing["info"] == ui_package.CLASSIFIER_MISSING_INFO
+    assert 'pip install "metacheck[concepts]"' in missing["info"]
+    monkeypatch.setattr("metacheck.datacheck.concepts.classifier_available", lambda: True)
+    there = _checkbox(ui.build_app().get_config_file())
+    assert there["value"] is True and there["info"] == ui_package.CLASSIFIER_INFO
+    assert "840 MB" in there["info"]
+
+
+def test_the_page_runs_with_the_classifier_asked_for_but_missing(tmp_path: Path) -> None:
+    root = folder(tmp_path)
+    with _client() as tc:
+        ticked = _join(tc, ["folder", str(root), None, "datapackage::default", True], "p6")
+        assert ticked["success"], ticked
+        assert pk.NO_CLASSIFIER in ticked["output"]["data"][1]  # said under the results
+        unticked = _join(tc, ["folder", str(root), None, "datapackage::default", False], "p7")
+        assert unticked["success"] and "classifier" not in unticked["output"]["data"][1]
 
 
 def test_the_two_pages_keep_their_reports_apart() -> None:

@@ -8,9 +8,11 @@ cookie prevents that. The guard therefore also refuses requests that another loc
 starts (``Origin`` and ``Sec-Fetch-Site``), and the app only reads files that were
 uploaded through the page. The one exception is the local app's "Check a data package"
 page, which reads the folder that the person types (see ``package.py``). The guard does
-not narrow that: a program on this computer that has the token cookie (see above) can ask
-the page to check any folder this user can read, and then download the report, which
-lists its files and quotes its README. A shared server has no such page.
+not narrow that, so the page does: it reads only inside the person's home folder (and the
+folders of ``METACHECK_APP_ROOTS``), after the path is resolved and its links are followed.
+Without that, a program on this computer that has the token cookie (see above) could ask the
+page to check any folder this user can read, and then download the report, which lists its
+files and quotes its README. A shared server has no such page.
 """
 
 from __future__ import annotations

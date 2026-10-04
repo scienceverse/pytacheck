@@ -8,7 +8,10 @@ requirement). It does not import gradio, and it never uploads anything: the chec
 this computer, and no check looks anything up online.
 
 Only the local app offers this. A folder is named by a path on the computer that runs the
-app, so a shared server never builds the page.
+app, so a shared server never builds the page. The page reads a folder only inside the
+person's home folder, or inside a folder named in ``METACHECK_APP_ROOTS``: another program on
+this computer that holds the app's token cookie could otherwise ask it to read any folder
+and return the README (see :func:`resolve_source` and ``security.py``).
 """
 
 from __future__ import annotations
@@ -20,6 +23,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from metacheck._env import env_get, env_name
 from metacheck.app.run import _RUN_LOCK, Progress, UserError, _plain, protect, report_filename
 
 if TYPE_CHECKING:
@@ -31,11 +35,15 @@ __all__ = [
     "CHECK_COLUMNS",
     "MAX_FILES",
     "MAX_UNPACKED_BYTES",
+    "NO_CLASSIFIER",
+    "ROOTS_ENV",
     "UPLOAD_LIMIT",
     "PackageAnalysis",
+    "allowed_roots",
     "check_package_source",
     "checklist_table",
     "checks_table",
+    "classifier_installed",
     "counts_line",
     "package_name",
     "package_presets",
@@ -57,10 +65,19 @@ NO_SOURCE_ZIP = "Upload a zip of the package first, or use a folder."
 NOT_A_FOLDER = (
     "No folder was found at that path. Give the path of the package's folder on this computer."
 )
+#: the variable that adds folders to the ones the page may read (see :func:`allowed_roots`)
+ROOTS_ENV = env_name("APP_ROOTS")
 EXPIRED = "Your upload is no longer on the server. Upload the zip again."
 BAD_ARCHIVE = "This file is not a zip or tar archive. Upload a zip, or give the package's folder."
 FAILED = "Something went wrong while checking this package."
 NO_CHECKS = "This preset runs no checks on a package."
+#: What the page says (as Markdown) when the classifier is asked for and the ``concepts`` extra
+#: is missing.
+NO_CLASSIFIER = (
+    "The local classifier is not installed, so the concepts of the data columns come from "
+    'rules only. To get it, install the concepts extra: `pip install "metacheck[concepts]"`. '
+    "Its model, about 840 MB, is downloaded the first time it is used."
+)
 
 #: The two ways to name a package (the page's choice).
 FOLDER = "folder"
@@ -143,11 +160,49 @@ def _clean_path(text: str) -> str:
     return cleaned
 
 
+def allowed_roots() -> list[Path]:
+    """The folders the page may read from, each with its links followed.
+
+    The person's home folder, and the folders in ``METACHECK_APP_ROOTS`` (separated by
+    ``os.pathsep``: ``:`` on Linux and macOS, ``;`` on Windows).
+    """
+    roots: list[Path] = []
+    try:
+        roots.append(Path.home())
+    except RuntimeError:  # no home folder is known: then only the variable allows anything
+        pass
+    listed = (env_get("APP_ROOTS") or "").split(os.pathsep)
+    roots.extend(Path(_clean_path(item)).expanduser() for item in listed if item.strip())
+    resolved: list[Path] = []
+    for root in roots:
+        try:
+            resolved.append(root.resolve())  # the home folder can be a link, too
+        except (OSError, RuntimeError, ValueError):
+            continue
+    return resolved
+
+
+def _outside_message(roots: list[Path]) -> str:
+    where = " or ".join(f"{root}" for root in roots) or "a folder you name in the settings"
+    return (
+        f"That folder is outside the places this page may read: {where}. The page reads only "
+        "there, so that no other program on this computer can use it to read the rest of your "
+        "files. Move or copy the package into your home folder, or upload a zip of it. To allow "
+        f"another folder, start the app with {ROOTS_ENV} set to it."
+    )
+
+
 def resolve_source(kind: str, folder: str | None, upload: str | None) -> Path:
     """The package to check: the folder that was typed, or the uploaded archive.
 
+    A folder must lie inside the person's home folder or a folder of ``METACHECK_APP_ROOTS``.
+    The path is resolved first (``~`` expanded, ``..`` removed, links followed) and the
+    folder that comes out is the one tested, so a link inside home that points out of it is
+    refused. The test comes before the one for existence, so the answer never says whether
+    a folder outside exists. An upload is the app's own file and is not tested.
+
     Raises :class:`~metacheck.app.run.UserError` when nothing was given, the folder is not
-    there, or the upload is gone or is not an archive.
+    there or is outside the allowed folders, or the upload is gone or is not an archive.
     """
     from metacheck.datapackage import is_archive
 
@@ -163,10 +218,23 @@ def resolve_source(kind: str, folder: str | None, upload: str | None) -> Path:
     text = _clean_path(folder or "")
     if not text:
         raise UserError(NO_SOURCE_FOLDER)
-    path = Path(text).expanduser()
+    try:
+        path = Path(text).expanduser().resolve()
+    except (OSError, RuntimeError, ValueError):  # an unknown ~user, a link loop, a bad name
+        raise UserError(NOT_A_FOLDER) from None
+    roots = allowed_roots()
+    if not any(path.is_relative_to(root) for root in roots):
+        raise UserError(_outside_message(roots))
     if not path.is_dir():
         raise UserError(NOT_A_FOLDER)
-    return path.resolve()
+    return path
+
+
+def classifier_installed() -> bool:
+    """Whether ``data_check``'s local concept classifier can run here (the ``concepts`` extra)."""
+    from metacheck.datacheck.concepts import classifier_available
+
+    return classifier_available()
 
 
 # -- the tables --------------------------------------------------------------------------
@@ -250,6 +318,7 @@ class PackageAnalysis:
     html: str  # the report page
     report_path: Path
     seconds: float
+    note: str = ""  # something the person should know about this run; empty if nothing
 
 
 def package_name(source: str | os.PathLike[str]) -> str:
@@ -271,7 +340,7 @@ def check_package_source(
     preset: str,
     *,
     report_dir: Path,
-    local_classifier: bool = False,
+    local_classifier: bool = True,
     progress: Progress | None = None,
     max_bytes: int = MAX_UNPACKED_BYTES,
     max_files: int = MAX_FILES,
@@ -280,10 +349,12 @@ def check_package_source(
 
     *source* is a folder, or a zip or tar archive that is unpacked to a private folder
     for the run (members that would leave it, links and device files are skipped; more
-    than *max_files* members or *max_bytes* unpacked is refused). With
-    ``local_classifier=False`` the concepts of the data columns come from rules only, so
-    nothing is downloaded; ``True`` lets ``data_check`` use its local classifier, which
-    downloads a model of about 840 MB the first time.
+    than *max_files* members or *max_bytes* unpacked is refused). ``local_classifier=True``
+    (the default, as for ``metacheck package``) leaves the concepts of the data columns to
+    ``data_check``'s own default, its local classifier, which downloads a model of about
+    840 MB the first time. Without the ``concepts`` extra the concepts come from rules only
+    instead, and the result's ``note`` says so. ``False`` names them by rules only, and
+    nothing is downloaded.
 
     The report is saved as ``<name>_report.html`` in *report_dir*, under the same
     Content-Security-Policy as the paper page's report. Raises
@@ -299,7 +370,9 @@ def check_package_source(
     report_dir.mkdir(parents=True, exist_ok=True)
     target = report_dir / report_filename(name)
     tick(0.1, "Checking the package")
-    args = None if local_classifier else {"data_check": {"concepts": "rules"}}
+    use_classifier = local_classifier and classifier_installed()
+    note = NO_CLASSIFIER if local_classifier and not use_classifier else ""
+    args = None if use_classifier else {"data_check": {"concepts": "rules"}}
     with _RUN_LOCK, warnings.catch_warnings():
         warnings.simplefilter("ignore")
         try:
@@ -333,4 +406,5 @@ def check_package_source(
         html=page,
         report_path=target,
         seconds=time.perf_counter() - start,
+        note=note,
     )

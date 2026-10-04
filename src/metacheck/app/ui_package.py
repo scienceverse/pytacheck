@@ -45,9 +45,16 @@ ABOUT = (
     "be better, *Manual* that a person has to decide, *Pass* that it meets it. A check that "
     "could not run says *Did not run*; the others still ran."
 )
-CLASSIFIER_LABEL = (
-    "Name the concept of each data column with the local classifier (downloads a model of "
-    "about 840 MB the first time; needs the concepts extra)"
+CLASSIFIER_LABEL = "Name the concept of each data column with the local classifier"
+#: the checkbox is ticked by default, as the classifier is the default of ``metacheck package``
+CLASSIFIER_INFO = (
+    "It needs the concepts extra, and its model (about 840 MB) is downloaded the first time. "
+    "Untick it to name the concepts by rules only, with no download."
+)
+#: the same, when the extra is not installed: the box can stay ticked, the run falls back
+CLASSIFIER_MISSING_INFO = (
+    "Not installed on this computer, so the concepts will come from rules only. To get it, "
+    'install the concepts extra: `pip install "metacheck[concepts]"`.'
 )
 PRESET_INFO = "Which checks to run. Presets from the packs you have installed are listed too."
 
@@ -100,6 +107,8 @@ def add_package_page(app: gr.Blocks, sessions: Sessions) -> None:
             f"Checked **{plain_markdown(analysis.name)}** in {analysis.seconds:.1f} s: "
             f"{pk.counts_line(analysis.checklist)}."
         )
+        if analysis.note:
+            summary += f"\n\n{analysis.note}"  # our own text, not the package's
         return (
             gr.update(visible=True),
             summary,
@@ -122,7 +131,8 @@ def add_package_page(app: gr.Blocks, sessions: Sessions) -> None:
         folder = gr.Textbox(
             label="Folder",
             info="The path of the package's folder on this computer, for example "
-            "~/data/my_study. The folder is read where it is and never changed.",
+            "~/data/my_study. It must be inside your home folder. The folder is read where "
+            "it is and never changed.",
             placeholder="/path/to/my_package",
         )
         upload = gr.File(
@@ -140,7 +150,11 @@ def add_package_page(app: gr.Blocks, sessions: Sessions) -> None:
             info=PRESET_INFO,
             interactive=True,
         )
-        classifier = gr.Checkbox(label=CLASSIFIER_LABEL, value=False)
+        classifier = gr.Checkbox(
+            label=CLASSIFIER_LABEL,
+            info=CLASSIFIER_INFO if pk.classifier_installed() else CLASSIFIER_MISSING_INFO,
+            value=True,
+        )
         check = gr.Button("Check the package", variant="primary", size="lg")
         with gr.Column(visible=False) as results:
             summary = gr.Markdown()
