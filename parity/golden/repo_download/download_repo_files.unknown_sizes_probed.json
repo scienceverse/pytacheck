@@ -15,8 +15,8 @@
       {
         "t": "chr",
         "v": [
-          "<SESSION>/example.org_repo-a/a.csv",
-          "<SESSION>/example.org_repo-a/b.csv",
+          null,
+          null,
           null
         ]
       },

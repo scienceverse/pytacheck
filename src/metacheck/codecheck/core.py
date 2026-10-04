@@ -837,6 +837,7 @@ def _as_lang_list(x: Any) -> list[Any]:
 def _code_expand_zip(
     all_files: pd.DataFrame,
     skip_on_api_limit: bool = False,
+    cache: bool = False,
 ) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
@@ -844,13 +845,9 @@ def _code_expand_zip(
     with range requests and only members :func:`code_lang` recognises are
     fetched, one new row each (the ``.zip`` row itself is kept). Under
     *skip_on_api_limit* a rate-limited host is skipped rather than waited
-    out (R accepts the argument but never passes it on, UPSTREAM_ISSUES U66).
+    out; both *skip_on_api_limit* and *cache* go on to the peek and to the
+    member fetches.
     """
-    if skip_on_api_limit is True:
-        from metacheck import http
-
-        with http.skip_on_api_limit(True):
-            return _code_expand_zip(all_files)
     names = _col(all_files, "file_name")
     urls = _col(all_files, "file_url")
     is_zip = [
@@ -868,7 +865,7 @@ def _code_expand_zip(
             continue
         url = urls[i]
         try:
-            peek = zip_peek(url)
+            peek = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit)
         except Exception:
             peek = None
         if peek is None or len(peek) == 0:
@@ -886,7 +883,11 @@ def _code_expand_zip(
         dest = _repo_cache_path(_col(all_files, "repo_url")[i], f"{base}.contents")
         try:
             fetched = _zip_fetch_members(
-                url, names=[m for m, c in zip(members, is_code, strict=True) if c], dest=dest
+                url,
+                names=[m for m, c in zip(members, is_code, strict=True) if c],
+                dest=dest,
+                cache=cache,
+                skip_on_api_limit=skip_on_api_limit,
             )
         except Exception:
             fetched = None
@@ -1078,7 +1079,7 @@ def code_parse_r(
         lines = code_read(fp) if fp != "" else given
         if lines is None:
             raise TypeError("argument is of length zero")
-        # an empty file parses (R: "subscript out of bounds", UPSTREAM_ISSUES U87)
+        # an empty file parses (older R: "subscript out of bounds", fixed in PR #426)
         if lines and lines[0] is not None and grepl(r"^---\s*$", lines[0]):
             lines = code_extract_r(text=lines)
         texts.append(["NA" if v is None else v for v in lines])
@@ -1138,8 +1139,8 @@ def code_abs_path(code_text: str | Sequence[str]) -> pd.DataFrame:
     two-segment Unix (``/Users/x``) paths. Returns a frame with columns
     ``abs_path`` and ``line``.
     """
-    # no code (character(0)) has no paths; R returns its columns the other
-    # way round and warns (UPSTREAM_ISSUES U67)
+    # no code (character(0)) has no paths; older R returned its columns the
+    # other way round and warned (fixed in PR #426, UPSTREAM_ISSUES U67)
     lines = _split_lines(code_text) or []
     # R runs search_text() twice: the first (return = "sentence") keeps the
     # matching lines but normalises their text the way search_text() does for
@@ -1451,7 +1452,7 @@ def code_line_stats(
     ``None``).
     """
     lang = _match_arg(lang)
-    # no code (character(0)) counts like "" (R errors, UPSTREAM_ISSUES U67)
+    # no code (character(0)) counts like "" (older R errors; fixed in PR #426, U67)
     lines = _split_lines(code_text) or []
     total = len(lines)
     code_lines = len(code_remove_comments(lines, lang))
@@ -1532,6 +1533,43 @@ def _cap(regex: str, line: str | None, i: int) -> str | None:
     return None
 
 
+def _code_char_vector_vars(code_text: Sequence[str | None]) -> dict[str, list[str]]:
+    """Character values a script assigns literally to a variable.
+
+    Port of ``R/code_check.R::.code_char_vector_vars()``, for
+    :func:`code_library_names` to resolve a package-list variable (issue
+    #421). Recognises ``name <- c("a", "b")`` (also ``=`` and ``<<-``, and a
+    ``c(...)`` spread over several lines), ``name <- "a"``, and a for-loop
+    variable over such a vector, ``for (v in name)``, which takes the
+    vector's values. Anything else (a vector built by a function call,
+    indexing, other variables) is not resolved. A later assignment to the
+    same name wins.
+    """
+    joined = "\n".join("NA" if s is None else s for s in code_text)
+    ident = "[.A-Za-z][.A-Za-z0-9_]*"
+    out: dict[str, list[str]] = {}
+
+    pat = (
+        rf"(?m)^\s*({ident})\s*(?:<<-|<-|=)\s*"
+        r"(c\s*\([^()]*\)|['\"][^'\"\n]*['\"])"
+    )
+    for hit in regextract_all(pat, joined, perl=True):
+        parts = regexec(pat, hit, perl=True)
+        value = str(sub(r"^c\s*\((.*)\)$", r"\1", parts[2]))
+        strs = regextract_all(r"(['\"])[^'\"\n]*\1", value, perl=True)
+        # only a vector of nothing but quoted strings is a literal package list
+        rest = gsub(r"(['\"])[^'\"\n]*\1", "", value, perl=True)
+        if not strs or grepl(r"[^[:space:],]", rest):
+            continue
+        out[parts[1]] = [str(gsub(r"^['\"]|['\"]$", "", q)) for q in strs]
+
+    for loop in regextract_all(rf"\bfor\s*\(\s*({ident})\s+in\s+({ident})\s*\)", joined, perl=True):
+        parts = regexec(rf"\(\s*({ident})\s+in\s+({ident})\s*\)", loop, perl=True)
+        if parts[2] in out:
+            out[parts[1]] = out[parts[2]]
+    return out
+
+
 def code_library_names(
     code_text: str | Sequence[str], lang: str | Sequence[str] = LANGS
 ) -> pd.DataFrame:
@@ -1543,6 +1581,14 @@ def code_library_names(
     namespaces; Python: ``import a, b as c`` and ``from a.b import c`` (top
     level package). Other languages give an empty frame. Columns ``package``,
     ``source`` and ``line``; rows are unique.
+
+    Where an R call takes a variable rather than a package name
+    (``install.packages(pkgs)``, ``requireNamespace(pkg)``,
+    ``library(pkg, character.only = TRUE)``, ``lapply(pkgs, library, ...)``)
+    the variable is resolved to the names it holds when the file assigns it a
+    literal vector (``pkgs <- c("a", "b")``, including a ``for (pkg in pkgs)``
+    loop variable) and dropped otherwise: the variable's own name is never
+    reported as a package (:func:`_code_char_vector_vars`).
     """
     lang = _match_arg(lang)
     if lang in ("SPSS", "SAS", "Stata", "Mplus", "MATLAB"):
@@ -1563,19 +1609,77 @@ def code_library_names(
                 src_out.append(source)
                 line_out.append(line)
 
+    # Variables the script assigns a literal package list to (issue #421): the
+    # argument of a loading call is then the VARIABLE, not a package name.
+    variables = _code_char_vector_vars(lines) if lang == "R" else {}
+
+    def arg_packages(tok: str, bare_is_name: bool) -> list[str]:
+        """Package names of one argument: a quoted name, a bare name only
+        where *bare_is_name* (``library(dplyr)``), else a variable resolved
+        through *variables* (``pkgs[...]`` resolves like ``pkgs``)."""
+        tok = str(trimws(tok))
+        if grepl(r"^(['\"]).*\1$", tok):
+            return [tok]
+        ident = str(sub(r"\[.*$", "", tok))
+        if not grepl(r"^[.A-Za-z][.A-Za-z0-9_]*$", ident):
+            return []
+        if bare_is_name and ident == tok:
+            return [tok]
+        return list(variables.get(ident, []))
+
+    char_only = r"character\.only\s*=\s*(TRUE|T)\b"
+
     for ln, L in enumerate(lines, start=1):
         if lang == "R":
+            # a bare word is a package name for library()/require() unless the
+            # call sets character.only = TRUE; requireNamespace() always
+            # evaluates its argument, so a bare word there is a variable
             for fn in ("library", "require", "requireNamespace"):
-                found = regextract_all(rf"\b{fn}\s*\(\s*([A-Za-z0-9._'\"]+)", L, perl=True)
-                if found:
-                    add(sub(rf"^{fn}\s*\(\s*", "", found, perl=True), fn, ln)
+                for call in regextract_all(
+                    rf"\b{fn}\s*\(\s*([A-Za-z0-9._'\"]+)([^)]*)", L, perl=True
+                ):
+                    parts = regexec(rf"^{fn}\s*\(\s*([A-Za-z0-9._'\"]+)(.*)$", call, perl=True)
+                    bare_is_name = fn != "requireNamespace" and not grepl(
+                        char_only, parts[2], perl=True
+                    )
+                    add(arg_packages(parts[1], bare_is_name), fn, ln)
+            # lapply(pkgs, library, character.only = TRUE) and the same with
+            # sapply/vapply/walk/map and require
+            for call in regextract_all(
+                r"\b(?:lapply|sapply|vapply|walk|map)\s*\(\s*([.A-Za-z][.A-Za-z0-9_]*)"
+                r"\s*,\s*(?:FUN\s*=\s*)?(library|require)\b",
+                L,
+                perl=True,
+            ):
+                parts = regexec(
+                    r"\(\s*([.A-Za-z][.A-Za-z0-9_]*)\s*,\s*(?:FUN\s*=\s*)?(library|require)\b",
+                    call,
+                    perl=True,
+                )
+                add(variables.get(parts[1], []), parts[2], ln)
+            # pacman::p_load(a, b, c); with character.only = TRUE, or given as
+            # p_load(char = pkgs), the arguments are variables instead
             pl = _cap(r"\bp_load\s*\(([^)]*)\)", L, 1)
             if pl is not None:
-                add(strsplit(pl, r"\s*,\s*"), "p_load", ln)
-            for fn in (r"install\.packages", "install"):
-                g = _cap(rf"\b{fn}\s*\(\s*(c\()?\s*([A-Za-z0-9._'\", ]+?)\s*\)", L, 2)
-                if g is not None:
-                    add(strsplit(g, r"\s*,\s*"), "install", ln)
+                args = strsplit(pl, r"\s*,\s*")
+                chr_arg = grepl(r"^\s*char\s*=", args)
+                args = [
+                    str(sub(r"^\s*char\s*=\s*", "", a)) if c else a
+                    for a, c in zip(args, chr_arg, strict=True)
+                ]
+                bare_is_name = not any(chr_arg) and not grepl(char_only, pl, perl=True)
+                args = [a for a in args if not grepl("=", a)]  # other named arguments
+                add([p for a in args for p in arg_packages(a, bare_is_name)], "p_load", ln)
+            # install.packages("x") / renv::install("x") / BiocManager::install("x"):
+            # the first argument, a name or c(...) of names; it is always
+            # evaluated, so a bare word there is a variable
+            for call in regextract_all(
+                r"\binstall(?:\.packages)?\s*\(\s*(c\s*\([^)]*\)|[^,)]+)", L, perl=True
+            ):
+                arg = sub(r"^install(?:\.packages)?\s*\(\s*", "", call, perl=True)
+                arg = sub(r"^c\s*\((.*)\)$", r"\1", trimws(arg))
+                toks = strsplit(arg, r"\s*,\s*")
+                add([p for t in toks for p in arg_packages(t, False)], "install", ln)
             ns = regextract_all(r"\b([A-Za-z][A-Za-z0-9._]*):{2,3}", L, perl=True)
             if ns:
                 add(sub(":{2,3}$", "", ns), "namespace", ln)

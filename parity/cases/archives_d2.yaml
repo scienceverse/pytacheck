@@ -242,6 +242,58 @@
         "r": "metacheck:::.dataone_info(\"doi:10.18739/MISSING\", host = \"arcticdata.io\")"
         "py": "lambda m: m.dataone._dataone_info(\"doi:10.18739/MISSING\", host=\"arcticdata.io\")"
   "mock_dir": "tests/archives_d2/mocks"
+- "id": ".dataone_info.mock.no_physical"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataone_info(\"doi:10.5063/NOPHYS\", host = \"knb.ecoinformatics.org\")"
+        "py": "lambda m: m.dataone._dataone_info(\"doi:10.5063/NOPHYS\", host=\"knb.ecoinformatics.org\")"
+  "mock_dir": "tests/archives_d2/mocks"
+- "id": ".dataone_info.mock.knb_docid"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataone_info(\"knb.1404.1\", host = \"knb.ecoinformatics.org\")"
+        "py": "lambda m: m.dataone._dataone_info(\"knb.1404.1\", host=\"knb.ecoinformatics.org\")"
+  "mock_dir": "tests/archives_d2/mocks"
+- "id": ".dataone_host.knb"
+  "r": "metacheck:::.dataone_host"
+  "py": "metacheck.archives.dataone._dataone_host"
+  "args":
+    "dataone_url":
+      "$expr":
+        "r": "c(\"https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87\", \"https://knb.ecoinformatics.org/catalog/view/doi:10.5063/F1Z60M87\", \"knb.1404.1\", \" knb.1404.1 \", \"KNB.1404.1\", \"knb.1404\", \"see knb.1404.1 here\", \"https://knb.ecoinformatics.org/view/knb.1404.1\")"
+        "py": "[\"https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87\", \"https://knb.ecoinformatics.org/catalog/view/doi:10.5063/F1Z60M87\", \"knb.1404.1\", \" knb.1404.1 \", \"KNB.1404.1\", \"knb.1404\", \"see knb.1404.1 here\", \"https://knb.ecoinformatics.org/view/knb.1404.1\"]"
+- "id": ".dataone_pid.knb"
+  "r": "metacheck:::.dataone_pid"
+  "py": "metacheck.archives.dataone._dataone_pid"
+  "args":
+    "dataone_url":
+      "$expr":
+        "r": "c(\"https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87\", \"https://knb.ecoinformatics.org/catalog/view/doi:10.5063/F1Z60M87\", \"knb.1404.1\", \" knb.1404.1 \", \"KNB.1404.1\", \"knb.1404\", \"see knb.1404.1 here\", \"https://knb.ecoinformatics.org/view/knb.1404.1\")"
+        "py": "[\"https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87\", \"https://knb.ecoinformatics.org/catalog/view/doi:10.5063/F1Z60M87\", \"knb.1404.1\", \" knb.1404.1 \", \"KNB.1404.1\", \"knb.1404\", \"see knb.1404.1 here\", \"https://knb.ecoinformatics.org/view/knb.1404.1\"]"
+- "id": "dataone_links.knb"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dataone_links(test_paper(text = c(\"KNB: https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87 and the legacy package knb.1404.1.\", \"Also knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD, not knb.1404 or xknb.1.2y, and KNB.77.3.\"), url = c(\"https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87/\")))"
+        "py": "lambda m: m.dataone.dataone_links(m.pc.test_paper([\"KNB: https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87 and the legacy package knb.1404.1.\", \"Also knb.ecoinformatics.org/catalog/view/doi:10.5063/AB12CD, not knb.1404 or xknb.1.2y, and KNB.77.3.\"], [\"https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87/\"]))"
+  "compare": *id001
+- "id": "dataone_info.mock.knb"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(dataone_info(c(\"knb.1404.1\", \"https://doi.org/10.5063/NOPHYS\")), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.dataone.dataone_info([\"knb.1404.1\", \"https://doi.org/10.5063/NOPHYS\"])"
+  "mock_dir": "tests/archives_d2/mocks"
 - "id": ".dspace7_parse.shapes"
   "r": "metacheck:::.dspace7_parse"
   "py": "metacheck.archives.dspace7._dspace7_parse"
@@ -298,6 +350,26 @@
     "paper":
       "$read":
       - "upstream/metacheck/tests/testthat/fixtures/psychsci"
+  "mock_dir": "apis"
+- "id": "dspace7_links.mock.doi_mentions"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dspace7_links(test_paper(text = c(\"Data: https://doi.org/10.35090/gatech/67239 and doi:10.7275/abcd-1234.\", \"Also repository.gatech.edu/handle/1853/67239 and 10.35090/gatech/67239 again.\"), url = c(\"https://dx.doi.org/10.7275/xyz\")))"
+        "py": "lambda m: m.dspace7.dspace7_links(m.pc.test_paper([\"Data: https://doi.org/10.35090/gatech/67239 and doi:10.7275/abcd-1234.\", \"Also repository.gatech.edu/handle/1853/67239 and 10.35090/gatech/67239 again.\"], [\"https://dx.doi.org/10.7275/xyz\"]))"
+  "mock_dir": "tests/archives_d2/mocks"
+  "compare": *id001
+- "id": ".dspace7_resolve_doi_url.mock.unresolved"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dspace7_resolve_doi_url(\"10.35090/gatech/67239\")"
+        "py": "lambda m: m.dspace7._dspace7_resolve_doi_url(\"10.35090/gatech/67239\")"
+  "mock_dir": "tests/archives_d2/mocks"
 - "id": ".dspace7_info.mock.uuid"
   "r": "identity"
   "py": "tests.archives_d2.parity_support.run"
@@ -476,6 +548,24 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(researchdata4tu_info(c(\"https://doi.org/10.4121/16766929.v1\", \"10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd\", \"99999999\", \"nope\", \"16766929\", \"https://doi.org/10.4121/16766929.v1\")), online = function(...) TRUE, .package = \"metacheck\")"
         "py": "lambda m: m.fourtu.researchdata4tu_info([\"https://doi.org/10.4121/16766929.v1\", \"10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd\", \"99999999\", \"nope\", \"16766929\", \"https://doi.org/10.4121/16766929.v1\"])"
+  "mock_dir": "tests/archives_d2/mocks"
+- "id": ".researchdata4tu_resolve_uuid.unresolved"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.researchdata4tu_resolve_uuid(\"ce413614-1c82-4e81-90c0-323aa7d2fabd\")"
+        "py": "lambda m: m.fourtu._researchdata4tu_resolve_uuid(\"ce413614-1c82-4e81-90c0-323aa7d2fabd\")"
+  "mock_dir": "tests/archives_d2/mocks"
+- "id": "researchdata4tu_info.mock.uuid_doi"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(researchdata4tu_info(c(\"https://doi.org/10.4121/uuid:ce413614-1c82-4e81-90c0-323aa7d2fabd\", \"16766929\")), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.fourtu.researchdata4tu_info([\"https://doi.org/10.4121/uuid:ce413614-1c82-4e81-90c0-323aa7d2fabd\", \"16766929\"])"
   "mock_dir": "tests/archives_d2/mocks"
 - "id": "researchdata4tu_info.mock.links_table"
   "r": "identity"

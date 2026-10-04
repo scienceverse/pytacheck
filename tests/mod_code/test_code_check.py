@@ -104,7 +104,7 @@ def test_offline_no_code(stub_repo_check: list[dict[str, Any]]) -> None:
     # R: "code_check offline" -- test_paper("no text") has no repositories
     paper = pc.test_paper(["no text"])
     mo = module_run(paper, "code_check")
-    assert stub_repo_check == [{"local_only": False, "cache": False}]
+    assert stub_repo_check == [{"local_only": False, "cache": False, "skip_on_api_limit": False}]
     assert mo.traffic_light == "na"
     assert len(mo.table) == 0
     assert {"file_name", "repo_url", "language"} <= set(mo.table.columns)
@@ -692,8 +692,26 @@ def test_green_light_and_parse_errors(tmp_path: Path) -> None:
     write(tmp_path / "bad.R", ["x <- (1"])
     mo = run_dir(tmp_path)
     assert mo.traffic_light == "yellow"
+    assert mo.table["parse_error"].tolist() == [True, False]
     assert "bad.R" in all_report(mo)
     assert "Parsing issues of R-type files were found." in mo.summary_text
+
+
+def test_empty_code_files_are_checked_without_errors_or_warnings(tmp_path: Path) -> None:
+    # R (issue #425): empty files (an empty __init__.py marks a Python package)
+    # were recorded with an error and gave "Unknown or uninitialised column"
+    # warnings. They are checked like any other file and not flagged for
+    # having no comments.
+    (tmp_path / "__init__.py").touch()
+    (tmp_path / "empty.R").touch()
+    write(tmp_path / "good.R", ["# comment", "x <- 1"])
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        mo = run_dir(tmp_path)
+    assert "error" not in mo.table.columns or mo.table["error"].isna().all()
+    assert row(mo, "__init__.py")["comment_lines"] == 0
+    assert row(mo, "empty.R")["code_lines"] == 0
+    assert "All your code files had comments" in all_report(mo)
 
 
 @pytest.mark.parametrize(
@@ -737,7 +755,12 @@ def test_local_path_forces_a_fresh_repo_check(stub_repo_check: list[dict[str, An
     prev = cc_prev("code_files")
     mo = module_run(prev, "code_check", local_path=str(CODE_FILES / "subdir"), local_only=True)
     assert stub_repo_check == [
-        {"local_path": str(CODE_FILES / "subdir"), "local_only": True, "cache": False}
+        {
+            "local_path": str(CODE_FILES / "subdir"),
+            "local_only": True,
+            "cache": False,
+            "skip_on_api_limit": False,
+        }
     ]
     assert mo.table["file_name"].tolist() == ["helper.R"]
 
@@ -934,11 +957,15 @@ def test_unexpanded_zip_code_members_are_checked(
     monkeypatch.setattr(
         zp,
         "zip_peek",
-        lambda url: pd.DataFrame({"name": ["README.txt", "analysis.R"], "size": [6.0, 38.0]}),
+        lambda url, **kwargs: pd.DataFrame(
+            {"name": ["README.txt", "analysis.R"], "size": [6.0, 38.0]}
+        ),
     )
     requested: list[list[str]] = []
 
-    def fetch(url: str, names: Any = None, dest: str = ".", verify: bool = True) -> pd.DataFrame:
+    def fetch(
+        url: str, names: Any = None, dest: str = ".", verify: bool = True, **kwargs: Any
+    ) -> pd.DataFrame:
         requested.append(list(names))
         return pd.DataFrame(
             {"name": ["analysis.R"], "path": [str(member)], "size": [38.0], "ok": [True]}
@@ -1047,7 +1074,7 @@ def test_notebook_and_quarto_language_is_read_from_the_local_copy(tmp_path: Path
 
 
 def test_empty_code_files_are_analysed(tmp_path: Path) -> None:
-    # U87: an empty file has nothing to flag; R records "subscript out of
+    # U87 (fixed in PR #426): an empty file has nothing to flag; older R recorded "subscript out of
     # bounds" (R) / "non-character argument" (other languages) as its error
     for name in ("empty.R", "empty.py", "empty.do"):
         (tmp_path / name).write_text("", encoding="utf-8")
@@ -1108,7 +1135,9 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
     # files of the listing: the catch-up quotes the pre-pass count
     import metacheck.codecheck.core as cc
 
-    def fake_expand(all_files: pd.DataFrame, skip_on_api_limit: bool = False) -> pd.DataFrame:
+    def fake_expand(
+        all_files: pd.DataFrame, skip_on_api_limit: bool = False, cache: bool = False
+    ) -> pd.DataFrame:
         member = all_files.iloc[[0]].copy()
         member["file_name"] = "member.R"
         member["file_url"] = None
@@ -1233,19 +1262,25 @@ def test_pin_files_of_one_name_keep_their_own_location(tmp_path: Path) -> None:
     ]
 
 
-def test_zip_expansion_honours_skip_on_api_limit(monkeypatch: pytest.MonkeyPatch) -> None:
-    # U66: under skip_on_api_limit the zip peek and member fetch skip a
-    # rate-limited host instead of waiting (R never passes the argument on)
+def test_zip_expansion_forwards_skip_on_api_limit_and_cache(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # R (PR #428): .code_expand_zip() passes skip_on_api_limit and cache on to
+    # zip_peek() and .zip_fetch_members()
     import metacheck.archives.zip_peek as zp
-    from metacheck import http
     from metacheck.codecheck.core import _code_expand_zip
 
-    seen: list[bool] = []
+    seen: list[dict[str, Any]] = []
 
-    def peek(url: str) -> None:
-        seen.append(http.skipping_api_limits())
+    def peek(url: str, **kwargs: Any) -> pd.DataFrame:
+        seen.append(("peek", kwargs))
+        return pd.DataFrame({"name": ["a.R"], "size": [1.0]})
+
+    def fetch(url: str, **kwargs: Any) -> None:
+        seen.append(("fetch", {k: v for k, v in kwargs.items() if k != "dest" and k != "names"}))
 
     monkeypatch.setattr(zp, "zip_peek", peek)
+    monkeypatch.setattr(zp, "_zip_fetch_members", fetch)
     table = _remote_listing(
         [
             {
@@ -1257,9 +1292,25 @@ def test_zip_expansion_honours_skip_on_api_limit(monkeypatch: pytest.MonkeyPatch
             }
         ]
     )
-    _code_expand_zip(table, skip_on_api_limit=True)
+    _code_expand_zip(table, skip_on_api_limit=True, cache=True)
     _code_expand_zip(table)
-    assert seen == [True, False]
+    both = {"skip_on_api_limit": True, "cache": True}
+    neither = {"skip_on_api_limit": False, "cache": False}
+    assert seen == [("peek", both), ("fetch", both), ("peek", neither), ("fetch", neither)]
+
+
+def test_code_check_forwards_skip_on_api_limit_to_repo_check(
+    stub_repo_check: list[dict[str, Any]],
+) -> None:
+    # R: code_check()'s own repo_check run gets skip_on_api_limit too (issue #427)
+    module_run(pc.test_paper(["no text"]), "code_check", skip_on_api_limit=True)
+    module_run(
+        pc.test_paper(["no text"]),
+        "code_check",
+        local_path=str(CODE_FILES / "subdir"),
+        skip_on_api_limit=True,
+    )
+    assert [c["skip_on_api_limit"] for c in stub_repo_check] == [True, True]
 
 
 def test_one_file_with_scattered_libraries_is_singular(tmp_path: Path) -> None:

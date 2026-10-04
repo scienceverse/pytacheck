@@ -289,10 +289,12 @@ def dc_run(
     return norm_paths(out)
 
 
-def dc_run_local(d: str, **kwargs: Any) -> Any:
+def dc_run_local(d: str, copy: str | None = None, **kwargs: Any) -> Any:
     """``module_run(<test paper p1>, "data_check", local_path = <fixture dir>)``.
 
-    The real pipeline: ``repo_check`` lists the directory.
+    The real pipeline: ``repo_check`` lists the directory. *copy* works on a
+    copy in ``parity/_out/dc_local_copy/<copy>`` (archives are unpacked beside
+    themselves); each case names its own folder.
     """
     import metacheck as pc
     from metacheck.module import module_run
@@ -305,6 +307,12 @@ def dc_run_local(d: str, **kwargs: Any) -> Any:
     # R passes the relative path (it runs from the repository root), which
     # repo_check reports as the repository URL
     local = f"tests/mod_data_check/fixtures/repos/{d}"
+    if copy:  # a fixed relative path, as in dc_helpers.R: the same URL on every run
+        work = ROOT / "parity" / "_out" / "dc_local_copy" / copy
+        shutil.rmtree(work, ignore_errors=True)
+        work.mkdir(parents=True)
+        shutil.copytree(REPOS / d, work / d)
+        local = f"parity/_out/dc_local_copy/{copy}/{d}"
     with (
         contextlib.chdir(ROOT),
         local_options({"pytacheck.careless": False, "metacheck.llm.use": False}),
@@ -317,7 +325,9 @@ def norm_paths(out: Any) -> Any:
     """Fixture locations as R's goldens hold them (twin of ``.dc_norm_paths()``).
 
     Paths under the repository become relative to it (R runs from the
-    repository root) and a temporary copy's become ``<copy>/<dir>/...``.
+    repository root), a temporary copy's become ``<copy>/<dir>/...`` and files
+    unpacked from a local archive (U214) become ``<archives>/<sha1>/...``, on
+    every system.
     """
     import re
 
@@ -328,9 +338,13 @@ def norm_paths(out: Any) -> Any:
             None
             if v is None or v is pd.NA
             else re.sub(
-                r"^.*/metacheck-repo-files/",
-                "<cache>/",
-                re.sub(r"^.*/dcrepo_[^/]*/", "<copy>/", str(v).removeprefix(root)),
+                r"^.*[/\\]metacheck-archives(?:-[^/\\]*)?[/\\]([0-9a-f]+)[/\\]",
+                r"<archives>/\1/",
+                re.sub(
+                    r"^.*/metacheck-repo-files/",
+                    "<cache>/",
+                    re.sub(r"^.*/dcrepo_[^/]*/", "<copy>/", str(v).removeprefix(root)),
+                ),
             )
             for v in st["file_location"].tolist()
         ]

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" packageId="knb.1404.1" system="knb">
+  <dataset>
+    <title>A legacy KNB data package</title>
+    <otherEntity>
+      <entityName>legacy.dat</entityName>
+      <physical><objectName>legacy.dat</objectName><size>10</size></physical>
+    </otherEntity>
+  </dataset>
+</eml:eml>

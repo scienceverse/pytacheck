@@ -634,8 +634,10 @@ def test_archives_are_expanded() -> None:
     paths = dict(zip(mo.structure["file_name"], mo.structure["file_path"], strict=True))
     assert paths["trials.csv"] == "bundle.zip/inner/trials.csv"
     # without peek_zips a zip is not expanded (tar/gz always are)
-    names2 = dc.dc_run("archives").structure["file_name"].tolist()
+    names2 = dc.dc_run("archives", peek_zips=False).structure["file_name"].tolist()
     assert "bundle.zip" in names2 and "summary.csv" in names2
+    # peek_zips is on by default (metacheck issue #424): the same rows as peek_zips = TRUE
+    assert dc.dc_run("archives").structure["file_name"].tolist() == names
 
 
 def test_downloads_file_urls() -> None:
@@ -909,7 +911,12 @@ def test_zip_peek_reasons_stay_with_their_rows(
     from metacheck.modules import data_check as D
 
     monkeypatch.setattr(
-        zp, "zip_decision", lambda url, skip_types=None: {"worth": False, "reason": "no data"}
+        zp,
+        "zip_decision",
+        lambda url, skip_types=None, cache=False, skip_on_api_limit=False: {
+            "worth": False,
+            "reason": "no data",
+        },
     )
     tar = tmp_path / "results.tar.gz"  # expanded next to itself: keep it out of the fixtures
     shutil.copy(REPOS / "archives" / "results.tar.gz", tar)
@@ -930,6 +937,38 @@ def test_zip_peek_reasons_stay_with_their_rows(
     reasons = dict(zip(names, dl["zip_peek_reason"], strict=True))
     assert reasons["stimuli.zip"] == "zip skipped: no data"
     assert sum(r is not None for r in reasons.values()) == 1
+
+
+def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatch) -> None:
+    """peek_zips defaults to TRUE; cache and skip_on_api_limit reach the zip peek (issue #427)."""
+    import inspect
+
+    import metacheck.archives.zip_peek as zp
+    from metacheck.modules import data_check as D
+
+    assert inspect.signature(D.data_check).parameters["peek_zips"].default is True
+    seen: dict[str, object] = {}
+
+    def fake(
+        url: str, skip_types: object = None, cache: bool = False, skip_on_api_limit: bool = False
+    ):
+        seen.update(cache=cache, skip_on_api_limit=skip_on_api_limit)
+        return {"worth": False, "reason": "no data"}
+
+    monkeypatch.setattr(zp, "zip_decision", fake)
+    files = pd.DataFrame(
+        {
+            "file_name": ["stimuli.zip"],
+            "file_path": ["stimuli.zip"],
+            "file_url": ["https://example.org/stimuli.zip"],
+            "file_location": [None],
+            "data_type": ["unknown"],
+            "doc_role": [None],
+            "data_format": [None],
+        }
+    )
+    D._download(files, "all", None, True, 100, 500, math.inf, True, True)
+    assert seen == {"cache": True, "skip_on_api_limit": True}
 
 
 # -----------------------------------------------------------------------------

@@ -112,6 +112,7 @@ FILE_MODULES: dict[str, str | list[tuple[int, str]]] = {
     "R/utils-logging.R": "metacheck.log",
     "R/utils.R": "metacheck.utils",
     "R/validate.R": "metacheck.validate",
+    "R/zip-peek-cache.R": "metacheck.archives.zip_peek_cache",
     "R/zip-peek.R": "metacheck.archives.zip_peek",
     "R/zzz.R": "metacheck.config",
 }

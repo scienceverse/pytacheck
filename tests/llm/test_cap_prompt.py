@@ -1,4 +1,4 @@
-"""Port of R/cap-prompt.R (cap_report(), .cap_size_str())."""
+"""Port of R/cap-prompt.R (.cap_report(), .cap_size_str())."""
 
 from __future__ import annotations
 

@@ -1904,7 +1904,11 @@ if (mode == "check_main") {
   {
     gh_avail <- requireNamespace("remotes", quietly = TRUE)
     install_lib <- if (cran_main) old_lib[1] else lib_dir
+    install_warnings <- character(0)
     res <- tryCatch({
+      # Warnings are recorded (not silenced) for the load check below: see
+      # _repro_not_loadable_msg() in the calling Python.
+      withCallingHandlers({
       if (identical(src, "github")) {
         if (!gh_avail) stop("the 'remotes' package is needed to install GitHub sources")
         remotes::install_github(ref, lib = lib_dir, upgrade = "never", quiet = FALSE)
@@ -1917,12 +1921,20 @@ if (mode == "check_main") {
       } else {
         utils::install.packages(pkg, lib = install_lib, quiet = FALSE)
       }
+      }, warning = function(w)
+        install_warnings <<- c(install_warnings, conditionMessage(w)))
       if (!requireNamespace(pkg, quietly = TRUE, lib.loc = lib_dir) &&
           !requireNamespace(pkg, quietly = TRUE))
-        stop("installed but package '", pkg, "' is not loadable")
-      list(ok = TRUE, msg = "")
+        list(ok = FALSE, msg = "", not_loadable = TRUE)
+      else list(ok = TRUE, msg = "")
     }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))
-    emit(res$ok, res$msg, extra = paste0(",\"install_lib\":", .mc_json_str(install_lib)))
+    warn_json <- if (isTRUE(res$not_loadable) && length(install_warnings))
+      paste0(",\"warnings\":[", paste(.mc_json_str(install_warnings), collapse = ","), "]")
+    else ""
+    emit(res$ok, res$msg,
+         extra = paste0(",\"install_lib\":", .mc_json_str(install_lib),
+                        if (isTRUE(res$not_loadable)) ",\"not_loadable\":true" else "",
+                        warn_json))
   }
 } else if (mode == "archive") {
   ok <- tryCatch({
@@ -2037,6 +2049,8 @@ def repro_install_deps(
         )
         ok = bool(res.get("ok"))
         msg = str(res.get("msg") or "")
+        if res.get("not_loadable"):
+            msg = _repro_not_loadable_msg(pkg, res.get("warnings") or [])
         via_archive = False
         if not ok and src == "cran":
             _message(
@@ -2074,6 +2088,22 @@ def repro_install_deps(
             }
         )
     return _install_frame(rows)
+
+
+def _repro_not_loadable_msg(pkg: str | None, warnings: Sequence[str | None] | None) -> str:
+    """The failure message for a package that cannot be loaded after its install step.
+
+    Port of ``R/reproducibility_check.R::.repro_not_loadable_msg()``.
+    ``install.packages()`` does not stop for a package it cannot find: it
+    warns "package 'x' is not available for this version of R" and returns
+    normally. The install step's own "not available" warning is the real
+    reason, so it is reported when there is one (issue #421); otherwise the
+    package is "installed but ... not loadable".
+    """
+    unavailable = [w for w in warnings or () if w is not None and "is not available" in w]
+    if unavailable:
+        return "; ".join(dict.fromkeys(unavailable))
+    return f"installed but package '{pkg}' is not loadable"
 
 
 _COMPILE_PAT = (
@@ -2114,23 +2144,30 @@ def _repro_classify_install_message(msg: str | None) -> str:
     return "other"
 
 
-def _read_url_lines(url: str) -> list[str] | None:
-    """``readLines(url)`` (``None`` when the URL cannot be read)."""
+def _read_url_lines(url: str) -> tuple[list[str] | None, bool]:
+    """``readLines(url)``: ``(lines, not_found)``.
+
+    The lines are ``None`` when the URL cannot be read; *not_found* tells a
+    ``404`` (the server answered: nothing there) from a failed request. In
+    R the status is only in ``readLines()``'s warning.
+    """
     from metacheck import http
 
     try:
         resp = http.request("GET", url, max_tries=1)
     except Exception:
-        return None
-    if resp is None or resp.status_code >= 400:
-        return None
+        return None, False
+    if resp is None:
+        return None, False
+    if resp.status_code >= 400:
+        return None, resp.status_code == 404
     text = resp.text
     if text == "":
-        return []
+        return [], False
     lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
     if lines and lines[-1] == "":
         lines.pop()
-    return lines
+    return lines, False
 
 
 def _parse_archive_date(s: str) -> float:
@@ -2163,8 +2200,13 @@ def _repro_cran_archive_install(pkg: str | None, install_lib: str, lib_dir: str)
         return {"ok": False, "msg": msg, "version": None}
 
     archive_url = f"https://cran.r-project.org/src/contrib/Archive/{pkg}/"
-    listing = _read_url_lines(archive_url)
+    listing, not_found = _read_url_lines(archive_url)
     if listing is None:
+        # a 404 means the Archive has no folder for this package (never
+        # archived, or not a CRAN package at all), not that CRAN is
+        # unreachable (issue #421)
+        if not_found:
+            return fail("package not found in the CRAN Archive")
         return fail("could not reach the CRAN Archive listing")
     tarball_pat = f"{pkg}_[0-9][^\"']*\\.tar\\.gz"
     hit_lines = [s for s, h in zip(listing, grepl(tarball_pat, listing), strict=True) if h]

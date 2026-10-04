@@ -591,3 +591,73 @@ def test_is_true_is_r_in_true() -> None:
         assert _is_true(x), x
     for x in (False, None, pd.NA, float("nan"), 0, 2, "FALSE", "T", "true", [True]):
         assert not _is_true(x), x
+
+
+# --------------------------------------------------------------------------- shared DOI prefixes
+
+
+def _redirects(serve: Any, doi: str, target: str) -> list[httpx.Request]:
+    return serve(  # type: ignore[no-any-return]
+        {
+            f"https://doi.org/{doi}": httpx.Response(302, headers={"Location": target}),
+            target: httpx.Response(200, text="<html></html>"),
+        }
+    )
+
+
+def test_phys_techsciences_and_figshare_prefixes() -> None:
+    hosts = dataverse.DATAVERSE_DOI_PREFIX_HOSTS
+    assert hosts["phys-techsciences.datastations.nl"] == ("10.17026",)
+    assert not any("10.6084" in p for p in hosts.values())  # Figshare's prefix (U32)
+    assert dataverse._prefix_hosts()["10.17026"] == (
+        "archaeology.datastations.nl",
+        "phys-techsciences.datastations.nl",
+        "lifesciences.datastations.nl",
+        "ssh.datastations.nl",
+    )
+
+
+def test_host_from_doi_resolves_a_shared_prefix(serve: Any) -> None:
+    doi = "10.17026/PT/ABC123"
+    target = "https://phys-techsciences.datastations.nl/dataset.xhtml?persistentId=doi:" + doi
+    requests = _redirects(serve, doi, target)
+    # a prefix with one host needs no lookup
+    assert _dataverse_host_from_doi(["10.7910/DVN/X", doi, None]) == [
+        "dataverse.harvard.edu",
+        "phys-techsciences.datastations.nl",
+        None,
+    ]
+    assert [str(r.url) for r in requests] == [f"https://doi.org/{doi}", target]
+
+
+def test_resolve_doi_host_falls_back_to_the_first_candidate(serve: Any) -> None:
+    serve({})  # every request is a 404 at doi.org itself
+    assert _dataverse_host_from_doi("10.17026/SS/Q1") == "archaeology.datastations.nl"
+
+
+def test_resolve_doi_host_connection_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    from metacheck import http
+
+    monkeypatch.setattr(http, "request", lambda *a, **k: None)
+    assert (
+        dataverse._dataverse_resolve_doi_host(
+            "10.17026/x", ["ssh.datastations.nl", "archaeology.datastations.nl"]
+        )
+        == "ssh.datastations.nl"
+    )
+
+
+def test_resolve_doi_host_compares_host_names(serve: Any) -> None:
+    # U211: metacheck takes the first candidate named anywhere in the URL, so
+    # rodbuk.pl (listed first) wins for a dataset on uj.rodbuk.pl
+    doi = "10.26106/abc"
+    _redirects(serve, doi, "https://uj.rodbuk.pl/dataset.xhtml?persistentId=doi:" + doi)
+    assert dataverse._prefix_hosts()["10.26106"] == ("rodbuk.pl", "uj.rodbuk.pl")
+    assert _dataverse_host_from_doi(doi) == "uj.rodbuk.pl"
+    doi2 = "10.26106/def"
+    _redirects(serve, doi2, "https://WWW.rodbuk.pl/dataset.xhtml?persistentId=doi:" + doi2)
+    assert _dataverse_host_from_doi(doi2) == "rodbuk.pl"
+    # a host named only in the query string is not the dataset's host
+    doi3 = "10.17026/q"
+    _redirects(serve, doi3, "https://example.org/landing?from=ssh.datastations.nl")
+    assert _dataverse_host_from_doi(doi3) == "archaeology.datastations.nl"

@@ -1998,9 +1998,9 @@
   "args":
     "url": "https://mock.example.org/zips/stimuli.zip"
   "mock_dir": "tests/repo_download/mocks"
-- "id": "remote_content_length.nolength"
-  "r": ".remote_content_length"
-  "py": "metacheck.archives.download._remote_content_length"
+- "id": "remote_size.nolength.zip"
+  "r": ".remote_size"
+  "py": "metacheck.archives.download._remote_size"
   "args":
     "url": "https://mock.example.org/zips/nolength.zip"
   "mock_dir": "tests/repo_download/mocks"

@@ -87,6 +87,25 @@ def test_osf_pat_validate(monkeypatch: pytest.MonkeyPatch) -> None:
             assert _osf_pat_validate("ANY") is False
 
 
+def test_osf_pat_validate_is_one_short_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck ccc786cb: the probe runs at load time, so one try with a 5 s
+    # timeout, not the default retries against a slow or unreachable OSF
+    from metacheck import http
+
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
+    calls: list[dict[str, object]] = []
+
+    def fake(method: str, url: str, **kwargs: object) -> httpx.Response:
+        calls.append({"method": method, "url": url, **kwargs})
+        return httpx.Response(200)
+
+    monkeypatch.setattr(http, "request", fake)
+    assert _osf_pat_validate("GOODPAT") is True
+    # anonymously and with the token
+    assert len(calls) == 2
+    assert all(c["max_tries"] == 1 and c["timeout"] == 5.0 for c in calls)
+
+
 def test_osf_parent_project(mock_api: respx.MockRouter, filetype_available: bool) -> None:
     assert _osf_parent_project("yt32c") == "pngda"
     assert _osf_parent_project("pngda") == "pngda"

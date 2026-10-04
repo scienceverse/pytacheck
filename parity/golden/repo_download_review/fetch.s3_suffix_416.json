@@ -1,0 +1,85 @@
+{
+  "id": "fetch.s3_suffix_416",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "result",
+      "files",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "name",
+          "path",
+          "size",
+          "ok",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ok/data.csv",
+              "dup.csv",
+              "dup.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<TMP>/ok/data.csv",
+              "<TMP>/dup.csv",
+              "<TMP>/dup.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              817,
+              6,
+              12
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dup.csv",
+          "ok/data.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          12,
+          817
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

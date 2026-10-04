@@ -26,6 +26,7 @@
 "dataone_links" = "metacheck.archives.dataone:dataone_links"
 ".dataone_host" = "metacheck.archives.dataone:_dataone_host"
 ".dataone_pid" = "metacheck.archives.dataone:_dataone_pid"
+".dataone_object_size" = "metacheck.archives.dataone:_dataone_object_size"
 "dataone_info" = "metacheck.archives.dataone:dataone_info"
 ".dataone_info" = "metacheck.archives.dataone:_dataone_info"
 # R/archive-dspace7.R
@@ -33,12 +34,14 @@
 ".dspace7_host_regex" = "metacheck.archives.dspace7:_dspace7_host_regex"
 ".dspace7_parse" = "metacheck.archives.dspace7:_dspace7_parse"
 "dspace7_links" = "metacheck.archives.dspace7:dspace7_links"
+".dspace7_resolve_doi_url" = "metacheck.archives.dspace7:_dspace7_resolve_doi_url"
 ".dspace7_rest" = "metacheck.archives.dspace7:_dspace7_rest"
 ".dspace7_info" = "metacheck.archives.dspace7:_dspace7_info"
 "dspace7_file_download" = "metacheck.archives.dspace7:dspace7_file_download"
 # R/archive-4tu.R
 "researchdata4tu_links" = "metacheck.archives.fourtu:researchdata4tu_links"
 ".researchdata4tu_id" = "metacheck.archives.fourtu:_researchdata4tu_id"
+".researchdata4tu_resolve_uuid" = "metacheck.archives.fourtu:_researchdata4tu_resolve_uuid"
 "researchdata4tu_info" = "metacheck.archives.fourtu:researchdata4tu_info"
 "researchdata4tu_pat" = "metacheck.archives.fourtu:researchdata4tu_pat"
 ".researchdata4tu_pat" = "metacheck.archives.fourtu:_researchdata4tu_pat"

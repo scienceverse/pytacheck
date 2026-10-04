@@ -239,6 +239,7 @@ _EXPORTS: dict[str, str] = {
     "zenodo_upload": "metacheck.archives.zenodo_upload",
     "zip_decision": "metacheck.archives.zip_peek",
     "zip_peek": "metacheck.archives.zip_peek",
+    "zip_peek_cache_clear": "metacheck.archives.zip_peek_cache",
     # file categories and naming
     "file_category": "metacheck.fileinfo.category",
     "filetype": "metacheck.fileinfo.category",
@@ -526,6 +527,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from metacheck.archives.zenodo import zenodo_file_download, zenodo_info, zenodo_links
     from metacheck.archives.zenodo_upload import zenodo_pat, zenodo_upload
     from metacheck.archives.zip_peek import zip_decision, zip_peek
+    from metacheck.archives.zip_peek_cache import zip_peek_cache_clear
     from metacheck.codecheck.core import (
         code_abs_path,
         code_extract_py,

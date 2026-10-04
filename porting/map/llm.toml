@@ -43,7 +43,7 @@ llm_cache_clear = "metacheck.llm.cache:llm_cache_clear"
 ".llm_cache_path" = "metacheck.llm.cache:_llm_cache_path"
 ".llm_cache_get" = "metacheck.llm.cache:_llm_cache_get"
 ".llm_cache_put" = "metacheck.llm.cache:_llm_cache_put"
-cap_report = "metacheck.llm.cap_prompt:cap_report"
+".cap_report" = "metacheck.llm.cap_prompt:cap_report"
 ".cap_size_str" = "metacheck.llm.cap_prompt:_cap_size_str"
 
 # R/zzz.R .onLoad(): its LLM defaults (metacheck.llm_max_calls = 30L,

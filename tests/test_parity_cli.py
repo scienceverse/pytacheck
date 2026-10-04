@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import multiprocessing
 import os
+import subprocess
 from pathlib import Path, PurePosixPath
 
 import pytest
@@ -127,6 +128,26 @@ def test_list_and_generate_take_a_list_of_areas(tree, monkeypatch, capsys) -> No
     assert parity_main.main(["generate", "--area", "beta,alpha+review"]) == 0
     # one R session per case file, as for a full run
     assert [Path(cmd[-1]).name for cmd in calls] == ["alpha.yaml", "alpha_review.yaml", "beta.yaml"]
+
+
+def test_generate_runs_case_files_side_by_side(tree, monkeypatch, capsys) -> None:
+    monkeypatch.setattr(parity_main, "_rscript", lambda explicit: "Rscript")
+
+    def run(cmd, **kw):
+        name = Path(cmd[-1]).stem
+        return subprocess.CompletedProcess(
+            cmd, 3 if name == "beta" else 0, f"[ok] {name}\n".encode()
+        )
+
+    monkeypatch.setattr(parity_main.subprocess, "run", run)
+    changes = iter([set(), {"?? tests/x/fixtures/out.zip.contents/a.csv"}])
+    monkeypatch.setattr(parity_main, "_tree_changes", lambda: next(changes))
+    # the worst exit status, and each session's output in one piece
+    assert parity_main.main(["generate", "--jobs", "2", "--area", "beta,alpha+review"]) == 3
+    captured = capsys.readouterr()
+    assert sorted(captured.out.splitlines()) == ["[ok] alpha", "[ok] alpha_review", "[ok] beta"]
+    # a file a case left in the checkout is named
+    assert "tests/x/fixtures/out.zip.contents/a.csv" in captured.err
 
 
 # -- check --strict ---------------------------------------------------------------------

@@ -518,7 +518,7 @@ def zenodo_file_download(
 
     with _spinner(pb, "Zenodo File Download") as bar:
         if len(ids) > 1:
-            from metacheck._r import bind_rows
+            from metacheck.archives.dataverse import _bind_downloads
 
             _tick(bar, f"Starting downloads for {len(ids)} Zenodo records...\n")
             dl_list: list[pd.DataFrame] = []
@@ -539,7 +539,7 @@ def zenodo_file_download(
                     dl_list.append(dl)
             if not dl_list:
                 return None
-            out = bind_rows(dl_list)
+            out = _bind_downloads(dl_list)
             _tick(bar, f"...Completed downloads for {len(ids)} Zenodo records")
             return out
         return _zenodo_download_one(
@@ -651,6 +651,8 @@ def _zenodo_download_one(
     selfs = files["self"].tolist()
 
     paths: list[str | None] = [None] * n
+    # zip members that could not be extracted (key, member, error): #429
+    failed_rows: list[tuple[str | None, str | None, str | None]] = []
     with tempfile.TemporaryDirectory() as temppath:
         # --- the whole-record archive, when no file was filtered out ---
         used_bulk = target == ""  # every file was omitted: nothing to fetch
@@ -693,6 +695,15 @@ def _zenodo_download_one(
                             pb,
                             f"- extracted {n_ok} file{plural(n_ok)} from {_na(keys[i])}",
                         )
+                        # a member that failed left a row with ok = FALSE: say
+                        # why, so a passing failure can be told from a lasting one
+                        from metacheck.archives.dataverse import _failed_members
+
+                        bad = _failed_members(got)
+                        key_i = None if is_na(keys[i]) else str(keys[i])
+                        failed_rows.extend((key_i, name, why) for name, why in bad)
+                        for name, why in bad:
+                            _tick(pb, f"  - failed to extract {_na(name)}: {_na(why)}")
                         continue
                     _tick(
                         pb,
@@ -751,7 +762,7 @@ def _zenodo_download_one(
     folder = None if target == "" else _r_basename(target)
     files["folder"] = pd.Series([folder] * len(files), dtype="string")
     files["zenodo_id"] = pd.Series([str(zid)] * len(files), dtype="string")
-    return files[
+    out = files[
         [
             "folder",
             "zenodo_id",
@@ -767,6 +778,10 @@ def _zenodo_download_one(
             "extracted",
         ]
     ]
+    from metacheck.archives.dataverse import _failed_frame
+
+    out.attrs = {"failed": _failed_frame(failed_rows)}
+    return out
 
 
 def _na(x: Any) -> str:

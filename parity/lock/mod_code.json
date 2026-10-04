@@ -1,7 +1,5 @@
 {
 "code_check.download_file_cap": {"r": "521f829276f728c7", "py": "1d2307c18016db0a", "diff": ["summary_text[]"]},
-"code_check.empty_files": {"r": "0ad6f6679bbcf6e1", "py": "8fc795e9649ec2aa", "diff": ["table", "table.absolute_paths[]", "table.code_abs_path[]", "table.code_install_packages[]", "table.code_lines[]", "table.code_setwd[]", "table.comment_lines[]", "table.install_packages_calls[]", "table.library_lines[]", "table.loaded_files_missing[]", "table.loaded_files_missing_names[]", "table.packages[]", "table.packages_n[]", "table.parse_error[]", "table.setwd_calls[]"]},
 "code_check.no_file_url": {"r": "ac5146cf65ca52a8", "py": "fc692b5073372bbf", "diff": ["<R error, Python value>"]},
-"code_check.qmd": {"r": "ca7de9b209710b65", "py": "0c532ca69e36ae15", "diff": ["report[]", "summary_table.code_missing_files[]", "summary_text[]", "table.code_lines[]", "table.comment_lines[]", "table.has_docstring[]", "table.language[]", "table.library_lines[]", "table.library_max_between[]", "table.loaded_files_missing[]", "table.loaded_files_missing_names[]", "table.packages[]", "table.packages_n[]", "table.parse_error[]", "table.percentage_comment[]"]},
-"report_tables.empty_files": {"r": "0b22b79c2e6a9c4d", "py": "427428b4ff37e1c9", "diff": ["[].Absolute Paths[]", "[].Missing Files[]"]}
+"code_check.qmd": {"r": "ca7de9b209710b65", "py": "0c532ca69e36ae15", "diff": ["report[]", "summary_table.code_missing_files[]", "summary_text[]", "table.code_lines[]", "table.comment_lines[]", "table.has_docstring[]", "table.language[]", "table.library_lines[]", "table.library_max_between[]", "table.loaded_files_missing[]", "table.loaded_files_missing_names[]", "table.packages[]", "table.packages_n[]", "table.parse_error[]", "table.percentage_comment[]"]}
 }

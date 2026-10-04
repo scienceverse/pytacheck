@@ -1,0 +1,29 @@
+{
+  "id": ".figshare_id.chained_subprefix",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "25808182",
+      "13712533",
+      "25808182",
+      "14618526",
+      null,
+      null,
+      null
+    ],
+    "names": [
+      "https://doi.org/10.17608/k6.auckland.25808182.v2",
+      "https://doi.org/10.15131/shef.data.13712533",
+      "10.17608/k6.auckland.25808182",
+      "https://doi.org/10.25375/a.b.c.14618526.v1.",
+      "https://doi.org/10.17608/k6.auckland.v2",
+      "https://figshare.com/collections/Some_collection/8742785",
+      "https://doi.org/10.6084/m9.figshare.c.8742785.v1"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

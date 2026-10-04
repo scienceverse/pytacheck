@@ -2,9 +2,7 @@
   "id": "code_setwd.my_encodings_newline_only_R",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`."
-  ],
+  "warnings": [],
   "value": {
     "t": "df",
     "nrow": 0,
