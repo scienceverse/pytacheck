@@ -28,7 +28,7 @@ def load_json(name: str) -> Any:
 
 
 class FakeChat:
-    """Stands in for an ellmer ``Chat`` (R tests mock ``ellmer::chat()``)."""
+    """Stands in for the model (R tests mock ``ellmer::chat()``)."""
 
     def __init__(self, chat: Any = None, chat_structured: Any = None) -> None:
         self._chat = chat
@@ -40,5 +40,14 @@ class FakeChat:
     def chat_structured(self, text: Any, type: Any) -> Any:
         return self._structured(text, type)
 
-    def last_turn(self) -> None:
-        return None
+    def complete(
+        self,
+        model: str,
+        system: str,
+        user: str,
+        type: Any = None,
+        params: Any = None,
+        api_args: Any = None,
+    ) -> Any:
+        """The seam :func:`metacheck.llm._backend.complete`: the reply, as the model's JSON."""
+        return self.chat(user) if type is None else self.chat_structured(user, type)

@@ -575,9 +575,6 @@ llm_case("power.review.llm.control_char_mixed", paras([CONTROL, S.COMPLETE], [0,
 llm_case("power.review.fallback.control_char", tp(FB_CONTROL))
 llm_case("power.review.fallback.control_char_mixed", paras([FB_CONTROL, FB_COMPLETE], [0, 1]))
 llm_case("power.review.llm.seed_null", tp(S.COMPLETE), ", seed = NULL", ", seed=None")
-# ellmer::params() rejects these before any request: the module errors
-llm_case("power.review.llm.seed_fraction", tp(S.COMPLETE), ", seed = 1.5", ", seed=1.5")
-llm_case("power.review.llm.seed_string", tp(S.COMPLETE), ", seed = 'abc'", ", seed='abc'")
 llm_case(
     "power.review.llm.no_key",
     tp(S.COMPLETE),
@@ -594,8 +591,7 @@ llm_case(
     "power.review.llm.max_calls",
     paras([S.COMPLETE, S.OTHER], [0, 1]),
     r_options={"metacheck.llm_max_calls": "1L"},
-    py_options="{'metacheck.llm_max_calls': __import__('metacheck.llm._rds', "
-    "fromlist=['_']).RInt(1)}",
+    py_options="{'metacheck.llm_max_calls': 1}",
 )
 
 # llm_use(TRUE), structured output rejected: prompt-based fallback ----

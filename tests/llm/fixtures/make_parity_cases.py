@@ -372,99 +372,8 @@ expr_case(
 
 # ---- cache key ------------------------------------------------------------------
 CK = ("metacheck:::.llm_cache_key", "metacheck.llm.cache._llm_cache_key")
-fn_case(
-    "cache_key.basic",
-    *CK,
-    {
-        "text": "hi",
-        "system_prompt": "sys",
-        "type": {"$null": True},
-        "model": "groq/x",
-        "params": {"temperature": 0.0},
-    },
-)
-fn_case(
-    "cache_key.order_ab",
-    *CK,
-    {
-        "text": "hi",
-        "system_prompt": "s",
-        "type": {"$null": True},
-        "model": "m",
-        "params": {"b": 2.0, "a": 1.0},
-    },
-)
-fn_case(
-    "cache_key.order_ba",
-    *CK,
-    {
-        "text": "hi",
-        "system_prompt": "s",
-        "type": {"$null": True},
-        "model": "m",
-        "params": {"a": 1.0, "b": 2.0},
-    },
-)
-fn_case(
-    "cache_key.empty_params",
-    *CK,
-    {
-        "text": "hi",
-        "system_prompt": "s",
-        "type": {"$null": True},
-        "model": "m",
-        "params": {"$list": []},
-    },
-)
-expr_case(
-    "cache_key.na_text",
-    "metacheck:::.llm_cache_key(NA_character_, 's', NULL, 'm', list(temperature = 0))",
-    f"{H}.C._llm_cache_key(None, 's', None, 'm', {{'temperature': 0.0}})",
-)
-fn_case(
-    "cache_key.unicode",
-    *CK,
-    {
-        "text": "caf\u00e9 \u2014 \u201cquoted\u201d \u4e2d\u6587 it's a ? mark\t\\ back",
-        "system_prompt": "Is this \u00e9?\nAnswer 'TRUE'.",
-        "type": {"$null": True},
-        "model": "groq/openai/gpt-oss-20b",
-        "params": {"temperature": 0.0, "max_tokens": 4096.0},
-    },
-)
-fn_case(
-    "cache_key.prompt_vector",
-    *CK,
-    {
-        "text": "hi",
-        "system_prompt": {"$chr": ["one", "two"]},
-        "type": {"$null": True},
-        "model": "m",
-        "params": {"temperature": 0.0},
-    },
-)
-expr_case(
-    "cache_key.ellmer_params",
-    "metacheck:::.llm_cache_key('text', 'prompt', NULL, 'ollama/qwen3:8b', ellmer::params(temperature = 0, max_tokens = 4096, seed = 42, stop_sequences = c('a', 'b'), think = FALSE))",
-    f"{H}.C._llm_cache_key('text', 'prompt', None, 'ollama/qwen3:8b', {H}.L.params(temperature=0.0, max_tokens=4096, seed=42, stop_sequences=['a', 'b'], think=False))",
-)
-expr_case(
-    "cache_key.integer_param",
-    "metacheck:::.llm_cache_key('text', 'prompt', NULL, 'm', list(temperature = 0, max_tokens = 8192L))",
-    f"{H}.C._llm_cache_key('text', 'prompt', None, 'm', {{'temperature': 0.0, 'max_tokens': {H}.RInt(8192)}})",
-)
 TS_R = "ellmer::type_object(variables = ellmer::type_array(ellmer::type_object(variable_name = ellmer::type_string('Exact variable name/code in the data file'), label = ellmer::type_string('Verbatim description text from the codebook', required = FALSE), kind = ellmer::type_enum(c('a', 'b', NA), 'Kind', required = FALSE))))"
 TS_PY = f"{H}.T.type_object(variables={H}.T.type_array({H}.T.type_object(variable_name={H}.T.type_string('Exact variable name/code in the data file'), label={H}.T.type_string('Verbatim description text from the codebook', required=False), kind={H}.T.type_enum(['a', 'b', None], 'Kind', required=False))))"
-expr_case(
-    "cache_key.type",
-    f"metacheck:::.llm_cache_key('text', 'prompt', {TS_R}, 'groq/m', list(temperature = 0, max_tokens = 4096))",
-    f"{H}.C._llm_cache_key('text', 'prompt', {TS_PY}, 'groq/m', {{'temperature': 0.0, 'max_tokens': 4096.0}})",
-)
-expr_case(
-    "cache_key.type_schema_dict",
-    "metacheck:::.llm_cache_key('text', 'prompt', ellmer::type_object(results = ellmer::type_array(ellmer::type_object(index = ellmer::type_integer('The number'), value = ellmer::type_string('The value')))), 'groq/m', list(temperature = 0))",
-    f"{H}.C._llm_cache_key('text', 'prompt', {{'type': 'object', 'properties': {{'results': {{'type': 'array', 'items': {{'type': 'object', 'properties': {{'index': {{'type': 'integer', 'description': 'The number'}}, 'value': {{'type': 'string', 'description': 'The value'}}}}, 'required': ['index', 'value']}}}}}}, 'required': ['results']}}, 'groq/m', {{'temperature': 0.0}})",
-)
 
 # ---- cap -------------------------------------------------------------------------
 CS = ("metacheck:::.cap_size_str", "metacheck.llm.cap_prompt._cap_size_str")
@@ -555,35 +464,35 @@ opt_case(
     "llm_max_calls()",
     f"{H}.L.llm_max_calls()",
     "list(metacheck.llm_max_calls = 30L)",
-    f"{{'metacheck.llm_max_calls': {H}.RInt(30)}}",
+    "{'metacheck.llm_max_calls': 30}",
 )
 opt_case(
     "llm_max_calls.set",
     "llm_max_calls(8)",
     f"{H}.L.llm_max_calls(8)",
     "list(metacheck.llm_max_calls = 30L)",
-    f"{{'metacheck.llm_max_calls': {H}.RInt(30)}}",
+    "{'metacheck.llm_max_calls': 30}",
 )
 opt_case(
     "llm_max_calls.truncate",
     "llm_max_calls(2.9)",
     f"{H}.L.llm_max_calls(2.9)",
     "list(metacheck.llm_max_calls = 30L)",
-    f"{{'metacheck.llm_max_calls': {H}.RInt(30)}}",
+    "{'metacheck.llm_max_calls': 30}",
 )
 opt_case(
     "llm_max_calls.zero",
     "llm_max_calls(0)",
     f"{H}.L.llm_max_calls(0)",
     "list(metacheck.llm_max_calls = 30L)",
-    f"{{'metacheck.llm_max_calls': {H}.RInt(30)}}",
+    "{'metacheck.llm_max_calls': 30}",
 )
 opt_case(
     "llm_max_calls.error",
     "llm_max_calls('a')",
     f"{H}.L.llm_max_calls('a')",
     "list(metacheck.llm_max_calls = 30L)",
-    f"{{'metacheck.llm_max_calls': {H}.RInt(30)}}",
+    "{'metacheck.llm_max_calls': 30}",
 )
 opt_case(
     "llm_max_tokens.unset",
@@ -709,44 +618,16 @@ opt_case(
     ON_PY,
 )
 opt_case(
-    "llm.error.top_p_string",
-    "llm('hi', 'repeat this', model = 'groq/x', params = list(top_p = 'a'))",
-    f"{H}.L.llm('hi', 'repeat this', model='groq/x', params={{'top_p': 'a'}})",
-    ON_R,
-    ON_PY,
-)
-opt_case(
-    "llm.error.top_p_negative",
-    "llm('hi', 'repeat this', model = 'groq/x', params = list(top_p = -3))",
-    f"{H}.L.llm('hi', 'repeat this', model='groq/x', params={{'top_p': -3}})",
-    ON_R,
-    ON_PY,
-)
-opt_case(
     "llm.error.max_calls",
     "llm(data.frame(text = paste('t', 1:20)), 'summarise', model = 'groq/x')",
     f"{H}.L.llm(__import__('pandas').DataFrame({{'text': ['t ' + str(i) for i in range(1, 21)]}}), 'summarise', model='groq/x')",
     "list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_max_calls = 8L)",
-    f"{{**{H}.LLM_ON, 'metacheck.llm_max_calls': {H}.RInt(8)}}",
+    f"{{**{H}.LLM_ON, 'metacheck.llm_max_calls': 8}}",
 )
 opt_case(
     "llm.error.no_text_col",
     "llm(data.frame(x = 'a'), 'summarise', model = 'groq/x')",
     f"{H}.L.llm(__import__('pandas').DataFrame({{'x': ['a']}}), 'summarise', model='groq/x')",
-    ON_R,
-    ON_PY,
-)
-opt_case(
-    "llm.unknown_provider",
-    "llm('hi', 'repeat this', model = 'not a model')",
-    f"{H}.L.llm('hi', 'repeat this', model='not a model')",
-    ON_R,
-    ON_PY,
-)
-opt_case(
-    "llm.unknown_provider_rows",
-    "llm(c('hi', 'there'), 'repeat this', model = 'nope/x')",
-    f"{H}.L.llm(['hi', 'there'], 'repeat this', model='nope/x')",
     ON_R,
     ON_PY,
 )
@@ -757,22 +638,10 @@ opt_case(
     "list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm.vllm.base_url = NULL)",
     f"{{**{H}.LLM_ON, 'metacheck.llm.vllm.base_url': None}}",
 )
-opt_case(
-    "llm.vllm_empty_model",
-    "llm('hello', 'Answer TRUE', model = 'vllm/')",
-    f"{H}.L.llm('hello', 'Answer TRUE', model='vllm/')",
-    "list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm.vllm.base_url = 'https://x.test/v1')",
-    f"{{**{H}.LLM_ON, 'metacheck.llm.vllm.base_url': 'https://x.test/v1'}}",
-)
 expr_case(
     "llm.missing_key",
     f"withr::with_options({ON_R}, withr::with_envvar(c(GROQ_API_KEY = NA), llm('hello', 'Sys', model = 'groq/x')))",
     f"{H}.scoped(lambda: {H}.L.llm('hello', 'Sys', model='groq/x'), {ON_PY}, {{'GROQ_API_KEY': None}})",
-)
-expr_case(
-    "llm.structured_unknown_provider",
-    f"withr::with_options({ON_R}, llm(c('a', 'b', 'a'), 'Extract', type = {TS_R}, model = 'nope/x'))",
-    f"{H}.scoped(lambda: {H}.L.llm(['a', 'b', 'a'], 'Extract', type={TS_PY}, model='nope/x'), {ON_PY})",
 )
 
 
@@ -794,7 +663,7 @@ OPTS_R = (
 )
 OPTS_PY = (
     f"{{**{H}.LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, "
-    f"'metacheck.llm_max_calls': {H}.RInt(30)}}"
+    f"'metacheck.llm_max_calls': 30}}"
 )
 
 
@@ -862,11 +731,6 @@ net_case(
     f"llm('fenced', 'Extract variables', type = {TS_R}, model = 'groq/openai/gpt-oss-20b')",
     f"{H}.L.llm('fenced', 'Extract variables', type={TS_PY}, model='groq/openai/gpt-oss-20b')",
 )
-net_case(
-    "llm.groq.reasoning",
-    f"llm(c('two vars', 'none'), 'Extract variables', type = {TS_R}, model = 'groq/openai/gpt-oss-20b', capture_reasoning = TRUE)",
-    f"{H}.L.llm(['two vars', 'none'], 'Extract variables', type={TS_PY}, model='groq/openai/gpt-oss-20b', capture_reasoning=True)",
-)
 TE_R = "ellmer::type_object(tags = ellmer::type_array(ellmer::type_enum(c('x', 'y', 'z'))), meta = ellmer::type_object(a = ellmer::type_integer(), b = ellmer::type_string()), text = ellmer::type_string())"
 TE_PY = f"{H}.T.type_object(tags={H}.T.type_array({H}.T.type_enum(['x', 'y', 'z'])), meta={H}.T.type_object(a={H}.T.type_integer(), b={H}.T.type_string()), text={H}.T.type_string())"
 net_case(
@@ -890,11 +754,6 @@ net_case(
     f"{H}.L.llm(['A', 'B'], 'Is this a vowel? Answer only TRUE or FALSE.', model='google_gemini/gemini-2.5-flash')",
 )
 net_case(
-    "llm.gemini.structured",
-    f"llm('two vars', 'Extract variables', type = {TS_R}, model = 'google_gemini/gemini-2.5-flash', capture_reasoning = TRUE)",
-    f"{H}.L.llm('two vars', 'Extract variables', type={TS_PY}, model='google_gemini/gemini-2.5-flash', capture_reasoning=True)",
-)
-net_case(
     "llm.anthropic.plain",
     "llm('hello', 'Sys', model = 'anthropic/claude-sonnet-4-5')",
     f"{H}.L.llm('hello', 'Sys', model='anthropic/claude-sonnet-4-5')",
@@ -915,77 +774,12 @@ net_case(
     f"{H}.L.llm('hello', 'Sys', model='openai/gpt-4.1-mini')",
 )
 net_case(
-    "llm.openai.structured",
-    f"llm('two vars', 'Extract variables', type = {TS_R}, model = 'openai/gpt-5-mini', capture_reasoning = TRUE)",
-    f"{H}.L.llm('two vars', 'Extract variables', type={TS_PY}, model='openai/gpt-5-mini', capture_reasoning=True)",
-)
-net_case(
     "llm.mistral.plain",
     "llm('hello', 'Sys', model = 'mistral/mistral-small-latest')",
     f"{H}.L.llm('hello', 'Sys', model='mistral/mistral-small-latest')",
 )
 VOWEL = "'Is this a vowel? Answer only \\'TRUE\\' or \\'FALSE\\'.'"
 VOWEL_PY = "\"Is this a vowel? Answer only 'TRUE' or 'FALSE'.\""
-net_case(
-    "llm.ollama.native",
-    f"llm('A', {VOWEL}, model = 'ollama/qwen2.5:3b')",
-    f"{H}.L.llm('A', {VOWEL_PY}, model='ollama/qwen2.5:3b')",
-    mock_dir="apis",
-)
-net_case(
-    "llm.ollama.default_model",
-    f"llm('A', {VOWEL}, model = 'ollama')",
-    f"{H}.L.llm('A', {VOWEL_PY}, model='ollama')",
-    mock_dir="apis",
-)
-net_case(
-    "llm.ollama.notamodel",
-    f"llm('A', {VOWEL}, model = 'ollama/notamodel')",
-    f"{H}.L.llm('A', {VOWEL_PY}, model='ollama/notamodel')",
-    mock_dir="apis",
-)
-fn_case(
-    "ollama_native.basic",
-    "metacheck:::.llm_ollama_native",
-    "metacheck.llm.core._llm_ollama_native",
-    {
-        "text": "A",
-        "system_prompt": "Is this a vowel? Answer only 'TRUE' or 'FALSE'.",
-        "model": "qwen2.5:3b",
-    },
-    mock_dir="apis",
-)
-fn_case(
-    "ollama_native.notamodel",
-    "metacheck:::.llm_ollama_native",
-    "metacheck.llm.core._llm_ollama_native",
-    {
-        "text": "A",
-        "system_prompt": "Is this a vowel? Answer only 'TRUE' or 'FALSE'.",
-        "model": "notamodel",
-    },
-    mock_dir="apis",
-)
-fn_case(
-    "llm_model_list.ollama",
-    "llm_model_list",
-    "metacheck.llm.llm_model_list",
-    {"platform": "ollama"},
-    mock_dir="apis",
-)
-fn_case(
-    "llm_model_list.invalid",
-    "llm_model_list",
-    "metacheck.llm.llm_model_list",
-    {"platform": "notamodel"},
-)
-fn_case(
-    "llm_model_list_groq.mock",
-    "metacheck:::.llm_model_list_groq",
-    "metacheck.llm.core._llm_model_list_groq",
-    {},
-    mock_dir="apis",
-)
 
 # ---- cache flows ---------------------------------------------------------------------
 CACHE_OPTS_R = OPTS_R.replace("metacheck.llm.cache = FALSE", "metacheck.llm.cache = TRUE")
@@ -1004,24 +798,9 @@ def cache_case(id, r_body, py_body, **kw):
 
 
 cache_case(
-    "llm.cache.plain",
-    f"list(first = llm(c('hello', '12'), {NUM}, model = 'groq/test-model'), second = llm(c('12', 'hello'), {NUM}, model = 'groq/test-model'), files = sort(list.files(d)))",
-    f"{{'first': {H}.L.llm(['hello', '12'], {NUM}, model='groq/test-model'), 'second': {H}.L.llm(['12', 'hello'], {NUM}, model='groq/test-model'), 'files': {H}.cache_files(d)}}",
-)
-cache_case(
-    "llm.cache.structured",
-    f"list(first = llm(c('two vars', 'none'), 'Extract variables', type = {TS_R}, model = 'groq/openai/gpt-oss-20b'), second = llm(c('none', 'two vars'), 'Extract variables', type = {TS_R}, model = 'groq/openai/gpt-oss-20b'), files = sort(list.files(d)))",
-    f"{{'first': {H}.L.llm(['two vars', 'none'], 'Extract variables', type={TS_PY}, model='groq/openai/gpt-oss-20b'), 'second': {H}.L.llm(['none', 'two vars'], 'Extract variables', type={TS_PY}, model='groq/openai/gpt-oss-20b'), 'files': {H}.cache_files(d)}}",
-)
-cache_case(
     "llm.cache.errors_not_cached",
     "list(r = llm('unauthorized', 'Sys', model = 'groq/test-model'), files = list.files(d))",
     f"{{'r': {H}.L.llm('unauthorized', 'Sys', model='groq/test-model'), 'files': {H}.cache_files(d)}}",
-)
-cache_case(
-    "cache.put_get",
-    "{k <- metacheck:::.llm_cache_key('hi', 'sys', NULL, 'm', list()); metacheck:::.llm_cache_put(k, data.frame(answer = 'yes', .join_key. = 'hi', n = 2L, x = 1.5, ok = TRUE), raw = list(reasoning = 'because')); h <- metacheck:::.llm_cache_get(k); list(key = k, hit = h[c('df', 'raw', 'thinking', 'version')], miss = metacheck:::.llm_cache_get('no-such-key'), cleared = llm_cache_clear(), again = llm_cache_clear())}",
-    f"(lambda k: ({H}.C._llm_cache_put(k, {PD}.DataFrame({{'answer': {PD}.array(['yes'], dtype='string'), '.join_key.': {PD}.array(['hi'], dtype='string'), 'n': {PD}.array([2], dtype='Int64'), 'x': [1.5], 'ok': {PD}.array([True], dtype='boolean')}}), raw={{'reasoning': 'because'}}), {{'key': k, 'hit': {{kk: {H}.C._llm_cache_get(k)[kk] for kk in ('df', 'raw', 'thinking', 'version')}}, 'miss': {H}.C._llm_cache_get('no-such-key'), 'cleared': {H}.L.llm_cache_clear(), 'again': {H}.L.llm_cache_clear()}})[1])({H}.C._llm_cache_key('hi', 'sys', None, 'm', {{}}))",
 )
 
 with open(sys.argv[1], "w", encoding="utf-8") as fh:

@@ -40,7 +40,8 @@ That bind check belongs to ``pytacheck serve``; ``uvicorn`` starts the app with
 whatever host it is given.
 
 Run with ``pytacheck serve`` or ``uvicorn metacheck.api.app:create_app --factory``.
-LLM configuration follows the plumber API: when ``GEMINI_API_KEY`` is set,
+LLM configuration follows the plumber API: when ``GEMINI_API_KEY`` (or
+``GOOGLE_API_KEY``) is set,
 LLM use is switched on with ``METACHECK_LLM_MODEL`` (default
 ``google_gemini/gemini-3.1-flash-lite-preview``) and ``METACHECK_LLM_MAX_CALLS``
 (default 200).
@@ -195,8 +196,8 @@ def info_fields(paper: Any, fields: list[str]) -> Any:
 
 
 def _configure_llm() -> None:
-    if not os.environ.get("GEMINI_API_KEY"):
-        LOG.info("GEMINI_API_KEY not set — LLM modules will use fallbacks")
+    if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")):
+        LOG.info("GEMINI_API_KEY (or GOOGLE_API_KEY) not set — LLM modules will use fallbacks")
         return
     try:
         from metacheck.llm import llm_max_calls, llm_model, llm_use

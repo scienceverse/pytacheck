@@ -1,19 +1,18 @@
 """Querying LLMs (port of ``R/llm.R`` and the LLM defaults of ``R/zzz.R``).
 
 :func:`llm` sends each unique text to a model and returns one row per input
-(or, for structured extraction, one row per extracted item), exactly like
-metacheck's ``llm()``: same arguments and defaults (temperature 0,
-``max_tokens`` 4096 or :func:`llm_max_tokens`, reasoning effort from
-:func:`llm_reasoning`), same retry of malformed structured replies, same
-per-row error columns and warnings, same on-disk response cache
-(:mod:`metacheck.llm.cache`), and the same session settings, stored in the
-R option names metacheck uses (``metacheck.llm.use``, ``metacheck.llm.model``,
-``metacheck.llm_max_calls``, ``metacheck.llm_max_tokens``,
+(or, for structured extraction, one row per extracted item), like metacheck's
+``llm()``: same arguments and defaults (temperature 0, ``max_tokens`` 4096 or
+:func:`llm_max_tokens`, reasoning effort from :func:`llm_reasoning`), same
+retry of malformed structured replies, same per-row error columns and
+warnings, a response cache (:mod:`metacheck.llm.cache`), and the same session
+settings, stored in the R option names metacheck uses (``metacheck.llm.use``,
+``metacheck.llm.model``, ``metacheck.llm_max_calls``, ``metacheck.llm_max_tokens``,
 ``metacheck.llm_timeout``, ``metacheck.llm_reasoning``).
 
-Providers are reached over :mod:`metacheck.http` by
-:mod:`metacheck.llm.providers` -- no SDKs; models are named
-``"provider/model"`` as in ellmer (``"groq/openai/gpt-oss-20b"``,
+Models are reached through the official provider SDKs (``pip install
+"metacheck[llm]"``, see :mod:`metacheck.llm._backend`) and are named
+``"provider/model"`` (``"groq/openai/gpt-oss-20b"``,
 ``"google_gemini/gemini-2.5-flash"``, ``"ollama/qwen3:8b"``,
 ``"vllm/<model>"``, ...).
 """
@@ -22,22 +21,18 @@ from __future__ import annotations
 
 import itertools
 import math
-import os
 import re
 import sys
-import threading
 import time
+import unicodedata
 import warnings
 from collections.abc import Iterable, Mapping, Sequence
-from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, cast
 
 from metacheck._env import env_get
 from metacheck.llm._onload import _API_KEY_ENV, _default_model_from_env  # noqa: F401  (re-exported)
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
-
     import pandas as pd
 
 __all__ = [
@@ -45,7 +40,6 @@ __all__ = [
     "llm_max_calls",
     "llm_max_tokens",
     "llm_model",
-    "llm_model_list",
     "llm_reasoning",
     "llm_timeout",
     "llm_use",
@@ -53,37 +47,15 @@ __all__ = [
 
 _MISSING: Any = object()
 
-# ---------------------------------------------------------------------------
-# messages
-# ---------------------------------------------------------------------------
-
-_capture = threading.local()
-
 
 def _message(msg: str, always: bool = False) -> None:
     """R ``message()``: to stderr (progress chatter only when verbose)."""
-    sink = getattr(_capture, "sink", None)
-    if sink is not None:
-        sink.append(msg)
-        return
     if not always:
         from metacheck.config import verbose
 
         if not verbose():
             return
     print(msg, file=sys.stderr)
-
-
-@contextmanager
-def _capture_messages() -> Iterator[list[str]]:
-    """``utils::capture.output(..., type = "message")``."""
-    prev = getattr(_capture, "sink", None)
-    sink: list[str] = []
-    _capture.sink = sink
-    try:
-        yield sink
-    finally:
-        _capture.sink = prev
 
 
 # ---------------------------------------------------------------------------
@@ -155,9 +127,7 @@ def llm_model(model: Any = _MISSING) -> str | None:
     ):
         _set("metacheck.llm.model", model)
         return _get("metacheck.llm.model")  # type: ignore[no-any-return]
-    raise ValueError(
-        "set llm_model with the name of a model, use `llm_model_list()` to get available models"
-    )
+    raise ValueError("set llm_model with the name of a model, as 'provider/model'")
 
 
 def _is_numeric(n: Any) -> bool:
@@ -165,8 +135,6 @@ def _is_numeric(n: Any) -> bool:
 
 
 def _set_count(option: str, n: Any) -> Any:
-    from metacheck.llm._rds import RInt
-
     if not _is_numeric(n):
         raise ValueError("n must be a number")
     if isinstance(n, float) and math.isnan(n):
@@ -183,7 +151,7 @@ def _set_count(option: str, n: Any) -> Any:
             stacklevel=3,
         )
     else:
-        _set(option, RInt(value))
+        _set(option, value)
     return _get(option)
 
 
@@ -206,8 +174,7 @@ def llm_timeout(seconds: Any = None) -> float:
 
     It bounds every request ``llm()`` makes, as documented; metacheck applies
     it to native Ollama requests only, while ellmer's hosted providers wait
-    300 s (U20). The ``ellmer_timeout_s`` option, when set, still overrides it
-    for the hosted providers.
+    300 s (U20).
     """
     if seconds is None:
         return _get("metacheck.llm_timeout", 180)  # type: ignore[no-any-return]
@@ -330,14 +297,6 @@ def _llm_sanitise_text(x: Any) -> list[str | None] | None:
     return gsub("[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F]", "", out, perl=True)  # type: ignore[no-any-return]
 
 
-def _cond_resp(e: BaseException) -> Any:
-    resp = getattr(e, "resp", None)
-    if resp is None:
-        parent = getattr(e, "parent", None)
-        resp = getattr(parent, "resp", None) if parent is not None else None
-    return resp
-
-
 def _r_dollar(x: Any, name: str) -> Any:
     """R ``x$name`` on parsed JSON: exact, else unique partial match; ``NULL`` if none."""
     if x is None or isinstance(x, list):  # NULL$x, unnamed list$x: NULL
@@ -361,22 +320,38 @@ def _llm_error_message(e: BaseException) -> str:
     return f"{msg}\n  Provider says: {detail}"
 
 
-_RETRYABLE = "Failed to (generate|validate|parse) JSON"
+# a reply that is not valid JSON ("Failed to parse JSON", and the wording of
+# jsonlite's errors in metacheck) or does not fit the schema is asked for again
+_RETRYABLE = re.compile(
+    "Failed to (generate|validate|parse) JSON|lexical error|malformed number|premature EOF|"
+    "parse error|```json",
+    re.IGNORECASE,
+)
+_TRANSPORT = re.compile(
+    "could not resolve|connection refused|couldn't connect|timed out|timeout|"
+    "connection reset|network is unreachable|no route to host|failed to connect|"
+    "empty reply from server|handshake|ssl",
+    re.IGNORECASE,
+)
 
 
 def _llm_json_retryable(e: BaseException) -> bool:
     """Port of ``.llm_json_retryable()``: a structured-output failure worth retrying."""
-    return re.search(_RETRYABLE, _llm_error_message(e), re.IGNORECASE) is not None
+    return _RETRYABLE.search(_llm_error_message(e)) is not None
 
 
 def _llm_is_systemic_error(e: BaseException) -> bool:
-    """Port of ``.llm_is_systemic_error()``: will every call this run fail this way?"""
+    """Port of ``.llm_is_systemic_error()``: will every call this run fail this way?
+
+    A rejected key or a failing server is; so is a connection that never
+    answered, unless it only ran out of time on this one request.
+    """
     status = getattr(e, "status", None)
-    if status is not None:
+    if status is not None:  # the provider answered: only its authentication and 5xx errors
         return bool(status in (401, 403) or status >= 500)
     if getattr(e, "timeout", False) or _llm_json_retryable(e):
         return False
-    return bool(getattr(e, "transport", False))
+    return _TRANSPORT.search(str(e)) is not None
 
 
 class _SystemicNotice:
@@ -397,25 +372,6 @@ class _SystemicNotice:
 _llm_systemic_notice = _SystemicNotice()
 
 
-def _llm_extract_thinking(chat: Any) -> str | None:
-    """Port of ``.llm_extract_thinking()``: the reasoning text of the last turn (``None`` = NA)."""
-    from metacheck.llm.providers import ContentThinking
-
-    try:
-        turn = chat.last_turn()
-    except Exception:
-        return None
-    if turn is None:
-        return None
-    contents = getattr(turn, "contents", None) or []
-    texts = [
-        c.thinking
-        for c in contents
-        if isinstance(c, ContentThinking) and isinstance(c.thinking, str) and c.thinking
-    ]
-    return "\n\n".join(texts) if texts else None
-
-
 # ---------------------------------------------------------------------------
 # R data-frame semantics for structured results
 # ---------------------------------------------------------------------------
@@ -424,6 +380,10 @@ _RESERVED = {
     "if", "else", "repeat", "while", "function", "for", "next", "break", "TRUE", "FALSE",
     "NULL", "Inf", "NaN", "NA", "NA_integer_", "NA_real_", "NA_character_", "NA_complex_", "in",
 }  # fmt: skip
+
+
+class _RList(list):  # type: ignore[type-arg]
+    """An R ``list()``: a plain Python list of scalars stands for an atomic vector instead."""
 
 
 def _make_names(names: Sequence[str], unique: bool = True) -> list[str]:
@@ -439,81 +399,6 @@ def _make_names(names: Sequence[str], unique: bool = True) -> list[str]:
             s += "."
         out.append(s)
     return _make_unique(out) if unique else out
-
-
-def _deparse_arg(v: Any) -> str:
-    """``deparse()`` of an unnamed ``data.frame()`` argument (its column name)."""
-    from metacheck.llm._rds import RInt, RVec
-    from metacheck.llm.types import _deparse
-
-    if isinstance(v, RVec):
-        return _deparse_vec(v)
-    if isinstance(v, list | tuple):
-        return _deparse_vec(RVec(_list_series_type(list(v)), list(v)))
-    if isinstance(v, RInt):
-        return f"{int(v)}L"
-    return _deparse(v)
-
-
-def _list_series_type(vals: list[Any]) -> str:
-    present = [v for v in vals if v is not None]
-    if all(isinstance(v, bool) for v in present):
-        return "lgl"
-    if all(isinstance(v, int) and not isinstance(v, bool) for v in present):
-        return "int"
-    if all(isinstance(v, int | float) and not isinstance(v, bool) for v in present):
-        return "dbl"
-    return "chr"
-
-
-_NA_DEPARSE = {"chr": "NA_character_", "int": "NA_integer_", "dbl": "NA_real_", "lgl": "NA"}
-_EMPTY_DEPARSE = {
-    "chr": "character(0)",
-    "int": "integer(0)",
-    "dbl": "numeric(0)",
-    "lgl": "logical(0)",
-}
-
-
-def _deparse_vec(v: Any) -> str:
-    """``deparse()`` of an atomic vector (factors as ``structure(...)``)."""
-    from metacheck._r import as_character
-    from metacheck.llm._rds import RVec
-    from metacheck.llm.types import _encode_string
-
-    cls = v.attrs.get("class")
-    if isinstance(cls, RVec) and "factor" in cls.values:
-        levels = v.attrs.get("levels")
-        codes = _deparse_vec(RVec("int", list(v.values)))
-        levs = _deparse_vec(RVec("chr", list(levels.values) if isinstance(levels, RVec) else []))
-        return f'structure({codes}, levels = {levs}, class = "factor")'
-    vals = list(v.values)
-    if not vals:
-        return _EMPTY_DEPARSE.get(v.type, "NULL")
-    if len(vals) == 1 and vals[0] is None:
-        return _NA_DEPARSE.get(v.type, "NA")
-
-    def one(x: Any) -> str:
-        if x is None:
-            return "NA"
-        if v.type == "chr":
-            return _encode_string(str(x))
-        if v.type == "lgl":
-            return "TRUE" if x else "FALSE"
-        if v.type == "int":
-            return f"{int(x)}L"
-        return as_character(float(x)) or "NA"
-
-    if (
-        v.type == "int"
-        and len(vals) > 1
-        and None not in vals
-        and all(b - a == 1 for a, b in itertools.pairwise(vals))
-    ):
-        return f"{vals[0]}:{vals[-1]}"
-    if len(vals) == 1:
-        return one(vals[0])
-    return "c(" + ", ".join(one(x) for x in vals) + ")"
 
 
 def _make_unique(names: Sequence[str], sep: str = ".") -> list[str]:
@@ -539,54 +424,118 @@ def _make_unique(names: Sequence[str], sep: str = ".") -> list[str]:
     return out
 
 
+_STRING_ESCAPES = {
+    '"': '\\"', "\\": "\\\\", "\n": "\\n", "\t": "\\t", "\r": "\\r",
+    "\a": "\\a", "\b": "\\b", "\f": "\\f", "\v": "\\v",
+}  # fmt: skip
+
+
+def _encode_string(s: str) -> str:
+    """R ``encodeString(s, quote = '"')`` in a UTF-8 locale."""
+    out = ['"']
+    for c in s:
+        if c in _STRING_ESCAPES:
+            out.append(_STRING_ESCAPES[c])
+        elif ord(c) < 0x20 or ord(c) == 0x7F:
+            out.append(f"\\{ord(c):03o}")
+        elif ord(c) > 0x7F and unicodedata.category(c) in ("Cc", "Cf", "Co", "Cn", "Cs"):
+            out.append(f"\\u{ord(c):04x}" if ord(c) <= 0xFFFF else f"\\U{ord(c):08x}")
+        else:
+            out.append(c)
+    out.append('"')
+    return "".join(out)
+
+
+_NA_DEPARSE = {"chr": "NA_character_", "int": "NA_integer_", "dbl": "NA_real_", "lgl": "NA"}
+_EMPTY_DEPARSE = {
+    "chr": "character(0)",
+    "int": "integer(0)",
+    "dbl": "numeric(0)",
+    "lgl": "logical(0)",
+}
+
+
+def _deparse_arg(v: Any) -> str:
+    """``deparse()`` of an unnamed ``data.frame()`` argument (its column name)."""
+    import pandas as pd
+
+    if isinstance(v, list | tuple):
+        v = _list_series(list(v))
+    elif not isinstance(v, pd.Series):
+        v = _scalar_series(v)
+    return _deparse_vec(v)
+
+
+def _deparse_vec(s: pd.Series[Any]) -> str:
+    """``deparse()`` of an atomic vector."""
+    import pandas as pd
+
+    from metacheck._r import as_character
+
+    kind = _col_kind(s)
+    if kind == "fct":
+        kind = "chr"
+    vals: list[Any] = [None if pd.isna(x) else x for x in s.astype(object).tolist()]
+    if not vals:
+        return _EMPTY_DEPARSE.get(kind, "NULL")
+    if len(vals) == 1 and vals[0] is None:
+        return _NA_DEPARSE.get(kind, "NA")
+
+    def one(x: Any) -> str:
+        if x is None:
+            return "NA"
+        if kind == "chr":
+            return _encode_string(str(x))
+        if kind == "lgl":
+            return "TRUE" if x else "FALSE"
+        if kind == "int":
+            return f"{int(x)}L"
+        return as_character(float(x)) or "NA"
+
+    if (
+        kind == "int"
+        and len(vals) > 1
+        and None not in vals
+        and all(b - a == 1 for a, b in itertools.pairwise(vals))
+    ):
+        return f"{vals[0]}:{vals[-1]}"
+    if len(vals) == 1:
+        return one(vals[0])
+    return "c(" + ", ".join(one(x) for x in vals) + ")"
+
+
 def _is_df(x: Any) -> bool:
     import pandas as pd
 
-    from metacheck.llm._rds import RList, RVec
-
-    if isinstance(x, pd.DataFrame):
-        return True
-    if isinstance(x, RList):
-        cls = x.attrs.get("class")
-        return isinstance(cls, RVec) and "data.frame" in cls.values
-    return False
+    return isinstance(x, pd.DataFrame)
 
 
 def _is_list(x: Any) -> bool:
     """R ``is.list()`` (data frames included)."""
     import pandas as pd
 
-    from metacheck.llm._rds import RList
-
-    return isinstance(x, dict | list | tuple | RList | pd.DataFrame)
+    return isinstance(x, dict | list | tuple | pd.DataFrame)
 
 
 def _list_items(x: Any) -> list[tuple[str | None, Any]]:
     import pandas as pd
 
-    from metacheck.llm._rds import RList
-
     if isinstance(x, dict):
         return list(x.items())
     if isinstance(x, pd.DataFrame):
         return [(str(c), x[c]) for c in x.columns]
-    if isinstance(x, RList):
-        names = x.names
-        return list(zip(names if names is not None else [None] * len(x), x.values, strict=True))
     return [(None, v) for v in x]
 
 
-def _scalar_series(v: Any, n: int = 1) -> pd.Series:
+def _scalar_series(v: Any, n: int = 1) -> pd.Series[Any]:
     import pandas as pd
-
-    from metacheck.llm._rds import RInt
 
     if v is None or v is pd.NA:
         return pd.Series([pd.NA] * n, dtype="boolean")
     if isinstance(v, bool):
         return pd.Series([v] * n, dtype="boolean")
-    if isinstance(v, RInt | int):
-        return pd.Series([int(v)] * n, dtype="Int64")
+    if isinstance(v, int):
+        return pd.Series([v] * n, dtype="Int64")
     if isinstance(v, float):
         return pd.Series([v] * n, dtype="float64")
     return pd.Series([str(v)] * n, dtype="string")
@@ -598,7 +547,7 @@ def _is_scalar(v: Any) -> bool:
     return v is None or v is pd.NA or isinstance(v, str | bool | int | float)
 
 
-def _list_series(vals: list[Any]) -> pd.Series:
+def _list_series(vals: list[Any]) -> pd.Series[Any]:
     """An R atomic vector from Python scalars (``c(...)`` coercion rules)."""
     import pandas as pd
 
@@ -615,41 +564,17 @@ def _list_series(vals: list[Any]) -> pd.Series:
     return pd.Series([None if v is None else as_character(v) for v in na], dtype="string")
 
 
-def _vec_series(v: Any) -> pd.Series:
-    import pandas as pd
-
-    from metacheck.llm._rds import RVec, _to_series
-
-    if isinstance(v, RVec):
-        return _to_series(v).reset_index(drop=True)
-    if isinstance(v, pd.Series):
-        return v.reset_index(drop=True)
-    return _scalar_series(v)
-
-
-def _df_to_frame(x: Any) -> pd.DataFrame:
-    import pandas as pd
-
-    from metacheck.llm._rds import _to_frame
-
-    if isinstance(x, pd.DataFrame):
-        return x.reset_index(drop=True)
-    return _to_frame(x)
-
-
 def _as_data_frame(x: Any, optional: bool = False) -> pd.DataFrame:
     """R ``as.data.frame()`` of a list (``data.frame(...)`` column semantics)."""
     import pandas as pd
 
-    from metacheck.llm._rds import RList, RVec
-
     if _is_df(x):
-        return _df_to_frame(x)
+        return cast("pd.DataFrame", x.reset_index(drop=True))
     if not _is_list(x):
-        s = _vec_series(x)
+        s = x.reset_index(drop=True) if isinstance(x, pd.Series) else _scalar_series(x)
         return pd.DataFrame({"result": s})
     names: list[str] = []
-    cols: list[pd.Series] = []
+    cols: list[pd.Series[Any]] = []
     nrows: list[int] = []
     groups: list[tuple[int, int]] = []  # column span of each argument
     for name, v in _list_items(x):
@@ -660,19 +585,15 @@ def _as_data_frame(x: Any, optional: bool = False) -> pd.DataFrame:
             continue
         if (
             _is_df(v)
-            or isinstance(v, dict)
-            or (isinstance(v, RList) and not _is_df(v))
+            or isinstance(v, dict | _RList)
             or (isinstance(v, list | tuple) and not all(_is_scalar(e) for e in v))
         ):
             # a list/data frame argument: its columns (unnamed elements are
             # named by deparse()), prefixed with the argument's name when it
             # has more than one
-            sub = _df_to_frame(v) if _is_df(v) else _as_data_frame(v, optional=True)
+            sub = _as_data_frame(v, optional=True)
             inner = [str(c) for c in sub.columns]
-            if len(inner) > 1:
-                labels = inner if not name else [f"{name}.{c}" for c in inner]
-            else:
-                labels = inner
+            labels = inner if len(inner) <= 1 or not name else [f"{name}.{c}" for c in inner]
             for j, lab in enumerate(labels):  # by position: names may repeat
                 cols.append(sub.iloc[:, j].reset_index(drop=True))
                 names.append(lab)
@@ -681,8 +602,8 @@ def _as_data_frame(x: Any, optional: bool = False) -> pd.DataFrame:
             if isinstance(v, list | tuple):
                 # a Python list of scalars is an atomic vector (as jsonlite/yaml simplify)
                 s = _list_series(list(v))
-            elif isinstance(v, RVec | pd.Series):
-                s = _vec_series(v)
+            elif isinstance(v, pd.Series):
+                s = v.reset_index(drop=True)
             else:
                 s = _scalar_series(v)
             cols.append(s)
@@ -696,25 +617,20 @@ def _as_data_frame(x: Any, optional: bool = False) -> pd.DataFrame:
         if n < nr:
             if n > 0 and nr % n == 0:
                 for j in range(start, end):
-                    reps = nr // n
-                    s = cols[j]
-                    cols[j] = pd.concat([s] * reps, ignore_index=True)
+                    cols[j] = pd.concat([cols[j]] * (nr // n), ignore_index=True)
                 continue
-            uniq: list[int] = []
-            for k in nrows:
-                if k not in uniq:
-                    uniq.append(k)
+            uniq = list(dict.fromkeys(nrows))
             raise ValueError(
                 "arguments imply differing number of rows: " + ", ".join(str(k) for k in uniq)
             )
     if not optional:
         names = _make_names(names)
     out = pd.DataFrame(dict(enumerate(cols)))
-    out.columns = names
+    out.columns = pd.Index(names)
     return out
 
 
-def _col_kind(s: pd.Series) -> str:
+def _col_kind(s: pd.Series[Any]) -> str:
     import pandas as pd
 
     dt = s.dtype
@@ -759,7 +675,7 @@ def _bind_rows_r(frames: Sequence[Any]) -> pd.DataFrame:
             if c not in columns:
                 columns.append(c)
     total = sum(len(f) for f in parts)
-    out: dict[str, pd.Series] = {}
+    out: dict[str, pd.Series[Any]] = {}
     for c in columns:
         pieces = []
         kinds = []
@@ -823,7 +739,7 @@ def _combine_kinds(kinds: list[str], col: str) -> str:
     )
 
 
-def _convert_kind(s: pd.Series, target: str) -> pd.Series:
+def _convert_kind(s: pd.Series[Any], target: str) -> pd.Series[Any]:
     import pandas as pd
 
     if target == "fct":
@@ -853,7 +769,7 @@ def _unnest_result(result: Any) -> pd.DataFrame:
     import pandas as pd
 
     if _is_df(result):
-        return _df_to_frame(result)
+        return cast("pd.DataFrame", result.reset_index(drop=True))
     if _is_list(result) and len(result) == 1:
         inner = _list_items(result)[0][1]
         if _is_list(inner) and not _is_df(inner):
@@ -861,8 +777,7 @@ def _unnest_result(result: Any) -> pd.DataFrame:
             if len(items) == 0:
                 return pd.DataFrame()
             if all(_is_list(item) for item in items):
-                frames = [_as_data_frame(_null_to_na(item)) for item in items]
-                return _bind_rows_r(frames)
+                return _bind_rows_r([_as_data_frame(_null_to_na(item)) for item in items])
     if isinstance(result, dict | list | tuple):
         result = _null_to_na(result)
     elif result is None:
@@ -873,30 +788,29 @@ def _unnest_result(result: Any) -> pd.DataFrame:
 def _as_rlists(x: Any) -> Any:
     """A structured result with its Python lists as R lists.
 
-    ellmer's results hold atomic vectors as :class:`RVec`; every Python list
-    in them (a raw JSON array, an array of arrays) is an R ``list()``, which
-    ``as.data.frame()`` spreads over columns rather than rows.
+    Converted results hold atomic vectors as :class:`pandas.Series`; every
+    Python list left in them (a raw JSON array, an array of arrays) is an R
+    ``list()``, which ``as.data.frame()`` spreads over columns rather than rows.
     """
-    from metacheck.llm._rds import RList
-
     if isinstance(x, dict):
         return {k: _as_rlists(v) for k, v in x.items()}
     if isinstance(x, list | tuple):
-        return RList([_as_rlists(v) for v in x])
-    if isinstance(x, RList) and not _is_df(x):
-        return RList([_as_rlists(v) for v in x.values], x.attrs)
+        return _RList([_as_rlists(v) for v in x])
     return x
 
 
 def _null_to_na(x: Any) -> Any:
-    from metacheck.llm._rds import RList, RVec
+    import pandas as pd
+
+    def na(v: Any) -> Any:
+        return pd.Series([pd.NA], dtype="boolean") if v is None else v
 
     if isinstance(x, dict):
-        return {k: RVec("lgl", [None]) if v is None else v for k, v in x.items()}
+        return {k: na(v) for k, v in x.items()}
+    if isinstance(x, _RList):
+        return _RList(na(v) for v in x)
     if isinstance(x, list | tuple):
-        return [RVec("lgl", [None]) if v is None else v for v in x]
-    if isinstance(x, RList) and not _is_df(x):
-        return RList([RVec("lgl", [None]) if v is None else v for v in x.values], x.attrs)
+        return [na(v) for v in x]
     return x
 
 
@@ -907,7 +821,7 @@ def _left_join(
     import numpy as np
     import pandas as pd
 
-    def keys(s: pd.Series) -> list[Any]:
+    def keys(s: pd.Series[Any]) -> list[Any]:
         kind = _col_kind(s)
         return [
             None if pd.isna(v) else (str(v) if kind in ("chr", "fct", "list") else v)
@@ -950,7 +864,7 @@ def _left_join(
             yj.append(-1)
     xpos = np.asarray(xi, dtype=np.intp)
     ypos = np.asarray(yj, dtype=np.intp)
-    out: dict[str, pd.Series] = {}
+    out: dict[str, pd.Series[Any]] = {}
     ycols = [c for c in y.columns if c != by]
     for c in x.columns:
         name = c + suffix[0] if (c in ycols and c != by) else c
@@ -961,7 +875,7 @@ def _left_join(
     return pd.DataFrame(out)
 
 
-def _take_fill(s: pd.Series, pos: Any) -> pd.Series:
+def _take_fill(s: pd.Series[Any], pos: Any) -> pd.Series[Any]:
     import numpy as np
     import pandas as pd
 
@@ -973,194 +887,6 @@ def _take_fill(s: pd.Series, pos: Any) -> pd.Series:
         return pd.Series([pd.NA if kind != "dbl" else np.nan] * len(pos), dtype=dtype)
     arr = s.array
     return pd.Series(arr.take(pos, allow_fill=True), dtype=s.dtype)
-
-
-# ---------------------------------------------------------------------------
-# model listing
-# ---------------------------------------------------------------------------
-
-#: Providers metacheck reviews and supports (an allowlist, see R/llm.R).
-_LLM_ALLOWED_PLATFORMS = (
-    "anthropic", "aws_bedrock", "claude", "deepseek", "google_gemini", "google_vertex", "groq",
-    "lmstudio", "mistral", "ollama", "openai", "portkey", "vllm",
-)  # fmt: skip
-
-#: ``names(funcs)`` in llm_model_list(): ellmer 0.5.0's export order, allowlisted.
-_PLATFORM_ORDER = (
-    "groq", "anthropic", "vllm", "deepseek", "mistral", "claude", "openai", "google_gemini",
-    "aws_bedrock", "lmstudio", "ollama", "portkey", "google_vertex",
-)  # fmt: skip
-
-
-def _platform_funcs() -> dict[str, Any]:
-    from metacheck.llm import providers as p
-
-    def unsupported(name: str) -> Any:
-        def f() -> Any:
-            raise p.LLMError(f"pytacheck does not implement models_{name}()")
-
-        return f
-
-    funcs: dict[str, Any] = {
-        "anthropic": p.models_anthropic,
-        "claude": p.models_anthropic,
-        "deepseek": p.models_deepseek,
-        "google_gemini": p.models_google_gemini,
-        "google_vertex": unsupported("google_vertex"),
-        "aws_bedrock": unsupported("aws_bedrock"),
-        "groq": _llm_model_list_groq,
-        "lmstudio": p.models_lmstudio,
-        "mistral": p.models_mistral,
-        "ollama": lambda: p.models_ollama(),
-        "openai": p.models_openai,
-        "portkey": p.models_portkey,
-        "vllm": lambda: p.models_vllm(),  # type: ignore[call-arg] # no base_url: errors, as in R
-    }
-    return {k: funcs[k] for k in _PLATFORM_ORDER if k in _LLM_ALLOWED_PLATFORMS}
-
-
-def llm_model_list(platform: str | Sequence[str] | None = None) -> pd.DataFrame:
-    """Port of ``llm_model_list()``: available models for each (allowlisted) platform.
-
-    Platforms whose API key is not set, or that cannot be reached, are
-    skipped silently; the result has ``platform`` and ``id`` first.
-    """
-    import pandas as pd
-
-    from metacheck.utils import online
-
-    funcs = _platform_funcs()
-    plats = (
-        list(funcs)
-        if platform is None
-        else ([platform] if isinstance(platform, str) else list(platform))
-    )
-    invalid = list(dict.fromkeys(p for p in plats if p not in funcs))  # setdiff(): unique
-    if invalid:
-        raise ValueError("Invalid platforms: " + ", ".join(invalid))
-    frames = []
-    for p in plats:
-        if p != "ollama" and not online():
-            continue
-        try:
-            if (
-                p in ("google_gemini", "google_vertex")
-                and os.environ.get("GOOGLE_API_KEY", "") == ""
-            ):
-                continue
-            m = funcs[p]()
-            if not isinstance(m, pd.DataFrame):
-                continue
-            m = m.copy()
-            m["platform"] = pd.Series([p] * len(m), index=m.index, dtype="string")
-            frames.append(m.reset_index(drop=True))
-        except Exception:  # noqa: S112 - R: tryCatch(..., error = \(e) {})
-            continue
-    all_models = _bind_rows_r(frames) if frames else pd.DataFrame()
-    if len(all_models):
-        start = ["platform", "id"]
-        rest = [c for c in all_models.columns if c not in start]
-        all_models = all_models.loc[:, start + rest]
-    return all_models
-
-
-def _llm_model_list_groq() -> pd.DataFrame:
-    """Port of ``.llm_model_list_groq()``: active Groq models (no whisper/vision)."""
-    import datetime as dt
-
-    import pandas as pd
-
-    from metacheck._r import grepl
-    from metacheck.llm.providers import perform, resp_body_json
-
-    key = os.environ.get("GROQ_API_KEY", "")
-    resp = perform(
-        "GET",
-        "https://api.groq.com/openai/v1/models",
-        headers={"Authorization": f"Bearer {key}"},
-        max_tries=1,
-    )
-    data = resp_body_json(resp).get("data") or []
-    rows = [{k: v for k, v in d.items() if v is not None} for d in data if isinstance(d, dict)]
-    models = _bind_rows_r([_as_data_frame(r) for r in rows]) if rows else pd.DataFrame()
-    created = models["created"].astype(object).tolist() if "created" in models.columns else []
-    models["created_at"] = pd.Series(
-        [
-            None
-            if v is None or v is pd.NA
-            # as.POSIXct(created) |> format("%Y-%m-%d"): the date in the local time zone
-            else dt.datetime.fromtimestamp(float(v)).date()
-            for v in created
-        ],
-        dtype=object,
-    )
-    ids = models["id"].astype(object).tolist()
-    keep = [
-        bool(a) if a is not pd.NA and a is not None else False
-        for a in models["active"].astype(object).tolist()
-    ]
-    drop = grepl("whisper|vision", ids)
-    rows_keep = [k and not d for k, d in zip(keep, drop, strict=True)]
-    cols = [c for c in models.columns if c not in ("active", "created")]
-    return models.loc[rows_keep, cols]
-
-
-# ---------------------------------------------------------------------------
-# ollama native API
-# ---------------------------------------------------------------------------
-
-
-def _llm_ollama_native(
-    text: str | None,
-    system_prompt: str,
-    model: str | None = None,
-    think: bool = False,
-    options: Mapping[str, Any] | None = None,
-    base_url: str | None = None,
-    timeout: float | None = None,
-) -> Any:
-    """Port of ``.llm_ollama_native()``: Ollama's ``/api/chat`` (honours ``think = FALSE``).
-
-    Returns the trimmed reply. A reply without ``message.content`` is an error
-    (metacheck returned ``trimws(NULL)``, ``character(0)``, so ``llm()`` failed
-    joining the answers of several texts; U19), which ``llm()`` records for
-    that text.
-    """
-    from metacheck._r import as_character, trimws
-    from metacheck.llm.providers import _r_vec, perform, resp_body_json
-
-    if base_url is None:
-        base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-    if timeout is None:
-        timeout = llm_timeout()
-    if think is False:
-        system_prompt = "/nothink\n\n" + system_prompt
-    opts = {k: _r_vec(v) for k, v in (options or {}).items()} or None
-    body = {
-        "model": model,
-        "think": think,
-        "stream": False,
-        "options": opts,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": text},
-        ],
-    }
-    resp = perform("POST", base_url + "/api/chat", body=body, timeout=timeout, max_tries=1)
-    content = (resp_body_json(resp).get("message") or {}).get("content")
-    if content is None:
-        raise RuntimeError("The Ollama reply has no message content.")
-    return trimws(content if isinstance(content, str) else as_character(content))
-
-
-def _ollama_up(base_url: str) -> bool:
-    from metacheck.llm.providers import perform
-
-    try:
-        perform("GET", base_url + "/api/version", timeout=3, max_tries=1)
-    except Exception:
-        return False
-    return True
 
 
 # ---------------------------------------------------------------------------
@@ -1250,7 +976,6 @@ def llm(
     model: Any = _MISSING,
     params: Mapping[str, Any] | None = None,
     phase: str | None = None,
-    capture_reasoning: bool = False,
 ) -> pd.DataFrame:
     """Query an LLM (port of ``llm()``).
 
@@ -1271,12 +996,10 @@ def llm(
         ``"provider"`` or ``"provider/model"``; defaults to :func:`llm_model`.
     params
         Model parameters (``temperature``, ``max_tokens``, ``seed``,
-        ``top_p``, ``think``, ...), as ``ellmer::params()``.
+        ``top_p``, ``top_k``, ``stop_sequences``, ...). A parameter the
+        provider's SDK does not know is sent to the provider as given.
     phase
         A label for the calling step (progress messages only).
-    capture_reasoning
-        For structured calls, add a ``.reasoning`` column with the provider's
-        reasoning text (``NA`` when none was returned).
 
     Returns
     -------
@@ -1289,8 +1012,6 @@ def llm(
 
     from metacheck._r import plural, trimws
     from metacheck.llm import _backend as backend
-    from metacheck.llm import providers as prov
-    from metacheck.llm._rds import EllmerOutput
     from metacheck.llm.cache import _llm_cache_get, _llm_cache_key, _llm_cache_put, llm_cache
     from metacheck.llm.types import as_type, convert_from_type
 
@@ -1329,47 +1050,17 @@ def llm(
     if _r_dollar(params_list, "temperature") is None:
         params_list["temperature"] = 0.0
     if _r_dollar(params_list, "max_tokens") is None:
-        mt = llm_max_tokens()
-        params_list["max_tokens"] = mt if mt is not None else 4096.0
+        params_list["max_tokens"] = llm_max_tokens() or 4096
 
     reasoning = _llm_apply_reasoning(params_list, model, api_args={})
     params_list = reasoning["params_list"]
-    reasoning_api_args = reasoning["api_args"]
-
-    try:
-        ellmer_params = prov.params(**params_list)
-    except (ValueError, TypeError) as e:
-        raise ValueError(f"Misspecified params argument:\n{e}") from None
+    api_args = reasoning["api_args"]
 
     structured = type is not None
     type_obj = as_type(type) if structured else None
-
-    use_ollama_native = False
-    ollama_model: str | None = None
-    ollama_options: dict[str, Any] = {}
-    if model.startswith("ollama"):
-        use_ollama_native = _r_dollar(params_list, "think") is not True and not structured
-        if use_ollama_native:
-            ollama_options = {k: v for k, v in params_list.items() if k != "think"}
-        ollama_base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-        if not _ollama_up(ollama_base_url):
-            raise RuntimeError(
-                f"Ollama is not running at {ollama_base_url}. Start ollama and try again."
-            )
-        from metacheck._r import sub
-
-        ollama_model = sub("^ollama\\/?", "", [model])[0]
-        models = prov.models_ollama(ollama_base_url)
-        ids = [str(i) for i in models["id"].tolist()]
-        if not ids:
-            raise RuntimeError("Ollama is installed, but there are no models loaded")
-        if not ollama_model:
-            ollama_model = ids[0]
-            _message(f'Using model = "{ollama_model}".')
-        elif ollama_model not in ids:
-            raise RuntimeError(
-                f"Ollama is installed, but the model {ollama_model} is not available"
-            )
+    system = (
+        "\n\n".join(system_prompt) if isinstance(system_prompt, list | tuple) else system_prompt
+    )
 
     # R shows a progress bar labelled with the phase (or a generic label) and model
     label = phase if phase else ("Extracting data" if structured else "Querying LLM")
@@ -1379,62 +1070,37 @@ def llm(
 
     def one(i: int, ut: str | None) -> Any:
         key = (
-            _llm_cache_key(ut, system_prompt, type_obj, model, ellmer_params) if use_cache else None
+            _llm_cache_key(ut, system, type_obj, model, params_list, api_args)
+            if use_cache
+            else None
         )
-        if key is not None:
-            hit = _llm_cache_get(key)
-            if hit is not None:
-                return _keyed(hit.get("df"), i)
         try:
-            if use_ollama_native:
-                out: Any = {
-                    "answer": _llm_ollama_native(
-                        ut, system_prompt, ollama_model, think=False, options=ollama_options
-                    )
-                }
-                if key is not None:
-                    _llm_cache_put(key, out)
-                return out
-            system = (
-                "\n\n".join(system_prompt)
-                if isinstance(system_prompt, list | tuple)
-                else system_prompt
-            )
+            hit = _llm_cache_get(key) if key is not None else None
+            if hit is not None:
+                reply = hit["reply"]
+                if not structured:
+                    return {"answer": trimws(reply)}
+                return _keyed(_unnest_result(_as_rlists(convert_from_type(reply, type_obj))), i)
             if not structured:
-                # chat$chat() returns an "ellmer_output"; trimws() keeps the class
-                out = {
-                    "answer": EllmerOutput(
-                        trimws(
-                            backend.complete(
-                                model, system, ut, None, params_list, reasoning_api_args
-                            )
-                        )
-                    )
-                }
+                reply = backend.complete(model, system, cast(str, ut), None, params_list, api_args)
                 if key is not None:
-                    _llm_cache_put(key, out)
-                return out
+                    _llm_cache_put(key, reply)
+                return {"answer": trimws(reply)}
             # Structured output: a reply that fails JSON generation/validation is
             # asked for again, up to five attempts in all.
             for attempt in range(1, 6):
                 try:
-                    data = backend.complete(
-                        model, system, ut, type_obj, params_list, reasoning_api_args
+                    reply = backend.complete(
+                        model, system, cast(str, ut), type_obj, params_list, api_args
                     )
-                    result = convert_from_type(data, type_obj)
+                    result = convert_from_type(reply, type_obj)
                     break
                 except Exception as e:
                     if attempt == 5 or not _llm_json_retryable(e):
                         raise
-            df = _unnest_result(_as_rlists(result))
-            if len(df) > 0:
-                df[".join_key."] = pd.Series([ut] * len(df), dtype="string")
-            thinking = None
-            if capture_reasoning and len(df) > 0:
-                df[".reasoning"] = pd.Series([thinking] * len(df), dtype="string")
             if key is not None:
-                _llm_cache_put(key, df, raw=result, thinking=_na_chr(thinking))
-            return _keyed(df, i)
+                _llm_cache_put(key, reply)
+            return _keyed(_unnest_result(_as_rlists(result)), i)
         except Exception as e:
             msg = _llm_error_message(e)
             if _llm_is_systemic_error(e):
@@ -1480,14 +1146,13 @@ def llm(
     x = text_df.copy()
     x[_ROW_KEY] = pd.Series(row_keys, dtype="Int64", index=text_df.index)
     if structured:
-        response_df = _bind_rows_r([_as_frame_response(r) for r in responses])
-        response_df = response_df.drop(columns=[".join_key."], errors="ignore")
+        response_df = _bind_rows_r([r if _is_df(r) else _as_data_frame(r) for r in responses])
         if _ROW_KEY not in response_df.columns:
             response_df[_ROW_KEY] = pd.Series([], dtype="Int64")
         answer_df = _left_join(x, response_df, _ROW_KEY, suffix=("", ".extracted"))
     else:
         frames = []
-        for k, r in enumerate(_plain_answers(responses)):
+        for k, r in enumerate(responses):
             f = _as_data_frame(r)
             f[_ROW_KEY] = pd.Series([k] * len(f), dtype="Int64", index=f.index)
             frames.append(f)
@@ -1545,41 +1210,13 @@ def _unique_key(v: Any) -> Any:
     return ("na",) if v is None else (type(v).__name__, v)
 
 
-def _keyed(df: Any, i: int) -> Any:
+def _keyed(df: pd.DataFrame, i: int) -> pd.DataFrame:
     """A structured reply keyed by the position *i* of its text (not by the text)."""
     import pandas as pd
 
-    if not isinstance(df, pd.DataFrame):
-        return df
-    df = df.drop(columns=[".join_key."], errors="ignore")
     if len(df) > 0:
         df[_ROW_KEY] = pd.Series([i] * len(df), dtype="Int64", index=df.index)
     return df
-
-
-def _plain_answers(responses: Sequence[Any]) -> list[Any]:
-    """Answers that ``bind_rows()`` can combine.
-
-    metacheck's ``bind_rows()`` failed when some texts were answered (an
-    ``ellmer_output``) and others failed (``NA``) or came from Ollama (a plain
-    string), losing every answer (U19); mixed answers become plain strings.
-    """
-    import pandas as pd
-
-    from metacheck.llm._rds import EllmerOutput
-
-    answers = [r.get("answer") if isinstance(r, dict) else None for r in responses]
-    if all(isinstance(a, EllmerOutput) for a in answers):
-        return list(responses)
-    out = []
-    for r in responses:
-        a = r.get("answer") if isinstance(r, dict) else None
-        if isinstance(a, EllmerOutput):
-            r = {**r, "answer": str(a)}
-        elif a is None:
-            r = {**r, "answer": pd.NA}
-        out.append(r)
-    return out
 
 
 def _llm_workers() -> int:
@@ -1596,20 +1233,6 @@ def _llm_workers() -> int:
         return max(1, int(value))
     except (TypeError, ValueError):
         return 1
-
-
-def _na_chr(x: str | None) -> Any:
-    from metacheck.llm._rds import RVec
-
-    return RVec("chr", [x])
-
-
-def _as_frame_response(r: Any) -> pd.DataFrame:
-    import pandas as pd
-
-    if isinstance(r, pd.DataFrame):
-        return r
-    return _as_data_frame(r)
 
 
 _init_options()

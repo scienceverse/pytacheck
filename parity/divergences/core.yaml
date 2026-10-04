@@ -30,24 +30,15 @@
 "llm_review/llm.input.mixed_order_1": *mixed
 "llm_review/llm.input.mixed_order_2": *mixed
 "llm_review/llm.input.mixed_order_3": *mixed
-"llm_review/reply.groq_plain": *mixed
-"llm_review/reply.gemini_plain": *mixed
 "llm_review/llm.input.text_col_answer":
   kind: r_bug_fixed
   ref: U19
   reason: with text_col = "answer" the texts and the answers are both kept (answer.x, answer.y); R overwrites the answers with the texts
-"llm_review/ollama_native.reply.no_message": &nocontent
-  kind: r_bug_fixed
-  ref: U19
-  reason: an Ollama reply without message.content is an error for that text (R returns character(0), so llm() gets NA or fails joining the answers of several texts)
-"llm_review/ollama_native.reply.no_content": *nocontent
-"llm_review/llm.ollama.no_content.mixed": *nocontent
-"llm_review/llm.ollama.no_content.mixed_first": *nocontent
-"llm_review/llm.ollama.no_content.single": *nocontent
-"llm_review/llm.ollama.no_content.repeated": *nocontent
-"llm_review/llm.ollama.no_content.all_empty": *nocontent
-"llm_review/llm.ollama.no_content.two_of_four": *nocontent
-"llm_review/llm.ollama.no_content.frame": *nocontent
+"llm/llm.groq.malformed": &json_text
+  kind: deliberate
+  ref: D63
+  reason: "the error text of a reply that is not valid JSON is Python's json module's (R: jsonlite's lexical or parse error); the reply is still asked for again, five attempts in all"
+"llm_review/structured.probe_truncated": *json_text
 
 # Cases of other lanes' areas that differ from R because of core-lane fixes
 # (text_search(), module_run(), module_report(), llm(), pubpeer_comments()).

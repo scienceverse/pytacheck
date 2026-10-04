@@ -24,14 +24,12 @@ LLM_ENV_R = "c(GROQ_API_KEY = 'test-key')"
 
 
 def llm_options() -> dict[str, Any]:
-    from metacheck.llm._rds import RInt
-
     return {
         "metacheck.llm.use": True,
         "metacheck.llm.cache": False,
         "metacheck.llm_reasoning": None,
         "metacheck.llm_max_tokens": None,
-        "metacheck.llm_max_calls": RInt(30),
+        "metacheck.llm_max_calls": 30,
         "metacheck.llm.model": "groq/test-model",
     }
 

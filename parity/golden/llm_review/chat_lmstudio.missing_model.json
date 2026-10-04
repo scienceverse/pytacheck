@@ -1,9 +1,0 @@
-{
-  "id": "chat_lmstudio.missing_model",
-  "ok": false,
-  "error": "Must specify `model`.\nℹ Locally available models: \"qwen2.5-7b\".",
-  "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
-  "r_version": "R version 4.5.3 (2026-03-11)"
-}

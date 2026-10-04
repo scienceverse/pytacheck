@@ -196,7 +196,6 @@ from metacheck.llm.core import llm as llm
 from metacheck.llm.core import llm_max_calls as llm_max_calls
 from metacheck.llm.core import llm_max_tokens as llm_max_tokens
 from metacheck.llm.core import llm_model as llm_model
-from metacheck.llm.core import llm_model_list as llm_model_list
 from metacheck.llm.core import llm_reasoning as llm_reasoning
 from metacheck.llm.core import llm_timeout as llm_timeout
 from metacheck.llm.core import llm_use as llm_use

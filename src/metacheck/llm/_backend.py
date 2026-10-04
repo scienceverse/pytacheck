@@ -28,7 +28,7 @@ import textwrap
 import threading
 import warnings
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 __all__ = ["LLMError", "complete"]
@@ -71,26 +71,32 @@ class LLMError(RuntimeError):
 # names: what ``llm(params = list(...))`` takes); a parameter missing from a
 # provider's table is dropped with a warning
 _CHAT = {
-    "temperature": "temperature",
-    "top_p": "top_p",
-    "top_k": "top_k",
-    "frequency_penalty": "frequency_penalty",
-    "presence_penalty": "presence_penalty",
-    "seed": "seed",
-    "max_tokens": "max_completion_tokens",
-    "log_probs": "logprobs",
+    "temperature": "temperature", "top_p": "top_p", "top_k": "top_k",
+    "frequency_penalty": "frequency_penalty", "presence_penalty": "presence_penalty",
+    "seed": "seed", "max_tokens": "max_completion_tokens", "log_probs": "logprobs",
     "stop_sequences": "stop",
-}
+}  # fmt: skip
+_ANTHROPIC = {
+    "temperature": "temperature", "top_p": "top_p", "top_k": "top_k", "max_tokens": "max_tokens",
+    "stop_sequences": "stop_sequences", "reasoning_tokens": "budget_tokens",
+    "reasoning_effort": "reasoning_effort",
+}  # fmt: skip
+_GEMINI = {
+    "temperature": "temperature", "top_p": "top_p", "top_k": "top_k",
+    "frequency_penalty": "frequency_penalty", "presence_penalty": "presence_penalty",
+    "seed": "seed", "max_tokens": "max_output_tokens", "log_probs": "response_logprobs",
+    "stop_sequences": "stop_sequences", "reasoning_tokens": "thinking_budget",
+    "reasoning_effort": "thinking_level",
+}  # fmt: skip
+_RESPONSES = {  # no seed, stop or presence penalty
+    "temperature": "temperature", "top_p": "top_p", "max_tokens": "max_output_tokens",
+    "reasoning_effort": "reasoning_effort",
+}  # fmt: skip
 
 
-def _chat_params(drop: tuple[str, ...] = (), **rename: str | None) -> dict[str, str]:
-    table = {k: v for k, v in _CHAT.items() if k not in drop}
-    for k, v in rename.items():
-        if v is None:
-            table.pop(k, None)
-        else:
-            table[k] = v
-    return table
+def _chat_params(drop: tuple[str, ...] = (), **names: str) -> dict[str, str]:
+    """The chat-completions table minus *drop*, with *names* as request names (added if new)."""
+    return {k: v for k, v in _CHAT.items() if k not in drop} | names
 
 
 @dataclass(frozen=True)
@@ -99,173 +105,52 @@ class _Provider:
     family: str  # chat | responses | anthropic | gemini
     host: str  # the host rate limits are kept for
     params: Mapping[str, str]
+    key_env: str
     base_url: str | None = None
-    key_env: str | None = None
-    key_required: bool = True
     default_model: str | None = None
     schema: str = "openai"  # the schema dialect: openai | ollama | gemini | generic
-    headers: Mapping[str, str] = field(default_factory=dict)
+    key_required: bool = True
     transient: tuple[int, ...] = (429, 503)
 
 
-_ANTHROPIC_PARAMS = {
-    "temperature": "temperature",
-    "top_p": "top_p",
-    "top_k": "top_k",
-    "max_tokens": "max_tokens",
-    "stop_sequences": "stop_sequences",
-    "reasoning_tokens": "budget_tokens",
-    "reasoning_effort": "reasoning_effort",
-}
-_GEMINI_PARAMS = {
-    "temperature": "temperature",
-    "top_p": "top_p",
-    "top_k": "top_k",
-    "frequency_penalty": "frequency_penalty",
-    "presence_penalty": "presence_penalty",
-    "seed": "seed",
-    "max_tokens": "max_output_tokens",
-    "log_probs": "response_logprobs",
-    "stop_sequences": "stop_sequences",
-    "reasoning_tokens": "thinking_budget",
-    "reasoning_effort": "thinking_level",
-}
-_OPENAI_PARAMS = {  # the Responses API: no seed, stop or presence penalty
-    "temperature": "temperature",
-    "top_p": "top_p",
-    "max_tokens": "max_output_tokens",
-    "reasoning_effort": "reasoning_effort",
-}
-
-_PROVIDERS: dict[str, _Provider] = {
-    p.name: p
-    for p in (
-        _Provider(
-            "groq",
-            "chat",
-            "api.groq.com",
-            _chat_params(),
-            "https://api.groq.com/openai/v1",
-            "GROQ_API_KEY",
-            default_model="openai/gpt-oss-20b",
-        ),
-        _Provider(
-            "openai",
-            "responses",
-            "api.openai.com",
-            _OPENAI_PARAMS,
-            None,
-            "OPENAI_API_KEY",
-            default_model="gpt-5.6-terra",
-        ),
-        _Provider(
-            "deepseek",
-            "chat",
-            "api.deepseek.com",
-            _chat_params(("seed", "top_k"), max_tokens="max_tokens"),
-            "https://api.deepseek.com",
-            "DEEPSEEK_API_KEY",
-            default_model="deepseek-v4-flash",
-        ),
-        _Provider(
-            "mistral",
-            "chat",
-            "api.mistral.ai",
-            _chat_params(("top_k",), max_tokens="max_tokens", seed="random_seed"),
-            "https://api.mistral.ai/v1",
-            "MISTRAL_API_KEY",
-            default_model="mistral-large-latest",
-        ),
-        _Provider(
-            "openrouter",
-            "chat",
-            "openrouter.ai",
-            _chat_params(max_tokens="max_tokens"),
-            "https://openrouter.ai/api/v1",
-            "OPENROUTER_API_KEY",
-            default_model="gpt-5.6-terra",
-        ),
-        _Provider(
-            "huggingface",
-            "chat",
-            "router.huggingface.co",
-            _chat_params(),
-            "https://router.huggingface.co/v1/",
-            "HUGGINGFACE_API_KEY",
-            default_model="Qwen/Qwen3-235B-A22B-Instruct-2507",
-        ),
-        _Provider(
-            "perplexity",
-            "chat",
-            "api.perplexity.ai",
-            _chat_params(("seed", "log_probs", "stop_sequences"), max_tokens="max_tokens"),
-            "https://api.perplexity.ai/",
-            "PERPLEXITY_API_KEY",
-            default_model="sonar",
-        ),
-        _Provider(
-            "portkey",
-            "chat",
-            "api.portkey.ai",
-            _chat_params(),
-            "https://api.portkey.ai/v1",
-            "PORTKEY_API_KEY",
-        ),
-        _Provider(
-            "cloudflare",
-            "chat",
-            "api.cloudflare.com",
-            _chat_params(),
-            None,
-            "CLOUDFLARE_API_KEY",
-            default_model="@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-        ),
-        _Provider("azure_openai", "chat", "", _chat_params(), None, "AZURE_OPENAI_API_KEY"),
-        _Provider("vllm", "chat", "", _chat_params(), None, "VLLM_API_KEY", key_required=False),
-        _Provider(
-            "lmstudio",
-            "chat",
-            "localhost",
-            _chat_params(("log_probs",), max_tokens="max_tokens"),
-            None,
-            "LMSTUDIO_API_KEY",
-            key_required=False,
-        ),
-        _Provider(
-            "ollama",
-            "chat",
-            "localhost",
-            _chat_params(
-                ("log_probs",), max_tokens="max_tokens", reasoning_effort="reasoning_effort"
-            ),
-            None,
-            "OLLAMA_API_KEY",
-            key_required=False,
-            schema="ollama",
-        ),
-        _Provider(
-            "anthropic",
-            "anthropic",
-            "api.anthropic.com",
-            _ANTHROPIC_PARAMS,
-            None,
-            "ANTHROPIC_API_KEY",
-            default_model="claude-sonnet-5",
-            schema="generic",
-            transient=(429, 503, 529),
-        ),
-        _Provider(
-            "google_gemini",
-            "gemini",
-            "generativelanguage.googleapis.com",
-            _GEMINI_PARAMS,
-            None,
-            "GEMINI_API_KEY",
-            default_model="gemini-3.7-flash",
-            schema="gemini",
-        ),
-    )
-}
+_MAX = "max_tokens"
+# fmt: off
+_PROVIDERS: dict[str, _Provider] = {p.name: p for p in (
+    _Provider("groq", "chat", "api.groq.com", _chat_params(), "GROQ_API_KEY",
+              "https://api.groq.com/openai/v1", "openai/gpt-oss-20b"),
+    _Provider("openai", "responses", "api.openai.com", _RESPONSES, "OPENAI_API_KEY",
+              None, "gpt-5.6-terra"),
+    _Provider("deepseek", "chat", "api.deepseek.com",
+              _chat_params(("seed", "top_k"), max_tokens=_MAX), "DEEPSEEK_API_KEY",
+              "https://api.deepseek.com", "deepseek-v4-flash"),
+    _Provider("mistral", "chat", "api.mistral.ai",
+              _chat_params(("top_k",), seed="random_seed", max_tokens=_MAX), "MISTRAL_API_KEY",
+              "https://api.mistral.ai/v1", "mistral-large-latest"),
+    _Provider("openrouter", "chat", "openrouter.ai", _chat_params(max_tokens=_MAX),
+              "OPENROUTER_API_KEY", "https://openrouter.ai/api/v1", "gpt-5.6-terra"),
+    _Provider("huggingface", "chat", "router.huggingface.co", _chat_params(),
+              "HUGGINGFACE_API_KEY", "https://router.huggingface.co/v1/",
+              "Qwen/Qwen3-235B-A22B-Instruct-2507"),
+    _Provider("perplexity", "chat", "api.perplexity.ai",
+              _chat_params(("seed", "log_probs", "stop_sequences"), max_tokens=_MAX),
+              "PERPLEXITY_API_KEY", "https://api.perplexity.ai/", "sonar"),
+    _Provider("portkey", "chat", "api.portkey.ai", _chat_params(), "PORTKEY_API_KEY",
+              "https://api.portkey.ai/v1"),
+    _Provider("cloudflare", "chat", "api.cloudflare.com", _chat_params(), "CLOUDFLARE_API_KEY",
+              None, "@cf/meta/llama-3.3-70b-instruct-fp8-fast"),
+    _Provider("azure_openai", "chat", "", _chat_params(), "AZURE_OPENAI_API_KEY"),
+    _Provider("vllm", "chat", "", _chat_params(), "VLLM_API_KEY", key_required=False),
+    _Provider("lmstudio", "chat", "localhost", _chat_params(("log_probs",), max_tokens=_MAX),
+              "LMSTUDIO_API_KEY", key_required=False),
+    _Provider("ollama", "chat", "localhost",
+              _chat_params(("log_probs",), max_tokens=_MAX, reasoning_effort="reasoning_effort"),
+              "OLLAMA_API_KEY", schema="ollama", key_required=False),
+    _Provider("anthropic", "anthropic", "api.anthropic.com", _ANTHROPIC, "ANTHROPIC_API_KEY",
+              None, "claude-sonnet-5", "generic", transient=(429, 503, 529)),
+    _Provider("google_gemini", "gemini", "generativelanguage.googleapis.com", _GEMINI,
+              "GEMINI_API_KEY", None, "gemini-3.7-flash", "gemini"),
+)}
+# fmt: on
 _PROVIDERS["claude"] = _PROVIDERS["anthropic"]
 
 #: providers of ellmer that need cloud SDK credentials; not offered
@@ -492,7 +377,7 @@ def _openai_client(spec: _Provider) -> Any:
 
     key = _key(spec.key_env, spec.key_required)
     base = spec.base_url
-    headers = dict(spec.headers)
+    headers: dict[str, str] = {}
     azure = spec.name == "azure_openai"
     if spec.name == "ollama":
         base = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/") + "/v1"
@@ -582,6 +467,7 @@ def _throttle(spec: _Provider) -> None:
 
 
 def _json(text: str | None) -> Any:
+    """The parsed JSON of a reply; an empty or malformed one is an :class:`LLMError` that ``llm()`` retries."""
     if text is None:
         raise LLMError("Data extraction failed: no JSON responses found.")
     try:
@@ -592,9 +478,9 @@ def _json(text: str | None) -> Any:
 
 def _wrapped(type: Any) -> tuple[Any, bool]:
     """Types that are not objects travel inside ``{"wrapper": ...}`` (strict schemas need an object)."""
-    from metacheck.llm.types import TypeJsonSchema, TypeObject, type_object
+    from metacheck.llm.types import type_object
 
-    if isinstance(type, TypeObject | TypeJsonSchema):
+    if type.get("type") == "object":
         return type, False
     return type_object(wrapper=type), True
 

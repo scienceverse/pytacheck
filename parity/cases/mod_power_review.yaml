@@ -213,24 +213,6 @@
         "r": "local({invisible(suppressMessages(trace(base::readLines, tracer = quote(if (identical(con, 'https://scienceverse.org/schema/power.json')) con <- 'tests/mod_power/mocks_review/scienceverse.org/schema/power.json.json'), print = FALSE, where = baseenv()))); tryCatch(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p1\"; p}), 'power', seed = NULL))), finally = invisible(suppressMessages(untrace(base::readLines, where = baseenv()))))})"
         "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_with(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.'], 'p1'), None, None, seed=None)"
   "mock_dir": "tests/mod_power/mocks_review"
-- "id": "power.review.llm.seed_fraction"
-  "r": "base::identity"
-  "py": "tests.mod_power.parity_helpers.identity"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({invisible(suppressMessages(trace(base::readLines, tracer = quote(if (identical(con, 'https://scienceverse.org/schema/power.json')) con <- 'tests/mod_power/mocks_review/scienceverse.org/schema/power.json.json'), print = FALSE, where = baseenv()))); tryCatch(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p1\"; p}), 'power', seed = 1.5))), finally = invisible(suppressMessages(untrace(base::readLines, where = baseenv()))))})"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_with(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.'], 'p1'), None, None, seed=1.5)"
-  "mock_dir": "tests/mod_power/mocks_review"
-- "id": "power.review.llm.seed_string"
-  "r": "base::identity"
-  "py": "tests.mod_power.parity_helpers.identity"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({invisible(suppressMessages(trace(base::readLines, tracer = quote(if (identical(con, 'https://scienceverse.org/schema/power.json')) con <- 'tests/mod_power/mocks_review/scienceverse.org/schema/power.json.json'), print = FALSE, where = baseenv()))); tryCatch(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p1\"; p}), 'power', seed = 'abc'))), finally = invisible(suppressMessages(untrace(base::readLines, where = baseenv()))))})"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_with(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.'], 'p1'), None, None, seed='abc')"
-  "mock_dir": "tests/mod_power/mocks_review"
 - "id": "power.review.llm.no_key"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
@@ -256,7 +238,7 @@
     "x":
       "$expr":
         "r": "local({invisible(suppressMessages(trace(base::readLines, tracer = quote(if (identical(con, 'https://scienceverse.org/schema/power.json')) con <- 'tests/mod_power/mocks_review/scienceverse.org/schema/power.json.json'), print = FALSE, where = baseenv()))); tryCatch(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 1L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\", \"A simulation-based power analysis (1000 runs) for a linear mixed model showed 90% power to detect a 20 ms difference with 60 participants at an alpha of .005.\")); p$text$paragraph_id <- c(0L, 1L); p$paper_id <- \"p1\"; p}), 'power'))), finally = invisible(suppressMessages(untrace(base::readLines, where = baseenv()))))})"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_with(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.', 'A simulation-based power analysis (1000 runs) for a linear mixed model showed 90% power to detect a 20 ms difference with 60 participants at an alpha of .005.'], [0, 1], 'p1'), {'metacheck.llm_max_calls': __import__('metacheck.llm._rds', fromlist=['_']).RInt(1)}, None)"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_with(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.', 'A simulation-based power analysis (1000 runs) for a linear mixed model showed 90% power to detect a 20 ms difference with 60 participants at an alpha of .005.'], [0, 1], 'p1'), {'metacheck.llm_max_calls': 1}, None)"
   "mock_dir": "tests/mod_power/mocks_review"
 - "id": "power.review.fallback.complete"
   "r": "base::identity"

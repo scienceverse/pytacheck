@@ -116,8 +116,7 @@ _READABLE_EXTENSIONS: tuple[str, ...] = tuple(ext for ext, _t, ok, _l, _m in EXT
 #: R: .data_check_llm_batch
 _DATA_CHECK_LLM_BATCH = 50
 
-#: R: .data_group_seed (``8675309L``, an R integer: wrapped in ``RInt`` where it is
-#: used, so the LLM cache key serialises it as R does)
+#: R: .data_group_seed (``8675309L``)
 _DATA_GROUP_SEED = 8675309
 
 #: R: .blob_row_min_bytes
@@ -1379,9 +1378,7 @@ def _data_group_llm_impl(
         return None
     params = dict(params or {})
     if params.get("seed") is None:
-        from metacheck.llm._rds import RInt
-
-        params["seed"] = RInt(_DATA_GROUP_SEED)
+        params["seed"] = _DATA_GROUP_SEED
     names = _col(files, "file_name") or [None] * len(files)
     raw_paths = _col(files, "file_path") if "file_path" in files.columns else names
     paths = [

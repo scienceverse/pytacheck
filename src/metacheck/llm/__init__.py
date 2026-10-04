@@ -3,7 +3,6 @@
 * :func:`llm` -- query a model for each text (free text or structured data);
 * settings: :func:`llm_use`, :func:`llm_model`, :func:`llm_max_calls`,
   :func:`llm_max_tokens`, :func:`llm_timeout`, :func:`llm_reasoning`;
-* :func:`llm_model_list` -- models available on each provider;
 * :func:`llm_cache` / :func:`llm_cache_clear` -- the on-disk response cache
   (shared with metacheck);
 * structured-output types: :func:`type_object`, :func:`type_array`,
@@ -11,7 +10,9 @@
   :func:`type_boolean`, :func:`type_enum`, :func:`type_from_schema`;
 * :func:`cap_report` -- report a skipped unit of work.
 
-Submodules are imported lazily, so ``import metacheck.llm`` is cheap.
+Submodules are imported lazily, so ``import metacheck.llm`` is cheap; the
+provider SDKs (``pip install "metacheck[llm]"``) are imported only when a model
+is first called.
 """
 
 from __future__ import annotations
@@ -27,14 +28,11 @@ _EXPORTS = {
     "llm_max_tokens": "core",
     "llm_timeout": "core",
     "llm_reasoning": "core",
-    "llm_model_list": "core",
     "llm_cache": "cache",
     "llm_cache_clear": "cache",
     "cap_report": "cap_prompt",
-    "chat": "providers",
-    "params": "providers",
-    "LLMError": "providers",
-    "Type": "types",
+    "LLMError": "_backend",
+    "Schema": "types",
     "type_object": "types",
     "type_array": "types",
     "type_string": "types",

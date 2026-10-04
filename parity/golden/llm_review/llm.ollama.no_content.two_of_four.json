@@ -1,9 +1,0 @@
-{
-  "id": "llm.ollama.no_content.two_of_four",
-  "ok": false,
-  "error": "Assigned data `unique_text` must be compatible with existing data.\n✖ Existing data has 2 rows.\n✖ Assigned data has 4 rows.\nℹ Only vectors of size 1 are recycled.\nCaused by error in `vectbl_recycle_rhs_rows()`:\n! Can't recycle input of size 4 to size 2.",
-  "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
-  "r_version": "R version 4.5.3 (2026-03-11)"
-}
