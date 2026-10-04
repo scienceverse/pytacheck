@@ -23,11 +23,9 @@ from metacheck.statout.jasp import (
 from metacheck.statout.omv import _omv_extract_syntax, import_omv
 from metacheck.statout.spv import (
     _as_numeric,
-    _r_function,
-    _r_parse,
+    _fit_function,
     _raw_to_char,
     _read_lines,
-    _RParseError,
     _spv_chart_html,
     _spvviz_function_guide,
     import_spv,
@@ -130,41 +128,64 @@ def test_rsqlite_column_typing(tmp_path: Path) -> None:
     assert d.tolist()[:2] == [1, 0] and pd.isna(d[2])  # -2^31 is NA_integer_
 
 
-def test_r_parse_matches_r_on_edge_cases() -> None:
-    ok = ["x;", "{x;;y}", "f(,)", "x |> f()", "a::'b'", "..1", "\\(x) x + 1", "x := 1", "é + x"]
-    bad = [";", "x;;y", "a < b < c", "x |> exp", "1_000", "'\\q'", "function(x, x) 1", "x²"]
-    for text in ok:
-        assert _r_parse(text), text
-    for text in bad:
-        with pytest.raises(_RParseError):
-            _r_parse(text)
-    assert _r_parse("") == [] and _r_parse("  # c") == []
-    assert len(_r_parse("x\n\ny")) == 2
+def test_fit_function_evaluates_arithmetic_only() -> None:
+    xs = [1.0, 2.0, 4.0]
+    for text, expected in {
+        "0.5 * x + 3": [3.5, 4.0, 5.0],
+        "0.01 * x^2 + 1": [1.01, 1.04, 1.16],
+        "-x^2": [-1.0, -4.0, -16.0],  # ^ binds tighter than the sign
+        "2^-1 * x": [0.5, 1.0, 2.0],
+        "x ** 2": [1.0, 4.0, 16.0],
+        "+x / 2": [0.5, 1.0, 2.0],
+        "3": [3.0, 3.0, 3.0],  # a constant is a flat line
+        ".5 * x + 1.5e-3": [0.5015, 1.0015, 2.0015],
+        "exp(x) / 10": [math.exp(v) / 10 for v in xs],
+        "log(x, 2)": [0.0, 1.0, 2.0],
+        "sqrt(x) + log(x)": [1.0, math.sqrt(2) + math.log(2), 2.0 + math.log(4)],
+        "\tx\n": xs,
+    }.items():
+        fn = _fit_function(text)
+        assert fn is not None, text
+        assert fn(xs) == pytest.approx(expected), text
+    # undefined points are NaN, never an error
+    y = _fit_function("1 / (x - 2)")([1.0, 2.0, 4.0])  # type: ignore[misc]
+    assert y[0] == -1.0 and math.isnan(y[1]) and y[2] == 0.5
+    assert all(math.isnan(v) for v in _fit_function("log(x - 10)")([1.0, 2.0]))  # type: ignore[misc]
+    assert all(math.isnan(v) for v in _fit_function("(0 - x)^0.5")([1.0, 2.0]))  # type: ignore[misc]
+    assert math.isnan(_fit_function("10^400^x")([2.0])[0])  # type: ignore[misc]
 
 
-def test_function_guides_follow_r_parse_and_lines() -> None:
+@pytest.mark.parametrize(
+    "text",
+    [
+        "", "   ", "x +", "TRUE", "NULL", "a * x", "1; 2", "1_000", "2L * x", "1i * x", "x // 2",
+        "x % 2", "x %% 2", "1 if x else 2", "x > 1", "!x", "not x", "x[0]", "x.real", "x$y",
+        "'abc'", "abs(x)", "log(x, base=2)", "log()", "exp(x, 2)", "max(x, 1)", "y = x", "y <- x",
+        "(lambda: 1)()", "__import__('os')", "x if 1 else 2", "[x]", "{x}", "-x if x else 1",
+        "True", "x * True",
+    ],
+)  # fmt: skip
+def test_fit_function_skips_everything_else(text: str) -> None:
+    assert _fit_function(text) is None
+
+
+def test_function_guides_keep_drawable_expressions() -> None:
     from lxml import etree
 
     def guide(value: str) -> object:
-        node = etree.fromstring(f'<functionGuide value="{value}"/>')
+        node = etree.fromstring(f'<functionGuide name="g" value="{value}"/>')
         return _spvviz_function_guide(node)
 
-    assert guide("TRUE") is not None and guide("a * x") is not None
-    assert guide("1_000") is None and guide("   ") is None
-    fn = _r_function("(function(z, k = 2) z / k)(x)")
-    assert fn is not None and fn([2.0, 4.0]) == [1.0, 2.0]
-    assert _r_function("NULL")([1.0]) is None  # type: ignore[misc]
+    assert guide("0.5 * x + 3") is not None and guide("exp(x / 100)") is not None
+    assert guide("a * x") is None and guide("x +") is None and guide("   ") is None
 
     df = pd.DataFrame({"x": [1.0, 2.0, 3.0], "y": [2.0, 4.0, 5.0]})
     df.attrs["spv_chart_type"] = "point"
-    # a scalar, function or formula guide no longer fails the chart (R's
-    # lines() stops: "'x' and 'y' lengths differ", U148); a constant is a
-    # flat line
-    for expr in ("TRUE", "3", "function(x) x", "y ~ x"):
-        df.attrs["spv_chart_fits"] = [{"name": None, "expr": expr, "fn": _r_function(expr)}]
+    # a constant is a flat line and an expression that is undefined everywhere
+    # draws no line; neither fails the chart
+    for expr in ("3", "1 / (x - x)", "log(0 - x)"):
+        df.attrs["spv_chart_fits"] = [{"name": None, "expr": expr, "fn": _fit_function(expr)}]
         assert _spv_chart_html(df).startswith("<img"), expr
-    df.attrs["spv_chart_fits"] = [{"name": "a", "expr": "a * x", "fn": _r_function("a * x")}]
-    assert _spv_chart_html(df).startswith("<img")
 
 
 def test_boxplot_without_complete_rows_is_left_out() -> None:
