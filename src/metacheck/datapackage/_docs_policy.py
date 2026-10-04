@@ -10,7 +10,7 @@ import json
 import os
 import re
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cache
 from importlib import resources
 from pathlib import Path
@@ -130,7 +130,14 @@ class FieldSpec:
 
 @dataclass(frozen=True)
 class SectionSpec:
-    """A section a README should have."""
+    """A section a README should have.
+
+    ``prompt`` and ``fill`` are only used when a README is drafted
+    (``datapackage::package_readme``): ``prompt`` is what a person is asked to write
+    where the package cannot say it, and ``fill`` names the part of the package
+    that fills the section (``files``, ``variables`` or ``licence``; the section's
+    id when it has no ``fill`` of its own).
+    """
 
     id: str
     title: str
@@ -139,6 +146,8 @@ class SectionSpec:
     intro: bool = False
     hint: str = ""
     fields: tuple[FieldSpec, ...] = ()
+    prompt: str = ""
+    fill: str = ""
 
 
 @dataclass(frozen=True)
@@ -149,6 +158,9 @@ class ReadmeTemplate:
     source: str
     sections: tuple[SectionSpec, ...]
     placeholders: tuple[re.Pattern[str], ...]
+    #: what a drafted README asks a person to write outside the sections (``title``,
+    #: ``folder``, ``file``, ``other_files``, ``variables``, ``licence_file``)
+    prompts: Mapping[str, str] = field(default_factory=dict, compare=False, hash=False)
 
     def section(self, section_id: str) -> SectionSpec | None:
         """The section with this id, if the template has it."""
@@ -199,6 +211,8 @@ def _section_spec(raw: Mapping[str, Any]) -> SectionSpec:
         intro=_flag(raw.get("intro"), False),
         hint=str(raw.get("hint", "")),
         fields=tuple(_field_spec(f, where) for f in raw.get("fields") or ()),
+        prompt=str(raw.get("prompt", "")),
+        fill=str(raw.get("fill", "")),
     )
 
 
@@ -226,11 +240,15 @@ def load_readme_template(spec: Any = None) -> ReadmeTemplate:
     placeholders = raw.get("placeholders")
     if placeholders is None:
         placeholders = _default_policy("docs_readme_generic.json")["placeholders"]
+    prompts = raw.get("prompts") or {}
+    if not isinstance(prompts, Mapping):
+        raise ValueError("README template: prompts must be an object of text")
     return ReadmeTemplate(
         name=str(raw.get("name", "README template")),
         source=str(raw.get("source", "")),
         sections=sections,
         placeholders=_regexes(placeholders, "README template, placeholders"),
+        prompts={str(k): str(v) for k, v in prompts.items()},
     )
 
 
