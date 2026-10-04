@@ -74,17 +74,6 @@ def test_the_engine_argument_comes_before_the_parser_variable(
     assert _rparse.parse_errors([["x <- "]]) != wanted  # the variable alone picks the other
 
 
-def test_the_serialize_version_option_comes_before_the_variable(
-    option: Any, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    from metacheck.llm._rds import _r_version_int
-
-    _both(monkeypatch, "R_SERIALIZE_VERSION", "4.4.1", "4.4.2")
-    assert _r_version_int() == 4 * 65536 + 4 * 256 + 1
-    option({"pytacheck.r_serialize_version": "4.3.0"})
-    assert _r_version_int() == 4 * 65536 + 3 * 256
-
-
 def test_the_workers_option_comes_before_the_workers_variable(
     option: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:

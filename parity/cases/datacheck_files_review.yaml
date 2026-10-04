@@ -1624,20 +1624,6 @@
   - "x"
   "py_args":
     "scenario": "dir_slash"
-- "id": "review.data_group_llm.seed_cache_key"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.data_group_cache_key"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({key <- NULL; testthat::with_mocked_bindings(metacheck::data_group_llm(data.frame(file_name\
-          \ = c(\"first_raw.csv\", \"second_raw.csv\"), data_type = \"data\"), model = \"m\"), llm = function(...,\
-          \ params) {key <<- metacheck:::.llm_cache_key(\"t\", \"s\", NULL, \"m\", do.call(ellmer::params,\
-          \ c(params, list(temperature = 0, max_tokens = 4096)))); stop(\"no llm\")}, .package = \"metacheck\"\
-          ); key})"
-        "py": "None"
-  "py_drop":
-  - "x"
 - "id": "review.data_classify_files.invalid_utf8.ext_substring"
   "r": "identity"
   "py": "tests.datacheck_files.review_helpers.classify"

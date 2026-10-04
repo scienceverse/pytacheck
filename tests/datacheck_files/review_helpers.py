@@ -117,36 +117,6 @@ def manifest_scenario(scenario: str) -> Any:
     raise ValueError(scenario)
 
 
-def data_group_cache_key() -> str | None:
-    """The LLM cache key of the params ``data_group_llm()`` sends to ``llm()``.
-
-    The R side mocks ``llm()`` and keys ``do.call(ellmer::params, c(params,
-    temperature = 0, max_tokens = 4096))`` -- the params ``llm()`` itself would
-    key -- so an ``int`` seed (a double in R) where R has ``8675309L`` shows up
-    as a different MD5 (the canonical comparison treats 1L and 1 as equal).
-    """
-    from metacheck.llm.cache import _llm_cache_key
-    from metacheck.llm.providers import params as ellmer_params
-
-    key: list[str] = []
-
-    def fake_llm(*_a: Any, params: dict[str, Any], **_k: Any) -> Any:
-        p = ellmer_params(**{**params, "temperature": 0, "max_tokens": 4096})
-        key.append(_llm_cache_key("t", "s", None, "m", p))
-        raise RuntimeError("no llm")
-
-    saved = F._llm
-    F._llm = fake_llm
-    try:
-        files = pd.DataFrame(
-            {"file_name": ["first_raw.csv", "second_raw.csv"], "data_type": "data"}
-        )
-        F.data_group_llm(files, model="m")
-    finally:
-        F._llm = saved
-    return key[0] if key else None
-
-
 def _unescape(s: str | None) -> str | None:
     r"""A name written with ``\xff`` escapes, as R's parser reads ``"b\xff.txt"``."""
     import codecs

@@ -19,8 +19,8 @@ test keeps the two in step.
    already meant unset almost everywhere. What changed is a value of only spaces,
    which these settings used as given before: `CACHE_DIR`, `DATA_DIR`, `LOG`,
    `RSCRIPT` and `LLM_CACHE_DIR` (used as a path), `NO_SLEEP` (sleeps stay on),
-   `EMAIL`, `STORE_URL`, `R_PARSER` and `LLM_MODEL` (the default is used),
-   `R_SERIALIZE_VERSION` (it raised an error) and `LLM_MAX_CALLS` (`serve` stopped).
+   `EMAIL`, `STORE_URL`, `R_PARSER` and `LLM_MODEL` (the default is used)
+   and `LLM_MAX_CALLS` (`serve` stopped).
    The other settings strip or parse the value, so spaces already gave the default.
 3. **Each setting resolves on its own.** `METACHECK_BIBR_URL` next to
    `PYTACHECK_BIBR_BACKEND` is used as given: the URL comes from the first, the
@@ -65,7 +65,6 @@ means the value is a key or token, which the package never logs.
 | `PRESET` | `METACHECK_PRESET`, `PYTACHECK_PRESET` | the config preset, then `metacheck::default` | `use(preset=)` in code comes first. Command line and API only. The preset's source names the variable read. |
 | `R_PARSER` | `METACHECK_R_PARSER`, `PYTACHECK_R_PARSER` | `r` if the reference R exists, else `python` | The `engine` argument comes first. |
 | `RSCRIPT` | `METACHECK_RSCRIPT`, `PYTACHECK_RSCRIPT` | `Rscript` on the `PATH` | The `rscript` argument comes first where a function has one. Some places use the path only if the file exists. |
-| `R_SERIALIZE_VERSION` | `METACHECK_R_SERIALIZE_VERSION`, `PYTACHECK_R_SERIALIZE_VERSION` | `4.5.3` | The option `metacheck.r_serialize_version` comes first (the old spelling is the same option). Part of the LLM cache key, so the default does not change. |
 | `STORE_URL` | `METACHECK_STORE_URL`, `PYTACHECK_STORE_URL` | the built-in store URL | A mirror for the built-in store. The config records which variable set it. |
 | `VERBOSE` | `METACHECK_VERBOSE`, `PYTACHECK_VERBOSE` | on | `verbose(value)` in code comes first. `0`, `false` and `no` (any case) mean off. |
 | `APP_AUTH` | `METACHECK_APP_AUTH` | `tokens` | Hosted app: `tokens` or `proxy`. New since 0.4.0a1, so it has no old name. |
