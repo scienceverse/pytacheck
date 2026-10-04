@@ -151,6 +151,26 @@ def test_zip_peek_reads_a_directory_larger_than_the_tail() -> None:
     assert [m for m, _ in calls] == ["HEAD", "GET", "GET"]
 
 
+def test_a_member_fetch_does_not_read_a_long_directory_again(tmp_path: Path) -> None:
+    # the listing read the directory (longer than the tail); the fetch that follows opens
+    # the archive from what the listing held, so only the member's own bytes are requested
+    members = [(f"folder/with/a/long/name/file_{i:04d}.csv", b"a\n") for i in range(600)]
+    data = _build_zip(members)
+    handler, calls = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        cd = zip_peek(URL, tail_bytes=4096)
+        assert cd is not None and len(cd) == 600
+        listing_calls = len(calls)
+        out = _zip_fetch_members(
+            URL, names="folder/with/a/long/name/file_0007.csv", dest=str(tmp_path)
+        )
+    assert out is not None and out["ok"].tolist() == [True]
+    asked = [c[1] for c in calls[listing_calls:]]
+    assert len(asked) == 1  # the member; the HEAD, the tail and the directory are in hand
+    assert int(asked[0].split("-")[1]) < len(data) - 4096  # not the end of the file again
+
+
 def test_zip_fetch_members_inflates_a_member_over_32768_bytes(tmp_path: Path) -> None:
     # U71: metacheck's inflate() stopped at 32768 bytes
     content = [f"line {i} {'x' * 20}" for i in range(1, 3001)]

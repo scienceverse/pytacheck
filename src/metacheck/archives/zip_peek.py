@@ -422,6 +422,10 @@ _WHOLE_BODY_TAIL = 1048576.0
 #: archive can claim any length).
 _MAX_DIRECTORY = 268435456
 
+#: The most of an archive's end kept for the session once its listing is read
+#: (a longer central directory is read again when a member is fetched).
+_MAX_HELD = 33554432
+
 
 class _RangeFile(io.RawIOBase):
     """A read-only, seekable view of a remote file that :class:`zipfile.ZipFile` can read.
@@ -468,6 +472,17 @@ class _RangeFile(io.RawIOBase):
         if data is None:
             raise OSError(reason.get("msg", "the range request failed"))
         self._buf, self._start = data, start
+
+    def held_tail(self) -> bytes:
+        """The end of the file held so far: the tail, with the span before it when they touch.
+
+        Once zipfile has read a central directory longer than the tail, this
+        holds all of it, so opening the archive again costs no request.
+        """
+        touching = self._buf and self._start + len(self._buf) == self._tail_start
+        if touching and len(self._buf) + len(self._tail) <= _MAX_HELD:
+            return self._buf + self._tail
+        return self._tail
 
     def readinto(self, b: Any) -> int:
         n = min(len(b), self.size - self._pos)
@@ -524,7 +539,7 @@ def _open_zip(
             return None
         else:
             with _CACHE_LOCK:
-                _ZIP_PEEK_CACHE[memo] = (bytes(raw), total)
+                _ZIP_PEEK_CACHE[memo] = (opened[1].held_tail(), total)
             return opened
         if not is_na(total) and nb >= total:
             break  # the whole file was in hand
