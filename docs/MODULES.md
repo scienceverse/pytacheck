@@ -483,7 +483,12 @@ The contract (the same one the built-in modules follow):
 * it works on a single paper and on a paper list, and on bibr 12.x papers as well
   as older ones (see the next section);
 * modules that call online services declare `requires=["network"]`, and those
-  that use an LLM declare `requires=["llm"]`, so `--offline` can skip them;
+  that use an LLM declare `requires=["llm"]`, so `--offline` can skip them. A module
+  that goes online only when asked to (a parameter that is off by default) does not
+  declare it, because `--offline` would then drop the whole module; it asks
+  `use_setting("offline", False)` (from `metacheck.module`) and does without the
+  request when that is true. `datapackage::package_docs` does this for its
+  `abstract_lookup`;
 * validation: describe it in a `<validation>` block in `details`, and give the
   numbers in `validation=`, from which tools compute PPV and sensitivity. An
   unvalidated module is allowed, but `pack check` warns about it.

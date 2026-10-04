@@ -3,10 +3,14 @@
 :func:`check_package` opens a package (a folder, or a zip or tar archive of one),
 runs a selection of modules on it and returns their outputs.
 :func:`report_package` does the same and writes the report.
-Both run on this machine only: an archive is extracted to a private folder
+Both run on this machine: an archive is extracted to a private folder
 that is removed when the run is over, and every module that takes
 ``local_path`` and ``local_only`` is given the package's folder and
-``local_only=True``, so nothing is looked up online or uploaded.
+``local_only=True``, so nothing is looked up online or uploaded. The one thing
+that goes online is a request you make: ``package_docs`` with
+``abstract_lookup=True`` fetches the paper's abstract by its DOI (nothing but
+the DOI is sent; see :mod:`metacheck.datapackage.abstract`). With ``offline``
+it does not, and says so.
 
 The modules have no paper to read, so they get an empty stand-in paper titled
 with the package's name (what :func:`metacheck.report.report_repository` does
@@ -102,7 +106,7 @@ def check_package(
     from metacheck.provenance import run_modules
 
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
-    with open_package(path) as opened, using_package(opened):
+    with open_package(path) as opened, using_package(opened), _offline(selection):
         run = _give_package(selection, opened)
         chain = run_modules(_stand_in_paper(_name(opened)), run)
         rec = _record(list(chain), run, opened)
@@ -142,7 +146,12 @@ def report_package(
     if fmt not in _OUTPUT_FORMATS:
         raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
-    with open_package(path) as opened, using_package(opened), run_session():
+    with (
+        open_package(path) as opened,
+        using_package(opened),
+        run_session(),
+        _offline(selection),
+    ):
         name = _name(opened)
         dest = Path(output_file if output_file is not None else f"{name}_report.{fmt}")
         if not dest.parent.is_dir() or not os.access(dest.parent, os.W_OK):
@@ -173,6 +182,18 @@ def report_package(
 
 
 # -- helpers --------------------------------------------------------------------------
+
+
+def _offline(selection: Selection) -> Any:
+    """``use(offline=True)`` when the run is offline, otherwise the setting around it.
+
+    A module that only sometimes needs the network (``package_docs`` with
+    ``abstract_lookup``) cannot declare ``requires=["network"]``, since
+    ``--offline`` would then leave the whole module out; it reads this setting.
+    """
+    from metacheck.module import use
+
+    return use(offline=True if selection.offline else None)
 
 
 def _name(opened: OpenedPackage) -> str:
