@@ -2531,6 +2531,7 @@ all = [
     { name = "pyreadstat" },
     { name = "python-multipart" },
     { name = "snowballstemmer" },
+    { name = "striprtf" },
     { name = "tokenizers" },
     { name = "uvicorn", extra = ["standard"] },
     { name = "xlrd" },
@@ -2559,6 +2560,7 @@ data = [
     { name = "pypdf" },
     { name = "pyreadstat" },
     { name = "snowballstemmer" },
+    { name = "striprtf" },
     { name = "xlrd" },
 ]
 
@@ -2607,6 +2609,7 @@ requires-dist = [
     { name = "rich", specifier = ">=13.7" },
     { name = "scipy", specifier = ">=1.13" },
     { name = "snowballstemmer", marker = "extra == 'data'", specifier = ">=2.2" },
+    { name = "striprtf", marker = "extra == 'data'", specifier = ">=0.0.33" },
     { name = "tokenizers", marker = "extra == 'concepts'", specifier = ">=0.21" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'api'", specifier = ">=0.30" },
     { name = "xlrd", marker = "extra == 'data'", specifier = ">=2.0.1" },
@@ -4838,6 +4841,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/ba/9b/be1d0894cd6c502e36e47462b0fae34381a3b8c8da646bdbc5d6e9e9e3ee/stringzilla-5.1.2-cp314-cp314t-win32.whl", hash = "sha256:806511b899fd71d0e11ab4faf5dd3d4d25b23bdd30c4fac301813a358aca8547", size = 322900, upload-time = "2026-08-12T02:05:17.352Z" },
     { url = "https://files.pythonhosted.org/packages/9f/09/c8a5ee87d192fdfbc6e8858182186fd7aca440862502abe9c9016937aa20/stringzilla-5.1.2-cp314-cp314t-win_amd64.whl", hash = "sha256:b1de5256a9b627b145a1501fae1ecc274dcea3f6c9b4e024c2648f4de38c656c", size = 887884, upload-time = "2026-08-12T02:05:19.019Z" },
     { url = "https://files.pythonhosted.org/packages/a9/60/55de977fca319f2ce687b00be4481f22bdf483333716c86dc08a9b4ff140/stringzilla-5.1.2-cp314-cp314t-win_arm64.whl", hash = "sha256:f54e19e1a7aa86218d9cfcb67afe3a7c31b91a068b8a198ce1e40809c8bcb9ae", size = 721597, upload-time = "2026-08-12T02:05:21.014Z" },
+]
+
+[[package]]
+name = "striprtf"
+version = "0.0.33"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3e/3b/c42830804cb2da515d0cb8aa200fb199ce57f7dcc344ff73db9dfe37cf3b/striprtf-0.0.33.tar.gz", hash = "sha256:c2d3d9ff3118df6dab558675f10a31ff8bb999ac1f8921f00c6dc9ea19961f18", size = 8010, upload-time = "2026-08-17T21:11:15.706Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f5/85/bee751fd2096accfc8b76186d49fbb2871163723e45f1e721e03c3f044ae/striprtf-0.0.33-py3-none-any.whl", hash = "sha256:f9637632a4414de05b1c399ee34d324dc336133ae45769992143a024e0f919ef", size = 8446, upload-time = "2026-08-17T21:11:14.696Z" },
 ]
 
 [[package]]

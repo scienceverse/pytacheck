@@ -526,17 +526,21 @@ def _pdf_codebook_lines(
 
 
 def _strip_rtf(text: str) -> str:
-    """Port of ``.strip_rtf()``: strip RTF control words and groups.
+    """The plain text of an RTF document, by the ``striprtf`` package (the ``data`` extra).
 
-    Like R's (TRE) ``gsub()``, text that is not valid UTF-8 is an error.
+    ``.strip_rtf()`` in R removes control words and braces with four regular
+    expressions, which leaves the font table's text, runs the lines together
+    and drops the characters written as ``\\'e9`` or ``\\u233``; striprtf reads
+    RTF properly (see D63). Text that is not valid UTF-8 is still an error, as
+    in R. Without striprtf this raises ``ImportError``, which
+    :func:`_extract_rich_text` turns into ``""``: the codebook is then read as
+    raw lines, as any other file whose text cannot be extracted is.
     """
     if not _valid_utf8(text):
         raise ValueError("input string 1 is invalid in this locale")
-    text = gsub(r"\\[a-z]+\-?[0-9]*\s?", " ", text)
-    text = gsub("\\\\[^a-z\n]", " ", text)
-    text = gsub("[{}]", "", text)
-    text = gsub(r"\s+", " ", text)
-    return cast(str, trimws(text))
+    from striprtf.striprtf import rtf_to_text
+
+    return str(rtf_to_text(text))
 
 
 _W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
