@@ -24,7 +24,8 @@ rather than copied, and nothing invented ([the accuracy contract](https://github
 pip install "metacheck>=0.4.0a1"           # core: bibr JSON / Grobid XML input
 pip install "metacheck[bibr]>=0.4.0a1"     # + extract PDF/DOCX/HTML with bibr, in-process
 pip install "metacheck[concepts]>=0.4.0a1" # + data_check's offline column-concept classifier
-pip install "metacheck[all]>=0.4.0a1"      # + bibr, data-file readers, REST API, charset detection, concepts
+pip install "metacheck[llm]>=0.4.0a1"      # + the OpenAI, Anthropic and Google SDKs that llm() calls models with
+pip install "metacheck[all]>=0.4.0a1"      # + bibr, data-file readers, REST API, charset detection, concepts, LLM SDKs
 ```
 
 The package is on PyPI as `metacheck` and is a pre-release for now, so the

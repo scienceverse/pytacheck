@@ -3,8 +3,8 @@
 * :func:`llm` -- query a model for each text (free text or structured data);
 * settings: :func:`llm_use`, :func:`llm_model`, :func:`llm_max_calls`,
   :func:`llm_max_tokens`, :func:`llm_timeout`, :func:`llm_reasoning`;
-* :func:`llm_cache` / :func:`llm_cache_clear` -- the on-disk response cache
-  (shared with metacheck);
+* :func:`llm_cache` / :func:`llm_cache_clear` -- the on-disk response cache (JSON
+  files; metacheck's ``.rds`` entries are not used);
 * structured-output types: :func:`type_object`, :func:`type_array`,
   :func:`type_string`, :func:`type_integer`, :func:`type_number`,
   :func:`type_boolean`, :func:`type_enum`, :func:`type_from_schema`;
