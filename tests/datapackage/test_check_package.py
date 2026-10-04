@@ -166,6 +166,7 @@ def test_the_default_selection_is_the_datapackage_preset(monkeypatch: pytest.Mon
         "datapackage::package_files",
         "datapackage::package_structure",
         "datapackage::package_docs",
+        "datapackage::package_pii",
         "metacheck::data_check",
         "metacheck::codebook_check",
     ]
@@ -395,6 +396,8 @@ def test_the_default_preset_modules_run_through_the_command(
         assert main(["package", str(root), "-a", "concepts=rules"]) == 0
     assert attempts == []
     out = capsys.readouterr().out
+    assert "Data Package Personal Data" in out
+    assert "Data files could be scanned" in out
     assert "Data Check" in out
     assert "Codebook Check" in out
     assert "3 of 3 data columns" in out

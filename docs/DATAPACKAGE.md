@@ -37,14 +37,14 @@ Choose the checks like for papers, with `-m`, `--preset` and `-a` (see
 [MODULES.md](MODULES.md#choosing-modules-at-run-time)):
 
 ```bash
-metacheck package my_data_folder -m package_files -m package_docs
+metacheck package my_data_folder -m package_files -m package_docs -m package_pii
 metacheck package my_data_folder --preset myoffice::archive
 metacheck package my_data_folder -a data_check.concepts=rules   # an argument for one module
 metacheck package my_data_folder -a concepts=rules              # ... for every module that takes it
 ```
 
 With no `-m` and no `--preset`, the preset `datapackage::default` runs, whatever
-preset you have configured for papers. It runs, in this order, the three checks
+preset you have configured for papers. It runs, in this order, the four checks
 below and then two of metacheck's modules that read the data files themselves:
 `metacheck::data_check` (classifies the files and describes every column of the
 data files, with a data-quality screen) and `metacheck::codebook_check` (whether
@@ -153,6 +153,78 @@ at the paper's text if there is one, and otherwise leaves them to a person
 can supply its institution's own.
 
 Options: see `metacheck modules datapackage::package_docs`.
+
+### `package_pii`
+
+Personal data **by value** in the data files. It reads the first rows of every csv,
+tsv, Excel, ODS, SPSS, Stata and SAS file and looks at the values of each column.
+It is separate from `metacheck::data_check`, which is a port of R and stays as it is:
+that check flags e-mail addresses, IPv4 addresses, US social security numbers and
+payment cards by value, and column names such as `naam` or `postcode`. This one adds
+what is typical for Dutch research data. One checklist item for each kind
+(`pii_bsn`, `pii_student_number`, `pii_phone`, `pii_ipv6`, `pii_postcode`,
+`pii_name`), and `pii_scan` for whether the files could be read.
+
+| What | How it is recognised |
+|---|---|
+| Dutch citizen service number (BSN) | 9 digits that pass the 11-check ("elfproef"), also written `123.456.782`; not `000000000`. About one in eleven random 9-digit numbers passes, so a column is flagged only when at least half of its filled cells (and three cells) pass; an ordinary column of 9-digit IDs is not. In a column named `bsn`, `burgerservicenummer` or `sofi...` one cell and 30% are enough, and 8 digits count too (a spreadsheet drops the leading zero). |
+| Student number | 7 digits (`s1234567` and `s123456` too), **only in a column whose name says it**: `student`, `studentnummer`, `student_id`, `studentnr`, `s-number`, `snummer`. A bare 7-digit number is never flagged, because every 7-digit ID would be. At least half of the filled cells must match. |
+| Phone number | `+` or `00` and a country code with 9 to 15 digits (`+31 6 12345678`, `+44 20 7946 0958`, `0031612345678`), or a Dutch national number: `0` and 10 digits with an area code of 2 to 4 digits and separators (`040-2474747`, `(020) 123 4567`, `06-12345678`), or `06` and 8 digits in one run (`0612345678`). In a column named `telefoon`, `phone`, `mobiel`, `gsm` any `0` and 9 digits count. Timestamps, EANs, dates and other numeric IDs do not (they do not start with `+` or `0`, or have the wrong number of digits); service numbers (`0800`, `0900`) do not. |
+| IPv6 address | Parsed with Python's `ipaddress`, so compressed forms (`2001:db8::1`, `fe80::1%eth0`, `[2001:db8::1]`) are found and a time (`12:30:45`), a MAC address (`aa:bb:cc:dd:ee:ff`) and a ratio are not. `::1` and `::` are not personal. |
+| Dutch postcode | 4 digits (not starting with 0), a space and 2 capitals: `1234 AB`; not `SA`, `SD`, `SS`, and not a number with a unit or an era (`1000 MB`, `500 BC`). Without a space or in lower case (`1234AB`, `1234 ab`) only in a column named `postcode`, `postcode_home`, `zipcode`. |
+| Name column | The column name says it holds names (`naam`, `voornaam`, `achternaam`, `tussenvoegsel`, `first_name`, `surname`, `participant_name`, ...) **and** at least 70% of at least three filled cells read like names: one to five words, capitalised, letters, hyphens, apostrophes and initials with a full stop, a lower-case particle (`van`, `de`, `der`) between them. A column called just `name` or `naam` needs full names (two words or more), so a `name` column of variables (`age`, `reaction_time`), files (`data_01.csv`), single words or labels (`Control group`) is not flagged; a name that says something else (`file_name`, `variable_name`, `condition`, `country`) is not looked at at all. |
+
+How a column is judged: a **cell** counts only when it is the number or name on its
+own (`06-12345678`), not when it sits in a sentence (`call me on 06-12345678`) or in a
+longer token. A column is flagged when enough of its filled cells count; a column whose
+name points the same way needs fewer. Empty cells and `NA` are not counted.
+
+What is reported is the file, the sheet, the column's name and the **number of cells**
+that matched, never a value, in the findings (`table`), in the extra `hits` table (one
+row for each flagged column: `path`, `sheet`, `column`, `column_index`, `rule`,
+`hits`, `checked`, `named`, `rows_read`, `rows_capped`) and in the report. A column
+or sheet name that is itself a value (a file without a header row has its first data
+row there: an `@`, six digits in a row, more than 40 characters, or something that passes
+one of the tests above, such as `5611 ZK` or `Jan de Vries`) is shown as `column 3` or
+`sheet 2`.
+
+Limits and options: at most `max_rows` rows of each file (5000) and the first 10 sheets
+of a workbook; files over `max_file_size` MB (100) and files beyond the first `max_files`
+(500) are not read, and say so on `pii_scan`. Hidden files and codebooks (a `name` column
+there holds variable names) are left out. Text files are read as text, so a leading
+zero is kept; spreadsheet cells and SPSS numbers are read as the numbers they are, which
+means a Dutch phone number stored as a number (`612345678`) has lost its `0` and is not
+found. `severity` maps a rule id (`bsn`, `student-number`, `phone`, `ipv6`, `postcode`,
+`person-name`, `file-too-large`, `file-unreadable`, `files-not-scanned`) to `problem`,
+`suggestion` (the default), `info` or `ignore` (that detector is not run).
+
+**What it does not do.** It does not look inside free text (a comment column with a
+phone number in a sentence), in other file types (JSON, XML, PDF, images, R data), in
+sheets after the tenth or rows after the first `max_rows`. It does not find e-mail
+addresses, IPv4 addresses or payment cards (`data_check` does), other countries'
+national numbers (apart from phone numbers with a country code), dates of birth,
+coordinates or indirect identifiers (a combination of age, gender and a small place).
+A name column that holds single first names under a plain `name` header is missed on
+purpose.
+
+**The findings are hints for a person.** A flagged item has the status `manual`, not
+`fail`: a 9-digit ID that happens to pass the 11-check, or a column of fictional
+names, is a false hit, and a person has to look. Set a rule to `problem` in `severity`
+to make that item fail.
+
+#### Reading the findings from a pack's own checklist
+
+A pack that has its own personal-data requirement (a data management check of an
+institution, say) can take the result from the output of `package_pii`: the
+`checklist` has the six `pii_*` items (status `manual`, `fail`, `pass` or `na`) and
+`pii_scan`, and `hits` says in which file and column. In a pack's module, call
+`metacheck.datapackage.pii.check_personal_data(pkg, severity=...)` with the opened
+package (`package_for(local_path)`) and read `result.checklist`, `result.hits` and
+`result.flagged` (columns flagged for each rule id). The pack's item can then be `fail`
+when `result.hits` is not empty and its own rules say personal data may not be in the
+package, and use `hits` for its detail line: the file, the column and the count, which
+is all there is; the values are never kept. The pack's preset can add `package_pii` to
+its modules, or leave it out of `datapackage::default` with `exclude`.
 
 ## The checklist
 
