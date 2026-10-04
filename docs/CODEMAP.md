@@ -665,9 +665,9 @@ Python: [llm/core.py](../src/metacheck/llm/core.py), [llm/_backend.py](../src/me
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
 | `llm()` | [`metacheck.llm.core:llm`](../src/metacheck/llm/core.py) | — | — |  |
-| `.llm_ollama_native()` | — | — | — | Not ported by design: Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D63). |
-| `llm_model_list()` | — | — | — | Not ported by design: Lists the models of each provider through ellmer's models_*() functions. Removed with them (D63): name a model as provider/model. |
-| `.llm_model_list_groq()` | — | — | — | Not ported by design: Groq's model listing, part of llm_model_list() (D63). |
+| `.llm_ollama_native()` | — | — | — | Not ported by design: Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D65). |
+| `llm_model_list()` | — | — | — | Not ported by design: Lists the models of each provider through ellmer's models_*() functions. Removed with them (D65): name a model as provider/model. |
+| `.llm_model_list_groq()` | — | — | — | Not ported by design: Groq's model listing, part of llm_model_list() (D65). |
 | `llm_max_calls()` | [`metacheck.llm.core:llm_max_calls`](../src/metacheck/llm/core.py) | — | — |  |
 | `llm_timeout()` | [`metacheck.llm.core:llm_timeout`](../src/metacheck/llm/core.py) | — | — |  |
 | `llm_max_tokens()` | [`metacheck.llm.core:llm_max_tokens`](../src/metacheck/llm/core.py) | — | — |  |
@@ -1089,7 +1089,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `quarto` | rendering reports | the `quarto` command, when `report(renderer="quarto")`; the default renderer writes HTML in Python ([`report/report.py`](../src/metacheck/report/report.py)) |
 | `DT` | interactive tables in reports | self-contained HTML tables in [`report/render.py`](../src/metacheck/report/render.py) |
 | `bibtex` | `format_ref()` of BibTeX text | not needed: modules pass the reference text R produced (U3) |
-| `ellmer` | LLM chats and structured output | the official provider SDKs (`openai`, `anthropic`, `google-genai`; the `metacheck[llm]` extra, D63), one request per call in [`llm/_backend.py`](../src/metacheck/llm/_backend.py); the `type_*()` builders in [`llm/types.py`](../src/metacheck/llm/types.py); five providers that need their own cloud sign-in are not supported ([`porting/skip.toml`](../porting/skip.toml)) |
+| `ellmer` | LLM chats and structured output | the official provider SDKs (`openai`, `anthropic`, `google-genai`; the `metacheck[llm]` extra, D65), one request per call in [`llm/_backend.py`](../src/metacheck/llm/_backend.py); the `type_*()` builders in [`llm/types.py`](../src/metacheck/llm/types.py); five providers that need their own cloud sign-in are not supported ([`porting/skip.toml`](../porting/skip.toml)) |
 | `jsonlite` | reading and writing JSON | orjson through [`_json.py`](../src/metacheck/_json.py); jsonlite's output format in [`api/jsonlite.py`](../src/metacheck/api/jsonlite.py) |
 | `xml2` | XML and HTML (Grobid TEI, archive pages, SPSS output) | lxml; helpers in [`io/xml.py`](../src/metacheck/io/xml.py) |
 | `curl`, `httr2` | HTTP requests | httpx through [`http.py`](../src/metacheck/http.py) |

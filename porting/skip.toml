@@ -56,7 +56,7 @@
 
 # ellmer internals and extras. LLM changes upstream are ported by behaviour
 # (prompts, schemas, parameters, result columns), never by ellmer's internals:
-# pytacheck sends requests through the provider SDKs (D63).
+# pytacheck sends requests through the provider SDKs (D65).
 "ellmer::chat" = "ellmer's chat object and its provider constructors. pytacheck builds one request per call with the provider SDKs (metacheck.llm._backend.complete)."
 "ellmer::params" = "ellmer's argument checks for model parameters. pytacheck passes the standard parameters to the SDK of the provider and drops, with a warning, the ones a provider does not take."
 "ellmer:::extract_data" = "ellmer's reading of a structured reply from a chat turn. The back end reads the JSON from the SDK's response."
@@ -71,11 +71,11 @@
 "ellmer::models_portkey" = "Model listing (see ellmer::models_ollama)."
 "ellmer::models_lmstudio" = "Model listing (see ellmer::models_ollama)."
 "ellmer::models_vllm" = "Model listing (see ellmer::models_ollama)."
-"llm_model_list" = "Lists the models of each provider through ellmer's models_*() functions. Removed with them (D63): name a model as provider/model."
-".llm_model_list_groq" = "Groq's model listing, part of llm_model_list() (D63)."
-".LLM_ALLOWED_PLATFORMS" = "The provider allowlist of llm_model_list() (D63)."
-".llm_ollama_native" = "Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D63)."
-".llm_extract_thinking" = "The reasoning text of an ellmer chat turn, for llm(capture_reasoning = TRUE). Reasoning capture was removed (D63); reasoning effort settings stay."
+"llm_model_list" = "Lists the models of each provider through ellmer's models_*() functions. Removed with them (D65): name a model as provider/model."
+".llm_model_list_groq" = "Groq's model listing, part of llm_model_list() (D65)."
+".LLM_ALLOWED_PLATFORMS" = "The provider allowlist of llm_model_list() (D65)."
+".llm_ollama_native" = "Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D65)."
+".llm_extract_thinking" = "The reasoning text of an ellmer chat turn, for llm(capture_reasoning = TRUE). Reasoning capture was removed (D65); reasoning effort settings stay."
 
 # statcheck parts metacheck never uses
 "statcheck::checkHTML" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
