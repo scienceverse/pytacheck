@@ -8,6 +8,7 @@ import random
 import re
 import shutil
 import string
+import sys
 import tempfile
 import zipfile
 from collections.abc import Iterator
@@ -554,8 +555,13 @@ ODD_NAMES = {
 }
 
 
+def _creatable(name: str) -> bool:
+    """Whether a file can have this name here (Windows refuses ``<>:"|?*`` and control characters)."""
+    return sys.platform != "win32" or not any(c in '<>:"|?*\n' for c in name)
+
+
 def test_odd_file_names_are_shown_and_never_become_placeholders(tmp_path: Path) -> None:
-    root = _folder(tmp_path, ODD_NAMES)
+    root = _folder(tmp_path, {k: v for k, v in ODD_NAMES.items() if _creatable(k)})
     draft = _draft(root)
     text = draft.text
     assert "ünïcode ✓.csv" in text and "with space.csv" in text
@@ -566,12 +572,14 @@ def test_odd_file_names_are_shown_and_never_become_placeholders(tmp_path: Path) 
     assert len(found) == draft.placeholders
     assert all(re.match(r"<(Describe|Give|State|Explain) ", value) for value in found)
     assert "`TODO notes.txt`: <Describe what this file holds or does>" in text
-    assert "[FILENAME].txt" in text and "<draft>.txt" in text
+    assert "[FILENAME].txt" in text
+    assert "<draft>.txt" in text or not _creatable("<draft>.txt")
     # R and r are one format, shown with the more common spelling; hidden files are not listed
     assert "`.R` (2 files)" in text
     assert ".hidden" not in text
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows file names cannot hold a newline")
 def test_a_name_with_a_newline_cannot_break_the_layout(tmp_path: Path) -> None:
     root = _folder(tmp_path, {"data/a\nb.txt": "t\n", "data/ok.csv": "a\n1\n"})
     draft = _draft(root)
