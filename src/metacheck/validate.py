@@ -330,7 +330,15 @@ def validate(gt: Any, module: Any, compare: str = "table") -> pd.DataFrame:
         if not _missing(pid):
             by_id.setdefault(pid, []).append(txt)
     papers = []
+    seen: set[Any] = set()
     for pid in ids:
+        if not _missing(pid):
+            # metacheck makes one paper per row of gt, so a repeated ID gives identical
+            # papers that a module pools. They are one paper here: F6 would otherwise rename
+            # the later ones, and their rows would no longer join to gt's by paper_id.
+            if pid in seen:
+                continue
+            seen.add(pid)
         t = [None] * len(ids) if _missing(pid) else by_id[pid]
         p = test_paper(["" if _missing(v) else _as_text(v) for v in t])
         if any(_missing(v) for v in t):

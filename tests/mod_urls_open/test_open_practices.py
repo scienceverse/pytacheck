@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 
 import metacheck as pc
+from metacheck.core.errors import PytacheckWarning
 from metacheck.module import SECTION_LEVELS, ModuleError
 
 MODULE = "open_practices"
@@ -254,11 +255,15 @@ def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
 
 
 def test_duplicate_paper_ids(demo: pc.Paper) -> None:
-    # U101: metacheck stops with "factor level [2] is duplicated"
-    single = run(demo)
-    mo = run(pc.PaperList([demo, demo]))
-    assert mo.traffic_light == single.traffic_light
-    assert mo.summary_text == single.summary_text
+    # U101: metacheck stops with "factor level [2] is duplicated"; U208: the second paper
+    # is renamed, so the list is two papers
+    with pytest.warns(PytacheckWarning, match="'to_err_is_human' as 'to_err_is_human~2'"):
+        mo = run(pc.PaperList([demo, demo]))
+    assert mo.summary_table["paper_id"].tolist() == ["to_err_is_human", "to_err_is_human~2"]
+    assert (
+        mo.summary_text
+        == "2 papers shared both data and code, 0 only data, 0 only code, and 0 neither."
+    )
 
 
 def test_empty_paper_list() -> None:
@@ -349,3 +354,20 @@ def test_chained_na_replace_leaves_open_practices_columns() -> None:
     assert pd.isna(st["materials_open"].tolist()[1])
     assert st["on_request"].tolist()[::2] == [False, True]
     assert st["urls"].tolist() == [1, 0, 1]
+
+
+def test_list_column_in_the_text_table() -> None:
+    # papers from older bibr exports have a list column (_bbox_2d) in the text table;
+    # it is part of the join key, and the module used to stop on the unhashable list
+    texts = [
+        "The data are available at https://osf.io/abc.",
+        "Code is on GitHub: github.com/a/b.",
+        "Data and code are available at https://osf.io/abc.",
+    ]
+    plain = run(pc.test_paper(texts))
+    paper = pc.test_paper(texts)
+    paper["text"]["_bbox_2d"] = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+    out = run(paper)
+    assert out.traffic_light == plain.traffic_light == "green"
+    assert out.summary_text == plain.summary_text
+    assert len(out.table) == len(plain.table)

@@ -267,9 +267,11 @@ def test_chaining_p_value_modules(psychsci) -> None:
         "n_zero",
         "n_nonsignificant",
     ]
-    assert x.summary_table["p_values"].tolist() == [6, 39, 13]
-    assert x.summary_table["n_imprecise"].tolist() == [0, 0, 2]
-    assert x.summary_table["n_nonsignificant"].tolist() == [0, 17, 0]
+    # metacheck: [6, 39, 13], [0, 0, 2] and [0, 17, 0]; its pattern misses the
+    # 'ps < .05' forms of the second and third paper (U204)
+    assert x.summary_table["p_values"].tolist() == [6, 44, 15]
+    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 4]
+    assert x.summary_table["n_nonsignificant"].tolist() == [0, 20, 0]
     assert isinstance(x.prev_outputs["all_p_values"], ModuleOutput)
 
 

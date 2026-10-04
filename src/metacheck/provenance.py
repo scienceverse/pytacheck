@@ -297,7 +297,9 @@ class RunRecord:
     :func:`rerun` replays it. ``version`` is this package's version and
     ``r_reference`` the R metacheck release and commit it is compared against.
     Records of the older schema are read too, and keys a record does not
-    know are ignored.
+    know are ignored. A run on a data package (``metacheck package``) has no
+    papers; ``package`` then holds its ``name``, ``source`` and whether it was
+    an ``archive``.
     """
 
     created: str
@@ -313,6 +315,7 @@ class RunRecord:
     modules: list[dict[str, Any]] = field(default_factory=list)
     environment: dict[str, Any] = field(default_factory=dict)
     schema: str = RUN_SCHEMA
+    package: dict[str, Any] | None = None
 
     @classmethod
     def build(
@@ -398,6 +401,7 @@ class RunRecord:
             "papers": list(self.papers),
             "modules": [dict(m) for m in self.modules],
             "environment": dict(self.environment),
+            **({"package": dict(self.package)} if self.package else {}),
         }
 
     def to_json(self, indent: int | None = 2) -> str:
@@ -568,24 +572,44 @@ def run_modules(
     ``report_module_run()``, a module that errors becomes a ``"fail"``
     output (with a warning) and the chain goes on. The result carries a
     :class:`RunRecord` as ``run_record``, also written to *record* when given.
+
+    **Modules must not edit a paper in place.** The run reads each paper's text
+    and section tables once (a paper's indexed Doc is built for the first module
+    and reused by the others), so an in-place edit by one module (for example
+    ``paper.text.loc[...] = ...``) is not seen by the modules after it. Copy the
+    paper (``paper.copy()``) and return the copy instead. With
+    ``METACHECK_CHECK_MUTATION=1`` (CI) such an edit raises
+    :class:`~metacheck.core.errors.StaleDocumentError` before the next module,
+    naming the one that made it.
     """
     import warnings
 
+    from metacheck.core.errors import StaleDocumentError
+    from metacheck.core.scope import check_mutation, running_module, trusted_scope
     from metacheck.module import module_run, run_session
     from metacheck.presets import label as label_of
 
     entries = _entries(selection)
     outputs: list[Any] = []
     op = paper
-    with run_session():
+    # a trusted scope (run_session() alone grants none): the chain does not edit
+    # its papers, so each paper's Doc is built once for all the modules
+    with run_session(), trusted_scope():
+        ran: str | None = None
         for ref, args in entries:
             label = label_of(ref)
+            check_mutation(ran)  # the module before edited a paper in place (CI check)
             try:
-                op = module_run(op, ref, **args)
+                with running_module(label):
+                    op = module_run(op, ref, **args)
+            except StaleDocumentError:
+                raise
             except Exception as exc:
                 warnings.warn(f"Error in {label}", stacklevel=2)
                 op = _failed_output(paper, op, ref, label, args, exc)
             outputs.append(op)
+            ran = label
+        check_mutation(ran)
     chain = ModuleChain(outputs, paper=paper, selection=selection)
     chain.run_record = RunRecord.build(chain, selection=selection, papers=paper)
     if record is not None:

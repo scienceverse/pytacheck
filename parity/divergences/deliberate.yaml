@@ -8,3 +8,11 @@
 "mod_codebook_review/codebook_check.llm.rv_dupscale": *d14
 "mod_codebook_review/codebook_check.llm_odd.rv_dupscale": *d14
 "mod_codebook_review/codebook_check.llm_odd_na.rv_dupscale": *d14
+# a sentence repeated word for word in a paper (V7; D60). stat_p_exact and stat_p_nonsig are
+# validated checks: this change awaits the maintainer's OK on the pull request (D60 in docs/UPSTREAM_ISSUES.md).
+"mod_p_values/all_p_values.duplicate_paragraph": &d60
+  kind: deliberate
+  ref: D60
+  reason: a paragraph repeated word for word counts once, so its p-values are listed once; metacheck lists them again for each copy (4 rows here, 2 in pytacheck)
+"mod_p_values/stat_p_exact.duplicate_paragraph": *d60
+"mod_p_values/stat_p_nonsig.duplicate_paragraph": *d60

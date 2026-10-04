@@ -8,6 +8,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.frames import bind_rows
+from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.papers.schema import empty_table, records_to_frame, table_names
 
@@ -15,14 +16,17 @@ __all__ = ["as_paper_list", "empty_paper_table", "paper_id", "paper_table", "ref
 
 
 def as_paper_list(paper: Any) -> PaperList:
-    """Wrap a single paper in a :class:`PaperList`; validate the argument."""
+    """Wrap a single paper in a :class:`PaperList`; validate the argument.
+
+    Papers of a list that share an ID get distinct ones (F6, :func:`~metacheck.papers.ids.resolve`).
+    """
     if isinstance(paper, PaperList):
-        return paper
+        return resolve(paper, stacklevel=4)
     if isinstance(paper, Paper):
         return PaperList([paper])
     if is_paper_list(paper):
         values = paper.values() if isinstance(paper, dict) else paper
-        return PaperList(values)
+        return resolve(PaperList(values), stacklevel=4)
     raise TypeError("paper must be a paper or paperlist object.")
 
 
@@ -83,8 +87,14 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
 
 
 def _one_table(p: Paper, table: str) -> pd.DataFrame:
-    """*table* of one paper plus ``paper_id``: the paper's own (lazily built, then
-    kept) table as a copy-on-write view, not a new frame from its JSON records."""
+    """*table* of one paper plus ``paper_id``: from the typed columns of its JSON
+    records while it has them (its table is not built), else its own table as a
+    copy-on-write view."""
+    from metacheck.core.doc import table_frame  # the core imports papers.model
+
+    fast = table_frame(p, table)
+    if fast is not None:
+        return fast
     x = p.get(table)
     if not isinstance(x, pd.DataFrame):
         return pd.DataFrame()

@@ -1,7 +1,8 @@
 {
 "link.doi_vector_na": {"r": "ade6654d1e2a4058", "py": "ef85af4cf748ebf8", "diff": ["[]"]},
-"module_report.stat_p_exact.headers": {"r": "cd1d9fe09bba5c01", "py": "e80f092f38b6294c", "diff": ["[]"]},
+"module_report.stat_p_exact.headers": {"r": "cd1d9fe09bba5c01", "py": "f1531e5092a98a19", "diff": ["[]"]},
 "report.paperlist.one_file": {"r": "25b7b11e247040ed", "py": "90a6cdf1341fa9d2", "diff": ["files[]", "save_path[]"]},
+"report_module_run.psychsci.real_modules": {"r": "a3d9a2942ba247b1", "py": "63fd85a04c2d9993", "diff": ["marginal.summary_table.n_imprecise[]", "marginal.summary_table.n_nonsignificant[]", "stat_p_exact.report[]", "stat_p_exact.summary_text[]", "stat_p_exact.table", "stat_p_exact.traffic_light[]", "stat_p_nonsig.summary_text[]", "stat_p_nonsig.table"]},
 "report_qmd.no_doi_column": {"r": "80cae6d34dda494b", "py": "3b55e60d984a63a8", "diff": ["[]"]},
 "report_qmd.vector_summary": {"r": "ac5146cf65ca52a8", "py": "31c89867ba4e98ba", "diff": ["<R error, Python value>"]},
 "report_qmd.zero_row_info": {"r": "80cae6d34dda494b", "py": "36f8135270dc3a81", "diff": ["[]"]},

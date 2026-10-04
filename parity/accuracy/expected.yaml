@@ -84,6 +84,13 @@ differences:
     kind: r_bug_fixed
     ref: U158
     reason: "'et al.Premotor' is not a URL (metacheck lists the host name 'al.Premotor')"
+  - module: all_urls
+    input: bibr12/preprint.json
+    field: [summary_table.urls, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U206
+    reason: "e-mail addresses are not URLs (metacheck lists 'gmail.com' and the parts of the other addresses: 17 rows, 15 here)"
   # module text -----------------------------------------------------------------
   - module: coi_check_oi
     input: "*"
@@ -210,8 +217,30 @@ differences:
       data_check, which runs first on the same folder, extracts folder/Archive.zip into the
       folder (Archive.zip.contents/), so metacheck's repo_check lists its 2 XML files as well
       (32 files, 4 naming problems); pytacheck extracts a local archive outside the user's folder
+  - module: [all_p_values, stat_p_exact, stat_p_nonsig]
+    input:
+      - formats/preprint.pdf.tei.xml
+      - bibr12/preprint.json
+      - problems/0956797617737129.xml
+      - psychsci/0956797614527830.json
+      - psychsci/0956797614522816.json
+    field: [traffic_light, summary_text, report, summary_table.*, table]
+    match: values
+    kind: r_bug_fixed
+    ref: U204
+    reason: >-
+      'ps < .05', 'ps > .115' and the other 'ps' forms are p-values (8 more in the preprint, 7
+      in the two psychsci papers, 1 in 0956797617737129); metacheck matches only p, p-value
+      and P. Counted as imprecise, they turn stat_p_exact red on 3 of these papers
 
 floors:
+  - module: stat_p_exact
+    traffic_light: 0.85
+    kind: r_bug_fixed
+    ref: U204
+    reason: >-
+      3 of the 21 papers report several p-values as 'ps < .05': pytacheck counts them as
+      imprecise p-values (red), metacheck does not see them (green)
   - module: ref_accuracy
     traffic_light: 0.4
     kind: r_bug_fixed

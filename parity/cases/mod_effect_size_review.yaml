@@ -302,6 +302,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- spacing, signs, comparators
 - "id": "stat_effect_size.review.tokens"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U205", "reason": "'t(40) = −2.9, d = −0.45' (Unicode minus) is a t-test with a d, one more coherence match; metacheck finds neither"}
   "module": "stat_effect_size"
   "args":
     "paper":

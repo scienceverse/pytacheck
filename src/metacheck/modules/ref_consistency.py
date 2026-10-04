@@ -169,10 +169,13 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
         xref_all = xref_all.copy()
         xref_all.loc[v12, "xref_id"] = xref_all.loc[v12, "target_id"]
     xref_type = xref_all["xref_type"]
+    # In the older formats a citation is a "bibr" xref in Grobid TEI and a "bib" xref in
+    # bibr exports (whose xref_id is the bib_id); metacheck keeps only "bibr", so every
+    # reference of an older bibr export was "not cross-referenced" (U207)
     is_bib = np.where(
         v12,
         xref_type.isin(["bib"]).to_numpy(dtype=bool),
-        xref_type.isin(["bibr"]).to_numpy(dtype=bool),
+        xref_type.isin(["bib", "bibr"]).to_numpy(dtype=bool),
     )
     xrefs = xref_all.loc[is_bib, ["paper_id", "xref_id", "contents", "text_id"]].rename(
         columns={"xref_id": "bib_id"}

@@ -1,16 +1,21 @@
 # Installs the metacheck preview app into one folder and opens it.
 #
 #   powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex"
-#   .\install.ps1 [-NoLaunch] [-Uninstall]
+#   .\install.ps1 [-NoLaunch] [-Steward] [-Uninstall]
 #
 # Everything goes into METACHECK_HOME (default: %LOCALAPPDATA%\metacheck):
 # uv, its Python, the app and uv's cache. No PATH or registry entry is edited.
 # "irm | iex" cannot pass parameters, so these environment variables work too:
 #   METACHECK_NO_LAUNCH=1     same as -NoLaunch
+#   METACHECK_STEWARD=1       same as -Steward
 #   METACHECK_UNINSTALL=1     same as -Uninstall
 #   METACHECK_REF=<commit>    install this commit instead of the pinned one
 #   METACHECK_SPEC=<spec>     install this requirement instead of the GitHub archive
 #   METACHECK_CONSTRAINTS=<file>  use this constraints file instead of the pinned one
+#
+# -Steward is for a data steward who only checks data packages: the app opens
+# on its "Check a data package" page. The installer has no PDF or bibr step to
+# skip; the page needs neither a PDF reader nor a key.
 #
 # The whole script is one function called on the last line, so a download that
 # stops half way runs nothing. It has no param() block, because that does not
@@ -41,14 +46,17 @@ function Install-Metacheck {
     function Fail([string]$Text) { throw "metacheck installer: $Text" }
 
     $launch = $true
+    $steward = $false
     $uninstall = $false
     if ($env:METACHECK_NO_LAUNCH -eq '1') { $launch = $false }
+    if ($env:METACHECK_STEWARD -eq '1') { $steward = $true }
     if ($env:METACHECK_UNINSTALL -eq '1') { $uninstall = $true }
     foreach ($arg in $Arguments) {
         switch -Regex ($arg) {
             '^-NoLaunch$' { $launch = $false }
+            '^-Steward$' { $steward = $true }
             '^-Uninstall$' { $uninstall = $true }
-            default { Fail "unknown option: $arg (use -NoLaunch or -Uninstall)" }
+            default { Fail "unknown option: $arg (use -NoLaunch, -Steward or -Uninstall)" }
         }
     }
 
@@ -261,15 +269,29 @@ function Install-Metacheck {
 
     Say ''
     Say "metacheck is installed in $root"
+    # The app opens on the data package page only if the installed version has one
+    # (a build from before that page does not know --page).
+    $page = $false
+    if ($steward) {
+        $help = ''
+        try { $help = (& $app --help 2>&1 | Out-String) } catch { $help = '' }
+        if ($help.Contains('--page')) {
+            $page = $true
+        } else {
+            Say 'This version of the app has no data package page yet; it opens on the paper page.'
+        }
+    }
     Say 'To open it again, run the same command again (it takes a few seconds),'
-    Say "or run: $app"
+    if ($page) { Say "or run: $app --page package" } else { Say "or run: $app" }
     Say 'To remove it, run these three lines:'
     Say '  $env:METACHECK_UNINSTALL=1'
     Say '  irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex'
     Say '  Remove-Item Env:METACHECK_UNINSTALL'
     Say ''
 
-    if ($launch) { & $app }
+    if ($launch) {
+        if ($page) { & $app --page package } else { & $app }
+    }
 }
 
 Install-Metacheck $args

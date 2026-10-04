@@ -130,6 +130,9 @@ its arguments (a typo is an error, not ignored). When a module fails, `run`
 shows why next to it (and in `--json` as `error`), runs the remaining modules,
 then exits with status 1.
 
+`pytacheck package PATH` takes the same flags and runs the `datapackage` pack's checks on
+a folder or archive of data and code instead of a paper (see [DATAPACKAGE.md](DATAPACKAGE.md)).
+
 In Python, the **library keeps metacheck's defaults**: `report(paper)` runs what
 metacheck's `report()` runs, whatever your config says. Choose explicitly:
 
@@ -282,7 +285,9 @@ metacheck module not ported yet) fails again rather than stopping the rerun.
 the version of this package and `r_reference` is the R metacheck release and commit
 it is compared against (`{"version": ..., "commit": ...}`). In HTML the record sits in
 `<script type="application/json" id="metacheck-run">`. Keys a reader does not know
-are ignored, so later versions can add keys to `/2` without a new schema id.
+are ignored, so later versions can add keys to `/2` without a new schema id. A run on a
+data package (`pytacheck package`) has no papers and adds `package`: `name`, `source`
+(the path that was checked) and `archive`.
 Records written by 0.4.0a1 (`pytacheck.run/1`, with the keys `pytacheck` and
 `metacheck`, and `id="pytacheck-run"` in HTML) still open and replay. They are
 upgraded when read, a key already under its new name wins, and a record written
@@ -466,7 +471,13 @@ The contract (the same one the built-in modules follow):
 
 * the function's name equals the file name, and it has a title, a description and
   one section keyword;
-* it never modifies the paper it receives (copy tables before changing them);
+* it never modifies the paper it receives (copy tables before changing them).
+  `run_modules()` and `report()` read each paper's text and section tables once per
+  run, and the later modules reuse what was read, so an in-place edit by one module
+  (such as `paper.text.loc[...] = ...`) is not seen by the modules after it. Run
+  your tests with `METACHECK_CHECK_MUTATION=1`: a run that finds a table edited in
+  place raises `StaleDocumentError` before the next module, naming the module that
+  made the edit (CI runs this way);
 * `traffic_light` is one of `na`, `fail`, `info`, `green`, `yellow`, `red`;
 * `summary_table` has a `paper_id` column and at most one row per paper;
 * it works on a single paper and on a paper list, and on bibr 12.x papers as well

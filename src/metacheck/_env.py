@@ -56,6 +56,7 @@ ENV_VARS: dict[str, EnvVar] = {
     "BIBR_BACKEND": EnvVar(("METACHECK_BIBR_BACKEND", "PYTACHECK_BIBR_BACKEND")),
     "BIBR_URL": EnvVar(("METACHECK_BIBR_URL", "PYTACHECK_BIBR_URL")),
     "CACHE_DIR": EnvVar(("METACHECK_CACHE_DIR", "PYTACHECK_CACHE_DIR")),
+    "CHECK_MUTATION": EnvVar(("METACHECK_CHECK_MUTATION", "PYTACHECK_CHECK_MUTATION")),
     "CONFIG": EnvVar(("METACHECK_CONFIG", "PYTACHECK_CONFIG")),
     "DATA_DIR": EnvVar(("METACHECK_DATA_DIR", "PYTACHECK_DATA_DIR")),
     "EMAIL": EnvVar(("METACHECK_EMAIL", "PYTACHECK_EMAIL")),
@@ -88,6 +89,8 @@ ENV_VARS: dict[str, EnvVar] = {
     "APP_COMMIT": EnvVar(("METACHECK_APP_COMMIT",)),
     "APP_HOSTS": EnvVar(("METACHECK_APP_HOSTS",)),
     "APP_JOB_TIMEOUT": EnvVar(("METACHECK_APP_JOB_TIMEOUT",)),
+    # the local app's data package page: extra folders it may read (new, so no old name)
+    "APP_ROOTS": EnvVar(("METACHECK_APP_ROOTS",)),
     "APP_TOKENS": EnvVar(("METACHECK_APP_TOKENS",), secret=True),
     "APP_USER_HEADER": EnvVar(("METACHECK_APP_USER_HEADER",)),
     # data_check's local concept classifier: new, so no old names

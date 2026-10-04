@@ -41,6 +41,7 @@ from metacheck._values import is_missing
 
 __all__ = [
     "RegexError",
+    "WordIndex",
     "compile_r",
     "gregexpr_all",
     "grep",
@@ -688,43 +689,99 @@ def _cnf(p: str) -> list[tuple[str, ...]]:
 # ---------------------------------------------------------------------------
 
 
+#: ``detect_many`` builds the word index when it is given at least this many patterns
+#: (``literals="auto"``); fewer patterns look up too few pieces to repay building it.
+INDEX_MIN_PATTERNS = 64
+
+
+class WordIndex:
+    """``piece in folded``, answered from the distinct words of ``folded``.
+
+    The words are the runs of ``folded.split()`` (no white space, in the sense of
+    ``str.split``), kept once each and joined with NUL into one *vocabulary*.
+    A piece of printable ASCII without a space (``!`` to ``~``; every piece of
+    :func:`required_literals` is one) contains no white space and no NUL, so each
+    of its occurrences in ``folded`` lies inside a single word, and each of its
+    occurrences in the vocabulary lies inside a single word of it (a word is a
+    substring of ``folded``; NUL cannot be part of the piece). Hence
+    ``piece in vocabulary`` is ``piece in folded``, exactly, wherever the piece
+    sits in a word, and a piece inside a longer word (``ann`` in ``planning``) or
+    with punctuation (``ab.cd``) is found like any other. The vocabulary is
+    shorter than the text because repeated words count once, so each lookup scans
+    less. Any other string (white space, control or non-ASCII characters, the empty
+    string) is looked up in ``folded`` itself, so the answer is always the scan's.
+    """
+
+    __slots__ = ("_folded", "_found", "_vocab")
+
+    def __init__(self, folded: str) -> None:
+        self._folded = folded
+        self._vocab = "\0".join(set(folded.split()))
+        self._found: dict[str, bool] = {}
+
+    def __contains__(self, piece: str) -> bool:
+        hit = self._found.get(piece)
+        if hit is None:
+            exact = piece.isascii() and piece.isprintable() and " " not in piece and piece != ""
+            hit = self._found[piece] = piece in (self._vocab if exact else self._folded)
+        return hit
+
+
+class _Scan:
+    """``piece in folded``, memoised per piece."""
+
+    __slots__ = ("_folded", "_found")
+
+    def __init__(self, folded: str) -> None:
+        self._folded = folded
+        self._found: dict[str, bool] = {}
+
+    def __contains__(self, piece: str) -> bool:
+        hit = self._found.get(piece)
+        if hit is None:
+            hit = self._found[piece] = piece in self._folded
+        return hit
+
+
 def detect_many(
     patterns: Iterable[str],
     text: str | None,
     ignore_case: bool = False,
     perl: bool = False,
     fixed: bool = False,
+    literals: str = "auto",
 ) -> list[bool]:
     """``[detector(p, ignore_case, perl, fixed)(text) for p in patterns]``, faster.
 
     The text is folded once, and a pattern runs only if, for every clause of its
     :func:`required_literals`, one of the pieces is in the folded text. Each
-    piece is looked for once per call, and a pattern is compiled only when it
+    piece is looked up once per call, and a pattern is compiled only when it
     runs, so an invalid pattern raises :class:`RegexError` only then (as with
     :func:`detector`; ``grepl()`` compiles first). ``METACHECK_LITERALS=off``
     skips the filter; the result is the same either way.
+
+    *literals* says how a piece is looked up: ``"scan"`` is ``piece in folded``;
+    ``"index"`` builds a :class:`WordIndex` first (a few milliseconds on a long
+    paper) and searches its vocabulary of distinct words; ``"auto"`` (the default)
+    takes the index when there are at least :data:`INDEX_MIN_PATTERNS` patterns
+    and the scan otherwise. The three give the same answers.
     """
+    if literals not in ("auto", "scan", "index"):
+        raise ValueError(f"literals must be 'auto', 'scan' or 'index', not {literals!r}")
     pats = list(patterns)
     if text is None:
         return [False] * len(pats)
     if fixed:
         return [p in text for p in pats]
     folded = fold(text)
-    found: dict[str, bool] = {}
+    use = literals_enabled()
+    has: _Scan | WordIndex = _Scan(folded)  # only the filter looks pieces up
+    if use and (literals == "index" or (literals == "auto" and len(pats) >= INDEX_MIN_PATTERNS)):
+        has = WordIndex(folded)
 
     def candidate(cnf: CNF) -> bool:
-        for clause in cnf:
-            for piece in clause:
-                hit = found.get(piece)
-                if hit is None:
-                    hit = found[piece] = piece in folded
-                if hit:
-                    break
-            else:
-                return False
-        return True
+        return all(any(piece in has for piece in clause) for clause in cnf)
 
-    use = literals_enabled()
     out = []
     for p in pats:
         if use and not candidate(_required_literals(p, perl)):

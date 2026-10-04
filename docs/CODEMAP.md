@@ -40,6 +40,7 @@ Most R files map to one Python file, grouped into subpackages by topic:
 | `modules/` | The checks, one file per metacheck module. Private helpers that a module needs start with `_` (`_funding.py`, `_power.py`, ...). `pack.json` lists the built-in presets. | `inst/modules/*.R` |
 | `papers/` | `Paper` and `PaperList` (bibr export schema 12.0, and the older format), reading and writing papers, cross-paper tables, validation. | `R/paper.R`, `R/import-read.R` |
 | `io/` | `read()` and conversion: bibr JSON, Grobid TEI, bibr run in-process, conversion servers. | `R/import-*.R`, `R/svutils-xml.R` |
+| `core/` | Python only. The indexed document under the text façades: a paper's sentences indexed once (`Doc`), R patterns as values, search chains (`Hits`) and their grouped views. | none |
 | `text/` | `text_search()`, `text_expand()` and the extractors (p-values, tests, URLs, causal sentences). | `R/text_search.R`, `R/text_expand.R`, `R/text-*.R`, `R/extract-tests.R`, `R/causal_sentences.R` |
 | `stats/` | `stats()` and a port of the statcheck package. | `R/stats.R`, `R/stat_helpers.R` |
 | `db/` | DOIs, Crossref, PubPeer, Retraction Watch, FLoRA, the registries, ORCID. | `R/doi.R`, `R/db-*.R`, `R/regcheck-local.R`, `R/svutils-orcid.R` |
@@ -56,6 +57,7 @@ Most R files map to one Python file, grouped into subpackages by topic:
 | `resources/` | Data files: databases, demo papers, JSON schemas, the status snapshot. | `data/`, `inst/databases`, `inst/demos`, `inst/schema` |
 | `packs/` | Python only. Packs and stores: sharing modules outside the package ([MODULES.md](MODULES.md)). | none |
 | `app/` | Python only. The local demo app (a Gradio page). It is not a port of the Shiny apps. | none |
+| `datapackage/` | Python only. Checks of a data package, the folder or archive of data, code and documentation that comes with a paper: opening and listing it, and the `datapackage` pack (files, folder structure, README and parts, personal data by value in the data files) behind `metacheck package` ([DATAPACKAGE.md](DATAPACKAGE.md)). | none |
 
 A few top-level files hold shared pieces: [`module.py`](../src/metacheck/module.py)
 (the module system: `module_run()`, `module_list()`, `module_help()`, from
@@ -149,19 +151,19 @@ modules is covered in [MODULES.md](MODULES.md).
 
 | Check | R file | Python | Tests | Parity areas | Status | Recorded differences |
 |---|---|---|---|---|---|---|
-| `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | U16 |
-| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U77, U79, U158 |
+| `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | D60, U16, U204, U208 |
+| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U77, U79, U158, U206 |
 | `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | U79, U84, U85 |
 | `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | U79, U82, U86, U87, U89 |
 | `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | D14, U91, U92 |
 | `coi_check`<br>COI Check | `inst/modules/coi_check.R` | [modules/coi_check.py](../src/metacheck/modules/coi_check.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | U95, U97 |
 | `coi_check_oi`<br>COI Check Overinclusive | `inst/modules/coi_check_oi.R` | [modules/coi_check_oi.py](../src/metacheck/modules/coi_check_oi.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D29, U80 |
 | `data_check`<br>Data Check | `inst/modules/data_check.R` | [modules/data_check.py](../src/metacheck/modules/data_check.py)<br>[modules/_data_check.py](../src/metacheck/modules/_data_check.py) | [tests/mod_data_check](../tests/mod_data_check) | mod_data_check | experimental | U79 |
-| `ethics_check`<br>Ethics Approval Check | `inst/modules/ethics_check.R` | [modules/ethics_check.py](../src/metacheck/modules/ethics_check.py) | [tests/mod_ethics](../tests/mod_ethics) | mod_ethics, bibr12, grobid12 | experimental | U79, U101, U102 |
-| `funding_check`<br>Funding Check | `inst/modules/funding_check.R` | [modules/funding_check.py](../src/metacheck/modules/funding_check.py)<br>[modules/_funding.py](../src/metacheck/modules/_funding.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, U79, U103 |
+| `ethics_check`<br>Ethics Approval Check | `inst/modules/ethics_check.R` | [modules/ethics_check.py](../src/metacheck/modules/ethics_check.py) | [tests/mod_ethics](../tests/mod_ethics) | mod_ethics, bibr12, grobid12 | experimental | U79, U102, U208 |
+| `funding_check`<br>Funding Check | `inst/modules/funding_check.R` | [modules/funding_check.py](../src/metacheck/modules/funding_check.py)<br>[modules/_funding.py](../src/metacheck/modules/_funding.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, U79, U103, U208 |
 | `funding_check_oi`<br>Funding Check (Overinclusive) | `inst/modules/funding_check_oi.R` | [modules/funding_check_oi.py](../src/metacheck/modules/funding_check_oi.py)<br>[modules/funding_check.py](../src/metacheck/modules/funding_check.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, U79, U105 |
-| `marginal`<br>Marginal Significance | `inst/modules/marginal.R` | [modules/marginal.py](../src/metacheck/modules/marginal.py) | — | bibr12, grobid12, mod_marginal | validated | U3, U16 |
-| `open_practices`<br>Open Practices Check | `inst/modules/open_practices.R` | [modules/open_practices.py](../src/metacheck/modules/open_practices.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U79, U83, U101, U106, U107 |
+| `marginal`<br>Marginal Significance | `inst/modules/marginal.R` | [modules/marginal.py](../src/metacheck/modules/marginal.py) | — | bibr12, grobid12, mod_marginal | validated | U3, U16, U208 |
+| `open_practices`<br>Open Practices Check | `inst/modules/open_practices.R` | [modules/open_practices.py](../src/metacheck/modules/open_practices.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U79, U83, U106, U107, U208 |
 | `power`<br>Power Analysis Check | `inst/modules/power.R` | [modules/power.py](../src/metacheck/modules/power.py)<br>[modules/_power.py](../src/metacheck/modules/_power.py) | [tests/mod_power](../tests/mod_power) | mod_power, bibr12, grobid12 | validated | U16 |
 | `prereg_check`<br>Preregistration Check | `inst/modules/prereg_check.R` | [modules/prereg_check.py](../src/metacheck/modules/prereg_check.py)<br>[modules/_prereg.py](../src/metacheck/modules/_prereg.py) | [tests/mod_prereg](../tests/mod_prereg) | mod_prereg | experimental | — |
 | `psychds_check`<br>Psych-DS Check | `inst/modules/psychds_check.R` | [modules/psychds_check.py](../src/metacheck/modules/psychds_check.py) | [tests/mod_psychds](../tests/mod_psychds) | mod_psychds | experimental | U78, U112, U113 |
@@ -176,9 +178,9 @@ modules is covered in [MODULES.md](MODULES.md).
 | `repo_check`<br>Repository Check | `inst/modules/repo_check.R` | [modules/repo_check.py](../src/metacheck/modules/repo_check.py)<br>[modules/_repo_check.py](../src/metacheck/modules/_repo_check.py) | [tests/mod_repo_check](../tests/mod_repo_check) | mod_repo_check | experimental | U79 |
 | `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | — |
 | `stat_check`<br>StatCheck | `inst/modules/stat_check.R` | [modules/stat_check.py](../src/metacheck/modules/stat_check.py) | [tests/stats](../tests/stats) | stats, bibr12, grobid12 | experimental | U4, U16 |
-| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U212 |
-| `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | U16, U127 |
-| `stat_p_nonsig`<br>Non-Significant P Value Check | `inst/modules/stat_p_nonsig.R` | [modules/stat_p_nonsig.py](../src/metacheck/modules/stat_p_nonsig.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | U16, U127 |
+| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U205, U208, U212 |
+| `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16, U127, U204, U208 |
+| `stat_p_nonsig`<br>Non-Significant P Value Check | `inst/modules/stat_p_nonsig.R` | [modules/stat_p_nonsig.py](../src/metacheck/modules/stat_p_nonsig.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16, U127, U204, U208 |
 <!-- END codemap:modules -->
 
 ## R functions
@@ -940,8 +942,8 @@ Python: [text/extract.py](../src/metacheck/text/extract.py). Tests: [tests/text_
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
 | `extract_urls()` | [`metacheck.text.extract:extract_urls`](../src/metacheck/text/extract.py) | yes | U158 |  |
-| `extract_p_values()` | [`metacheck.text.extract:extract_p_values`](../src/metacheck/text/extract.py) | yes | U150 |  |
-| `extract_eq()` | [`metacheck.text.extract:extract_eq`](../src/metacheck/text/extract.py) | yes | U10, U150 |  |
+| `extract_p_values()` | [`metacheck.text.extract:extract_p_values`](../src/metacheck/text/extract.py) | yes | U150, U204 |  |
+| `extract_eq()` | [`metacheck.text.extract:extract_eq`](../src/metacheck/text/extract.py) | yes | U10, U150, U205 |  |
 
 ### `R/text-json_expand.R`
 
