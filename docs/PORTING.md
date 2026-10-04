@@ -383,8 +383,7 @@ Cross-lane rules:
 
 * **Never delete a function another lane imports.** Point it at the shared primitive
   (`metacheck._values`, `metacheck._json`, `metacheck.http`) or leave it; the closing
-  step removes it once nothing imports it. Kept for now: `llm._rds.RInt` (imported by
-  `datacheck/files.py`), `text.json_expand.as_numeric` (`db/crossref.py`,
+  step removes it once nothing imports it. Kept for now: `text.json_expand.as_numeric` (`db/crossref.py`,
   `text/extract.py`), `stats._rmath.as_numeric` (`archives/download.py`,
   `archives/zip_peek.py`), `datacheck.files._r_as_numeric` (`archives/dryad.py`,
   `archives/dataverse.py`), `datacheck._strip_llm_wrapper` (`modules/_power.py`,

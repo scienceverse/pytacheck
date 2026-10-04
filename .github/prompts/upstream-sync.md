@@ -18,6 +18,11 @@ Then port the upstream changes:
   idiomatic Python with the shared helpers (`metacheck._values`, `metacheck._json`,
   `metacheck.http`); do not emulate R internals (error texts, C-library quirks on
   malformed input, R type details).
+  Upstream changes to LLM code (`R/llm.R`, its prompts, schemas and ellmer calls) are ported by
+  behaviour -- the prompts, the schemas, the parameters and the result columns -- never by ellmer's
+  internals: pytacheck sends requests through the official provider SDKs
+  (`src/metacheck/llm/_backend.py`), and a new ellmer function with no behaviour of its own goes in
+  `porting/skip.toml`.
   New R functions go to the location given by `porting/symbols.json` (regenerate it with
   `uv run python scripts/porting_symbols.py` after adding entries to `porting/map/*.toml`).
   New modules go to `src/metacheck/modules/<name>.py`.

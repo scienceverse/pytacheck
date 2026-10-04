@@ -55,7 +55,7 @@ means the value is a key or token, which the package never logs.
 | `GITHUB_TOKEN` | `METACHECK_GITHUB_TOKEN`, `PYTACHECK_GITHUB_TOKEN`, `GH_TOKEN`, `GITHUB_TOKEN` | none | secret. Stripped. Sent only to GitHub hosts. Redaction covers all four names. `GH_TOKEN` and `GITHUB_TOKEN` are other tools' variables: the first one set wins, with no log line. |
 | `GROBID_URL` | `METACHECK_GROBID_URL`, `PYTACHECK_GROBID_URL` | the built-in list | A comma-separated list replaces the built-in list of Grobid servers. |
 | `LITERALS` | `METACHECK_LITERALS`, `PYTACHECK_LITERALS` | on | `off`, `0`, `false` or `no` (any case) turns off the required-literal prefilter (`required_literals()`, `detect_many()`), so a suspected missed match can be ruled out. Results are the same either way. `grepl()`'s own prefilter is not affected. |
-| `LLM_CACHE_DIR` | `PYTACHECK_LLM_CACHE_DIR`, `METACHECK_LLM_CACHE_DIR` | `.metacheck_llm_cache` under the cache root | shared with R. **The old name ranks first.** `METACHECK_LLM_CACHE_DIR` is R metacheck's name for its own cache, so it ranks last, and a setting meant for this package wins. If the two differ, only a DEBUG line is logged, because that is expected. `CACHE_DIR` feeds only the default cache root, below both names. |
+| `LLM_CACHE_DIR` | `PYTACHECK_LLM_CACHE_DIR`, `METACHECK_LLM_CACHE_DIR` | `.metacheck_llm_cache` under the cache root | shared with R as a folder name; this package keeps its replies as JSON files in the subfolder `json` and neither reads, writes nor deletes R's `.rds` entries beside it. **The old name ranks first.** `METACHECK_LLM_CACHE_DIR` is R metacheck's name for its own cache, so it ranks last, and a setting meant for this package wins. If the two differ, only a DEBUG line is logged, because that is expected. `CACHE_DIR` feeds only the default cache root, below both names. |
 | `LLM_MAX_CALLS` | `METACHECK_LLM_MAX_CALLS` | 200 | shared with R, which has the same name and meaning. No old name. Read by `serve` only, and only when `GEMINI_API_KEY` is set. A value that is not a number stops `serve` (a known gap, see below). |
 | `LLM_MODEL` | `METACHECK_LLM_MODEL` | `google_gemini/gemini-3.1-flash-lite-preview` | shared with R. No old name. Read as `LLM_MAX_CALLS` is. |
 | `LLM_WORKERS` | `METACHECK_LLM_WORKERS`, `PYTACHECK_LLM_WORKERS` | 1 | The option `metacheck.llm.workers` comes first (the old spelling `pytacheck.llm.workers` is the same option). A value that is not a number gives 1. |
@@ -103,7 +103,14 @@ A test stops any other module from spelling a variable name as a string.
 These are shared with R or with other tools, and they are read as before:
 
 * `SCIVRS_API_KEY`, `BIBR_URL`, `BIBR_API_URL` and `BIBR_API_KEY` (the bibr clients);
-* the LLM provider keys, such as `GEMINI_API_KEY`;
+* the LLM provider keys, read by the provider SDKs' back end (`metacheck[llm]`): `GROQ_API_KEY`,
+  `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` or `GOOGLE_API_KEY` (either one means
+  Gemini, and `GOOGLE_API_KEY` ranks first, as in the Google SDK), `MISTRAL_API_KEY`,
+  `DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY`, `HUGGINGFACE_API_KEY`, `PERPLEXITY_API_KEY`,
+  `PORTKEY_API_KEY`, `CLOUDFLARE_API_KEY` with `CLOUDFLARE_ACCOUNT_ID`, `AZURE_OPENAI_API_KEY` with
+  `AZURE_OPENAI_ENDPOINT`, and for local servers `VLLM_API_KEY`, `LMSTUDIO_API_KEY` and
+  `OLLAMA_API_KEY` (none of them needs a key), with `OLLAMA_BASE_URL`, `LMSTUDIO_BASE_URL` and
+  `ANTHROPIC_BASE_URL` to move a server;
 * `GITHUB_PAT_GITHUB_COM`, `NETRC` and the personal access tokens for the other
   archive hosts;
 * `REGCHECK_*`, `GRADIO_*`, `PORT`, `TZ`, `TESTTHAT` and `PYTEST_CURRENT_TEST`;
