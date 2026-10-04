@@ -178,7 +178,7 @@
         - "g and d, t(40) = 2.9, g = 0.44, d = 0.45."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_effect_size.hedges_g_variants"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U207", "reason": "gav, gz, grm and gs are read as effect sizes and checked like dav, dz, drm and ds (metacheck parses the value but does not label gav/gz/grm/gs as an effect size, so reports 'not reported')."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U212", "reason": "gav, gz, grm and gs are read as effect sizes and checked like dav, dz, drm and ds (metacheck parses the value but does not label gav/gz/grm/gs as an effect size, so reports 'not reported')."}
   "module": "stat_effect_size"
   "args":
     "paper":

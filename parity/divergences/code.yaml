@@ -131,8 +131,8 @@
   reason: a local file file_category() cannot place takes its extension's type (stimulus.png is image) in repo_check's listing, which data_check's structure keeps; R leaves it NA
 "mod_data_check/data_check.local.archives": &u123_local_archives
   kind: r_bug_fixed
-  ref: U208
-  reason: "the files extracted from local archives take their own extension's type (R: NA here, the archive's type for downloaded archives) and an archive left as a row takes its extension's type, archive (U123, U208); they are extracted to the temporary folder, not beside the archive in the user's folder (U209); the file decompressed from a .gz has its real size (U69)"
+  ref: U213
+  reason: "the files extracted from local archives take their own extension's type (R: NA here, the archive's type for downloaded archives) and an archive left as a row takes its extension's type, archive (U123, U213); they are extracted to the temporary folder, not beside the archive in the user's folder (U214); the file decompressed from a .gz has its real size (U69)"
 "mod_data_check/data_check.local.archives_nopeek": *u123_local_archives
 
 # --- reproducibility check (R/reproducibility_check*.R, its module) ----------

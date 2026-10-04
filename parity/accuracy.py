@@ -284,7 +284,7 @@ def _remove_new(before: dict[Path, set[Path]]) -> list[Path]:
 def generate(outputs: list[Output], rscript: str) -> float:
     """Run *outputs* in the reference R and rewrite their modules' goldens; the seconds R took.
 
-    R's data_check unpacks an archive in ``local_path`` into that folder (U209),
+    R's data_check unpacks an archive in ``local_path`` into that folder (U214),
     so what R adds to a repository input is removed afterwards: left there, it
     would be listed by the Python runs and parity cases that come later. Within
     the R run, the modules after data_check see it, as they would in metacheck.
@@ -295,7 +295,7 @@ def generate(outputs: list[Output], rscript: str) -> float:
         return _generate(outputs, rscript)
     finally:
         for path in _remove_new(before):
-            print(f"removed {path.relative_to(ROOT)}, which the R run left in its input (U209)")
+            print(f"removed {path.relative_to(ROOT)}, which the R run left in its input (U214)")
 
 
 def _generate(outputs: list[Output], rscript: str) -> float:

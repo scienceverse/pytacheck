@@ -11,7 +11,7 @@ pytacheck stores versioned, typed JSON as ``<sha1 of the URL>.json`` (the
 codec of :mod:`metacheck.repro.tables`, never pickle), written atomically. An
 unreadable entry is a miss, not a cached failure, and a failed peek that can
 pass (a rate limit, a connection failure, a 403/429/5xx answer) is not
-stored at all (U205).
+stored at all (U210).
 """
 
 from __future__ import annotations

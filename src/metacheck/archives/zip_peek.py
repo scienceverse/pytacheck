@@ -261,7 +261,7 @@ def _with_total(body: bytes, total: Any) -> _RangeBody:
 
 #: Set while :func:`zip_peek` runs: a request of the peek failed for a
 #: reason that can pass (a rate-limit skip, a connection failure, a 429 or
-#: 5xx answer), so a failed peek is not written to the disk cache (U205).
+#: 5xx answer), so a failed peek is not written to the disk cache (U210).
 _PEEK_TRANSIENT: ContextVar[list[bool] | None] = ContextVar("zip_peek_transient", default=None)
 
 
@@ -322,7 +322,7 @@ def _head_size(url: str, skip_on_api_limit: bool = False) -> float:
     and any error. 403 is not retried.
 
     A rate limit, a connection failure or a 429/5xx answer flags the running
-    peek's failure as one that can pass (U205), so a listing the size would
+    peek's failure as one that can pass (U210), so a listing the size would
     have made possible is not cached as a failure. 403 is not flagged: S3
     hosts always refuse HEAD.
     """
@@ -550,7 +550,7 @@ def zip_peek(
     cannot be read. Results -- successes and failures -- are cached per URL
     for the session. With *cache* they are also kept on disk for later
     sessions (:func:`~metacheck.archives.zip_peek_cache.zip_peek_cache_clear`);
-    a failure that can pass (rate limit, connection, 429/5xx) is not (U205).
+    a failure that can pass (rate limit, connection, 429/5xx) is not (U210).
     *skip_on_api_limit* gives up on a host known to be rate-limited instead
     of waiting out its reset.
     """
@@ -924,7 +924,7 @@ def _archive_rows(
 
     ``file_type`` is the file's own extension type when the extension has
     one (``NA`` otherwise); R keeps the archive's type, so a CSV from a zip
-    was typed "archive" (UPSTREAM_ISSUES U208).
+    was typed "archive" (UPSTREAM_ISSUES U213).
     """
     import pandas as pd
 
@@ -1178,7 +1178,7 @@ def _contents_dir(archive_path: str) -> str:
     folder named by the archive's SHA-1 (an edited archive is extracted
     afresh): R writes into the user's folder, and the next run then lists the
     extracted files as well as the archive's members, so every member is
-    reported twice (U209).
+    reported twice (U214).
     """
     import tempfile
 

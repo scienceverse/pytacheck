@@ -326,7 +326,7 @@ def norm_paths(out: Any) -> Any:
 
     Paths under the repository become relative to it (R runs from the
     repository root), a temporary copy's become ``<copy>/<dir>/...`` and files
-    unpacked from a local archive (U209) become ``<archives>/<sha1>/...``, on
+    unpacked from a local archive (U214) become ``<archives>/<sha1>/...``, on
     every system.
     """
     import re

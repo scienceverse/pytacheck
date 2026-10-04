@@ -205,7 +205,7 @@ differences:
     field: [report, summary_table.files_n, summary_table.files_code, summary_table.naming_issues, table]
     match: values
     kind: r_bug_fixed
-    ref: U209
+    ref: U214
     reason: >-
       data_check, which runs first on the same folder, extracts folder/Archive.zip into the
       folder (Archive.zip.contents/), so metacheck's repo_check lists its 2 XML files as well

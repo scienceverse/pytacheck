@@ -354,15 +354,15 @@
 "repo_download/expand.gz":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U208)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U213)"
 "repo_download/expand.bz2":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U208)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U213)"
 "repo_download/expand.xz":
   kind: r_bug_fixed
   ref: U69
-  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U208)"
+  reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files), and its own extension's type, not the archive's (U213)"
 "repo_download/expand.gz_uncompressed":
   kind: r_bug_fixed
   ref: U69
@@ -371,10 +371,10 @@
   kind: r_bug_fixed
   ref: U69
   reason: "a decompressed file's real size (metacheck reads it before the last buffer is flushed: 0 for small files)"
-# U208
+# U213
 "repo_download/expand.zip_mixed": &u208_member_type
   kind: r_bug_fixed
-  ref: U208
+  ref: U213
   reason: "each file from the archive takes its own extension's type (code, text, data), not the archive's (archive)"
 "repo_download/expand.zip_skip_code": *u208_member_type
 "repo_download/expand.zip_stimuli": *u208_member_type
@@ -530,13 +530,13 @@
   kind: r_bug_fixed
   ref: U76
   reason: "file names with bytes that are not valid UTF-8 are classified by their extension (R's grepl() is FALSE for invalid strings, so they were 'unknown')"
-# U205
+# U210
 "repo_download_review/peek_cache.rate_limited_not_kept":
   kind: r_bug_fixed
-  ref: U205
+  ref: U210
   reason: "a peek that failed only because the host was rate-limited is not kept in the disk cache, so the next session lists the zip (metacheck keeps the failure for good)"
-# U204
+# U209
 "archives_osf_review/osf_file_download.zip.budget_partial":
   kind: r_bug_fixed
-  ref: U204
+  ref: U209
   reason: "the files that fit in the zip-mode budget are downloaded and the rest reported (metacheck stops: its call to the renamed cap_report() fails)"

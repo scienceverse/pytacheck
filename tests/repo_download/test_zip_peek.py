@@ -266,7 +266,7 @@ def test_expand_zip_reuses_extraction_and_filters_macosx(tmp_path: Path) -> None
 
 
 def test_expand_zip_members_take_their_own_type(tmp_path: Path) -> None:
-    # U208: metacheck copies the archive's file_type ("archive") to every member
+    # U213: metacheck copies the archive's file_type ("archive") to every member
     z = tmp_path / "mixed.zip"
     shutil.copyfile(DATA / "mixed.zip", z)
     rows = _expand_zip(z, _zip_row(z)).set_index("file_name")
@@ -294,7 +294,7 @@ def test_finding_where_to_extract_does_not_create_the_repository_cache(
 def test_local_archive_is_not_extracted_into_the_users_folder(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    # U209: metacheck extracts to <archive>.contents/ beside it, in the user's folder,
+    # U214: metacheck extracts to <archive>.contents/ beside it, in the user's folder,
     # and the next run lists the extracted files too
     import tempfile
 
@@ -782,7 +782,7 @@ def test_zip_peek_cache_clear_counts_the_entries(peek_cache_dir: Path) -> None:
 
 
 def test_zip_peek_cache_unreadable_entry_is_a_miss(peek_cache_dir: Path) -> None:
-    # U205: metacheck reads an unreadable entry as a cached failure (NULL)
+    # U210: metacheck reads an unreadable entry as a cached failure (NULL)
     from metacheck.archives.zip_peek_cache import _zip_peek_cache_lookup, _zip_peek_cache_path
 
     peek_cache_dir.mkdir(parents=True, exist_ok=True)
@@ -798,7 +798,7 @@ def test_zip_peek_cache_unreadable_entry_is_a_miss(peek_cache_dir: Path) -> None
 
 
 def test_zip_peek_cache_keeps_a_lasting_failure_only(peek_cache_dir: Path) -> None:
-    # U205: a refused range (the host ignores it) is kept; a 503 is not
+    # U210: a refused range (the host ignores it) is kept; a 503 is not
     from metacheck.archives.zip_peek_cache import _zip_peek_cache_has
 
     handler, _ = _s3_like_host(_test_zip_bytes(), suffix_status=200)

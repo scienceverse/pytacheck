@@ -58,7 +58,7 @@ _ETA_PATTERN = r"(?i)^\s*" r"([^=≈<>≤≥;]+?)" r"\s*([=≈<>≤≥]{1,3})\s*
 _F_DF_PATTERN = r"^\(\s*[0-9]+\s*,\s*[0-9]+\s*\)$"
 _ES_PATTERNS = (
     r"^(cohen.{0,3})?d(_?(z|s|av|rm))?$",  # Cohen's d / dz / ds / dav / drm
-    r"^(hedge.{0,3})?g(_?(z|s|av|rm))?$",  # Hedges' g / gz / gs / gav / grm (U207)
+    r"^(hedge.{0,3})?g(_?(z|s|av|rm))?$",  # Hedges' g / gz / gs / gav / grm (U212)
     r"^f2?$",  # Cohen's f
     r"cohen",
     r"ω|omega",  # omega

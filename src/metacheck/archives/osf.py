@@ -1681,7 +1681,7 @@ def _osf_zip_mode(
                 need_total = math.ceil((used + listed) / _MB)
                 n = len(dropped)
                 # metacheck calls `cap_report()` here, which no longer exists
-                # (renamed `.cap_report()`), so it stops with an error: U204
+                # (renamed `.cap_report()`), so it stops with an error: U209
                 cap_report(
                     f"{n} file{plural(n)} in {osf_id} did not fit in the "
                     f"{cap_num(max_download_size)} MB per-repository limit and "

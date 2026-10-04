@@ -417,7 +417,7 @@ def test_zip_node_over_budget_is_fetched_file_by_file_within_it(  # type: ignore
 ) -> None:
     # 130 listed bytes do not fit in 50: no archive is requested; a.csv and
     # b.csv (30 bytes) fit, c.csv does not and is not attempted. metacheck
-    # stops here instead (its cap_report() call was not renamed): U204
+    # stops here instead (its cap_report() call was not renamed): U209
     fetched = budget_project(_budget_contents([10, 20, 100]))
     with respx.mock(assert_all_mocked=True), pytest.warns(UserWarning, match="did not fit"):
         dl = osf_file_download(
