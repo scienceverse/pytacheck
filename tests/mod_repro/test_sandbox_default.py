@@ -12,6 +12,7 @@ from __future__ import annotations
 import inspect
 import os
 import re
+import stat
 import subprocess
 import tempfile
 import warnings
@@ -669,7 +670,8 @@ def test_real_container_isolates_the_run_phase(
     if home not in ("/root", "/tmp", "/home"):
         assert probes["home_exists"] == "FALSE"
     # non-root, no capabilities, no new privileges
-    assert probes["uid"] == "1000"
+    assert probes["uid"] == docker._repro_docker_user().split(":")[0]
+    assert probes["uid"] != "0"
     assert set(probes["capeff"]) == {"0"}
     assert probes["nonewprivs"] == "1"
 
@@ -809,6 +811,122 @@ def test_the_scrub_runs_after_every_container_and_before_the_host_reads(
     )
     docker.repro_run_scripts_docker(run_tbl, ["a.R", "b.R"], scripts, image="img")
     assert order == ["read", "container", "scrub", "read", "container", "scrub"]
+
+
+# -- who the container runs as ----------------------------------------------------------------------
+
+
+def _as_host(
+    monkeypatch: pytest.MonkeyPatch, platform: str, uid: int | None = None, gid: int = 0
+) -> None:
+    """Make :mod:`metacheck.repro.docker` see a host of the given platform and user."""
+    monkeypatch.setattr(docker.sys, "platform", platform)
+    if uid is None:
+        monkeypatch.delattr(os, "getuid", raising=False)
+    else:
+        monkeypatch.setattr(os, "getuid", lambda: uid, raising=False)
+        monkeypatch.setattr(os, "getgid", lambda: gid, raising=False)
+
+
+@pytest.mark.parametrize(
+    ("platform", "uid", "gid", "expected"),
+    [
+        ("linux", 1001, 1002, "1001:1002"),  # a runner, or any account that is not the first one
+        ("linux", 1000, 1000, "1000:1000"),
+        ("linux", 0, 0, "1000:1000"),  # never root, whoever runs this
+        ("darwin", 501, 20, "1000:1000"),  # Docker Desktop does not enforce host ownership
+        ("win32", None, 0, "1000:1000"),  # no getuid at all
+    ],
+)
+def test_the_container_runs_as_the_host_user_never_root(
+    monkeypatch: pytest.MonkeyPatch, platform: str, uid: int | None, gid: int, expected: str
+) -> None:
+    _as_host(monkeypatch, platform, uid, gid)
+    assert docker._repro_docker_user() == expected
+    assert docker._repro_docker_user().split(":")[0] != "0"
+
+
+@pytest.mark.skipif(not hasattr(os, "getuid"), reason="owners and modes are POSIX")
+def test_the_sandbox_is_private_to_the_host_user(tmp_path: Path) -> None:
+    """The premise of :func:`_repro_docker_user`: a container user who is not the host user
+    cannot enter the directory the sandbox is made in, so it must be the host user."""
+    root = tempfile.mkdtemp(prefix="repro_sandbox_", dir=tmp_path)
+    assert stat.S_IMODE(os.stat(root).st_mode) == 0o700
+    assert os.stat(root).st_uid == os.getuid()
+
+
+@pytest.mark.parametrize("phase", ["run", "install"])
+def test_each_container_is_started_as_that_user(
+    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, phase: str
+) -> None:
+    _as_host(monkeypatch, "linux", 4242, 4343)
+    started: list[list[str]] = []
+
+    def fake_docker(args: Any, **kw: Any) -> dict[str, Any]:
+        started.append(list(args))
+        return {"status": 0, "timeout": False, "stdout": ""}
+
+    monkeypatch.setattr(docker, "_docker", fake_docker)
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    if phase == "run":
+        (scripts / "a.R").write_text("x <- 1\n")
+        run_tbl = pd.DataFrame(
+            {
+                "file_name": ["a.R"],
+                "script_path": [str(scripts / "a.R")],
+                "run_dir": [str(scripts)],
+            }
+        )
+        docker.repro_run_scripts_docker(run_tbl, ["a.R"], scripts, image="img")
+    else:
+        deps = pd.DataFrame({"package": ["stringr"], "source": ["cran"]})
+        docker.repro_install_deps_docker(deps, tmp_path / "lib", image="img")
+    assert len(started) == 1
+    args = started[0]
+    assert args[args.index("--user") + 1] == "4242:4343"
+    assert "--cap-drop" in args and "no-new-privileges" in args
+
+
+def test_a_root_host_hands_the_sandbox_to_the_container_user(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Run as root, the code runs as 1000:1000, and the private directories are made theirs."""
+    _as_host(monkeypatch, "linux", 0, 0)
+    outside = tmp_path / "outside.txt"
+    outside.write_text("host\n")
+    root = tmp_path / "sandbox"
+    (root / "sub").mkdir(parents=True)
+    (root / "a.R").write_text("x\n")
+    (root / "sub" / "b.R").write_text("x\n")
+    (root / "to_host").symlink_to(outside)
+    (root / "to_dir").symlink_to(tmp_path, target_is_directory=True)
+    owned: list[tuple[str, int, int]] = []
+    monkeypatch.setattr(
+        os, "lchown", lambda p, u, g: owned.append((os.fspath(p), u, g)), raising=False
+    )
+
+    docker._repro_docker_hand_over(root)
+    names = sorted(os.path.relpath(p, root) for p, u, g in owned)
+    assert names == [".", "a.R", "sub", os.path.join("sub", "b.R"), "to_dir", "to_host"]
+    assert {(u, g) for _, u, g in owned} == {(1000, 1000)}
+    handed = [p for p, _, _ in owned]
+    assert str(outside) not in handed and str(tmp_path) not in handed  # a link is not followed
+    assert all(p.startswith(str(root)) for p in handed)  # nothing outside the sandbox
+
+    owned.clear()
+    docker._repro_docker_hand_over(root / "a.R", tree=False)
+    assert [p for p, _, _ in owned] == [str(root / "a.R")]
+
+
+@pytest.mark.parametrize(("platform", "uid"), [("linux", 1001), ("darwin", 0), ("win32", None)])
+def test_nothing_is_handed_over_unless_a_linux_root_runs_it(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, platform: str, uid: int | None
+) -> None:
+    _as_host(monkeypatch, platform, uid)
+    (tmp_path / "a.R").write_text("x\n")
+    monkeypatch.setattr(os, "lchown", lambda *a: pytest.fail("lchown was called"), raising=False)
+    docker._repro_docker_hand_over(tmp_path)
 
 
 def _chunks_outside_fences(text: str) -> list[str]:
