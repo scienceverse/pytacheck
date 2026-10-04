@@ -442,10 +442,10 @@ def create_app() -> FastAPI:
             # has no such argument, so every request using it failed (U2).
             target: Any = paper
             if mp.get("section"):
-                from metacheck.text.search import _text_frame
+                from metacheck.text.search import sentence_table
 
                 wanted = [x.strip().lower() for x in str(mp["section"]).split(",") if x.strip()]
-                table, _ = _text_frame(paper)
+                table, _ = sentence_table(paper)
                 types = table["section_type"].astype("string").str.lower()
                 table = table.loc[types.isin(wanted).fillna(False).astype(bool)]
                 target = table.reset_index(drop=True)

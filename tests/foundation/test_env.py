@@ -44,7 +44,7 @@ def _ours(caplog: pytest.LogCaptureFixture) -> list[logging.LogRecord]:
 
 
 def test_the_table_has_the_twins_and_the_exceptions_the_spec_lists() -> None:
-    assert len(TWINS) == 21  # 22 twins, and LLM_CACHE_DIR ranks the old name first
+    assert len(TWINS) == 22  # 23 twins, and LLM_CACHE_DIR ranks the old name first
     assert ENV_VARS["LLM_CACHE_DIR"].names == ("PYTACHECK_LLM_CACHE_DIR", "METACHECK_LLM_CACHE_DIR")
     assert ENV_VARS["LLM_MODEL"].names == ("METACHECK_LLM_MODEL",)
     assert ENV_VARS["LLM_MAX_CALLS"].names == ("METACHECK_LLM_MAX_CALLS",)

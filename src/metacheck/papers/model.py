@@ -21,6 +21,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import itertools
+import threading
 import time
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import Any, cast, overload
@@ -31,10 +32,16 @@ from metacheck.papers.schema import empty_table, records_to_frame, required_tabl
 
 __all__ = ["Paper", "PaperList", "is_paper", "is_paper_list"]
 
-_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy"})
+_RESERVED = frozenset(
+    {"paper_id", "extra", "_tables", "_raw", "_columns", "_generation", "_lazy", "_derived"}
+)
 # Process-wide mutation counter: ``Paper._generation`` changes whenever a paper is
 # modified through its API, which invalidates ``run_session()`` memo entries.
 _GENERATION = itertools.count(1)
+# Builds a table from its JSON records once, however many threads ask first. One
+# lock for all papers (never part of a paper's state, so papers pickle and copy
+# as before); a build takes milliseconds and is rare.
+_MATERIALISE = threading.Lock()
 
 
 # Papers created in the same clock tick (a coarse clock, e.g. on Windows) must not
@@ -72,7 +79,16 @@ class Paper:
         not given starts as an empty, fully-typed table.
     """
 
-    __slots__ = ("_columns", "_generation", "_lazy", "_raw", "_tables", "extra", "paper_id")
+    __slots__ = (
+        "_columns",
+        "_derived",
+        "_generation",
+        "_lazy",
+        "_raw",
+        "_tables",
+        "extra",
+        "paper_id",
+    )
 
     paper_id: str | None
     extra: dict[str, Any]
@@ -84,11 +100,23 @@ class Paper:
         object.__setattr__(self, "_columns", {})
         object.__setattr__(self, "_generation", next(_GENERATION))
         object.__setattr__(self, "_lazy", {})  # a _Lazy per table read from JSON records
+        # what is computed from the tables (the indexed document of metacheck.core.doc):
+        # never pickled or copied, and checked against the tables it was built from
+        object.__setattr__(self, "_derived", {})
         store: dict[str, Any] = {}
         for name in required_tables():
             store[name] = tables.pop(name) if name in tables else None
         store.update(tables)
         object.__setattr__(self, "_tables", store)
+
+    def __getstate__(self) -> tuple[None, dict[str, Any]]:
+        """The slots to pickle or copy: all but ``_derived``, which is rebuilt when needed."""
+        state = {
+            name: getattr(self, name)
+            for name in self.__slots__
+            if name != "_derived" and hasattr(self, name)
+        }
+        return None, state
 
     # -- construction from raw JSON records (used by the readers) ----------
 
@@ -105,23 +133,36 @@ class Paper:
 
     def _raw_records(self, name: str) -> tuple[list[dict[str, Any]], list[str]] | None:
         """``(records, columns)`` if *name* is still unmaterialised JSON."""
-        if name in self._raw and self._tables.get(name) is None:
-            return self._raw[name], self._columns[name]
+        if self._tables.get(name) is None:
+            records = self._raw.get(name)
+            columns = self._columns.get(name)
+            if records is not None and columns is not None:
+                return records, columns
         return None
 
     def _materialise(self, name: str) -> Any:
         value = self._tables.get(name)
         if value is None:
-            if name in self._raw:
-                value = records_to_frame(name, self._raw.pop(name), self._columns.pop(name))
-                token = self._lazy.get(name)
-                if token is not None:
-                    token.built = value
-            elif name in table_names():
-                value = empty_table(name)
-            else:
-                return None
-            self._tables[name] = value
+            # Under a lock, and the table is stored before the records are dropped:
+            # a thread that reads the paper meanwhile finds the records or the
+            # table, never neither (which would read as a missing table).
+            with _MATERIALISE:
+                value = self._tables.get(name)
+                if value is not None:
+                    return value
+                if name in self._raw:
+                    value = records_to_frame(name, self._raw[name], self._columns[name])
+                    token = self._lazy.get(name)
+                    if token is not None:
+                        token.built = value
+                    self._tables[name] = value
+                    self._raw.pop(name, None)
+                    self._columns.pop(name, None)
+                elif name in table_names():
+                    value = empty_table(name)
+                    self._tables[name] = value
+                else:
+                    return None
         return value
 
     # -- mapping-style access ----------------------------------------------

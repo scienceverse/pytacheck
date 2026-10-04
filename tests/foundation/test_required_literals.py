@@ -32,7 +32,7 @@ from tests.foundation.record_regex_calls import DATA, load
 BUILTIN = Path(__file__).with_name("data") / "builtin_patterns.json"
 
 #: the built-in triples with at least one clause: a floor that only goes up
-BUILTIN_COVERED_FLOOR = 229  # of 273
+BUILTIN_COVERED_FLOOR = 229  # of 272
 
 
 @pytest.fixture(autouse=True)
