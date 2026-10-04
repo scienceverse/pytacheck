@@ -37,8 +37,8 @@ PAGE_PATH = "package"
 INTRO = (
     "Check the folder of data, code and documentation that comes with a paper before it is "
     "archived: junk files, file formats and names, the folder tree, the README and the parts a "
-    "package should have. Everything runs on this computer and nothing is uploaded or looked "
-    "up online."
+    "package should have. Everything runs on this computer and nothing is uploaded. The one "
+    "download is the model of the local classifier (see below), the first time it is used."
 )
 ABOUT = (
     "**Status.** *Fail* means the package does not meet a requirement, *Warning* that it could "

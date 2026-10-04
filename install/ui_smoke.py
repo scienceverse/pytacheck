@@ -40,6 +40,9 @@ NO_OUTSIDE = {
 }
 SLOW = 240_000  # ms: the first check on a fresh runner
 SETTLE = 1.0  # s: between two events of one page, see settle()
+LOADS = (
+    8  # page loads, each with a click at once, in the check that a folder outside home is refused
+)
 
 
 class Watch:
@@ -198,19 +201,33 @@ def click_through_package(page: Page, url: str, watch: Watch) -> None:
         (root / "data").mkdir(parents=True)
         (root / "README.md").write_text("# Study\n\nSurvey data.\n", encoding="utf-8")
         (root / "data" / "survey.csv").write_text("id,age\n1,23\n2,31\n", encoding="utf-8")
-        watch.go(page.goto, f"{parts.scheme}://{parts.netloc}/package")  # the token cookie is set
+        package_page = f"{parts.scheme}://{parts.netloc}/package"  # the token cookie is set
         box = page.get_by_placeholder("/path/to/my_package")
-        box.wait_for(timeout=60_000)
         check = page.get_by_role("button", name="Check the package")
-        settle(page)  # the page's own start-up is done before the first click
+        refusal = page.get_by_text("outside the places this page may read").first
 
+        # A folder outside home is refused. The click comes the moment the page is there, and
+        # the page is loaded several times: a click that is lost when it lands as the page's
+        # start-up ends (it was, when the page had a load event) is lost only now and then.
         outside = Path(home.anchor)  # the root of the disk: never inside home
-        if outside != home:
+        loads = LOADS if outside != home else 0  # (a home that is the root has nothing outside)
+        for load in range(1, loads + 1):
+            watch.go(page.goto, package_page)
+            box.wait_for(timeout=60_000)
             box.fill(str(outside))
             check.click()
-            page.get_by_text("outside the places this page may read").first.wait_for(timeout=60_000)
-            print("data package: a folder outside home is refused", flush=True)
-            settle(page)
+            try:
+                refusal.wait_for(timeout=30_000)
+            except PlaywrightTimeout:
+                raise AssertionError(
+                    f"data package: no answer to a click made at once (load {load} of {loads})"
+                ) from None
+        if loads:
+            print(f"data package: a folder outside home is refused ({loads} loads)", flush=True)
+        else:
+            watch.go(page.goto, package_page)
+            box.wait_for(timeout=60_000)
+        settle(page)  # a person cannot click again at the very end of the last event
 
         classifier = page.get_by_role(
             "checkbox", name=re.compile(r"^\s*Name the concept of each data column")

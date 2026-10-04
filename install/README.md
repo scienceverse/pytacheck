@@ -46,9 +46,10 @@ its classifier box is ticked, as the classifier is the default of `metacheck pac
 installer installs `metacheck[app]` without the `concepts` extra, so the page falls back to
 rules and says that the classifier is not installed; nothing is downloaded.
 
-`ui_smoke.py` also runs the data package page: a folder outside home is refused, and a
-package under the home folder is checked with the page's defaults, which must end in that
-message. It therefore expects an app without the `concepts` extra, which is what the
+`ui_smoke.py` also runs the data package page: a folder outside home is refused (the page is
+loaded eight times, with a click the moment it is there, so that a click lost at the page's
+start-up shows), and a package under the home folder is checked with the page's defaults,
+which must end in that message. It therefore expects an app without the `concepts` extra, which is what the
 installer makes.
 
 ## The pinned commit

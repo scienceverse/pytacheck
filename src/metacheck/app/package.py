@@ -5,7 +5,9 @@ comes with a paper. This module finds the package the person named, runs the
 ``datapackage`` checks on it with :func:`metacheck.datapackage.report_package` and turns
 the result into two tables: one row per check, and the checklist (one row per
 requirement). It does not import gradio, and it never uploads anything: the checks run on
-this computer, and no check looks anything up online.
+this computer, and no check looks anything up online. The one download is the local
+classifier's model (about 840 MB, once), which is on by default and needs the ``concepts``
+extra.
 
 Only the local app offers this. A folder is named by a path on the computer that runs the
 app, so a shared server never builds the page. The page reads a folder only inside the
