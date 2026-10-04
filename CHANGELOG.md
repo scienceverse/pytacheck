@@ -152,6 +152,11 @@ These change the results of validated checks (`all_p_values`, `stat_p_exact`, `s
 
 - `ref_consistency` counts the citations of an older bibr JSON export (bibr 0.3.0 and the v10 format), which marks them `bib` instead of Grobid's `bibr`. Before, such a paper had no citations: every reference was reported as not cited and the light was red. On 120 platform papers 4,973 of 4,973 references were reported, now 922, and 20 papers are green instead of none (86 older bibr papers: 3,700 to 375, 11 green). A 12.x export and Grobid TEI are unchanged. What the module still reports is mostly bibr's own noise (citations it did not link, author-year styles). metacheck has the same bug (docs/UPSTREAM_ISSUES.md U207).
 
+### Changed: code checks read JSON and the parser tables with standard tools
+
+- Jupyter notebooks and `renv.lock` files are read with `metacheck._json.loads`, the one JSON parser, instead of a reader that copied jsonlite's yajl parser. Results are the same on valid JSON, which every real notebook and lock file is. The text yajl accepts but no JSON writer produces is no longer read: `/* */` and `//` comments, vertical-tab and form-feed white space (such a notebook has no cells, as with any other invalid JSON), a `\u0000` escape (the NUL stays in the string) and a lone surrogate escape (it becomes U+FFFD, not `?`); a repeated key keeps its last value, not the first. Of the 39 notebooks and lock files in the repository, 35 give identical results; the 4 that differ were written to hold these quirks. The 13 parity cases of the quirks (`codecheck_review`, tier 2) are marked `c_quirk` and locked.
+- The tables of R's parser (the 2,250-line `_rparse_tables.py`) are one compressed file, `_rparse_tables.json.gz`, loaded when the parser first runs; `scripts/gen_rparse_tables.py` rebuilds it from R's `gram.c`. The tables are identical, so `code_parse_r()` messages are unchanged.
+
 ### Documentation
 
 - docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.

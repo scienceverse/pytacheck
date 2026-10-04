@@ -1,9 +1,10 @@
 # R source -> Python location for codecheck (see docs/PORTING.md).
 # _encoding/_icu: readr::guess_encoding (stringi/ICU) + readr::read_lines (vroom) + readLines;
 # _rparse: R's gram.y parser (parse errors); _purl/_reval: knitr::purl and chunk-option evaluation;
-# _rjson: jsonlite::fromJSON(simplifyVector = FALSE) (yajl quirks) and unlist()/as.character() of its values.
+# _rcoerce: unlist()/as.character() of parsed JSON/YAML values (JSON is read with metacheck._json, as standard JSON, not with
+# jsonlite's yajl quirks); _rparse_tables: the parser's LALR tables, loaded from _rparse_tables.json.gz.
 [files]
-"R/code_check.R" = ["src/metacheck/codecheck/core.py", "src/metacheck/codecheck/_encoding.py", "src/metacheck/codecheck/_icu.py", "src/metacheck/codecheck/_icu_tables.py", "src/metacheck/codecheck/_rparse.py", "src/metacheck/codecheck/_rparse_tables.py", "src/metacheck/codecheck/_purl.py", "src/metacheck/codecheck/_reval.py", "src/metacheck/codecheck/_rjson.py"]
+"R/code_check.R" = ["src/metacheck/codecheck/core.py", "src/metacheck/codecheck/_encoding.py", "src/metacheck/codecheck/_icu.py", "src/metacheck/codecheck/_icu_tables.py", "src/metacheck/codecheck/_rparse.py", "src/metacheck/codecheck/_rparse_tables.py", "src/metacheck/codecheck/_purl.py", "src/metacheck/codecheck/_reval.py", "src/metacheck/codecheck/_rcoerce.py"]
 
 [functions]
 code_read = "metacheck.codecheck.core:code_read"

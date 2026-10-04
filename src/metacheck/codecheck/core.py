@@ -26,6 +26,7 @@ from typing import Any, cast
 
 import pandas as pd
 
+from metacheck._json import loads as _json_loads
 from metacheck._r.base import r_sorted, trimws
 from metacheck._r.regex import (
     compile_r,
@@ -38,7 +39,7 @@ from metacheck._r.regex import (
     strsplit,
     sub,
 )
-from metacheck.codecheck._rjson import RList, r_as_character, r_unlist_chr
+from metacheck.codecheck._rcoerce import r_as_character, r_unlist_chr
 
 __all__ = [
     "code_abs_path",
@@ -133,10 +134,11 @@ def _is_na(x: Any) -> bool:
 
 
 def _json_load(text: str) -> Any:
-    """``jsonlite::fromJSON(text, simplifyVector = FALSE)`` (``None`` on error)."""
-    from metacheck.codecheck._rjson import json_load
-
-    return json_load(text)
+    """Parsed JSON (objects as dicts); ``None`` when *text* is not valid JSON."""
+    try:
+        return _json_loads(text)
+    except ValueError:
+        return None
 
 
 def _dollar(x: Any, name: str) -> Any:
@@ -146,12 +148,6 @@ def _dollar(x: Any, name: str) -> Any:
     """
     if x is None:
         return None
-    if isinstance(x, RList):
-        for k, v in x:
-            if k == name:
-                return v
-        hits = [v for k, v in x if k.startswith(name)]
-        return hits[0] if len(hits) == 1 else None
     if isinstance(x, dict):
         if name in x:
             return x[name]
@@ -263,14 +259,14 @@ def _ipynb_lang(file_name: Any) -> str:
 
 def _get(x: Any, name: str) -> Any:
     """``x$name`` of a parsed JSON/YAML object; ``None`` for any other value."""
-    if not isinstance(x, RList | dict):
+    if not isinstance(x, dict):
         return None
     return _dollar(x, name)
 
 
 def _first_chr(x: Any) -> str | None:
     """``as.character(x)[[1]]``; ``None`` when *x* has no (text) value."""
-    if x is None or isinstance(x, RList | dict):
+    if x is None or isinstance(x, dict):
         return None
     try:
         return _r_as_character1(x)
@@ -990,14 +986,14 @@ def code_extract_py(
 
 
 def _r_length(x: Any) -> int:
-    if isinstance(x, list):
+    if isinstance(x, list | dict):
         return len(x)
     return 1
 
 
 def _r_elements(x: Any) -> list[Any]:
-    if isinstance(x, RList):
-        return [v for _, v in x]
+    if isinstance(x, dict):
+        return list(x.values())
     if isinstance(x, list):
         return list(x)
     return [x]
