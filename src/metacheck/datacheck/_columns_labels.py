@@ -373,23 +373,6 @@ def _empty_codebook_vars() -> pd.DataFrame:
 # JSON as jsonlite writes and reads it
 # -----------------------------------------------------------------------------
 
-_JSON_ESCAPES = {'"': '\\"', "\\": "\\\\", "\n": "\\n", "\r": "\\r", "\t": "\\t",
-                 "\b": "\\b", "\f": "\\f"}  # fmt: skip
-
-
-def _json_str(s: str) -> str:
-    """A JSON string literal as jsonlite writes it (UTF-8 kept, controls escaped)."""
-    out = []
-    for ch in s:
-        esc = _JSON_ESCAPES.get(ch)
-        if esc is not None:
-            out.append(esc)
-        elif ord(ch) < 0x20:
-            out.append(f"\\u{ord(ch):04x}")
-        else:
-            out.append(ch)
-    return '"' + "".join(out) + '"'
-
 
 def _make_unique(names: list[str], sep: str = ".") -> list[str]:
     """R ``make.unique()``."""
@@ -414,17 +397,13 @@ def _make_unique(names: list[str], sep: str = ".") -> list[str]:
 def _json_object(names: list[str | None], values: list[str | None]) -> str:
     """``jsonlite::toJSON(<named list of strings>, auto_unbox = TRUE)``."""
     clean = [str(i + 1) if nm is None or nm == "" else nm for i, nm in enumerate(names)]
-    clean = _make_unique(clean)
-    items = [
-        f"{_json_str(k)}:{'null' if v is None else _json_str(v)}"
-        for k, v in zip(clean, values, strict=True)
-    ]
-    return "{" + ",".join(items) + "}"
+    obj = dict(zip(_make_unique(clean), values, strict=True))
+    return json.dumps(obj, ensure_ascii=False, separators=(",", ":"))
 
 
 def _json_array(values: list[str | None]) -> str:
     """``jsonlite::toJSON(<character vector>)``."""
-    return "[" + ",".join("null" if v is None else _json_str(v) for v in values) + "]"
+    return json.dumps(values, ensure_ascii=False, separators=(",", ":"))
 
 
 class _JsonObject(list):  # type: ignore[type-arg]
