@@ -30,9 +30,18 @@ README template (JSON)::
          "match": ["\\bauthors?\\b", "\\bcontact"],      # regexes for the heading
          "required": true,
          "intro": false,                                 # the text at the top may stand in
+         "prompt": "Give the names of the authors",      # what a drafted README asks for here
+         "fill": "files",                                # what a drafted README fills it with
          "fields": [{"id": "email", "label": "E-mail", "match": ["e-?mail"],
                      "required": false, "expect": "email"}]}],
+     "prompts": {"title": "Give the title", "folder": "Describe this folder"},
      "placeholders": ["<[^>]+>", "\\bTODO\\b"]}          # template text left behind
+
+``prompt``, ``fill`` and ``prompts`` are only read by the README draft
+(:mod:`metacheck.datapackage.readme`, the ``package_readme`` module); the checks
+ignore them. ``fill`` is ``files``, ``variables`` or ``licence`` (the section's
+id when absent): the part of the package that fills the section; other sections
+get a placeholder that asks for ``prompt``.
 
 Component catalogue (JSON)::
 

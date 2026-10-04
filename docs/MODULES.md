@@ -493,6 +493,30 @@ The contract (the same one the built-in modules follow):
   numbers in `validation=`, from which tools compute PPV and sensitivity. An
   unvalidated module is allowed, but `pack check` warns about it.
 
+A module can also hand back **files** (a drafted README, an export), with a
+`files` key in its result:
+
+```python
+return {"summary_text": "...", "files": {"README.md": draft_text, "figure.png": png_bytes}}
+```
+
+`files` maps a plain file name to its content, `str` (written as UTF-8) or `bytes`.
+A name has no folder in it (`/`, `\`, `..`, a drive such as `C:` and control
+characters are refused; at most 255 bytes), and two names that differ only in case
+are refused too; a bad `files` result makes that module fail with a message that
+says why. A module never writes the files itself: the caller decides where they go.
+
+* `out["files"]` (or `out.files`) is a module's own; `chain.files` (the result of
+  `run_modules()` and of `check_package()`) and `report.files` (a report's outputs)
+  collect the files of every module, in run order. When two modules return the same
+  name, the later one's file is stored as `<module>_<name>` so that none is lost.
+* `metacheck.module.write_module_files(files, directory, force=False, protect=())`
+  writes them into a folder: the folder is created, nothing is written if one of the
+  names already exists (unless `force`, which replaces a file, never a folder), and a
+  folder that is, or lies inside, one of the `protect` folders is refused.
+* `metacheck package PATH --files-dir DIR [--force]` does that for the files of a
+  data package check; see [DATAPACKAGE.md](DATAPACKAGE.md#files-a-check-hands-back).
+
 Use `get_prev_outputs("other_module", "table")` to read an earlier module's
 output in the same run. Use the helpers pytacheck exports (`text_search`,
 `pytacheck.report.scroll_table`, `collapse_section`, ...); see the built-in
@@ -715,6 +739,7 @@ entries list each pack's `languages`.
 | `presets.select(modules, preset, args, offline=...)` | what a call would run |
 | `run_modules(paper, selection, record=None)` | run in order; returns a `ModuleChain` with `.run_record` (written to `record` if given) |
 | `use(preset=..., allow_local=..., offline=...)` | scope settings to a `with` block |
+| `module_files(outputs)`, `write_module_files(files, directory, force=False, protect=())` | the files that modules handed back (`files` in a result), and writing them to a folder (`metacheck.module`) |
 | `run_session()` | memoise repeated module runs in a `with` block (`run_modules`, the CLI and the API use it; do not edit a paper's tables inside one, as edits within a table are not detected) |
 | `pack_install(ref=None, scope="user", yes=False)` | install (or sync all pins) |
 | `pack_remove(name)`, `pack_update(name=None)`, `pack_list()`, `pack_show(name)` | manage packs |

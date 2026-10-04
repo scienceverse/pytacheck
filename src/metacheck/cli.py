@@ -433,6 +433,7 @@ def cmd_package(ns: argparse.Namespace) -> int:
     import pandas as pd
 
     from metacheck.datapackage import PackageError, check_package, package_selection, report_package
+    from metacheck.module import ModuleFileError, check_files_directory
     from metacheck.packs.ui import console
 
     per, bare = _module_args(ns.arg or [])
@@ -458,6 +459,18 @@ def cmd_package(ns: argparse.Namespace) -> int:
     if not sel:
         _err("No modules to run (--offline leaves out the modules that need the network or an LLM)")
         return 2
+    files_dir = ns.files_dir
+    if ns.force and not files_dir:
+        _err("--force only goes with --files-dir (it replaces files already in that folder)")
+        return 2
+    # the package folder, if it is one, is never written to (an archive is only read)
+    protect = [Path(ns.path).expanduser()] if Path(ns.path).expanduser().is_dir() else []
+    if files_dir:
+        try:  # refuse before anything runs
+            check_files_directory(files_dir, protect=protect)
+        except ModuleFileError as exc:
+            _err(str(exc))
+            return 2
     report_file = bool(ns.output or ns.format)
     try:
         if report_file:
@@ -485,7 +498,34 @@ def cmd_package(ns: argparse.Namespace) -> int:
             [*columns, "item", "title", "status", "detail"],
             title="\nChecklist",
         )
-    return _exit_status(outputs)
+    status = _exit_status(outputs)
+    if files_dir:
+        refused = _write_files(outputs, files_dir, ns.force, protect=protect)
+        status = refused or status
+    return status
+
+
+def _write_files(
+    outputs: Sequence[Any], directory: str, force: bool, *, protect: Sequence[Path]
+) -> int:
+    """Write the files that modules handed back into *directory*; 0, or 2 when that is refused."""
+    from metacheck.module import ModuleFileError, module_files, write_module_files
+    from metacheck.packs.ui import console
+
+    files = module_files(outputs)
+    if not files:
+        console().print(
+            f"[dim]No module handed back a file, so nothing was written to {_escape(directory)}.[/]"
+        )
+        return 0
+    try:
+        paths = write_module_files(files, directory, force=force, protect=protect)
+    except ModuleFileError as exc:
+        _err(str(exc))
+        return 2
+    for path in paths:
+        console().print(f"[dim]File: {_escape(path)}[/]")
+    return 0
 
 
 def cmd_rerun(ns: argparse.Namespace) -> int:
@@ -1025,6 +1065,20 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         choices=["html", "qmd", "md"],
         help="the report's format (default html); without -o the file is <name>_report.<format>",
+    )
+    p.add_argument(
+        "--files-dir",
+        default=None,
+        metavar="DIR",
+        help="write the files that modules hand back (such as the README draft of "
+        "-m datapackage::package_readme) into this folder, which is created; it must not be "
+        "the package itself or inside it",
+    )
+    p.add_argument(
+        "--force",
+        action="store_true",
+        help="with --files-dir: replace files that are already in the folder "
+        "(by default one that exists stops the whole write)",
     )
     p.add_argument(
         "--abstract-lookup",
