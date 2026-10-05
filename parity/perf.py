@@ -26,7 +26,7 @@ other targets too (``doc_builds``, once ``core/`` exists):
 ``deepcopy``          top-level ``copy.deepcopy()`` calls
 ``regex_compiles``    patterns ``regex`` or ``re`` compiled for the first time
 ``regex_recompiles``  patterns compiled again, after their engine's cache dropped them
-``csv_parses``        delimited files parsed (fread, read.table), also per file
+``csv_parses``        delimited files parsed (read_delim), also per file
 ``workbook_parses``   workbooks opened (xlsx, xls, ods), also per file
 ``code_decodes``      code files decoded (``code_read()``), also per file
 ``file_opens``        files opened with ``open()`` or ``io.open_code()``, also per file
@@ -115,8 +115,7 @@ TARGETS: tuple[Target, ...] = (
         "regex_compiles", "regex._regex_core:_check_group_features", front="regex._main:_compile"
     ),
     Target("regex_compiles", "re._compiler:compile", front="re:_compile"),
-    Target("csv_parses", "metacheck.datacheck._files_fread:fread", per_file="path"),
-    Target("csv_parses", "metacheck.datacheck._files_readtable:read_table", per_file="path"),
+    Target("csv_parses", "metacheck.datacheck._files_delim:read_delim", per_file="path"),
     Target(
         "workbook_parses", "metacheck.datacheck._files_readers:_XlsxBook.__init__", per_file="path"
     ),

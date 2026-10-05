@@ -283,7 +283,7 @@ def _r_is_date(s: str | None) -> bool:
 
 @functools.cache
 def _strtod_fns() -> tuple[Any, Any]:
-    from metacheck.datacheck._files_readtable import _is_blank_string, _strtod
+    from metacheck.datacheck._files_strtod import _is_blank_string, _strtod
 
     return _strtod, _is_blank_string
 

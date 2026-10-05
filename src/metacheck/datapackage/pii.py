@@ -149,10 +149,10 @@ def _csv_rows(path: Path, sep: str, limit: int, encoding: str) -> list[list[str]
 
 
 def _read_delimited(path: Path, ext: str, max_rows: int) -> list[_Table]:
-    from metacheck.datacheck.files import _detect_header, _sniff_delimiter
+    from metacheck.datacheck.files import _delimiter, _detect_header
 
     try:
-        sep = "\t" if ext == "tsv" else _sniff_delimiter(path)
+        sep = _delimiter(path, ext)
         header = _detect_header(path, sep)
         rows: list[list[str]] | None = None
         for encoding in ("utf-8-sig", "latin-1"):

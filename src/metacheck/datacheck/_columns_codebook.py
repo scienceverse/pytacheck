@@ -2,7 +2,7 @@
 
 Port of ``parse_codebook()`` and its file-format back-ends in
 ``R/data_check_helpers.R``: delimited text (``utils::read.delim()`` via
-:mod:`metacheck.datacheck._files_readtable`), JSON, markdown pipe tables,
+:mod:`metacheck.datacheck._files_delim`), JSON, markdown pipe tables,
 Excel / OpenDocument spreadsheets (every sheet), haven / JASP / jamovi
 embedded labels, Qualtrics ``.qsf``, and plain-text extraction of docx / pdf /
 rtf / odt for the LLM tier.
@@ -867,7 +867,7 @@ def _transpose_wide(raw: pd.DataFrame) -> pd.DataFrame:
 
 def _read_delim_codebook(path: str, sep: str, encoding: str | None) -> pd.DataFrame | None:
     """``read.delim(path, sep, header = FALSE, check.names = FALSE, fileEncoding)``."""
-    from metacheck.datacheck._files_readtable import read_table
+    from metacheck.datacheck._files_delim import read_delim
 
     try:
         if encoding == "UTF-8-BOM":
@@ -875,8 +875,8 @@ def _read_delim_codebook(path: str, sep: str, encoding: str | None) -> pd.DataFr
             with tempfile.TemporaryDirectory() as tmp:
                 p = Path(tmp) / "codebook.txt"
                 p.write_bytes(data)
-                return read_table(p, sep, False)
-        return read_table(path, sep, False, encoding=encoding)
+                return read_delim(p, sep, False, fill=True)
+        return read_delim(path, sep, False, encoding=encoding, fill=True)
     except Exception:
         return None
 
@@ -893,7 +893,7 @@ def _has_invalid_utf8(df: pd.DataFrame) -> bool:
 
 
 def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookahead: float) -> Any:
-    from metacheck.datacheck.files import _sniff_delimiter
+    from metacheck.datacheck.files import _delimiter
 
     try:
         h = [trimws(x) for x in _read_lines(path, 5)]
@@ -907,7 +907,7 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
             jres = jres.copy()
             jres["parse_method"] = pd.Series(["structured"] * len(jres), dtype="string")
             return ("return", jres)
-    sep = "\t" if ext == "tsv" else _sniff_delimiter(path)
+    sep = _delimiter(path, ext)
     try:
         b = Path(path).read_bytes()[:3]
     except OSError:
