@@ -8,10 +8,10 @@ brotli==1.2.0
 certifi==2026.7.22
 click==8.5.0
 colorama==0.4.6 ; sys_platform == 'win32'
-fastapi==0.141.1
-filelock==4.0.3
+fastapi==0.142.2
+filelock==4.0.9
 fsspec==2026.9.0
-gradio==6.28.0
+gradio==6.29.0
 gradio-client==2.7.1
 groovy==0.1.2
 h11==0.16.0
@@ -35,28 +35,28 @@ orjson==3.12.0
 packaging==26.3
 pandas==3.0.6
 pillow==12.3.0
-platformdirs==4.11.13
+platformdirs==4.12.2
 pydantic==2.13.5
-pydantic-core==2.46.5
+pydantic-core==2.49.0
 pydub==0.25.1
 pygments==2.21.0
 python-dateutil==2.9.0.post0
 python-multipart==0.0.32
 pytz==2026.4
 pyyaml==6.0.3
-regex==2026.9.10
+regex==2026.9.29
 rich==14.3.4
-safehttpx==0.1.7
+safehttpx==0.2.0
 scipy==1.17.1 ; python_full_version < '3.12'
 scipy==1.18.1 ; python_full_version >= '3.12'
 semantic-version==2.10.0
 shellingham==1.5.4
 six==1.17.0
 starlette==1.7.0
-tomlkit==0.14.0
+tomlkit==0.15.1
 tqdm==4.70.1
 typer==0.27.2
 typing-extensions==4.16.0
 typing-inspection==0.4.4
 tzdata==2026.4 ; sys_platform == 'emscripten' or sys_platform == 'win32'
-uvicorn==0.53.0
+uvicorn==0.54.0
