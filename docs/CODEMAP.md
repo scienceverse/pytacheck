@@ -472,7 +472,7 @@ Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/
 | `data_read_head()` | [`metacheck.datacheck.files:data_read_head`](../src/metacheck/datacheck/files.py) | yes | D10 |  |
 | `data_col_type()` | [`metacheck.datacheck.columns:data_col_type`](../src/metacheck/datacheck/columns.py) | yes | — |  |
 | `data_col_stats()` | [`metacheck.datacheck.columns:data_col_stats`](../src/metacheck/datacheck/columns.py) | yes | — |  |
-| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | U64 |  |
+| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | U64, U215 |  |
 | `parse_qsf()` | [`metacheck.datacheck.columns:parse_qsf`](../src/metacheck/datacheck/_columns_qsf.py) | yes | — |  |
 | `match_column_labels()` | [`metacheck.datacheck.columns:match_column_labels`](../src/metacheck/datacheck/columns.py) | yes | U58 |  |
 | `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55, U59 |  |

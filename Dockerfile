@@ -44,10 +44,13 @@ LABEL org.opencontainers.image.title="pytacheck" \
       org.opencontainers.image.description="Check research outputs for best practices (Python port of metacheck)" \
       org.opencontainers.image.source="https://github.com/scienceverse/pytacheck" \
       org.opencontainers.image.licenses="AGPL-3.0-or-later"
-RUN if [ "$WITH_BIBR" = "1" ]; then \
-      apt-get update && apt-get install -y --no-install-recommends libmagic1 && \
-      rm -rf /var/lib/apt/lists/*; \
+# apt-get upgrade picks up Debian security fixes the base image has not rolled in
+# yet (the Trivy scan gates the push on fixable HIGH findings)
+RUN apt-get update && apt-get upgrade -y && \
+    if [ "$WITH_BIBR" = "1" ]; then \
+      apt-get install -y --no-install-recommends libmagic1; \
     fi && \
+    rm -rf /var/lib/apt/lists/* && \
     useradd --create-home --uid 10001 --shell /usr/sbin/nologin pytacheck && \
     mkdir -p /work /cache && chown pytacheck:pytacheck /work /cache
 COPY --from=build /opt/pytacheck /opt/pytacheck
