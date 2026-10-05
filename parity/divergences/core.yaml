@@ -36,7 +36,7 @@
   reason: with text_col = "answer" the texts and the answers are both kept (answer.x, answer.y); R overwrites the answers with the texts
 "llm/llm.groq.malformed": &json_text
   kind: deliberate
-  ref: D69
+  ref: D73
   reason: "the error text of a reply that is not valid JSON is Python's json module's (R: jsonlite's lexical or parse error); the reply is still asked for again, five attempts in all"
 "llm_review/structured.probe_truncated": *json_text
 

@@ -665,9 +665,9 @@ Python: [llm/core.py](../src/metacheck/llm/core.py), [llm/_backend.py](../src/me
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
 | `llm()` | [`metacheck.llm.core:llm`](../src/metacheck/llm/core.py) | — | — |  |
-| `.llm_ollama_native()` | — | — | — | Not ported by design: Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D69). |
-| `llm_model_list()` | — | — | — | Not ported by design: Lists the models of each provider through ellmer's models_*() functions. Removed with them (D69): name a model as provider/model. |
-| `.llm_model_list_groq()` | — | — | — | Not ported by design: Groq's model listing, part of llm_model_list() (D69). |
+| `.llm_ollama_native()` | — | — | — | Not ported by design: Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D73). |
+| `llm_model_list()` | — | — | — | Not ported by design: Lists the models of each provider through ellmer's models_*() functions. Removed with them (D73): name a model as provider/model. |
+| `.llm_model_list_groq()` | — | — | — | Not ported by design: Groq's model listing, part of llm_model_list() (D73). |
 | `llm_max_calls()` | [`metacheck.llm.core:llm_max_calls`](../src/metacheck/llm/core.py) | — | — |  |
 | `llm_timeout()` | [`metacheck.llm.core:llm_timeout`](../src/metacheck/llm/core.py) | — | — |  |
 | `llm_max_tokens()` | [`metacheck.llm.core:llm_max_tokens`](../src/metacheck/llm/core.py) | — | — |  |
