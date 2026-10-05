@@ -375,7 +375,7 @@ def test_check_and_lock_stop_when_the_checkout_lacks_its_setup(
             err = capsys.readouterr().err
             assert "upstream/metacheck is empty" in err
             assert "git submodule update --init" in err
-            assert "pyreadstat, xlrd, snowballstemmer not installed" in err
+            assert "pyreadstat, xlrd, snowballstemmer, striprtf not installed" in err
             assert "uv sync --locked --all-extras" in err
     assert not (tmp_path / "parity").exists()  # nothing ran
     (submodule / "DESCRIPTION").write_text("Package: metacheck\n")

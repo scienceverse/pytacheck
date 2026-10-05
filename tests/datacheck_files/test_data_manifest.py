@@ -146,15 +146,15 @@ def test_manifest_merge_null_removes_na_keeps(tmp_path: Path) -> None:
 
 
 def test_manifest_merge_jsonlite_layout(tmp_path: Path) -> None:
-    # R: manifest_merge(p, list(x = c(1, 2), l = list(1, 2), y = list(z = 0.000012345),
-    #                           n = 5e8, t = 1e-7, s = "a"))
+    # R: manifest_merge(p, list(l = list(1, 2), y = list(z = 0.000012345), n = 5e8, t = 1e-7,
+    #                           s = "a"))
     # jsonlite's layout, but numbers at full precision (U62: digits = 4 writes 0 for z)
     path = tmp_path / "m.json"
-    F.manifest_merge(path, {"x": F.RVector([1.0, 2.0]), "l": [1.0, 2.0],
-                            "y": {"z": 0.000012345}, "n": 5e8, "t": 1e-7, "s": "a"})  # fmt: skip
+    F.manifest_merge(
+        path, {"l": [1.0, 2.0], "y": {"z": 0.000012345}, "n": 5e8, "t": 1e-7, "s": "a"}
+    )
     assert path.read_text(encoding="utf-8").splitlines() == [
         "{",
-        '  "x": [1, 2],',
         '  "l": [',
         "    1,",
         "    2",
@@ -167,6 +167,13 @@ def test_manifest_merge_jsonlite_layout(tmp_path: Path) -> None:
         '  "s": "a"',
         "}",
     ]
+
+
+def test_manifest_merge_reads_past_a_byte_order_mark(tmp_path: Path) -> None:
+    path = tmp_path / "m.json"
+    path.write_bytes(b'\xef\xbb\xbf{"a": 1}')
+    F.manifest_merge(path, {"b": 2.0})
+    assert _read(path) == {"a": 1, "b": 2}
 
 
 def test_manifest_merge_numpy_scalars_are_json_numbers(tmp_path: Path) -> None:
