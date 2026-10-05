@@ -16,8 +16,8 @@ import pandas as pd
 import pytest
 
 from metacheck.codecheck import core
+from metacheck.codecheck._rcoerce import r_as_character, r_unlist_chr
 from metacheck.codecheck._reval import r_eval
-from metacheck.codecheck._rjson import RList, json_load, r_as_character, r_unlist_chr
 from metacheck.codecheck._rparse import parse_exprs
 
 FIX = Path(__file__).parent / "fixtures"
@@ -59,45 +59,8 @@ def test_line_stats_na_comment_line() -> None:
 
 
 # ---------------------------------------------------------------------------
-# jsonlite (yajl) parsing and unlist()
+# JSON values: unlist() and as.character() coercion
 # ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    ("text", "expected"),
-    [
-        ("[1] // c", [1]),
-        ("/* c */ [1]", [1]),
-        ("[1, /* c */ 2]", [1, 2]),
-        ("[1] /* unterminated", [1]),
-        ('["//", "/*"]', ["//", "/*"]),
-        ("\v[1]\f", [1]),
-        ("\ufeff[1]", [1]),
-        ("2147483647", 2147483647),
-        ("2147483648", 2147483648.0),
-        ("-2147483648", -2147483648.0),
-        ('"a\\ud800b"', "a?b"),
-        ('"\\ud800\\u0041"', "\U00010041"),
-        ('"\\ud800\\ud800"', "\U00010000"),
-        ('"\\ud83d\\ude00"', "\U0001f600"),
-        ('["a\\u0000b", "c"]', ["a", "c"]),
-    ],
-)
-def test_json_load_yajl_quirks(text: str, expected: object) -> None:
-    value = json_load(text)
-    assert value == expected
-    assert type(value) is type(expected)
-
-
-@pytest.mark.parametrize("text", ["[1] # c", "[1]/", "/**/", " \ufeff[1]", "[1,]", "[01]", "NaN"])
-def test_json_load_errors(text: str) -> None:
-    assert json_load(text) is None
-
-
-def test_json_load_nul_in_key_and_duplicates() -> None:
-    value = json_load('{"a\\u0000b": 1, "a": 2}')
-    assert isinstance(value, RList)
-    assert value.names() == ["a", "a"]
 
 
 def test_unlist_coercion() -> None:
@@ -105,32 +68,34 @@ def test_unlist_coercion() -> None:
     assert r_unlist_chr([1.5, 3e9]) == ["1.5", "3e+09"]
     assert r_unlist_chr([True, False]) == ["TRUE", "FALSE"]
     assert r_unlist_chr(["x", 1, 2.5, True, None]) == ["x", "1", "2.5", "TRUE"]
-    assert r_as_character(RList([("a", "r"), ("b", [1])])) == ["r", "list(1L)"]
+    assert r_as_character({"a": "r", "b": [1]}) == ["r", "list(1L)"]
 
 
-def test_code_extract_py_json_quirks() -> None:
+def test_integers_beyond_r_range_are_doubles() -> None:
+    assert r_unlist_chr([2147483647, 2147483648]) == ["2147483647", "2147483648"]
+    assert r_as_character([3000000000]) == ["3e+09"]
+    assert r_as_character({"a": [3000000000]}) == ["list(3e+09)"]
+
+
+def test_code_extract_py_json_values() -> None:
     def nb(src: str) -> str:
         return '{"cells": [{"cell_type": "code", "source": ' + src + "}]}"
 
-    assert core.code_extract_py(text=nb('"x"') + " // c") == ["x", ""]
     assert core.code_extract_py(text="\ufeff" + nb('"x"')) == ["x", ""]
-    assert core.code_extract_py(text=nb('"a\\u0000b\\nc"')) == ["a", ""]
     assert core.code_extract_py(text=nb("[1, true]")) == ["11", ""]
     assert core.code_extract_py(text=nb("[1.5, 3000000000]")) == ["1.53e+09", ""]
     assert core.code_extract_py(text=nb("[0.1, 1e-20, 123456789012345678]")) == [
         "0.11e-20123456789012345680",
         "",
     ]
+    # text that is not valid JSON has no cells
+    assert core.code_extract_py(text=nb('"x"') + " // c") == []
+    assert core.code_extract_py(text=nb('"x"') + " # c") == []
+    assert core.code_extract_py(text=nb('["x",]')) == []
 
 
-def test_notebook_files_with_comments_and_bom() -> None:
-    assert core.code_lang(str(FIX / "review" / "nb_comments.ipynb")) == "R"
+def test_notebook_file_with_bom() -> None:
     assert core.code_lang(str(FIX / "review" / "nb_bom.ipynb")) == "R"
-    assert core.code_extract_py(str(FIX / "review" / "nb_comments.ipynb")) == [
-        "library(dplyr)",
-        "x <- 1 // not a comment in R",
-        "",
-    ]
 
 
 # ---------------------------------------------------------------------------
@@ -281,7 +246,8 @@ def test_predownload_missing_column_is_a_no_op(
     pd.testing.assert_frame_equal(out, af)
 
 
-def test_version_pin_check_jsonlite_lockfiles(tmp_path: Path) -> None:
+def test_version_pin_check_lockfiles(tmp_path: Path) -> None:
+    """A lock file with comments (accepted by jsonlite) is not JSON and is skipped."""
     shutil.copytree(FIX / "review" / "pin", tmp_path / "pin")
     names = ["renv.lock", "sub/renv.lock", "SESSION-INFO.txt"]
     af = pd.DataFrame(
@@ -294,9 +260,9 @@ def test_version_pin_check_jsonlite_lockfiles(tmp_path: Path) -> None:
     )
     out = core._code_version_pin_check(af, [["checkpoint::checkpoint('2020-02-02')"]])
     assert out["mechanisms"] == ["renv.lock", "sessionInfo", "checkpoint"]
-    assert out["r_versions"] == ["4.3.1", "4.2", "4.4.2"]
-    assert out["renv_files"] == ["renv.lock", "sub/renv.lock"]
-    assert out["renv_packages"]["package"].tolist() == ["dplyr", "x", "a"]
+    assert out["r_versions"] == ["4.2", "4.4.2"]
+    assert out["renv_files"] == ["sub/renv.lock"]
+    assert out["renv_packages"]["package"].tolist() == ["a"]
     with pytest.raises(TypeError, match="attribute on NULL"):
         core._code_version_pin_check(af.drop(columns="file_location"))
 
