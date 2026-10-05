@@ -435,7 +435,7 @@ Python: [text/causal.py](../src/metacheck/text/causal.py). Tests: [tests/text_ex
 
 ### `R/code_check.R`
 
-Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_encoding.py](../src/metacheck/codecheck/_encoding.py), [codecheck/_icu.py](../src/metacheck/codecheck/_icu.py), [codecheck/_icu_tables.py](../src/metacheck/codecheck/_icu_tables.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rjson.py](../src/metacheck/codecheck/_rjson.py). Tests: [tests/codecheck](../tests/codecheck).
+Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_encoding.py](../src/metacheck/codecheck/_encoding.py), [codecheck/_icu.py](../src/metacheck/codecheck/_icu.py), [codecheck/_icu_tables.py](../src/metacheck/codecheck/_icu_tables.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
