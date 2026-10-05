@@ -190,8 +190,34 @@ def test_read_rds_generic_objects() -> None:
     assert obj["e"] == []
 
 
-def test_read_rds_rejects_other_formats(tmp_path: Path) -> None:
-    f = tmp_path / "ascii.rds"
-    f.write_bytes(b"A\n3\n")
-    with pytest.raises(ValueError, match=r"XDR"):
+def test_read_rds_rejects_other_files(tmp_path: Path) -> None:
+    f = tmp_path / "text.rds"
+    f.write_bytes(b"this is not an R serialisation\n")
+    with pytest.raises(ValueError, match=r"unknown input format"):
         _read_rds(f)
+
+
+def test_read_rds_ascii_stream_equals_xdr() -> None:
+    data = IO_FIXTURES.parent.parent / "datacheck_files" / "data"
+    pd.testing.assert_frame_equal(
+        _read_rds(data / "study_ascii.rds"), _read_rds(data / "study.rds")
+    )
+
+
+def _strsxp(*cells: tuple[int, bytes]) -> bytes:
+    """An XDR (version 2) stream holding one character vector of ``(levels, bytes)`` cells."""
+    import struct
+
+    body = struct.pack(">ii", 16, len(cells))
+    for levels, raw in cells:
+        body += struct.pack(">ii", 9 | (levels << 12), len(raw)) + raw
+    return b"X\n" + struct.pack(">iii", 2, 0x00040000, 0x00020300) + body
+
+
+def test_read_rds_text_is_valid_utf8(tmp_path: Path) -> None:
+    """Bytes that are not UTF-8 read as U+FFFD; latin1-marked text reads as latin-1."""
+    f = tmp_path / "text.rds"
+    f.write_bytes(_strsxp((0, b"a\xffb"), (4, b"caf\xe9"), (8, "caf\u00e9".encode()), (0, b"")))
+    got = _read_rds(f)
+    assert got == ["a\ufffdb", "caf\u00e9", "caf\u00e9", ""]
+    assert all(type(v) is str for v in got)

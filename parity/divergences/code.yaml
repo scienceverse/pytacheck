@@ -225,6 +225,11 @@
   ref: U148
   reason: a chart whose fitted line cannot be drawn (scalar, function, formula) or a box plot without data is drawn without it / left out; R's lines()/boxplot() fail the whole export
 "statout_readers_review/export_spv_html.spv_box_na": *u148_chart
+"statout_readers_review/import_spv.attrs.spv_charts": &d63_fits
+  kind: deliberate
+  ref: D63
+  reason: only a fitted-curve text that is arithmetic in x is listed and drawn; R keeps any expression its parser accepts (TRUE, a * x, if/function/assignment, x %% 2) as a legend entry
+"statout_readers_review/import_spv.attrs.spv_charts_ok": *d63_fits
 "statout_readers/export_omv_html.fixture": &u148_img
   kind: r_bug_fixed
   ref: U148

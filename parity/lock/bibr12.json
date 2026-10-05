@@ -20,7 +20,15 @@
 "module.stat_p_exact.preprint": {"r": "f4045b014d50cba5", "py": "72a9279d11d996cc", "diff": ["report[]", "summary_table.n_imprecise[]", "summary_text[]", "table", "traffic_light[]"]},
 "module.stat_p_nonsig.mixed": {"r": "779d43596815ea77", "py": "dd781fe68192aec0", "diff": ["summary_table.n_nonsignificant[]", "summary_text[]", "table"]},
 "module.stat_p_nonsig.preprint": {"r": "e8881d5455a9ab96", "py": "04d508e6cd53c9a1", "diff": ["summary_table.n_nonsignificant[]", "summary_text[]", "table"]},
-"paper_write.text.PMC4383902": {"r": "e13382101019cf08", "py": "51b789562e7104ec", "diff": ["[]"]},
-"paper_write.text.preprint": {"r": "17faeb7418af61b4", "py": "af8d801925d21309", "diff": ["[]"]},
+"paper_write.text.PMC4383902": {"r": "e13382101019cf08", "py": "6722fe2134ef7e7e", "diff": ["<root>"]},
+"paper_write.text.add_bib_match": {"r": "b0a3b5aa04ce97f7", "py": "5e93d7a98008d5df", "diff": ["<root>"]},
+"paper_write.text.full": {"r": "f9e9a3bd4e947f84", "py": "1bd0dd5d8dd4a002", "diff": ["<root>"]},
+"paper_write.text.inspect": {"r": "b2d3287b7310ce23", "py": "eda93668da8df08c", "diff": ["<root>"]},
+"paper_write.text.match_variants": {"r": "4fe2d87cf77386fd", "py": "71483c02b6e7843b", "diff": ["<root>"]},
+"paper_write.text.preprint": {"r": "17faeb7418af61b4", "py": "c0d4317fb4bff8e7", "diff": ["<root>"]},
+"paper_write.text.probe_docx": {"r": "02658c19cbaac4e6", "py": "bca08a5d7814f6ac", "diff": ["<root>"]},
+"paper_write.text.probe_docx.images": {"r": "146f17b7bd0b06ce", "py": "51f75f362f3c8dcc", "diff": ["<root>"]},
+"paper_write.text.probe_html": {"r": "eee0d28090f01ee0", "py": "b638afc011036df0", "diff": ["<root>"]},
+"paper_write.text.pyfull": {"r": "f9e9a3bd4e947f84", "py": "1bd0dd5d8dd4a002", "diff": ["<root>"]},
 "read.dir.v11_and_v12": {"r": "ac5146cf65ca52a8", "py": "35e45a022be29dfa", "diff": ["<R error, Python value>"]}
 }

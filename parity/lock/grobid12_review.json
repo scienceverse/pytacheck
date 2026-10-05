@@ -20,11 +20,11 @@
 "write_read.review_unicode": {"r": "abcc20fe79dccb78", "py": "0350a9c09c7971e2", "diff": ["figure.caption[]", "text.text[]", "xref.contents[]", "xref.end[]"]},
 "write_read.review_url_na": {"r": "2d19daf2c2751d6e", "py": "3b3c99aa60712046", "diff": ["text.text[]"]},
 "write_read.review_urls": {"r": "0d7c0034b432d970", "py": "4382221f3a359f71", "diff": ["text.text[]", "url.end[]", "url.start[]", "xref.contents[]", "xref.end[]", "xref.start[]"]},
-"written.review_header": {"r": "6a8d52bf71b17882", "py": "bc8fe8541cacd5aa", "diff": ["[]"]},
-"written.review_inline": {"r": "ed62090237994352", "py": "f7e23ac90173431f", "diff": ["[]"]},
-"written.review_noapp": {"r": "f8b7cf688faaced8", "py": "c1a078deca8c7275", "diff": ["[]"]},
+"written.review_header": {"r": "6a8d52bf71b17882", "py": "d80ed8ba367b0a8d", "diff": ["<root>"]},
+"written.review_inline": {"r": "ed62090237994352", "py": "3ac6d792b45e6d4c", "diff": ["<root>"]},
+"written.review_noapp": {"r": "f8b7cf688faaced8", "py": "7ebb5bc4954067c9", "diff": ["<root>"]},
 "written.review_sentences": {"r": "0debfe782533625c", "py": "7bd613ecbe52ee92", "diff": ["<root>"]},
 "written.review_unicode": {"r": "7e8ed64aebfbe781", "py": "6245e2c00ee0c4af", "diff": ["[]"]},
 "written.review_url_na": {"r": "1642820ef9912356", "py": "6b36ecccf53c1f4d", "diff": ["[]"]},
-"written.review_urls": {"r": "dddd5018a90d5282", "py": "dc458682e21e46eb", "diff": ["[]"]}
+"written.review_urls": {"r": "dddd5018a90d5282", "py": "11dab59e7369af1d", "diff": ["<root>"]}
 }
