@@ -99,6 +99,13 @@
 "negate_disclosure_2" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
 "negate_conflict_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
 
+# R library behaviour that pytacheck stopped reproducing by hand (the maintainer decided on
+# 2026-10-04): the R function stays the reference, the Python side uses a library or the
+# standard library, and the parity cases that compare layout or listing are marked (D63, D64).
+"base::eval" = "metacheck's .spv_chart_html() evaluates the text of an SPSS fitted line with eval(parse(text = ...)), so any R expression is a fit. pytacheck draws a fit only when its text is arithmetic in x (numbers, x, + - * / ^, exp, log, sqrt) and evaluates it with a whitelisted `ast` walk (D63); the R expression parser stays only for scanning R code in code_check (codecheck/_rparse_tables.py)."
+"progress::progress_bar" = "The R5 class behind pb(). Its format tokens (:bar, :eta, :rate, :bytes, ...), bar width and refresh rules are not emulated: pb() keeps tick(), update(), message() and terminate() and draws with rich.progress on a terminal (metacheck.utils.ProgressBar)."
+"jsonlite::write_json (pretty layout of a bibr 12.0 file)" = "paper_write(schema_version = \"12.0\") is written with orjson, two-space indented, one array value per line, so the line layout differs from jsonlite's (inline I() arrays, 1e-05, <\\/); every value reads back equal (D64)."
+
 [skip_files]
 "R/app.R" = "Shiny app launchers (see [skip])."
 "inst/app" = "Shiny apps: report_app.R, osf_app.R, shiny_app/, tabs/, www/ (including the app's usage telemetry)."

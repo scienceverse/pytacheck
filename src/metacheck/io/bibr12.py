@@ -19,23 +19,23 @@ kept in their parentheses (``"(28)"``), as metacheck's statistics code
 expects; 12.x writes them bare (``"28"``).
 
 :func:`_paper_to_bibr12` and :func:`_bibr12_json` write a paper back as a 12.0
-file, byte for byte as metacheck's ``paper_write(schema_version = "12.0")``
-does (``jsonlite::write_json(auto_unbox = TRUE, pretty = TRUE, digits = NA)``),
+file with the values metacheck's ``paper_write(schema_version = "12.0")`` writes,
 except that pytacheck names itself, not metacheck, as the ``converter``, and
-writes a double that 15 significant digits would change in full (U22).
+writes a double that 15 significant digits would change in full (U22). The text
+is plain JSON written by ``orjson`` (two-space indentation, one array value per
+line), not jsonlite's layout (D64).
 """
 
 from __future__ import annotations
 
 import datetime as dt
 import hashlib
-import json
 import math
 import os
 import re
 from collections.abc import Mapping, Sequence
 from os import PathLike
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Any
 
 import numpy as np
@@ -1216,7 +1216,7 @@ def _bibr12_sha256(path: str | PathLike[str]) -> str | None:
 
 
 class _Array(tuple):  # type: ignore[type-arg]
-    """An R atomic vector wrapped in ``I()``: jsonlite writes it inline, ``["a", "b"]``."""
+    """An R atomic vector wrapped in ``I()``: an array of scalars in the file."""
 
     __slots__ = ()
 
@@ -1270,7 +1270,7 @@ def paper_to_bibr12(paper: Paper) -> dict[str, Any]:
     Deliberate difference: ``extraction.converter`` names pytacheck and its
     version (metacheck writes ``metacheck`` and its own version).
 
-    Returns the JSON structure :func:`bibr12_json` writes (inline arrays are
+    Returns the JSON structure :func:`bibr12_json` writes (arrays of scalars are
     ``_Array`` tuples).
     """
     pid = _chr1(paper.paper_id)
@@ -1435,115 +1435,30 @@ def _rows_out(columns: Mapping[str, list[Any]], cols: Mapping[str, str]) -> list
     return [dict(zip(names, row, strict=True)) for row in zip(*lists, strict=True)]
 
 
-# jsonlite's string escapes: quote, backslash and the control characters (as
-# \b \f \n \r \t or \u00xx), which is exactly what the json module's
-# C-accelerated encoder escapes with ensure_ascii=False; "</" is written "<\/"
-_encode_basestring = json.encoder.encode_basestring
-
-
-def _json_double(x: float) -> str:
-    """A double as jsonlite writes it (15 significant digits), or with all the
-    digits it needs when 15 do not give it back.
-
-    (jsonlite's ``digits = NA`` rounds to 15 significant digits, so rewriting a
-    bibr export changed its values: 0.9411764705882353 became
-    0.941176470588235; U22.)
-    """
-    if math.isnan(x) or math.isinf(x):
-        return "null"
-    s = f"{x:.15g}"
-    return s if float(s) == x else repr(x)
-
-
-def _json_atom(x: Any) -> str:
-    """A scalar as jsonlite writes it (``na = "null"``), doubles as :func:`_json_double`."""
-    tx = type(x)
-    if tx is str:
-        return _encode_basestring(x).replace("</", "<\\/")
-    if x is None or x is pd.NA:
-        return "null"
-    if tx is bool:
-        return "true" if x else "false"
-    if tx is int:
-        return str(x) if -_INT_MAX <= x <= _INT_MAX else _json_double(float(x))
-    if tx is float:
-        return _json_double(x)
-    if isinstance(x, str):
-        return _json_string(x)
-    if isinstance(x, bool | np.bool_):
-        return "true" if x else "false"
-    if isinstance(x, int | np.integer):
-        v = int(x)
-        return str(v) if -_INT_MAX <= v <= _INT_MAX else _json_double(float(v))
-    if isinstance(x, float | np.floating):
-        return _json_double(float(x))
-    return _json_string(str(x))
-
-
-def _json_string(s: str) -> str:
-    """A JSON string as jsonlite escapes it (``</`` too, as ``<\\/``)."""
-    return _encode_basestring(s).replace("</", "<\\/")
-
-
-def _json_pretty(x: Any, indent: str, out: list[str]) -> None:
-    # hot path: exact-type checks first (the ABC Mapping check is slow)
-    tx = type(x)
-    if tx is str:
-        out.append(_encode_basestring(x).replace("</", "<\\/"))
-    elif tx is dict or (tx is not _Array and isinstance(x, Mapping)):
-        if not x:
-            out.append("{}")
-            return
-        inner = indent + "  "
-        sep = "{\n"
-        for k, v in x.items():
-            out.append(sep + inner + _json_string(str(k)) + ": ")
-            sep = ",\n"
-            if type(v) is str:
-                out.append(_encode_basestring(v).replace("</", "<\\/"))
-            else:
-                _json_pretty(v, inner, out)
-        out.append("\n" + indent + "}")
-    elif tx is _Array:
-        out.append("[" + ", ".join([_json_atom(v) for v in x]) + "]")
-    elif tx is list or isinstance(x, list | tuple):
-        if isinstance(x, _Array):
-            out.append("[" + ", ".join([_json_atom(v) for v in x]) + "]")
-            return
-        if not x:
-            out.append("[]")
-            return
-        inner = indent + "  "
-        sep = "[\n"
-        for v in x:
-            out.append(sep + inner)
-            sep = ",\n"
-            _json_pretty(v, inner, out)
-        out.append("\n" + indent + "]")
-    elif isinstance(x, pd.DataFrame):
-        _json_pretty(
-            [{k: _json_scalar(v) for k, v in r.items()} for r in x.to_dict("records")],
-            indent,
-            out,
-        )
-    else:
-        out.append(_json_atom(x))
+def _json_default(x: Any) -> Any:
+    """What orjson does not write itself: the ``_Array`` tuples, ``pd.NA``, tables, other types."""
+    if isinstance(x, tuple):
+        return list(x)
+    if x is pd.NA:
+        return None
+    if isinstance(x, pd.DataFrame):
+        return [{k: _json_scalar(v) for k, v in r.items()} for r in x.to_dict("records")]
+    if isinstance(x, Mapping):
+        return dict(x)
+    if isinstance(x, PurePath):  # the same file on every system: "/" between parts
+        return x.as_posix()
+    return str(x)
 
 
 def bibr12_json(x: Any) -> str:
-    """JSON text as ``jsonlite::toJSON(x, auto_unbox = TRUE, pretty = TRUE, digits = NA,
-    na = "null", null = "null")`` writes it.
+    """JSON text of *x*, indented by two spaces (``orjson``; the bibr 12.0 file is plain JSON).
 
-    Objects (dicts) and lists are written over several lines with two-space
-    indentation, an ``_Array`` (an R vector in ``I()``) inline; doubles use 15
-    significant digits (``%.15g``) unless that changes their value, when they
-    are written in full (a difference from jsonlite, which rounds them; U22);
-    integers beyond R's integer range are doubles, and NaN/Inf are null. Only
-    ``"``, ``\\`` and control characters are escaped.
+    Doubles are written with as many digits as they need to read back equal;
+    NaN and infinities are ``null``, as are ``None`` and ``pd.NA``. ``_Array``
+    tuples are lists. An integer wider than 64 bits is an error.
     """
-    out: list[str] = []
-    _json_pretty(x, "", out)
-    return "".join(out)
+    option = orjson.OPT_INDENT_2 | orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_NON_STR_KEYS
+    return orjson.dumps(x, default=_json_default, option=option).decode()
 
 
 _bibr12_json = bibr12_json

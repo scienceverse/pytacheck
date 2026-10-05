@@ -120,6 +120,16 @@
   reason: only text that is not valid UTF-8 triggers the Latin-1 re-read; R's is.na(iconv()) is also TRUE for an NA cell, so "café" becomes "cafÃ©"
 "datacheck_columns/parse_codebook.utf8_na.csv": *u64
 
+# U215: .strip_rtf() on an RTF codebook
+"datacheck_columns/.strip_rtf.basic": &u215
+  kind: r_bug_fixed
+  ref: U215
+  reason: an RTF codebook is read with striprtf, so paragraphs stay lines, the font table and other destination groups are skipped, and hex, Unicode and backslash escapes become the characters they stand for; R's four regular expressions leave the font name first, join every paragraph into one line and drop those characters
+"datacheck_columns/.extract_rich_text.codebook.rtf.rtf": *u215
+"datacheck_columns/parse_codebook.codebook.rtf": *u215
+"datacheck_columns_review/.extract_rich_text.escapes.rtf": *u215
+"datacheck_columns_review/parse_codebook.escapes.rtf": *u215
+
 # U98: data_check's early return when no tabular file could be read
 "mod_data_check/data_check.nodata": &u98
   kind: r_bug_fixed
