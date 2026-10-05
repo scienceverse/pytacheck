@@ -665,9 +665,15 @@ def _gemini(
         cfg["system_instruction"] = system
     if type is not None:
         cfg["response_mime_type"] = "application/json"
-        # `response_json_schema` takes the schema as written; the typed
-        # `response_schema` refuses a null among the values of an enum
-        cfg["response_json_schema"] = type_as_json(type, "gemini")
+        # The schema goes in `responseSchema`, as ellmer sends it, through the body the
+        # SDK merges in: the typed `response_schema` refuses a null among the values of
+        # an enum, and `responseJsonSchema` changed what `power` returned (an extra
+        # all-null row; 11 to 13 values differed on 14 paragraphs, against 3 for the
+        # model's own run-to-run noise).
+        extra = {
+            **(extra or {}),
+            "generationConfig": {"responseSchema": type_as_json(type, "gemini")},
+        }
     cfg["http_options"] = types.HttpOptions(
         timeout=int(float(llm_timeout()) * 1000),
         retry_options=types.HttpRetryOptions(attempts=1),

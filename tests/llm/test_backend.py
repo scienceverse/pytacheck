@@ -478,10 +478,10 @@ def test_gemini_request(wire: Wire) -> None:
     assert cfg["topK"] == 3
     assert cfg["thinkingConfig"] == {"thinking_level": "LOW"}
     assert cfg["responseMimeType"] == "application/json"
-    schema = cfg["responseJsonSchema"]  # as written, not through `response_schema`
+    schema = cfg["responseSchema"]  # as written (a null among the enum values), as ellmer sends it
     assert schema["properties"]["items"]["items"]["required"] == ["name"]
     assert schema["properties"]["items"]["items"]["properties"]["tag"]["enum"] == ["a", "b", None]
-    assert "responseSchema" not in cfg
+    assert "responseJsonSchema" not in cfg
 
 
 def test_gemini_plain_reply(wire: Wire) -> None:
