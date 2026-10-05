@@ -36,14 +36,14 @@ dependencies = [
     "scipy>=1.13",
     # `regex` (not `re`): POSIX leftmost-longest matching, POSIX bracket
     # classes and \m/\M word anchors are needed to reproduce R's TRE engine.
-    "regex>=2024.9.11",
+    "regex>=2026.9.29",
     "orjson>=3.10",
     "httpx[http2]>=0.28.1,<1",
     "packaging>=24",
     "h2>=4.4.1",
     "lxml>=5.3",
     "markdown-it-py>=3.0",
-    "platformdirs>=4.2",
+    "platformdirs>=4.12.2",
     "rich>=13.7",
     # codecheck reads YAML (Quarto/R Markdown headers, codecheck.yml)
     "pyyaml>=6.0.2",
@@ -52,7 +52,7 @@ dependencies = [
 [project.optional-dependencies]
 # Tight integration with bibr: `metacheck.read("paper.pdf")` and
 # `pytacheck check paper.pdf` run the bibr extraction pipeline in-process.
-bibr = ["bibr>=0.5.1"]
+bibr = ["bibr>=0.6.0"]
 # data_check & co.: SPSS/Stata/SAS files (pyreadstat), legacy .xls (xlrd; .xlsx
 # and .ods are read without extra packages), distribution plots (matplotlib),
 # Porter stemming of codebook labels (snowballstemmer, as metacheck's SnowballC;
@@ -70,12 +70,12 @@ data = [
 ]
 # REST API server (port of metacheck's plumber API).
 api = [
-    "fastapi>=0.115",
-    "uvicorn[standard]>=0.30",
+    "fastapi>=0.142.2",
+    "uvicorn[standard]>=0.54.0",
     "python-multipart>=0.0.31",
 ]
 # The local demo app: `metacheck-app` opens a Gradio page in the browser.
-app = ["gradio>=6.28,<7"]
+app = ["gradio>=6.29.0,<7"]
 # Character-set detection for files that are not UTF-8 (chardet, 0BSD since 7.0).
 charset = ["chardet>=7"]
 # data_check's local column-concept classifier (an int8 ONNX model, ~540 MB,
@@ -109,7 +109,7 @@ metacheck-app = "metacheck.app:main"
 datapackage = "metacheck.datapackage.modules"
 
 [build-system]
-requires = ["hatchling>=1.26"]
+requires = ["hatchling>=1.32.4"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
@@ -124,10 +124,10 @@ dev = [
     "pytest-cov>=6.0",
     "pytest-xdist>=3.6",
     "pytest-benchmark>=5.1",
-    "hypothesis>=6.112",
+    "hypothesis>=6.168.3",
     "respx>=0.22",
-    "ruff>=0.8.0",
-    "mypy>=1.15",
+    "ruff>=0.16.10",
+    "mypy>=2.4.0",
     "pandas-stubs>=2.2",
     "types-regex>=2024.9",
     "lxml-stubs>=0.5",
