@@ -533,3 +533,31 @@ def test_zenodo_info_internal_with_several_ids(tmp_path: Path) -> None:
             zenodo._zenodo_info(["5559004", "5559001"])
         with pytest.raises(ValueError, match="replacement has 1 row, data has 0"):
             zenodo._zenodo_info([])
+
+
+def test_zenodo_downloads_retry_through_the_shared_stack(tmp_path: Path) -> None:
+    arc = "https://zenodo.org/api/records/1/files-archive"
+    with respx.mock(assert_all_mocked=True) as router:
+        route = router.get(arc).mock(
+            side_effect=[httpx.Response(503), httpx.Response(200, content=b"zip bytes")]
+        )
+        assert zenodo._download_archive(arc, str(tmp_path / "a.zip")) is True
+        assert route.call_count == 2
+        assert (tmp_path / "a.zip").read_bytes() == b"zip bytes"
+
+        gone = router.get("https://files.example/gone").respond(404)
+        assert zenodo._download_file("https://files.example/gone", str(tmp_path / "g")) is False
+        assert gone.call_count == 1 and not (tmp_path / "g").exists()  # a 404 is final
+
+        flaky = router.get("https://files.example/flaky").mock(
+            side_effect=[httpx.Response(502), httpx.Response(200, content=b"x")]
+        )
+        assert zenodo._download_file("https://files.example/flaky", str(tmp_path / "f")) is True
+        assert flaky.call_count == 2 and (tmp_path / "f").read_bytes() == b"x"
+
+        down = router.get("https://files.example/down").mock(side_effect=httpx.ConnectError("x"))
+        assert zenodo._download_file("https://files.example/down", str(tmp_path / "d")) is False
+        assert down.call_count == 5
+        empty = router.get("https://files.example/empty").respond(200, content=b"")
+        assert zenodo._download_archive("https://files.example/empty", str(tmp_path / "e")) is False
+        assert empty.call_count == 1

@@ -446,7 +446,7 @@ def _halt() -> None:
 def test_a_request_or_a_download_ends_when_the_check_says_so() -> None:
     import respx
 
-    from metacheck.archives.download import _perform_once
+    from metacheck.archives.download import _storage_request
 
     with respx.mock(assert_all_called=False) as router:
         route = router.get("https://files.example.test/a.csv").respond(200, content=b"a,b\n1,2\n")
@@ -455,6 +455,6 @@ def test_a_request_or_a_download_ends_when_the_check_says_so() -> None:
             with pytest.raises(_Halt):
                 http.request("GET", "https://files.example.test/a.csv")
             with pytest.raises(_Halt):
-                _perform_once({"method": "GET", "url": "https://files.example.test/a.csv"})
+                _storage_request("GET", "https://files.example.test/a.csv")
         assert route.call_count == 1
     http.check_interrupt()  # outside the block nothing happens

@@ -65,7 +65,7 @@ def test_a_tsv_is_read_with_a_tab_unless_no_tab_is_outside_quotes(tmp_path: Path
         return F._delimiter(tmp_path / name, name.rsplit(".", 1)[1])
 
     assert sep("a\tb\n1\t2\n") == "\t"
-    assert sep('a,b\n1,"x\ty"\n2,3\n') == ","  # the only tab is inside quotes (D73)
+    assert sep('a,b\n1,"x\ty"\n2,3\n') == ","  # the only tab is inside quotes (D72)
     assert sep('a,b\n1,2\n3,4\n5,6\n"x\ty",8\n') == ","
     assert sep("a,b\n1\t2\n") == "\t"  # a tab outside quotes, whatever else is there
     assert sep("a,b\n" + "1,2\n" * 5 + "x\ty\n") == "\t"  # in any of the first 100 lines

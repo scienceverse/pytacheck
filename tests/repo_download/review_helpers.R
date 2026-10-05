@@ -174,20 +174,6 @@ rv_fetch <- function(routes, url, names = NULL, verify = TRUE) {
        sizes = unname(file.size(file.path(d, files))))
 }
 
-rv_member <- function(routes, url, name, verify = TRUE) {
-  out <- rv_serve(routes, function() {
-    cd <- zip_peek(url)
-    metacheck:::.zip_member_fetch(url, cd[cd$name == name, , drop = FALSE], verify = verify)
-  })
-  if (is.null(out)) return(NULL)
-  list(length = length(out), crc = metacheck:::.crc32(out))
-}
-
-rv_cd <- function(fixture) {
-  p <- file.path(rv_dir, fixture)
-  rv_df_bytes(metacheck:::.parse_zip_central_dir(readBin(p, "raw", file.size(p))))
-}
-
 rv_download <- function(routes, files, twice = FALSE, disk = TRUE, ...) {
   sess <- tempfile("rv_sess_")
   old <- options(metacheck.repo_cache.session_dir = sess,

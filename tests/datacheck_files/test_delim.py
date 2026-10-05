@@ -13,7 +13,7 @@ way fread does. It agrees with fread on every case but the ones listed below, ea
 a difference of the reader chosen on purpose (a register entry in docs/UPSTREAM_ISSUES.md
 or parity/divergences/) and pinned here, so that a change of the reader shows.  The cases with
 a quote that does not fit are fuzzed inputs, not valid CSV: fread chooses one of four quote
-rules for the whole file by the table each gives, the reader decides at every quote (D70).
+rules for the whole file by the table each gives, the reader decides at every quote (D69).
 """
 
 from __future__ import annotations
@@ -62,7 +62,7 @@ DOUBLED_QUOTE = _words("""
 # Quotes that do not fit (``"a"b``, ``"""`` before a separator, a field that never closes) are
 # read where they stand: a quote opens a field only at its start, the first quote that is not
 # doubled must be followed by a separator or a line end to close it, and one that is not (or
-# that has no closing quote) is a character (D70).  fread picks one of four quote rules for
+# that has no closing quote) is a character (D69).  fread picks one of four quote rules for
 # the whole file; where its rule keeps the file apart (a quote never closes, a short line), the
 # reader's reading is the other.  Same rows, and the cells differ in quote characters only:
 IMPROPER_TEXT = _words("""q_002 q_005 q_006 q_070""")
@@ -75,7 +75,7 @@ IMPROPER_MORE = _words("""
 IMPROPER_FEWER = _words("""f1_0111 q_033 q_050 q_062 q_072""")
 IMPROPER_QUOTE = IMPROPER_TEXT + IMPROPER_MORE + IMPROPER_FEWER
 # fread keeps a tab that follows the separator in a text column; the reader drops it, as it
-# drops every blank around an unquoted field of a table (D72).
+# drops every blank around an unquoted field of a table (D71).
 LEADING_TAB = ["f2_0116"]
 # fread stops with an internal error on these files (a first row that starts with a blank
 # and a separator); the reader reads them (D11).

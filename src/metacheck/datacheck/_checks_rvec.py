@@ -21,6 +21,7 @@ from __future__ import annotations
 import datetime as dt
 import functools
 import math
+import statistics
 from collections.abc import Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any, overload
 
@@ -85,12 +86,6 @@ class RVec:
     def is_numeric(self) -> bool:
         """R ``is.numeric()``."""
         return self.kind in _NUMERIC
-
-    def subset(self, keep: Sequence[bool]) -> RVec:
-        """``x[keep]`` (a logical index without NA)."""
-        return RVec(
-            self.kind, [v for v, k in zip(self.values, keep, strict=True) if k], self.levels
-        )
 
     def drop_na(self) -> RVec:
         """``x[!is.na(x)]``."""
@@ -560,11 +555,6 @@ def df_columns(df: Any) -> list[Any]:
     return [df.iloc[:, j] for j in range(df.shape[1])]
 
 
-def column_kinds(df: Any) -> list[str]:
-    """The R type of each column of *df*."""
-    return [rvec(c).kind for c in df_columns(df)]
-
-
 # -- string helpers ------------------------------------------------------------
 
 
@@ -609,15 +599,8 @@ def is_whole(f: float) -> bool:
 
 
 def median(values: Sequence[float]) -> float:
-    """``stats::median()`` of non-NA numbers (NA for an empty vector)."""
-    n = len(values)
-    if n == 0:
-        return math.nan
-    s = sorted(values)
-    h = n // 2
-    if n % 2:
-        return float(s[h])
-    return (s[h - 1] + s[h]) / 2
+    """``stats::median()`` of non-NA numbers (NaN for an empty vector)."""
+    return float(statistics.median(values)) if len(values) else math.nan
 
 
 def quantile7(

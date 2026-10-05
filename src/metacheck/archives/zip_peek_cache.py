@@ -28,7 +28,9 @@ __all__ = ["zip_peek_cache_clear"]
 
 _SUFFIX = ".json"
 _FORMAT = "metacheck.zip_peek_cache"
-_VERSION = 1
+# 2: zipfile reads the listing, so an archive an older version could not list (Zip64, a
+# directory over 1 MB: a cached failure) is listed; entries of version 1 are peeked again.
+_VERSION = 2
 
 
 def zip_peek_cache_clear() -> int:

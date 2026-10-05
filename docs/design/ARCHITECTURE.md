@@ -680,7 +680,7 @@ Basis: each item's measured line range, the lane gates, and the spike's −17% o
 | data.table fread C port → pandas C engine + type layer | 1,352 → 300 | DATA-a | edge cases |
 | knitr purl + chunk-option evaluator → static `_chunks.py` | 1,748 → 260 | CODE-a | edge cases: computed chunk options |
 | read.table/scan/type.convert port | 585 → 30 | DATA-a | edge cases |
-| readxl walker + two ODS readers + minty → calamine (already declared) | 909 → 200 | DATA-a | edge cases |
+| readxl walker + two ODS readers + minty → calamine (declared again by DATA-a; nothing imports it before then) | 909 → 200 | DATA-a | edge cases |
 | `zenodo_upload` out of the package | 1,228 → 800, then separate | SERVICES-b | – |
 | **Value models, deparsers and JSON emulation** | | | |
 | `json_expand`'s jsonlite model, `type.convert`, dates, deparser → `json.loads` + a flatten (nulls stay None) | 1,235 → 120 | CORE-1c | B |

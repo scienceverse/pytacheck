@@ -435,7 +435,7 @@ Python: [text/causal.py](../src/metacheck/text/causal.py). Tests: [tests/text_ex
 
 ### `R/code_check.R`
 
-Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_encoding.py](../src/metacheck/codecheck/_encoding.py), [codecheck/_icu.py](../src/metacheck/codecheck/_icu.py), [codecheck/_icu_tables.py](../src/metacheck/codecheck/_icu_tables.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rjson.py](../src/metacheck/codecheck/_rjson.py). Tests: [tests/codecheck](../tests/codecheck).
+Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_encoding.py](../src/metacheck/codecheck/_encoding.py), [codecheck/_icu.py](../src/metacheck/codecheck/_icu.py), [codecheck/_icu_tables.py](../src/metacheck/codecheck/_icu_tables.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
@@ -469,10 +469,10 @@ Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/
 | `data_study_roster()` | [`metacheck.datacheck.files:data_study_roster`](../src/metacheck/datacheck/files.py) | yes | — |  |
 | `text_peek()` | [`metacheck.datacheck.files:text_peek`](../src/metacheck/datacheck/files.py) | yes | U63 |  |
 | `txt_classify_content()` | [`metacheck.datacheck.files:txt_classify_content`](../src/metacheck/datacheck/files.py) | yes | U63, U217 |  |
-| `data_read_head()` | [`metacheck.datacheck.files:data_read_head`](../src/metacheck/datacheck/files.py) | yes | D10, D71, U216, U217 |  |
+| `data_read_head()` | [`metacheck.datacheck.files:data_read_head`](../src/metacheck/datacheck/files.py) | yes | D10, D70, U216, U217 |  |
 | `data_col_type()` | [`metacheck.datacheck.columns:data_col_type`](../src/metacheck/datacheck/columns.py) | yes | — |  |
 | `data_col_stats()` | [`metacheck.datacheck.columns:data_col_stats`](../src/metacheck/datacheck/columns.py) | yes | — |  |
-| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | U64 |  |
+| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | U64, U215 |  |
 | `parse_qsf()` | [`metacheck.datacheck.columns:parse_qsf`](../src/metacheck/datacheck/_columns_qsf.py) | yes | — |  |
 | `match_column_labels()` | [`metacheck.datacheck.columns:match_column_labels`](../src/metacheck/datacheck/columns.py) | yes | U58 |  |
 | `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55, U59 |  |
@@ -1101,7 +1101,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `gitcreds` | the GitHub token | `git credential fill`, as gitcreds does ([`archives/github.py`](../src/metacheck/archives/github.py)) |
 | `roxygen2` | reading module headers (`module_info()`) | module metadata is given to the `@module` decorator ([`module.py`](../src/metacheck/module.py)) |
 | `jpeg` | `fig_image_view()` | not ported (an R graphics viewer) |
-| `progress` | progress bars | [`utils.py`](../src/metacheck/utils.py) |
+| `progress` | progress bars | `rich.progress`, behind `pb()` in [`utils.py`](../src/metacheck/utils.py) |
 | `graphics`, `grDevices` | SPSS chart images in `export_spv_html()`; `fig_image_view()` | SVG drawn in [`statout/spv.py`](../src/metacheck/statout/spv.py) (D26); `fig_image_view()` not ported |
 | `utils` | `unzip()`, `URLencode()`, `read.csv()`, `head()` and so on | Python's standard library (`zipfile`, `urllib.parse`) and pandas |
 | `ggplot2` | the distribution figure of `data_check` | matplotlib (`metacheck[data]`), in [`modules/_data_check.py`](../src/metacheck/modules/_data_check.py) |
@@ -1124,7 +1124,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `BiocManager` | installing a paper's Bioconductor packages in a reproducibility run (Suggests only) | still used, inside the R session that runs the paper's code ([`repro/core.py`](../src/metacheck/repro/core.py)); `code_check` recognises `BiocManager::install()` calls ([`codecheck/core.py`](../src/metacheck/codecheck/core.py)) |
 | `shiny`, `shinyjs`, `shinydashboard` | the Shiny apps (`report_app()`, `osf_app()`) | not ported; see [`porting/skip.toml`](../porting/skip.toml) |
 | `DBI`, `RSQLite` | reading JASP files (an SQLite database inside) | Python's `sqlite3` ([`statout/jasp.py`](../src/metacheck/statout/jasp.py)) |
-| `zip` | inflating zip members without extracting them | Python's `zlib` ([`archives/zip_peek.py`](../src/metacheck/archives/zip_peek.py)) |
+| `zip` | inflating zip members without extracting them | Python's `zipfile`, over a file whose reads are range requests ([`archives/zip_peek.py`](../src/metacheck/archives/zip_peek.py)) |
 | `digest` | CRC-32 and SHA-256 checksums | Python's `zlib` and `hashlib` |
 | `jsonvalidate` | not called by metacheck's code | not needed |
 

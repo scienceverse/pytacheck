@@ -114,11 +114,21 @@
   reason: a Latin-1 script's data-file references are found (its lines are read as Latin-1); R's gregexpr() matches nothing on invalid UTF-8 (or fails)
 
 # U64: a valid UTF-8 table with an NA cell is re-read as Latin-1
-# (review.read_head_typed.rt_fallback_latin1.csv shows it too, and is marked D70 below)
+# (review.read_head_typed.rt_fallback_latin1.csv shows it too, and is marked D69 below)
 "datacheck_columns/parse_codebook.utf8_na.csv":
   kind: r_bug_fixed
   ref: U64
   reason: only text that is not valid UTF-8 triggers the Latin-1 re-read; R's is.na(iconv()) is also TRUE for an NA cell, so "café" becomes "cafÃ©"
+
+# U215: .strip_rtf() on an RTF codebook
+"datacheck_columns/.strip_rtf.basic": &u215
+  kind: r_bug_fixed
+  ref: U215
+  reason: an RTF codebook is read with striprtf, so paragraphs stay lines, the font table and other destination groups are skipped, and hex, Unicode and backslash escapes become the characters they stand for; R's four regular expressions leave the font name first, join every paragraph into one line and drop those characters
+"datacheck_columns/.extract_rich_text.codebook.rtf.rtf": *u215
+"datacheck_columns/parse_codebook.codebook.rtf": *u215
+"datacheck_columns_review/.extract_rich_text.escapes.rtf": *u215
+"datacheck_columns_review/parse_codebook.escapes.rtf": *u215
 
 # U98: data_check's early return when no tabular file could be read
 "mod_data_check/data_check.nodata": &u98
@@ -302,32 +312,32 @@
   ref: U217
   reason: the repository's UTF-16 table (utf16_table.txt) is read as 3 columns (Subject, Trial, RT), which adds 2 rows to the column table; R reads one empty column from the bytes
 
-# D70: quotes that do not fit CSV quoting are read where they stand
+# D69: quotes that do not fit CSV quoting are read where they stand
 "datacheck_files_review/review.read_head_typed.rt_blank_na.csv": &d70
   kind: deliberate
-  ref: D70
+  ref: D69
   reason: the improper quote ("x"y) stays as text and a one-column file keeps its blank lines as rows (5 here), so data_check rates it as it rates the same file without the quote; R's fread fails on it and read.delim drops the blank lines and reads xy
 "datacheck_files_review/review.read_head_typed.rt_cr_cr.csv": *d70
 "datacheck_files_review/review.read_head_typed.rt_fallback_latin1.csv":
   kind: deliberate
-  ref: D70
+  ref: D69
   reason: the improper quote ("a"b) stays as text where R's read.delim reads ab; the Latin-1 re-read of a valid UTF-8 table with an NA cell (café becomes cafÃ© in R) is U64
 "datacheck_files_review/review.read_head_typed.rt_nul_quote_header.csv":
   kind: deliberate
-  ref: D70
+  ref: D69
   reason: the improper quote on line 1 does not change how line 2 is read, so the quoted "a,b" is one field as in R's read.delim; only the column name differs, which ends at the NUL byte and keeps its quotes ("a") where R drops the NUL and the quotes
 
-# D71: files without a regular table
+# D70: files without a regular table
 "datacheck_files/data_read_head.whitespace.csv": &d71
   kind: deliberate
-  ref: D71
+  ref: D70
   reason: a file of blanks is an empty frame (0 rows, 0 columns); R returns a data frame of 1 row and no columns
 "datacheck_checks/fixture_profile.files.whitespace.csv": *d71
 "datacheck_files_review/review.read_head_typed.fread_cr_ws_first.tsv": *d71
 
-# D73: a .tsv file with no tab outside quotes is read by its sniffed separator
+# D72: a .tsv file with no tab outside quotes is read by its sniffed separator
 "datacheck_files_review/review.read_head_typed.tab_in_quotes.tsv": &d73
   kind: deliberate
-  ref: D73
+  ref: D72
   reason: the file is comma-separated text with a .tsv name, and its only tab sits inside a quoted field; R reads it with a tab (one field per line, and the one line with the quoted tab split at it, so 0 data rows), here its 31 lines are read with the comma as 2 columns
 "datacheck_files_review/review.read_head_typed.tab_in_quotes.tsv.n5": *d73
