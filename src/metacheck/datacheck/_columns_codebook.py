@@ -889,7 +889,7 @@ def _has_invalid_utf8(df: pd.DataFrame) -> bool:
 
 
 def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookahead: float) -> Any:
-    from metacheck.datacheck.files import _sniff_delimiter
+    from metacheck.datacheck.files import _delimiter
 
     try:
         h = [trimws(x) for x in _read_lines(path, 5)]
@@ -903,7 +903,7 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
             jres = jres.copy()
             jres["parse_method"] = pd.Series(["structured"] * len(jres), dtype="string")
             return ("return", jres)
-    sep = "\t" if ext == "tsv" else _sniff_delimiter(path)
+    sep = _delimiter(path, ext)
     try:
         b = Path(path).read_bytes()[:3]
     except OSError:

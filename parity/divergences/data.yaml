@@ -324,3 +324,10 @@
   reason: a file of blanks is an empty frame (0 rows, 0 columns); R returns a data frame of 1 row and no columns
 "datacheck_checks/fixture_profile.files.whitespace.csv": *d71
 "datacheck_files_review/review.read_head_typed.fread_cr_ws_first.tsv": *d71
+
+# D73: a .tsv file with no tab outside quotes is read by its sniffed separator
+"datacheck_files_review/review.read_head_typed.tab_in_quotes.tsv": &d73
+  kind: deliberate
+  ref: D73
+  reason: the file is comma-separated text with a .tsv name, and its only tab sits inside a quoted field; R reads it with a tab (one field per line, and the one line with the quoted tab split at it, so 0 data rows), here its 31 lines are read with the comma as 2 columns
+"datacheck_files_review/review.read_head_typed.tab_in_quotes.tsv.n5": *d73

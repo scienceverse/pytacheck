@@ -1728,6 +1728,9 @@ class _LineReader:
         return _latin1_fix(line.split(b"\0", 1)[0].decode("utf-8", "surrogateescape"))
 
 
+_CANDIDATES = (",", ";", "\t", "|")
+
+
 def _sniff_delimiter(path: str | os.PathLike[str]) -> str:
     """The field delimiter of the first non-blank, non-comment line (``.sniff_delimiter()``)."""
     reader = _LineReader(path)
@@ -1741,11 +1744,10 @@ def _sniff_delimiter(path: str | os.PathLike[str]) -> str:
             break
     if line is None:
         return ","
-    candidates = (",", ";", "\t", "|")
-    counts = _separators(line, candidates)
+    counts = _separators(line, _CANDIDATES)
     if max(counts) == 0:
         return ","
-    return candidates[counts.index(max(counts))]
+    return _CANDIDATES[counts.index(max(counts))]
 
 
 def _separators(line: str, candidates: tuple[str, ...]) -> list[int]:
@@ -1762,6 +1764,33 @@ def _separators(line: str, candidates: tuple[str, ...]) -> list[int]:
         if m[1]:
             counts[m[1]] += 1
     return list(counts.values())
+
+
+def _delimiter(path: str | os.PathLike[str], ext: str) -> str:
+    """The separator to read *path* with.
+
+    The sniffed one, except that a ``.tsv`` file is read with a tab (R's rule). The exception: a
+    ``.tsv`` file in which none of the first 100 lines (the lines in which the table is looked
+    for) holds a tab outside quoted text can only be read as one column with a tab, so the
+    sniffed separator is taken when it splits every non-blank line of them into the same number
+    of fields (comma-separated text with a ``.tsv`` name, D73).
+    """
+    if ext != "tsv":
+        return _sniff_delimiter(path)
+    reader = _LineReader(path)
+    lines: list[str] = []
+    for _ in range(100):
+        line = reader.next()
+        if line is None:
+            break
+        lines.append(line)
+    reader.close()
+    if any(_separators(line, _CANDIDATES)[2] for line in lines):  # a tab outside quotes
+        return "\t"
+    sep = _sniff_delimiter(path)
+    rows = [ln for ln in lines if trimws(ln) != "" and not trimws(ln).startswith("#")]
+    counts = {_separators(ln, _CANDIDATES)[_CANDIDATES.index(sep)] for ln in rows}
+    return sep if sep != "\t" and len(counts) == 1 and 0 not in counts else "\t"
 
 
 _NUMLIKE = frozenset({"NA", "NAN", "NULL", "INF", "-INF", "+INF"})
@@ -2032,7 +2061,7 @@ def data_read_head(
     try:
         df: pd.DataFrame | None
         if ext in ("csv", "txt", "tsv", "dat", "tab", "table"):
-            sep = "\t" if ext == "tsv" else _sniff_delimiter(path)
+            sep = _delimiter(path, ext)
             hdr = _detect_header(path, sep)
             if _is_single_field_blob(path, sep):
                 return None

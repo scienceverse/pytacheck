@@ -7,6 +7,8 @@
 "review.read_head_typed.rt_fallback_latin1.csv": {"r": "e2ee1b877bf58b95", "py": "e2c0848e658832ab", "diff": ["data.v[]"]},
 "review.read_head_typed.rt_nul_quote_header.csv": {"r": "2b6a9a9b55447798", "py": "c146b90ebf83b740", "diff": ["data", "names[]"]},
 "review.read_head_typed.rt_quotes.csv": {"r": "447be9698b2ee12c", "py": "7e084957f621e2b8", "diff": ["data.value[]"]},
+"review.read_head_typed.tab_in_quotes.tsv": {"r": "da555fd190328bef", "py": "e08bc15ab703150a", "diff": ["data", "names[]", "types[][]"]},
+"review.read_head_typed.tab_in_quotes.tsv.n5": {"r": "06c994001a616e5e", "py": "5d49a5e994b39f02", "diff": ["data", "names", "types"]},
 "review.write_manifest.no_repo_url": {"r": "2902b4a1861f5af4", "py": "22a27bc30c635a37", "diff": ["not_downloaded.unintentional_files"]},
 "review.write_manifest.no_repo_url_gated": {"r": "ac5146cf65ca52a8", "py": "58ddefd0e4ddb7a2", "diff": ["<R error, Python value>"]}
 }
