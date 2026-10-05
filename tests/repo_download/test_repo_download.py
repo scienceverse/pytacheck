@@ -31,17 +31,14 @@ from metacheck.archives.download import (
     _download_one,
     _download_zip_to_cache,
     _format_object_size,
-    _host_rate_limit_record,
-    _host_rate_limit_remaining,
     _is_login_page,
     _rate_limit_wait,
+    _RateLimitSkipped,
     _repo_cache_path,
     _repo_cache_rel,
     _repo_cache_subdir,
-    _storage_is_transient_factory,
+    _storage_is_transient,
     _storage_request,
-    _storage_retry_after_factory,
-    _wait_out_known_rate_limit,
     _zip_timeout_for_size,
     download_repo_files,
     repo_cache_clear,
@@ -681,86 +678,68 @@ def test_rate_limit_wait_clamps_past_reset() -> None:
     assert _rate_limit_wait(mk_ratelimit_resp("0", past)) == 0
 
 
-def test_retry_after_factory_skip_returns_na(messages: list[str]) -> None:
-    resp = mk_ratelimit_resp("0", str(round(time.time()) + 900), url="https://after-a.invalid/x")
-    assert round(_storage_retry_after_factory(False)(resp)) == 900
-    assert any("Rate limit reached from after-a.invalid; waiting 15.0 min" in m for m in messages)
-    assert math.isnan(_storage_retry_after_factory(True)(resp))
-    with local_options({"metacheck.skip_on_api_limit": True}):
-        assert math.isnan(_storage_retry_after_factory(False)(resp))
-    with http.skip_on_api_limit():
-        assert math.isnan(_storage_retry_after_factory(False)(resp))
+@pytest.fixture
+def waits(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """Collect what metacheck.http announces (``utils.message``) and the seconds it sleeps."""
+    out: list[str] = []
+    monkeypatch.setattr("metacheck.utils.message", lambda *parts: out.append("".join(parts)))
+    return out
 
 
-def test_host_rate_limit_round_trip() -> None:
-    host = "test-ratelimit-roundtrip.invalid"
-    _host_rate_limit_record(host, 5)
-    remaining = _host_rate_limit_remaining(host)
-    assert 4 < remaining <= 5
-    # shared with metacheck.http's per-host memory
-    assert http.host_reset_at(host) is not None
+def test_storage_request_waits_out_a_confirmed_reset_and_remembers_it(
+    waits: list[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    slept: list[float] = []
+    monkeypatch.setattr(http, "sleep", slept.append)
+    reset = str(round(time.time()) + 900)
+    limited = httpx.Response(429, headers={"ratelimit-remaining": "0", "ratelimit-reset": reset})
+    with respx.mock(assert_all_called=False) as router:
+        route = router.get("https://after-a.invalid/x").mock(
+            side_effect=[limited, httpx.Response(200, content=b"ok")]
+        )
+        resp = _storage_request("GET", "https://after-a.invalid/x")
+    assert resp.status_code == 200 and route.call_count == 2
+    assert len(slept) == 1 and 890 < slept[0] <= 901  # the host's own reset, not a backoff
+    assert (
+        len(waits) == 1 and "Rate limit reached from after-a.invalid; waiting 15.0 min" in waits[0]
+    )
+    assert http.host_reset_at("after-a.invalid") is not None  # later requests wait up front
 
 
-def test_host_rate_limit_later_reset_wins() -> None:
-    host = "test-ratelimit-later-wins.invalid"
-    _host_rate_limit_record(host, 100)
-    _host_rate_limit_record(host, 1)
-    assert _host_rate_limit_remaining(host) > 90
-    _host_rate_limit_record(host, 200)
-    assert _host_rate_limit_remaining(host) > 190
+def test_storage_request_waits_for_a_known_reset_before_sending(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    slept: list[float] = []
+    monkeypatch.setattr(http, "sleep", slept.append)
+    http._record_reset("test-ratelimit-wait.invalid", time.time() + 30)
+    with respx.mock(assert_all_called=False) as router:
+        route = router.get("https://test-ratelimit-wait.invalid/x").respond(200, content=b"ok")
+        assert _storage_request("GET", "https://test-ratelimit-wait.invalid/x").status_code == 200
+    assert slept and 25 < slept[0] <= 30
+    assert route.call_count == 1
 
 
-def test_host_rate_limit_unseen_and_expired() -> None:
-    assert math.isnan(_host_rate_limit_remaining("test-ratelimit-unseen.invalid"))
-    assert math.isnan(_host_rate_limit_remaining(None))
-    host = "test-ratelimit-expiring.invalid"
-    _host_rate_limit_record(host, 0.1)
-    time.sleep(0.15)
-    assert math.isnan(_host_rate_limit_remaining(host))
-    assert math.isnan(_host_rate_limit_remaining(host))
-    _host_rate_limit_record(host, math.nan)  # an unconfirmed wait records nothing
-    assert math.isnan(_host_rate_limit_remaining(host))
-
-
-def test_wait_out_known_rate_limit_sleeps(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("PYTACHECK_NO_SLEEP", raising=False)
-    host = "test-ratelimit-wait.invalid"
-    _host_rate_limit_record(host, 0.2)
-    t0 = time.perf_counter()
-    assert _wait_out_known_rate_limit(f"https://{host}/x") is True
-    assert time.perf_counter() - t0 >= 0.15
-
-
-def test_wait_out_known_rate_limit_clean_host_and_skip() -> None:
-    t0 = time.perf_counter()
-    assert _wait_out_known_rate_limit("https://test-ratelimit-clean.invalid/x") is True
-    assert time.perf_counter() - t0 < 0.1
+def test_a_known_rate_limit_is_skipped_when_asked_to(tmp_path: Path) -> None:
     host = "test-ratelimit-skip.invalid"
-    _host_rate_limit_record(host, 5)
-    t0 = time.perf_counter()
-    assert _wait_out_known_rate_limit(f"https://{host}/x", skip_on_api_limit=True) is False
-    assert time.perf_counter() - t0 < 0.1
+    http._record_reset(host, time.time() + 30)
+    with respx.mock(assert_all_called=False) as router:
+        route = router.get(f"https://{host}/x").respond(200, content=b"ok")
+        with pytest.raises(_RateLimitSkipped):
+            _storage_request("GET", f"https://{host}/x", skip_on_api_limit=True)
+        with http.skip_on_api_limit():  # the block counts like the argument
+            with pytest.raises(_RateLimitSkipped):
+                _storage_request("GET", f"https://{host}/x")
+        err = _download_one(f"https://{host}/x", str(tmp_path / "x"), skip_on_api_limit=True)
+    assert err == "API rate limit exhausted: known rate-limited host, skip_on_api_limit"
+    assert route.call_count == 0
+    assert not (tmp_path / "x").exists()
 
 
-def test_retry_after_factory_records_host_reset(messages: list[str]) -> None:
-    host = "test-ratelimit-factory-record.invalid"
-    resp = mk_ratelimit_resp("0", str(round(time.time()) + 30), url=f"https://{host}/api/x")
-    _storage_retry_after_factory(False)(resp)
-    remaining = _host_rate_limit_remaining(host)
-    assert 25 < remaining <= 31
-
-
-def test_is_transient_factory() -> None:
-    exhausted = mk_ratelimit_resp("0", str(round(time.time()) + 900))
-    plain = httpx.Response(429)
-    wait, skip = _storage_is_transient_factory(False), _storage_is_transient_factory(True)
-    assert wait(exhausted) is True
-    assert skip(exhausted) is False
-    assert wait(plain) is True and skip(plain) is True
-    assert wait(httpx.Response(503)) is True and skip(httpx.Response(503)) is True
-    assert wait(httpx.Response(403)) is True
-    assert skip(httpx.Response(200)) is False
-    assert wait(httpx.Response(404)) is False
+def test_storage_is_transient() -> None:
+    for status in (403, 429, 500, 502, 503, 504):
+        assert _storage_is_transient(httpx.Response(status)) is True
+    for status in (200, 206, 301, 401, 404, 416):
+        assert _storage_is_transient(httpx.Response(status)) is False
 
 
 def test_skip_on_api_limit_is_recorded_in_failed(
@@ -796,7 +775,7 @@ def test_storage_request_retries_transient_statuses() -> None:
     with respx.mock(assert_all_called=False) as router:
         route = router.get("https://store.example.org/g").mock(return_value=httpx.Response(503))
         resp = _storage_request("GET", "https://store.example.org/g")
-    assert resp.status_code == 503 and route.call_count == 3  # max_tries = 3
+    assert resp.status_code == 503 and route.call_count == 5  # max_tries = 5
 
     with respx.mock(assert_all_called=False) as router:
         route = router.get("https://store.example.org/h").mock(return_value=httpx.Response(404))
@@ -826,7 +805,7 @@ def test_storage_request_connection_failures_raise() -> None:
         )
         with pytest.raises(dlm._RequestError, match="Failed to perform HTTP request"):
             _storage_request("GET", "https://down.example.org/f")
-    assert route.call_count == 3
+    assert route.call_count == 5
 
 
 def test_download_one_statuses_and_login_page(tmp_path: Path) -> None:
@@ -928,6 +907,30 @@ def test_unrestricted_auth_keeps_token_across_redirect(
     assert (tmp_path / "f.bin").read_bytes() == b"private bytes"
 
 
+def test_other_hosts_do_not_send_their_token_to_a_redirect_target(tmp_path: Path) -> None:
+    # the other direction: only the OSF and Zenodo token travels (unrestricted_auth);
+    # httpx drops an Authorization header when a redirect leaves the host
+    seen: list[str | None] = []
+
+    def storage(request: httpx.Request) -> httpx.Response:
+        seen.append(request.headers.get("Authorization"))
+        return httpx.Response(200, content=b"bytes")
+
+    with respx.mock(assert_all_called=False) as router:
+        router.get("https://data.example.org/file/1").mock(
+            return_value=httpx.Response(302, headers={"Location": "https://cdn.example.net/f1"})
+        )
+        router.get("https://cdn.example.net/f1").mock(side_effect=storage)
+        _storage_request(
+            "GET",
+            "https://data.example.org/file/1",
+            {"Authorization": "token secret"},
+            path=str(tmp_path / "f.bin"),
+        )
+    assert seen == [None]
+    assert (tmp_path / "f.bin").read_bytes() == b"bytes"
+
+
 # -- whole-repository zips over HTTP (respx) ---------------------------------------
 
 
@@ -995,6 +998,7 @@ def test_download_zip_to_cache_caps_and_failures(tmp_path: Path, messages: list[
         )
         out = _download_zip_to_cache(files, [0], url)
     assert route.call_count == 2 and not pd.isna(out["file_location"].iloc[0])
+    http._host_reset.clear()  # the reset it waited for would have passed (sleeping is off)
     with respx.mock(assert_all_called=False) as router:
         route = router.get(url).mock(return_value=limited)
         out = _download_zip_to_cache(files, [0], url, skip_on_api_limit=True)

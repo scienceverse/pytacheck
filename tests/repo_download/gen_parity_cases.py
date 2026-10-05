@@ -51,18 +51,6 @@ def helper_call(
     return case
 
 
-def raw_expr(fixture: str, tail: int | None = None, head: int | None = None) -> dict[str, Any]:
-    r = f"readBin(file.path(root, 'tests/repo_download/data/{fixture}'), 'raw', 1e7)"
-    py = f"{HELPERS_PY}.raw('{fixture}'"
-    if tail is not None:
-        r = f"utils::tail({r}, {tail})"
-        py += f", tail={tail}"
-    if head is not None:
-        r = f"utils::head({r}, {head})"
-        py += f", head={head}"
-    return {"$expr": {"r": r, "py": py + ")"}}
-
-
 def hex_of(
     case_id: str, r_fn: str, py_fn: str, args: dict[str, Any], **extra: Any
 ) -> dict[str, Any]:
@@ -91,164 +79,6 @@ DL = "metacheck.archives.download."
 
 def zip_cases() -> list[dict[str, Any]]:
     cases: list[dict[str, Any]] = []
-
-    # .le_int()
-    bytes8 = {
-        "$expr": {
-            "r": "as.raw(c(0x50, 0x4b, 0x05, 0x06, 0xff, 0xff, 0xff, 0xff))",
-            "py": "bytes([0x50, 0x4b, 5, 6, 255, 255, 255, 255])",
-        }
-    }
-    for at, n in ((1, 4), (5, 4), (3, 2), (1, 1), (7, 4), (9, 2)):
-        cases.append(
-            fn_case(
-                f"le_int.at{at}_n{n}", ".le_int", ZP + "_le_int", {"raw": bytes8, "at": at, "n": n}
-            )
-        )
-
-    # .crc32() / .zip_crc_ok()
-    digits = {"$expr": {"r": "charToRaw('123456789')", "py": "b'123456789'"}}
-    empty = {"$expr": {"r": "raw(0)", "py": "b''"}}
-    cases += [
-        fn_case("crc32.check_value", ".crc32", ZP + "_crc32", {"bytes": digits}),
-        fn_case("crc32.empty", ".crc32", ZP + "_crc32", {"bytes": empty}),
-        fn_case("crc32.fixture", ".crc32", ZP + "_crc32", {"bytes": raw_expr("mixed.zip")}),
-        fn_case(
-            "zip_crc_ok.match",
-            ".zip_crc_ok",
-            ZP + "_zip_crc_ok",
-            {"bytes": digits, "crc": 3421780262.0},
-        ),
-        fn_case(
-            "zip_crc_ok.mismatch",
-            ".zip_crc_ok",
-            ZP + "_zip_crc_ok",
-            {"bytes": digits, "crc": 12345},
-        ),
-        fn_case(
-            "zip_crc_ok.na",
-            ".zip_crc_ok",
-            ZP + "_zip_crc_ok",
-            {"bytes": digits, "crc": {"$NA": True}},
-        ),
-        # all.equal() tolerance: a large CRC a few units off still "matches" in R
-        fn_case(
-            "zip_crc_ok.near_miss_large",
-            ".zip_crc_ok",
-            ZP + "_zip_crc_ok",
-            {"bytes": digits, "crc": 3421780300.0},
-        ),
-        fn_case(
-            "zip_crc_ok.near_miss_far",
-            ".zip_crc_ok",
-            ZP + "_zip_crc_ok",
-            {"bytes": digits, "crc": 3421790262.0},
-        ),
-        fn_case(
-            "zip_crc_ok.empty_zero", ".zip_crc_ok", ZP + "_zip_crc_ok", {"bytes": empty, "crc": 0}
-        ),
-    ]
-
-    # .zip_inflate_member()
-    for cid, fixture, member, with_size in (
-        ("big_with_size", "big.zip", "big.R", True),
-        ("big_without_size", "big.zip", "big.R", False),
-        ("deflate_small", "mixed.zip", "study.csv", True),
-        ("deflate_small_no_size", "mixed.zip", "analysis.R", False),
-        ("stored", "mixed.zip", "README.txt", True),
-        ("stored_no_size", "stored.zip", "data.csv", False),
-    ):
-        cases.append(
-            helper_call(
-                f"zip_inflate_member.{cid}",
-                "rd_inflate",
-                "inflate",
-                {"rel": fixture, "name": member, "with_size": with_size},
-            )
-        )
-    cases.append(
-        helper_call(
-            "zip_inflate_member.unsupported_method",
-            "rd_inflate",
-            "inflate",
-            {"rel": "mixed.zip", "name": "study.csv", "method": 12},
-        )
-    )
-    garbage = {"$expr": {"r": "as.raw(c(1, 2, 3))", "py": "bytes([1, 2, 3])"}}
-    cases += [
-        hex_of(
-            "zip_inflate_member.garbage",
-            ".zip_inflate_member",
-            ZP + "_zip_inflate_member",
-            {"comp": garbage, "method": 8, "size": 3},
-        ),
-        hex_of(
-            "zip_inflate_member.stored_raw",
-            ".zip_inflate_member",
-            ZP + "_zip_inflate_member",
-            {"comp": garbage, "method": 0},
-        ),
-        hex_of(
-            "zip_inflate_member.method_12",
-            ".zip_inflate_member",
-            ZP + "_zip_inflate_member",
-            {"comp": garbage, "method": 12},
-        ),
-    ]
-
-    # .parse_zip_central_dir()
-    for fixture in (
-        "mixed.zip",
-        "big.zip",
-        "stored.zip",
-        "comment.zip",
-        "stimuli.zip",
-        "unicode.zip",
-        "zip64.zip",
-        "empty.zip",
-        "notzip.bin",
-        "archive.tar.gz",
-    ):
-        cases.append(
-            fn_case(
-                f"parse_zip_central_dir.{fixture}",
-                ".parse_zip_central_dir",
-                ZP + "_parse_zip_central_dir",
-                {"raw": raw_expr(fixture)},
-            )
-        )
-    for fixture, tail in (
-        ("big.zip", 22),
-        ("big.zip", 60),
-        ("big.zip", 120),
-        ("mixed.zip", 300),
-        ("mixed.zip", 21),
-        ("comment.zip", 250),
-    ):
-        cases.append(
-            fn_case(
-                f"parse_zip_central_dir.{fixture}.tail{tail}",
-                ".parse_zip_central_dir",
-                ZP + "_parse_zip_central_dir",
-                {"raw": raw_expr(fixture, tail=tail)},
-            )
-        )
-    cases.append(
-        fn_case(
-            "parse_zip_central_dir.mixed.zip.head",
-            ".parse_zip_central_dir",
-            ZP + "_parse_zip_central_dir",
-            {"raw": raw_expr("mixed.zip", head=1500)},
-        )
-    )
-    cases.append(
-        fn_case(
-            "parse_zip_central_dir.empty_raw",
-            ".parse_zip_central_dir",
-            ZP + "_parse_zip_central_dir",
-            {"raw": empty},
-        )
-    )
 
     # archive-format classification
     names = {
@@ -409,65 +239,6 @@ def zip_cases() -> list[dict[str, Any]]:
                 mock_dir=MOCKS,
             )
         )
-    entry = {
-        "name": ["x.dat"],
-        "size": [None],
-        "method": [8],
-        "csize": [None],
-        "offset": [None],
-        "crc": [1],
-    }
-    cases += [
-        hex_of(
-            "zip_member_fetch.zip64",
-            ".zip_member_fetch",
-            ZP + "_zip_member_fetch",
-            {"url": "http://example.invalid/x.zip", "entry": {"$df": entry}},
-        ),
-        hex_of(
-            "zip_member_fetch.empty_member",
-            ".zip_member_fetch",
-            ZP + "_zip_member_fetch",
-            {
-                "url": "http://example.invalid/x.zip",
-                "entry": {
-                    "$df": {
-                        "name": ["e.txt"],
-                        "size": [0],
-                        "method": [0],
-                        "csize": [0],
-                        "offset": [10],
-                        "crc": [0],
-                    }
-                },
-            },
-        ),
-        hex_of(
-            "zip_member_fetch.two_rows",
-            ".zip_member_fetch",
-            ZP + "_zip_member_fetch",
-            {
-                "url": "http://example.invalid/x.zip",
-                "entry": {
-                    "$df": {
-                        "name": ["a", "b"],
-                        "size": [1, 1],
-                        "method": [0, 0],
-                        "csize": [1, 1],
-                        "offset": [0, 5],
-                        "crc": [0, 0],
-                    }
-                },
-            },
-        ),
-        hex_of(
-            "zip_member_fetch.null",
-            ".zip_member_fetch",
-            ZP + "_zip_member_fetch",
-            {"url": "http://example.invalid/x.zip", "entry": {"$null": True}},
-        ),
-    ]
-
     # expanding downloaded archives
     for fid, fn, fixture, skip, minimal in (
         ("zip_mixed", "_expand_zip", "mixed.zip", "materials", False),
@@ -576,14 +347,8 @@ def download_cases() -> list[dict[str, Any]]:
             fn_case(
                 f"format_wait_duration.s{sid}",
                 ".format_wait_duration",
-                DL + "_format_wait_duration",
+                "metacheck.http._format_wait_duration",
                 {"seconds": float(s)},
-            )
-        )
-    for a in (1, 2, 3, 4, 5, 6):
-        cases.append(
-            fn_case(
-                f"storage_backoff.a{a}", ".storage_backoff", DL + "_storage_backoff", {"attempt": a}
             )
         )
     statuses = [200, 206, 301, 403, 404, 429, 500, 501, 502, 503, 504]

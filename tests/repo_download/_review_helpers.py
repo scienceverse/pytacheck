@@ -18,6 +18,7 @@ import os
 import re
 import shutil
 import tempfile
+import time
 from collections.abc import Callable, Iterator
 from pathlib import Path
 from typing import Any
@@ -153,7 +154,7 @@ def peek_cached(
     """
     from metacheck import http
     from metacheck.archives import zip_peek_cache as zpc
-    from metacheck.archives.download import _host, _host_rate_limit_record
+    from metacheck.archives.download import _host
     from metacheck.archives.zip_peek import zip_peek
     from metacheck.utils import options
 
@@ -167,7 +168,7 @@ def peek_cached(
 
     try:
         if rate_limited:
-            _host_rate_limit_record(host, 999)
+            http._record_reset(host, time.time() + 999)
         one = serve(first, zip_peek, url, cache=True, skip_on_api_limit=rate_limited, **kw)
         forget()
         stored = zpc._zip_peek_cache_has(url)
@@ -236,26 +237,6 @@ def fetch(
         }
     finally:
         shutil.rmtree(d, ignore_errors=True)
-
-
-def member(routes: list[dict[str, Any]], url: str, name: str, verify: bool = True) -> Any:
-    from metacheck.archives.zip_peek import _crc32, _zip_member_fetch, zip_peek
-
-    def run() -> Any:
-        cd = zip_peek(url)
-        assert cd is not None
-        return _zip_member_fetch(url, cd.loc[cd["name"] == name], verify=verify)
-
-    out = serve(routes, run)
-    if out is None:
-        return None
-    return {"length": len(out), "crc": _crc32(out)}
-
-
-def cd(fixture: str) -> Any:
-    from metacheck.archives.zip_peek import _parse_zip_central_dir
-
-    return _df_bytes(_parse_zip_central_dir((DATA / fixture).read_bytes()))
 
 
 def download(

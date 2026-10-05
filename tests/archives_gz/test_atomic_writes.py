@@ -17,7 +17,7 @@ import pytest
 
 from metacheck.archives import zip_peek as zp
 from metacheck.archives._atomic import atomic_write, staged_dir, sweep_stale
-from metacheck.archives.download import _perform_once
+from metacheck.archives.download import _storage_request
 
 TEMP = re.compile(r"^\.~[0-9a-f]{4,12}$")
 URL = "https://files.example.test/a.csv"
@@ -67,7 +67,7 @@ def test_an_interrupted_download_leaves_no_file(
     _fake_client(monkeypatch, [b"a,b\n", b"1,2\n"], stop=True)
     path = tmp_path / "a.csv"
     with pytest.raises(_Stop):
-        _perform_once({"method": "GET", "url": URL}, path=str(path))
+        _storage_request("GET", URL, path=str(path))
     assert not path.exists()
     assert _leftovers(tmp_path) == []
     assert list(tmp_path.iterdir()) == []
@@ -76,7 +76,7 @@ def test_an_interrupted_download_leaves_no_file(
 def test_a_finished_download_lands_whole(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _fake_client(monkeypatch, [b"a,b\n", b"1,2\n"], stop=False)
     path = tmp_path / "a.csv"
-    _perform_once({"method": "GET", "url": URL}, path=str(path))
+    _storage_request("GET", URL, path=str(path))
     assert path.read_bytes() == b"a,b\n1,2\n"
     assert list(tmp_path.iterdir()) == [path]
 
@@ -88,7 +88,7 @@ def test_an_interrupted_download_keeps_the_old_file(
     path.write_bytes(b"old complete bytes")
     _fake_client(monkeypatch, [b"new "], stop=True)
     with pytest.raises(_Stop):
-        _perform_once({"method": "GET", "url": URL}, path=str(path))
+        _storage_request("GET", URL, path=str(path))
     assert path.read_bytes() == b"old complete bytes"
     assert _leftovers(tmp_path) == []
 

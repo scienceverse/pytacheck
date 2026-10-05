@@ -395,7 +395,7 @@ def _run_case(
     err: Exception | None = None
     start = time.perf_counter()
     try:
-        with watch_run() as run, no_network(attempts), _case_cache_dir():
+        with watch_run() as run, no_network(attempts), _case_cache_dir(), _case_rate_limits():
             result = run_python(case)
     except RWithoutReference:
         res.seconds = time.perf_counter() - start
@@ -526,6 +526,23 @@ def _case_cache_dir() -> Iterator[None]:
                 os.environ.pop("PYTACHECK_CACHE_DIR", None)
             else:
                 os.environ["PYTACHECK_CACHE_DIR"] = base
+
+
+@contextlib.contextmanager
+def _case_rate_limits() -> Iterator[None]:
+    """A fresh memory of rate-limited hosts for one case (``metacheck.http``'s).
+
+    A case that records a host's reset (a mocked 429) must not make the next one
+    to the same address wait or give up.
+    """
+    from metacheck import http
+
+    saved = http._host_reset
+    http._host_reset = {}
+    try:
+        yield
+    finally:
+        http._host_reset = saved
 
 
 # -- many cases -------------------------------------------------------------------------
@@ -689,7 +706,7 @@ def stale_quarantine_entries(cases: list[Case], areas: list[str] | None = None) 
 
 #: the modules of the ``data`` extra without which some cases differ from R (with
 #: matplotlib and pypdf missing, none do)
-_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer")
+_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer", "striprtf")
 
 
 def environment_problems() -> list[str]:
@@ -1141,7 +1158,7 @@ _CACHE_DIR: Any = None  # the throwaway cache dir, removed at exit
 
 
 def _hermetic_env() -> None:
-    """No user/project config, and throwaway data and cache dirs, unless the caller set them.
+    """No user/project config, no retry sleeps, and throwaway data and cache dirs, unless the caller set them.
 
     As under pytest (``tests/conftest.py``): without ``PYTACHECK_CACHE_DIR``
     the caches (``.metacheck_repo_cache``, the LLM cache, ...) would go to the
@@ -1159,6 +1176,7 @@ def _hermetic_env() -> None:
     fold_to_legacy()
 
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
+    os.environ.setdefault("PYTACHECK_NO_SLEEP", "1")  # no backoff against mocks, as under pytest
     if not os.environ.get("PYTACHECK_DATA_DIR"):
         _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-data-")
         atexit.register(_DATA_DIR.cleanup)

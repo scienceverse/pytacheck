@@ -1,4 +1,5 @@
 {
+"download_repo_files.archive_members": {"r": "765e7987c6fb0003", "py": "eacfeff0db2f9862", "diff": ["failed", "file_location[]"]},
 "expand.bz2": {"r": "66a6e9b6900ea324", "py": "e7d2efac5ad216a0", "diff": ["file_size[]", "file_type[]"]},
 "expand.gz": {"r": "75fd8efec08b164e", "py": "fc205dc57c928ba1", "diff": ["file_size[]", "file_type[]"]},
 "expand.gz_minimal_row": {"r": "1ec73f7a2ab30d91", "py": "0323ebadb56c56b3", "diff": ["file_size[]"]},
@@ -10,6 +11,8 @@
 "expand.zip_skip_code": {"r": "26325af701e34dab", "py": "ced8c5dded57147f", "diff": ["file_type[]"]},
 "expand.zip_stimuli": {"r": "ff4f88d73b40db37", "py": "d65c76d6e469d810", "diff": ["file_type[]"]},
 "expand.zip_unicode": {"r": "6310e50b58e4788b", "py": "c4c734aaa985e60b", "diff": ["file_type[]"]},
-"zip_crc_ok.near_miss_large": {"r": "dc2bf8626cfd83b7", "py": "e6e5bcc9388d34ec", "diff": ["[]"]},
-"zip_inflate_member.big_without_size": {"r": "513b6ff8fbd37375", "py": "dc61766e8117e295", "diff": ["crc[]", "length[]"]}
+"zip_fetch_members.all": {"r": "19596620302999a2", "py": "27a197da628247e2", "diff": ["error[]", "ok[]", "path[]"]},
+"zip_fetch_members.deflated": {"r": "4773fbab08884444", "py": "38c9eb1d44ab4d7e", "diff": ["error[]", "ok[]", "path[]"]},
+"zip_fetch_members.subset": {"r": "c85e4674de1b34f0", "py": "607f53ed79b2011e", "diff": ["error[]", "ok[]", "path[]"]},
+"zip_fetch_members.zip64": {"r": "863f3600f9056e7b", "py": "08592cdb9976bf9a", "diff": ["error[]", "ok[]", "path[]"]}
 }

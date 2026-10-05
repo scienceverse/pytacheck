@@ -6,7 +6,7 @@ Port of ``R/data_check_helpers.R`` (from the top of the file through
 * file classification -- :func:`data_classify_files`, :func:`data_format`,
   ``.is_r_package_file()``, ``.data_doc_role()`` and the extension registry;
 * manifests -- :func:`data_is_manifest`, ``.data_check_write_manifest()`` and
-  :func:`manifest_merge` (written byte-for-byte as jsonlite does);
+  :func:`manifest_merge` (written in jsonlite's layout);
 * study grouping -- :func:`data_group_llm`, :func:`data_study_roster` and the
   deterministic ``.data_group_*`` passes;
 * text classification -- :func:`text_peek`, :func:`txt_classify_content` and
@@ -617,75 +617,34 @@ class RNull:
 R_NULL = RNull()
 
 
-class RVector(tuple):  # type: ignore[type-arg]
-    """An R atomic vector of length != 1 (jsonlite writes it on one line)."""
+def _jsonable(x: Any) -> Any:
+    """*x* with the values ``json.dumps()`` cannot write replaced, as jsonlite writes them.
 
-
-def _json_num(x: float | np.floating[Any]) -> str:
-    """A double as JSON: whole numbers without a fraction, others at full
-    precision (shortest round-trip form). metacheck writes with jsonlite's
-    ``digits = 4``, which turns ``0.000012345`` into ``0``."""
-    x = float(x)  # a numpy float's repr() is "np.float64(...)"
-    if not math.isfinite(x):
-        return "null"
-    if x == int(x) and abs(x) < 1e17:
-        return str(int(x))
-    return repr(x)
-
-
-def _json_str(s: str) -> str:
-    return json.dumps(s, ensure_ascii=False)
-
-
-def _json_scalar(x: Any) -> str:
+    ``None`` and ``pd.NA`` (R's ``NA``) and non-finite numbers give ``None``
+    (``null``), :data:`R_NULL` gives ``{}``, numpy scalars give Python ones, a
+    double with no fraction (below 1e17) is written as an integer, and any
+    other object as its text. metacheck writes with jsonlite's ``digits = 4``,
+    which turns ``0.000012345`` into ``0``; here a fraction keeps its
+    shortest round-trip form.
+    """
     if x is None or x is pd.NA:
-        return "null"
-    if isinstance(x, bool | np.bool_):
-        return "true" if x else "false"
-    if isinstance(x, int | np.integer):
-        return str(int(x))
-    if isinstance(x, float | np.floating):
-        return _json_num(x)
-    return _json_str(str(x))
-
-
-def to_json_pretty(x: Any, indent: int = 0) -> str:
-    """``jsonlite::toJSON(x, auto_unbox = TRUE, pretty = TRUE, na = "null")``.
-
-    Python ``dict`` is a named list, ``list`` an unnamed list, :class:`RVector`
-    an atomic vector, ``None`` an ``NA`` and :data:`R_NULL` a ``NULL``.
-    """
-    pad = "  " * (indent + 1)
-    end = "  " * indent
+        return None
     if isinstance(x, RNull):
-        return "{}"
+        return {}
     if isinstance(x, dict):
-        if not x:
-            return "{}"
-        items = [f"{pad}{_json_str(str(k))}: {to_json_pretty(v, indent + 1)}" for k, v in x.items()]
-        return "{\n" + ",\n".join(items) + "\n" + end + "}"
-    if isinstance(x, RVector):
-        return "[" + ", ".join(_json_scalar(v) for v in x) + "]"
+        return {str(k): _jsonable(v) for k, v in x.items()}
     if isinstance(x, list | tuple):
-        if not x:
-            return "[]"
-        items = [pad + to_json_pretty(v, indent + 1) for v in x]
-        return "[\n" + ",\n".join(items) + "\n" + end + "]"
-    return _json_scalar(x)
-
-
-def _from_json(value: Any) -> Any:
-    """A parsed manifest as the writer's values: JSON null stays null (``None``).
-
-    (metacheck reads it back with ``jsonlite::fromJSON(simplifyVector = FALSE)``,
-    where null becomes ``NULL``, which it then writes as ``{}``: every re-merge
-    turns a null into an empty object.)
-    """
-    if isinstance(value, dict):
-        return {k: _from_json(v) for k, v in value.items()}
-    if isinstance(value, list):
-        return [_from_json(v) for v in value]
-    return value
+        return [_jsonable(v) for v in x]
+    if isinstance(x, bool | np.bool_):
+        return bool(x)
+    if isinstance(x, int | np.integer):
+        return int(x)
+    if isinstance(x, float | np.floating):
+        f = float(x)  # a numpy float's repr() is "np.float64(...)"
+        if not math.isfinite(f):
+            return None
+        return int(f) if f == int(f) and abs(f) < 1e17 else f
+    return str(x)
 
 
 def manifest_merge(path: str | os.PathLike[str], patch: dict[str, Any]) -> str:
@@ -695,27 +654,29 @@ def manifest_merge(path: str | os.PathLike[str], patch: dict[str, Any]) -> str:
     ``*.manifest.json``, replaces each key in *patch* wholesale (an
     :data:`R_NULL` value -- R's ``NULL`` -- removes the key; ``None`` is R's
     ``NA`` and is written as ``null``) and writes it back in jsonlite's
-    layout. JSON ``null`` values already in the file stay ``null`` (metacheck
-    rewrites them as ``{}``), and numbers keep their full precision.
+    layout (two-space indent). JSON ``null`` values already in the file stay
+    ``null`` (metacheck re-reads them as ``NULL`` and rewrites them as ``{}``:
+    every re-merge turns a null into an empty object), and numbers keep their
+    full precision.
     """
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     existing: Any = {}
     if p.exists():
         try:
-            existing = _from_json(json.loads(p.read_text(encoding="utf-8")))
+            existing = json.loads(p.read_text(encoding="utf-8-sig"))  # a BOM is skipped
         except (ValueError, OSError):
             existing = {}
-        if not isinstance(existing, dict | list):
-            existing = {}
-    if isinstance(existing, list):  # a top-level JSON array is not a manifest
+    if not isinstance(existing, dict):  # a top-level array or scalar is not a manifest
         existing = {}
     for name, value in patch.items():
         if isinstance(value, RNull):
             existing.pop(name, None)
         else:
             existing[name] = value
-    p.write_text(to_json_pretty(existing) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(_jsonable(existing), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     return str(p)
 
 

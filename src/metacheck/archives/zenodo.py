@@ -797,32 +797,17 @@ def _unzip_list(x: Any) -> list[Any]:
     return _as_list(x)
 
 
-def _stream_to(resp_ctx: Any, path: str) -> httpx.Response:
-    with resp_ctx as resp:
-        if resp.status_code == 200:
-            with atomic_write(path) as fh:
-                for chunk in resp.iter_bytes():
-                    fh.write(chunk)
-        return resp  # type: ignore[no-any-return]
+def _write_200(resp: httpx.Response, path: str) -> None:
+    """The sink of a download: a 200's body goes to *path* (a temporary file moved onto it)."""
+    if resp.status_code == 200:
+        with atomic_write(path) as fh:
+            for chunk in resp.iter_bytes():
+                fh.write(chunk)
 
 
 def _download_archive(url: str, path: str) -> bool:
-    """``req_perform(path = ...)`` of Zenodo's files-archive (3 tries, 600 s timeout)."""
-    from metacheck import http
-
-    for attempt in range(1, 4):
-        try:
-            resp = _stream_to(http.client().stream("GET", url, timeout=600), path)
-        except Exception:
-            if attempt == 3:
-                return False
-            http.sleep(min(2**attempt, 30))
-            continue
-        if resp.status_code in (429, 503) and attempt < 3:
-            http.sleep(min(2**attempt, 30))
-            continue
-        return resp.status_code == 200 and os.path.exists(path) and os.path.getsize(path) > 0
-    return False
+    """``req_perform(path = ...)`` of Zenodo's files-archive (metacheck's retries, 600 s timeout)."""
+    return _download_file(url, path) and os.path.exists(path) and os.path.getsize(path) > 0
 
 
 def _extract_archive(
@@ -851,14 +836,15 @@ def _extract_archive(
 
 
 def _download_file(url: str, path: str) -> bool:
-    """One file (600 s timeout, one try); ``True`` when it came back 200 and was written."""
+    """One file (600 s timeout, through :func:`metacheck.http.request`); ``True`` when it
+    came back 200 and was written."""
     from metacheck import http
 
     try:
-        resp = _stream_to(http.client().stream("GET", url, timeout=600), path)
+        resp = http.request("GET", url, timeout=600, sink=lambda r: _write_200(r, path))
     except Exception:
         return False
-    return resp.status_code == 200
+    return resp is not None and resp.status_code == 200
 
 
 def _zenodo_zip_members(

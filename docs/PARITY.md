@@ -75,7 +75,7 @@ cases read:
 
 ```bash
 git submodule update --init      # upstream/metacheck: fixtures and recorded responses
-uv sync --locked --all-extras    # the data extra (pyreadstat, xlrd, snowballstemmer)
+uv sync --locked --all-extras    # the data extra (pyreadstat, xlrd, snowballstemmer, striprtf)
 ```
 
 Without the submodule some 1,800 cases fail, and without the extra some 60, all for

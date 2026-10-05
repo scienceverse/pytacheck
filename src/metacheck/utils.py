@@ -14,6 +14,7 @@ from __future__ import annotations
 import contextlib
 import contextvars
 import os
+import re
 import socket
 import threading
 import warnings
@@ -563,65 +564,128 @@ def message(*args: Any, domain: Any = None, appendLF: bool = True) -> None:  # n
     stream.flush()
 
 
-class ProgressBar:
-    """A console progress bar (R ``progress::progress_bar``), as :func:`pb` makes it.
+# ---------------------------------------------------------------------------
+# Progress bars
+# ---------------------------------------------------------------------------
 
-    ``format`` understands the progress package's tokens (``:bar``,
-    ``:current``, ``:total``, ``:elapsed``, ``:elapsedfull``, ``:eta``,
-    ``:percent``, ``:rate``, ``:tick_rate``, ``:bytes``, ``:spin``) plus any
-    custom ``:name`` passed in ``tokens``. A ``total`` of ``None``/``NaN``
-    shows a spinner and never finishes on its own. The bar is only drawn on
-    a terminal; ticking a finished bar is an error, as in R.
+# the layout words of R's progress package that callers put in a format; the
+# rest of the format is the bar's text
+_LAYOUT = re.compile(
+    r"\s*(?:\[:bar\]|\(:spin\)|:current/:total"
+    r"|:(?:bar|spin|current|total|elapsedfull|elapsed|eta|percent|rate|tick_rate|bytes)\b)"
+)
+_TOKEN = re.compile(r":([A-Za-z_]\w*)")
+_progress_lock = threading.RLock()
+_progress: Any = None  # the shared rich.progress.Progress while a bar is open
+_open_bars = 0
+
+
+def _shared_progress() -> Any:
+    """The one live display on stderr, started for the first bar (rich allows only one)."""
+    global _progress
+    if _progress is None:
+        import atexit
+        import sys
+
+        from rich.console import Console
+        from rich.progress import (
+            BarColumn,
+            MofNCompleteColumn,
+            Progress,
+            ProgressColumn,
+            SpinnerColumn,
+            TextColumn,
+            TimeElapsedColumn,
+        )
+        from rich.text import Text
+
+        class Only(ProgressColumn):
+            """A column shown for tasks with a known total (or, with ``known=False``, without)."""
+
+            def __init__(self, column: ProgressColumn, known: bool) -> None:
+                super().__init__()
+                self.column, self.known = column, known
+
+            def render(self, task: Any) -> Any:
+                if (task.total is not None) == self.known:
+                    return self.column.render(task)
+                return Text("")
+
+        _progress = Progress(
+            Only(SpinnerColumn(), False),
+            TextColumn("{task.description}", markup=False),
+            Only(BarColumn(), True),
+            Only(MofNCompleteColumn(), True),
+            Only(TimeElapsedColumn(), True),
+            console=Console(file=sys.stderr, force_jupyter=False),
+            transient=True,
+        )
+        _progress.start()
+        atexit.register(_stop_progress)
+    return _progress
+
+
+def _stop_progress() -> None:
+    global _progress
+    with _progress_lock:
+        if _progress is not None:
+            _progress.stop()
+            _progress = None
+
+
+class ProgressBar:
+    """A progress bar on stderr (``rich.progress``), as :func:`pb` makes it.
+
+    The words of the *format* that name a layout (``:bar``, ``:current/:total``,
+    ``:elapsedfull``, ``:spin``) are not read: a bar with a known *total* shows a
+    bar, the count and the elapsed time, and one without (``None`` or NaN) a
+    spinner. What is left of the format is the text, and its ``:name`` tokens
+    are filled from the *tokens* given to :meth:`tick`. The bar is drawn only
+    on a terminal and only with ``show=True``; bars open at the same time share
+    one display. A bar finishes when it reaches its total or is terminated, and
+    ticking a finished bar does nothing.
     """
 
-    _SPIN = "-\\|/"
-
     def __init__(
-        self,
-        total: float | None,
-        format: str = "[:bar] :current/:total",
-        width: int | None = None,
-        stream: Any = None,
-    ) -> None:
-        import math
-        import shutil
-        import sys
-        import time
-
-        is_nan = isinstance(total, float) and math.isnan(total)
-        if total is not None and not is_nan and not (isinstance(total, int | float) and total >= 0):
+        self, total: float | None, format: str = "[:bar] :current/:total", show: bool = True
+    ):
+        if total is not None and not total >= 0 and total == total:
             raise ValueError("`total` must be a non-negative number or NA")
-        self.total = None if total is None or is_nan else total
-        self.format = format
-        self.stream = stream if stream is not None else sys.stderr
-        self.width = width or min(shutil.get_terminal_size((80, 20)).columns, 80)
+        self.total = None if total is None or total != total else total
+        self.text = _LAYOUT.sub("", format).strip()
         self.current: float = 0
         self.finished = False
-        self._start = time.monotonic()
         self._tokens: dict[str, Any] = {}
-        self._spin = 0
-        self._last = ""
-        try:
-            self._draw_ok = bool(self.stream.isatty())
-        except (AttributeError, ValueError):
-            self._draw_ok = False
+        self._task: Any = None
+        if show:
+            import sys
 
-    # -- R methods -----------------------------------------------------------
+            global _open_bars
+            with _progress_lock:
+                # while a display is live, sys.stderr is rich's proxy for it
+                try:
+                    interactive = _progress is not None or sys.stderr.isatty()
+                except (AttributeError, ValueError):
+                    interactive = False
+                if interactive:
+                    self._task = _shared_progress().add_task(self._text(), total=self.total)
+                    _open_bars += 1
+
+    def _text(self) -> str:
+        return _TOKEN.sub(lambda m: str(self._tokens.get(m[1], "")), self.text)
 
     def tick(self, len: float = 1, tokens: Mapping[str, Any] | None = None) -> None:
         """Advance the bar by *len* ticks (0 just redraws, e.g. with new *tokens*)."""
         if self.finished:
-            raise RuntimeError("!self$finished is not TRUE")
+            return
         if tokens:
             self._tokens.update(tokens)
         self.current += len
-        self._spin += 1
+        if self._task is not None:
+            with _progress_lock:
+                _progress.update(self._task, completed=self.current, description=self._text())
         if self.total is not None and self.current >= self.total:
-            self.current = self.total
-            self._render()
             self.terminate()
-            return
-        self._render()
 
     def update(self, ratio: float, tokens: Mapping[str, Any] | None = None) -> None:
         """Set the progress to *ratio* of the total."""
@@ -629,125 +693,37 @@ class ProgressBar:
             raise RuntimeError("Cannot update a progress bar with an unknown total")
         self.tick(ratio * self.total - self.current, tokens)
 
-    def message(self, msg: str, set_width: bool = True) -> None:  # noqa: ARG002
-        """Print a message above the bar (``set_width`` is accepted for R compatibility)."""
-        if not self._draw_ok:
-            return
-        if self.finished:
-            self.stream.write(str(msg) + "\n")
-        else:
-            self.stream.write("\r\033[2K" + str(msg) + "\n" + self._last)
-        self.stream.flush()
+    def message(self, msg: str) -> None:
+        """Print *msg* above the bar."""
+        if self._task is not None and not self.finished:
+            with _progress_lock:
+                _progress.console.print(str(msg), markup=False, highlight=False)
 
     def terminate(self) -> None:
-        """Finish the bar (a newline ends the drawn line)."""
+        """Finish the bar and take it off the display."""
         if self.finished:
             return
         self.finished = True
-        if self._draw_ok and self._last:
-            self.stream.write("\n")
-            self.stream.flush()
-
-    # -- rendering -------------------------------------------------------------
-
-    def render(self) -> str:
-        """The bar's current text."""
-        import re
-        import time
-
-        elapsed = time.monotonic() - self._start
-        total = self.total
-        ratio = (self.current / total) if total else (1.0 if total == 0 else 0.0)
-        ratio = max(0.0, min(1.0, ratio))
-        rate = self.current / elapsed if elapsed > 0 else 0.0
-        eta = (total - self.current) / rate if total is not None and rate > 0 else float("nan")
-
-        def fmt_secs(secs: float) -> str:
-            if secs != secs:  # NaN
-                return "?"
-            if secs < 60:
-                return f"{secs:.0f}s"
-            if secs < 3600:
-                return f"{secs / 60:.0f}m"
-            return f"{secs / 3600:.1f}h"
-
-        def full(secs: float) -> str:
-            s = int(secs)
-            return f"{s // 3600:02d}:{(s % 3600) // 60:02d}:{s % 60:02d}"
-
-        def as_bytes(n: float) -> str:
-            units = ["B", "kB", "MB", "GB", "TB"]
-            i = 0
-            while n >= 1000 and i < len(units) - 1:
-                n /= 1000
-                i += 1
-            return f"{n:.0f}{units[i]}" if i == 0 else f"{n:.2f}{units[i]}"
-
-        values: dict[str, str] = {
-            "current": f"{self.current:g}",
-            "total": "?" if total is None else f"{total:g}",
-            "elapsedfull": full(elapsed),
-            "elapsed": fmt_secs(elapsed),
-            "eta": fmt_secs(eta),
-            "percent": f"{ratio * 100:3.0f}%",
-            "tick_rate": f"{rate:.1f}",
-            "rate": as_bytes(rate) + "/s",
-            "bytes": as_bytes(self.current),
-            "spin": self._SPIN[self._spin % len(self._SPIN)],
-        }
-        for key, value in self._tokens.items():
-            values[str(key)] = str(value)
-        names = sorted(values, key=len, reverse=True)
-        pattern = re.compile(":(" + "|".join(re.escape(n) for n in names) + ")")
-        text = pattern.sub(lambda m: values[m.group(1)], self.format.replace(":bar", "\x00"))
-        if "\x00" in text:
-            space = max(self.width - (len(text) - 1), 0)
-            done = round(space * ratio) if total is not None else 0
-            text = text.replace("\x00", "=" * done + "-" * (space - done))
-        return text
-
-    def _render(self) -> None:
-        if not self._draw_ok:
-            return
-        line = self.render()
-        self._last = "\r" + line
-        self.stream.write("\r\033[2K" + line)
-        self.stream.flush()
+        if self._task is not None:
+            global _open_bars
+            with _progress_lock:
+                _progress.remove_task(self._task)
+                _open_bars -= 1
+                if _open_bars == 0:
+                    _stop_progress()
 
 
-class _NullProgressBar:
-    """The no-op bar :func:`pb` returns when ``verbose()`` is off."""
-
-    finished = False
-
-    def tick(self, *_: Any, **__: Any) -> None:
-        return None
-
-    def update(self, *_: Any, **__: Any) -> None:
-        return None
-
-    def message(self, *_: Any, **__: Any) -> None:
-        return None
-
-    def terminate(self, *_: Any, **__: Any) -> None:
-        return None
-
-
-def pb(
-    total: float | None, format: str = "[:bar] :current/:total"
-) -> ProgressBar | _NullProgressBar:
+def pb(total: float | None, format: str = "[:bar] :current/:total") -> ProgressBar:
     """Port of metacheck's ``pb()``: a progress bar that respects ``verbose()``.
 
-    With verbosity off it returns a dummy whose ``tick()``, ``message()`` and
-    ``terminate()`` do nothing, so callers never need to check.
+    With verbosity off the bar is never drawn, but ``tick()``, ``message()`` and
+    ``terminate()`` still work, so callers never need to check.
     """
     from metacheck.config import verbose
 
-    if verbose():
-        bar = ProgressBar(total, format)
-        bar.tick(0)
-        return bar
-    return _NullProgressBar()
+    bar = ProgressBar(total, format, show=verbose())
+    bar.tick(0)
+    return bar
 
 
 _init_default_model()
