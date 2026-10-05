@@ -491,3 +491,30 @@ def test_stream_to_file_refuses_a_declared_length_over_the_limit(tmp_path: Path)
         assert not dest.exists()
         assert osf._stream_to_file("https://example.test/z", str(dest), max_bytes=10) == 200
     assert dest.read_bytes() == b"x" * 10
+
+
+def test_stream_to_file_retries_like_every_storage_request(tmp_path: Path) -> None:
+    dest = tmp_path / "r.zip"
+    with respx.mock(assert_all_mocked=True) as router:
+        route = router.get("https://example.test/r").mock(
+            side_effect=[httpx.Response(503, content=b"busy"), httpx.Response(200, content=b"ok")]
+        )
+        assert osf._stream_to_file("https://example.test/r", str(dest)) == 200
+        assert route.call_count == 2
+        route = router.get("https://example.test/q").mock(return_value=httpx.Response(503))
+        assert osf._stream_to_file("https://example.test/q", str(tmp_path / "q.zip")) == 503
+        assert route.call_count == 5  # the tries ran out: the last answer, nothing written
+    assert dest.read_bytes() == b"ok"
+    assert not (tmp_path / "q.zip").exists()
+
+
+def test_stream_to_file_raises_the_last_connection_error(tmp_path: Path) -> None:
+    with respx.mock(assert_all_mocked=True) as router:
+        route = router.get("https://example.test/d").mock(side_effect=httpx.ConnectError("down"))
+        with pytest.raises(httpx.ConnectError):
+            osf._stream_to_file("https://example.test/d", str(tmp_path / "d.zip"))
+        assert route.call_count == 5
+        route.reset()
+        with pytest.raises(httpx.ConnectError):  # a limited transfer is not started again
+            osf._stream_to_file("https://example.test/d", str(tmp_path / "d.zip"), max_bytes=5)
+        assert route.call_count == 1

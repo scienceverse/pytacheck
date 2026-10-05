@@ -26,46 +26,11 @@ def path(rel: str) -> str:
     return str(DATA / rel)
 
 
-def raw(rel: str, tail: int | None = None, head: int | None = None) -> bytes:
-    """The bytes of a fixture (R: ``readBin(path, "raw", n)``), optionally the tail/head."""
-    data = (DATA / rel).read_bytes()
-    if tail is not None:
-        data = data[-tail:] if tail > 0 else b""
-    if head is not None:
-        data = data[:head]
-    return data
-
-
-def member_bytes(rel: str, name: str) -> tuple[bytes, float, float]:
-    """A member's compressed bytes, method and size, read the way ``.zip_member_fetch()`` does."""
-    from metacheck.archives.zip_peek import _le_int, _parse_zip_central_dir
-
-    data = raw(rel)
-    cd = _parse_zip_central_dir(data)
-    assert cd is not None
-    row = cd.loc[cd["name"] == name].iloc[0]
-    off = int(row["offset"])
-    lh = data[off : off + 30]
-    start = off + 30 + int(_le_int(lh, 27, 2) + _le_int(lh, 29, 2))
-    return data[start : start + int(row["csize"])], float(row["method"]), float(row["size"])
-
-
 def hexbytes(x: Any) -> list[str] | None:
     """R ``as.character()`` of a raw vector: two lower-case hex digits per byte."""
     if x is None:
         return None
     return [f"{b:02x}" for b in bytes(x)]
-
-
-def inflate(rel: str, name: str, with_size: bool = True, method: float | None = None) -> Any:
-    """``.zip_inflate_member()`` of a fixture member; returns ``length()`` and the CRC32."""
-    from metacheck.archives.zip_peek import _crc32, _zip_inflate_member
-
-    comp, m, size = member_bytes(rel, name)
-    out = _zip_inflate_member(comp, m if method is None else method, size if with_size else None)
-    if out is None:
-        return None
-    return {"length": len(out), "crc": _crc32(out)}
 
 
 def _row(name: str) -> pd.DataFrame:

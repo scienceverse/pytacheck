@@ -102,10 +102,6 @@ def fuzz_names() -> list[str]:
 def main() -> None:
     cases: list[dict[str, Any]] = []
 
-    # -- .parse_zip_central_dir(): names with NULs, empty names ----------------
-    for f in ("trailnul", "emptyname", "emptyname_last", "bigoffset", "allnul", "midnul"):
-        cases.append(call(f"cd.{f}", "rv_cd", "cd", {"fixture": f"review/{f}.cd"}))
-
     # -- zip_peek() over the range server --------------------------------------
     for z in ("paths.zip", "cp437.zip", "crc.zip", "climb.zip"):
         cases.append(
@@ -320,7 +316,7 @@ def main() -> None:
         ),
     ]
 
-    # -- .zip_fetch_members() / .zip_member_fetch() ------------------------------
+    # -- .zip_fetch_members() ------------------------------
     cases += [
         call(
             "fetch.paths_all",
@@ -389,29 +385,6 @@ def main() -> None:
             {"routes": [route("bzcrc.zip")], "url": f"{SRV}/bzcrc.zip"},
         ),
     ]
-    for name in ("good.csv", "badcrc.csv", "badsize.csv", "empty.csv", "stored.txt"):
-        cases.append(
-            call(
-                f"member.{name}",
-                "rv_member",
-                "member",
-                {"routes": [route("crc.zip")], "url": f"{SRV}/crc.zip", "name": name},
-            )
-        )
-    cases.append(
-        call(
-            "member.badcrc_noverify",
-            "rv_member",
-            "member",
-            {
-                "routes": [route("crc.zip")],
-                "url": f"{SRV}/crc.zip",
-                "name": "badcrc.csv",
-                "verify": False,
-            },
-        )
-    )
-
     # -- .expand_zip() / .expand_tar(): what R's unzip / GNU tar extract ---------
     for z in (
         "paths.zip",

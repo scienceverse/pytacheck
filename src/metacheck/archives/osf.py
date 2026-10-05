@@ -797,9 +797,6 @@ def osf_preprint_list(
 # ---------------------------------------------------------------------------
 
 _MB = 1024 * 1024
-# R/repo-download.R::.storage_is_transient() / .storage_backoff(), used when the
-# download port is not importable (they are two constants).
-_STORAGE_TRANSIENT = (403, 429, 500, 502, 503, 504)
 
 
 def _cap_helpers() -> tuple[Any, Any, Any]:
@@ -830,16 +827,6 @@ def _cap_size_str_local(nbytes: float | None) -> str:
     return f"{nbytes / 1024 ** (i - 1):.1f} {units[i - 1]}"
 
 
-def _storage_retry() -> tuple[Any, Any]:
-    try:
-        from metacheck.archives.download import _storage_backoff, _storage_is_transient
-    except ImportError:
-        return (lambda resp: resp.status_code in _STORAGE_TRANSIENT), (
-            lambda attempt: min(2**attempt, 30)
-        )
-    return _storage_is_transient, _storage_backoff
-
-
 class _MaxFileSizeExceeded(Exception):
     """A streamed body grew past its byte limit (curl's ``maxfilesize_large``)."""
 
@@ -848,54 +835,55 @@ def _stream_to_file(
     url: str,
     path: str,
     timeout_s: float = 1800,
-    max_tries: int = 3,
+    max_tries: int = 5,
     max_bytes: float = math.inf,
 ) -> int:
-    """GET *url* straight to *path* with the storage retry policy; returns the status.
+    """GET *url* straight to *path* through :func:`metacheck.http.request`; returns the status.
 
-    Raises the last connection error when every try failed to connect. A finite
-    *max_bytes* stops the transfer once more bytes than that arrive (or at once
-    when the Content-Length says so), raising :class:`_MaxFileSizeExceeded` with
-    nothing left at *path*; a connection error is then not retried, since each
-    retry would download up to the limit again (R: ``req_retry(retry_on_failure
-    = !is.finite(max_bytes))`` with ``req_options(maxfilesize_large =)``).
+    Retried as every storage request is (R's ``.storage_is_transient()``: 403,
+    429, 5xx and connection failures), and the status of the last answer is
+    returned: the body is written to *path* (a temporary file moved onto it
+    once complete) unless that answer is one still being retried when the tries
+    ran out. Raises the last connection error when every try failed to connect.
+    A finite *max_bytes* stops the transfer once more bytes than that arrive (or
+    at once when the Content-Length says so), raising
+    :class:`_MaxFileSizeExceeded` with nothing left at *path*; a connection
+    error is then not retried, since each retry would download up to the limit
+    again (R: ``req_retry(retry_on_failure = !is.finite(max_bytes))`` with
+    ``req_options(maxfilesize_large =)``).
     """
-    import httpx
-
     from metacheck import http
+    from metacheck.archives.download import _storage_is_transient
     from metacheck.archives.osf_helpers import _osf_headers
 
-    is_transient, backoff = _storage_retry()
-    headers = _osf_headers()["headers"]
     limited = math.isfinite(max_bytes)
-    last_exc: Exception | None = None
-    status = 0
-    for attempt in range(1, max_tries + 1):
-        try:
-            with http.client_for(url).stream(
-                "GET", url, headers=headers, timeout=timeout_s
-            ) as resp:
-                status = resp.status_code
-                if status == 200 or not is_transient(resp) or attempt == max_tries:
-                    declared = resp.headers.get("content-length")
-                    if limited and declared and declared.isdigit() and int(declared) > max_bytes:
-                        raise _MaxFileSizeExceeded("Maximum file size exceeded")
-                    with atomic_write(path) as fh:
-                        written = 0
-                        for chunk in resp.iter_bytes():
-                            written += len(chunk)
-                            if limited and written > max_bytes:
-                                raise _MaxFileSizeExceeded("Maximum file size exceeded")
-                            fh.write(chunk)
-                    return status
-        except (httpx.TransportError, httpx.TimeoutException) as exc:
-            last_exc = exc
-            if attempt == max_tries or limited:
-                raise
-        http.sleep(backoff(attempt))
-    if last_exc is not None:
-        raise last_exc
-    return status
+
+    def write(resp: Any) -> None:
+        declared = resp.headers.get("content-length")
+        if limited and declared and declared.isdigit() and int(declared) > max_bytes:
+            raise _MaxFileSizeExceeded("Maximum file size exceeded")
+        with atomic_write(path) as fh:
+            written = 0
+            for chunk in resp.iter_bytes():
+                written += len(chunk)
+                if limited and written > max_bytes:
+                    raise _MaxFileSizeExceeded("Maximum file size exceeded")
+                fh.write(chunk)
+
+    resp = http.request(
+        "GET",
+        url,
+        headers=_osf_headers()["headers"],
+        timeout=timeout_s,
+        max_tries=max_tries,
+        is_transient=_storage_is_transient,
+        retry_on_failure=not limited,
+        sink=write,
+        raise_errors=True,
+    )
+    if resp is None:  # raise_errors makes this impossible
+        raise OSError(f"no response from {url}")
+    return int(resp.status_code)
 
 
 def _osf_prepare_save_paths(

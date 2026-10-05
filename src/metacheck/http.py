@@ -7,9 +7,13 @@ clients share:
   User-Agent carrying the contact email set with :func:`metacheck.email`);
 * httr2-style retries: up to 5 tries on 429/500/502/503/504 and on
   connection failures, jittered exponential backoff, ``Retry-After`` honoured;
-* per-host rate-limit memory: a 429 with ``RateLimit-Reset`` /
+* per-host rate-limit memory: a 429 (or any retried status that says the
+  bucket is empty, ``RateLimit-Remaining: 0``) with ``RateLimit-Reset`` /
   ``X-RateLimit-Reset`` / ``Retry-After`` makes later requests to that host
-  wait for the stated reset instead of rediscovering the limit;
+  wait for the stated reset instead of rediscovering the limit; a wait of
+  more than 5 s is announced;
+* streamed bodies (``sink``): a download to disk goes through the same
+  retries, and a connection that drops mid-body is a failed try;
 * :func:`skip_on_api_limit`: give up immediately on a rate limit instead of
   waiting (metacheck's ``metacheck.skip_on_api_limit`` option);
 * optional token-bucket throttling per host (:class:`Throttle`);
@@ -23,6 +27,7 @@ from __future__ import annotations
 
 import contextlib
 import email.utils
+import math
 import random
 import threading
 import time
@@ -40,6 +45,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "RETRY_STATUSES",
+    "RateLimited",
     "Throttle",
     "batch_query",
     "check_interrupt",
@@ -197,6 +203,36 @@ def _parse_reset(resp: httpx.Response) -> float | None:
     return None
 
 
+def _exhausted(resp: httpx.Response) -> bool:
+    """Whether a response says the rate-limit bucket is empty (``RateLimit-Remaining: 0``)."""
+    remaining = resp.headers.get("RateLimit-Remaining") or resp.headers.get("X-RateLimit-Remaining")
+    try:
+        return remaining is not None and float(remaining) == 0
+    except ValueError:
+        return False
+
+
+def _format_wait_duration(seconds: float) -> str:
+    """Port of ``R/repo-download.R::.format_wait_duration()``: ``47s``, ``12.3 min``, ``1.4 hours``."""
+    if seconds < 60:
+        return f"{math.ceil(seconds)}s"
+    if seconds < 3600:
+        return f"{seconds / 60:.1f} min"
+    return f"{seconds / 3600:.1f} hours"
+
+
+def _announce_wait(host: str, seconds: float) -> None:
+    """Say, unless quiet, that a wait of over 5 s for *host*'s rate-limit reset begins."""
+    if seconds > 5:
+        from metacheck.utils import message
+
+        message(
+            f"Rate limit reached from {host}; waiting {_format_wait_duration(seconds)} for the "
+            "host's own reset before retrying (Ctrl+C to stop, or use skip_on_api_limit = "
+            "TRUE to skip this file instead of waiting)."
+        )
+
+
 def host_reset_at(host: str) -> float | None:
     """When a host we have been rate-limited by resets (epoch seconds), if known."""
     with _reset_lock:
@@ -245,14 +281,58 @@ class Throttle:
                 return
 
 
+class RateLimited(Exception):
+    """:func:`request` (with ``raise_errors``) gave up before sending anything.
+
+    The host is known to be rate-limited and :func:`skip_on_api_limit` is active.
+    """
+
+
+def _send(
+    session: httpx.Client,
+    method: str,
+    url: str,
+    kwargs: dict[str, Any],
+    *,
+    stream: bool,
+    resend_headers: bool,
+) -> httpx.Response:
+    """One request. With *stream* the body is left unread; with *resend_headers* every
+    redirect hop is sent the original headers, a token included (httpx drops
+    ``Authorization`` when a redirect leaves the origin)."""
+    if not stream:
+        return session.request(method, url, **kwargs)
+    kwargs = dict(kwargs)
+    follow = kwargs.pop("follow_redirects", True)
+    auth = {"auth": kwargs.pop("auth")} if "auth" in kwargs else {}
+    for hop in range(20):
+        check_interrupt()
+        req = session.build_request(method, url, **kwargs)
+        resp = session.send(
+            req, stream=True, follow_redirects=follow and not resend_headers, **auth
+        )
+        if not (resend_headers and resp.is_redirect and resp.next_request is not None) or hop == 19:
+            break
+        url = str(resp.next_request.url)
+        if resp.status_code == 303:
+            method = "GET"
+        resp.close()
+    return resp
+
+
 def request(
     method: str,
     url: str,
     *,
     max_tries: int = 5,
     retry_statuses: Sequence[int] = RETRY_STATUSES,
+    is_transient: Callable[[httpx.Response], bool] | None = None,
+    retry_on_failure: bool = True,
     throttle: Throttle | None = None,
     http: httpx.Client | None = None,
+    sink: Callable[[httpx.Response], None] | None = None,
+    resend_headers: bool = False,
+    raise_errors: bool = False,
     **kwargs: Any,
 ) -> httpx.Response | None:
     """Send a request with metacheck's retry policy.
@@ -261,41 +341,84 @@ def request(
     raised), or ``None`` after a connection-level failure on every try, or
     when the host is known to be rate-limited and :func:`skip_on_api_limit`
     is active. ``kwargs`` go to :meth:`httpx.Client.request`.
+
+    A response is retried when its status is in *retry_statuses*, or, with
+    *is_transient*, when that function says so (it replaces the list). A
+    connection failure is retried too, unless *retry_on_failure* is false
+    (httr2's ``req_retry(retry_on_failure =)``). A 429, or a retried status
+    that says the bucket is empty (GitHub answers 403), makes the host's
+    stated reset the wait, remembered for every later request to the host;
+    under :func:`skip_on_api_limit` it ends the request at once.
+
+    With *sink* the body is streamed: once a response is not one to retry,
+    ``sink(response)`` reads it (``iter_bytes()``; or not at all, to leave an
+    unwanted body unread). A connection that drops while it does is a failed
+    try like any other, so *sink* must start over on a new try (a download
+    writes to a temporary file, as
+    :func:`metacheck.archives._atomic.atomic_write` does); any other
+    exception it raises ends the request. The returned response is closed
+    and its body not kept unless *sink* read it; a response that is retried
+    or given up on is closed unread. *resend_headers* sends every redirect
+    hop the original headers (an OSF or Zenodo token goes on to their storage
+    hosts).
+
+    With *raise_errors* a connection failure on the last try raises its
+    :mod:`httpx` exception, and a request that is not sent because the host is
+    known to be rate-limited raises :class:`RateLimited`, instead of
+    returning ``None``.
     """
     import httpx
 
     host = urlsplit(url).hostname or ""
     session = http or client_for(url)
+    stream = sink is not None or resend_headers
+    retry = is_transient or (lambda r: r.status_code in retry_statuses)
     resp: httpx.Response | None = None
     for attempt in range(1, max_tries + 1):
         check_interrupt()
         reset = host_reset_at(host)
         if reset is not None:
             if skipping_api_limits():
+                if resp is None and raise_errors:
+                    raise RateLimited(f"{host} is rate-limited and waiting was skipped")
                 return resp
+            _announce_wait(host, reset - time.time())
             sleep(reset - time.time())
         if throttle is not None:
             throttle.acquire(host)
         try:
-            resp = session.request(method, url, **kwargs)
+            resp = _send(session, method, url, kwargs, stream=stream, resend_headers=resend_headers)
+            if not retry(resp):
+                try:
+                    if sink is not None:
+                        sink(resp)
+                    elif stream:
+                        resp.read()
+                finally:
+                    if stream:
+                        resp.close()
+                return resp
         except (httpx.TransportError, httpx.TimeoutException):
-            if attempt == max_tries:
+            if attempt == max_tries or not retry_on_failure:
+                if raise_errors:
+                    raise
                 return None
             sleep(_backoff(attempt))
             continue
-        if resp.status_code not in retry_statuses:
-            return resp
-        wait: float | None = None
-        if resp.status_code == 429:
+        if stream:
+            resp.close()
+        remembered = False
+        if resp.status_code == 429 or _exhausted(resp):
             reset = _parse_reset(resp)
             if reset is not None:
                 _record_reset(host, reset)
-                wait = max(0.0, reset - time.time())
+                remembered = True
             if skipping_api_limits():
                 return resp
         if attempt == max_tries:
             return resp
-        sleep(wait if wait is not None else _backoff(attempt))
+        if not remembered:  # a remembered reset is waited for, and announced, at the top
+            sleep(_backoff(attempt))
     return resp
 
 

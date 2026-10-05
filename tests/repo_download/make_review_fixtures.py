@@ -7,8 +7,7 @@ Run from the repository root::
 Writes ``tests/repo_download/data/review/``: zips whose member names or
 central-directory fields are edge cases (names that climb out of the target
 directory or collide with a file, CP437 names without the UTF-8 flag, a name
-with trailing NULs, CRC/size mismatches) and hand-built central directories
-(``*.cd``) for ``.parse_zip_central_dir()``. Deterministic: the zips are
+with trailing NULs, CRC/size mismatches). Deterministic: the zips are
 written by :mod:`zipfile` with fixed timestamps.
 """
 
@@ -108,41 +107,6 @@ def _patch(
             assert bytes(raw[local + 30 : local + 30 + lname]) == name
             raw[local + 30 : local + 30 + lname] = new
     path.write_bytes(bytes(raw))
-
-
-def _cd_entry(name: bytes, usize: int = 3, csize: int = 3, offset: int = 0) -> bytes:
-    return (
-        b"PK\x01\x02"
-        + struct.pack(
-            "<HHHHHHIIIHHHHHII",
-            20,
-            20,
-            0,
-            0,
-            0,
-            0,
-            0,
-            csize,
-            usize,
-            len(name),
-            0,
-            0,
-            0,
-            0,
-            0,
-            offset,
-        )
-        + name
-    )
-
-
-def _cd(entries: list[bytes]) -> bytes:
-    cd = b"".join(entries)
-    prefix = b"\x00" * 64
-    eocd = b"PK\x05\x06" + struct.pack(
-        "<HHHHIIH", 0, 0, len(entries), len(entries), len(cd), len(prefix), 0
-    )
-    return prefix + cd + eocd
 
 
 def _github_zip() -> None:
@@ -283,17 +247,6 @@ def main() -> None:
         tail=[("z.csv", CSV)],
     )
     _github_zip()
-    # hand-built central directories for .parse_zip_central_dir()
-    cds = {
-        "trailnul.cd": [_cd_entry(b"data.csv\x00\x00"), _cd_entry(b"b.R", offset=50)],
-        "emptyname.cd": [_cd_entry(b""), _cd_entry(b"b.R", offset=50)],
-        "emptyname_last.cd": [_cd_entry(b"b.R", offset=50), _cd_entry(b"")],
-        "bigoffset.cd": [_cd_entry(b"", offset=0x01000000), _cd_entry(b"z.R")],
-        "midnul.cd": [_cd_entry(b"a\x00b.csv")],
-        "allnul.cd": [_cd_entry(b"\x00\x00"), _cd_entry(b"ok.csv")],
-    }
-    for name, entries in cds.items():
-        (OUT / name).write_bytes(_cd(entries))
 
 
 if __name__ == "__main__":

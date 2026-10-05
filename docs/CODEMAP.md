@@ -1124,7 +1124,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `BiocManager` | installing a paper's Bioconductor packages in a reproducibility run (Suggests only) | still used, inside the R session that runs the paper's code ([`repro/core.py`](../src/metacheck/repro/core.py)); `code_check` recognises `BiocManager::install()` calls ([`codecheck/core.py`](../src/metacheck/codecheck/core.py)) |
 | `shiny`, `shinyjs`, `shinydashboard` | the Shiny apps (`report_app()`, `osf_app()`) | not ported; see [`porting/skip.toml`](../porting/skip.toml) |
 | `DBI`, `RSQLite` | reading JASP files (an SQLite database inside) | Python's `sqlite3` ([`statout/jasp.py`](../src/metacheck/statout/jasp.py)) |
-| `zip` | inflating zip members without extracting them | Python's `zlib` ([`archives/zip_peek.py`](../src/metacheck/archives/zip_peek.py)) |
+| `zip` | inflating zip members without extracting them | Python's `zipfile`, over a file whose reads are range requests ([`archives/zip_peek.py`](../src/metacheck/archives/zip_peek.py)) |
 | `digest` | CRC-32 and SHA-256 checksums | Python's `zlib` and `hashlib` |
 | `jsonvalidate` | not called by metacheck's code | not needed |
 
