@@ -11,7 +11,9 @@ inside quotes and the odd line only the general tokenizer reads; written by
 The reader is pandas' C parser plus a layer that finds the table and types the columns the
 way fread does. It agrees with fread on every case but the ones listed below, each of them
 a difference of the reader chosen on purpose (a register entry in docs/UPSTREAM_ISSUES.md
-or parity/divergences/) and pinned here, so that a change of the reader shows.
+or parity/divergences/) and pinned here, so that a change of the reader shows.  The cases with
+a quote that does not fit are fuzzed inputs, not valid CSV: fread chooses one of four quote
+rules for the whole file by the table each gives, the reader decides at every quote (D70).
 """
 
 from __future__ import annotations
@@ -55,15 +57,23 @@ DOUBLED_QUOTE = _words("""
     f1_0176 f1_0188 f1_0260 f2_0058 f2_0229 f3_0143 f3_0368 q_000 q_001 q_003 q_004 q_007 q_008
     q_009 q_011 q_013 q_015 q_017 q_018 q_021 q_022 q_024 q_026 q_028 q_029 q_031 q_032 q_034
     q_035 q_036 q_037 q_040 q_041 q_042 q_044 q_045 q_046 q_048 q_051 q_053 q_054 q_055 q_057
-    q_058 q_059 q_061 q_063 q_068 q_071 q_073 q_074 q_075 q_076 q_077 q_078 q_079
+    q_058 q_059 q_061 q_063 q_068 q_071 q_073 q_074 q_075 q_076 q_077 q_078 q_079 q_010 q_016
 """)
-# A quote that closes a field before its end (``"a"b``) is read as the text ``ab``; fread
-# chooses one of four quote rules by the table each gives, and keeps ``"a"b``, or reads
-# another number of rows (D70: the file is not valid CSV, so neither reading is the right one).
-IMPROPER_QUOTE = _words("""
-    f1_0111 q_002 q_005 q_006 q_010 q_012 q_016 q_019 q_020 q_023 q_027 q_030 q_033 q_043 q_047
-    q_049 q_050 q_060 q_062 q_066 q_067 q_069 q_070 q_072
+# Quotes that do not fit (``"a"b``, ``"""`` before a separator, a field that never closes) are
+# read where they stand: a quote opens a field only at its start, the first quote that is not
+# doubled must be followed by a separator or a line end to close it, and one that is not (or
+# that has no closing quote) is a character (D70).  fread picks one of four quote rules for
+# the whole file; where its rule keeps the file apart (a quote never closes, a short line), the
+# reader's reading is the other.  Same rows, and the cells differ in quote characters only:
+IMPROPER_TEXT = _words("""q_002 q_005 q_006 q_070""")
+# the reader reads more rows (fread stops where its quote rule gives a ragged table):
+IMPROPER_MORE = _words("""
+    q_012 q_019 q_020 q_023 q_027 q_030 q_043 q_047 q_049 q_060 q_066 q_067 q_069
 """)
+# the reader stops at a short line that fread reads on, splitting a quoted field at its
+# separator (the cells ``"a`` and ``b"``) or taking the largest block of lines (f1_0111):
+IMPROPER_FEWER = _words("""f1_0111 q_033 q_050 q_062 q_072""")
+IMPROPER_QUOTE = IMPROPER_TEXT + IMPROPER_MORE + IMPROPER_FEWER
 # fread keeps a tab that follows the separator in a text column; the reader drops it, as it
 # drops every blank around an unquoted field of a table (D72).
 LEADING_TAB = ["f2_0116"]
@@ -116,6 +126,20 @@ def _agrees(
     return compare(value, canonical(df), Options()) == []
 
 
+def _same_but_quotes(df: pd.DataFrame, value: dict[str, Any]) -> bool:
+    """Do the cells of *df* and of R's *value* differ in quote characters only?"""
+    if df.shape[1] != len(value["v"]):
+        return False
+    for j, col in enumerate(value["v"]):
+        if col["t"] != "chr":
+            continue
+        for r, got in zip(col["v"], df.iloc[:, j].tolist(), strict=True):
+            mine = None if got is None or got is pd.NA else str(got)
+            if (r and r.replace('"', "")) != (mine and mine.replace('"', "")):
+                return False
+    return True
+
+
 @pytest.mark.parametrize("case", CASES, ids=[c["name"] for c in CASES])
 def test_read_delim_matches_r(case: dict[str, Any], tmp_path: Path) -> None:
     name = case["name"].removesuffix(".csv")
@@ -133,7 +157,13 @@ def test_read_delim_matches_r(case: dict[str, Any], tmp_path: Path) -> None:
             if col["t"] == "chr":
                 col["v"] = [v.replace('""', '"') if v is not None else v for v in col["v"]]
         assert _agrees(case, df, value, classes)
-    elif name in IMPROPER_QUOTE or name in LEADING_TAB:
+    elif name in IMPROPER_QUOTE:
+        assert not _agrees(case, df, value, classes)
+        assert (len(df) > value["nrow"]) == (name in IMPROPER_MORE)
+        assert (len(df) < value["nrow"]) == (name in IMPROPER_FEWER)
+        if name in IMPROPER_TEXT:
+            assert len(df) == value["nrow"] and _same_but_quotes(df, value)
+    elif name in LEADING_TAB:
         assert not _agrees(case, df, value, classes)
     else:
         assert _agrees(case, df, value, classes)

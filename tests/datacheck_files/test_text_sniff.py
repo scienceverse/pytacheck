@@ -46,6 +46,19 @@ def test_sniffers() -> None:
     assert F._is_single_field_blob(DATA / "single_col.csv", ",") is False
 
 
+def test_the_sniffer_counts_separators_outside_quoted_text(tmp_path: Path) -> None:
+    def sniff(text: str) -> str:
+        (tmp_path / "t.csv").write_text(text, encoding="utf-8")
+        return F._sniff_delimiter(tmp_path / "t.csv")
+
+    assert sniff('"Last, First";"Age"\nx;1\n') == ";"  # a comma in quotes is not a separator
+    assert sniff('"a;b;c",d\n1,2\n') == ","
+    assert sniff('x"y,z;a;b\n') == ";"  # a quote inside a field is text, so every ; counts
+    assert sniff('"a\tb"\t"c"\n') == "\t"
+    assert sniff('"open,a;b;c\n') == ";"  # a quote that never closes is text too
+    assert sniff("a,b\n") == ","
+
+
 def test_vec_as_names_unique() -> None:
     # vctrs::vec_as_names(c("a", "a", "b", "...1", ""), repair = "unique")
     assert vec_as_names_unique(["a", "a", "b", "...1", ""]) == [

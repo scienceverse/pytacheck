@@ -118,7 +118,7 @@ def test_read_delim_fast_keeps_utf8_next_to_na(monkeypatch: pytest.MonkeyPatch) 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         df = F._read_delim_fast(REVIEW / "rt_fallback_latin1.csv", ",", True)
-    assert _na(df["v"]) == ["ab", None, "caf\u00e9"]
+    assert _na(df["v"]) == ['"a"b', None, "caf\u00e9"]
 
 
 # -- haven ------------------------------------------------------------------------

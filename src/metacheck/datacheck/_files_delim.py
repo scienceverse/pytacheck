@@ -8,7 +8,9 @@ character. What it keeps of ``fread``'s way of finding the table: lines before t
 first block of lines with one number of fields are skipped, reading stops at the
 first line with another number of fields (a footer, a ragged line, a blank line),
 blanks around an unquoted field are dropped, ``NA`` is missing (text when quoted, in a
-text column), and a quote that never closes is an ordinary character.
+text column), and every quote is read where it stands: one opens a field only at the start
+of one and closes it at the first quote that a separator or a line end follows, any other
+(``"a"b``, or one that never closes) is an ordinary character.
 """
 
 from __future__ import annotations
@@ -35,6 +37,8 @@ _SAMPLE_LINES = 100  # fread looks at this many lines to find the table
 _NO_SEP = "\x7f"  # the separator of a single-column table: none
 _QUOTED_NA = "\x1aNA"  # a quoted NA: missing in a number, text in a text column
 _NUL = "\x1c"  # a NUL byte
+_STRAY = "\x1d"  # a quote that is an ordinary character, while pandas reads the text
+_NONE = np.empty(0, np.intp)
 _PREFIX = 1 << 16  # the bytes a head scans first
 _INT32_MAX = 2**31 - 1
 
@@ -67,59 +71,92 @@ _TIME = re.compile(
 # -----------------------------------------------------------------------------
 
 
-def _outside(buf: np.ndarray, sep: int, escape: bool) -> tuple[np.ndarray, np.ndarray]:
-    """Which bytes of *buf* lie outside a quoted field, and where a quoted field is followed
-    by more text (``"a"b``: improper quoting).
+class _Quotes(NamedTuple):
+    outside: np.ndarray  # which bytes lie outside quoted fields
+    plain: np.ndarray  # the quotes that are ordinary characters, though pandas would not think so
+    odd: np.ndarray  # those that stand where a field opens (``"a"b``)
+    unclosed: int  # where the first of them has no quote to close it (``len(buf)``: none)
 
-    A quote opens a field only at the start of one (after a separator or line end, blanks
-    apart); a quote inside a field is an ordinary character.  An open field ends at the next
-    quote, and a doubled quote is two of them.  With *escape* a quote after an odd number of
-    backslashes is an ordinary character too.
+
+def _quotes(buf: np.ndarray, sep: int, escape: bool) -> _Quotes:
+    """Which bytes of *buf* lie outside a quoted field and which quotes are ordinary characters.
+
+    A quote opens a field only at the start of one (blanks apart).  The field closes at the
+    first quote that is not half of a doubled one (``""``), and only if a separator or a line
+    end follows it; otherwise (``"a"b``, or no such quote at all) the opening quote is an
+    ordinary character, and so is every quote inside a field.  With *escape* a quote after an
+    odd number of backslashes is an ordinary character too.
     """
     quote = np.flatnonzero(buf == 34)
+    plain: list[int] = []
+    odd: list[int] = []
     if escape:
         for q in quote[buf[np.maximum(quote - 1, 0)] == 92].tolist():
             run = 1
             while q - run - 1 >= 0 and buf[q - run - 1] == 92:
                 run += 1
             if run % 2:
-                quote = quote[quote != q]
-    before = buf[np.maximum(quote - 1, 0)]
+                plain.append(q)
+        quote = np.setdiff1d(quote, plain)
+    last = len(buf) - 1
+    before, after = buf[np.maximum(quote - 1, 0)], buf[np.minimum(quote + 1, last)]
     start = (quote == 0) | np.isin(before, (sep, 10, 13))
-    for i in np.flatnonzero(before == 32):  # blanks before the quote
-        j = quote[i]
+    end = (quote == last) | np.isin(after, (sep, 10, 13))
+    for k in np.flatnonzero(before == 32).tolist():  # blanks before the quote
+        j = int(quote[k])
         while j > 0 and buf[j - 1] == 32:
             j -= 1
-        start[i] = j == 0 or buf[j - 1] in (sep, 10, 13)
+        start[k] = j == 0 or buf[j - 1] in (sep, 10, 13)
+    for k in np.flatnonzero((after == 32) & (quote < last)).tolist():  # blanks after it
+        j = int(quote[k]) + 1
+        while j <= last and buf[j] == 32:
+            j += 1
+        end[k] = j > last or buf[j] in (sep, 10, 13)
     toggle = np.zeros(len(buf), bool)
-    closing = quote[1::2]
-    if (start | (before == 34))[0::2].all():
+    if (
+        len(quote) % 2 == 0  # a regular file: quotes in pairs, as pandas reads them
+        and (start | (before == 34))[0::2].all()
+        and (end | (after == 34))[1::2].all()
+    ):
         toggle[quote] = True
-    else:  # a quote inside a field: walk the quotes
-        inside, closed, marks = False, -2, []
-        for q, opens in zip(quote.tolist(), start.tolist(), strict=True):
-            if inside or opens or q == closed + 1:
-                inside = not inside
-                marks.append(q)
-                if not inside:
-                    closed = q
-        toggle[marks] = True
-        closing = np.array(marks[1::2], dtype=np.intp)
-    after = buf[np.minimum(closing + 1, len(buf) - 1)]
-    improper = closing[
-        np.isin(after, (sep, 10, 13, 34, 32), invert=True) & (closing + 1 < len(buf))
-    ]
-    return ~np.bitwise_xor.accumulate(toggle), improper
+        return _Quotes(
+            ~np.bitwise_xor.accumulate(toggle), np.array(plain, dtype=np.intp), _NONE, len(buf)
+        )
+    pos, opens, closes = quote.tolist(), start.tolist(), end.tolist()
+    marks: list[int] = []
+    i, unclosed = 0, len(buf)
+    while i < len(pos):
+        if not opens[i]:
+            i += 1
+            continue
+        j = i + 1
+        while j + 1 < len(pos) and pos[j + 1] == pos[j] + 1:  # a doubled quote
+            j += 2
+        if j < len(pos) and closes[j]:
+            marks += (pos[i], pos[j])
+            i = j + 1
+        else:
+            odd.append(pos[i])
+            if j >= len(pos):
+                unclosed = min(unclosed, pos[i])
+            i += 1
+    toggle[marks] = True
+    return _Quotes(
+        ~np.bitwise_xor.accumulate(toggle),
+        np.sort(np.array(plain + odd, dtype=np.intp)),
+        np.array(odd, dtype=np.intp),
+        unclosed,
+    )
 
 
 def _lines(
-    buf: np.ndarray, sep: int, quoted: bool, escape: bool
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Where each line of *buf* starts, how many fields it has, whether it is blank, which
-    bytes lie outside quotes, and where the quoting is improper.  A separator or a line end
-    inside a quoted field does not count.
+    buf: np.ndarray, sep: int, escape: bool
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, _Quotes]:
+    """Where each line of *buf* starts, how many fields it has, whether it is blank, and its
+    quotes.  A separator or a line end inside a quoted field does not count.
     """
-    outside, improper = _outside(buf, sep, escape) if quoted else (np.ones(len(buf), bool), buf[:0])
+    quotes = _quotes(buf, sep, escape)
+    outside = quotes.outside
     after = np.append(buf[1:], 0)
     eol = ((buf == 10) | ((buf == 13) & (after != 10))) & outside
     starts = np.append(0, np.flatnonzero(eol) + 1)
@@ -128,7 +165,7 @@ def _lines(
     space = np.zeros(256, bool)
     space[[10, 13, 32] + ([9] if sep != 9 else [])] = True
     text = np.add.reduceat((~space[buf]).view(np.uint8), starts, dtype=np.int64)
-    return starts, seps + 1, text == 0, outside, improper
+    return starts, seps + 1, text == 0, quotes
 
 
 def _table(counts: np.ndarray, blank: np.ndarray, jump: int) -> tuple[int, int]:
@@ -162,27 +199,26 @@ class _Plan(NamedTuple):
 
     starts: np.ndarray  # where each line starts
     outside: np.ndarray  # which bytes lie outside quotes
+    plain: np.ndarray  # the quotes that are ordinary characters
     first: int
     last: int
     ncol: int
     single: bool  # one column: the separator is part of the value, a blank line a row
     rows: int  # lines that hold a row
-    improper: int  # the first line among those sampled with an improper quote, or -1
-    bad: int  # improper quotes in the table
+    bad: int  # odd quotes in the table, or the line that ends it (``"a"b``)
     complete: bool  # the lines beyond the scanned ones cannot change this plan
 
 
 def _plan(
     buf: np.ndarray,
     sep: int,
-    quoted: bool,
-    escape: bool,
     header: bool,
     nrows: float,
     jump: int,
     fill: bool,
+    escape: bool = False,
 ) -> _Plan | None:
-    starts, counts, blank, outside, improper = _lines(buf, sep, quoted, escape)
+    starts, counts, blank, quotes = _lines(buf, sep, escape)
     if blank.all():
         return None
     n = len(starts)
@@ -207,15 +243,12 @@ def _plan(
         rows = rows[: int(limit)]
     if fill:
         ncol = int(counts[first + rows].max()) if len(rows) else 1
-    sample = np.searchsorted(starts, improper, "right") - 1  # the lines of improper quotes
-    sample = sample[(sample >= first) & (sample < min(first + jump, last))]
-    complete = (truncated or ended) and first + jump < n - 1
-    top = starts[last] if last < n else len(buf)
-    n_bad = int(np.count_nonzero((improper >= starts[first]) & (improper < top)))
+    top = starts[last + 1] if last + 1 < n else len(buf)  # the line that ends the table too
+    complete = (truncated or ended) and first + jump < n - 1 and quotes.unclosed >= top
+    n_bad = int(np.count_nonzero((quotes.odd >= starts[first]) & (quotes.odd < top)))
     return _Plan(
-        starts, outside, first, last, ncol, single, len(rows),
-        int(sample[0]) if len(sample) else -1, n_bad, complete,
-    )  # fmt: skip
+        starts, quotes.outside, quotes.plain, first, last, ncol, single, len(rows), n_bad, complete
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -238,21 +271,7 @@ def _unpadded(chunk: np.ndarray, outside: np.ndarray, sep: int, tabs: bool) -> b
     return np.delete(chunk, pos[at_start | at_end]).tobytes()
 
 
-def _escaped(chunk: bytes) -> bytes:
-    r"""*chunk* for a reader that takes a backslash as its escape character, though the text
-    keeps every backslash (``fread`` does not unescape): each is doubled, and one more goes
-    before a quote that an odd run of them escapes."""
-
-    def double(m: re.Match[bytes]) -> bytes:
-        run, quote = m[1], m[2] or b""
-        return run * 2 + (b"\\" if quote and len(run) % 2 else b"") + quote
-
-    return re.sub(rb'(\\+)(")?', double, chunk)
-
-
-def _read_strings(
-    chunk: bytes, sep: str, ncol: int, quoted: bool, escape: bool, latin1: bool, blanks: bool
-) -> pd.DataFrame:
+def _read_strings(chunk: bytes, sep: str, ncol: int, latin1: bool, blanks: bool) -> pd.DataFrame:
     try:
         return pd.read_csv(
             io.BytesIO(chunk),
@@ -265,12 +284,42 @@ def _read_strings(
             engine="c",
             encoding="latin-1" if latin1 else "utf-8",
             encoding_errors="surrogateescape",
-            quoting=csv.QUOTE_MINIMAL if quoted else csv.QUOTE_NONE,
-            escapechar="\\" if escape else None,
+            quoting=csv.QUOTE_MINIMAL,
             skip_blank_lines=not blanks,
         )
     except pd.errors.EmptyDataError:
         return pd.DataFrame(columns=range(ncol), dtype=object)
+
+
+def _read_plan(
+    buf: np.ndarray, plan: _Plan, sep: str, fill: bool, latin1: bool
+) -> tuple[pd.DataFrame, int, bool] | None:
+    """The table of *plan* as strings, its width, and whether *buf* held all it needed;
+    ``None`` if pandas does not find the rows the plan did."""
+    starts, outside, plain, first, last, ncol, single, rows, _, complete = plan
+    lo, hi = starts[first], starts[last] if last < len(starts) else len(buf)
+    piece = buf[lo:hi]
+    own = plain[(plain >= lo) & (plain < hi)] - lo
+    if len(own):  # pandas must not take these quotes for quoting
+        piece = piece.copy()
+        piece[own] = ord(_STRAY)
+    chunk = _unpadded(
+        piece, outside[lo:hi], ord(_NO_SEP if single else sep), not single and sep != "\t"
+    )
+    if b"\r" in chunk:  # pandas' parser overflows on some lines that end in a lone CR
+        chunk = chunk.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    if not fill:  # a quoted NA is text in a text column: mark it, pandas cannot tell
+        around = b"[^" + re.escape(sep.encode()) + b"\r\n]"
+        chunk = re.sub(rb'(?<!%b)"NA"(?!%b)' % (around, around), b'"\x1aNA"', chunk)
+    try:
+        raw = _read_strings(chunk, _NO_SEP if single else sep, ncol, latin1, single and not fill)
+    except pd.errors.ParserError:
+        return None
+    if len(raw) != rows:
+        return None
+    if len(own):
+        raw = raw.apply(lambda col: col.str.replace(_STRAY, '"', regex=False))
+    return raw, ncol, complete
 
 
 def _split(
@@ -278,43 +327,18 @@ def _split(
 ) -> tuple[pd.DataFrame, int, bool] | None:
     """The table in *buf* as strings, its width, and whether *buf* held all it needed;
     ``None`` for a blank *buf*."""
-    backslash = bool(((buf[:-1] == 92) & (buf[1:] == 34)).any())
     args = (header, nrows, jump, fill)
-    for quoted in (True, False):  # a quote that never closes is read as a character
-        plan = _plan(buf, ord(sep), quoted, False, *args)
-        if plan is None:
-            return None
-        escape = False
-        if quoted and plan.bad and backslash:  # fread's quote rule 1: a backslash escapes a quote
-            alt = _plan(buf, ord(sep), True, True, *args)
-            if alt is not None and alt.bad < plan.bad:
-                plan, escape = alt, True
-        starts, outside, first, last, ncol, single, rows, improper, _, complete = plan
-        if quoted and single and improper >= 0:  # fread reads the quotes of a column so
-            alt = _plan(buf, ord(sep), False, False, *args)  # quoted as characters
-            if alt is not None and alt.last - alt.first > improper - first:
-                continue
-        lo, hi = starts[first], starts[last] if last < len(starts) else len(buf)
-        chunk = _unpadded(
-            buf[lo:hi], outside[lo:hi], ord(_NO_SEP if single else sep), not single and sep != "\t"
-        )
-        if b"\r" in chunk:  # pandas' parser overflows on some lines that end in a lone CR
-            chunk = chunk.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
-        if quoted and not fill:  # a quoted NA is text in a text column: mark it, pandas cannot tell
-            around = b"[^" + re.escape(sep.encode()) + b"\r\n]"
-            chunk = re.sub(rb'(?<!%b)"NA"(?!%b)' % (around, around), b'"\x1aNA"', chunk)
-        if escape:
-            chunk = _escaped(chunk)
-        try:
-            raw = _read_strings(
-                chunk, _NO_SEP if single else sep, ncol, quoted, escape, latin1, single and not fill
-            )
-        except pd.errors.ParserError:
-            continue
-        if len(raw) == rows:
-            if single and not quoted and not fill:  # fread's quote rule 2: the outer quotes of a
-                raw[0] = raw[0].str.replace(r'^"(.*)"$', r"\1", regex=True)  # field come off
-            return raw, ncol, complete
+    plan = _plan(buf, ord(sep), *args)
+    if plan is None:
+        return None
+    plans = [plan]
+    if plan.bad and ((buf[:-1] == 92) & (buf[1:] == 34)).any():  # a backslash escapes a quote
+        escaped = _plan(buf, ord(sep), *args, escape=True)
+        plans += [escaped] if escaped is not None else []
+    for each in sorted(plans, key=lambda p: (-p.rows, p.bad)):  # most rows, then fewest odd quotes
+        found = _read_plan(buf, each, sep, fill, latin1)
+        if found is not None:
+            return found
     raise ValueError("cannot tokenize the file")
 
 

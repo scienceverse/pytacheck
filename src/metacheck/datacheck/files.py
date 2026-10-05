@@ -1742,10 +1742,26 @@ def _sniff_delimiter(path: str | os.PathLike[str]) -> str:
     if line is None:
         return ","
     candidates = (",", ";", "\t", "|")
-    counts = [line.count(d) for d in candidates]
+    counts = _separators(line, candidates)
     if max(counts) == 0:
         return ","
     return candidates[counts.index(max(counts))]
+
+
+def _separators(line: str, candidates: tuple[str, ...]) -> list[int]:
+    """How often each of *candidates* separates fields in *line*: one inside a quoted field
+    does not count.
+
+    A quote opens a field only at the start of one and closes it at the next quote that a
+    candidate or the line end follows (the rule of ``_files_delim``); any other quote is text.
+    """
+    cls = "".join(re.escape(c) for c in candidates)
+    fields = re.compile(f'(?:"(?:[^"]|"")*"(?=[{cls}]|$)|[^{cls}]*)([{cls}])?')
+    counts = dict.fromkeys(candidates, 0)
+    for m in fields.finditer(line):
+        if m[1]:
+            counts[m[1]] += 1
+    return list(counts.values())
 
 
 _NUMLIKE = frozenset({"NA", "NAN", "NULL", "INF", "-INF", "+INF"})

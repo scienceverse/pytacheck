@@ -165,6 +165,32 @@ class TestTable:
         df = _read(tmp_path, 'v\n"1"2\n"x"y\n"z"\n', ",", True)
         assert df["v"].tolist() == ['"1"2', '"x"y', "z"]
 
+    def test_a_quote_inside_a_field_is_a_character(self, tmp_path: Path) -> None:
+        df = _read(tmp_path, 'a,b\nx"y,"p"q\n1,2\n', ",", True)
+        assert df["a"].tolist() == ['x"y', "1"] and df["b"].tolist() == ['"p"q', "2"]
+
+    def test_an_improper_quote_does_not_change_how_the_rest_is_read(self, tmp_path: Path) -> None:
+        # one bad quote on the first line must not unquote the valid "a,b" on the second
+        df = _read(tmp_path, b'"a"\0b he said "hi"\n"a,b"\n', ",", True)
+        assert df.shape == (1, 1) and df.iloc[0, 0] == "a,b"
+
+    def test_a_field_that_cannot_close_ends_at_its_separator(self, tmp_path: Path) -> None:
+        # the third quote of """ has no closing quote before the next field starts (q_002)
+        df = _read(
+            tmp_path, '"v0"\t"v1"\t"v2"\n"a\tb"\t1\t"""\n"c"\t2\t"x"\n"d"\t3\t"y"\n', "\t", True
+        )
+        assert df.shape == (3, 3)
+        assert df["v0"].tolist() == ["a\tb", "c", "d"] and df["v2"].tolist() == ['"""', "x", "y"]
+
+    def test_a_quoted_field_may_span_lines_next_to_improper_ones(self, tmp_path: Path) -> None:
+        df = _read(tmp_path, 'a,b\n"x\ny",1\n"p"q,2\n"z",3\n', ",", True)
+        assert df["a"].tolist() == ["x\ny", '"p"q', "z"] and df["b"].tolist() == [1, 2, 3]
+
+    def test_a_quote_that_closes_a_field_is_followed_by_a_separator(self, tmp_path: Path) -> None:
+        # the first quote that is not doubled decides: here it is followed by text
+        df = _read(tmp_path, 'a,b\n"x"y,"z,w"\n1,2\n', ",", True)
+        assert df.shape == (2, 2) and df.iloc[0].tolist() == ['"x"y', "z,w"]
+
     def test_empty_and_blank_files(self, tmp_path: Path) -> None:
         assert _read(tmp_path, "", ",", True).shape == (0, 0)
         assert _read(tmp_path, "  \n \n", ",", True).shape == (0, 0)
