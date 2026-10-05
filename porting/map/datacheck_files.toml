@@ -7,7 +7,7 @@
 # tests/datacheck_files/gen_parity_cases.py and gen_review_cases.py
 # (area datacheck_files_review); goldens: parity/golden/datacheck_files*/.
 [files]
-"R/data_check_helpers.R" = ["src/metacheck/datacheck/files.py", "src/metacheck/datacheck/_files_fread.py", "src/metacheck/datacheck/_files_readers.py", "src/metacheck/datacheck/_files_rdata.py", "src/metacheck/datacheck/_files_registry.py", "src/metacheck/datacheck/_files_readtable.py", "src/metacheck/datacheck/_files_time.py", "src/metacheck/datacheck/__init__.py"]
+"R/data_check_helpers.R" = ["src/metacheck/datacheck/files.py", "src/metacheck/datacheck/_files_delim.py", "src/metacheck/datacheck/_files_readers.py", "src/metacheck/datacheck/_files_rdata.py", "src/metacheck/datacheck/_files_registry.py", "src/metacheck/datacheck/_files_strtod.py", "src/metacheck/datacheck/_files_time.py", "src/metacheck/datacheck/__init__.py"]
 
 [functions]
 "data_classify_files" = "metacheck.datacheck.files:data_classify_files"
@@ -57,9 +57,6 @@
 
 # reader back ends (R packages replaced by Python code)
 [backends]
-"data.table::fread" = "metacheck.datacheck._files_fread:fread"
-"utils::read.delim" = "metacheck.datacheck._files_readtable:read_table"
-"utils::type.convert" = "metacheck.datacheck._files_readtable:type_convert"
 "readxl::read_excel" = "metacheck.datacheck._files_readers:read_excel"
 "readODS::read_ods" = "metacheck.datacheck._files_readers:read_ods"
 "haven::read_sav/read_dta/read_por/read_sas" = "metacheck.datacheck._files_readers:read_stat_file"

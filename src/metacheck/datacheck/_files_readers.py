@@ -129,11 +129,11 @@ def read_delim(
     """``utils::read.delim(path, sep, header, nrows, check.names = FALSE)``.
 
     ``encoding = "latin1"`` is ``fileEncoding = "latin1"``. See
-    :mod:`metacheck.datacheck._files_readtable`.
+    :mod:`metacheck.datacheck._files_delim`.
     """
-    from metacheck.datacheck._files_readtable import read_table
+    from metacheck.datacheck._files_delim import read_delim as read_table
 
-    return read_table(path, sep, header, nrows, encoding)
+    return read_table(path, sep, header, nrows, encoding, fill=True)
 
 
 # -----------------------------------------------------------------------------

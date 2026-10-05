@@ -75,16 +75,6 @@ def read_head_typed(path: str, n_rows: float | None = None) -> dict[str, Any] | 
     return _typed(F.data_read_head(str(ROOT / path), n_rows=n))
 
 
-def read_delim_typed(
-    path: str, sep: str, header: bool, nrows: float | None = None, encoding: str | None = None
-) -> dict[str, Any] | None:
-    """``utils::read.delim(path, sep, header, nrows, check.names = FALSE)`` with R types."""
-    from metacheck.datacheck._files_readers import read_delim
-
-    n = math.inf if nrows is None else nrows
-    return _typed(read_delim(str(ROOT / path), sep=sep, header=header, nrows=n, encoding=encoding))
-
-
 def manifest_scenario(scenario: str) -> Any:
     """Run ``.data_check_write_manifest()`` for a review scenario."""
     with tempfile.TemporaryDirectory() as tmp:

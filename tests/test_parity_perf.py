@@ -229,15 +229,15 @@ def test_compiles_and_recompiles(monitoring: bool) -> None:
 def test_readers_count_per_file(monitoring: bool, tmp_path: Path) -> None:
     # through their modules: a function imported into a local before the probe is not rebound
     from metacheck.codecheck import core
-    from metacheck.datacheck import _files_fread, _files_readtable
+    from metacheck.datacheck import _files_delim
 
     csv = tmp_path / "data.csv"
     csv.write_text("a,b\n1,2\n", encoding="utf-8")
     script = tmp_path / "analysis.R"
     script.write_text("x <- 1\n", encoding="utf-8")
     with perf.Probe(monitoring=monitoring) as probe:
-        _files_fread.fread(str(csv), ",", True)
-        _files_readtable.read_table(csv, ",", True)
+        _files_delim.read_delim(str(csv), ",", True)
+        _files_delim.read_delim(csv, ",", True, fill=True)
         core.code_read(str(script))
         readers.read_excel(SPREADSHEETS / "clean.xlsx")
         readers.read_ods(SPREADSHEETS / "clean.ods")

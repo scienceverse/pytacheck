@@ -1633,6 +1633,15 @@ class _LineReader:
         self.fh = Path(path).open("rb")  # noqa: SIM115 - closed at eof / on delete
         self.buf = b""
         self.eof = False
+        if self.fh.read(2) in (b"\xff\xfe", b"\xfe\xff"):
+            # UTF-16, which the reader decodes (U217): its first lines are what a sniffer sees
+            self.fh.seek(0)
+            raw = self.fh.read(16 * self._CHUNK)
+            self.buf = raw.decode("utf-16", errors="replace").encode("utf-8", "surrogatepass")
+            self.eof = True
+            self.close()
+        else:
+            self.fh.seek(0)
 
     def __del__(self) -> None:
         self.close()
@@ -1677,6 +1686,9 @@ class _LineReader:
         return _latin1_fix(line.split(b"\0", 1)[0].decode("utf-8", "surrogateescape"))
 
 
+_CANDIDATES = (",", ";", "\t", "|")
+
+
 def _sniff_delimiter(path: str | os.PathLike[str]) -> str:
     """The field delimiter of the first non-blank, non-comment line (``.sniff_delimiter()``)."""
     reader = _LineReader(path)
@@ -1690,11 +1702,53 @@ def _sniff_delimiter(path: str | os.PathLike[str]) -> str:
             break
     if line is None:
         return ","
-    candidates = (",", ";", "\t", "|")
-    counts = [line.count(d) for d in candidates]
+    counts = _separators(line, _CANDIDATES)
     if max(counts) == 0:
         return ","
-    return candidates[counts.index(max(counts))]
+    return _CANDIDATES[counts.index(max(counts))]
+
+
+def _separators(line: str, candidates: tuple[str, ...]) -> list[int]:
+    """How often each of *candidates* separates fields in *line*: one inside a quoted field
+    does not count.
+
+    A quote opens a field only at the start of one and closes it at the next quote that a
+    candidate or the line end follows (the rule of ``_files_delim``); any other quote is text.
+    """
+    cls = "".join(re.escape(c) for c in candidates)
+    fields = re.compile(f'(?:"(?:[^"]|"")*"(?=[{cls}]|$)|[^{cls}]*)([{cls}])?')
+    counts = dict.fromkeys(candidates, 0)
+    for m in fields.finditer(line):
+        if m[1]:
+            counts[m[1]] += 1
+    return list(counts.values())
+
+
+def _delimiter(path: str | os.PathLike[str], ext: str) -> str:
+    """The separator to read *path* with.
+
+    The sniffed one, except that a ``.tsv`` file is read with a tab (R's rule). The exception: a
+    ``.tsv`` file in which none of the first 100 lines (the lines in which the table is looked
+    for) holds a tab outside quoted text can only be read as one column with a tab, so the
+    sniffed separator is taken when it splits every non-blank line of them into the same number
+    of fields (comma-separated text with a ``.tsv`` name, D72).
+    """
+    if ext != "tsv":
+        return _sniff_delimiter(path)
+    reader = _LineReader(path)
+    lines: list[str] = []
+    for _ in range(100):
+        line = reader.next()
+        if line is None:
+            break
+        lines.append(line)
+    reader.close()
+    if any(_separators(line, _CANDIDATES)[2] for line in lines):  # a tab outside quotes
+        return "\t"
+    sep = _sniff_delimiter(path)
+    rows = [ln for ln in lines if trimws(ln) != "" and not trimws(ln).startswith("#")]
+    counts = {_separators(ln, _CANDIDATES)[_CANDIDATES.index(sep)] for ln in rows}
+    return sep if sep != "\t" and len(counts) == 1 and 0 not in counts else "\t"
 
 
 _NUMLIKE = frozenset({"NA", "NAN", "NULL", "INF", "-INF", "+INF"})
@@ -1773,21 +1827,19 @@ def _is_single_field_blob(path: str | os.PathLike[str], sep: str) -> bool:
 def _read_delim_fast(
     path: str | os.PathLike[str], sep: str, header: bool, n_rows: float = math.inf
 ) -> pd.DataFrame:
-    """Read a delimited file as ``data.table::fread()`` does (``.read_delim_fast()``).
+    """Read a delimited file the way ``data.table::fread()`` does (``.read_delim_fast()``).
 
-    Falls back to a ``utils::read.delim()`` emulation (with a Latin-1 retry for
-    invalid UTF-8) when fread fails, as R does.
+    pandas' C parser splits the text and ``_files_delim`` types the columns. A file it
+    cannot split is read again as ``utils::read.delim()`` would (every line a row, short
+    lines padded), with a Latin-1 retry for invalid UTF-8.
     """
-    from metacheck.datacheck._files_fread import FreadError, fread
-    from metacheck.datacheck._files_readers import read_delim
+    from metacheck.datacheck._files_delim import read_delim
 
     try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            return fread(Path(path), sep=sep, header=header, nrows=n_rows)
-    except (FreadError, ValueError, OSError):  # tryCatch(fread(...), error = NULL)
+        return read_delim(path, sep=sep, header=header, nrows=n_rows)
+    except (ValueError, OSError):  # tryCatch(fread(...), error = NULL)
         pass
-    df = read_delim(path, sep=sep, header=header, nrows=n_rows)
+    df = read_delim(path, sep=sep, header=header, nrows=n_rows, fill=True)
     # re-read as Latin-1 only when a text cell is not valid UTF-8 (metacheck's
     # is.na(iconv(col, "UTF-8", "UTF-8")) is also TRUE for an NA cell, so a
     # valid UTF-8 file with an empty cell is re-read and "é" becomes "Ã©")
@@ -1797,7 +1849,7 @@ def _read_delim_fast(
         for j in range(df.shape[1])
     )
     if has_invalid:
-        df = read_delim(path, sep=sep, header=header, nrows=n_rows, encoding="latin1")
+        df = read_delim(path, sep=sep, header=header, nrows=n_rows, encoding="latin1", fill=True)
     return df
 
 
@@ -1967,7 +2019,7 @@ def data_read_head(
     try:
         df: pd.DataFrame | None
         if ext in ("csv", "txt", "tsv", "dat", "tab", "table"):
-            sep = "\t" if ext == "tsv" else _sniff_delimiter(path)
+            sep = _delimiter(path, ext)
             hdr = _detect_header(path, sep)
             if _is_single_field_blob(path, sep):
                 return None

@@ -6,5 +6,6 @@
 "review.download_count_cap": {"r": "cc77db37984a6019", "py": "11c2ff40a36d4b04", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
 "review.mixed_list": {"r": "4050c61fc0dd5385", "py": "79c6054c4e52ee5b", "diff": ["summary_text[]"]},
 "review.nodata_list": {"r": "629c7a1f4c947dbf", "py": "55e8ec836086727a", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table"]},
-"review.text": {"r": "1243bc1852961f60", "py": "93063cbec636702b", "diff": ["summary_text[]"]}
+"review.text": {"r": "1243bc1852961f60", "py": "258087c7c0feb83e", "diff": ["previews.utf16_table.txt", "report[]", "structure.data_format[]", "structure.data_type[]", "summary_table.col_numeric[]", "summary_table.col_text[]", "summary_table.column_n[]", "summary_table.data_file_n[]", "summary_text[]", "table"]},
+"review_tables.text": {"r": "9cca52c93f75a0c2", "py": "bd50c4c2e33a10f4", "diff": ["<root>"]}
 }

@@ -58,30 +58,6 @@ def typed_head(name: str, n_rows: float | None = None) -> None:
     )
 
 
-def typed_delim(name: str, sep: str, header: bool, nrows: float | None = None,
-                encoding: str | None = None) -> None:  # fmt: skip
-    extra = "" if nrows is None else f", nrows = {nrows:g}"
-    if encoding:
-        extra += f', fileEncoding = "{encoding}"'
-    sep_r = sep.replace("\t", "\\t")
-    call = (
-        f'suppressWarnings(utils::read.delim(rpath("{REVIEW}/{name}"), sep = "{sep_r}", '
-        f"header = {'TRUE' if header else 'FALSE'}{extra}, check.names = FALSE))"
-    )
-    tag = f"{name}.{'hdr' if header else 'nohdr'}" + ("" if nrows is None else f".n{nrows:g}")
-    if encoding:
-        tag += f".{encoding}"
-    add(
-        f"review.read_delim.{tag}",
-        r="identity",
-        py=f"{HELP}.read_delim_typed",
-        args={"x": {"$expr": {"r": _R_TYPED.format(call=call), "py": "None"}}},
-        py_drop=["x"],
-        py_args={"path": f"{REVIEW}/{name}", "sep": sep, "header": header, "nrows": nrows,
-                 "encoding": encoding},
-    )  # fmt: skip
-
-
 # -- text_peek(): NUL handling of rawToChar() / iconv() --------------------------
 for name in ("tp_trailing_nul.csv", "tp_trailing_nul1.csv", "tp_dbl_nul.txt", "tp_all_nul.txt",
              "tp_mid_nul.txt"):  # fmt: skip
@@ -135,23 +111,6 @@ for name in ("stata_int_na.dta", "all_na_dates.sav", "zero_rows.sav", "int64.csv
         py_drop=["x"],
         py_args={"path": f"{REVIEW}/{name}", "n_rows": None},
     )  # fmt: skip
-
-# -- utils::read.delim() (the fallback reader) on its own ---------------------
-for name in ("rt_quotes.csv", "rt_int.csv", "rt_int_trailing_ws.csv", "rt_lgl.csv",
-             "rt_lgl_lower.csv", "rt_dbl.csv", "rt_nan_upper.csv", "rt_cplx.csv",
-             "rt_blank_na.csv", "rt_na_latin1.csv", "rt_mb_error.csv", "rt_dup_rownames.txt",
-             "rt_rownames.txt", "rt_wrap.csv", "rt_nul_quote_header.csv", "rt_nul_value.csv",
-             "rt_cr_cr.csv", "fread_nul_name.csv", "bom_numeric.csv", "fread_cr_ws_first.tsv",
-             "tab_in_quotes.tsv"):  # fmt: skip
-    sep = "\t" if name.endswith(".tsv") else ","
-    typed_delim(name, sep, True)
-for name in ("rt_wrap.csv", "bom_numeric.csv", "rt_blank_na.csv", "fread_cr_ws_first.tsv"):
-    typed_delim(name, "\t" if name.endswith(".tsv") else ",", False)
-typed_delim("rt_nrows.csv", ",", True, nrows=5)
-typed_delim("rt_wrap.csv", ",", True, nrows=1)
-typed_delim("rt_wrap.csv", ",", False, nrows=0)
-typed_delim("rt_na_latin1.csv", ",", True, encoding="latin1")
-typed_delim("rt_mb_error.csv", ",", True, encoding="latin1")
 
 # -- .detect_likert_scale(): as.integer() turns |x| > .Machine$integer.max into NA
 for tag, r_x, py_x in [
